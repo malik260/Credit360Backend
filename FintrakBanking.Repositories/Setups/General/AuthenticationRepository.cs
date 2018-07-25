@@ -9,6 +9,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using static FintrakBanking.Repositories.Credit.LoanApplicationRepository;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -95,7 +96,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public async Task<UserViewModel> FindUserByUserNameAsync(string username)
@@ -157,7 +158,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             }
 
-            throw new Exception("1001 Login Failure.");
+            throw new SecureException("1001 Login Failure.");
 
             //return null;
         }
@@ -269,7 +270,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 if (data == null)
                 {
-                    throw new Exception("1001 Login Failure.");
+                    throw new SecureException("1001 Login Failure.");
                 }
 
                 data.sessionStatusInfo = result;
@@ -287,7 +288,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 return data.isLocked;
             }
-            throw new Exception("1001 Login Failure.");
+            throw new SecureException("1001 Login Failure.");
         }
 
         public  bool IsAccountActive(string userName)
@@ -298,7 +299,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 return data.isActive;
             }
 
-            throw new Exception("1001 Login Failure.");
+            throw new SecureException("1001 Login Failure.");
         }
 
         private UserViewModel UserLoginDetails(string username, string password)
@@ -356,11 +357,11 @@ namespace FintrakBanking.Repositories.Setups.General
                         
                         context.SaveChanges();
 
-                        throw new Exception("1001 Login Failure.");
+                        throw new SecureException("1001 Login Failure.");
                     }
                     else
                     {
-                        throw new Exception("1001 Not Fund.");
+                        throw new SecureException("1001 Not Fund.");
                     }
 
                 }

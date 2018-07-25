@@ -46,7 +46,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
             }
@@ -81,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
             }
-            catch (Exception e )
+            catch (SecureException e )
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
             }

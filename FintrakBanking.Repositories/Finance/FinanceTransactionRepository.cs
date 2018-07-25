@@ -296,7 +296,7 @@ namespace FintrakBanking.Repositories.Finance
                 }
                 else
                 {
-                    throw new Exception($"Transaction Failed.");
+                    throw new SecureException($"Transaction Failed.");
                 }
             }
             else
@@ -1920,7 +1920,7 @@ namespace FintrakBanking.Repositories.Finance
             //    else
             //    {
             //        //display message
-            //        throw new Exception($"Transaction Failed.");
+            //        throw new SecureException($"Transaction Failed.");
             //    }
 
             //}

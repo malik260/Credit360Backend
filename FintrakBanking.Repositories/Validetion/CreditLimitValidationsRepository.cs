@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using FintrakBanking.Common.CustomException;
+
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.CASA;
@@ -596,7 +598,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
             return false;

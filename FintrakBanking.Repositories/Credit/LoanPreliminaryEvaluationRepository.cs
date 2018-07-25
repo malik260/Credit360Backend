@@ -50,7 +50,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (model == null)
             {
-                throw new Exception("The data submitted in the form is invalid. Please try again");
+                throw new SecureException("The data submitted in the form is invalid. Please try again");
             }
 
             bool output = false;
@@ -179,7 +179,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
 
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -190,7 +190,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (model == null)
             {
-                throw new Exception("The data submitted in the form is invalid. Please try again");
+                throw new SecureException("The data submitted in the form is invalid. Please try again");
             }
 
             bool output = false;
@@ -287,7 +287,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         trans.Rollback();
 
-                        throw new Exception(ex.Message);
+                        throw new SecureException(ex.Message);
                     }
                 }
             }
@@ -630,7 +630,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -1040,7 +1040,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 

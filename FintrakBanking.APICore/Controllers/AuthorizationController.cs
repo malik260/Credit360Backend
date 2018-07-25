@@ -10,7 +10,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
- 
+using FintrakBanking.Common.CustomException;
+
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -44,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = "No group found" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 returnMessage = e.Message;
             }
@@ -73,7 +74,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = "There was an error creating this group" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
 
                 this.errorLogger.LogError(e, HttpContext.Current.Request.Path, token.GetUsername);
@@ -98,7 +99,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //        returnnew { success = false, message = "There was an error creating this group" });
         //    }
-        //    catch (Exception e)
+        //    catch (SecureException e)
         //    {
 
         //        this.errorLogger.LogError(e, Request.Path.Value, token.GetUsername);
@@ -122,7 +123,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"There was an error updating this group {grpModel}" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"There was an error updating this group {e.Message}" });
@@ -146,7 +147,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = true, result = activity, count = activity.Count });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"Error: {e.Message}" });
@@ -169,7 +170,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = true, result = activities });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"Error: {e.Message}" });
@@ -196,7 +197,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = "There was an error creating this group" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"There was an error creating this group {e.Message}" });

@@ -5,6 +5,8 @@ using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
+using FintrakBanking.Common.CustomException;
+
 using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -15,8 +17,7 @@ using System.Linq;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(IStaffRoleRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
+
     public class StaffRoleRepository : IStaffRoleRepository
     {
         private FinTrakBankingContext context;
@@ -226,13 +227,13 @@ namespace FintrakBanking.Repositories.Setups.General
                             catch (Exception ex)
                             {
                                 trans.Rollback();
-                                throw new Exception(ex.Message);
+                                throw new SecureException(ex.Message);
                             }
                         }
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception(ex.Message);
+                        throw new SecureException(ex.Message);
                     }
                 }
                 return false;
@@ -321,7 +322,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
-                        throw new Exception("Approval Failed");
+                        throw new SecureException("Approval Failed");
                     }
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
@@ -355,7 +356,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -459,7 +460,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
 
         }

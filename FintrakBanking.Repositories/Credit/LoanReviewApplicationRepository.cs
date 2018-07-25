@@ -12,6 +12,8 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Repositories.WorkFlow;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
+using FintrakBanking.Common.CustomException;
+
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -454,7 +456,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                throw new Exception("The Product type is Invalid");
+                throw new SecureException("The Product type is Invalid");
             }
             return result;
         }

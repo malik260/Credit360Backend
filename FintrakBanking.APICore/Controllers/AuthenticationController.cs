@@ -17,6 +17,7 @@ using FintrakBanking.Entities.Models;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using System.Web;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -68,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"No user found" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an internal error : { ex.Message}" });
@@ -98,7 +99,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
@@ -120,7 +121,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -141,7 +142,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error occured while updating user" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
@@ -175,7 +176,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
@@ -274,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers
                 });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 string str = string.Empty;
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
@@ -313,7 +314,7 @@ namespace FintrakBanking.APICore.Controllers
                 return this.Ok(new { success = true, message = "Session Ended. Login To Continue" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
@@ -359,7 +360,7 @@ namespace FintrakBanking.APICore.Controllers
                 return this.Ok(new { success = true, message = "User Logged Off" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return this.Ok(new { success = false, message = $"An unknown error occured {ex.Message}" });
@@ -382,7 +383,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });

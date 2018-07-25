@@ -12,6 +12,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Repositories.WorkFlow;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -198,7 +199,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Where(x => x.staffId == staffId);
             }
 
-            if (staffLevels.FirstOrDefault() == null) { throw new Exception("No workflow setup for this product"); }
+            if (staffLevels.FirstOrDefault() == null) { throw new SecureException("No workflow setup for this product"); }
             return staffLevels.Select(x => x.levelId).First();
         }
 
@@ -325,7 +326,7 @@ namespace FintrakBanking.Repositories.Credit
                     var detail = items.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == changed.detailId);
                     if (detail != null)
                     {
-                        if (changed.amount == 0) throw new Exception("ZERO! => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
+                        if (changed.amount == 0) throw new SecureException("ZERO! => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
                         detail.APPROVEDPRODUCTID = (short)changed.productId;
                         detail.APPROVEDAMOUNT = changed.amount;
@@ -413,7 +414,7 @@ namespace FintrakBanking.Repositories.Credit
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            if (model.comment == "debug_test") throw new Exception("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
+            if (model.comment == "debug_test") throw new SecureException("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
             LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
             context.SaveChanges();
@@ -1040,7 +1041,7 @@ namespace FintrakBanking.Repositories.Credit
             var operationId = (int)OperationsEnum.CAM;
             var levels = general.GetStaffApprovalLevelIds(staffId, operationId);
             var region = context.TBL_BRANCH_REGION.FirstOrDefault(x => x.CAM_HOU_STAFFID == staffId);
-            if (region == null) { throw new Exception("This user does not have a region mapped to him."); }
+            if (region == null) { throw new SecureException("This user does not have a region mapped to him."); }
             var branches = context.TBL_BRANCH.Where(x => x.REGIONID == region.REGIONID).Select(x => x.BRANCHID);
 
             var applications = context.TBL_LOAN_APPLICATION.Where(x => branches.Contains(x.BRANCHID)
