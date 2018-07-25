@@ -7376,6 +7376,22 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 //output = true;
             }
+            catch (BadLogicException be)
+            {
+                throw new BadLogicException(be.Message);
+            }
+            catch (ConditionNotMetException ce)
+            {
+                throw new ConditionNotMetException(ce.Message);
+            }
+            catch (APIErrorException ae)
+            {
+                throw new APIErrorException(ae.Message);
+            }
+            catch (TwoFactorAuthenticationException fa)
+            { 
+                throw new TwoFactorAuthenticationException(fa.Message);
+            }
             catch (Exception ex)
             {
                 //trans.Rollback();
@@ -10586,6 +10602,22 @@ namespace FintrakBanking.Repositories.Credit
                         return data;
                   }
                     
+                }
+                catch (ConditionNotMetException ce)
+                {
+                    throw new ConditionNotMetException(ce.Message);
+                }
+                catch (BadLogicException be)
+                {
+                    throw new BadLogicException(be.Message);
+                }
+                catch (APIErrorException e)
+                {
+                    throw new APIErrorException(e.Message);
+                }
+                catch (TwoFactorAuthenticationException e)
+                {
+                    throw new TwoFactorAuthenticationException(e.Message);
                 }
                 catch (Exception ex)
                 {

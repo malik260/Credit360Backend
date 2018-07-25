@@ -780,6 +780,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             targetId = applicationId;
                         }
+                       
 
                         var detail = from a in context.TBL_CHECKLIST_DEFINITION
                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
@@ -814,6 +815,20 @@ namespace FintrakBanking.Repositories.Credit
                             str = str + "One or more item(s) did not meet up with the condition." + Environment.NewLine
                                 + " Please check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
+                        }
+                        if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
+                        {
+                            var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
+                            var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == targetId select b;
+                            int x, k;
+                            x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
+
+                            if (esg_checklist_definition.Count() != esg_checklist_details.Count())
+                            {
+                                isCheckListDone = false;
+                                str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                            }
                         }
                     }
                 }

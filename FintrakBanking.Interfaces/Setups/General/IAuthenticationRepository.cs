@@ -45,5 +45,6 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool ClearLoginToken(string userName);
 
+        bool PasswordChange(PasswordChangeViewModel pwdChange);
     }
 }

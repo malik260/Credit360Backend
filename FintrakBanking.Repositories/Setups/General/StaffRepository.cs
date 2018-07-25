@@ -1275,7 +1275,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 AUDITTYPEID = (short)AuditTypeEnum.CreateStaffInitiated,
                 STAFFID = staffModel.createdBy,
                 BRANCHID = (short)staffModel.BranchId,
-                DETAIL = $"Initiated Staff Creation for '{staffModel?.StaffFullName}' with code'{staffModel?.StaffCode}'",
+                DETAIL = $"Updated Staff Creation for '{staffModel?.StaffFullName}' with code'{staffModel?.StaffCode}'",
                 IPADDRESS = staffModel.userIPAddress,
                 URL = staffModel.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),

@@ -26,6 +26,7 @@ namespace FintrakBanking.Repositories.Admin
         private IGeneralSetupRepository genSetup;
         private IApprovalLevelStaffRepository level;
         private ITwoFactorAuthIntegrationService auth;
+        bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public AdminRepository(FinTrakBankingContext _context,
             IAuditTrailRepository _auditTrail,
@@ -40,6 +41,10 @@ namespace FintrakBanking.Repositories.Admin
             this.auth = _auth;
             workFlow = _workFlow;
             level = _level;
+
+            var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
+
         }
         #region DashBoard
         public LookupViewModel GetDashboardStaffRole(int staffId)
@@ -912,64 +917,35 @@ namespace FintrakBanking.Repositories.Admin
         public bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId)
         {
             bool output = false;
-            //IEnumerable<TBL_APPROVAL_GROUP_MAPPING> groupMappings;
-            //if (productId != null)
-            //{
-            //    groupMappings = (from a in context.TBL_APPROVAL_GROUP_MAPPING where a.OPERATIONID == operationId
-            //        && a.PRODUCTCLASSID == productClassId && a.PRODUCTID == productId select a).ToList();
-            //}
-            //else
-            //{
-            //    groupMappings = (from x in context.TBL_APPROVAL_GROUP_MAPPING where
-            //         x.OPERATIONID == (int)OperationsEnum.CAM
-            //         && x.PRODUCTCLASSID == productClassId select x).ToList();
-            //}
-            var staff = context.TBL_STAFF.Find(staffId);
-
-            var max = (from x in context.TBL_APPROVAL_GROUP_MAPPING
-                       join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
-                       join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
-                       where x.OPERATIONID == operationId
-                       select z.POSITION).Max();
-
-            var op = (from x in context.TBL_APPROVAL_GROUP_MAPPING
-                      join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
-                      join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
-                      where x.OPERATIONID == operationId && z.STAFFROLEID == staff.STAFFROLEID
-                      select z.POSITION).FirstOrDefault();
-            if (op == max)
+            if (USE_THIRD_PARTY_INTEGRATION == true)
             {
-                output = true;
+                var staff = context.TBL_STAFF.Find(staffId);
+
+                var approvalLevelIds = (from x in context.TBL_APPROVAL_GROUP_MAPPING
+                                        join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
+                                        join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
+                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null
+                                        orderby x.POSITION, z.POSITION ascending
+                                        select z.APPROVALLEVELID
+                             ).ToList();
+
+                var levelCount = approvalLevelIds.Count;
+
+                var staffLevelId = (from x in context.TBL_APPROVAL_GROUP_MAPPING
+                                    join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
+                                    join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
+                                    join st in context.TBL_APPROVAL_LEVEL_STAFF on z.APPROVALLEVELID equals st.APPROVALLEVELID
+                                    where x.OPERATIONID == operationId && z.STAFFROLEID == staff.STAFFROLEID || st.STAFFID == staff.STAFFID
+                                    select z.APPROVALLEVELID).FirstOrDefault();
+
+                var currentLevel = approvalLevelIds.IndexOf(staffLevelId) + 1;
+
+                if (currentLevel == levelCount)
+                {
+                    output = true;
+                }
             }
-           
 
-            //var staffLevels =  groupMappings
-            //.Select(x => x.TBL_APPROVAL_GROUP)
-            //.SelectMany(x => x.TBL_APPROVAL_LEVEL.Where(l => l.STAFFROLEID == staff.STAFFROLEID))
-            //.Select(x => new
-            //{
-            //    staffId = staffId,
-            //    levelId = x.APPROVALLEVELID,
-            //    position = x.POSITION
-            //});
-
-            //if (staffLevels.Any() == false)
-            //{
-            //    staffLevels = groupMappings
-            //    .Select(x => x.TBL_APPROVAL_GROUP)
-            //    .SelectMany(x => x.TBL_APPROVAL_LEVEL)
-            //    .SelectMany(x => x.TBL_APPROVAL_LEVEL_STAFF)
-            //    .Select(x => new
-            //    {
-            //        staffId = x.STAFFID,
-            //        levelId = x.TBL_APPROVAL_LEVEL.APPROVALLEVELID,
-            //        position = x.TBL_APPROVAL_LEVEL.POSITION
-            //    })
-            //    .Where(x => x.staffId == staffId);
-            //}
-
-            //if (staffLevels.FirstOrDefault() == null) { throw new Exception("No workflow setup for this product"); }
-            //var ss = staffLevels.Select(x => x.levelId).First();
             return output;
         }
         #endregion

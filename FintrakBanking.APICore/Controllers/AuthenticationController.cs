@@ -366,7 +366,34 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-      
+
+        [HttpPost] //[ClaimsAuthorization]
+        [Route("passwordchange")]
+        public IHttpActionResult PasswordChange(PasswordChangeViewModel pwdChange)
+        {
+            try
+            {
+                var password = new PasswordChangeViewModel
+                {
+                    username = pwdChange.username,
+                    currentPassword = StaticHelpers.EncryptSha512(pwdChange.currentPassword, StaticHelpers.EncryptionKey),
+                    newPassword = StaticHelpers.EncryptSha512(pwdChange.newPassword, StaticHelpers.EncryptionKey),
+                };
+
+                var res = _repo.PasswordChange(password);
+                return this.Ok(new { success = true, message = "Password Change was successful" });
+            }
+            catch (Exception ex)
+            {
+
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+
+                return this.Ok(new { success = false, message = ex.Message });
+            }
+
+
+        }
+
         private IAuthenticationManager Authentication => Request.GetOwinContext().Authentication;
 
     }

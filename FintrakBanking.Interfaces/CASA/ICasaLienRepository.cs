@@ -10,7 +10,7 @@ namespace FintrakBanking.Interfaces.CASA
 {
     public interface ICasaLienRepository
     {
-        string PlaceLien(CasaLienViewModel model);
-        bool ReleaseLien(CasaLienViewModel model);
+        string PlaceLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
+        bool ReleaseLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
     }
 }

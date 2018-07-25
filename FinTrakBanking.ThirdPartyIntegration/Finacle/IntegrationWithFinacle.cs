@@ -17,6 +17,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using ForeignCurrencyAccountCreation;
     using AccountInformation;
     using FintrakBanking.Common.CustomException;
+    using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
     public class IntegrationWithFinacle : IIntegrationWithFinacle
     {
@@ -26,10 +27,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
         private ForeignCurrencyAccount account;
         private CustomerDetails customer;
         private AccountDetail accountDetail;
-
+        private ITwoFactorAuthIntegrationService twoFactorAuth;
+        bool USE_TWO_FACTOR_AUTHENTICATION = false;
 
         public IntegrationWithFinacle(FinTrakBankingContext context, TransactionPosting transaction,
-            CustomerDetails customer, OverDraft overDraft, ForeignCurrencyAccount account, AccountDetail accountDetail)
+            CustomerDetails customer, OverDraft overDraft, ForeignCurrencyAccount account, AccountDetail accountDetail,
+            ITwoFactorAuthIntegrationService _twoFactorAuth)
         {
             this.context = context;
             this.transaction = transaction;
@@ -37,13 +40,26 @@ namespace FinTrakBanking.ThirdPartyIntegration
             this.overDraft = overDraft;
             this.account = account;
             this.accountDetail = accountDetail;
+            this.twoFactorAuth = _twoFactorAuth;
+
+            var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            USE_TWO_FACTOR_AUTHENTICATION = globalSetting.USE_TWO_FACTOR_AUTHENTICATION;
         }
 
         #region Overdraft
 
-        public ResponseMessageViewModel OverDraftExtend(OverDraftExtendViewModel model)
+        public ResponseMessageViewModel OverDraftExtend(OverDraftExtendViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
 
             ResponseMessage result = null;
                 Task.Run(async () => result = await overDraft.APIOverDraftExtend(model)).GetAwaiter().GetResult();
@@ -67,8 +83,19 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model)
+        public ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
             ResponseMessage result = null;
             // if( LogOverDraftNormal(model))
             Task.Run(async () => result = await overDraft.APIOverDraftNormal(model)).GetAwaiter().GetResult();
@@ -93,8 +120,20 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model)
+        public ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
             ResponseMessage result = null;
 
             model.apiUrl = @"api/OverDraft/TopUp";
@@ -120,8 +159,19 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
         }
 
-        public ResponseMessageViewModel OverDraftRenew(OverDraftTopUpAndRenewViewModel model)
+        public ResponseMessageViewModel OverDraftRenew(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
             ResponseMessage result = null;
 
             model.apiUrl = @"api/OverDraft/Renew ";
@@ -146,8 +196,20 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
         }
 
-        public ResponseMessageViewModel TemporaryOverDraftNormal(TemporaryOverDraftViewModel model)
+        public ResponseMessageViewModel TemporaryOverDraftNormal(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
             ResponseMessage result = null;
             model.APIUrl = @"api/TemporaryOverDraft/Normal";
 
@@ -172,8 +234,18 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
         }
 
-        public ResponseMessageViewModel TemporaryOverDraftRunning(TemporaryOverDraftViewModel model)
+        public ResponseMessageViewModel TemporaryOverDraftRunning(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
             model.APIUrl = @"api/TemporaryOverDraft/Running";
             ResponseMessage result = null;
 
@@ -205,8 +277,19 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public ResponseMessageViewModel TemporaryOverDraftSingle(TemporaryOverDraftViewModel model)
+        public ResponseMessageViewModel TemporaryOverDraftSingle(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
             model.APIUrl = @"api/TemporaryOverDraft/Single";
             ResponseMessage result = null;
                 Task.Run(async () => result = await overDraft.APITemporaryOverDraftSingle(model)).GetAwaiter().GetResult();
@@ -322,7 +405,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
-            Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
+            var curencyTypeCount = model.Select(x => x.currencyId).Distinct().Count();
+
+            if (curencyTypeCount <= 1)
+            {
+                Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
+            }
+            else
+            {
+                Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+            }
 
             if (result.APIResponse != null)
             {
@@ -345,21 +437,51 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         }
 
-        public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
-        {
-            ResponseMessage result = null;
-            List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+        //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
+        //{
+        //    ResponseMessage result = null;
+        //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
 
-            Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+        //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
 
 
-            if (result.APIResponse.responseCode == "0")
-            {
-                AddCustomTransactions(transactionLst);
-            }
+        //    if (result.APIResponse.responseCode == "0")
+        //    {
+        //        AddCustomTransactions(transactionLst);
+        //    }
 
-            return result.APIStatus;
-        }
+        //    return result.APIStatus;
+        //}
+
+        //public bool PostCrossCurrencyTransactions(List<FinanceTransactionViewModel> model)
+        //{
+        //    ResponseMessage result = null;
+
+        //    List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+
+        //    Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+
+        //    if (result.APIResponse != null)
+        //    {
+        //        if (result.APIResponse.responseCode == "0")
+        //        {
+        //            AddCustomTransactions(transactionLst);
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+        //    }
+
+        //    //return result.APIStatus;
+
+        //}
+
 
         public bool AddCustomerAccounts(string customerCode)
         {
