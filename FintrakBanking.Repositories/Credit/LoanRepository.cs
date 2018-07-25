@@ -144,7 +144,13 @@ namespace FintrakBanking.Repositories.Credit
             if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 var data = ((this.context.TBL_LOAN.Count(x => x.BRANCHID == branch.BRANCHID && x.PRODUCTID == productId)) + 1);
-                return $"{branch.BRANCHCODE}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+                var reference = $"{branch.BRANCHCODE}-{productCode}-{CommonHelpers.GenerateZeroString(5) + data.ToString().Right(5)}";
+
+                    for (var count = data; context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == reference).Any(); count++)
+                    {
+                        reference = $"{branch.BRANCHCODE}-{productCode}-{CommonHelpers.GenerateZeroString(5) + count.ToString().Right(5)}";
+                    };
+                return reference;
             }
             else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
@@ -956,7 +962,7 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN.Add(data);
 
                     //...................Update the Loan Request table.......................
-                    request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                    //request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
 
                     //...................Adding Audit...............................
