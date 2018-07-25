@@ -1,4 +1,6 @@
-﻿using System;
+﻿using FintrakBanking.ReportObjects;
+using Microsoft.Reporting.WebForms;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,12 +16,22 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             if (!IsPostBack)
             {
 
-                operationId.Text = Request.QueryString["operationId"];
-                targetId.Text = Request.QueryString["loanApplicationId"];
-                companyId.Text = Request.QueryString["companyId"];
-                staffId.Text = Request.QueryString["staffId"];
+               int operationId = Int32.Parse( Request.QueryString["operationId"]);
+               int targetId = Int32.Parse(Request.QueryString["loanApplicationId"]);
+               int companyId = Int32.Parse(Request.QueryString["companyId"]);
+              int  staffId = Int32.Parse(Request.QueryString["staffId"]);
 
-                ReportViewer.LocalReport.Refresh();
+                WorkFlowDesign workFlow = new WorkFlowDesign();
+             var data =   workFlow.TrackWorkFlow(operationId, companyId, targetId, staffId);
+
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource = new ReportDataSource();
+                reportDataSource.Value = data;
+                reportDataSource.Name = "WorkFlowSLA";
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ApprovalTrailWithSLA.rdlc");
+                this.ReportViewer.LocalReport.Refresh();
 
             }
         }

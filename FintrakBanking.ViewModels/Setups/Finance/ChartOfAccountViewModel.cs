@@ -53,6 +53,10 @@ namespace FintrakBanking.ViewModels.Setups.Finance
 
     public class CustomChartOfAccountViewModel : GeneralEntity
     {
+        public string detail { get; set; }
+
+        public bool isNostroAccount { get; set; }
+
         public int customAccountId { get; set; }
         public string accountId { get; set; }
         public string accountName { get; set; }

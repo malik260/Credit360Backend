@@ -115,6 +115,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 accountName = x.ACCOUNTNAME,
                 currencyCode = x.CURRENCYCODE,
                 placeholderId = x.PLACEHOLDERID,
+                isNostroAccount = x.ISNOSTROACCOUNT,
+                detail = x.ACCOUNTID + "-(" + x.ACCOUNTNAME + "-" + x.CURRENCYCODE + ")"
             });
         }
 
@@ -134,12 +136,22 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 accountName = data.ACCOUNTNAME,
                 currencyCode = data.CURRENCYCODE,
                 placeholderId = data.PLACEHOLDERID,
+                isNostroAccount = data.ISNOSTROACCOUNT,
+                detail = data.ACCOUNTID + "-(" + data.ACCOUNTNAME + "-" + data.CURRENCYCODE + ")"
             };
         }
 
         public IEnumerable<CustomChartOfAccountViewModel> GetAllCustomChartOfAccountByCompanyId(int companyId)
         {
-            return this.GetAllCustomChartOfAccount().Where(x => x.companyId == companyId);
+            var chartOfAccounts = this.GetAllCustomChartOfAccount().Where(x => x.companyId == companyId);
+            return chartOfAccounts;
+        }
+
+        public IEnumerable<CustomChartOfAccountViewModel> GetnostroCustomChartOfAccountByCompanyId(int companyId)
+        {
+            var chartOfAccounts = this.GetAllCustomChartOfAccount().Where(x=>x.isNostroAccount == true);
+            var b = chartOfAccounts.ToList();
+            return chartOfAccounts;
         }
     }
 }

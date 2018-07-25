@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
@@ -14,12 +15,32 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                startDate.Text = Request.QueryString["startDate"];
-                companyId.Text = Request.QueryString["companyId"];
-                branchCode.Text = Request.QueryString["branchCode"];
+                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                int branchCode = Int32.Parse(Request.QueryString["branchCode"]);
 
-                ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
+                LoanReportObjects dispursement = new LoanReportObjects();
+                var loanDocumentWaivedForMCC = dispursement.LoanDocumentWaivedForMCC(startDate,companyId, branchCode);
+                var loanDeferralMCCExp = dispursement.LoanDeferralMCCExp(startDate,companyId, branchCode);
+                var loanDeferralMCCCur = dispursement.LoanDeferralMCCCur(startDate,companyId, branchCode);
 
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource1 = new ReportDataSource();
+                ReportDataSource reportDataSource2 = new ReportDataSource();
+                ReportDataSource reportDataSource3 = new ReportDataSource();
+                reportDataSource1.Value = loanDocumentWaivedForMCC;
+                reportDataSource2.Value = loanDeferralMCCExp;
+                reportDataSource3.Value = loanDeferralMCCCur;
+                reportDataSource1.Name = "WaiverMCC";
+                reportDataSource2.Name = "DeferralMCCExp";
+                reportDataSource2.Name = "DeferralMCC";
+
+                ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource1);
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource2);
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource3);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDocumentDeferralForMCC.rdlc");
                 ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate });
                 ReportViewer.LocalReport.Refresh();
             }

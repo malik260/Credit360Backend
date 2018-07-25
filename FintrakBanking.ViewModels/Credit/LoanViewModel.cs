@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanViewModel : GeneralEntity
     {
         public short trailApprovalStatus;
+        public string ApprovalStatus { get; set; }
+        public string approvedByName { get; set; }
 
         public short requestStatusId { get; set; }
         public bool requestDeleted { get; set; }
@@ -238,6 +240,11 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isPerforming { get; set; }
         public object loanPrincipal { get; set; }
         public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
+        public string approvedComment { get; set; }
+        public decimal scheduleDayCountConvention { get; set; }
+        public string isDisbursedState { get; set; }
+        public string productPriceIndexName { get; set; }
+        public string revolvingType { get; set; }
 
 
 
@@ -246,6 +253,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string revolvingTypeName { get; set; }
+
         public string casaAccountDetails { get; set; }
 
         public string casaAccountNumber { get; set; }
@@ -457,6 +466,11 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public decimal approveRequestAmount { get; set; }
+        public decimal pendingRequestAmount { get; set; }
+        public decimal allRequestAmount { get; set; }
+        public decimal disapprovedCount { get; set; }
+
         public bool? isTemporaryOverdraft { get; set; }
 
         public string repaymentTerms { get; set; }
@@ -857,8 +871,8 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class ProductType
     {
-        public int productTypeId { get; set; }
-        public string prodcutTypeName { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public string loanSystemTypeName { get; set; }
     }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{

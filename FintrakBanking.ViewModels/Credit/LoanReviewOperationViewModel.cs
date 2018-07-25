@@ -300,6 +300,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationParentChildViewModel
     {
+        public decimal interestAtMuturity { get; set; }
+
         public int? tenorLeft { get; set; }
 
         public short loanStatusId { get; set; }
