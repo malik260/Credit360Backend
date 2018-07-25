@@ -470,6 +470,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal pendingRequestAmount { get; set; }
         public decimal allRequestAmount { get; set; }
         public decimal disapprovedCount { get; set; }
+        public decimal disApprovedAmount { get; set; }
 
         public bool? isTemporaryOverdraft { get; set; }
 
