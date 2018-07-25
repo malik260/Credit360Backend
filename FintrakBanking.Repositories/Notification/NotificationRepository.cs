@@ -30,23 +30,32 @@ namespace FintrakBanking.Repositories.Notification
             var approvalLevel = levelStaffRepo.GetAllAssignedApprovalLevelStaff(companyId).Where(c => c.staffId == staffId).ToList();
             if (approvalLevel.Any())
             {
+                var operations = (from a in context.TBL_OPERATIONS select a).ToList();
                 foreach (var level in approvalLevel)
                 {
-                    var log = (from c in context.TBL_APPROVAL_TRAIL
-                               where c.COMPANYID == companyId &&
-                                     c.OPERATIONID == level.operationId &&
-                                     c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
-                                     && c.RESPONSESTAFFID == null &&
-                                     c.TOAPPROVALLEVELID == level.approvalLevelId
-                               group c by c.OPERATIONID into d
-                               select new NotificationViewModel
-                               {
-                                   messageCount = d.Count(),
-                                   message = "You have " + d.Count().ToString() + " " +
-                                             context.TBL_OPERATIONS.FirstOrDefault(c => c.OPERATIONID == d
-                                                                                            .Select(f => f.OPERATIONID).FirstOrDefault()).OPERATIONNAME + " request awaiting your action",
-                               //    operationURL = d.Select(h => h.TBL_OPERATIONS.OPERATIONURL).FirstOrDefault()
-                               }).FirstOrDefault();
+                    var trail = (from c in context.TBL_APPROVAL_TRAIL
+                                 join op in context.TBL_OPERATIONS on c.OPERATIONID equals op.OPERATIONID
+                                 where c.COMPANYID == companyId &&
+                                       c.OPERATIONID == level.operationId &&
+                                       c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
+                                        c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                                       && c.RESPONSESTAFFID == null &&
+                                       c.TOAPPROVALLEVELID == level.approvalLevelId
+                                 group c by c.OPERATIONID into d
+                                 select new
+                                 {
+                                     count = d.Count(),
+                                     opreationId = d.FirstOrDefault().OPERATIONID
+                                 }).FirstOrDefault();
+
+                    var filteredOp = operations.FirstOrDefault(x => x.OPERATIONID == trail.opreationId);
+                    var log = new NotificationViewModel
+                    {
+                        messageCount = trail.count,
+                        message = "You have " + trail.count.ToString() + " " + filteredOp.OPERATIONNAME + " request awaiting your action",
+                        operationURL = filteredOp.OPERATIONURL
+                    };
+
                     if (log != null)
                     {
                         logs.Add(log);

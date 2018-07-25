@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.Common.CustomException;
+using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -23,6 +24,9 @@ namespace FintrakBanking.Repositories.CASA
         private FinTrakBankingContext context;
         private IGeneralSetupRepository generalSetup;
         private IAuditTrailRepository auditTrail;
+        private ITwoFactorAuthIntegrationService twoFactorAuth;
+        bool USE_TWO_FACTOR_AUTHENTICATION = false;
+        bool USE_THIRD_PARTY_INTEGRATION = false;
         //private ILoanOperationsRepository creditOperations;
         private TransactionPosting tran;
         public CasaLienRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
@@ -34,18 +38,30 @@ namespace FintrakBanking.Repositories.CASA
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
             //this.creditOperations = _creditOperations;
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            USE_THIRD_PARTY_INTEGRATION = setup.USE_THIRD_PARTY_INTEGRATION;
+            USE_TWO_FACTOR_AUTHENTICATION = setup.USE_TWO_FACTOR_AUTHENTICATION;
         }
 
 
-        public string PlaceLien(CasaLienViewModel model)
+        public string PlaceLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             model.lienReferenceNumber = referenceNumber;
 
             //call     
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
+            if (USE_THIRD_PARTY_INTEGRATION)
             {
 
                 ResponseMessage result = null;
@@ -118,7 +134,7 @@ namespace FintrakBanking.Repositories.CASA
 
         }
 
-        public bool ReleaseLien(CasaLienViewModel model)
+        public bool ReleaseLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
             var existingLien = context.TBL_CASA_LIEN.Where(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).FirstOrDefault();
 
@@ -137,9 +153,18 @@ namespace FintrakBanking.Repositories.CASA
             //model.description = data.DESCRIPTION;
 
             //call
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (setup.USE_THIRD_PARTY_INTEGRATION)
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
+            if (USE_THIRD_PARTY_INTEGRATION)
             {
 
                 ResponseMessage result = null;

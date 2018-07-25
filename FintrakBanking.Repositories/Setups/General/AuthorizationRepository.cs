@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -14,10 +15,13 @@ namespace FintrakBanking.Repositories.Setups.General
     public class AuthorizationRepository : IAuthorizationRepository
     { 
         private FinTrakBankingContext context;
+        private ITwoFactorAuthIntegrationService auth;
 
-        public AuthorizationRepository( FinTrakBankingContext _context)
+        public AuthorizationRepository( FinTrakBankingContext _context,
+            ITwoFactorAuthIntegrationService _auth)
         { 
             this.context = _context;
+            this.auth = _auth;
         }
 
         public async Task<bool> AddGroup(GroupModel groupModel)
@@ -166,5 +170,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     groupId = x.GROUPID
                 });
         }
+       
     }
 }

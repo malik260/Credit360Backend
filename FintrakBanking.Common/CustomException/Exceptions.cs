@@ -49,15 +49,18 @@ namespace FintrakBanking.Common.CustomException
         }
     }
 
-    
+    public class TwoFactorAuthenticationException : Exception
+    {
+        public TwoFactorAuthenticationException()
+        {
 
+        }
 
+        public TwoFactorAuthenticationException(string literal)
+        : base(String.Format(literal))
+        {
 
-
-
-
-
-
-
+        }
+    }
 
 }

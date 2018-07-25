@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
             this.canAuthorization = _canAuthorization;
 
         }
- 
+
 
         private string username { get { return token.GetUsername; } }
 
@@ -588,19 +588,88 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (data == null)
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new {success = false, result = data, message = $"Record not fund"});
+                        new { success = false, result = data, message = $"Record not fund" });
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new {success = false, result = data, message = $"Record not fund"});
+                    new { success = false, result = data, message = $"Record not fund" });
 
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, (new {success = false, message = $"Action Failed"}));
+                return Request.CreateResponse(HttpStatusCode.OK, (new { success = false, message = $"Action Failed" }));
             }
 
         }
 
 
+        #endregion
+
+        #region Two Factor Authentication
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("two-factor-auth")]
+        public HttpResponseMessage TwoFactorAuthentication(string staffCode, string passCode)
+        {
+            try
+            {
+                var data = repo.TwoFactorAuthentication(staffCode, passCode);
+                if (!data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = data, message = "" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("two-factor-auth-enabled")]
+        public HttpResponseMessage TwoFactorAuthenticationEnabled()
+        {
+            try
+            {
+                var data = repo.TwoFactorAuthenticationEnabled();
+                if (!data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = data, message = "" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("two-factor-auth-last-approval")]
+        public HttpResponseMessage TwoFactorAuthenticationEnabled(int operationId,int? productClassId, int? productId)
+        {
+            try
+            {
+                var data = repo.Enable2FAForLastApproval(token.GetStaffId, operationId, productClassId ,productId);
+                if (!data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = data, message = "" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         #endregion
     }
 }

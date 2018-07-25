@@ -7327,7 +7327,7 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
-        public bool UpdateLoanPrepaymentSchedule(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool UpdateLoanPrepaymentSchedule(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
 
             //using (var trans = context.Database.BeginTransaction())
@@ -7385,9 +7385,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 
-                    //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment) );
 
-                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
 
                     //financeTransaction.PostTransaction(inputTransactions);
                     updateloanTableStatus(loanInput.loanId);
@@ -7398,9 +7398,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
 
-                    //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
 
-                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, partPayment, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, partPayment, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
 
 
                     if (LoanExist(loanId) > 0)
@@ -7570,6 +7570,22 @@ namespace FintrakBanking.Repositories.Credit
                     output = true;
                 }
                 //output = true;
+            }
+            catch (BadLogicException be)
+            {
+                throw new BadLogicException(be.Message);
+            }
+            catch (ConditionNotMetException ce)
+            {
+                throw new ConditionNotMetException(ce.Message);
+            }
+            catch (APIErrorException ae)
+            {
+                throw new APIErrorException(ae.Message);
+            }
+            catch (TwoFactorAuthenticationException fa)
+            { 
+                throw new TwoFactorAuthenticationException(fa.Message);
             }
             catch (Exception ex)
             {
@@ -10829,7 +10845,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public int GoForApproval(ApprovalViewModel entity)
         {
-
+            var twoFactorAuth = new TwoFactorAutheticationViewModel
+            {
+                passcode = entity.passCode,
+                username = entity.userName
+            };
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -10868,7 +10888,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
-                        result = LoanRephasementProcess((short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId);
+                        result = LoanRephasementProcess(twoFactorAuth, (short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId);
                         if (result == true)
                         {
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
@@ -10884,6 +10904,22 @@ namespace FintrakBanking.Repositories.Credit
                        return data;
                     }
                     
+                }
+                catch (ConditionNotMetException ce)
+                {
+                    throw new ConditionNotMetException(ce.Message);
+                }
+                catch (BadLogicException be)
+                {
+                    throw new BadLogicException(be.Message);
+                }
+                catch (APIErrorException e)
+                {
+                    throw new APIErrorException(e.Message);
+                }
+                catch (TwoFactorAuthenticationException e)
+                {
+                    throw new TwoFactorAuthenticationException(e.Message);
                 }
                 catch (Exception ex)
                 {
@@ -10923,12 +10959,12 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
-                        result = LoanRephasementProcess((short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, user.staffId);
-                        if (result == true)
-                        {
-                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                            output = context.SaveChanges() > 0;
-                        }
+                      //  result = LoanRephasementProcess((short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, user.staffId);
+                        //if (result == true)
+                        //{
+                        //    reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        //    output = context.SaveChanges() > 0;
+                        //}
 
 
                         if (output == true && result == true)
@@ -11004,7 +11040,7 @@ namespace FintrakBanking.Repositories.Credit
         //}
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool LoanRephasementProcess(short loanReviewOperationsId, int loanId, int staffId)
+        public bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth,short loanReviewOperationsId, int loanId, int staffId)
         {
             try
             {
@@ -11246,16 +11282,16 @@ namespace FintrakBanking.Repositories.Credit
                                 model.principalFirstpaymentDate = nextPaymentDate;
                             }
 
-                            result = UpdateLoanPrepaymentSchedule(loanId, model, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
+                        result = UpdateLoanPrepaymentSchedule(twoFactorAuth, loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
 
                         }
                         else if ((int)OperationsEnum.PaymentDateChange == model.operationId)
@@ -11569,16 +11605,16 @@ namespace FintrakBanking.Repositories.Credit
                                 model.principalFirstpaymentDate = nextPaymentDate;
                             }
 
-                            result = UpdateLoanPrepaymentSchedule(loanId, model, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
+                        result = UpdateLoanPrepaymentSchedule(twoFactorAuth, loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
 
                         }
                         else if ((int)OperationsEnum.PaymentDateChange == model.operationId)

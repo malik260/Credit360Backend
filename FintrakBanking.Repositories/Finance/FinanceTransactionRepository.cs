@@ -15,6 +15,7 @@ using FintrakBanking.Interfaces.Credit;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.Common.CustomException;
+using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -27,9 +28,12 @@ namespace FintrakBanking.Repositories.Finance
         //private ILoanOperationsRepository creditOperations;
         private CustomerDetails customerInfo;
         private IIntegrationWithFinacle integration;
+        private ITwoFactorAuthIntegrationService twoFactoeAuth;
         bool USE_THIRD_PARTY_INTEGRATION;
+        bool USE_TWO_FACTOR_AUTHENTICATION;
         public FinanceTransactionRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, IIntegrationWithFinacle _integration,
                                             //ILoanOperationsRepository _creditOperations, 
+                                            ITwoFactorAuthIntegrationService _twoFactoeAuth,
                                             FinTrakBankingContext _context, CustomerDetails customerInfo)
         {
             this.context = _context;
@@ -37,9 +41,13 @@ namespace FintrakBanking.Repositories.Finance
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
             this.integration = _integration;
+            this.twoFactoeAuth = _twoFactoeAuth;
             //this.creditOperations = _creditOperations;
             var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (global != null) USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
+            if (global != null) {
+                USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
+                USE_TWO_FACTOR_AUTHENTICATION = global.USE_TWO_FACTOR_AUTHENTICATION;
+            }
         }
 
         private void UpdateCASABalances(int casaAccountId, decimal debitAmount, decimal creditAmount)
@@ -217,7 +225,8 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
+        public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false, TwoFactorAutheticationViewModel twoFADetails = null)
+        //public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             
@@ -282,8 +291,18 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             //api call
-           
-            if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
+                if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
             {
                 bool data;
 
@@ -1247,7 +1266,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
+        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth, decimal postedAmount, int creditGL, string description, int operationId)
         {
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -1304,7 +1323,7 @@ namespace FintrakBanking.Repositories.Finance
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
-            PostTransaction(inputTransactions);
+            PostTransaction(inputTransactions, false, twoFactorAuth);
 
             //financeTransaction.PostTransaction(loanTransaction);
 
