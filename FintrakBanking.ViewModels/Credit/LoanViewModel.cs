@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanViewModel : GeneralEntity
     {
         public short trailApprovalStatus;
+        public string ApprovalStatus { get; set; }
+        public string approvedByName { get; set; }
 
         public short requestStatusId { get; set; }
         public bool requestDeleted { get; set; }
@@ -109,6 +111,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? approvedAmount { get; set; }
         public bool creditAppraisalCompleted { get; set; }
         public int? operationId { get; set; }
+        public int? operationTypeId { get; set; }
         public string operationName {get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
@@ -238,6 +241,11 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isPerforming { get; set; }
         public object loanPrincipal { get; set; }
         public List<LoanDisbursementViewModel> loanBeneficiary { get; set; }
+        public string approvedComment { get; set; }
+        public decimal scheduleDayCountConvention { get; set; }
+        public string isDisbursedState { get; set; }
+        public string productPriceIndexName { get; set; }
+        public string revolvingType { get; set; }
 
 
 
@@ -296,6 +304,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public int? operationId { get; set; }
+        public int? operationTypeId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public string trancheBatchCode { get; set; }
@@ -392,6 +401,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string disburserComment { get; set; }
         public DateTime? disburseDate { get; set; }
         public int? operationId { get; set; }
+        public int? operationTypeId { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public string trancheBatchCode { get; set; }
@@ -463,6 +473,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal pendingRequestAmount { get; set; }
         public decimal allRequestAmount { get; set; }
         public decimal disapprovedCount { get; set; }
+        public decimal disApprovedAmount { get; set; }
 
         public bool? isTemporaryOverdraft { get; set; }
 
@@ -864,8 +875,8 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class ProductType
     {
-        public int productTypeId { get; set; }
-        public string prodcutTypeName { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public string loanSystemTypeName { get; set; }
     }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{

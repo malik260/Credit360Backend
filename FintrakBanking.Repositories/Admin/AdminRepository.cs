@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.Repositories.Admin
 {
@@ -24,30 +25,38 @@ namespace FintrakBanking.Repositories.Admin
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IApprovalLevelStaffRepository level;
+        private ITwoFactorAuthIntegrationService auth;
+        bool USE_THIRD_PARTY_INTEGRATION = false;
 
         public AdminRepository(FinTrakBankingContext _context,
             IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
             IWorkflow _workFlow,
-            IApprovalLevelStaffRepository _level)
+            IApprovalLevelStaffRepository _level,
+            ITwoFactorAuthIntegrationService _auth)
         {
             this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
+            this.auth = _auth;
             workFlow = _workFlow;
             level = _level;
+
+            var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
+
         }
         #region DashBoard
         public LookupViewModel GetDashboardStaffRole(int staffId)
         {
-            var dash = (from st in context.TBL_STAFF 
+            var dash = (from st in context.TBL_STAFF
                         join sr in context.TBL_STAFF_ROLE on st.STAFFROLEID equals sr.STAFFROLEID
                         where st.STAFFID == staffId
                         select new LookupViewModel
-                       {
-                          lookupId = (short)sr.STAFFROLEID,
-                          lookupName = sr.STAFFROLENAME
-                       }).FirstOrDefault();
+                        {
+                            lookupId = (short)sr.STAFFROLEID,
+                            lookupName = sr.STAFFROLENAME
+                        }).FirstOrDefault();
             return dash;
         }
         #endregion
@@ -606,7 +615,7 @@ namespace FintrakBanking.Repositories.Admin
         //            userAccount.ISACTIVE = false;
         //            userAccount.ISLOCKED = false;
         //            userAccount.ISACTIVE = true;
-                
+
         //        context.SaveChanges();
         //        return new { message = "No Account Found" };
         //    }
@@ -894,6 +903,52 @@ namespace FintrakBanking.Repositories.Admin
 
         #endregion
 
+        #region TwoFactorAuthentication
+        public bool TwoFactorAuthentication(string staffCode, string passCode)
+        {
+            var output = auth.Authenticate(staffCode, passCode);
+            return output;
+        }
+        public bool TwoFactorAuthenticationEnabled()
+        {
+            var output = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
+            return output;
+        }
+        public bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId)
+        {
+            bool output = false;
+            if (USE_THIRD_PARTY_INTEGRATION == true)
+            {
+                var staff = context.TBL_STAFF.Find(staffId);
+
+                var approvalLevelIds = (from x in context.TBL_APPROVAL_GROUP_MAPPING
+                                        join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
+                                        join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
+                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null
+                                        orderby x.POSITION, z.POSITION ascending
+                                        select z.APPROVALLEVELID
+                             ).ToList();
+
+                var levelCount = approvalLevelIds.Count;
+
+                var staffLevelId = (from x in context.TBL_APPROVAL_GROUP_MAPPING
+                                    join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
+                                    join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
+                                    join st in context.TBL_APPROVAL_LEVEL_STAFF on z.APPROVALLEVELID equals st.APPROVALLEVELID
+                                    where x.OPERATIONID == operationId && z.STAFFROLEID == staff.STAFFROLEID || st.STAFFID == staff.STAFFID
+                                    select z.APPROVALLEVELID).FirstOrDefault();
+
+                var currentLevel = approvalLevelIds.IndexOf(staffLevelId) + 1;
+
+                if (currentLevel == levelCount)
+                {
+                    output = true;
+                }
+            }
+
+            return output;
+        }
+        #endregion
     }
 
     public enum UserAccountLockStatusEnum

@@ -13,11 +13,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
     {
         public IEnumerable<AuditViewModel> GetAuditTrailByParam(DateTime startDate, DateTime endDate, string username, int auditTypeId)
         {
-
-
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-
                 var data =  from _audit in context.TBL_AUDIT
                 join atype in context.TBL_AUDIT_TYPE on _audit.AUDITTYPEID equals atype.AUDITTYPEID
                 join st in context.TBL_STAFF on _audit.STAFFID equals st.STAFFID
@@ -44,8 +41,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                     username = u.USERNAME,
                     url = _audit.URL,
                     branchName = b.BRANCHNAME,
-                    ipAddress = _audit.IPADDRESS
-                };
+                    ipAddress = _audit.IPADDRESS,
+
+            };
                 return data.ToList();
             }
         

@@ -301,7 +301,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.GL_SUB_HEAD_CODE,
-                                 ref_Desc = a.SCHM_CODE,
+                                 ref_Desc = a.SCHM_CODE + " - " + a.GL_SUB_HEAD_CODE,
                                  // del_Flg = a.DEL_FLG,
                                  // bank_Id = a.BANK_ID
                              }).ToList();

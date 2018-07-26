@@ -11,6 +11,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -531,37 +532,53 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
                 }
             }
-            catch (System.Exception e)
+            catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ce.Message}" });
             }
-        }
-         [HttpPost] [ClaimsAuthorization]
-        [Route("operation-loan-rephrasement")]
-        public HttpResponseMessage LoanRephrasementOperation([FromBody]LoanReviewOperationViewModel entity)
-        {
-            try
+            catch (BadLogicException be)
             {
-
-                if (entity.loanReviewOperationsId == 0 || entity.loanId == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please reconfirm your request and try again" });
-                }
-                var data = repo.LoanRephasementProcess((short)entity.loanReviewOperationsId, entity.loanId, token.GetStaffId);
-
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "Operation not successful" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{be.Message}" });
+            }
+            catch (APIErrorException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{be.Message}" });
+            }
+            catch (TwoFactorAuthenticationException fa)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
             }
             catch (System.Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+        // [HttpPost] [ClaimsAuthorization]
+        //[Route("operation-loan-rephrasement")]
+        //public HttpResponseMessage LoanRephrasementOperation([FromBody]LoanReviewOperationViewModel entity)
+        //{
+        //    try
+        //    {
+
+        //        if (entity.loanReviewOperationsId == 0 || entity.loanId == 0)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Please reconfirm your request and try again" });
+        //        }
+        //        var data = repo.LoanRephasementProcess((short)entity.loanReviewOperationsId, entity.loanId, token.GetStaffId);
+
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = true, message = "Operation successfully" });
+        //        }
+
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = false, message = "Operation not successful" });
+        //    }
+        //    catch (System.Exception e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+        //    }
+        //}
     }
 }

@@ -27,7 +27,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         Task<bool> UpdateUser(int userId, UserViewModel user);
 
         bool IsAccountActive(string userName);
-
+        bool ResumptionClosignTime(string userName);
 
         Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password);
 
@@ -45,7 +45,10 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool ClearLoginToken(string userName);
 
-        bool TwoFactorAuthentication(string staffCode, string passCode);
+        bool PasswordChange(PasswordChangeViewModel pwdChange);
 
+        bool ValidatePasswordPolicy(string password);
+
+        bool ValidateOldPassword(string username, string oldPassword);
     }
 }

@@ -31,6 +31,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool USE_THIRD_PARTY_INTEGRATION { get; set; }
 
+        public bool USE_TWO_FACTOR_AUTHENTICATION { get; set; }
+
         public int MAXIMUMUPLOADFILESIZE { get; set; }
     }
 }

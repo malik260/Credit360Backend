@@ -23,5 +23,6 @@ namespace FintrakBanking.ViewModels.Admin
 
         public string staffName => $"{this.firstName} {this.lastName}";
         public string ipAddress { get; set; }
+        public string logo { get; set; }
     }
 }

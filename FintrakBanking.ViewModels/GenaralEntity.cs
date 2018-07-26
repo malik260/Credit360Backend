@@ -21,6 +21,8 @@ namespace FintrakBanking.ViewModels
         public string applicationUrl { get; set; }
         public DateTime? systemCurrentDate { get; set; }
         public int staffId { get; set; }
+        public string username { get; set; }
+        public string passCode { get; set; }
     }
 
 }

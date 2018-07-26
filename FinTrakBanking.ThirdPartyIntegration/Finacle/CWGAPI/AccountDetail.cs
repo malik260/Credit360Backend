@@ -44,7 +44,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
+                client.Timeout = TimeSpan.FromSeconds(60);
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Authorization = token;
@@ -124,7 +124,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                 _httpClientInstance = new HttpClient();
                 _httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                client.Timeout = TimeSpan.FromSeconds(30);
+                client.Timeout = TimeSpan.FromSeconds(60);
                 client.BaseAddress = new Uri(API_URL);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Authorization = token;

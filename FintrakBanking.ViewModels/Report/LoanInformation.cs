@@ -97,7 +97,7 @@ namespace FintrakBanking.ViewModels.Reports
     {
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
-        public short? branchId { get; set; }
+        public short branchId { get; set; }
         public string loanRefNo { get; set; }
         public int productClassId { get; set; }
         public string username { get; set; }
