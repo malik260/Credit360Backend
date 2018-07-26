@@ -1512,6 +1512,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GetRepaymentFromStaging()
         {
+            var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
             bool output = false;
             decimal fullAmount = 0;
             decimal partailAmount = 0;
@@ -1583,7 +1584,7 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == model.sourceReferenceNumber);
                         var instruction = context.TBL_LOAN_MATURITY_INSTRUCTION.FirstOrDefault(x => x.LOANID == loan.TERMLOANID);
 
-                        ArchiveLoan(loan.TERMLOANID, model.operationId);//change to method that will disburs new loan
+                        ArchiveLoan(loan.TERMLOANID, model.operationId, archiveBatchCode);//change to method that will disburs new loan
 
                     }
                     if (results == true)
@@ -4192,6 +4193,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //using (var trans = context.Database.BeginTransaction())
             //{
+            var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
             try
             {
                 bool output = false;
@@ -4219,7 +4221,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (productType == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                 {
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, operationId);
+                    ArchiveLoan(loanId, operationId, archiveBatchCode);
 
                     model = (
                     from a in context.TBL_LOAN_REVIEW_OPERATION
@@ -4263,7 +4265,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (productType == (int)LoanSystemTypeEnum.OverdraftFacility)
                 {
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveOverDraft(loanId);
+                    ArchiveOverDraft(loanId, archiveBatchCode);
                     model = (
                    from a in context.TBL_LOAN_REVIEW_OPERATION
                    join b in context.TBL_LOAN_REVOLVING on a.LOANID equals b.REVOLVINGLOANID
@@ -4451,8 +4453,9 @@ namespace FintrakBanking.Repositories.Credit
             {
 
                 var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 DeleteLoanExist(loanId, systemDate);
-                ArchiveOverDraft(loanId);
+                ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -4628,8 +4631,9 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 DeleteLoanExist(loanId, systemDate);
-                ArchiveOverDraft(loanId);
+                ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -4793,8 +4797,9 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 DeleteLoanExist(loanId, systemDate);
-                ArchiveOverDraft(loanId);
+                ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -4997,8 +5002,9 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 DeleteLoanExist(loanId, systemDate);
-                ArchiveOverDraft(loanId);
+                ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -5254,7 +5260,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public LoanViewModel ArchiveLoan(int loanId, int operationId)
+        public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -5426,6 +5432,8 @@ namespace FintrakBanking.Repositories.Credit
             addLoanArchive.NPLDATE = model.nplDate;
             addLoanArchive.CREATEDBY = model.createdBy;
             addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
+            addLoanArchive.ARCHIVEBATCHCODE = archiveBatchCode;
+            
 
             loanArchive.Add(addLoanArchive);
             //}
@@ -5436,7 +5444,7 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public RevolvingLoanViewModel ArchiveOverDraft(int overDraftId)
+        public RevolvingLoanViewModel ArchiveOverDraft(int overDraftId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -5549,6 +5557,7 @@ namespace FintrakBanking.Repositories.Credit
             addOverDraftArchive.CREATEDBY = model.createdBy;
             addOverDraftArchive.DATETIMECREATED = model.dateTimeCreated;
             addOverDraftArchive.REVOLVINGTYPEID = model.revolvingTypeId;
+            addOverDraftArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
             overDraftArchive.Add(addOverDraftArchive);
             //}
@@ -5559,7 +5568,7 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId)
+        public IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId,string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -5619,6 +5628,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanSchedulePeriodicArchive.DATETIMECREATED = item.dateTimeCreated;
                 //addLoanSchedulePeriodicArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
                 addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = batchCode;
+                addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
                 loanSchedulePeriodicArchive.Add(addLoanSchedulePeriodicArchive);
 
@@ -5630,7 +5640,7 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId)
+        public IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -5718,6 +5728,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleDailyArchive.DATETIMECREATED = item.dateTimeCreated;
                 addLoanScheduleDailyArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
                 addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = batchCode;
+                addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
                 loanScheduleDailyArchive.Add(addLoanScheduleDailyArchive);
 
@@ -6388,10 +6399,11 @@ namespace FintrakBanking.Repositories.Credit
                 var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == loanId && x.OPERATIONTYPEID == loanInput.operationId && x.OPERATIONCOMPLETED == false).FirstOrDefault();
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
                     //----------generate and save periodic loan schedule -----------------------------------
@@ -7405,10 +7417,11 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (LoanExist(loanId) > 0)
                     {
+                        var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                         DeleteLoanExist(loanId, systemDate);
-                        ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                        ArchivePeriodicSchedule(loanId);
-                        ArchiveDailySchedule(loanId);
+                        ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                        ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                        ArchiveDailySchedule(loanId, archiveBatchCode);
 
                         loanInput.principalAmount = ((double)totalamount - (loanInput.payAmount + penalAmount));
                         //---------------save irregular loan schedule input---------------------------
@@ -7595,10 +7608,11 @@ namespace FintrakBanking.Repositories.Credit
                 if (LoanExist(loanId) > 0)
 
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
                     //---------------save irregular loan schedule input---------------------------
@@ -7783,10 +7797,11 @@ namespace FintrakBanking.Repositories.Credit
                 var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == loanId && x.OPERATIONTYPEID == loanInput.operationId && x.OPERATIONCOMPLETED == false).FirstOrDefault();
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
                     //---------------save irregular loan schedule input---------------------------
@@ -7981,10 +7996,10 @@ namespace FintrakBanking.Repositories.Credit
                 decimal totalamount = (accruedInterest + principalOutStandingBalance + pastDue);
 
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
-                ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                ArchivePeriodicSchedule(loanId);
-                ArchiveDailySchedule(loanId);
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
+                ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                ArchiveDailySchedule(loanId, archiveBatchCode);
 
                 //----------generate and save periodic loan schedule -----------------------------------
                 List<LoanPaymentSchedulePeriodicViewModel> periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
@@ -9020,10 +9035,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
                     //---------------save irregular loan schedule input---------------------------
                     List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
@@ -9378,10 +9394,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId,archiveBatchCode);
 
 
                     //---------------save irregular loan schedule input---------------------------
@@ -9561,10 +9578,11 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
                     //---------------save irregular loan schedule input---------------------------
@@ -9832,10 +9850,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
                     //---------------save irregular loan schedule input---------------------------
                     List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
@@ -12981,11 +13000,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             foreach (var model in models)
             {
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 var loanRecord = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == model.loanReferenceNumber);
                 if (loanRecord.Any())
                 {
                     var loan = loanRecord.FirstOrDefault();
-                    ArchiveLoan(loan.TERMLOANID, (short)OperationsEnum.CommercialPaperLoanBooking);
+                    ArchiveLoan(loan.TERMLOANID, (short)OperationsEnum.CommercialPaperLoanBooking, archiveBatchCode);
                     loan.PRINCIPALAMOUNT = model.newPrincipalAmount;
                     loan.OUTSTANDINGPRINCIPAL = model.newPrincipalAmount;
                     loan.LASTRESTRUCTUREDATE = generalSetup.GetApplicationDate();
@@ -13113,6 +13133,7 @@ namespace FintrakBanking.Repositories.Credit
             var refNo = string.Empty;
             var auditDetail = string.Empty;
             userModel.isParent = false;
+            var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
 
             TBL_LOAN loan = new TBL_LOAN();
             TBL_LOAN_APPLICATION_DETAIL loanApp = new TBL_LOAN_APPLICATION_DETAIL();
@@ -13128,7 +13149,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (loan != null && loan.MATURITYDATE < loan.MATURITYDATE.AddDays(userModel.newTenor))
                 {
-                    ArchiveLoan(loan.TERMLOANID, (int)loan.OPERATIONID);
+                    ArchiveLoan(loan.TERMLOANID, (int)loan.OPERATIONID, archiveBatchCode);
                     loan.MATURITYDATE = loan.MATURITYDATE.AddDays(userModel.newTenor);
                 }
                 else throw new Exception("New tenor has no positive value");

@@ -472,7 +472,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingInterest.DESCRIPTION = "Interest Repayment";
                 addStagingInterest.DESTINATIONBRANCHID = item.branchId;
                 addStagingInterest.ISPOSTED = false;
-                addStagingInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;///change to periodInterestAmount
+                addStagingInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;
                 addStagingInterest.POSTEDBY = "SYSTEM";
                 addStagingInterest.POSTEDDATE = applicationDate;
                 addStagingInterest.SOURCEBRANCHID = item.branchId;

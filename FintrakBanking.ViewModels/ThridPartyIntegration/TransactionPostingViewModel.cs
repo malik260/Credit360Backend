@@ -182,6 +182,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string TemporaryOverDraftNaration { get; set; }
         public string APIUrl { get; set; }
         public int TemporaryOverDraftId { get; set; }
+        public string TemporaryOverDraftInterestRate { get; set; }
+        
     }
     
     public class ResponseMessageViewModel

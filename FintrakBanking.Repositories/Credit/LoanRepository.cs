@@ -2295,6 +2295,7 @@ namespace FintrakBanking.Repositories.Credit
                                         TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
                                         TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
                                         TemporaryOverDraftNaration = "Normal Temporary Overdraft",
+                                        TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
                                     };
                                     ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model);
                                     revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
@@ -2308,6 +2309,7 @@ namespace FintrakBanking.Repositories.Credit
                                         TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
                                         TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
                                         TemporaryOverDraftNaration = "Single Limit Temporary Overdraft",
+                                        TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
                                     };
                                     ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model);
                                     revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
