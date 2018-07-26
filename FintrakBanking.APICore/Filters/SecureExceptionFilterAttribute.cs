@@ -1,19 +1,20 @@
-﻿using FintrakBanking.Common.CustomException;
-using FintrakBanking.Common.Enum;
-using FintrakBanking.Entities.Models;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http.Filters;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Entities.Models;
+using System.Configuration;
 
 namespace FintrakBanking.APICore.Filters
 {
     public class SecureExceptionFilterAttribute : ExceptionFilterAttribute
     {
         private FinTrakBankingContext context = new FinTrakBankingContext();
+        private readonly string support = ConfigurationManager.AppSettings["SupportEmailAddr"];
 
-        // public override async Task OnExceptionAsync(HttpActionExecutedContext context, CancellationToken cancellationToken)
         public override void OnException(HttpActionExecutedContext context)
         { 
             var ctx = context;
@@ -24,7 +25,6 @@ namespace FintrakBanking.APICore.Filters
                 return;
             }
 
-            // LogUnhandledException(context.Exception);
             Task.Run(() => LogUnhandledExceptionAsync(context));
 
             if (context.Exception is Exception)
@@ -53,7 +53,7 @@ namespace FintrakBanking.APICore.Filters
                 USERNAME = userName,
                 APIENDPOINT = endPoint.ToString(),
                 ERRORPATH = ex.TargetSite.ToString(),
-                ERRORSOURCE = ex.Source.ToString(),
+                ERRORSOURCE = ex.Source,
                 ERRORMESSAGE = errorMessage,
                 ERRORTYPE = ex.GetType().Name,
                 STATUSCODE = 500,
@@ -62,16 +62,18 @@ namespace FintrakBanking.APICore.Filters
             };
             context.TBL_ERRORLOG.Add(log);
 
+            string recipients = "anu.omotayo@fintraksoftware.com; osemeke.anyirah@fintraksoftware.com";
+
             var message = new TBL_MESSAGE_LOG
             {
-                TOADDRESS = "ft", //
+                FROMADDRESS = support,
+                TOADDRESS = recipients,
                 MESSAGESUBJECT = "CREDIT 360 UNHANDLED EXCEPTION",
-                MESSAGEBODY = "ERROR MESSAGE: " + errorMessage + " STACKTRACE: " + ex.StackTrace + " TIME: " + time, //
+                MESSAGEBODY = "USERNAME: " + userName + " ENDPOINT: " + endPoint + " ERROR MESSAGE: " + errorMessage + " STACKTRACE: " + ex.StackTrace + " TIME: " + time, //
                 MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                 MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                FROMADDRESS = "this.support", //
-                DATETIMERECEIVED = DateTime.Now,
-                SENDONDATETIME = DateTime.Now,
+                DATETIMERECEIVED = time,
+                SENDONDATETIME = time,
                 TARGETID = null,
                 OPERATIONID = null
             };
@@ -81,35 +83,3 @@ namespace FintrakBanking.APICore.Filters
         }
     }
 }
-/*
-        private void LogUnhandledExceptions(Exception ex)
-        {
-            //    var errorLogger = new ErrorLogRepository();
-            //    await errorLogger.LogErrorAsync(ex, "fake ip", "fake name");
-            //}
-            var errorMsg = ex.Message;
-            if (ex.InnerException != null)
-            {
-                errorMsg += " " + ex.InnerException.Message;
-            }
-
-            var errorDetails = new TBL_ERRORLOG()
-            {
-                USERNAME = "test",
-                ERRORPATH = "error type",
-                ERRORSOURCE = ex.Source,
-                ERRORMESSAGE = errorMsg,
-                APIENDPOINT = "/end",
-                ERRORTYPE = ex.GetType().Name,
-                STATUSCODE = 401,
-                ALLXML = errorMsg + " " + ex.StackTrace,
-                TIMEUTC = DateTime.Now,
-            };
-            context.TBL_ERRORLOG.Add(errorDetails);
-            int row = context.SaveChanges();
-
-            if (row > 0) { Console.WriteLine("good"); }
-
-
-        }
-*/

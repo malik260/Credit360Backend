@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.Common.Enum;
-using System.Linq;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.Repositories.WorkFlow;
-using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
-using FintrakBanking.Common.CustomException;
-
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.Credit
 {
