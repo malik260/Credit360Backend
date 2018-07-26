@@ -63,6 +63,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.Interfaces.Validation;
     using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
     using FintrakBanking.Entities.StagingModels;
+    using FintrakBanking.APICore.Filters;
 
     public static class NinjectWebCommon
     {

@@ -17,7 +17,7 @@ using FintrakBanking.Common.CustomException;
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
-    [SecureExceptionFilterAttribute]
+    //[SecureExceptionFilterAttribute]
     public class LoanReviewApplicationController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();

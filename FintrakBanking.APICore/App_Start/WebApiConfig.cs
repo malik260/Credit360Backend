@@ -16,7 +16,7 @@ namespace FintrakBanking.APICore
             // Configure Web API to use only bearer token authentication.
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
-            // config.Filters.Add(new SecureExceptionFilterAttribute());
+            config.Filters.Add(new SecureExceptionFilterAttribute());
 
             // Use camel case for JSON data.
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
