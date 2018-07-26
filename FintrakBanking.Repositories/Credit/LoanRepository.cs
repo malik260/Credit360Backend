@@ -32,6 +32,7 @@ using FintrakBanking.Common.CustomException;
 using System.Net.Sockets;
 using FintrakBanking.Entities.StagingModels;
 using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
+using FintrakBanking.Interfaces.Setups.Finance;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -50,6 +51,7 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private IAuditTrailRepository audit;
         private IOverRideRepository overrider;
+        private IChartOfAccountRepository chartOfAccount;
         //private ICasaRepository casaRep;
 
         private IIntegrationWithFinacle finacle;
@@ -60,7 +62,7 @@ namespace FintrakBanking.Repositories.Credit
                                         ILoanCovenantRepository _loanCovenant, IAuditTrailRepository _audit,
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
-
+                                        IChartOfAccountRepository _chartOfAccount,
                                         IOverRideRepository _overrider,
             IIntegrationWithFinacle finacle)
         {
@@ -76,6 +78,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = _workflow;
             this.casaLien = _casaLien;
             this.overrider = _overrider;
+            this.chartOfAccount = _chartOfAccount;
             //this.casaRep = _casaRep;
             this.finacle = finacle;
 
@@ -1063,11 +1066,11 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
-            if (loans.Any())
-            {
-                if (loans.First().OUTSTANDINGPRINCIPAL > 0)
-                    throw new ConditionNotMetException("The customer already have a running FX-Loan which has not been paid down");
-            }
+            //if (loans.Any())
+            //{
+            //    if (loans.First().OUTSTANDINGPRINCIPAL > 0)
+            //        throw new ConditionNotMetException("The customer already have a running FX-Loan which has not been paid down");
+            //}
 
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
@@ -1215,7 +1218,13 @@ namespace FintrakBanking.Repositories.Credit
                                 AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             if (entity.loanBeneficiary.Count > 0)
+                            {
+                                foreach (var item in entity.loanBeneficiary)
+                                {
+                                    item.loanId = loan.TERMLOANID;
+                                };
                                 addLoanBeneficiary(entity.loanBeneficiary);
+                            }
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
@@ -2566,11 +2575,8 @@ namespace FintrakBanking.Repositories.Credit
                             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanRecord.LOANAPPLICATIONDETAILID);
                             var product = context.TBL_PRODUCT.Find(loanRecord.PRODUCTID);
 
-                            int daysInAYear = GetDaysInAYear(DayCountConventionEnum.Actual_365);
-                            var interestDaysPeriod = (loanRecord.MATURITYDATE - loanRecord.EFFECTIVEDATE).TotalDays - 1;
-                            Decimal totalInterest = (decimal)((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1);
-                            //Decimal dailyInterest = decimal.Round(((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / interestDaysPeriod),4);
-                            //Decimal totalInterest2 = (decimal)(dailyInterest * (decimal)interestDaysPeriod);
+                            int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE) - 1;
+                            var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
 
                             loanRecord.OUTSTANDINGINTEREST = totalInterest;
 
@@ -2797,7 +2803,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var scheduleModel = new LoanPaymentScheduleInputViewModel();
-            if (loanScheduleData.OPERATIONID != (short)OperationsEnum.CommercialPaperLoanBooking)
+            if (loanScheduleData.OPERATIONID != (short)OperationsEnum.CommercialPaperLoanBooking && loanScheduleData.OPERATIONID != (short)OperationsEnum.ForeignExchangeLoanBooking)
             {
                 if (loanScheduleData.SCHEDULETYPEID == (short)LoanScheduleTypeEnum.BulletPayment)
                 {
@@ -3074,6 +3080,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.approvedDateTime = DateTime.Now;
             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             debit.companyId = model.companyId;
+            
 
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == product.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
@@ -3083,7 +3090,6 @@ namespace FintrakBanking.Repositories.Credit
             debit.creditAmount = 0;
             debit.sourceBranchId = model.branchId;
             debit.destinationBranchId = casa.BRANCHID;
-
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)model.operationId;
@@ -3109,7 +3115,6 @@ namespace FintrakBanking.Repositories.Credit
             credit.creditAmount = model.principalAmount;
             credit.sourceBranchId = model.branchId;
             credit.destinationBranchId = model.branchId;
-
 
             loanTransaction.Add(debit);
             loanTransaction.Add(credit);
@@ -3177,6 +3182,9 @@ namespace FintrakBanking.Repositories.Credit
                             debit.creditAmount = 0;
                             debit.sourceBranchId = loanDetails.branchId;
                             debit.destinationBranchId = casa.BRANCHID;
+                            debit.rateCode = "TTB";
+                            debit.rateUnit = string.Empty;
+                            debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(debit);
                         }
@@ -3195,7 +3203,7 @@ namespace FintrakBanking.Repositories.Credit
                             credit.description = $"Fee charge on {credits.DESCRIPTION}";
                             credit.valueDate = generalSetup.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;
-                            credit.currencyId = casa.CURRENCYID;
+                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
                             credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, loanDetails.companyId).sellingRate;
                             credit.isApproved = true;
                             credit.postedBy = loanDetails.createdBy;
@@ -3212,6 +3220,9 @@ namespace FintrakBanking.Repositories.Credit
                             credit.creditAmount = creditAmount;
                             credit.sourceBranchId = loanDetails.branchId;
                             credit.destinationBranchId = loanDetails.branchId;
+                            credit.rateCode = "TTB";
+                            credit.rateUnit = string.Empty;
+                            credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(credit);
                         }

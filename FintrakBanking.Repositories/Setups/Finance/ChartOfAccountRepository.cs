@@ -509,6 +509,26 @@ namespace FintrakBanking.Repositories.Setups.Finance
             };
         }
 
+        public int GetAccountDefaultCurrency(int glAccountId, int companyId)
+        {
+            int output;
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION == false)
+            {
+                output = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
+            }
+            else
+            {
+                 output = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                                   join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                                   join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
+                                   where gla.GLACCOUNTID == glAccountId
+                                   select cur.CURRENCYID).FirstOrDefault();
+            }
+
+            return output;  
+        }
+
         private bool UpdateAccount2(short accountId, ChartOfAccountViewModel account)
         {
             ValidateAccountId(account.accountCode);

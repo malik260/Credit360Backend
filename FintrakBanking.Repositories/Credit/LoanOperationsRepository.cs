@@ -13720,7 +13720,7 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
-        public List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID)
+        public List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoansByApplicationDetailId(int companyId, int loanApplicationDetailID)
         {
             var data = (from ln in context.TBL_LOAN
                         where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID
@@ -13791,6 +13791,75 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
+        public List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoans(int companyId)
+        {
+            var date = DateTime.Now.Date;
+            var data = (from ln in context.TBL_LOAN
+                        where //ln.MATURITYDATE < DateTime.Now &&
+                         ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                        && ln.COMPANYID == companyId
+                        orderby ln.MATURITYDATE descending
+                        select new LoanReviewOperationApprovalViewModel
+                        {
+                            loanId = ln.TERMLOANID,
+                            customerId = ln.CUSTOMERID,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            branchId = ln.BRANCHID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            relatedReferenceNumber = ln.RELATED_LOAN_REFERENCE_NUMBER,
+                            loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                            companyId = ln.COMPANYID,
+                            exchangeRate = ln.EXCHANGERATE,
+
+                            principalAmount = ln.PRINCIPALAMOUNT,
+                            interestRate = ln.INTERESTRATE,
+                            interestAmount = ln.OUTSTANDINGINTEREST,
+                            outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = ln.OUTSTANDINGINTEREST,
+
+                            maturityAmount = ln.OUTSTANDINGPRINCIPAL + ln.OUTSTANDINGINTEREST,
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            createdByName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.LASTNAME,
+                            dischargeLetter = ln.DISCHARGELETTER,
+
+                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            misCode = ln.MISCODE,
+                            teamMiscode = ln.TEAMMISCODE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+
+                            approverComment = ln.APPROVERCOMMENT,
+                            dateApproved = ln.DATEAPPROVED,
+
+                            isDisbursed = ln.ISDISBURSED,
+                            disburserComment = ln.DISBURSERCOMMENT,
+                            disburseDate = ln.DISBURSEDATE,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                            operationId = ln.OPERATIONID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            subSectorId = ln.SUBSECTORID,
+                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+
+                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            currencyId = ln.CURRENCYID,
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            loanStatusId = ln.LOANSTATUSID,
+                            comment = "",
+                        });
+            return data.ToList();
+        }
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperPrepayment(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId)
         {

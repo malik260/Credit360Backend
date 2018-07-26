@@ -79,7 +79,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
         bool CommercialPaperRateReview(InterestReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetCommercialLoansLines(int companyId);
-        List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID);
+        List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoans(int companyId);
+        List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoansByApplicationDetailId(int companyId, int loanApplicationDetailID);
         //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
         void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId);
         bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
