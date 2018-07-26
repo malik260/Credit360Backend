@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -62,7 +63,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -86,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -110,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -128,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = 1 });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -158,7 +159,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -198,7 +199,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -222,7 +223,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -247,7 +248,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -265,7 +266,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = 1 });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -293,7 +294,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -318,7 +319,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -349,7 +350,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -384,7 +385,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -415,7 +416,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -453,7 +454,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating these record(s)" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -491,7 +492,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating these record(s)" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -517,7 +518,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -542,7 +543,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -568,7 +569,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -594,7 +595,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -619,7 +620,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -638,7 +639,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = 1 });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -669,7 +670,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -700,7 +701,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -730,7 +731,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = fsdetailId, message = "record has been deleted successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -759,7 +760,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = fsdetailId, message = "record has been deleted successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -787,7 +788,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = 1, message = "record(s) has been deleted successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -821,7 +822,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -846,7 +847,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -864,7 +865,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = _fsRepo.GetFSRatioCaptionById(ratioCaptionId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"There was an error updating this record {ex.Message}" });
@@ -893,7 +894,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -922,7 +923,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = ratioCaptionId, message = "record has been deleted successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -958,7 +959,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -997,7 +998,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error creating these record(s)" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -1021,7 +1022,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -1038,7 +1039,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = _fsRepo.GetFSRatioDetailById(ratioDetailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -1069,7 +1070,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -1098,7 +1099,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = ratioDetailId, message = "record has been deleted successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -1127,7 +1128,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = 1, message = "record(s) has been deleted successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -1152,7 +1153,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 
@@ -1177,7 +1178,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLog.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
 

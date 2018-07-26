@@ -1,7 +1,6 @@
 ﻿namespace FinTrakBanking.ThirdPartyIntegration
 {
     using FintrakBanking.Common;
-    using FintrakBanking.Common.CustomException;
     using FintrakBanking.Common.Enum;
     using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.ViewModels.ThridPartyIntegration;
@@ -13,6 +12,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Xml;
+    using FintrakBanking.Common.CustomException;
 
 
     namespace CreditBureau

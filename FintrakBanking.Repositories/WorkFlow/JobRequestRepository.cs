@@ -88,15 +88,15 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                                 break;
                             default:
-                                throw new Exception("Debit charge type is not specified.");
+                                throw new SecureException("Debit charge type is not specified.");
 
                         }
                         financeTransaction.PostTransaction(inputTransactions);
                     }
                 }
-                else throw new Exception("The collateral details information is incomplete");
+                else throw new SecureException("The collateral details information is incomplete");
             }
-            else throw new Exception(" Collateral cannot be traced to an active application in the system");
+            else throw new SecureException(" Collateral cannot be traced to an active application in the system");
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -119,7 +119,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public string AddGlobalJobRequest(JobRequestViewModel model)
         {
             if (model.receiverStaffId == model.createdBy)
-                throw new Exception("You cannot assign a job to yourself");
+                throw new SecureException("You cannot assign a job to yourself");
 
             var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
@@ -842,7 +842,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var casa = context.TBL_CASA.Find(model.casaAccountId);
 
             if (casa == null)
-                throw new Exception("Customer account number is not supplied");
+                throw new SecureException("Customer account number is not supplied");
 
             Decimal chargeAmount = 0;
 

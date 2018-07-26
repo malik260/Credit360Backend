@@ -10,6 +10,7 @@ using System.ComponentModel.Composition;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Entities.DocumentModels;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -60,7 +61,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 return context.SaveChanges() != 0;
             }
             else
-                throw new Exception("Record already exist");
+                throw new SecureException("Record already exist");
          
         }
         public bool UpdateCity(CityViewModel entity, int id)

@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Net;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {     
@@ -48,7 +49,7 @@ namespace FintrakBanking.APICore.Controllers
 
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
-                catch (Exception e)
+                catch (SecureException e)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message, error = e.InnerException, stack = e.StackTrace });
                 }
@@ -70,7 +71,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data, count = 1 });
                 }
-                catch (Exception e)
+                catch (SecureException e)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = $"Error: {e.Message}" });
@@ -93,7 +94,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
@@ -120,7 +121,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = "There was an error updating this record" });
                 }
-                catch (Exception e)
+                catch (SecureException e)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = $"There was an error updating this record {e.Message}" });
                 }
@@ -144,7 +145,7 @@ namespace FintrakBanking.APICore.Controllers
 
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = operationMappingId, message = "record has been deleted successfully" });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException, stack = ex.StackTrace });
             }
@@ -176,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "There was an error creating this record" });
                 }
-                catch (Exception e)
+                catch (SecureException e)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = $"There was an error creating this record {e.Message}" });
@@ -202,7 +203,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data, count = data.Count() });
                 }
-                catch (Exception e)
+                catch (SecureException e)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = $"Error: {e.Message}" });
@@ -220,7 +221,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = true, result = data, count = 1 });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
 
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -252,7 +253,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "There was an error updating this record" });
                 }
-                catch (Exception e)
+                catch (SecureException e)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = $"There was an error updating this record {e.Message}" });
@@ -281,7 +282,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = GroupId, message = "record has been deleted successfully" });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = ex.Message });

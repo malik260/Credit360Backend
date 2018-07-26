@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces;
 using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories
 {
@@ -42,7 +43,7 @@ namespace FintrakBanking.Repositories
             }
             else
             {
-                throw new Exception("Record not fund");
+                throw new SecureException("Record not fund");
             }
 
             return entity;
@@ -68,7 +69,7 @@ namespace FintrakBanking.Repositories
             }).FirstOrDefault();
             if (settings == null)
             { 
-                throw new Exception("Record not fund");
+                throw new SecureException("Record not fund");
             }
 
             return settings;

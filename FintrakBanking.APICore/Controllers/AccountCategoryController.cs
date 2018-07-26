@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -32,7 +33,7 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.GetAllAccountCategory();
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
                 }
@@ -47,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.GetAccountCategoryById(categoryId);
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
                 } 
@@ -70,7 +71,7 @@ namespace FintrakBanking.APICore.Controllers
         //            return Created("", model);
         //        }
         //    }
-        //    catch (System.Exception ex)
+        //    catch (SecureException ex)
         //    {
         //        return BadRequest();
         //    }

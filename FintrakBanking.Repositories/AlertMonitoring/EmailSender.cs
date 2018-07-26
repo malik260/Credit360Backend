@@ -8,6 +8,7 @@ using FintrakBanking.Entities.Models;
 using System.Configuration;
 using System.Net.Mail;
 using FintrakBanking.Common.Enum;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
@@ -55,7 +56,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 if (innerException != null)
                     innerMessage = innerException.Message;
 
-                throw new Exception("Failed with error : " + innerMessage);
+                throw new SecureException("Failed with error : " + innerMessage);
             }
         }
 
@@ -138,7 +139,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     Console.WriteLine("error sending mail ~~~~~~~~~~~~~~~");
                     Console.WriteLine("");
 
-                    throw new Exception("Error : " + ex);
+                    throw new SecureException("Error : " + ex);
                 }
 
 
@@ -236,7 +237,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
                             }catch(Exception ex)
                             {
-                                throw new Exception("Error : " + ex);
+                                throw new SecureException("Error : " + ex);
                             }
 
                             UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
@@ -255,7 +256,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
                 UpdateMailDeliveryStatus(mailId, (int)MessageStatusEnum.Attempted, "Email sending failed. Error Response : " + ex.Message);
 
-                throw new Exception("Failed with error : " + ex.Message);
+                throw new SecureException("Failed with error : " + ex.Message);
             }
         }
 
@@ -311,7 +312,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 if (innerException != null)
                     innerMessage = innerException.Message;
 
-                throw new Exception("Failed with error : " + innerMessage);
+                throw new SecureException("Failed with error : " + innerMessage);
             }
         }
     }

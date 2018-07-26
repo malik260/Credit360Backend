@@ -1,4 +1,5 @@
-﻿
+﻿using FintrakBanking.Common.CustomException;
+
 using FintrakBanking.Common;
 using FintrakBanking.Common.AlertMonitoring;
 using FintrakBanking.Common.Enum;
@@ -114,7 +115,7 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -271,7 +272,7 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -371,7 +372,7 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -473,7 +474,7 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -788,7 +789,7 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -1036,7 +1037,7 @@ namespace FintrakBanking.Repositories.AppEmail
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -1086,7 +1087,7 @@ namespace FintrakBanking.Repositories.AppEmail
         //    }
         //    catch (Exception ex)
         //    {
-        //        throw new Exception(ex.Message);
+        //        throw new SecureException(ex.Message);
         //    }
         //}
 
