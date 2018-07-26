@@ -87,6 +87,7 @@
     <Compile Include="CustomException\BadLogicException.cs" />
     <Compile Include="CustomException\ConditionNotMetException.cs" />
     <Compile Include="CustomException\SecureException.cs" />
+    <Compile Include="CustomException\TwoFactorAuthenticationException.cs" />
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\AccreditedConsultantTypeEnum.cs" />
