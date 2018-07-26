@@ -170,7 +170,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         catch(Exception ex)
                         {
-                            throw ex; // new Exception(ex.Message);
+                            throw ex; // new SecureException(ex.Message);
                         }
                     }
                 }
@@ -192,10 +192,10 @@ namespace FintrakBanking.Repositories.Credit
                 if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
             };
             if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
-                throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+                throw new SecureException("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
             if (previousSearch.Count() >= 3)
-                throw new Exception("You have reached that maximum credit bureau search for this customer");
+                throw new SecureException("You have reached that maximum credit bureau search for this customer");
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 
@@ -225,10 +225,10 @@ namespace FintrakBanking.Repositories.Credit
                 if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
             };
             if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
-                throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+                throw new SecureException("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
             if (previousSearch.Count() >= 3)
-                throw new Exception("You have reached that maximum credit bureau search for this customer");
+                throw new SecureException("You have reached that maximum credit bureau search for this customer");
 
             if (entity.companyDirectorId == 0) entity.companyDirectorId = null;
 
@@ -536,7 +536,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
 
-            if (casa == null) throw new Exception("Norminated Account Does not Exist");
+            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
 
             //var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
 
@@ -545,7 +545,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //if (chargeAmount > accountBalance)
             //{
-            //    //throw new Exception("The norminated customer account has insufficient fund to perform this transaction.");
+            //    //throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             //}
             //else
             //{
@@ -646,7 +646,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 if (!SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
                                 {
-                                    throw new Exception("Could not save file");
+                                    throw new SecureException("Could not save file");
                                 }
 
                                 context.SaveChanges();
@@ -659,19 +659,19 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
-                            throw new Exception("An error occured");
+                            throw new SecureException("An error occured");
                         }
                     }
                     else
                     {
                         //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
-                        throw new Exception("Timed out");
+                        throw new SecureException("Timed out");
                     }
                 }
                 catch (Exception ex)
                 {
                     //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
-                    throw new Exception(ex.Message.ToString());
+                    throw new SecureException(ex.Message.ToString());
                 }
             }
         }
@@ -794,7 +794,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
             var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
-            if (casa == null) throw new Exception("Norminated Account Does not Exist");
+            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
@@ -807,7 +807,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             if (chargeAmount > accountBalance)
-                throw new Exception("The norminated customer account has insufficient fund to perform this transaction.");
+                throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             else
             {
                 DebitCustomer(creditBureau, casa, chargeAmount, searchInput);
@@ -826,7 +826,7 @@ namespace FintrakBanking.Repositories.Credit
                         var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
                         if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
                         {
-                            throw new Exception("Could not save file");
+                            throw new SecureException("Could not save file");
                         }
                         context.SaveChanges();
                         trans.Commit();
@@ -835,14 +835,14 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception(ex.Message.ToString());
+                        throw new SecureException(ex.Message.ToString());
                     }
                 }
             }
             catch
             {
                 ReverseDebit(creditBureau, casa, chargeAmount, searchInput);
-                throw new Exception("Download failed. This may have been cause by slow or no internet connection");
+                throw new SecureException("Download failed. This may have been cause by slow or no internet connection");
             }
         }
 

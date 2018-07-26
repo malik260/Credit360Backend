@@ -105,6 +105,10 @@ namespace FintrakBanking.Entities.Models
 
         public decimal? LOAN_LIMIT { get; set; }
 
+        public decimal? WORKSTARTDURATION { get; set; }
+
+        public decimal? WORKENDDURATION { get; set; }
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -236,7 +237,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -340,7 +341,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                                                                          && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.GROUPCODE.ToLower() == entity.groupCode.ToLower());
             if (unApprovedCustomerGroupEdit.Any())
             {
-                throw new Exception("Customer group is already undergoing approval");
+                throw new SecureException("Customer group is already undergoing approval");
             }
 
             TBL_TEMP_CUSTOMER_GROUP tempCustomerGroup = new TBL_TEMP_CUSTOMER_GROUP();
@@ -622,7 +623,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -866,7 +867,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
             if (unApprovedCustomerGroupMapEdit.Any())
             {
-                throw new Exception("Customer group map is already undergoing approval");
+                throw new SecureException("Customer group map is already undergoing approval");
             }
             else
             {

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces;
 using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories
 {
@@ -35,14 +36,14 @@ namespace FintrakBanking.Repositories
                 settings.REQUIRESQUESTIONANDANSWER = entity.requiresQuestionAndAnswer;
                 settings.REQUIRESUNIQUEEMAIL = entity.requiresUniqueEmail;
                 settings.SESSIONTIMEOUT = entity.sessionTimeOut;
-                settings.BusinessStartTime = entity.BusinessStartTime;
-                settings.BusinessCloseTime = entity.BusinessCloseTime;
+           //     settings.BusinessStartTime = entity.BusinessStartTime;
+           //     settings.BusinessCloseTime = entity.BusinessCloseTime;
 
                 _context.SaveChanges() ;
             }
             else
             {
-                throw new Exception("Record not fund");
+                throw new SecureException("Record not fund");
             }
 
             return entity;
@@ -63,12 +64,12 @@ namespace FintrakBanking.Repositories
                 requiresQuestionAndAnswer = p.REQUIRESQUESTIONANDANSWER,
                 requiresUniqueEmail = p.REQUIRESUNIQUEEMAIL,
                 sessionTimeOut = p.SESSIONTIMEOUT,
-                BusinessStartTime = p.BusinessStartTime,
-                BusinessCloseTime = p.BusinessCloseTime,
+         //       BusinessStartTime = p.BusinessStartTime,
+          //      BusinessCloseTime = p.BusinessCloseTime,
             }).FirstOrDefault();
             if (settings == null)
             { 
-                throw new Exception("Record not fund");
+                throw new SecureException("Record not fund");
             }
 
             return settings;

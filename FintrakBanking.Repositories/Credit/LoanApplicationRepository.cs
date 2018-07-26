@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -780,6 +781,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             targetId = applicationId;
                         }
+                       
 
                         var detail = from a in context.TBL_CHECKLIST_DEFINITION
                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
@@ -814,6 +816,20 @@ namespace FintrakBanking.Repositories.Credit
                             str = str + "One or more item(s) did not meet up with the condition." + Environment.NewLine
                                 + " Please check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
+                        }
+                        if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
+                        {
+                            var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
+                            var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == targetId select b;
+                            int x, k;
+                            x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
+
+                            if (esg_checklist_definition.Count() != esg_checklist_details.Count())
+                            {
+                                isCheckListDone = false;
+                                str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                            }
                         }
                     }
                 }
@@ -885,7 +901,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (loanAmt > (decimal)limit)
                         {
-                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                            throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
                         }
                     }
                 }
@@ -920,7 +936,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (total > (decimal)limit)
                         {
-                            throw new Exception($"RM Limit Exceeded. The limit of this RM is {limit}");
+                            throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
                         }
                     }
                 }
@@ -1130,7 +1146,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (a.proposedTenor == 0)
                 {
-                    throw new Exception("Tenor can not be ZERO (0)");
+                    throw new SecureException("Tenor can not be ZERO (0)");
                 }
                 int loanId = this.loanData == null ? 0 : this.loanData.LOANAPPLICATIONID;
                 int tenor = 0;
@@ -1198,7 +1214,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("No fee is defined for this product(s)");
+                    throw new SecureException("No fee is defined for this product(s)");
                 }
 
 
@@ -1263,10 +1279,10 @@ namespace FintrakBanking.Repositories.Credit
         //        if (i.creditBureauId == (short)CreditBureauEnum.CRMS) hascrms = true;
         //    };
         //    if (previousSearch.Count() >= 2 && !hascrms && entity.creditBureauId != (short)CreditBureauEnum.CRMS)
-        //        throw new Exception("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
+        //        throw new SecureException("Only three search options allowed and must inlude CRMS.\n Please check CRMS");
 
         //    if (previousSearch.Count() >= 3)
-        //        throw new Exception("You have reached that maximum credit bureau search for this customer");
+        //        throw new SecureException("You have reached that maximum credit bureau search for this customer");
 
         //    var data = new TBL_CUSTOMER_CREDIT_BUREAU()
         //    {

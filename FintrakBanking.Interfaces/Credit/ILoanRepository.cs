@@ -149,7 +149,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         LoanViewModel BuildDisbursementModel(int loanId, LoanPaymentScheduleInputViewModel loanInputModel, int staffId);
 
-        void DisburseLoan(LoanViewModel entity);
+        void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null);
 
         IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId);
 

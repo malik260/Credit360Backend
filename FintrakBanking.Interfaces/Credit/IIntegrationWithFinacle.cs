@@ -12,14 +12,15 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IIntegrationWithFinacle
     {
-        ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model);
-        ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model);
-        ResponseMessageViewModel OverDraftExtend(OverDraftExtendViewModel model);
-        ResponseMessageViewModel OverDraftRenew(OverDraftTopUpAndRenewViewModel model);
+        ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
+        //ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model);
+        ResponseMessageViewModel OverDraftTopUp(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
+        ResponseMessageViewModel OverDraftExtend(OverDraftExtendViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
+        ResponseMessageViewModel OverDraftRenew(OverDraftTopUpAndRenewViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
 
-        ResponseMessageViewModel TemporaryOverDraftNormal(TemporaryOverDraftViewModel model);
-        ResponseMessageViewModel TemporaryOverDraftRunning(TemporaryOverDraftViewModel model);
-        ResponseMessageViewModel TemporaryOverDraftSingle(TemporaryOverDraftViewModel model);
+        ResponseMessageViewModel TemporaryOverDraftNormal(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
+        ResponseMessageViewModel TemporaryOverDraftRunning(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
+        ResponseMessageViewModel TemporaryOverDraftSingle(TemporaryOverDraftViewModel model, TwoFactorAutheticationViewModel twoFADetails = null);
 
         bool GetExposePersonStatus(string customerCode);
         BVNCustomerDetailsViewModel BVNCustomerDetails(string customerCode);

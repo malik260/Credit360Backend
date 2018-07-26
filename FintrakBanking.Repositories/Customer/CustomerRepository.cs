@@ -16,6 +16,7 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 using FinTrakBanking.ThirdPartyIntegration;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -340,7 +341,7 @@ namespace FintrakBanking.Repositories.Customer
                             catch (Exception ex)
                             {
                                 trans.Rollback();
-                                throw new Exception(ex.Message);
+                                throw new SecureException(ex.Message);
                             }
                         }
                     }
@@ -365,7 +366,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -451,7 +452,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -510,7 +511,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -650,7 +651,7 @@ namespace FintrakBanking.Repositories.Customer
                             catch (Exception ex)
                             {
                                 trans.Rollback();
-                                throw new Exception(ex.Message);
+                                throw new SecureException(ex.Message);
                             }
                         }
                     }
@@ -675,7 +676,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -827,7 +828,7 @@ namespace FintrakBanking.Repositories.Customer
                             catch (Exception ex)
                             {
                                 trans.Rollback();
-                                throw new Exception(ex.Message);
+                                throw new SecureException(ex.Message);
                             }
                         }
                     }
@@ -851,7 +852,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -968,7 +969,7 @@ namespace FintrakBanking.Repositories.Customer
                                 catch (Exception ex)
                                 {
                                     trans.Rollback();
-                                    throw new Exception(ex.Message);
+                                    throw new SecureException(ex.Message);
                                 }
                             }
                         }
@@ -1010,7 +1011,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -1302,7 +1303,7 @@ namespace FintrakBanking.Repositories.Customer
                             catch (Exception ex)
                             {
                                 trans.Rollback();
-                                throw new Exception(ex.Message);
+                                throw new SecureException(ex.Message);
                             }
                         }
                     }
@@ -1339,7 +1340,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -1398,7 +1399,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -1598,7 +1599,7 @@ namespace FintrakBanking.Repositories.Customer
                             catch (Exception ex)
                             {
                                 trans.Rollback();
-                                throw new Exception(ex.Message);
+                                throw new SecureException(ex.Message);
                             }
                         }
                     }
@@ -1622,7 +1623,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -1763,7 +1764,7 @@ namespace FintrakBanking.Repositories.Customer
                             catch (Exception ex)
                             {
                                 trans.Rollback();
-                                throw new Exception(ex.Message);
+                                throw new SecureException(ex.Message);
                             }
                         }
 
@@ -1790,7 +1791,7 @@ namespace FintrakBanking.Repositories.Customer
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
 
             }
@@ -2465,7 +2466,7 @@ namespace FintrakBanking.Repositories.Customer
                     x.CUSTOMERCODE.ToLower() == entity.customerCode.ToLower());
                 //////if (unApprovedCustomerUpdate.Any())
                 //////{
-                //////    throw new Exception("Customer is already undergoing approval");
+                //////    throw new SecureException("Customer is already undergoing approval");
                 //////}
 
                 if (existingTempCustomer != null)
@@ -2609,7 +2610,7 @@ namespace FintrakBanking.Repositories.Customer
                     catch (Exception ex)
                     {
                         trans.Rollback();
-                        throw new Exception(ex.Message);
+                        throw new SecureException(ex.Message);
                     }
                 }
 
@@ -3815,7 +3816,7 @@ namespace FintrakBanking.Repositories.Customer
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -4560,7 +4561,7 @@ namespace FintrakBanking.Repositories.Customer
             catch (Exception ex)
             {
                 return false;
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public bool ValidateRelatedPartyEntry(int customerId, int companyDirectorId)

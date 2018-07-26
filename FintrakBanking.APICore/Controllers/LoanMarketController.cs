@@ -8,6 +8,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
+
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -42,7 +44,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetLoanMarket(token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
@@ -56,7 +58,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetLoanMarket(marketId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
@@ -73,7 +75,7 @@ namespace FintrakBanking.APICore.Controllers
                 string response = repo.UpdateLoanMarket(marketId,loanMarket);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 IEnumerable<String> error = ex.Messages();
 
@@ -89,7 +91,7 @@ namespace FintrakBanking.APICore.Controllers
                 string response = repo.DeleteLoanMarket(marketId,loanMarket);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
@@ -105,7 +107,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.AddLoanMarket(loanMarket);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = data });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }

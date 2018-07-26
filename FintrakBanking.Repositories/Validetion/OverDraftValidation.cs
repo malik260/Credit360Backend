@@ -8,6 +8,8 @@ using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.Validation;
+using FintrakBanking.Common.CustomException;
+
 
 namespace FintrakBanking.Repositories.Validetion
 {
@@ -32,13 +34,13 @@ namespace FintrakBanking.Repositories.Validetion
             {
                 if(data.MATURITYDATE.Date < topupDate.Date)
                 {
-                    throw new Exception("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
+                    throw new SecureException("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
                 }
                 return true; 
             }
             else
             {
-                throw new Exception("Limit has experied or is inactive");
+                throw new SecureException("Limit has experied or is inactive");
             }          
         }
     }

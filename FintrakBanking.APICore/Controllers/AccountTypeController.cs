@@ -1,8 +1,9 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Interfaces.Setups.Finance;
-using FintrakBanking.ViewModels.Setups.Finance; 
- 
+using FintrakBanking.ViewModels.Setups.Finance;
+using FintrakBanking.Common.CustomException;
+
 using System;
 using System.Linq;
 using System.Net;
@@ -35,7 +36,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllAccountType();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -52,7 +53,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllAccountTypeById(accountTypId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -82,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "account type not created" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = ex.Message });
@@ -109,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
                     result = Request.CreateResponse(HttpStatusCode.OK, Ok(model));
                 }
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 result = Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }

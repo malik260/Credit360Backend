@@ -13,6 +13,7 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -186,7 +187,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         trans.Rollback();
                         return 0;
-                        throw new Exception(ex.Message);
+                        throw new SecureException(ex.Message);
                     }
                 }
             }
@@ -211,7 +212,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
-                        throw new Exception("Approval Failed");
+                        throw new SecureException("Approval Failed");
                     }
                     if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
@@ -233,7 +234,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }

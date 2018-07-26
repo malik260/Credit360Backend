@@ -17,6 +17,7 @@ using FintrakBanking.Entities.Models;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using System.Web;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -68,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"No user found" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an internal error : { ex.Message}" });
@@ -98,7 +99,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
@@ -120,7 +121,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -141,7 +142,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error occured while updating user" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
@@ -175,7 +176,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
@@ -197,10 +198,10 @@ namespace FintrakBanking.APICore.Controllers
             {
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
                 string ipAddressStr = null;
-                if(token.LoginCode == null)
+                if (token.LoginCode == null)
                     ipAddressStr = token.LoginCode.Split('@')[1];
 
-               _repo.SessionInfo = await _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
+                _repo.SessionInfo = await _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
                 var foundUser = await _repo.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
 
                 if (foundUser == null)
@@ -263,7 +264,7 @@ namespace FintrakBanking.APICore.Controllers
                     {
                         branchName = currUser.branchName,
                         companyName = currUser.companyName,
-                        UserName = currUser.username,
+                        userName = currUser.username,
                         activities = userActivities,
                         staffId = currUser.staffId,
                         staffName = currUser.staffName,
@@ -274,13 +275,13 @@ namespace FintrakBanking.APICore.Controllers
                 });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 string str = string.Empty;
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
                 {
-                    str = ex.Message.Replace("1001", "");                    
+                    str = ex.Message.Replace("1001", "");
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = str });
             }
@@ -313,7 +314,7 @@ namespace FintrakBanking.APICore.Controllers
                 return this.Ok(new { success = true, message = "Session Ended. Login To Continue" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
@@ -359,35 +360,49 @@ namespace FintrakBanking.APICore.Controllers
                 return this.Ok(new { success = true, message = "User Logged Off" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return this.Ok(new { success = false, message = $"An unknown error occured {ex.Message}" });
             }
 
         }
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("two-factor-auth")]
-        public HttpResponseMessage TwoFactorAuthentication(string staffCode, string passCode)
+
+        [HttpPost] //[ClaimsAuthorization]
+        [Route("passwordchange")]
+        public IHttpActionResult PasswordChange(PasswordChangeViewModel pwdChange)
         {
             try
             {
-                var data = _repo.TwoFactorAuthentication(staffCode, passCode);
-                if (!data)
+                if (!_repo.ValidateOldPassword(pwdChange.username, StaticHelpers.EncryptSha512(pwdChange.currentPassword, StaticHelpers.EncryptionKey)))
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, result = data, message = "" });
+                    return this.Ok(new { success = false, message = "Invalid current password." });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data });
+                if (!_repo.ValidatePasswordPolicy(pwdChange.newPassword))
+                {
+                    return this.Ok(new { success = false, message = "Password must contain at least 8 characters, a number, lowercare and uppercase" });
+                }
+                var password = new PasswordChangeViewModel
+                {
+                    username = pwdChange.username,
+                    currentPassword = StaticHelpers.EncryptSha512(pwdChange.currentPassword, StaticHelpers.EncryptionKey),
+                    newPassword = StaticHelpers.EncryptSha512(pwdChange.newPassword, StaticHelpers.EncryptionKey),
+                };
+
+                var res = _repo.PasswordChange(password);
+                return this.Ok(new { success = true, message = "Password Change was successful" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
+
+                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+
+                return this.Ok(new { success = false, message = ex.Message });
             }
+
+
         }
+
         private IAuthenticationManager Authentication => Request.GetOwinContext().Authentication;
 
     }

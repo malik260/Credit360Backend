@@ -11,6 +11,7 @@ using System.Linq;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Setups.Finance
 {
@@ -44,7 +45,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (existStingTempChargeFee.Any())
             {
-                throw new Exception("Charge Fee Information already exist and is undergoing approval");
+                throw new SecureException("Charge Fee Information already exist and is undergoing approval");
             }
 
             var chargeFee = new TBL_TEMP_CHARGE_FEE()
@@ -110,7 +111,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         }
                         else
                         {
-                            throw new Exception("Approval route have not been defined for this operation");
+                            throw new SecureException("Approval route have not been defined for this operation");
                         }*/
             return output;
 
@@ -253,13 +254,13 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         catch (Exception ex)
                         {
                             trans.Rollback();
-                            throw new Exception(ex.Message);
+                            throw new SecureException(ex.Message);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
             return false;
@@ -505,7 +506,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public bool GoForApproval(ApprovalViewModel entity)
@@ -527,7 +528,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
-                        throw new Exception("Approval Failed");
+                        throw new SecureException("Approval Failed");
                     }
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
@@ -558,7 +559,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }

@@ -6,7 +6,6 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using FintrakBanking.APICore.ExceptionLogger.SeriLogger;
 
 namespace FintrakBanking.APICore
 {
@@ -19,8 +18,6 @@ namespace FintrakBanking.APICore
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-            SeriLogger.LogSetup();
-
         }
     }
 }

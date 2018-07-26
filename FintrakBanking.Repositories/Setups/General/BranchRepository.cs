@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -100,7 +101,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
 
             }

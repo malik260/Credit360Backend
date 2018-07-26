@@ -32,7 +32,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetCurrency();
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllCurrencyRateCode();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -90,7 +90,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetBaseCurrency(token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -104,7 +104,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetCurrencyRate();
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data.ToList() });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
             }
@@ -119,7 +119,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetCurrentCurrencyExchangeRate(currencyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -133,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetCurrencyRateById(currencyId);
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -158,7 +158,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
@@ -183,7 +183,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {e.Message}" });
             }

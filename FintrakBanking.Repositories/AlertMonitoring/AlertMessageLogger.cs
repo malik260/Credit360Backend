@@ -15,6 +15,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
@@ -158,7 +159,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(List<LoanCovenantDetailViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -198,7 +199,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -332,7 +333,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertsForCovenantsOverDueMonitoringTeam(List<LoanCovenantDetailViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -372,7 +373,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -498,7 +499,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertsForCollateralPropertyApproachingRevaluationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -538,7 +539,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -664,7 +665,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertsForCollateralPropertyDueForRevaluationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -704,7 +705,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -805,7 +806,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertsForLoanNplMonitoringMonitoringTeam(List<LoanViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -845,7 +846,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -2268,7 +2269,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertOnInsuranceApprochingExpirationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -2308,7 +2309,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -2437,7 +2438,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertOnExpiredInsuranceMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -2477,7 +2478,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -2611,7 +2612,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertOnTurnoverCovenantMonitoringTeam(List<LoanCovenantDetailViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -2651,7 +2652,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -2780,7 +2781,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public void SendAlertsForCollateralPropertyDueForVisitationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
@@ -2820,7 +2821,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -2849,7 +2850,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 

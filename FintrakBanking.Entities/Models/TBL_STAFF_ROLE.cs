@@ -34,6 +34,10 @@ namespace FintrakBanking.Entities.Models
 
         public int COMPANYID { get; set; }
 
+        public decimal? WORKSTARTDURATION { get; set; }
+
+        public decimal? WORKENDDURATION { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
 

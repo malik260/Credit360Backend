@@ -93,7 +93,12 @@ namespace FintrakBanking.APICore.Providers
                     return;
                 }
 
-               
+                if (!authRepo.ResumptionClosignTime(userVm.username.ToLower()))
+                {
+                    context.SetError("invalid_grant", "You cannot login at this time");
+                    return;
+                }
+                
 
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {

@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Credit
         //catch (Exception ex)
         //{
         //    trans.Rollback();
-        //    throw new Exception(ex.Message);
+        //    throw new SecureException(ex.Message);
         //}
     } 
             
