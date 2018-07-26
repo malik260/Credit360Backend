@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
+
 using FintrakBanking.ViewModels;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Setups.General;
@@ -118,7 +120,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         trans.Rollback();
 
-                        throw new Exception("Error has occured while creating this collateral");
+                        throw new SecureException("Error has occured while creating this collateral");
                     }
                     if (saved) { return true; }
 
@@ -197,7 +199,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.TEMPCOLLATERALCUSTOMERID == model.collateralId).Any() == true)
             {
-                throw new Exception("The specified Collateral Code is already used in the system!");
+                throw new SecureException("The specified Collateral Code is already used in the system!");
             }
 
             var collateral = context.TBL_TEMP_COLLATERAL_CUSTOMER.Add(new TBL_TEMP_COLLATERAL_CUSTOMER
@@ -844,7 +846,7 @@ namespace FintrakBanking.Repositories.Credit
         {
 
             //if (entity.valuationDate > DateTime.Now || entity.dateOfManufacture > DateTime.Now)
-            //    throw new Exception("Wrong date selected. Transaction aborted");
+            //    throw new SecureException("Wrong date selected. Transaction aborted");
 
             context.TBL_TEMP_COLLATERAL_VEHICLE.Add(new TBL_TEMP_COLLATERAL_VEHICLE
             {
@@ -1036,7 +1038,7 @@ namespace FintrakBanking.Repositories.Credit
         private void AddTempGuaranteeCollateral(int collateralId, CollateralViewModel entity)
         {
             //if (entity.cStartDate > DateTime.Now || entity.endDate  < DateTime.Now )
-            //    throw new Exception("Wrong date selected. Transaction aborted");
+            //    throw new SecureException("Wrong date selected. Transaction aborted");
 
             context.TBL_TEMP_COLLATERAL_GAURANTEE.Add(new TBL_TEMP_COLLATERAL_GAURANTEE
             {
@@ -1327,7 +1329,7 @@ namespace FintrakBanking.Repositories.Credit
         private void AddTempMarketableSecuritiesCollateral(int collateralId, CollateralViewModel entity)
         {
             //if (entity.effectiveDate > DateTime.Now || entity.maturityDate < DateTime.Now)
-            //    throw new Exception("Wrong date selected. Transaction aborted");
+            //    throw new SecureException("Wrong date selected. Transaction aborted");
 
             context.TBL_TEMP_COLLATERAL_MKT_SEC.Add(new TBL_TEMP_COLLATERAL_MKT_SEC
             {
@@ -1424,7 +1426,7 @@ namespace FintrakBanking.Repositories.Credit
         private void AddTempPolicyCollateral(int collateralId, CollateralViewModel entity)
         {
             //if (entity.policyStartDate > DateTime.Now || entity.assignDate > DateTime.Now || entity.policyRenewalDate < DateTime.Now)
-            //    throw new Exception("Wrong date selected. Transaction aborted");
+            //    throw new SecureException("Wrong date selected. Transaction aborted");
 
             context.TBL_TEMP_COLLATERAL_POLICY.Add(new TBL_TEMP_COLLATERAL_POLICY
             {
@@ -3584,7 +3586,7 @@ namespace FintrakBanking.Repositories.Credit
         private void AddTempImmovablePropertyCollateral(int collateralId, CollateralViewModel entity)
         {
             //if (entity.constructionDate > DateTime.Now || entity.lastValuationDate > DateTime.Now || entity.lastValuationDate > DateTime.Now || entity.dateOfAcquisition>DateTime.Now)
-            //    throw new Exception("Wrong date selected. Transaction aborted"); 
+            //    throw new SecureException("Wrong date selected. Transaction aborted"); 
 
             context.TBL_TEMP_COLLATERAL_IMMOV_PROP.Add(new TBL_TEMP_COLLATERAL_IMMOV_PROP
             {
@@ -3637,7 +3639,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (casaDetail.isCasaAccountDetailAvailable == false)
                 {
-                    throw new Exception(entity.collateralCode + " is not a valid CASA account number");
+                    throw new SecureException(entity.collateralCode + " is not a valid CASA account number");
                 }
                 else
                 {
@@ -3682,7 +3684,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (finacleBalance.accountNumber == null)
                 {
-                    throw new Exception(entity.collateralCode + " is not a valid fixed depposit account number");
+                    throw new SecureException(entity.collateralCode + " is not a valid fixed depposit account number");
                 }
                 else
                 {
@@ -3799,7 +3801,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.COLLATERALCODE == model.collateralCode && x.APPROVALSTATUSID != 2).Any() == true)
             {
-                throw new Exception("The specified Collateral is edited and is going through approval!");
+                throw new SecureException("The specified Collateral is edited and is going through approval!");
             }
             DateTime date = DateTime.Now;
             var collateral = context.TBL_TEMP_COLLATERAL_CUSTOMER.Add(new TBL_TEMP_COLLATERAL_CUSTOMER
@@ -3914,7 +3916,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     transaction.Rollback();
 
-                    throw new Exception("Error has occured while approving this insurance policy, kindly try again");
+                    throw new SecureException("Error has occured while approving this insurance policy, kindly try again");
                 }
             }
         }

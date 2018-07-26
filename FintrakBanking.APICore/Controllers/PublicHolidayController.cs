@@ -13,6 +13,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -49,7 +50,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "An unknown error has occured" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
@@ -86,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "An unknown error has occured" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
@@ -118,7 +119,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "An unknown error has occured" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
@@ -147,7 +148,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "An unknown error has occured" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
@@ -181,7 +182,7 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = "An unknown error has occured" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });

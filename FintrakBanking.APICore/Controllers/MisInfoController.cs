@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using FintrakBanking.APICore.core;
 using System.Web;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -36,7 +37,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -55,7 +56,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -74,7 +75,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -96,7 +97,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -115,7 +116,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -134,7 +135,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -157,7 +158,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -176,7 +177,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -195,7 +196,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -214,7 +215,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "mis not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -240,7 +241,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "account has been updated successfully" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }

@@ -237,7 +237,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -559,7 +559,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -722,7 +722,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -888,7 +888,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1055,7 +1055,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1220,7 +1220,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1321,7 +1321,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1422,7 +1422,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1498,7 +1498,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2049,7 +2049,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2244,7 +2244,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2615,7 +2615,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2698,7 +2698,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2771,7 +2771,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2836,7 +2836,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2903,7 +2903,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -3096,7 +3096,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -3425,7 +3425,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -3754,7 +3754,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -4377,7 +4377,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return false;
 
             }
@@ -4577,7 +4577,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (data1.MATURITYDATE.Date < systemDate.Date)
                         {
-                            throw new Exception("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
+                            throw new SecureException("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
                         }
                         var loan = model;
                         var reviewDate = data1.BOOKINGDATE.AddMonths(1);
@@ -4596,7 +4596,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        throw new Exception("Limit has experied or is inactive");
+                        throw new SecureException("Limit has experied or is inactive");
                     }
                 }
                 addOverDraft.SERIALNUMBER = topResult.serialNumber;
@@ -4611,7 +4611,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -4777,7 +4777,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -4943,7 +4943,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -4978,7 +4978,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -5162,7 +5162,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -6519,7 +6519,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 // trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -7590,7 +7590,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -7779,7 +7779,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -7950,7 +7950,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8268,7 +8268,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8608,7 +8608,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8679,7 +8679,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 // trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8948,7 +8948,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8983,7 +8983,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9186,7 +9186,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = true;
 
             }
@@ -9372,7 +9372,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9544,7 +9544,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9731,7 +9731,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9799,7 +9799,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback()
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9993,7 +9993,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -10421,7 +10421,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -10924,7 +10924,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -10979,7 +10979,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -11033,7 +11033,7 @@ namespace FintrakBanking.Repositories.Credit
         //        catch (Exception ex)
         //        {
         //            trans.Rollback();
-        //            throw new Exception(ex.Message);
+        //            throw new SecureException(ex.Message);
         //        }
         //    }
 
@@ -13167,7 +13167,7 @@ namespace FintrakBanking.Repositories.Credit
                     ArchiveLoan(loan.TERMLOANID, (int)loan.OPERATIONID);
                     loan.MATURITYDATE = loan.MATURITYDATE.AddDays(userModel.newTenor);
                 }
-                else throw new Exception("New tenor has no positive value");
+                else throw new SecureException("New tenor has no positive value");
 
                 auditDetail = $"Extended loan tenor with reference number: {loan.LOANREFERENCENUMBER} with {userModel.newTenor} extra";
             }

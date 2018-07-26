@@ -388,7 +388,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -573,7 +573,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -814,7 +814,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -1031,7 +1031,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                  {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -1252,7 +1252,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -2035,13 +2035,13 @@ namespace FintrakBanking.Repositories.Credit
                     catch (Exception e)
                     {
                         trans.Rollback();
-                        throw new Exception("Approval failed. " + e.Message);
+                        throw new SecureException("Approval failed. " + e.Message);
                     }
                 }
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -6444,6 +6444,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int productTypeId, string searchQuery)
         {
+
+            if (searchQuery == "test1") throw new Exception("Exception 1");
+            if (searchQuery == "test2") throw new SecureException("SecuredException 2");
+            if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
+
+
+
             bool all = performanceTypeId == 3;
             bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();

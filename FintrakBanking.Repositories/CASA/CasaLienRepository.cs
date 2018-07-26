@@ -139,13 +139,13 @@ namespace FintrakBanking.Repositories.CASA
             var existingLien = context.TBL_CASA_LIEN.Where(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).FirstOrDefault();
 
             if (existingLien == null)
-                throw new Exception($"Cannot release lien because lien with reference number {model.lienReferenceNumber} does not exist");
+                throw new SecureException($"Cannot release lien because lien with reference number {model.lienReferenceNumber} does not exist");
 
 
             var lienSum = context.TBL_CASA_LIEN.Where(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).Sum(y => y.LIENAMOUNT);
 
             if (lienSum <= 0)
-                throw new Exception($"Cannot release lien because lien with reference number {model.lienReferenceNumber} has already been released");
+                throw new SecureException($"Cannot release lien because lien with reference number {model.lienReferenceNumber} has already been released");
 
             model.lienAmount = existingLien.LIENAMOUNT;
             model.sourceReferenceNumber = existingLien.SOURCEREFERENCENUMBER;
