@@ -365,11 +365,11 @@ namespace FintrakBanking.Repositories.Credit
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId) // jump process OR end flag
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId && model.operationId != 71) // jump process OR end flag
                 {
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
-                if (operationId == lastOperationId) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
+                if (operationId == lastOperationId || model.operationId == 71) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
                 context.SaveChanges();
             }
 
