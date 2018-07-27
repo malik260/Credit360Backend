@@ -21,7 +21,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string responseCode { get; set; }
         public int operationId { get; set; }
 
-
+        public string currencycrosscode { get; set; }
         public string rateCode { get; set; }
         public string rateUnit { get; set; }
 

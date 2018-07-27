@@ -159,7 +159,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("fx-revolving-loan-search/")]
+        public HttpResponseMessage SearchForFXRevolvingLoan(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForFXRevolvingLoan(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("running-commercial-loan-search/")]
         public HttpResponseMessage SearchRunningCommercialForLoans(string searchQuery)
         {
@@ -202,6 +225,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("approved-overdraft-review-application")]

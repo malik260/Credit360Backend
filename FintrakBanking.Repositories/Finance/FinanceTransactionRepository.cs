@@ -302,7 +302,7 @@ namespace FintrakBanking.Repositories.Finance
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 
-                if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
+            if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
             {
                 bool data;
 
