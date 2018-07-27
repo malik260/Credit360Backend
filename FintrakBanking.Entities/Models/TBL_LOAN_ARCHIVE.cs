@@ -12,6 +12,8 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int LOANARCHIVEID { get; set; }
 
+        public string ARCHIVEBATCHCODE { get; set; }
+
         //[Column(TypeName = "date")]
         public DateTime CHANGEEFFECTIVEDATE { get; set; }
 
@@ -231,5 +233,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_PRUDENTIALGUIDELINE TBL_LOAN_PRUDENTIALGUIDELINE2 { get; set; }
 
         public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
+
     }
 }

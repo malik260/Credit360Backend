@@ -17,6 +17,13 @@ namespace FintrakBanking.Interfaces.Credit
         List<CollateralViewModel> Collateral(int loanId);
         List<LoanViewModel> LoanSearch(int productTypeId, string searchQuery);
         List<ProductType> ProductType();
-
+        LoanViewModel OverdraftFacilityDetail(int loanId);
+        LoanViewModel ContingentFacilityDetail(int loanId);
+        LoanViewModel OverdraftFacilityDetailArchive(int archiveId);
+        LoanViewModel FacilityDetailArchive(int loanId);
+        List<LoanViewModel> ArchiveLoanFacilityDetail(int archiveId);
+        List<LoanViewModel> ArchiveRevolvingLoanFacilityDetail(int archiveId);
+        List<LoanViewModel> SearchAllRevolvingLoan(int loanId);
+        List<LoanPaymentSchedulePeriodicViewModel> ArchivedLoanSchedule(LoanPaymentSchedulePeriodicViewModel data);
     }
 }

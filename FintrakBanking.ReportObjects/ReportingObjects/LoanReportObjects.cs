@@ -632,7 +632,7 @@ namespace FintrakBanking.ReportObjects
 
         }
 
-        public IList<LoanViewModel> GetStakeHolderOnExperationOfFTP(short? branchId, string customerName, DateTime maturityDate)
+        public IList<LoanViewModel> GetStakeHolderOnExperationOfFTP(short branchId, string customerName, DateTime maturityDate)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -781,7 +781,7 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
-        public IEnumerable<DisburstLoanViewModel> GetLoansInterestReceivable(DateTime startDate, DateTime endDate, int companyId, string searchParamemter, int? productClassId)
+        public IEnumerable<DisburstLoanViewModel> GetLoansInterestReceivable(DateTime startDate, DateTime endDate, int companyId, string searchParamemter, int productClassId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {

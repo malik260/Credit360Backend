@@ -17,7 +17,9 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                 int companyId = Int32.Parse(Request.QueryString["companyId"]);
-                int branchCode = Int32.Parse(Request.QueryString["branchCode"]);
+                string branch = Request.QueryString["branchId"];
+              int  branchCode = Int32.Parse(Request.QueryString["branchId"]);
+
 
                 LoanReportObjects dispursement = new LoanReportObjects();
                 var loanDocumentWaivedForMCC = dispursement.LoanDocumentWaivedForMCC(startDate,companyId, branchCode);

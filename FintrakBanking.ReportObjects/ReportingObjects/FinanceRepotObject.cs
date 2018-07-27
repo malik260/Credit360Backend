@@ -14,7 +14,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public partial class FinanceRepotObject
     {
-        public List<TransactionViewModel> FinanceTransaction(DateTime startDate, DateTime endDate,  int companyId, int? branchId,int glAccountId,int PostedByStaffId)
+        public List<TransactionViewModel> FinanceTransaction(DateTime startDate, DateTime endDate,  int companyId, int branchId,int glAccountId,int PostedByStaffId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -55,7 +55,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }
 
         }
-        public List<TransactionViewModel> LoanRepayment(DateTime endDate, DateTime startDate, int? operationId, int companyId)
+        public List<TransactionViewModel> LoanRepayment(DateTime endDate, DateTime startDate, int operationId, int companyId)
         {
             int[] operations = { (int)OperationsEnum.InterestLoanRepayment, (int)OperationsEnum.PrincipalPastDueLoanRepayment, (int)OperationsEnum.InterestPastDueLoanRepayment, (int)OperationsEnum.PrincipalLoanRepayment, (int)OperationsEnum.TermLoanBooking };
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -103,7 +103,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
 
         }
-        public List<DailyAccrualViewModel> DailyAccrual(DateTime endDate, DateTime startDate, int companyId, int? categoryId)// int? transactionTypeId
+        public List<DailyAccrualViewModel> DailyAccrual(DateTime endDate, DateTime startDate, int companyId, int categoryId)// int? transactionTypeId
         {
             List<DailyAccrualViewModel> data;
             using (FinTrakBankingContext context = new FinTrakBankingContext())

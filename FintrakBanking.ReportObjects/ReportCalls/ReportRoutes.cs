@@ -135,7 +135,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         public string GetLoanDocumentDeferralsMCC(int companyId, DateRange dateRange, int staffId)
         {
             string path = string.Empty;
-            path = reportPath + "ReportViews/LoanDocumentDeferalsForMCC.aspx?companyId=" + companyId + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&branchCode=" + dateRange.branchCode;
+            path = reportPath + "ReportViews/LoanDocumentDeferalsForMCC.aspx?companyId=" + companyId + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&branchCode=" + dateRange.branchId;
             return path;
         }
         public string GetCollateralEstimated(int companyId, string collateralCode, int staffId)
@@ -346,7 +346,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/BondAndGuarantee.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/BondAndGuarantee.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate + "&approvalStatus="+dateRange.approvalStatus;
                 return path;
             }
             catch (Exception ex)

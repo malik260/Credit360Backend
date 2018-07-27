@@ -15,23 +15,9 @@
         <div>
             <asp:ScriptManager ID="ScriptManager1" runat="server">
             </asp:ScriptManager>
-            <rsweb:ReportViewer ID="collPropRv" runat="server" Font-Names="Verdana" Font-Size="8pt" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1600px" Height="608px">
-                <LocalReport ReportPath="Reports\Report\CollateralPropertyRevaluation.rdlc">
-                    <DataSources>
-                        <rsweb:ReportDataSource DataSourceId="odsCollPropRev" Name="CollateralPropertyDetails" />
-                    </DataSources>
-                </LocalReport>
+            <rsweb:ReportViewer ID="ReportViewer" runat="server" Font-Names="Verdana" Font-Size="8pt" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1600px" Height="608px">
             </rsweb:ReportViewer>
         </div>
-          <asp:Label ID="value" runat="server" Visible="false" ></asp:Label>
-        <asp:ObjectDataSource ID="odsCollPropRev" runat="server" SelectMethod="CollateralPropertyRevaluation" TypeName="FintrakBanking.ReportObjects.ReportingObjects.LimitsMonitoringReportsObjects">
-            <SelectParameters>
-                <asp:ControlParameter ControlID="startDate" Name="startDate" PropertyName="Text" Type="DateTime" />
-                <asp:ControlParameter ControlID="endDate" Name="endDate" PropertyName="Text" Type="DateTime" />
-            </SelectParameters>
-        </asp:ObjectDataSource>
     </form>
 </body>
-     <asp:Label ID="startDate" runat="server" Visible ="false"  ></asp:Label>
-     <asp:Label ID="endDate" runat="server" Visible ="false"  ></asp:Label>
 </html>
