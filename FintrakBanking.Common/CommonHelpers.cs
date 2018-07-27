@@ -121,6 +121,17 @@ namespace FintrakBanking.Common
         }
 
         /// <summary>
+        /// Verifies that a string contains alphanumeric characters
+        /// </summary>
+        /// <param name="strToCheck"></param>
+        /// <returns>Boolean</returns>
+        public static Boolean isAlphaNumeric(string strToCheck)
+        {
+            Regex rg = new Regex(@"^[\w\s,]+$");
+            return rg.IsMatch(strToCheck);
+        }
+
+        /// <summary>
         /// Generate random digit code
         /// </summary>
         /// <param name="length">Length</param>

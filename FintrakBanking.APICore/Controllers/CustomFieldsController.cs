@@ -11,6 +11,7 @@ using System.Web.Http;
 using System.Net.Http;
 using System.Web;
 using System.Net;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -51,7 +52,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
@@ -82,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
               }
-              catch (Exception ex)
+              catch (SecureException ex)
               {
                   this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
@@ -116,7 +117,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
-                catch (Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
@@ -149,7 +150,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
                 }
-                catch (Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -182,7 +183,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
                 }
-                catch (Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
@@ -204,7 +205,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -240,7 +241,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
-                catch (Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
@@ -274,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
                 }
-                catch (Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -299,7 +300,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -330,7 +331,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error Update this record" });
                 }
-                catch (Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error Update this record {ex.Message}" });
@@ -357,7 +358,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -381,7 +382,7 @@ namespace FintrakBanking.APICore.Controllers
                     }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });

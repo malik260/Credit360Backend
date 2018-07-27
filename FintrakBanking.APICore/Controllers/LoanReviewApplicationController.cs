@@ -11,10 +11,13 @@ using System.Web.Http;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
+using FintrakBanking.APICore.Filters;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
     [RoutePrefix("api/v1/credit")]
+    //[SecureExceptionFilterAttribute]
     public class LoanReviewApplicationController : ApiControllerBase
     {
         TokenDecryptionHelper token = new TokenDecryptionHelper();
@@ -64,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = items.Count() });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
@@ -78,7 +81,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllSelectList();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -96,26 +99,19 @@ namespace FintrakBanking.APICore.Controllers
                 bool response = repo.SubmitLoanReviewApplication(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Application submitted successfully.", result = response });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/loan-search")]
         public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)
         {
-            try
-            {
-                //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-                var data = loanRepo.SearchForLoanAndRevolvingLoan(search.performanceTypeId, search.productTypeId, search.searchString);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
-            }
-            catch (Exception e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+            //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.performanceTypeId, search.productTypeId, search.searchString);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
          [HttpPost] [ClaimsAuthorization]
@@ -133,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
                 int response = repo.SaveCam(cam);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
@@ -148,7 +144,7 @@ namespace FintrakBanking.APICore.Controllers
                 CamViewModel data = repo.GetCamDocumentByApprovalLevel(applicationId,token.GetStaffId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -163,7 +159,7 @@ namespace FintrakBanking.APICore.Controllers
                 List<CamViewModel> data = repo.GetCamDocuments(applicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -184,7 +180,7 @@ namespace FintrakBanking.APICore.Controllers
                 int response = repo.ForwardApplication(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }

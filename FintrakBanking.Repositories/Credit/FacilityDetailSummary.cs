@@ -732,7 +732,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        loadArchiveId = a.LOANARCHIVEID,
                                        loanId = a.LOANID,
-                                       archiveCode = a.ARCHIVEBATCHCODE,
+                                       archiveCode = a.GetARCHIVEBATCHCODE(),
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,

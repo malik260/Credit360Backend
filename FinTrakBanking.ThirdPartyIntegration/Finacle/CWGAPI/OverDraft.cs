@@ -33,7 +33,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
             }
 
             //FinTrakBankingContext logContext = new FinTrakBankingContext();
-            private HttpClientHandler _handler = new HttpClientHandler();
+            //private HttpClientHandler _handler = new HttpClientHandler();
             private static HttpClient _httpClientInstance;
 
             private ResponseMessageViewModel responseAPI;
@@ -41,7 +41,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APIOverDraftNormal(OverDraftNormalViewModel model)
             {
-                //HttpClientHandler handler = new HttpClientHandler();
+                HttpClientHandler _handler = new HttpClientHandler();
 
                 _handler.UseDefaultCredentials = true;
                 HttpClient client = new HttpClient(_handler);
@@ -110,6 +110,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         }; 
                     }
                     responseMessage = await response.Content.ReadAsStringAsync();
+                    _handler.Dispose();
+                    client.Dispose();
                     return responseMsg;
                 }
                 catch (Exception ex)
@@ -143,11 +145,13 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                     logContext.SaveChanges();
+                   
                 }
             }
 
             public async Task<ResponseMessage> APIOverDraftTopUp(OverDraftTopUpAndRenewViewModel model)
             {
+                HttpClientHandler _handler = new HttpClientHandler();
                 HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -211,6 +215,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     };
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();
+
+                _handler.Dispose();
+                client.Dispose();
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
                     APIURL = "api/OverDraft/TopUp",
@@ -226,12 +233,14 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                 logContext.SaveChanges();
+            
                 return responseMsg;
 
             }
 
             public async Task<ResponseMessage> APIOverDraftRenew(OverDraftTopUpAndRenewViewModel model)
             {
+                HttpClientHandler _handler = new HttpClientHandler();
                 HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -293,6 +302,9 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     };
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();
+
+                _handler.Dispose();
+                client.Dispose();
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
                     APIURL = "api/OverDraft/Renew",
@@ -308,13 +320,14 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                 logContext.SaveChanges();
+         
                 return responseMsg;
 
             }
 
             public async Task<ResponseMessage> APIOverDraftExtend(OverDraftExtendViewModel model)
             {
-
+                HttpClientHandler _handler = new HttpClientHandler();
                 HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -377,6 +390,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 }
 
                 responseMessage = await response.Content.ReadAsStringAsync();
+                _handler.Dispose();
+                client.Dispose();
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
                     APIURL = "api/OverDraft/Extend",
@@ -392,6 +407,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                 logContext.SaveChanges();
+               
                 return responseMsg;
 
             }
@@ -402,6 +418,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
             //----------------------------------- TemporaryOverDraft----------------------------------------
             public async Task<ResponseMessage> APITemporaryOverDraftNormal(TemporaryOverDraftViewModel model)
             {
+                HttpClientHandler _handler = new HttpClientHandler();
                 HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -464,6 +481,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 }
 
                 responseMessage = await response.Content.ReadAsStringAsync();
+                _handler.Dispose();
+                client.Dispose();
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
                     APIURL = "api/TemporaryOverDraft/Normal",
@@ -479,6 +498,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                 logContext.SaveChanges();
+        
                 return responseMsg;
 
 
@@ -486,6 +506,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APITemporaryOverDraftRunning(TemporaryOverDraftViewModel model)
             {
+                HttpClientHandler _handler = new HttpClientHandler();
                 HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -546,6 +567,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     };
                 }
                 responseMessage = await response.Content.ReadAsStringAsync();
+                _handler.Dispose();
+                client.Dispose();
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
                     APIURL = "api/TemporaryOverDraft/Running",
@@ -561,6 +584,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                 logContext.SaveChanges();
+         
                 return responseMsg;
 
 
@@ -568,6 +592,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 
             public async Task<ResponseMessage> APITemporaryOverDraftSingle(TemporaryOverDraftViewModel model)
             {
+                HttpClientHandler _handler = new HttpClientHandler();
                 HttpClient client = new HttpClient(_handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -626,10 +651,12 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                     };
                 }
 
-                _handler.Dispose();
-                client.Dispose();
+                //_handler.Dispose();
+                //client.Dispose();
 
                 responseMessage = await response.Content.ReadAsStringAsync();
+                _handler.Dispose();
+                client.Dispose();
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
                     APIURL = "api/TemporaryOverDraft/Single",
@@ -645,6 +672,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 logContext.TBL_CUSTOM_API_LOGS.Add(logs);
 
                 logContext.SaveChanges();
+         
                 return responseMsg;
             }
 

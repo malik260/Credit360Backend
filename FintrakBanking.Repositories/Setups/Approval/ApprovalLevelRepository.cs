@@ -11,7 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.WorkFlow;
-using System.ComponentModel.Composition;
+using FintrakBanking.Common.CustomException;
 using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Setups.Approval
@@ -346,7 +346,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             if (context.TBL_APPROVAL_TRAIL.Where(x => x.TOAPPROVALLEVELID == id || x.FROMAPPROVALLEVELID == id).Any())
             {
-                throw new Exception("Can not delete this level because it is being used. You can de activate it.");
+                throw new SecureException("Can not delete this level because it is being used. You can de activate it.");
             }
             else
             {
@@ -366,7 +366,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 

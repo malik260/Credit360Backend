@@ -6,6 +6,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -32,7 +33,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
@@ -49,7 +50,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
@@ -66,7 +67,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
@@ -83,7 +84,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
@@ -100,7 +101,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });
@@ -117,7 +118,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = "Email sent successfully" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 errorLog.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There were errors: {ex.Message}" });

@@ -12,7 +12,17 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int LOANARCHIVEID { get; set; }
 
-        public string ARCHIVEBATCHCODE { get; set; }
+        private string aRCHIVEBATCHCODE;
+
+        public string GetARCHIVEBATCHCODE()
+        {
+            return aRCHIVEBATCHCODE;
+        }
+
+        public void SetARCHIVEBATCHCODE(string value)
+        {
+            aRCHIVEBATCHCODE = value;
+        }
 
         //[Column(TypeName = "date")]
         public DateTime CHANGEEFFECTIVEDATE { get; set; }
@@ -189,6 +199,9 @@ namespace FintrakBanking.Entities.Models
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
+
+        public string ARCHIVEBATCHCODE { get; set; }
+        
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

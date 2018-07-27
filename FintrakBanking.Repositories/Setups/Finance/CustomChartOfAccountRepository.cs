@@ -10,6 +10,7 @@ using FintrakBanking.Common.Enum;
 using System.Linq;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Setups.Finance
 {
@@ -68,7 +69,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             {
                 if (finacle.ValidateGLNumber("100" + accountId) == null) // 100 is headoffice code
                 {
-                    throw new Exception("The pecified account id do not exist!");
+                    throw new SecureException("The pecified account id do not exist!");
                 }
             }
         }

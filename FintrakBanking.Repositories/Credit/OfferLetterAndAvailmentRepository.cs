@@ -1616,7 +1616,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (appl == null)
                     {
                         result = false;
-                        throw new Exception("Loan application with the given reference number not found!");
+                        throw new SecureException("Loan application with the given reference number not found!");
                     }
                     else
                     {
@@ -1699,7 +1699,7 @@ namespace FintrakBanking.Repositories.Credit
                                     var request = new TBL_LOAN_BOOKING_REQUEST
                                     {
                                         AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                         LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                                         DATETIMECREATED = DateTime.Now,
                                         CREATEDBY = entity.staffId,
@@ -1719,7 +1719,7 @@ namespace FintrakBanking.Repositories.Credit
                                             var request = new TBL_LOAN_BOOKING_REQUEST
                                             {
                                                 AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                                                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                                                APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                                 LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                                                 DATETIMECREATED = DateTime.Now,
                                                 CREATEDBY = entity.staffId,
@@ -1784,7 +1784,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var operationId = (int)OperationsEnum.OfferLetterApproval;
             var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
-            if (appl == null) throw new Exception("Loan application with the given reference number not found!");
+            if (appl == null) throw new SecureException("Loan application with the given reference number not found!");
 
             // init
             workflow.StaffId = model.createdBy;

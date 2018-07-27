@@ -5,6 +5,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
 using System;
 using System.Collections.Generic;
+using FintrakBanking.Common.CustomException;
 using System.ComponentModel.Composition;
 using System.Linq;
 
@@ -106,7 +107,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 

@@ -428,8 +428,8 @@
     <Compile Include="Controllers\StaffController.cs" />
     <Compile Include="Controllers\TaxController.cs" />
     <Compile Include="Controllers\TestController.cs" />
-    <Compile Include="ExceptionLogger\Logger.cs" />
     <Compile Include="Filters\AuthorizeActivity.cs" />
+    <Compile Include="Filters\SecureExceptionFilterAttribute.cs" />
     <Compile Include="Providers\SimpleRefreshTokenProvider.cs" />
     <Compile Include="Reports\Credit\Credit1.Designer.cs">
       <AutoGen>True</AutoGen>

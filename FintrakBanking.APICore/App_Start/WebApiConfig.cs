@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.WebApi.Extensions.Compression.Server;
+﻿using FintrakBanking.APICore.Filters;
+using Microsoft.AspNet.WebApi.Extensions.Compression.Server;
 using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 using System.Net.Http.Extensions.Compression.Core.Compressors;
@@ -15,6 +16,7 @@ namespace FintrakBanking.APICore
             // Configure Web API to use only bearer token authentication.
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+            config.Filters.Add(new SecureExceptionFilterAttribute());
 
             // Use camel case for JSON data.
             config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -163,7 +164,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 {
                     trans.Rollback();
 
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
             return output;

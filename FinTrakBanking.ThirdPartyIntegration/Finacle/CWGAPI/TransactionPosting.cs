@@ -52,7 +52,7 @@
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.Timeout = TimeSpan.FromSeconds(60);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(
@@ -185,7 +185,7 @@
 
             //    httpClientInstance = new HttpClient();
             //    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-            //    client.Timeout = TimeSpan.FromSeconds(30);
+            //    client.Timeout = TimeSpan.FromSeconds(60);
             //    client.DefaultRequestHeaders.Authorization = token;
             //    client.BaseAddress = new Uri(API_URL);
             //    client.DefaultRequestHeaders.Accept.Clear();
@@ -249,7 +249,7 @@
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.Timeout = TimeSpan.FromSeconds(60);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -335,7 +335,7 @@
             }
 
 
-            public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model)
+            public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model, bool isCrossCurrency = false)
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
@@ -354,7 +354,7 @@
                     handler.UseDefaultCredentials = true;
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.Timeout = TimeSpan.FromSeconds(60);
                     client.DefaultRequestHeaders.Authorization = token;
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
@@ -363,8 +363,19 @@
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
-                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;                  
+
+                    string apiUrl = "api/Transactions/PostTransactions";
+                    if (isCrossCurrency == true)
+                    {
+                        apiUrl = "api/Transactions/PostCrossCurrencyTransactions";
+                    }
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    //response = client.PostAsync("api/Transactions/PostCrossCurrencyTransactions", new StringContent(
+                    //                                 new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
 
                     responseDateTime = DateTime.Now; 
 
@@ -478,7 +489,7 @@
 
                     httpClientInstance = new HttpClient();
                     httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-                    client.Timeout = TimeSpan.FromSeconds(30);
+                    client.Timeout = TimeSpan.FromSeconds(60);
                     client.BaseAddress = new Uri(API_URL);
                     client.DefaultRequestHeaders.Accept.Clear();
 

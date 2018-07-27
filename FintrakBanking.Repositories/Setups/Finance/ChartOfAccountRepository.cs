@@ -12,7 +12,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
+using FintrakBanking.Common.CustomException;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             if (data  != null)
                 return data;
             else
-                throw new Exception("Office Account Does Not Exist in Finaco");
+                throw new SecureException("Office Account Does Not Exist in Finaco");
         }
 
         public bool GoForApproval(ApprovalViewModel entity)
@@ -82,7 +82,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
                         trans.Rollback();
-                        throw new Exception("Approval Failed");
+                        throw new SecureException("Approval Failed");
                     }
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
@@ -105,7 +105,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -238,7 +238,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -247,7 +247,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             ValidateAccountId(account.accountCode);
 
             if (account.currencies.Count < 1)
-                throw new Exception("Chart of Account Currency must be specified");
+                throw new SecureException("Chart of Account Currency must be specified");
 
             List<TBL_CHART_OF_ACCOUNT_CURRENCY> currencies = new List<TBL_CHART_OF_ACCOUNT_CURRENCY>();
 
@@ -311,12 +311,12 @@ namespace FintrakBanking.Repositories.Setups.Finance
             if (USE_THIRD_PARTY_INTEGRATION)
             {
                 if (cwpAIP.ValidateGLNumber(accountModel.accountCode) == null)
-                    throw new Exception($"Account Number {accountModel.accountCode} does not exist on the core banking application");
+                    throw new SecureException($"Account Number {accountModel.accountCode} does not exist on the core banking application");
             }
 
 
             if (accountModel.currencies.Count < 1)
-                throw new Exception("Chart of Account Currency must be specified");
+                throw new SecureException("Chart of Account Currency must be specified");
 
             List<TBL_TEMP_CHART_OF_ACCOUNT_CUR> currencies = new List<TBL_TEMP_CHART_OF_ACCOUNT_CUR>();
 
@@ -327,7 +327,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (existStingTempAccount.Any())
             {
-                throw new Exception("Account Information already exist and is undergoing approval");
+                throw new SecureException("Account Information already exist and is undergoing approval");
             }
 
             //Storing the chart of account currencies
@@ -408,7 +408,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -509,6 +509,26 @@ namespace FintrakBanking.Repositories.Setups.Finance
             };
         }
 
+        public int GetAccountDefaultCurrency(int glAccountId, int companyId)
+        {
+            int output;
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION == false)
+            {
+                output = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == companyId).CURRENCYID;
+            }
+            else
+            {
+                 output = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                                   join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                                   join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
+                                   where gla.GLACCOUNTID == glAccountId
+                                   select cur.CURRENCYID).FirstOrDefault();
+            }
+
+            return output;  
+        }
+
         private bool UpdateAccount2(short accountId, ChartOfAccountViewModel account)
         {
             ValidateAccountId(account.accountCode);
@@ -568,7 +588,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 var placeholder = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == accountCode);
                 if (placeholder.Any() == false)
                 {
-                    throw new Exception("The pecified account id do not exist!");
+                    throw new SecureException("The pecified account id do not exist!");
                 }
             }
         }
@@ -595,7 +615,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
             if (unApprovedAccountEdit.Any())
             {
-                throw new Exception("Chart of Account is already undergoing approval");
+                throw new SecureException("Chart of Account is already undergoing approval");
             }
 
             if (existingTempAccount != null)
@@ -736,7 +756,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }

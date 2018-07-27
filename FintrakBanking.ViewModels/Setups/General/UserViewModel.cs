@@ -80,6 +80,8 @@ namespace FintrakBanking.ViewModels.Setups.General
                     : DateTime.Now.AddDays(-5).ToString("dd/MM/yyyy");
             }
         }
+
+        public int sessionTimeout { get; set; }
     }
 
     public class SessionStatusInfo
@@ -88,8 +90,16 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int state { get; set; }
         public string errorMessage { get; set; }
         public string ipaddress { get; set; }
+        public bool isPasswordExpired { get; set; }
+        public bool isFirstLogin { get; set; }
     }
 
+    public class PasswordChangeViewModel
+    {
+        public string username { get; set; }
+        public string currentPassword { get; set; }
+        public string newPassword { get; set; }
+    }
     public class ActiveUserDetails
     {
         public int companyId { get; set; }

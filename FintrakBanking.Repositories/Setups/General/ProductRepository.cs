@@ -230,7 +230,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (isProductGroupExist)
             {
-                throw new Exception("Product group already exists!");
+                throw new SecureException("Product group already exists!");
             }
 
             var isProductCodeExist = context.TBL_PRODUCT_GROUP.Any(x =>
@@ -238,7 +238,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (isProductCodeExist)
             {
-                throw new Exception("Product group with that code already exists!");
+                throw new SecureException("Product group with that code already exists!");
             }
 
             var data = new TBL_PRODUCT_GROUP()
@@ -393,7 +393,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (isProductTypeExist)
             {
-                throw new Exception("Product type already exists!");
+                throw new SecureException("Product type already exists!");
             }
             var data = new TBL_PRODUCT_TYPE()
             {
@@ -450,7 +450,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 var countProductGroupUsed = this.context.TBL_PRODUCT.Count(x => x.PRODUCTTYPEID == productTypeId);
                 if (countProductGroupUsed > 0)
                 {
-                    throw new Exception("The product group for this product type cannot be changed because the product type is already in use");
+                    throw new SecureException("The product group for this product type cannot be changed because the product type is already in use");
                 }
             }
 
@@ -1052,7 +1052,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             catch (Exception ex)
             {
-                throw new Exception("" + ex);
+                throw new SecureException("" + ex);
             }
 
 
@@ -1205,7 +1205,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     //if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     //{
                     //    trans.Rollback();
-                    //    throw new Exception("Approval Failed");
+                    //    throw new SecureException("Approval Failed");
                     //}
 
                     if(entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
@@ -1239,7 +1239,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -1544,7 +1544,7 @@ namespace FintrakBanking.Repositories.Setups.General
             if (isPrincipalGLRequired)
             {
                 if (productModel.currencies == null)
-                    throw new Exception("Product Currency must be specified. Please select a principal GL with mapped currencies");
+                    throw new SecureException("Product Currency must be specified. Please select a principal GL with mapped currencies");
             }
 
             bool output = false;
@@ -1570,7 +1570,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (existingTempProduct != null)
             {
-                throw new Exception("Product Information already exist and is undergoing approval");
+                throw new SecureException("Product Information already exist and is undergoing approval");
             }
 
             //// Remove exisiting product fees, currency and collaterals
@@ -1778,7 +1778,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -1896,7 +1896,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (unApprovedProductEdit.Any())
             {
-                throw new Exception("Product is already undergoing approval");
+                throw new SecureException("Product is already undergoing approval");
             }
 
             if (existingTempProduct != null)
@@ -2233,7 +2233,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -2333,7 +2333,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (isProductPriceIndexExist)
             {
-                throw new Exception("Product price already exists!");
+                throw new SecureException("Product price already exists!");
             }
             var data = new TBL_PRODUCT_PRICE_INDEX()
             {
