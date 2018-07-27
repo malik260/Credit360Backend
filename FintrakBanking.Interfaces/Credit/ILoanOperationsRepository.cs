@@ -60,6 +60,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId); 
          IEnumerable<LoanClassificationViewModel> CalculateLoanClassification(DateTime applicationDate);
         LoanViewModel GetRunningLoans(int companyId, string refNo);
+        LoanViewModel GetRunningFXLoans(int companyId, string refNo);
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD();
         IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType();
         IEnumerable<LoanFeeOperationViewModel> GetLoanChargeFeeByLoanId(int loanId);

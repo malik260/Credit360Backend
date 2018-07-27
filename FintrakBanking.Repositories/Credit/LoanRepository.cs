@@ -5392,6 +5392,119 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public IQueryable<LoanViewModel> SearchForFXRevolvingLoan(string searchQuery)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            try
+            {
+                IQueryable<LoanViewModel> allFilteredLoan = null;
+                if (!string.IsNullOrWhiteSpace(searchQuery))
+                {
+                    searchQuery = searchQuery.ToLower();
+                }
+                if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+                {
+                    var loans = (from a in context.TBL_LOAN
+                                 join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                 join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                 where a.ISDISBURSED == true //&& a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate)
+                                 && a.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving
+                                 select new LoanViewModel
+                                 {
+                                     loanId = a.TERMLOANID,
+                                     customerId = a.CUSTOMERID,
+                                     customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                     firstName = b.FIRSTNAME,
+                                     lastName = b.LASTNAME,
+                                     customerCode = b.CUSTOMERCODE,
+                                     productAccountName = c.PRODUCTACCOUNTNAME,
+                                     loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                     principalAmount = a.PRINCIPALAMOUNT,
+                                     nostroAccount = a.NOSTROACCOUNTID,
+                                     currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
+                                     currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                     productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                     productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                     casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                                     productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+                                     //applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                     //principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
+                                     //pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
+                                     //interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
+                                     //interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
+                                     //productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+                                     //productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                     //productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                     //principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
+                                     //interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
+                                     //relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                     //relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                                     //relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                     //relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
+                                     //misCode = a.MISCODE,
+                                     //teamMiscode = a.TEAMMISCODE,
+                                     //interestRate = a.INTERESTRATE,
+                                     //effectiveDate = a.EFFECTIVEDATE,
+                                     //maturityDate = a.MATURITYDATE,
+                                     //bookingDate = a.BOOKINGDATE,
+
+                                     //principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,
+                                     //interestInstallmentLeft = a.INTERESTINSTALLMENTLEFT,
+                                     //approvalStatusId = a.APPROVALSTATUSID,
+                                     //approvedBy = a.APPROVEDBY,
+                                     //approverComment = a.APPROVERCOMMENT,
+                                     //dateApproved = a.DATEAPPROVED,
+                                     //loanStatusId = a.LOANSTATUSID,
+                                     //scheduleTypeId = a.SCHEDULETYPEID,
+                                     //scheduleTypeName = a.TBL_LOAN_SCHEDULE_TYPE.SCHEDULETYPENAME,
+                                     //isDisbursed = a.ISDISBURSED,
+                                     //disbursedBy = a.DISBURSEDBY,
+                                     //disburserComment = a.DISBURSERCOMMENT,
+                                     //disburseDate = a.DISBURSEDATE,
+                                     //approvedAmount = a.ApprovedAmount,
+                                     //operationId = a.OPERATIONID,
+                                     //operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                     //subSectorName = a.TBL_SUB_SECTOR.NAME,
+                                     //sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                                     //casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                                     //customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                                     //loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                                     //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                     //equityContribution = a.EQUITYCONTRIBUTION,
+                                     //firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
+                                     //firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
+                                     //outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                     //outstandingInterest = a.OUTSTANDINGINTEREST,
+                                     //principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,
+                                     //principalReductionCount = a.PRINCIPALREDUCTIONCOUNT ?? 0,
+                                     //fixedPrincipal = a.FIXEDPRINCIPAL,
+                                     //profileLoan = a.PROFILELOAN,
+                                     //dischargeLetter = a.DISCHARGELETTER,
+                                     //suspendInterest = a.SUSPENDINTEREST,
+                                     //customerSensitivityLevelId = b.CUSTOMERSENSITIVITYLEVELID,
+                                     //createdBy = a.CREATEDBY,
+                                     //dateTimeCreated = a.DATETIMECREATED,
+                                     //isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
+                                     //exchangeRate = a.EXCHANGERATE,
+                                     //currencyId = a.CURRENCYID,
+                                     //currency = a.TBL_CURRENCY.CURRENCYNAME
+                                 });
+                    allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) || x.customerCode.ToLower().Contains(searchQuery) ||
+                                       x.firstName.ToLower().Contains(searchQuery) ||
+                                       x.lastName.ToLower().Contains(searchQuery) ||
+                                       x.currencyCode.ToLower().Contains(searchQuery) ||
+                                       x.casaAccountNumber.ToLower().Contains(searchQuery) ||
+                                       x.nostroAccount.ToLower().Contains(searchQuery) ||
+                                       x.productAccountName.ToLower().Contains(searchQuery)).Take(10).AsQueryable();
+                }
+                return allFilteredLoan;
+            }
+            catch (System.Exception ex)
+            {
+                return null;
+            }
+        }
+
         public IQueryable<LoanViewModel> SearchRunningCommercialForLoans(string searchQuery)
         {
             var applicationDate = generalSetup.GetApplicationDate();
@@ -5411,7 +5524,8 @@ namespace FintrakBanking.Repositories.Credit
                                        join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                        where a.ISDISBURSED == true
                                        && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                       && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                      // && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) 
+                                       && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                        b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                        b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                        b.LASTNAME.ToLower().Contains(searchQuery) ||

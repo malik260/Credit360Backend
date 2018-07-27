@@ -47,7 +47,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-        public short trailApprovalStatus;
+        public short trailApprovalStatus { get; set; }
+        public string nostroAccount { get; set; }
+        public string currencyCode { get; set; }
+
         public string ApprovalStatus { get; set; }
         public string approvedByName { get; set; }
 

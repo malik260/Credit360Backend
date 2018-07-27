@@ -10086,6 +10086,69 @@ namespace FintrakBanking.Repositories.Credit
             return runningLoan;
         }
 
+        public LoanViewModel GetRunningFXLoans(int companyId, string refNo)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
+            DateTime maturityDate = data.MATURITYDATE;
+            DateTime effectiveDate = data.EFFECTIVEDATE;
+            decimal outStandingBalance = data.OUTSTANDINGPRINCIPAL;
+            TimeSpan difference = maturityDate - applicationDate;
+            int days = (int)difference.TotalDays;
+            //decimal accruedInterest =  context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.LOANID == data.TERMLOANID && x.DATE == applicationDate).ACCRUEDINTEREST;
+            //decimal accruedInterest = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.DATE == applicationDate).ACCRUEDINTEREST;
+            //accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
+            //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.LOANID == data.TERMLOANID && x.PAYMENTDATE > applicationDate).PAYMENTDATE;
+            //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.PAYMENTDATE >= applicationDate).PAYMENTDATE;
+           // outStandingBalance = decimal.Round(outStandingBalance, 2, MidpointRounding.AwayFromZero);
+
+            //decimal pastDue = decimal.Round((data.PASTDUEINTEREST + data.INTERESTONPASTDUEINTEREST + data.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+            //decimal totalamount = (accruedInterest + outStandingBalance + pastDue);
+
+
+            var runningLoan = (from l in context.TBL_LOAN
+                               where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo
+                               select new LoanViewModel()
+                               {
+                                   loanId = l.TERMLOANID,
+                                   companyName = l.TBL_COMPANY.NAME,
+                                   companyId = l.COMPANYID,
+                                   customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                                   customerId = l.CUSTOMERID,
+                                   approvedAmount = l.PRINCIPALAMOUNT,
+                                   branchId = l.BRANCHID,
+                                   branchName = l.TBL_BRANCH.BRANCHNAME,
+                                   interestRate = l.INTERESTRATE,
+                                   outstandingInterest = l.OUTSTANDINGINTEREST,
+                                   outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
+                                   principalAmount = l.PRINCIPALAMOUNT,
+                                   currency = l.TBL_CURRENCY.CURRENCYNAME,
+                                   loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                   effectiveDate = applicationDate,
+                                   previousEffectiveDate = l.EFFECTIVEDATE,
+                                   equityContribution = 0,
+                                   maintainTenor = true,
+                                   maturityDate = l.MATURITYDATE,
+                                   scheduleTypeId = l.SCHEDULETYPEID,
+                                   scheduleTypeCategoryId = l.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
+                                   //teno = (int)(l.MATURITYDATE - l.EFFECTIVEDATE).Days,
+                                   newtenor = 0,
+                                  // accrualedAmount = accruedInterest,
+                                  // totalAmount = totalamount,
+                                   //firstPrincipalPaymentDate = nextPaymentDate,
+                                  // firstInterestPaymentDate = nextPaymentDate,
+                                   principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
+                                   interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
+                                 //  pastDueTotal = pastDue,
+                                   relationshipManagerId = l.RELATIONSHIPMANAGERID,
+                                   relationshipOfficerId = l.RELATIONSHIPOFFICERID,
+                                   productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
+                                   systemCurrentDate = applicationDate
+                               }).FirstOrDefault();
+
+            return runningLoan;
+        }
+
         public IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId)
         {
             var excemptionsList = (from l in context.TBL_LOAN

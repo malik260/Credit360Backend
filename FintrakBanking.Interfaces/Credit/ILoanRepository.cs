@@ -28,6 +28,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
 
+        IQueryable<LoanViewModel> SearchForFXRevolvingLoan(string searchQuery);
+
         IEnumerable<LoanViewModel> GetApprovedLoanReview();
 
         IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial();

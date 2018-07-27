@@ -59,6 +59,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-running-fx-revolving-loan/{refNo}")]
+        public HttpResponseMessage GetRunningFXLoans(string refNo)
+        {
+            try
+            {
+                var data = repo.GetRunningFXLoans(token.GetCompanyId, refNo);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("commercial-loans-lines")]
         public HttpResponseMessage GetCommercialLoansLines()
         {
