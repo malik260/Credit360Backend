@@ -4508,6 +4508,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dateTimeCreated = DateTime.Today,
                                  revolvingTypeId = a.REVOLVINGTYPEID,
                                  productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 serialNumber = a.SERIALNUMBER,
 
                              }).FirstOrDefault();
 
@@ -4587,7 +4588,7 @@ namespace FintrakBanking.Repositories.Credit
                         var data = new OverDraftTopUpAndRenewViewModel
                         {
                             sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                            sanctionReferenceNumber = loan.loanReferenceNumber,
+                            sanctionReferenceNumber = loan.serialNumber,
                             accountNumber = loan.productAccountNumber,
                             expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                             reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -4686,6 +4687,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dateTimeCreated = DateTime.Today,
                                  revolvingTypeId = a.REVOLVINGTYPEID,
                                  productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 serialNumber = a.SERIALNUMBER,
 
                              }).FirstOrDefault();
 
@@ -4760,7 +4762,7 @@ namespace FintrakBanking.Repositories.Credit
                         //reviewedDate = loan.effectiveDate.ToString()
 
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
+                        sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -5007,6 +5009,7 @@ namespace FintrakBanking.Repositories.Credit
                 ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
+                             join c in context.TBL_CASA on b.CASA_ACCOUNTID equals c.CASAACCOUNTID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                              select new RevolvingLoanViewModel()
                              {
@@ -5030,7 +5033,7 @@ namespace FintrakBanking.Repositories.Credit
                                  interestRate = (double)b.INTERATERATE,
                                  effectiveDate = b.EFFECTIVEDATE,
                                  maturityDate = (DateTime)b.MATURITYDATE,
-                                 bookingDate = DateTime.Today,
+                                 bookingDate = systemDate,
                                  overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
                                  pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                  pastDueInterest = a.PASTDUEINTEREST,
@@ -5057,6 +5060,9 @@ namespace FintrakBanking.Repositories.Credit
                                  dateTimeCreated = DateTime.Today,
                                  revolvingTypeId = a.REVOLVINGTYPEID,
                                  productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 serialNumber = a.SERIALNUMBER,
+                                 casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
+
 
                              }).FirstOrDefault();
 
@@ -5124,28 +5130,42 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
+                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                     var loan = model;
                     var reviewDate = loan.bookingDate.AddMonths(1);                   
                     var data = new OverDraftExtendViewModel
                     {
                         sanctionLimit = String.Format("{0:0.00}", initialLimit -loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
+                        sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
                         createdDate = systemDate,
                     };
-                    subAllocationExtentionResult = finacle.OverDraftExtend(data);
-                    var data1  = new OverDraftTopUpAndRenewViewModel
+                   subAllocationExtentionResult = finacle.OverDraftExtend(data);
+                    var data1  = new OverDraftNormalViewModel
                     {
-                        sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
-                        accountNumber = loan.productAccountNumber,
+                        //sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
+                        //sanctionReferenceNumber = loan.serialNumber,
+                        //accountNumber = loan.productAccountNumber,
+                        //expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                        //reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                        //createdDate = systemDate,
+                        accountNumber = loan.casaAccountNumber,
+                        applicationDate = loan.bookingDate.ToString("dd-MMM-yyyy", null),
+                        documentDate = loan.bookingDate.ToString("dd-MMM-yyyy", null),
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                        createdDate = systemDate,
+                        sanctionDate = loan.bookingDate.ToString("dd-MMM-yyyy", null),
+                        sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
+                        sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
                     };
-                    subAllocationResult = finacle.OverDraftRenew(data1);
+                    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                    {
+                        username = "fintrak",//user.userName,
+                        passcode = "1234",//user.passCode
+                    };
+                    subAllocationResult = finacle.OverDraftNormal(data1, twoFactorAuthDetails);
                 }
 
                 addOverDraft.SERIALNUMBER = subAllocationResult.serialNumber;
