@@ -1,4 +1,5 @@
-﻿using Microsoft.Reporting.WebForms;
+﻿using FintrakBanking.ReportObjects.ReportingObjects;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,23 +17,27 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                startDate.Text = Request.QueryString["startDate"];
-                endDate.Text = Request.QueryString["endDate"];
-                companyId.Text = Request.QueryString["companyId"];
-                categoryId.Text = Request.QueryString["categoryId"];
-                transactionTypeId.Text = Request.QueryString["transactionTypeId"];
-                branchId.Text = Request.QueryString["branchId"];
+               
+                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                int categoryId = Int32.Parse(Request.QueryString["categoryId"]);
+                int companyId = Int32.Parse(Request.QueryString["companyId"]);
+               
 
-                string tmpPath = @"Content\Icons\firstbank-logo.jpg";
-                string a = Path.GetFullPath(tmpPath);
-                string ProjectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)));
-                var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-                var imagePath = Path.Combine(outPutDirectory, tmpPath);
 
-                this.ReportViewer.LocalReport.EnableExternalImages = true;
-                ReportParameter logo = new ReportParameter("Path", imagePath);
-                ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
-                ReportParameter eDate = new ReportParameter("endDate", endDate.Text);
+                FinanceRepotObject accru = new FinanceRepotObject();
+                var data = accru.DailyAccrual(endDate, startDate, companyId,categoryId);
+
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource = new ReportDataSource();
+                reportDataSource.Value = data;
+                reportDataSource.Name = "accrual";
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/DailyAccrualReport.rdlc");
+
+                ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
              //   ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                 ReportViewer.LocalReport.Refresh();
             }

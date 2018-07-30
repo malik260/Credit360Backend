@@ -21,7 +21,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string responseCode { get; set; }
         public int operationId { get; set; }
 
-
+        public string currencycrosscode { get; set; }
         public string rateCode { get; set; }
         public string rateUnit { get; set; }
 
@@ -182,6 +182,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string TemporaryOverDraftNaration { get; set; }
         public string APIUrl { get; set; }
         public int TemporaryOverDraftId { get; set; }
+        public string TemporaryOverDraftInterestRate { get; set; }
+        
     }
     
     public class ResponseMessageViewModel

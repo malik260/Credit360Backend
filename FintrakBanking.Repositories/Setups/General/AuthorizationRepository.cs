@@ -10,8 +10,6 @@ using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFa
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(IAuthorizationRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class AuthorizationRepository : IAuthorizationRepository
     { 
         private FinTrakBankingContext context;

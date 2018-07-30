@@ -31,48 +31,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// nplLoanRv control.
+        /// ReportViewer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer nplLoanRv;
-        
-        /// <summary>
-        /// odsSelfLiquidatingLoans control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsSelfLiquidatingLoans;
-        
-        /// <summary>
-        /// endDate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label endDate;
-        
-        /// <summary>
-        /// startDate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label startDate;
-        
-        /// <summary>
-        /// classification control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label classification;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer;
     }
 }

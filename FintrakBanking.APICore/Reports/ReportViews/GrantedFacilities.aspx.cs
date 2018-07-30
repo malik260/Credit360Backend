@@ -1,4 +1,5 @@
-﻿ 
+﻿
+using FintrakBanking.ReportObjects.ReportingObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
@@ -17,23 +18,35 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
+                int? branchId = 0;
+                int? PostedByStaffId = 0;
                 string imagePath = new Uri(Server.MapPath("~/Content/icons/firstbank-logo.jpg")).AbsoluteUri;
-                //string tmpPath = @"image\firstbank-logo.jpg";
-                //string a = Path.GetFullPath(tmpPath);
-                //string ProjectPath = Path.GetDirectoryName(Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase)));
-                //var outPutDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-                //var imagePath = Path.Combine(outPutDirectory, tmpPath);
-               // var a = @"C:\Users\uuser\Desktop\Fintrak\Credit360\API\FintrakBankingAPI462\FintrakBanking.APICore\Content\icons\firstbank-logo.jpg";
-                ReportParameter data = new ReportParameter("selectedDate", DateTime.Now.ToString());
-                StartDate.Text = Request.QueryString["StartDate"];
-                EndDate.Text = Request.QueryString["EndDate"];
-                PostedByStaffId.Text = Request.QueryString["PostedByStaffId"];
-                glAccountId.Text = Request.QueryString["glAccountId"];
-                branchId.Text = Request.QueryString["branchId"];
-                companyId.Text = Request.QueryString["companyId"];
+                DateTime StartDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                DateTime EndDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);               
+                int glAccountId = int.Parse(Request.QueryString["glAccountId"]);
+                int companyId = int.Parse(Request.QueryString["companyId"]);
 
-                ReportParameter sDate = new ReportParameter("StartDate", StartDate.Text);
-                ReportParameter eDate = new ReportParameter("EndDate", EndDate.Text);
+                var staffId = Request.QueryString["PostedByStaffId"];
+                    if (staffId!=null && staffId != "")
+                        PostedByStaffId = int.Parse(Request.QueryString["PostedByStaffId"]);
+                string branch = Request.QueryString["branchId"];
+                if (branch != null && branch != "")
+                    branchId = Int32.Parse(Request.QueryString["branchId"]);
+
+                FinanceRepotObject sla = new FinanceRepotObject();
+                var data = sla.FinanceTransaction(StartDate, EndDate, companyId,branchId,glAccountId,PostedByStaffId);
+
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource = new ReportDataSource();
+                reportDataSource.Value = data;
+                reportDataSource.Name = "FinanceTransactions";
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/FinanceTransactions.rdlc");
+
+
+                ReportParameter sDate = new ReportParameter("StartDate", StartDate.ToString());
+                ReportParameter eDate = new ReportParameter("EndDate", EndDate.ToString());
                 ReportParameter logoPath = new ReportParameter("logo", imagePath);
 
                 this.ReportViewer.LocalReport.EnableExternalImages = true;

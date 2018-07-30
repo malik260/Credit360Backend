@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -36,7 +37,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = type });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -58,7 +59,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = totalItems });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
             }
@@ -85,7 +86,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = loans.ToList(), count = loans.Count() });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
             }
@@ -111,7 +112,7 @@ namespace FintrakBanking.APICore.Controllers
 
                     new { success = false, message = "Performance Status Change Not Successful" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }

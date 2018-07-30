@@ -126,7 +126,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 if (ActionIsApprovalDecision())
                 {
-                    throw new Exception("Unable to resolve initiating level or the process is closed!");
+                    throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 }
                 this.currentStateId = (int)ApprovalState.Initiation;
             }
@@ -138,10 +138,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute && request.REQUESTSTAFFID == this.staffId) { this.fromLevelId = request.FROMAPPROVALLEVELID; }
                 if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(request.REQUESTSTAFFID, request.FROMAPPROVALLEVELID, request.TOAPPROVALLEVELID); }
-                if (ProcessIsClosed()) { throw new Exception("Process is closed!"); }
+                if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
             }
 
-            if (ResolveLevelConfigurations() == false) { throw new Exception("Could not resolve approval level configurations!"); }
+            if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
             if (this.useOrganogram == true) { OrganogramRouting(); } // force to superior in organogram
 
@@ -169,7 +169,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             SendNotifications();
 
-            if (this.comment == "flow_test") { throw new Exception("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TOSTAFFID:" + this.toStaffId); }
+            if (this.comment == "flow_test") { throw new SecureException("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TOSTAFFID:" + this.toStaffId); }
 
             var trail = new TBL_APPROVAL_TRAIL
             {
@@ -195,7 +195,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.saved = context.SaveChanges() > 0;
             if (this.saved) return true;
 
-            throw new Exception("Unknown Process Flow Error! Unable to save workflow records!");
+            throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
         }
 
         public void NextProcess(
@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (this.staffId == this.requestStaffId)
             {
-                throw new Exception("Cannot act on self initiated process!");
+                throw new SecureException("Cannot act on self initiated process!");
             }
             return false;
         }
@@ -257,7 +257,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ResolveReferred(int referrerId, int? fromId, int? toId)
         {
-            if (toId == null) throw new Exception("Unable to resolve destination level!");
+            if (toId == null) throw new SecureException("Unable to resolve destination level!");
             if (fromId == null) return;
             var referrerGroup = context.TBL_APPROVAL_LEVEL.Find(fromId);
             var recepientGroup = context.TBL_APPROVAL_LEVEL.Find(toId);
@@ -274,7 +274,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.toStaffId > 0 && this.nextLevelId > 0)
             {
                 valid = general.GetStaffApprovalLevelIds((int)this.toStaffId, this.operationId).ToList().Contains((int)this.nextLevelId);
-                if (valid == false) throw new Exception("Target Staff is NOT in the destination approval level");
+                if (valid == false) throw new SecureException("Target Staff is NOT in the destination approval level");
             }
         }
 
@@ -296,7 +296,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.useOrganogram = next.RouteViaStaffOrganogram;
                     return true;
                 }
-                throw new Exception("Unable to resolve initiating level or there is no setup for the specified operation!");
+                throw new SecureException("Unable to resolve initiating level or there is no setup for the specified operation!");
             }
 
             if (this.fromLevelId != null) // check if staff in level
@@ -304,7 +304,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 level = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
                 if (level == null)
                 {
-                    throw new Exception("This Approval Level is not in the workflow setup!");
+                    throw new SecureException("This Approval Level is not in the workflow setup!");
                 }
 
                 var staff = level.Staff.Where(x => x.STAFFID == this.staffId); // check if staff is in approval_level_staff
@@ -329,7 +329,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (staff.Any() == false && defaultRole == null && relieverStaff == null)
                 {
-                    throw new Exception("This User is not in the current workflow level of the process!");
+                    throw new SecureException("This User is not in the current workflow level of the process!");
                 }
 
                 this.neededNumberOfApproval = level.NumberOfApprovals;
@@ -340,7 +340,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.STAFFID == this.staffId).FirstOrDefault(); // doing
                 if (levelStaff == null)
                 {
-                    throw new Exception("Unable to resolve initiating level OR there may be no setup for this operation!");
+                    throw new SecureException("Unable to resolve initiating level OR there may be no setup for this operation!");
                 }
                 this.fromLevelId = levelStaff.APPROVALLEVELID;
                 this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
@@ -397,7 +397,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 )
                 .ToList();
 
-            if (votes.FirstOrDefault(x => x.REQUESTSTAFFID == (int)this.staffId) != null) throw new Exception("You have already acted on this item.");
+            if (votes.FirstOrDefault(x => x.REQUESTSTAFFID == (int)this.staffId) != null) throw new SecureException("You have already acted on this item.");
 
             // APPROVING ORDER VALIDATION
             var approvers = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == fromLevelId).ToList();
@@ -414,13 +414,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     bool allow = false;
                     string message = "You are not next in line for approval on this approval level. You will be notified by email when required.";
-                    if (votes.Count() == 0) throw new Exception(message);
+                    if (votes.Count() == 0) throw new SecureException(message);
                     foreach (var vote in votes)
                     {
                         //if (!first.Contains((int)vote.REQUESTSTAFFID))
                         if (subs.Where(x => x.STAFFID == vote.REQUESTSTAFFID).Any()) allow = true;
                     }
-                    if (allow == false) throw new Exception(message);
+                    if (allow == false) throw new SecureException(message);
                 }
             }
 
@@ -512,11 +512,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void ValidateCall()
         {
-            if (this.staffId <= 0) throw new Exception("Invalid Call! staffid cannot be " + this.staffId);
-            if (this.operationId <= 0) throw new Exception("Invalid Call! operationId cannot be " + this.operationId);
-            if (this.targetId <= 0 && !this.deferredExecution) throw new Exception("Invalid Call! targetId cannot be " + this.targetId);
-            if (this.companyId <= 0) throw new Exception("Invalid Call! companyId cannot be " + this.companyId);
-            if (this.statusId < 0) throw new Exception("Invalid Call! statusId cannot be " + this.statusId);
+            if (this.staffId <= 0) throw new SecureException("Invalid Call! staffid cannot be " + this.staffId);
+            if (this.operationId <= 0) throw new SecureException("Invalid Call! operationId cannot be " + this.operationId);
+            if (this.targetId <= 0 && !this.deferredExecution) throw new SecureException("Invalid Call! targetId cannot be " + this.targetId);
+            if (this.companyId <= 0) throw new SecureException("Invalid Call! companyId cannot be " + this.companyId);
+            if (this.statusId < 0) throw new SecureException("Invalid Call! statusId cannot be " + this.statusId);
             if (this.nextLevelId < 1) { this.nextLevelId = null; }
         }
 
@@ -601,7 +601,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool WithinAllLimits()
         {
             var level = context.TBL_APPROVAL_LEVEL.Find(this.fromLevelId);
-            if (level == null) { throw new Exception("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
+            if (level == null) { throw new SecureException("The user is not in the workflow setup!"); } // redundant - wouldnt get here in the first place
             if (this.disputed == true && level.CANRESOLVEDISPUTE != true) { return false; }
 
             return WithinTenorLimit(level) == true
@@ -620,7 +620,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {
-                    throw new Exception("Workflow is missing an approval authority!");
+                    throw new SecureException("Workflow is missing an approval authority!");
                 }
             }
             else
@@ -867,7 +867,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 return true;
             }
-            throw new Exception("Unauthorized action!");
+            throw new SecureException("Unauthorized action!");
         }
 
         public bool LogForApproval(ApprovalViewModel model) // <----------- this method is deprecated!!!

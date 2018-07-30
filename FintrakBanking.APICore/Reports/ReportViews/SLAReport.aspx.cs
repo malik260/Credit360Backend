@@ -35,7 +35,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/SLAMonitoringReport.rdlc");
                 this.ReportViewer.LocalReport.Refresh();
 
-                ReportViewer.LocalReport.Refresh();
             }
         }
     }

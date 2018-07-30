@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.Common.Enum;
-using System.Linq;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.Repositories.WorkFlow;
-using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -365,11 +363,11 @@ namespace FintrakBanking.Repositories.Credit
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId) // jump process OR end flag
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId && model.operationId != 71) // jump process OR end flag
                 {
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
-                if (operationId == lastOperationId) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
+                if (operationId == lastOperationId || model.operationId == 71) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
                 context.SaveChanges();
             }
 
@@ -454,7 +452,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                throw new Exception("The Product type is Invalid");
+                throw new SecureException("The Product type is Invalid");
             }
             return result;
         }

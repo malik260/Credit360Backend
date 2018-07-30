@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -32,7 +33,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllGuidelineTypes(token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
@@ -47,7 +48,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.GetAllGuidelines(token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
@@ -62,7 +63,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.getGuideline(prudentialGuidelineId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
@@ -81,7 +82,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.AddGuideline(guideline);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
@@ -100,7 +101,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.UpdateGuideline(guideline, prudentialGuidelineId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
@@ -114,7 +115,7 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.DeleteGuideline(prudentialGuidelineId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }

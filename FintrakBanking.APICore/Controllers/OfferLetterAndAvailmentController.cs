@@ -42,7 +42,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = await repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetCompanyId).ToListAsync();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count(), message = "No record found" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -64,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response.ToList(), count = response.Count() });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -86,7 +86,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -102,7 +102,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetBranchId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -118,7 +118,7 @@ namespace FintrakBanking.APICore.Controllers
                 var response = await repo.GetApplicationsAtOfferLetter(token.GetStaffId, token.GetBranchId, token.GetCompanyId).ToListAsync();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -142,7 +142,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {data}" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this group {e.Message}" });
             }
@@ -166,7 +166,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -188,7 +188,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -211,7 +211,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -232,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Document not saved successfully" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -261,7 +261,7 @@ namespace FintrakBanking.APICore.Controllers
         //    {
         //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
         //    }
-        //    catch (Exception ex)
+        //    catch (SecureException ex)
         //    {
         //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
         //    }
@@ -288,7 +288,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Document not updated successfully" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -310,7 +310,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -332,7 +332,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -354,7 +354,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -376,7 +376,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -397,7 +397,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Document not saved successfully" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
@@ -440,7 +440,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message, message = "An error occured" });
@@ -471,7 +471,7 @@ namespace FintrakBanking.APICore.Controllers
         //        return Request.CreateResponse(HttpStatusCode.OK,
         //            new { success = true, message = "Operation not successfull" });
         //    }
-        //    catch (System.Exception ex)
+        //    catch (SecureException ex)
         //    {
         //        errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
         //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
@@ -502,7 +502,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
@@ -532,7 +532,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
@@ -559,7 +559,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
@@ -581,7 +581,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }

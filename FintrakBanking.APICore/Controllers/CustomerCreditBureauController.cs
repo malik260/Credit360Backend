@@ -64,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {e.Message}" });
@@ -87,7 +87,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data.ToList() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {ex.Message}" });
@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data.ToList() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {ex.Message}" });
@@ -133,7 +133,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data.ToList() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {ex.Message}" });
@@ -165,7 +165,7 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = true, message = model.creditBureauName + " report upload failed" });
                 }
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"Error: {ex.Message}" });
@@ -196,7 +196,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error updating this record {e.Message}" });
@@ -230,7 +230,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "There was an error updating this record" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error updating this record {e.Message}" });
@@ -301,7 +301,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = loanCreditBureauModel.creditBureauName + " report upload failed" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " +ex.Message });
             }
@@ -337,7 +337,7 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = true, message = " download failed" });
                 }
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"Error: {ex.Message}" });
@@ -383,7 +383,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"Error: An unhandled error occured." });
@@ -429,7 +429,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"Error: {ex.Message}" });

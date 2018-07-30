@@ -335,7 +335,7 @@
             }
 
 
-            public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model)
+            public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model, bool isCrossCurrency = false)
             {
                 HttpClientHandler handler = new HttpClientHandler();
                 HttpClient httpClientInstance;
@@ -363,8 +363,19 @@
 
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
-                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;                  
+
+                    string apiUrl = "api/Transactions/PostTransactions";
+                    if (isCrossCurrency == true)
+                    {
+                        apiUrl = "api/Transactions/PostCrossCurrencyTransactions";
+                    }
+
+                    response = client.PostAsync(apiUrl, new StringContent(
+                                                    new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
+                    //response = client.PostAsync("api/Transactions/PostCrossCurrencyTransactions", new StringContent(
+                    //                                 new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
+
 
                     responseDateTime = DateTime.Now; 
 

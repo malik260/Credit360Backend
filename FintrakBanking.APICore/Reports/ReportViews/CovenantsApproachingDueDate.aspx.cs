@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Entities.Models;
+using FintrakBanking.ReportObjects.ReportingObjects;
 using FintrakBanking.Repositories.Setups.General;
 using Microsoft.Reporting.WebForms;
 using System;
@@ -16,12 +17,21 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
         {
             if (!IsPostBack)
             {
-                FinTrakBankingContext context = new FinTrakBankingContext();
-                GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
-                ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());
+                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
 
-                covDueDateRv.LocalReport.SetParameters(new ReportParameter[] { date });
-                covDueDateRv.LocalReport.Refresh();
+                LimitsMonitoringReportsObjects sla = new LimitsMonitoringReportsObjects();
+                var data = sla.CovenantsApproachingDueDate(startDate, endDate);
+
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource = new ReportDataSource();
+                reportDataSource.Value = data;
+                reportDataSource.Name = "CovenantDetails";
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/CovenantsApproachingDueDate.rdlc");
+                this.ReportViewer.LocalReport.Refresh();
+
             }
         }
     }

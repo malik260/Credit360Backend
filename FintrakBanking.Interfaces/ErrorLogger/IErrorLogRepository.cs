@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.ErrorLogger
 {
@@ -6,6 +7,7 @@ namespace FintrakBanking.Interfaces.ErrorLogger
     {
 
         void LogError(Exception ex, string url,string username);
+        Task LogErrorAsync(Exception ex, string url, string username);
 
     }
 }

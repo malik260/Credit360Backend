@@ -20,7 +20,7 @@ using GemBox.Spreadsheet;
 using System.IO;
 using FintrakBanking.ViewModels.Admin;
 using System.Web;
-using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.Repositories.Setups.General
@@ -327,7 +327,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (unApprovedStaffEdit.Any())
             {
-                throw new Exception("Staff is already undergoing approval");
+                throw new SecureException("Staff is already undergoing approval");
             }
 
             if (existingTempStaff != null)
@@ -488,7 +488,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -575,7 +575,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -836,7 +836,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
         public bool GoForBulkApproval(List<ApprovalViewModel> model, UserInfo userInfo)
@@ -881,7 +881,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     catch (Exception ex)
                     {
                         trans.Rollback();
-                        throw new Exception(ex.Message);
+                        throw new SecureException(ex.Message);
                     }
                 }
             }
@@ -1141,7 +1141,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
             }
         }
 
@@ -1161,7 +1161,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (existStingTempStaff.Any())
             {
-                throw new Exception("Staff Information already exist and is undergoing approval");
+                throw new SecureException("Staff Information already exist and is undergoing approval");
             }
 
 
@@ -1805,7 +1805,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             //    {
                             //        rowSuccess = false;
                             //        staffRowData.errorMessage = staffRowData.errorMessage + $"State Code @ '{cellColumn}' does not exist. ";
-                            //        //throw new Exception($"the 'State Code' @" + cellColumn + " does not exist.");
+                            //        //throw new SecureException($"the 'State Code' @" + cellColumn + " does not exist.");
                             //    }
                             //    break;
 
@@ -2086,7 +2086,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 && x.STAFFCODE.ToLower() == model.staffCode.ToLower()
               );
 
-            if (pending.Any()) throw new Exception("Staff is already undergoing approval");
+            if (pending.Any()) throw new SecureException("Staff is already undergoing approval");
 
             string comment = model.status + " delegate";
             int staffid = model.supervisorStaffId;

@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Web ;
 using System.Web.Http;
 using System.Threading.Tasks;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -39,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, result = accounts.ToList() });  //Ok(accounts);
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = ex.Message });
@@ -63,7 +64,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = accountInfo });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -83,7 +84,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = true, result = accounts.ToList() });  //Ok(accounts);
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                  new { success = false, message = ex.Message });
@@ -105,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = true, result = accounts.ToList() });  //Ok(accounts);
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
@@ -130,7 +131,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = true, result = account });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = false, message = ex.Message });
@@ -163,7 +164,7 @@ namespace FintrakBanking.APICore.Controllers
         //                new { success = false, message = "account not created" });
         //            }
         //        }
-        //        catch (System.Exception ex)
+        //        catch (SecureException ex)
         //        {
         //            return Request.CreateResponse(HttpStatusCode.OK,
         //            new { success = false, message = ex.Message });
@@ -207,7 +208,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "Account not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -243,7 +244,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "Account not created" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -274,7 +275,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -295,7 +296,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = accountInfo.ToList() });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -319,7 +320,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = accountInfo });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
@@ -347,7 +348,7 @@ namespace FintrakBanking.APICore.Controllers
         //            return Request.CreateResponse(HttpStatusCode.OK,
         //              new { success = true, result = model.accountId, message = "account has been updated successfully" });
         //        }
-        //        catch (System.Exception ex)
+        //        catch (SecureException ex)
         //        {
         //            return Request.CreateResponse(HttpStatusCode.OK,
         //              new { success = false, message = ex.Message });
@@ -374,7 +375,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = true, result = accountId, message = "account has been deleted successfully" });
                 }
-                catch (System.Exception ex)
+                catch (SecureException ex)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
@@ -398,7 +399,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, result = data.ToList(), message = "No records found!" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = ex.Message });

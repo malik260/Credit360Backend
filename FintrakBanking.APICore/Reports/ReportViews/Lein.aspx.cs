@@ -1,4 +1,5 @@
-﻿using Microsoft.Reporting.WebForms;
+﻿using FintrakBanking.ReportObjects;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,25 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                companyId.Text = Request.QueryString["companyId"];
-                startDate.Text = Request.QueryString["startDate"];
-                endDate.Text = Request.QueryString["endDate"];
-                searchParamemter.Text = Request.QueryString["searchParamemter"];
-                ReportViewer.LocalReport.Refresh();
+  
+
+                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                string searchParamemter = Request.QueryString["searchParamemter"];
+
+                LoanReportObjects sla = new LoanReportObjects();
+                var data = sla.AccountsWithLein(startDate, endDate,searchParamemter,companyId);
+
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource = new ReportDataSource();
+                reportDataSource.Value = data;
+                reportDataSource.Name = "LeinLoanCASA";
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Lein.rdlc");
+                this.ReportViewer.LocalReport.Refresh();
+
             }
         }
     }

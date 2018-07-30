@@ -1,4 +1,5 @@
-﻿using Microsoft.Reporting.WebForms;
+﻿using FintrakBanking.ReportObjects;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,14 +15,28 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                startDate.Text = Request.QueryString["startDate"];
-                endDate.Text = Request.QueryString["endDate"];
-                companyId.Text = Request.QueryString["companyId"];
-                searchParamemter.Text = Request.QueryString["searchParamemter"];
-                productClassId.Text = Request.QueryString["productClassId"];
+                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                int operationId = Int32.Parse(Request.QueryString["operationId"]);
+                int productClassId = Int32.Parse(Request.QueryString["productClassId"]);
+                string searchParamemter = Request.QueryString["searchParamemter"];
 
-                ReportParameter sDate = new ReportParameter("startDate", startDate.Text);
-                ReportParameter eDate = new ReportParameter("endDate", endDate.Text);
+                LoanReportObjects report = new LoanReportObjects();
+                var data = report.GetLoansInterestReceivable(startDate,endDate,companyId,searchParamemter,productClassId);
+
+                this.ReportViewer.LocalReport.DataSources.Clear();
+                ReportDataSource reportDataSource = new ReportDataSource();
+                reportDataSource.Value = data;
+                reportDataSource.Name = "CommercialLoan";
+
+                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/RuningLoansByLoanType.rdlc");
+                this.ReportViewer.LocalReport.Refresh();
+
+
+                ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                 ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                 ReportViewer.LocalReport.Refresh();

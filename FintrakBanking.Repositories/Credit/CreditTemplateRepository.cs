@@ -9,6 +9,7 @@ using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.Common.Enum;
 using System.Linq;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -29,7 +30,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddCreditTemplate(CreditTemplateViewModel model)
         {
-            if (String.IsNullOrEmpty(model.templateDocument)) { throw new Exception("Document is blank. Cannot create a blank document!"); }
+            if (String.IsNullOrEmpty(model.templateDocument)) { throw new SecureException("Document is blank. Cannot create a blank document!"); }
 
             var data = new TBL_CREDIT_TEMPLATE
             {

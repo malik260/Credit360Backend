@@ -406,7 +406,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
             //catch (Exception ex)
             //{
             //    return null;
-            //    throw new Exception(ex.Message);
+            //    throw new SecureException(ex.Message);
             //}
           
         }

@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -37,7 +38,7 @@ namespace FintrakBanking.APICore.Controllers
                 var regionViewModels = data as BranchRegionViewModel[] ?? data.ToArray();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = regionViewModels, count = regionViewModels.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -77,7 +78,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error {createUpdate} this record" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
@@ -97,7 +98,7 @@ namespace FintrakBanking.APICore.Controllers
                 var branchViewModels = data as BranchViewModel[] ?? data.ToArray();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = branchViewModels, count = branchViewModels.Count() });
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -112,7 +113,7 @@ namespace FintrakBanking.APICore.Controllers
                 var branch = _repo.GetBranch(id);
                 return Request.CreateResponse<BranchViewModel>(HttpStatusCode.OK, branch);
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -127,7 +128,7 @@ namespace FintrakBanking.APICore.Controllers
                 var branch = _repo.GetAllBranchByCompanyId(companyid);
                 return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -143,7 +144,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse<List<BranchViewModel>>(HttpStatusCode.OK, branch.ToList());
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -168,7 +169,7 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = "There was an error saving this record, Branch Name Exist" });
 
             }
-            catch (Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -192,7 +193,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
@@ -218,7 +219,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Saved changes not successfull" });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
@@ -241,7 +242,7 @@ namespace FintrakBanking.APICore.Controllers
                 var branch = await _repo.DeleteBranch(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, Ok(branch));
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
@@ -263,7 +264,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = true, result = data });
             }
-            catch (System.Exception ex)
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });

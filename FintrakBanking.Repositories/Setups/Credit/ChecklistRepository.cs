@@ -14,6 +14,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -859,7 +860,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
             return false;
@@ -1296,7 +1297,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     return false;
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -1386,7 +1387,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
             // return false;

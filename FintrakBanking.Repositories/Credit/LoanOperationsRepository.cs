@@ -237,7 +237,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -559,7 +559,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -722,7 +722,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -888,7 +888,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1055,7 +1055,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1220,7 +1220,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1321,7 +1321,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1422,7 +1422,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1498,7 +1498,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -1512,6 +1512,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GetRepaymentFromStaging()
         {
+            var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
             bool output = false;
             decimal fullAmount = 0;
             decimal partailAmount = 0;
@@ -1583,7 +1584,7 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == model.sourceReferenceNumber);
                         var instruction = context.TBL_LOAN_MATURITY_INSTRUCTION.FirstOrDefault(x => x.LOANID == loan.TERMLOANID);
 
-                        ArchiveLoan(loan.TERMLOANID, model.operationId);//change to method that will disburs new loan
+                        ArchiveLoan(loan.TERMLOANID, model.operationId, archiveBatchCode);//change to method that will disburs new loan
 
                     }
                     if (results == true)
@@ -2049,7 +2050,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2244,7 +2245,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2615,7 +2616,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2698,7 +2699,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2771,7 +2772,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2836,7 +2837,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -2903,7 +2904,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -3096,7 +3097,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -3425,7 +3426,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -3754,7 +3755,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return null;
 
             }
@@ -4192,6 +4193,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //using (var trans = context.Database.BeginTransaction())
             //{
+            var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
             try
             {
                 bool output = false;
@@ -4219,7 +4221,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (productType == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                 {
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, operationId);
+                    ArchiveLoan(loanId, operationId, archiveBatchCode);
 
                     model = (
                     from a in context.TBL_LOAN_REVIEW_OPERATION
@@ -4263,7 +4265,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (productType == (int)LoanSystemTypeEnum.OverdraftFacility)
                 {
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveOverDraft(loanId);
+                    ArchiveOverDraft(loanId, archiveBatchCode);
                     model = (
                    from a in context.TBL_LOAN_REVIEW_OPERATION
                    join b in context.TBL_LOAN_REVOLVING on a.LOANID equals b.REVOLVINGLOANID
@@ -4377,7 +4379,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 return false;
 
             }
@@ -4451,8 +4453,9 @@ namespace FintrakBanking.Repositories.Credit
             {
 
                 var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 DeleteLoanExist(loanId, systemDate);
-                ArchiveOverDraft(loanId);
+                ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -4505,6 +4508,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dateTimeCreated = DateTime.Today,
                                  revolvingTypeId = a.REVOLVINGTYPEID,
                                  productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 serialNumber = a.SERIALNUMBER,
 
                              }).FirstOrDefault();
 
@@ -4577,14 +4581,14 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (data1.MATURITYDATE.Date < systemDate.Date)
                         {
-                            throw new Exception("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
+                            throw new SecureException("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
                         }
                         var loan = model;
                         var reviewDate = data1.BOOKINGDATE.AddMonths(1);
                         var data = new OverDraftTopUpAndRenewViewModel
                         {
                             sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                            sanctionReferenceNumber = loan.loanReferenceNumber,
+                            sanctionReferenceNumber = loan.serialNumber,
                             accountNumber = loan.productAccountNumber,
                             expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                             reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -4596,7 +4600,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                        throw new Exception("Limit has experied or is inactive");
+                        throw new SecureException("Limit has experied or is inactive");
                     }
                 }
                 addOverDraft.SERIALNUMBER = topResult.serialNumber;
@@ -4611,7 +4615,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -4628,8 +4632,9 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 DeleteLoanExist(loanId, systemDate);
-                ArchiveOverDraft(loanId);
+                ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -4682,6 +4687,7 @@ namespace FintrakBanking.Repositories.Credit
                                  dateTimeCreated = DateTime.Today,
                                  revolvingTypeId = a.REVOLVINGTYPEID,
                                  productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 serialNumber = a.SERIALNUMBER,
 
                              }).FirstOrDefault();
 
@@ -4756,7 +4762,7 @@ namespace FintrakBanking.Repositories.Credit
                         //reviewedDate = loan.effectiveDate.ToString()
 
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
+                        sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -4777,7 +4783,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -4793,8 +4799,9 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 DeleteLoanExist(loanId, systemDate);
-                ArchiveOverDraft(loanId);
+                ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -4943,7 +4950,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -4973,12 +4980,12 @@ namespace FintrakBanking.Repositories.Credit
                     //trans.Commit();
                     output = true;
                 }
-                output = false;
+                //output = false;
             }
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -4997,10 +5004,12 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 DeleteLoanExist(loanId, systemDate);
-                ArchiveOverDraft(loanId);
+                ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
+                             join c in context.TBL_CASA on b.CASA_ACCOUNTID equals c.CASAACCOUNTID
                              where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                              select new RevolvingLoanViewModel()
                              {
@@ -5024,7 +5033,7 @@ namespace FintrakBanking.Repositories.Credit
                                  interestRate = (double)b.INTERATERATE,
                                  effectiveDate = b.EFFECTIVEDATE,
                                  maturityDate = (DateTime)b.MATURITYDATE,
-                                 bookingDate = DateTime.Today,
+                                 bookingDate = systemDate,
                                  overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
                                  pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                  pastDueInterest = a.PASTDUEINTEREST,
@@ -5051,6 +5060,9 @@ namespace FintrakBanking.Repositories.Credit
                                  dateTimeCreated = DateTime.Today,
                                  revolvingTypeId = a.REVOLVINGTYPEID,
                                  productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 serialNumber = a.SERIALNUMBER,
+                                 casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
+
 
                              }).FirstOrDefault();
 
@@ -5118,28 +5130,42 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
+                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                     var loan = model;
                     var reviewDate = loan.bookingDate.AddMonths(1);                   
                     var data = new OverDraftExtendViewModel
                     {
                         sanctionLimit = String.Format("{0:0.00}", initialLimit -loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
+                        sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
                         createdDate = systemDate,
                     };
-                    subAllocationExtentionResult = finacle.OverDraftExtend(data);
-                    var data1  = new OverDraftTopUpAndRenewViewModel
+                   subAllocationExtentionResult = finacle.OverDraftExtend(data);
+                    var data1  = new OverDraftNormalViewModel
                     {
-                        sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
-                        accountNumber = loan.productAccountNumber,
+                        //sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
+                        //sanctionReferenceNumber = loan.serialNumber,
+                        //accountNumber = loan.productAccountNumber,
+                        //expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                        //reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                        //createdDate = systemDate,
+                        accountNumber = loan.casaAccountNumber,
+                        applicationDate = loan.bookingDate.ToString("dd-MMM-yyyy", null),
+                        documentDate = loan.bookingDate.ToString("dd-MMM-yyyy", null),
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                        createdDate = systemDate,
+                        sanctionDate = loan.bookingDate.ToString("dd-MMM-yyyy", null),
+                        sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
+                        sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
                     };
-                    subAllocationResult = finacle.OverDraftRenew(data1);
+                    var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+                    {
+                        username = "fintrak",//user.userName,
+                        passcode = "1234",//user.passCode
+                    };
+                    subAllocationResult = finacle.OverDraftNormal(data1, twoFactorAuthDetails);
                 }
 
                 addOverDraft.SERIALNUMBER = subAllocationResult.serialNumber;
@@ -5162,7 +5188,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -5254,7 +5280,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public LoanViewModel ArchiveLoan(int loanId, int operationId)
+        public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -5426,6 +5452,8 @@ namespace FintrakBanking.Repositories.Credit
             addLoanArchive.NPLDATE = model.nplDate;
             addLoanArchive.CREATEDBY = model.createdBy;
             addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
+            addLoanArchive.SetARCHIVEBATCHCODE(archiveBatchCode);
+            
 
             loanArchive.Add(addLoanArchive);
             //}
@@ -5436,7 +5464,7 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public RevolvingLoanViewModel ArchiveOverDraft(int overDraftId)
+        public RevolvingLoanViewModel ArchiveOverDraft(int overDraftId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -5549,6 +5577,7 @@ namespace FintrakBanking.Repositories.Credit
             addOverDraftArchive.CREATEDBY = model.createdBy;
             addOverDraftArchive.DATETIMECREATED = model.dateTimeCreated;
             addOverDraftArchive.REVOLVINGTYPEID = model.revolvingTypeId;
+            addOverDraftArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
             overDraftArchive.Add(addOverDraftArchive);
             //}
@@ -5559,7 +5588,7 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId)
+        public IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId,string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -5619,6 +5648,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanSchedulePeriodicArchive.DATETIMECREATED = item.dateTimeCreated;
                 //addLoanSchedulePeriodicArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
                 addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = batchCode;
+                addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
                 loanSchedulePeriodicArchive.Add(addLoanSchedulePeriodicArchive);
 
@@ -5630,7 +5660,7 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId)
+        public IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -5718,6 +5748,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleDailyArchive.DATETIMECREATED = item.dateTimeCreated;
                 addLoanScheduleDailyArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
                 addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = batchCode;
+                addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
                 loanScheduleDailyArchive.Add(addLoanScheduleDailyArchive);
 
@@ -6388,10 +6419,11 @@ namespace FintrakBanking.Repositories.Credit
                 var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == loanId && x.OPERATIONTYPEID == loanInput.operationId && x.OPERATIONCOMPLETED == false).FirstOrDefault();
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
                     //----------generate and save periodic loan schedule -----------------------------------
@@ -6519,7 +6551,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 // trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -7405,10 +7437,11 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (LoanExist(loanId) > 0)
                     {
+                        var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                         DeleteLoanExist(loanId, systemDate);
-                        ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                        ArchivePeriodicSchedule(loanId);
-                        ArchiveDailySchedule(loanId);
+                        ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                        ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                        ArchiveDailySchedule(loanId, archiveBatchCode);
 
                         loanInput.principalAmount = ((double)totalamount - (loanInput.payAmount + penalAmount));
                         //---------------save irregular loan schedule input---------------------------
@@ -7590,7 +7623,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -7611,10 +7644,11 @@ namespace FintrakBanking.Repositories.Credit
                 if (LoanExist(loanId) > 0)
 
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
                     //---------------save irregular loan schedule input---------------------------
@@ -7779,7 +7813,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -7799,10 +7833,11 @@ namespace FintrakBanking.Repositories.Credit
                 var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == loanId && x.OPERATIONTYPEID == loanInput.operationId && x.OPERATIONCOMPLETED == false).FirstOrDefault();
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
                     //---------------save irregular loan schedule input---------------------------
@@ -7950,7 +7985,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -7997,10 +8032,10 @@ namespace FintrakBanking.Repositories.Credit
                 decimal totalamount = (accruedInterest + principalOutStandingBalance + pastDue);
 
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
-                ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                ArchivePeriodicSchedule(loanId);
-                ArchiveDailySchedule(loanId);
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
+                ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                ArchiveDailySchedule(loanId, archiveBatchCode);
 
                 //----------generate and save periodic loan schedule -----------------------------------
                 List<LoanPaymentSchedulePeriodicViewModel> periodicSchedule = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
@@ -8268,7 +8303,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8608,7 +8643,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8679,7 +8714,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 // trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8948,7 +8983,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -8983,7 +9018,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9036,10 +9071,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
                     //---------------save irregular loan schedule input---------------------------
                     List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
@@ -9186,7 +9222,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = true;
 
             }
@@ -9372,7 +9408,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9394,10 +9430,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId,archiveBatchCode);
 
 
                     //---------------save irregular loan schedule input---------------------------
@@ -9544,7 +9581,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9577,10 +9614,11 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
 
                     //---------------save irregular loan schedule input---------------------------
@@ -9731,7 +9769,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9799,7 +9837,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback()
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -9848,10 +9886,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (LoanExist(loanId) > 0)
                 {
+                    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                     DeleteLoanExist(loanId, systemDate);
-                    ArchiveLoan(loanId, loanInput.operationId);/////loanId change this to OperationId
-                    ArchivePeriodicSchedule(loanId);
-                    ArchiveDailySchedule(loanId);
+                    ArchiveLoan(loanId, loanInput.operationId, archiveBatchCode);/////loanId change this to OperationId
+                    ArchivePeriodicSchedule(loanId, archiveBatchCode);
+                    ArchiveDailySchedule(loanId, archiveBatchCode);
 
                     //---------------save irregular loan schedule input---------------------------
                     List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
@@ -9993,7 +10032,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex)
             {
                 //trans.Rollback();
-                throw new Exception(ex.Message);
+                throw new SecureException(ex.Message);
                 output = false;
 
             }
@@ -10058,6 +10097,69 @@ namespace FintrakBanking.Repositories.Credit
                                    principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
                                    interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
                                    pastDueTotal = pastDue,
+                                   relationshipManagerId = l.RELATIONSHIPMANAGERID,
+                                   relationshipOfficerId = l.RELATIONSHIPOFFICERID,
+                                   productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
+                                   systemCurrentDate = applicationDate
+                               }).FirstOrDefault();
+
+            return runningLoan;
+        }
+
+        public LoanViewModel GetRunningFXLoans(int companyId, string refNo)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var data = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId);
+            DateTime maturityDate = data.MATURITYDATE;
+            DateTime effectiveDate = data.EFFECTIVEDATE;
+            decimal outStandingBalance = data.OUTSTANDINGPRINCIPAL;
+            TimeSpan difference = maturityDate - applicationDate;
+            int days = (int)difference.TotalDays;
+            //decimal accruedInterest =  context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.LOANID == data.TERMLOANID && x.DATE == applicationDate).ACCRUEDINTEREST;
+            //decimal accruedInterest = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.DATE == applicationDate).ACCRUEDINTEREST;
+            //accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
+            //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.LOANID == data.TERMLOANID && x.PAYMENTDATE > applicationDate).PAYMENTDATE;
+            //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == refNo && x.PAYMENTDATE >= applicationDate).PAYMENTDATE;
+           // outStandingBalance = decimal.Round(outStandingBalance, 2, MidpointRounding.AwayFromZero);
+
+            //decimal pastDue = decimal.Round((data.PASTDUEINTEREST + data.INTERESTONPASTDUEINTEREST + data.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+            //decimal totalamount = (accruedInterest + outStandingBalance + pastDue);
+
+
+            var runningLoan = (from l in context.TBL_LOAN
+                               where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo
+                               select new LoanViewModel()
+                               {
+                                   loanId = l.TERMLOANID,
+                                   companyName = l.TBL_COMPANY.NAME,
+                                   companyId = l.COMPANYID,
+                                   customerName = l.TBL_CUSTOMER.FIRSTNAME + " " + l.TBL_CUSTOMER.MIDDLENAME + " " + l.TBL_CUSTOMER.LASTNAME,
+                                   customerId = l.CUSTOMERID,
+                                   approvedAmount = l.PRINCIPALAMOUNT,
+                                   branchId = l.BRANCHID,
+                                   branchName = l.TBL_BRANCH.BRANCHNAME,
+                                   interestRate = l.INTERESTRATE,
+                                   outstandingInterest = l.OUTSTANDINGINTEREST,
+                                   outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
+                                   principalAmount = l.PRINCIPALAMOUNT,
+                                   currency = l.TBL_CURRENCY.CURRENCYNAME,
+                                   loanReferenceNumber = l.LOANREFERENCENUMBER,
+                                   effectiveDate = applicationDate,
+                                   previousEffectiveDate = l.EFFECTIVEDATE,
+                                   equityContribution = 0,
+                                   maintainTenor = true,
+                                   maturityDate = l.MATURITYDATE,
+                                   scheduleTypeId = l.SCHEDULETYPEID,
+                                   scheduleTypeCategoryId = l.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
+                                   //teno = (int)(l.MATURITYDATE - l.EFFECTIVEDATE).Days,
+                                   newtenor = 0,
+                                  // accrualedAmount = accruedInterest,
+                                  // totalAmount = totalamount,
+                                   //firstPrincipalPaymentDate = nextPaymentDate,
+                                  // firstInterestPaymentDate = nextPaymentDate,
+                                   principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
+                                   interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
+                                 //  pastDueTotal = pastDue,
                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                    relationshipOfficerId = l.RELATIONSHIPOFFICERID,
                                    productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
@@ -10421,7 +10523,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -10924,7 +11026,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -10979,7 +11081,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -11033,7 +11135,7 @@ namespace FintrakBanking.Repositories.Credit
         //        catch (Exception ex)
         //        {
         //            trans.Rollback();
-        //            throw new Exception(ex.Message);
+        //            throw new SecureException(ex.Message);
         //        }
         //    }
 
@@ -11524,11 +11626,13 @@ namespace FintrakBanking.Repositories.Credit
                                      isManagementInterestRate = a.ISMANAGEMENTINTERESTRATE,
                                      proposedTenor = a.TENOR,
                                      newMaturityDate = a.MATURITYDATE,// change to maturity date affter scarfolding
-                                 companyId = b.COMPANYID,
+                                     companyId = b.COMPANYID,
                                      staffId = staffId,
                                      createdBy = staffId,
                                      customerId = b.CUSTOMERID,
                                      productId = b.PRODUCTID,
+                                     oldCasaAccountId = b.CASAACCOUNTID,
+                                     newCasaAccountId = a.CASA_ACCOUNTID,
 
 
                                  }).FirstOrDefault();
@@ -11546,7 +11650,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         DateTime nextPaymentDate = DateTime.Now;
                         var paymentDate = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
-                                           where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE == applicationDate
+                                           where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE >= applicationDate
                                            select a).FirstOrDefault();
 
                         if (paymentDate == null)
@@ -11847,8 +11951,24 @@ namespace FintrakBanking.Repositories.Credit
                             }
 
                         }
+
+
+                        else if ((int)OperationsEnum.CASAAccountChange == model.operationId)
+                        {
+                            result = ChangeOperativeAccount(model.oldCasaAccountId, (int)model.newCasaAccountId);
+                            if (result == true)
+                            {
+                                output = true;
+                            }
+                            else
+                            {
+                                output = false;
+                            }
+
+                        }
                         //}
                     }
+
                 }
 
 
@@ -13017,11 +13137,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             foreach (var model in models)
             {
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
                 var loanRecord = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == model.loanReferenceNumber);
                 if (loanRecord.Any())
                 {
                     var loan = loanRecord.FirstOrDefault();
-                    ArchiveLoan(loan.TERMLOANID, (short)OperationsEnum.CommercialPaperLoanBooking);
+                    ArchiveLoan(loan.TERMLOANID, (short)OperationsEnum.CommercialPaperLoanBooking, archiveBatchCode);
                     loan.PRINCIPALAMOUNT = model.newPrincipalAmount;
                     loan.OUTSTANDINGPRINCIPAL = model.newPrincipalAmount;
                     loan.LASTRESTRUCTUREDATE = generalSetup.GetApplicationDate();
@@ -13149,6 +13270,7 @@ namespace FintrakBanking.Repositories.Credit
             var refNo = string.Empty;
             var auditDetail = string.Empty;
             userModel.isParent = false;
+            var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
 
             TBL_LOAN loan = new TBL_LOAN();
             TBL_LOAN_APPLICATION_DETAIL loanApp = new TBL_LOAN_APPLICATION_DETAIL();
@@ -13164,10 +13286,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (loan != null && loan.MATURITYDATE < loan.MATURITYDATE.AddDays(userModel.newTenor))
                 {
-                    ArchiveLoan(loan.TERMLOANID, (int)loan.OPERATIONID);
+                    ArchiveLoan(loan.TERMLOANID, (int)loan.OPERATIONID, archiveBatchCode);
                     loan.MATURITYDATE = loan.MATURITYDATE.AddDays(userModel.newTenor);
                 }
-                else throw new Exception("New tenor has no positive value");
+                else throw new SecureException("New tenor has no positive value");
 
                 auditDetail = $"Extended loan tenor with reference number: {loan.LOANREFERENCENUMBER} with {userModel.newTenor} extra";
             }
@@ -13720,7 +13842,7 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
-        public List<LoanReviewOperationApprovalViewModel> GetMaturedCommercialLoans(int companyId, int loanApplicationDetailID)
+        public List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoansByApplicationDetailId(int companyId, int loanApplicationDetailID)
         {
             var data = (from ln in context.TBL_LOAN
                         where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID
@@ -13791,6 +13913,75 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
         }
 
+        public List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoans(int companyId)
+        {
+            var date = DateTime.Now.Date;
+            var data = (from ln in context.TBL_LOAN
+                        where //ln.MATURITYDATE < DateTime.Now &&
+                         ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                        && ln.COMPANYID == companyId
+                        orderby ln.MATURITYDATE descending
+                        select new LoanReviewOperationApprovalViewModel
+                        {
+                            loanId = ln.TERMLOANID,
+                            customerId = ln.CUSTOMERID,
+                            productId = ln.PRODUCTID,
+                            casaAccountId = ln.CASAACCOUNTID,
+                            branchId = ln.BRANCHID,
+                            loanReferenceNumber = ln.LOANREFERENCENUMBER,
+                            relatedReferenceNumber = ln.RELATED_LOAN_REFERENCE_NUMBER,
+                            loanApplicationDetailId = ln.LOANAPPLICATIONDETAILID,
+                            companyId = ln.COMPANYID,
+                            exchangeRate = ln.EXCHANGERATE,
+
+                            principalAmount = ln.PRINCIPALAMOUNT,
+                            interestRate = ln.INTERESTRATE,
+                            interestAmount = ln.OUTSTANDINGINTEREST,
+                            outstandingPrincipal = ln.OUTSTANDINGPRINCIPAL,
+                            outstandingInterest = ln.OUTSTANDINGINTEREST,
+
+                            maturityAmount = ln.OUTSTANDINGPRINCIPAL + ln.OUTSTANDINGINTEREST,
+                            dateTimeCreated = ln.DATETIMECREATED,
+                            createdByName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.LASTNAME,
+                            dischargeLetter = ln.DISCHARGELETTER,
+
+                            relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
+                            relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                            misCode = ln.MISCODE,
+                            teamMiscode = ln.TEAMMISCODE,
+                            effectiveDate = ln.EFFECTIVEDATE,
+                            maturityDate = ln.MATURITYDATE,
+                            bookingDate = ln.BOOKINGDATE,
+
+                            approverComment = ln.APPROVERCOMMENT,
+                            dateApproved = ln.DATEAPPROVED,
+
+                            isDisbursed = ln.ISDISBURSED,
+                            disburserComment = ln.DISBURSERCOMMENT,
+                            disburseDate = ln.DISBURSEDATE,
+                            customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                            operationId = ln.OPERATIONID,
+                            loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                            subSectorId = ln.SUBSECTORID,
+                            subSectorName = ln.TBL_SUB_SECTOR.NAME,
+                            sectorName = ln.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+
+                            customerCode = ln.TBL_CUSTOMER.CUSTOMERCODE,
+                            productAccountNumber = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE,
+                            productAccountName = ln.TBL_PRODUCT.TBL_CHART_OF_ACCOUNT.ACCOUNTNAME,
+                            loanTypeName = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            customerName = ln.TBL_CUSTOMER.LASTNAME + " " + ln.TBL_CUSTOMER.FIRSTNAME + " " + ln.TBL_CUSTOMER.MIDDLENAME,
+                            currencyId = ln.CURRENCYID,
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
+                            branchName = ln.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            relationshipManagerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.MIDDLENAME + " " + ln.TBL_STAFF.LASTNAME,
+                            productName = ln.TBL_PRODUCT.PRODUCTNAME,
+                            loanStatusId = ln.LOANSTATUSID,
+                            comment = "",
+                        });
+            return data.ToList();
+        }
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperPrepayment(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId)
         {

@@ -12,6 +12,7 @@ using System.Linq;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -53,7 +54,7 @@ namespace FintrakBanking.APICore.Controllers
                     var data = repo.GetExchangeRate(inputDate, currencyId, token.GetCompanyId);
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
-                catch (Exception ex)
+                catch (SecureException ex)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,new { success = false, message = ex.Message });
                 }
@@ -75,7 +76,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
@@ -106,7 +107,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
             }
-            catch (Exception e)
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
@@ -127,7 +128,7 @@ namespace FintrakBanking.APICore.Controllers
 
         //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
         //    }
-        //    catch (Exception e)
+        //    catch (SecureException e)
         //    {
         //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
         //    }

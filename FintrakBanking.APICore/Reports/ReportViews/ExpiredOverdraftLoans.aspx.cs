@@ -16,7 +16,7 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
         {
             if (!IsPostBack)
             {
-                expOverDraftLoansRv.LocalReport.Refresh();
+              //  ReportViewer.LocalReport.Refresh();
             }
         }
     }
