@@ -4980,7 +4980,7 @@ namespace FintrakBanking.Repositories.Credit
                     //trans.Commit();
                     output = true;
                 }
-                output = false;
+                //output = false;
             }
             catch (Exception ex)
             {
@@ -11626,11 +11626,13 @@ namespace FintrakBanking.Repositories.Credit
                                      isManagementInterestRate = a.ISMANAGEMENTINTERESTRATE,
                                      proposedTenor = a.TENOR,
                                      newMaturityDate = a.MATURITYDATE,// change to maturity date affter scarfolding
-                                 companyId = b.COMPANYID,
+                                     companyId = b.COMPANYID,
                                      staffId = staffId,
                                      createdBy = staffId,
                                      customerId = b.CUSTOMERID,
                                      productId = b.PRODUCTID,
+                                     oldCasaAccountId = b.CASAACCOUNTID,
+                                     newCasaAccountId = a.CASA_ACCOUNTID,
 
 
                                  }).FirstOrDefault();
@@ -11648,7 +11650,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         DateTime nextPaymentDate = DateTime.Now;
                         var paymentDate = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
-                                           where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE == applicationDate
+                                           where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE >= applicationDate
                                            select a).FirstOrDefault();
 
                         if (paymentDate == null)
@@ -11949,8 +11951,24 @@ namespace FintrakBanking.Repositories.Credit
                             }
 
                         }
+
+
+                        else if ((int)OperationsEnum.CASAAccountChange == model.operationId)
+                        {
+                            result = ChangeOperativeAccount(model.oldCasaAccountId, (int)model.newCasaAccountId);
+                            if (result == true)
+                            {
+                                output = true;
+                            }
+                            else
+                            {
+                                output = false;
+                            }
+
+                        }
                         //}
                     }
+
                 }
 
 
