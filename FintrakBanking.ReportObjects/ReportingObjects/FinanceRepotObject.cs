@@ -14,7 +14,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 {
     public partial class FinanceRepotObject
     {
-        public List<TransactionViewModel> FinanceTransaction(DateTime startDate, DateTime endDate,  int companyId, int branchId,int glAccountId,int PostedByStaffId)
+        public List<TransactionViewModel> FinanceTransaction(DateTime startDate, DateTime endDate,  int companyId, int? branchId,int glAccountId,int? PostedByStaffId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {

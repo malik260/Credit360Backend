@@ -15,9 +15,11 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-
+                short branchId = 0;
                 DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                short branchId = short.Parse(Request.QueryString["branchId"]);
+                string branch = Request.QueryString["branchId"];
+                if (branch != null && branch != "")
+                    branchId = short.Parse(Request.QueryString["branchId"]);
                 string customerName = Request.QueryString["customerName"];
 
                 LoanReportObjects sla = new LoanReportObjects();

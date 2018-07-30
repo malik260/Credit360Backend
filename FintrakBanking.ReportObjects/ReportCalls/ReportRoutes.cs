@@ -258,7 +258,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy");
                 return path;
             }
             catch (Exception ex)
@@ -272,7 +272,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/CollateralPropertyRevaluation.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/CollateralPropertyRevaluation.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy");
                 return path;
             }
             catch (Exception ex)
@@ -287,7 +287,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/CollateralVisitation.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/CollateralVisitation.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy");
                 return path;
             }
             catch (Exception ex)
@@ -302,7 +302,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/ExpiredSelfLiquidatingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/ExpiredSelfLiquidatingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy");
                 return path;
             }
             catch (Exception ex)
@@ -317,7 +317,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/NonPeformingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&classification=" + dateRange.classification + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/NonPeformingLoans.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&classification=" + dateRange.classification + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy");
                 return path;
             }
             catch (Exception ex)
@@ -332,7 +332,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/Overdraft.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/Overdraft.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy");
                 return path;
             }
             catch (Exception ex)
@@ -346,7 +346,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/BondAndGuarantee.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate + "&approvalStatus="+dateRange.approvalStatus;
+                path = reportPath + "ReportViews/BondAndGuarantee.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&approvalStatus="+dateRange.approvalStatus;
                 return path;
             }
             catch (Exception ex)
@@ -360,7 +360,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/CollateralInsurance.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/CollateralInsurance.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy");
                 return path;
             }
             catch (Exception ex)
@@ -375,7 +375,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             try
             {
                 string path = string.Empty;
-                path = reportPath + "ReportViews/TurnOverConvenant.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate + "&endDate=" + dateRange.endDate;
+                path = reportPath + "ReportViews/TurnOverConvenant.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy");
                 return path;
             }
             catch (Exception ex)

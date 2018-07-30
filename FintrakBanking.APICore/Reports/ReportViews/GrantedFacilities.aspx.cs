@@ -18,14 +18,20 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
+                int? branchId = 0;
+                int? PostedByStaffId = 0;
                 string imagePath = new Uri(Server.MapPath("~/Content/icons/firstbank-logo.jpg")).AbsoluteUri;
-
-              DateTime  StartDate = DateTime.Parse( Request.QueryString["StartDate"]);
-                DateTime EndDate = DateTime.Parse(Request.QueryString["EndDate"]);
-                int PostedByStaffId = int.Parse(Request.QueryString["PostedByStaffId"]);
+                DateTime StartDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                DateTime EndDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);               
                 int glAccountId = int.Parse(Request.QueryString["glAccountId"]);
-                int branchId = int.Parse(Request.QueryString["branchId"]);
                 int companyId = int.Parse(Request.QueryString["companyId"]);
+
+                var staffId = Request.QueryString["PostedByStaffId"];
+                    if (staffId!=null && staffId != "")
+                        PostedByStaffId = int.Parse(Request.QueryString["PostedByStaffId"]);
+                string branch = Request.QueryString["branchId"];
+                if (branch != null && branch != "")
+                    branchId = Int32.Parse(Request.QueryString["branchId"]);
 
                 FinanceRepotObject sla = new FinanceRepotObject();
                 var data = sla.FinanceTransaction(StartDate, EndDate, companyId,branchId,glAccountId,PostedByStaffId);

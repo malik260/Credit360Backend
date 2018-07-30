@@ -17,11 +17,12 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
+               
                 DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                 DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
                 int categoryId = Int32.Parse(Request.QueryString["categoryId"]);
                 int companyId = Int32.Parse(Request.QueryString["companyId"]);
-                int branchId = Int32.Parse(Request.QueryString["branchId"]);
+               
 
 
                 FinanceRepotObject accru = new FinanceRepotObject();

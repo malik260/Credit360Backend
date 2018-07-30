@@ -15,10 +15,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
+                int? branchCode = 0;
                 DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                 int companyId = Int32.Parse(Request.QueryString["companyId"]);
                 string branch = Request.QueryString["branchId"];
-              int  branchCode = Int32.Parse(Request.QueryString["branchId"]);
+                if (branch!=null)
+                     branchCode = Int32.Parse(Request.QueryString["branchId"]);
+
+
 
 
                 LoanReportObjects dispursement = new LoanReportObjects();
@@ -33,6 +37,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 reportDataSource1.Value = loanDocumentWaivedForMCC;
                 reportDataSource2.Value = loanDeferralMCCExp;
                 reportDataSource3.Value = loanDeferralMCCCur;
+
                 reportDataSource1.Name = "WaiverMCC";
                 reportDataSource2.Name = "DeferralMCCExp";
                 reportDataSource2.Name = "DeferralMCC";
