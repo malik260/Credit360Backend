@@ -119,6 +119,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public decimal overDraft { get; set; }
+        public string archiveCode { get; set; }
 
 
         public decimal equityContribution { get; set; }
@@ -249,7 +250,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string isDisbursedState { get; set; }
         public string productPriceIndexName { get; set; }
         public string revolvingType { get; set; }
-
+        public string istenored { get; set; }
+        public string isbankFormat { get; set; }
+        public int loadArchiveId { get; set; }
+        public bool isTermLoam { get; set; }
+        public bool isOD { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -588,7 +593,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal loanAmount { get; set; }
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
         public DateTime date  { get; set; }
-
+        public decimal feeRate { get; set; }
     }
 
     public class LoanCollateralMappingViewModel : CollateralViewModel

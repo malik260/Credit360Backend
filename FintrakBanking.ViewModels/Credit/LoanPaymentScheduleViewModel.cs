@@ -38,6 +38,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanId  { get; set; }
         public double? previousInterestAmount  { get; set; }
         public double? previousPrincipalAmount { get; set; }
+        public string archiveCode { get; set; }
 
     }
 

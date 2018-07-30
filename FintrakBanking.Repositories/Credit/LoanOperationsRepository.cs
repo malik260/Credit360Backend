@@ -5452,7 +5452,7 @@ namespace FintrakBanking.Repositories.Credit
             addLoanArchive.NPLDATE = model.nplDate;
             addLoanArchive.CREATEDBY = model.createdBy;
             addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
-            addLoanArchive.ARCHIVEBATCHCODE = archiveBatchCode;
+            addLoanArchive.SetARCHIVEBATCHCODE(archiveBatchCode);
             
 
             loanArchive.Add(addLoanArchive);
