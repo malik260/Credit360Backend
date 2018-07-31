@@ -29,7 +29,7 @@ namespace System
             }
             else if (ex.InnerException != null)
             {
-                innerExceptions = new Exception[] { ex.InnerException };
+                innerExceptions = new SecureException[] { ex.InnerException };
             }
 
             foreach (var innerEx in innerExceptions)

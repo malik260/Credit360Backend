@@ -211,7 +211,7 @@ namespace FintrakBanking.Common.Extensions
             }
             catch(Exception ex) {
 
-                throw new Exception("" +ex);
+                throw new SecureException("" +ex);
             }
             finally
             {

@@ -38,7 +38,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle
 
                         }).FirstOrDefault();
             }
-            throw new Exception("Staff does not exist in the staff MIS record");
+            throw new SecureException("Staff does not exist in the staff MIS record");
 
         }
     }

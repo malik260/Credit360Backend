@@ -263,15 +263,15 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime valueDate { get; set; }
         public DateTime postedDate { get; set; }
         public DateTime postedTime { get; set; }
-        public string postCurrency { get; set; }
         public double currencyRate { get; set; }
+        public string postCurrency { get; set; }
         public string sourceReferenceNumber { get; set; }
+        public decimal requestedAmount { get; set; }
+        public string remark { get; set; }
         public string nostroAccountId { get; set; }
         public string nostroRateCode { get; set; }
-        public object nostroRateAmount { get; set; }
         public string notstroCurrency { get; set; }
-        public string remark { get; set; }
-        public decimal requestedAmount { get; set; }
+        public decimal? nostroRateAmount { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

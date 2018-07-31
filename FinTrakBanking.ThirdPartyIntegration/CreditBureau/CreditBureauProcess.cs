@@ -134,7 +134,7 @@
                 catch (Exception ex)
                 {
 
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -149,7 +149,7 @@
                 catch (Exception ex)
                 {
 
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -176,7 +176,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -200,7 +200,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -280,7 +280,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -304,7 +304,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 

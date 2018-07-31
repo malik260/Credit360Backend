@@ -73,7 +73,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
             }
             catch (System.IO.IOException e)
             {
-                throw new Exception(e.Message);
+                throw new SecureException(e.Message);
 
             }
         }

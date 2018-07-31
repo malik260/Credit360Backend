@@ -218,7 +218,7 @@
             //    else
             //    {
             //        output = false;
-            //        throw new Exception($"Transaction {responseAPI.webRequestStatus}");
+            //        throw new SecureException($"Transaction {responseAPI.webRequestStatus}");
             //    }
 
             //    return output;
