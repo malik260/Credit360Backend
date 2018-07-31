@@ -8803,7 +8803,7 @@ namespace FintrakBanking.Repositories.Credit
                              externalPrudentialGuidelineStatusId = 1,
                              userPrudentialGuidelineStatusId = null,
                              nplDate = null,
-                             createdBy = -1,
+                             createdBy = (int)SystemStaff.System,
                              dateTimeCreated = DateTime.Today,
 
                          }).FirstOrDefault();
@@ -11313,7 +11313,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         DateTime nextPaymentDate = DateTime.Now;
                         var paymentDate = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
-                                       where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE == applicationDate
+                                       where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE >= applicationDate
                                        select a).FirstOrDefault();
 
                         if (paymentDate != null)
@@ -11351,7 +11351,7 @@ namespace FintrakBanking.Repositories.Credit
                             //decimal accruedAmount = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.DATE == applicationDate).ACCRUEDINTEREST;
                             decimal accruedAmount = 0;
                             var accrued = (from a in context.TBL_LOAN_SCHEDULE_DAILY
-                                           where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
+                                           where a.TBL_LOAN.TERMLOANID == loanId && a.DATE >= applicationDate
                                            select a).FirstOrDefault();
 
                             if (accrued != null)
@@ -11490,7 +11490,7 @@ namespace FintrakBanking.Repositories.Credit
                         else if ((int)OperationsEnum.TenorChange == model.operationId)
                         {
                             //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.PAYMENTDATE >= applicationDate).PAYMENTDATE;
-                            model.maturityDate = model.maturityDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
                             model.effectiveDate = model.newEffectiveDate;
                             model.tenor = model.newTenor; ;
                             model.principalFirstpaymentDate = nextPaymentDate;
@@ -11577,6 +11577,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             model.interestRate = model.newInterest;
                             model.effectiveDate = model.newEffectiveDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
                             model.scheduleMethodId = (short)LoanScheduleTypeEnum.IrregularSchedule;
                             result = LoanRecovery(loanId, model, applicationDate, staffId);
                             if (result == true)
@@ -11857,6 +11858,7 @@ namespace FintrakBanking.Repositories.Credit
                             //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.PAYMENTDATE >= applicationDate).PAYMENTDATE;
                             model.maturityDate = model.maturityDate;
                             model.effectiveDate = model.newEffectiveDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
                             model.tenor = model.newTenor; ;
                             model.principalFirstpaymentDate = nextPaymentDate;
                             model.interestFirstpaymentDate = nextPaymentDate;
@@ -11916,6 +11918,7 @@ namespace FintrakBanking.Repositories.Credit
                             //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.PAYMENTDATE >= systemDate).PAYMENTDATE;
                             model.interestRate = model.newInterest;
                             model.effectiveDate = model.newEffectiveDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
                             model.scheduleMethodId = model.scheduleMethodId;
                             result = LoanWorkOut(loanId, model, applicationDate, staffId);
                             if (result == true)
