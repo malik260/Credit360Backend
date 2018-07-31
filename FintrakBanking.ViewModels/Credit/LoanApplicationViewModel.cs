@@ -278,6 +278,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int performanceTypeId { get; set; }
         public int productTypeId { get; set; }
         public string searchString { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public string relatedloanReferenceNumber { get; set; }
+        public string loanReferenceNumber { get; set; }
     }
 
     public class CommitteFilterViewModel
