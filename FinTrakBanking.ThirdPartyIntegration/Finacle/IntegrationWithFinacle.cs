@@ -403,24 +403,24 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
             ResponseMessage result = null;
 
-            List<TransactionPostingViewModel> transactionLst = TransactionData(model);
+            List<TransactionPostingViewModel> transactionList = TransactionData(model);
 
             var curencyTypeCount = model.Select(x => x.currencyId).Distinct().Count();
 
             if (curencyTypeCount <= 1)
             {
-                Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionLst)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionList)).GetAwaiter().GetResult();
             }
             else
             {
-                Task.Run(async () => result = await transaction.ApiPostCrossCurrencyTransactions(transactionLst)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await transaction.ApiTransactionPosting(transactionList, true)).GetAwaiter().GetResult();
             }
 
             if (result.APIResponse != null)
             {
                 if (result.APIResponse.responseCode == "0")
                 {
-                    AddCustomTransactions(transactionLst);
+                    AddCustomTransactions(transactionList);
                     return true;
                 }
                 else
@@ -761,11 +761,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 
 
                 transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
-
-
-
                 transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
 
+                //cross currency attributes
+                transPosting.rateCode = item.rateCode;
+                transPosting.rateUnit = item.rateUnit;
+                transPosting.currencycrosscode = item.currencyCrossCode;
+                //-------------------
 
                 transactionLst.Add(transPosting);
             }
@@ -798,6 +800,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
             output = true;
             return output;
 
+        }
+
+        public InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType)
+        {
+            InterestRateInquiryViewModel accountOutput = null;
+
+            Task.Run(async () => accountOutput = await customer.GetInterestRateInquiry(accountNumber, accountType)).GetAwaiter()
+                .GetResult();
+
+            return accountOutput;
         }
         #endregion
 

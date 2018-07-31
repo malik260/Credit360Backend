@@ -67,6 +67,249 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("related-facilty-details/{relatedloanReferenceNumber}")]
+        public HttpResponseMessage GetRelatedFacilityDetail(string relatedloanReferenceNumber)
+        {
+            try
+            {
+                var data = repo.RelatedFacilityDetail(relatedloanReferenceNumber);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("overdraft-facilty-details/{loanId}")]
+        public HttpResponseMessage GetOverdraftFacilityDetail(int loanId)
+        {
+            try
+            {
+                var data = repo.OverdraftFacilityDetail(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("related-overdraft-facilty-details/{relatedLoanRefNo}")]
+        public HttpResponseMessage GetRelatedOverdraftFacilityDetail(string relatedLoanRefNo)
+        {
+            try
+            {
+                var data = repo.RelatedOverdraftFacilityDetail(relatedLoanRefNo);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("facilty-details-archive/{archiveId}")]
+        public HttpResponseMessage GetFacilityDetailArchive(int archiveId)
+        {
+            try
+            {
+                var data = repo.FacilityDetailArchive(archiveId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("all-facilty-details-archive/{loanId}")]
+        public HttpResponseMessage GetAllFacilityDetailArchive(int loanId)
+        {
+            try
+            {
+                var data = repo.ArchiveLoanFacilityDetail(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("all-overdraft-facilty-details-archive/{loanId}")]
+        public HttpResponseMessage GetAllRevolvingLoanFacilityDetailArchive(int loanId)
+        {
+            try
+            {
+                var data = repo.SearchAllRevolvingLoan(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("overdraft-facilty-details-archive/{archiveId}")]
+        public HttpResponseMessage GetOverdraftFacilityDetailArchiveArchive(int archiveId)
+        {
+            try
+            {
+                var data = repo.OverdraftFacilityDetailArchive(archiveId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("archive-periodic-loan-schedule")]
+        public HttpResponseMessage GetArchiveLoanSchedule(LoanPaymentSchedulePeriodicViewModel val)
+        {
+            try
+            {
+                var data = repo.ArchivedLoanSchedule(val);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("contingent-facilty-details/{loanId}")]
+        public HttpResponseMessage GetContingentFacilityDetail(int loanId)
+        {
+            try
+            {
+                var data = repo.ContingentFacilityDetail(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("related-contingent-facilty-details/{relatedLoanRefNo}")]
+        public HttpResponseMessage GetRelatedContingentFacilityDetail(string relatedLoanRefNo)
+        {
+            try
+            {
+                var data = repo.RelatedContingentFacilityDetail(relatedLoanRefNo);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("contingent-utilization/{loanId}")]
+        public HttpResponseMessage GetRepayment(int loanId)
+        {
+            try
+            {
+                var data = repo.ContingentUtilization(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -115,6 +358,28 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-repayment/{relatedLoanRefNo}")]
+        public HttpResponseMessage GetLoanRepayment(string relatedLoanRefNo)
+        {
+            try
+            {
+                var data = repo.LoanRepayment(relatedLoanRefNo); ;
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("loan-collateral/{loanId}")]
         public HttpResponseMessage GetCollateralDetail(int loanId)
         {
@@ -144,6 +409,28 @@ namespace FintrakBanking.APICore.Controllers
             {
                 //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
                 var data = repo.LoanSearch(search.productTypeId, search.searchString);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("related-loan")]
+        public HttpResponseMessage RelatedLoan([FromBody] SearchViewModel search)
+        {
+            try
+            {
+                //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+                var data = repo.RelatedFacility(search.loanSystemTypeId, search.relatedloanReferenceNumber, search.loanReferenceNumber);
+                if (data==null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = "No record found" });
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             catch (SecureException e)

@@ -28,5 +28,7 @@ namespace FintrakBanking.Interfaces.Setups.Finance
         IEnumerable<ChartOfAccountClassViewModel> GetChartOfAccountClasses();
 
         string GetAccountNameByAccountCode(string accountCode);
+
+        int GetAccountDefaultCurrency(int glAccountId, int companyId);
     }
 }

@@ -83,7 +83,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int chargeFeeId { get; set; }
         public int chargeFeeTypeId { get; set; }
         public decimal feeAmountDiff { get; set; }
-        
+        public int oldCasaAccountId { get; set; }
+        public int? newCasaAccountId { get; set; }
+
 
 
 

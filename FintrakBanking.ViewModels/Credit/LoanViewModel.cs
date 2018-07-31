@@ -47,7 +47,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-        public short trailApprovalStatus;
+        public short trailApprovalStatus { get; set; }
+        public string nostroAccount { get; set; }
+        public string currencyCode { get; set; }
+
         public string ApprovalStatus { get; set; }
         public string approvedByName { get; set; }
 
@@ -116,6 +119,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public decimal overDraft { get; set; }
+        public string archiveCode { get; set; }
 
 
         public decimal equityContribution { get; set; }
@@ -200,7 +204,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int staffName { get; set; }
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
+        public int lmsApplicationDetailId  { get; set; }
         
+
 
         public List<ApprovalLevelStaffViewModel> loanOperationApprovers { get; set; }
 
@@ -246,7 +252,28 @@ namespace FintrakBanking.ViewModels.Credit
         public string isDisbursedState { get; set; }
         public string productPriceIndexName { get; set; }
         public string revolvingType { get; set; }
-
+        public string istenored { get; set; }
+        public string isbankFormat { get; set; }
+        public int loadArchiveId { get; set; }
+        public bool isTermLoam { get; set; }
+        public bool isOD { get; set; }
+        public int postedByStaffId { get; set; }
+        public string batchNo { get; set; }
+        public decimal creditAmount { get; set; }
+        public decimal debitAmount { get; set; }
+        public string description { get; set; }
+        public DateTime valueDate { get; set; }
+        public DateTime postedDate { get; set; }
+        public DateTime postedTime { get; set; }
+        public double currencyRate { get; set; }
+        public string postCurrency { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public decimal requestedAmount { get; set; }
+        public string remark { get; set; }
+        public string nostroAccountId { get; set; }
+        public string nostroRateCode { get; set; }
+        public string notstroCurrency { get; set; }
+        public decimal? nostroRateAmount { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -585,7 +612,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal loanAmount { get; set; }
         public List<LoanChargeFeeViewModel> loanDeferredFeeList { get; set; }
         public DateTime date  { get; set; }
-
+        public decimal feeRate { get; set; }
     }
 
     public class LoanCollateralMappingViewModel : CollateralViewModel

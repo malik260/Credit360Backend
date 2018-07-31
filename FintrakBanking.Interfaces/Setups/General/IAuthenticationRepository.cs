@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -44,6 +45,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<TBL_PROFILE_GROUP> GetAllGroups();
 
         bool ClearLoginToken(string userName);
+
+        LookupViewModel GetDashboardStaffRole(int staffId);
 
         bool PasswordChange(PasswordChangeViewModel pwdChange);
 

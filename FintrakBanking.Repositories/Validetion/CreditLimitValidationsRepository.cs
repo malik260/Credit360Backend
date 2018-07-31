@@ -123,8 +123,27 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
         {
 
             CreditLimitValidationsModel model = new CreditLimitValidationsModel();
-            var loanOutstandingBalance = (from d in context.TBL_LOAN
+
+            var loanTotalExposure = (from d in context.TBL_LOAN
                                           where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active || d.LOANSTATUSID == (short)LoanStatusEnum.Inactive
+                                          select new
+                                          {
+                                              d.OUTSTANDINGPRINCIPAL
+                                          }).ToList();
+            var sumLoanTotalExposure = loanTotalExposure.Select(c => c.OUTSTANDINGPRINCIPAL).Sum();
+
+
+            var ODTotalExposure  = (from d in context.TBL_LOAN_REVOLVING
+                                        where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active 
+                                        select new
+                                        {
+                                            d.OVERDRAFTLIMIT
+                                        }).ToList();
+            var sumODTotalExposure = ODTotalExposure.Select(c => c.OVERDRAFTLIMIT).Sum();
+
+            var loanOutstandingBalance = (from d in context.TBL_LOAN
+                                          where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active 
+                                          && d.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing 
                                           select new
                                           {
                                               d.OUTSTANDINGPRINCIPAL
@@ -133,7 +152,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
 
             var ODOutstandingBalance = (from d in context.TBL_LOAN_REVOLVING
-                                        where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active || d.LOANSTATUSID == (short)LoanStatusEnum.Inactive
+                                        where d.BRANCHID == branchId && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                        && d.EXT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
                                         select new
                                         {
                                             d.OVERDRAFTLIMIT
@@ -145,10 +165,13 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                               let maximumLimit = a.NPL_LIMIT
                               select maximumLimit;
 
+            var branchRatio = (((double)(sumLoanOutstandingBalance + sumODOutstandingBalance) / (double)(sumLoanTotalExposure + sumODTotalExposure)) * 100);
 
+            model.totalExposure = (double)(sumLoanTotalExposure + sumODTotalExposure);
             model.outstandingBalance = (double)(sumLoanOutstandingBalance + sumODOutstandingBalance);
             model.limit = (double)limitAmount.FirstOrDefault();
             model.difference = model.limit - model.outstandingBalance;
+            model.ratio = branchRatio;
 
             return model;
         }

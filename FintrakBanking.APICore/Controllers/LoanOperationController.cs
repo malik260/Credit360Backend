@@ -59,6 +59,22 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("get-running-fx-revolving-loan/{refNo}")]
+        public HttpResponseMessage GetRunningFXLoans(string refNo)
+        {
+            try
+            {
+                var data = repo.GetRunningFXLoans(token.GetCompanyId, refNo);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("commercial-loans-lines")]
         public HttpResponseMessage GetCommercialLoansLines()
         {
@@ -92,12 +108,28 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("mature-commercial-loans/detail/{loanApplicationDetailId}")]
-        public HttpResponseMessage GetMaturedCommercialLoans(int loanApplicationDetailId)
+        [Route("due-commercial-loans")]
+        public HttpResponseMessage GetDueCommercialLoans()
         {
             try
             {
-                var data = repo.GetMaturedCommercialLoans(token.GetCompanyId, loanApplicationDetailId);
+                var data = repo.GetDueCommercialLoans(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("due-commercial-loans/detail/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetDueCommercialLoansByApplicationDetailId(int loanApplicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetDueCommercialLoansByApplicationDetailId(token.GetCompanyId, loanApplicationDetailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)
