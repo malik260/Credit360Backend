@@ -32,9 +32,6 @@
                 API_URL = configdata.APIURL;
             }
 
-            //private HttpClientHandler handler = new HttpClientHandler();
-            //private static HttpClient httpClientInstance;
-
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
             {
                 HttpClientHandler handler = new HttpClientHandler();
@@ -115,9 +112,7 @@
 
                     logContext.SaveChanges();
                 }
-            }
-           
-
+            }         
             private bool AddCustomLien(LienProcessViewModel entity)
             {
                 bool output = false;
@@ -145,87 +140,6 @@
                 return output;
 
             }
-
-
-
-            //public async Task<bool> APITransactionPosting(List<FinanceTransactionViewModel> model)
-            //{
-
-            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
-            //    bool output = false;
-            //    var dta = context.TBL_SETUP_GLOBAL.ToList();
-            //    TransactionPostingViewModel responseModel = new TransactionPostingViewModel();
-            //    List<TransactionPostingViewModel> apiModel = new List<TransactionPostingViewModel>();
-            //    foreach (var item in model)
-            //    {
-
-
-            //        apiModel.Add(new TransactionPostingViewModel
-            //            {
-
-            //                accounts =
-            //                    item.casaAccountId
-            //                        .ToString(), //item.casaAccountId!= null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,                       
-            //                amounts = item.creditAmount > 0
-            //                    ? "C" + item.creditAmount.ToString()
-            //                    : "D" + item.debitAmount.ToString(),
-            //                //amounts = item.sourceReferenceNumber,
-            //                narration = item.description,
-            //                referenceNumber = item.batchCode,
-            //                currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId)
-            //                    .CURRENCYCODE,
-            //                operationId =
-            //                    item.operationId, // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
-            //            }
-            //        );
-            //    }
-
-            //    handler.UseDefaultCredentials = true;
-            //    HttpClient client = new HttpClient(handler);
-
-            //    httpClientInstance = new HttpClient();
-            //    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
-            //    client.Timeout = TimeSpan.FromSeconds(60);
-            //    client.DefaultRequestHeaders.Authorization = token;
-            //    client.BaseAddress = new Uri(API_URL);
-            //    client.DefaultRequestHeaders.Accept.Clear();
-            //    client.DefaultRequestHeaders.Accept.Add(
-            //        new MediaTypeWithQualityHeaderValue("application/json"));
-
-            //    ServicePointManager.ServerCertificateValidationCallback +=
-            //        (sender, cert, chain, sslPolicyErrors) => true;
-            //    HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
-            //        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
-
-            //    if (response.IsSuccessStatusCode)
-            //    {
-            //        responseModel = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
-
-            //    }
-
-            //    ResponseViewModel responseAPI = new ResponseViewModel();
-            //    responseAPI.responseCode = responseModel.responseCode;
-            //    responseAPI.webRequestDate = responseModel.webRequestDate;
-            //    responseAPI.webRequestStatus = responseModel.webRequestStatus;
-
-            //    handler.Dispose();
-            //    client.Dispose();
-            //    if (responseModel.responseCode == "0")
-            //    {
-            //        AddCustomTransactions(apiModel);
-            //        output = true;
-            //    }
-            //    else
-            //    {
-            //        output = false;
-            //        throw new Exception($"Transaction {responseAPI.webRequestStatus}");
-            //    }
-
-            //    return output;
-
-
-            //}
-
             public async Task<ResponseMessage> ApiPostCrossCurrencyTransactions(List<TransactionPostingViewModel> model)
             {
                 HttpClientHandler handler = new HttpClientHandler();
@@ -333,8 +247,6 @@
                 }
 
             }
-
-
             public async Task<ResponseMessage> ApiTransactionPosting(List<TransactionPostingViewModel> model, bool isCrossCurrency = false)
             {
                 HttpClientHandler handler = new HttpClientHandler();
@@ -450,8 +362,6 @@
 
                 //context.SaveChanges();
             }
-
-
             public async Task<ResponseMessage> APIProcessLien(CasaLienViewModel model, string lienType)
             {
                 HttpClientHandler handler = new HttpClientHandler();
@@ -591,7 +501,116 @@
 
                 
             }
-         
+            public async Task<ResponseMessage> APIPostInterestRate(InterestRateInquiryViewModel model, string accountType)
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+                InterestRateInquiryViewModel responseModel = new InterestRateInquiryViewModel();
+                bool output = false;
+                HttpClient client = new HttpClient(handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
+
+                try
+                {
+                    InterestRateInquiryIntegrationViewModel apiModel = new InterestRateInquiryIntegrationViewModel
+                    {
+                        accountNumber = model.accountNumber,
+                        accountType = accountType,
+                        interestTableCode = model.interestTableCode,
+                        startDate = model.startDate,
+                        endDate = model.endDate,
+                        interestRateAmount = model.interestRateAmount,
+
+                   };
+
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+                    handler.UseDefaultCredentials = true;
+
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+
+                    client.DefaultRequestHeaders.Authorization = token;
+
+
+                    ServicePointManager.ServerCertificateValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+                    response = client.PostAsync("api/InterestRateInquiry/PostInterestRate", new StringContent(
+                        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                    responseDateTime = DateTime.Now;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        responseModel = await response.Content.ReadAsAsync<InterestRateInquiryViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseModel.responseCode,
+                            webRequestDate = responseModel.webRequestDate,
+                            webRequestStatus = responseModel.webRequestStatus,
+
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = "api/InterestRateInquiry/PostInterestRate",
+                        LOGTYPEID = 19,
+                        REFERENCENUMBER = model.accountNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = objData,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseModel.webRequestStatus,
+                    };
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
+                }
+
+
+            }
+
         }
     }
 }

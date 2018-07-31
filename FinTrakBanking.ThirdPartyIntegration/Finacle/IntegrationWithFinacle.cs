@@ -801,6 +801,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return output;
 
         }
+
+        public InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType)
+        {
+            InterestRateInquiryViewModel accountOutput = null;
+
+            Task.Run(async () => accountOutput = await customer.GetInterestRateInquiry(accountNumber, accountType)).GetAwaiter()
+                .GetResult();
+
+            return accountOutput;
+        }
         #endregion
 
     }

@@ -60,6 +60,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short? interestTypeId { get; set; }
 
+        public int lmsApplicationDetailId { get; set; }
+        
+
         public List<LoanReviewIrregularScheduleViewModel> reviewIrregularSchedule { get; set; }
     }
 
