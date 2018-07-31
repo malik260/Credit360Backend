@@ -32,6 +32,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> RelatedFacility(int loanSystemTypeId, string relatedLoanRefNo, string loanRefN);
         List<LoanViewModel> LoanRepayment(string loanRefNo);
         List<LoanViewModel> ContingentUtilization(int contingentId);
+        List<LoanViewModel> DailyInterestAccrual(DateTime endDate, DateTime startDate, string loanReferenceNumber);
 
     }
 }

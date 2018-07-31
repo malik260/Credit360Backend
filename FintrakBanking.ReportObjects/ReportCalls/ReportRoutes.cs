@@ -460,7 +460,7 @@ namespace FintrakBanking.ReportObjects.ReportCalls
         {
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/DailyAccrualReport.aspx?startDate=" + searchEntity.startDate.ToString("dd-MM-yyyy") + "&endDate=" + searchEntity.endDate.ToString("dd-MM-yyyy") + "&categoryId=" + searchEntity.categoryId + "&transactionTypeId=" + searchEntity.transactionTypeId + "&companyId=" + searchEntity.companyId;
+            path = reportPath + "ReportViews/DailyAccrualReport.aspx?startDate=" + searchEntity.startDate.ToString("dd-MM-yyyy") + "&endDate=" + searchEntity.endDate.ToString("dd-MM-yyyy") + "&categoryId=" + searchEntity.categoryId + "&searchParamemter=" + searchEntity.searchParamemter + "&companyId=" + searchEntity.companyId;
             return path;
         }
         public string GetRepayment(ReportSearchEntity searchEntity)

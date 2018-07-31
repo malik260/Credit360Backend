@@ -281,6 +281,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanSystemTypeId { get; set; }
         public string relatedloanReferenceNumber { get; set; }
         public string loanReferenceNumber { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
     }
 
     public class CommitteFilterViewModel

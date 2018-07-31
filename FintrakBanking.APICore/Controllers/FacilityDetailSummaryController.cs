@@ -438,6 +438,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("daily-interest-accrual")]
+        public HttpResponseMessage DailyInterestAccrual([FromBody] SearchViewModel search)
+        {
+            try
+            {
+                var data = repo.DailyInterestAccrual(search.startDate,search.endDate,search.loanReferenceNumber);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("product-type")]

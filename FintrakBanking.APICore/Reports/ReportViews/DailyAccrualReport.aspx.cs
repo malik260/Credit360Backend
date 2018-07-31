@@ -20,13 +20,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                
                 DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                 DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
-                int categoryId = Int32.Parse(Request.QueryString["categoryId"]);
+                string searchParamemter = Request.QueryString["searchParamemter"];
                 int companyId = Int32.Parse(Request.QueryString["companyId"]);
                
 
 
                 FinanceRepotObject accru = new FinanceRepotObject();
-                var data = accru.DailyAccrual(endDate, startDate, companyId,categoryId);
+                var data = accru.DailyAccrual(endDate, startDate, companyId, searchParamemter);
 
                 this.ReportViewer.LocalReport.DataSources.Clear();
                 ReportDataSource reportDataSource = new ReportDataSource();

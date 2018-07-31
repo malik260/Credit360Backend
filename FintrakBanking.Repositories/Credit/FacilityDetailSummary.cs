@@ -1253,7 +1253,7 @@ namespace FintrakBanking.Repositories.Credit
                                                    join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
                                                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
                                                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                                                   where a.SOURCEREFERENCENUMBER== loanRefNo
+                                                   where a.SOURCEREFERENCENUMBER== loanRefNo 
                                                    && a.CREDITAMOUNT == 0
                                                    && a.DEBITAMOUNT > 0
                                                    orderby a.POSTEDDATE, a.TRANSACTIONID descending
@@ -1299,6 +1299,35 @@ namespace FintrakBanking.Repositories.Credit
                 return data;
             }
 
+        }
+
+
+        public List<LoanViewModel> DailyInterestAccrual(DateTime endDate, DateTime startDate,  string loanReferenceNumber)
+        {
+            List<LoanViewModel> data;
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                data = (from a in context.TBL_DAILY_ACCRUAL
+                        join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+                        join l in context.TBL_LOAN on a.REFERENCENUMBER equals l.LOANREFERENCENUMBER
+                        join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                        where a.DATE >= startDate && a.DATE <= endDate
+                        && a.REFERENCENUMBER==loanReferenceNumber
+                        orderby a.DAILYACCURALID descending
+                        select new LoanViewModel()
+                        {
+                            baseReferenceNumber = a.BASEREFERENCENUMBER,
+                            categoryName = context.TBL_DAILY_ACCRUAL_CATEGORY.Where(x => x.CATEGORYID == a.CATEGORYID).Select(x => x.CATEGORYNAME).FirstOrDefault(),
+                            currencyName = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
+                            dailyAccrualAmount = a.DAILYACCURALAMOUNT,
+                            date = a.DATE,
+                            exchangeRate = a.EXCHANGERATE,
+                            interestRate = a.INTERESTRATE,
+                            mainAmount = a.MAINAMOUNT,
+                            loanReferenceNumber = a.REFERENCENUMBER,
+                        }).ToList();
+            }
+            return data;
         }
     }
 }
