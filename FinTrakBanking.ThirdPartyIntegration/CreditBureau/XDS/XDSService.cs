@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.ThridPartyIntegration;
 using FintrakBanking.ViewModels.ThridPartyIntegration;

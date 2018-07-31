@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
