@@ -7376,7 +7376,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                select a).FirstOrDefault();
 
-                if (accrued == null)
+                if(accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
@@ -8013,7 +8013,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                select a).FirstOrDefault();
 
-                if (accrued == null)
+                if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
@@ -8668,7 +8668,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                select a).FirstOrDefault();
 
-                if (accrued == null)
+                if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
@@ -8908,7 +8908,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                select a).FirstOrDefault();
 
-                if (accrued == null)
+                if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
@@ -9041,7 +9041,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                select a).FirstOrDefault();
 
-                if (accrued == null)
+                if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
@@ -9346,7 +9346,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                select a).FirstOrDefault();
 
-                if (accrued == null)
+                if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
@@ -9793,7 +9793,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                select a).FirstOrDefault();
 
-                if (accrued == null)
+                if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
@@ -9859,7 +9859,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                select a).FirstOrDefault();
 
-                if (accrued == null)
+                if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
@@ -11312,7 +11312,7 @@ namespace FintrakBanking.Repositories.Credit
                                            where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE == applicationDate
                                            select a).FirstOrDefault();
 
-                        if (paymentDate == null)
+                        if (paymentDate != null)
                         {
                             nextPaymentDate = paymentDate.PAYMENTDATE;
                         }
@@ -11350,7 +11350,7 @@ namespace FintrakBanking.Repositories.Credit
                                            where a.TBL_LOAN.TERMLOANID == loanId && a.DATE == applicationDate
                                            select a).FirstOrDefault();
 
-                            if (accrued == null)
+                            if (accrued != null)
                             {
                                 accruedAmount = accrued.ACCRUEDINTEREST;
                             }
@@ -11649,7 +11649,7 @@ namespace FintrakBanking.Repositories.Credit
                                            where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE >= applicationDate
                                            select a).FirstOrDefault();
 
-                        if (paymentDate == null)
+                        if (paymentDate != null)
                         {
                             nextPaymentDate = paymentDate.PAYMENTDATE;
                         }
@@ -11947,8 +11947,6 @@ namespace FintrakBanking.Repositories.Credit
                             }
 
                         }
-
-
                         else if ((int)OperationsEnum.CASAAccountChange == model.operationId)
                         {
                             result = ChangeOperativeAccount(model.oldCasaAccountId, (int)model.newCasaAccountId);
