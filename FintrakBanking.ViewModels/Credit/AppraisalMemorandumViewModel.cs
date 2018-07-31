@@ -81,7 +81,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL
     {
-        public List<DedupeApplicationViewModel> dedupApplications { get; set; }
+        public List<DedupeApplicationViewModel> duplications { get; set; }
         public List<ApprovedLoanDetailViewModel> facilities { get; set; }
     }
 

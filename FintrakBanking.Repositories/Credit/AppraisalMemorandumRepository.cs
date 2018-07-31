@@ -680,8 +680,6 @@ namespace FintrakBanking.Repositories.Credit
         public LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId)
         {
             var details = new LoanApplicationDetailsViewModel();
-            try
-            {
                 var facilities = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
                     .Join(context.TBL_LOAN_APPLICATION_DETAIL,
                     a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
@@ -713,15 +711,15 @@ namespace FintrakBanking.Repositories.Credit
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
 
-                var dedupe = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => customerIds.Contains(x.CUSTOMERID)
-                    //&& x.DELETED == false
-                    //&& x.LOANAPPLICATIONID != applicationId
-                    //&& x.STATUSID == (int)ApprovalStatusEnum.Approved
+                var duplications = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => customerIds.Contains(x.CUSTOMERID)
+                    && x.DELETED == false
+                    && x.LOANAPPLICATIONID != applicationId
+                    && x.STATUSID == (int)ApprovalStatusEnum.Approved
                 )
                 .Join(
-                    context.TBL_LOAN_APPLICATION//.Where(x => 
-                        //x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved 
-                        //&& x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                    context.TBL_LOAN_APPLICATION.Where(x => 
+                        x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                         , d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
                 .Select(x => new DedupeApplicationViewModel
                 {
@@ -735,13 +733,9 @@ namespace FintrakBanking.Repositories.Credit
                 })
                 .ToList();
 
-                details.dedupApplications = dedupe;
+                details.duplications = duplications;
                 details.facilities = facilities;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message + " -- "+ ex.InnerException);
-            }
+           
             return details;
         }
 
