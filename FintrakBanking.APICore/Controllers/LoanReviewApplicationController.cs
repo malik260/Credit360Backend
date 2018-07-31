@@ -109,8 +109,9 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-review-application/loan-search")]
         public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)
         {
+            var searchString = search.searchString.Trim();
             //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.performanceTypeId, search.productTypeId, search.searchString);
+            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.performanceTypeId, search.productTypeId, searchString);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 

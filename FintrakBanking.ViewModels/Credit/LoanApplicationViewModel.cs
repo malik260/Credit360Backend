@@ -111,6 +111,19 @@ namespace FintrakBanking.ViewModels.Credit
         public short productClassProcessId { get; set; }
         public string approvalStatus { get; set; }
         public string responsiblePerson { get; set; }
+        public DateTime? timeIn { get; set; }
+        public DateTime? slaTime { get; set; }
+        public string tenorString
+        {
+            get
+            {
+                var units = applicationTenor == 1 ? " day" : " days";
+                if (applicationTenor < 15) return applicationTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(applicationTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " months";
+            }
+        }
     }
 
     public class LoanApplicationUpdateMessage
@@ -241,6 +254,28 @@ namespace FintrakBanking.ViewModels.Credit
         public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
         public string sectorName { get; set; }
         public string productClass { get; set; }
+        public string proposedTenorString
+        {
+            get
+            {
+                var units = proposedTenor == 1 ? " day" : " days";
+                if (proposedTenor < 15) return proposedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " months";
+            }
+        }
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = approvedTenor == 1 ? " day" : " days";
+                if (approvedTenor < 15) return approvedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " months";
+            }
+        }
     }
 
     public class ProductFeesViewModel// : GeneralEntity

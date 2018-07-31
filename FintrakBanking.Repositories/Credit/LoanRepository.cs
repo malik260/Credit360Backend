@@ -6444,12 +6444,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int productTypeId, string searchQuery)
         {
-
-            if (searchQuery == "test1") throw new Exception("Exception 1");
-            if (searchQuery == "test2") throw new SecureException("SecuredException 2");
-            if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
-
-
+            //if (searchQuery == "test1") throw new Exception("Exception 1");
+            //if (searchQuery == "test2") throw new SecureException("SecuredException 2");
+            //if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
 
             bool all = performanceTypeId == 3;
             bool performing = performanceTypeId == 1;
