@@ -39,7 +39,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanCovenantDetailViewModel> ProcessLPOExpiryAndlocking(DateTime applicationDate);
         IEnumerable<LoanPastDueViewModel> ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(DateTime applicationDate);
         bool LoanCancellation(int loanId, DateTime applicationDate, int staffId);
-        bool OverdraftTopUp(int loanId, decimal amount);
+        bool OverdraftTopUp(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, decimal amount);
+        //bool OverdraftTopUp(int loanId, decimal amount);
         IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension();
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue (DateTime applicationDate);

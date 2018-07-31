@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static FintrakBanking.Repositories.Credit.LoanApplicationRepository;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -622,6 +623,18 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return activities;
         }
+        public LookupViewModel GetDashboardStaffRole(int staffId)
+        {
+            var dash = (from st in context.TBL_STAFF
+                        join sr in context.TBL_STAFF_ROLE on st.STAFFROLEID equals sr.STAFFROLEID
+                        where st.STAFFID == staffId
+                        select new LookupViewModel
+                        {
+                            lookupId = (short)sr.STAFFROLEID,
+                            lookupName = sr.STAFFROLENAME
+                        }).FirstOrDefault();
+            return dash;
+        }
         public bool PasswordChange(PasswordChangeViewModel pwdChange)
         {
 
@@ -629,34 +642,34 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var data = context.TBL_PROFILE_USER.Where(u => u.USERNAME.ToUpper() == pwdChange.username.ToUpper()).FirstOrDefault();
 
-                //var daat = context.TBL_PROFILE_PASSWORD_HISTORY.Where(p => p.USERID == data.USERID && p.PASSWORD == pwdChange.newPassword)
-                //                                            .OrderBy(p => p.DATETIMECREATED)
-                //                                            .Take(profile_Setting.ALLOWPASSWORDREUSEAFTER);
-                //if (!daat.Any())
-                //{
-                if (data != null && data.PASSWORD == pwdChange.currentPassword)
+                var daat = context.TBL_PROFILE_PASSWORD_HISTORY.Where(p => p.USERID == data.USERID && p.PASSWORD == pwdChange.newPassword)
+                                                            .OrderBy(p => p.DATETIMECREATED)
+                                                            .Take(profile_Setting.ALLOWPASSWORDREUSEAFTER);
+                if (!daat.Any())
                 {
-                    int staffId = data.STAFFID;
-                    data.PASSWORD = pwdChange.newPassword;
-                    data.DATETIMEUPDATED = DateTime.Now;
-                    data.LASTUPDATEDBY = staffId;
-                    data.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
-                    //var history = new TBL_PROFILE_PASSWORD_HISTORY
-                    //{
-                    //    CREATEDBY = staffId,
-                    //    DATETIMECREATED = DateTime.Now,
-                    //    PASSWORD = pwdChange.newPassword,
-                    //    USERID = daat.FirstOrDefault().USERID
-                    //};
-                    //context.TBL_PROFILE_PASSWORD_HISTORY.Add(history);
+                    if (data != null && data.PASSWORD == pwdChange.currentPassword)
+                    {
+                        int staffId = data.STAFFID;
+                        data.PASSWORD = pwdChange.newPassword;
+                        data.DATETIMEUPDATED = DateTime.Now;
+                        data.LASTUPDATEDBY = staffId;
+                        data.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
+                        var history = new TBL_PROFILE_PASSWORD_HISTORY
+                        {
+                            CREATEDBY = staffId,
+                            DATETIMECREATED = DateTime.Now,
+                            PASSWORD = pwdChange.newPassword,
+                            USERID = daat.FirstOrDefault().USERID
+                        };
+                        context.TBL_PROFILE_PASSWORD_HISTORY.Add(history);
 
-                    return context.SaveChanges() > 0;
+                        return context.SaveChanges() > 0;
+                    }
+                    else
+                        throw new Exception("Password is not valid");
                 }
                 else
-                    throw new Exception("Password is not valid");
-                //}
-                //else
-                //    throw new Exception("You are not allow to re-use the previous 12 passwords");
+                    throw new Exception($"You are not allow to re-use the previous {profile_Setting.ALLOWPASSWORDREUSEAFTER} passwords");
             }
             else
                 throw new Exception("New Password should not be same as the Current Password");
