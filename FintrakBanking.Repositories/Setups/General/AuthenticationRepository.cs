@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static FintrakBanking.Repositories.Credit.LoanApplicationRepository;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -621,6 +622,18 @@ namespace FintrakBanking.Repositories.Setups.General
             //var test2 = roleGroupActivityIds.ToList();
 
             return activities;
+        }
+        public LookupViewModel GetDashboardStaffRole(int staffId)
+        {
+            var dash = (from st in context.TBL_STAFF
+                        join sr in context.TBL_STAFF_ROLE on st.STAFFROLEID equals sr.STAFFROLEID
+                        where st.STAFFID == staffId
+                        select new LookupViewModel
+                        {
+                            lookupId = (short)sr.STAFFROLEID,
+                            lookupName = sr.STAFFROLENAME
+                        }).FirstOrDefault();
+            return dash;
         }
         public bool PasswordChange(PasswordChangeViewModel pwdChange)
         {

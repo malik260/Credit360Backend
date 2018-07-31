@@ -1519,7 +1519,7 @@ namespace FintrakBanking.Repositories.Finance
 
         //}
 
-        public FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model)
+        public FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth)
         {
             //*FinanceTransactionViewModel*/ loanTransaction = new FinanceTransactionViewModel();
 
@@ -1581,7 +1581,7 @@ namespace FintrakBanking.Repositories.Finance
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
                 inputTransactions.Add(debit);
                 inputTransactions.Add(credit);
-                PostTransaction(inputTransactions);
+                PostTransaction(inputTransactions, false, twoFactorAuth);
             }
             else
             {
@@ -1635,7 +1635,7 @@ namespace FintrakBanking.Repositories.Finance
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
                 inputTransactions.Add(debit);
                 inputTransactions.Add(credit);
-                PostTransaction(inputTransactions);
+                PostTransaction(inputTransactions, false, twoFactorAuth);
             }
             //financeTransaction.PostTransaction(loanTransaction);
 

@@ -208,6 +208,7 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     var found = _repo.GetSingleUserByUserName(user.username.ToLower());
 
+
                     if (found.branchId != null)
                     {
                         var audit1 = new TBL_AUDIT()
@@ -231,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var currUser = foundUser;
-
+                var userRole = _repo.GetDashboardStaffRole(currUser.staffId);
                 var userActivities = _repo.GetUserActivitiesByUser(currUser.user_id);
 
                 if (currUser.branchId != null)
@@ -271,6 +272,7 @@ namespace FintrakBanking.APICore.Controllers
                         sessionStatusInfo = currUser.sessionStatusInfo,
                         applicationDate = _genSetup.GetApplicationDate(),
                         lastLoginDate = currUser.lastLoginDate,
+                        staffRole = userRole.lookupName,
                     }
                 });
 
