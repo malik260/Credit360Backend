@@ -170,7 +170,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetApprovedLoanDetail(loanApplicationId);
+                LoanApplicationDetailsViewModel data = repo.GetLoanApplicationDetail(loanApplicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)

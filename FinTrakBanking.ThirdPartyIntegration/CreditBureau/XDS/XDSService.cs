@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.ThridPartyIntegration;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
@@ -73,7 +74,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
             }
             catch (System.IO.IOException e)
             {
-                throw new Exception(e.Message);
+                throw new SecureException(e.Message);
 
             }
         }

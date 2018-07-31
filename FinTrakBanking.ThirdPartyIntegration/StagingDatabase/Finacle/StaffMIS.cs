@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Credit;
@@ -38,7 +39,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle
 
                         }).FirstOrDefault();
             }
-            throw new Exception("Staff does not exist in the staff MIS record");
+            throw new SecureException("Staff does not exist in the staff MIS record");
 
         }
     }

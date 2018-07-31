@@ -1643,7 +1643,7 @@ namespace FintrakBanking.Repositories.Credit
                     var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
                     var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == item.companyId);
 
-                    pastDue.LOANID = item.loanId;
+                    pastDue.LOANID = (int)item.loanId;
                     pastDue.PARENT_PASTDUECODE = PastDueCode;
                     pastDue.CREDITAMOUNT = 0;
                     pastDue.DESCRIPTION = "Past Due Entries on " + result.DESCRIPTION + "as a result of Account not funded";
@@ -1713,7 +1713,7 @@ namespace FintrakBanking.Repositories.Credit
                     var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
                     var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == item.companyId);
 
-                    pastDue.LOANID = item.loanId;
+                    pastDue.LOANID = (int)item.loanId;
                     pastDue.PARENT_PASTDUECODE = PastDueCode;
                     pastDue.CREDITAMOUNT = 0;
                     pastDue.DESCRIPTION = "Past Due Entries on " + result.DESCRIPTION + "as a result of Account not funded";
@@ -7382,7 +7382,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("Application Date not found in Payment Schedule");
+                    throw new SecureException("Application Date not found in Payment Schedule");
                 }
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
@@ -8019,7 +8019,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("Application Date not found in Payment Schedule");
+                    throw new SecureException("Application Date not found in Payment Schedule");
                 }
                 //int Count = loanSchePeriodic.Count();
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
@@ -8318,7 +8318,7 @@ namespace FintrakBanking.Repositories.Credit
             int Count = loanSchePeriodic.Count();
             if (Count == 0)
             {
-                throw new Exception("Application Date not found in Payment Schedule");
+                throw new SecureException("Application Date not found in Payment Schedule");
             }
 
             var data1 = from d in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV
@@ -8674,7 +8674,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("Application Date not found in Payment Schedule");
+                    throw new SecureException("Application Date not found in Payment Schedule");
                 }
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
@@ -8914,7 +8914,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("Application Date not found in Payment Schedule");
+                    throw new SecureException("Application Date not found in Payment Schedule");
                 }
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
@@ -9047,7 +9047,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("Application Date not found in Payment Schedule");
+                    throw new SecureException("Application Date not found in Payment Schedule");
                 }
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
@@ -9352,7 +9352,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("Application Date not found in Payment Schedule");
+                    throw new SecureException("Application Date not found in Payment Schedule");
                 }
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
@@ -9799,7 +9799,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("Application Date not found in Payment Schedule");
+                    throw new SecureException("Application Date not found in Payment Schedule");
                 }
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
@@ -9865,7 +9865,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    throw new Exception("Application Date not found in Payment Schedule");
+                    throw new SecureException("Application Date not found in Payment Schedule");
                 }
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
@@ -10449,6 +10449,13 @@ namespace FintrakBanking.Repositories.Credit
                 TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
             };
             // Audit Section ---------------------------
+
+
+            var operationPerformed = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+            if(operationPerformed!= null)
+            {
+                operationPerformed.OPERATIONPERFORMED = true;
+            }
 
             var audit = new TBL_AUDIT
             {
@@ -11318,7 +11325,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
-                            throw new Exception("Application Date not found in Payment Schedule");
+                            throw new SecureException("Application Date not found in Payment Schedule");
                         }
 
                         if ((int)OperationsEnum.ContractualInterestRateChange == model.operationId)
@@ -11356,7 +11363,7 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             else
                             {
-                                throw new Exception("Application Date not found in Payment Schedule");
+                                throw new SecureException("Application Date not found in Payment Schedule");
                             }
                             decimal accruedInterest = decimal.Round(accruedAmount, 2, MidpointRounding.AwayFromZero);
                             //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.PAYMENTDATE >= applicationDate).PAYMENTDATE;
@@ -11656,7 +11663,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
-                            throw new Exception("Application Date not found in Payment Schedule");
+                            throw new SecureException("Application Date not found in Payment Schedule");
                         }
                         if ((int)OperationsEnum.ContractualInterestRateChange == model.operationId)
                         {

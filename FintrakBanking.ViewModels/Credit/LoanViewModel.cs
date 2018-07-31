@@ -204,7 +204,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int staffName { get; set; }
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
+        public int lmsApplicationDetailId  { get; set; }
         
+
 
         public List<ApprovalLevelStaffViewModel> loanOperationApprovers { get; set; }
 
