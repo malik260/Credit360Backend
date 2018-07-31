@@ -272,4 +272,6 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string valueName { get; set; }
         
     }
+
+
 }

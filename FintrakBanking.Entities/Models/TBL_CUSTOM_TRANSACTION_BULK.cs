@@ -94,7 +94,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CREDITCASAACCOUNTID { get; set; }
 
-        public int LOANID { get; set; }
+        public int? LOANID { get; set; }
         
     }
 }
