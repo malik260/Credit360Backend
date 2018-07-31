@@ -669,7 +669,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         throw new Exception("Password is not valid");
                 }
                 else
-                    throw new Exception("You are not allow to re-use the previous 12 passwords");
+                    throw new Exception($"You are not allow to re-use the previous {profile_Setting.ALLOWPASSWORDREUSEAFTER} passwords");
             }
             else
                 throw new Exception("New Password should not be same as the Current Password");
