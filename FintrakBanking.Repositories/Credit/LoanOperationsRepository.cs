@@ -11653,7 +11653,7 @@ namespace FintrakBanking.Repositories.Credit
                                            where a.TBL_LOAN.TERMLOANID == loanId && a.PAYMENTDATE >= applicationDate
                                            select a).FirstOrDefault();
 
-                        if (paymentDate == null)
+                        if (paymentDate != null)
                         {
                             nextPaymentDate = paymentDate.PAYMENTDATE;
                         }
