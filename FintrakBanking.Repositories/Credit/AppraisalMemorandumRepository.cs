@@ -739,46 +739,6 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
-        /*public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
-        {
-            var details = (from a in context.TBL_LOAN_APPLICATION
-                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                           join c in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals c.PRODUCTID
-                           join d in context.TBL_PRODUCT on b.APPROVEDPRODUCTID equals d.PRODUCTID
-                           join e in context.TBL_CUSTOMER on b.CUSTOMERID equals e.CUSTOMERID
-                           join f in context.TBL_CURRENCY on b.CURRENCYID equals f.CURRENCYID
-                           where a.LOANAPPLICATIONID == applicationId && b.DELETED == false
-                           select new ApprovedLoanDetailViewModel
-                           {
-                               loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
-                               applicationId = b.LOANAPPLICATIONID,
-                               customerId = e.CUSTOMERID,
-                               obligorName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
-                               currencyCode = f.CURRENCYCODE,
-
-                               proposedProductName = c.PRODUCTNAME,
-                               proposedTenor = b.PROPOSEDTENOR,
-                               proposedRate = b.PROPOSEDINTERESTRATE,
-                               proposedAmount = b.PROPOSEDAMOUNT,
-                               proposedProductId = b.PROPOSEDPRODUCTID,
-
-                               approvedProductName = d.PRODUCTNAME, // <----------take note of 1
-                               approvedTenor = b.APPROVEDTENOR,
-                               approvedRate = b.APPROVEDINTERESTRATE,
-                               approvedAmount = b.APPROVEDAMOUNT,
-                               approvedProductId = b.APPROVEDPRODUCTID,
-
-                               statusId = b.STATUSID,
-                               exchangeRate = b.EXCHANGERATE,
-                               terms = b.REPAYMENTTERMS,
-                               schedule = b.REPAYMENTSCHEDULE
-                           });
-
-            // var test = details.ToList();
-
-            return details.ToList();
-        }*/
-
         public IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId)
         {
             var fees = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
