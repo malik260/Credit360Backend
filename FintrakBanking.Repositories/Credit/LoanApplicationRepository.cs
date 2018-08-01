@@ -764,10 +764,22 @@ namespace FintrakBanking.Repositories.Credit
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
             var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+            bool MiddleOfficeCertified = true;
+
+            
             if (dat != null)
             {
                 foreach (var d in dat)
                 {
+                    //Replace hard-coding with a variable once defined
+                    if(d.APPROVEDPRODUCTID == 36)
+                    {
+                        if (context.TBL_JOB_REQUEST.Where(x => x.JOBTYPEID == (int)JobTypeEnum.middleOfficeVerification).Any())
+                        {
+                            MiddleOfficeCertified = true;
+                        }
+                        else MiddleOfficeCertified = false;
+                    }
                     var types = from a in context.TBL_CHECKLIST_TYPE select a;
                     foreach (var item in types)
                     {
@@ -835,7 +847,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
+            if (isCheckListDone && MiddleOfficeCertified  && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
                 return new LoanApplicationUpdateMessage
                 {

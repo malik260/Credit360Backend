@@ -13160,7 +13160,7 @@ namespace FintrakBanking.Repositories.Credit
         public loanPrepaymentViewModel CommercialPaperPrepayment( string refNo, loanPrepaymentViewModel model)
         {
             var systemDate = generalSetup.GetApplicationDate();
-
+            var c = string.Empty;
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             TBL_LOAN loanRecord = (from p in context.TBL_LOAN where p.LOANREFERENCENUMBER == refNo select p).FirstOrDefault();
             TBL_LOAN newLoanRecord = new TBL_LOAN();

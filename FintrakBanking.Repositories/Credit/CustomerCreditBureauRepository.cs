@@ -448,7 +448,9 @@ namespace FintrakBanking.Repositories.Credit
                         if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
                         {
                             if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
+                            {
                                 try { CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString(); } catch { CommercialID = 1; }
+                            }
                             else
                             {
                                 try{CommercialID = json["ConsumerMtaching"]["ConsumerID"].ToString();} catch { CommercialID = 1; }
