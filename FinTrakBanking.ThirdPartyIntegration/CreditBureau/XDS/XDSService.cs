@@ -25,30 +25,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
 
         private string GetStoredTicket(string userName)
         {
-            //try
-            //{
-            //    pathString = helper.FilePath();
-            //    pathString = Path.Combine(pathString, userName);
-            //    using (TextReader tr = new StreamReader(pathString))
-            //    {
-            //        ticket = tr.ReadLine();
-            //    }
-            //}
-            //catch (IOException e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //}
             return innerContext.TBL_CREDIT_BUREAU.SingleOrDefault(x => x.CREDITBUREAUID == (short)CreditBureauEnum.XDSCreditBureau).TOKEN;
-             
         }
 
         private void StoredTicket(string userName, string ticket)
         {
-            //string folderName = string.Empty;
-            //folderName = pathString = helper.FilePath();
-            //pathString = Path.Combine(folderName, userName);
-
-            
             var xdsInfo = innerContext.TBL_CREDIT_BUREAU.SingleOrDefault(x => x.CREDITBUREAUID == (short)CreditBureauEnum.XDSCreditBureau);
             if(xdsInfo.TOKEN == null)
             {
@@ -56,38 +37,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
                 innerContext.SaveChanges();
             }
             return;
-            //if (!Directory.Exists(folderName))
-            //{
-            //    Directory.CreateDirectory(folderName);
-            //}
-
-            //if (!File.Exists(pathString))
-            //{
-            //    using (StreamWriter sw = new StreamWriter(pathString))
-            //    {
-            //        sw.Write(ticket);
-            //    }
-            //    return;
-            //}
-            //else
-            //{
-            //    DisposeTicket(pathString);
-            //    StoredTicket(userName, ticket);
-            //}
         }
-
-        //private void DisposeTicket(string pathString)
-        //{
-        //    try
-        //    {
-        //        System.IO.File.Delete(pathString);
-        //    }
-        //    catch (System.IO.IOException e)
-        //    {
-        //        throw new SecureException(e.Message);
-
-        //    }
-        //}
 
         public string Login(string userName, string password)
         {
