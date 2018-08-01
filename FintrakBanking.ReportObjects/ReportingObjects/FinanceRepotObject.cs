@@ -22,7 +22,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          where a.COMPANYID == companyId
                                                          && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)
                                                          && (branchId == null || branchId==0 || a.TBL_BRANCH.BRANCHID==branchId)
-                                                         && (a.GLACCOUNTID== glAccountId || glAccountId==0)
+                                                        // && (a.GLACCOUNTID== glAccountId || glAccountId==0)
                                                          && (a.POSTEDBY == PostedByStaffId || PostedByStaffId ==0)
                                                          orderby a.POSTEDDATE, a.TRANSACTIONID descending
                                                          select new TransactionViewModel()
@@ -103,7 +103,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
 
         }
-        public List<DailyAccrualViewModel> DailyAccrual(DateTime endDate, DateTime startDate, int companyId, int categoryId)// int? transactionTypeId
+        public List<DailyAccrualViewModel> DailyAccrual(DateTime endDate, DateTime startDate, int companyId, string searchParamemter)// int? transactionTypeId
         {
             List<DailyAccrualViewModel> data;
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -113,8 +113,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         join l in context.TBL_LOAN on a.REFERENCENUMBER equals l.LOANREFERENCENUMBER
                         join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                         where a.DATE >= startDate && a.DATE <= endDate
-                         && a.COMPANYID == companyId
-                        && (a.CATEGORYID == categoryId || categoryId == null || categoryId == 0)
+                        && a.COMPANYID == companyId
+                        && (a.REFERENCENUMBER.ToLower().StartsWith(searchParamemter) || searchParamemter =="")//(searchParamemter.ToLower().Trim().Contains(a.REFERENCENUMBER.ToLower()) || searchParamemter =="")
                         orderby a.DAILYACCURALID descending
                         select new DailyAccrualViewModel()
                         {

@@ -756,14 +756,13 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanViewModel> ArchiveLoanFacilityDetail(int loanId)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_ARCHIVE
-                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                                   join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.LOANID == loanId
                                    select new LoanViewModel
                                    {
+                                       archiveCode = a.ARCHIVEBATCHCODE,
                                        loadArchiveId = a.LOANARCHIVEID,
                                        loanId = a.LOANID,
-                                       archiveCode = a.GetARCHIVEBATCHCODE(),
+                                     //  archiveCode =a.ARCHIVEBATCHCODE,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -1245,7 +1244,7 @@ namespace FintrakBanking.Repositories.Credit
             return loanDetails;
         }
 
-        public List<LoanViewModel> LoanRepayment(string loanRefNo)
+        public List<LoanViewModel> TransactionDetail(string loanRefNo)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
@@ -1253,9 +1252,8 @@ namespace FintrakBanking.Repositories.Credit
                                                    join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
                                                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
                                                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                                                   where a.SOURCEREFERENCENUMBER== loanRefNo
-                                                   && a.CREDITAMOUNT == 0
-                                                   && a.DEBITAMOUNT > 0
+                                                   where a.SOURCEREFERENCENUMBER== loanRefNo         
+                                                   && a.TBL_CHART_OF_ACCOUNT.GLCLASSID == (short)GLClassEnum.CASA
                                                    orderby a.POSTEDDATE, a.TRANSACTIONID descending
 
                                                    select new LoanViewModel()
@@ -1299,6 +1297,35 @@ namespace FintrakBanking.Repositories.Credit
                 return data;
             }
 
+        }
+
+
+        public List<LoanViewModel> DailyInterestAccrual(DateTime startDate, DateTime endDate, string loanReferenceNumber)
+        {
+            List<LoanViewModel> data;
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                data = (from a in context.TBL_DAILY_ACCRUAL
+                        join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
+                        join l in context.TBL_LOAN on a.REFERENCENUMBER equals l.LOANREFERENCENUMBER
+                        join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                        where a.DATE >= startDate && a.DATE <= endDate
+                        && a.REFERENCENUMBER==loanReferenceNumber
+                        orderby a.DAILYACCURALID descending
+                        select new LoanViewModel()
+                        {
+                            baseReferenceNumber = a.BASEREFERENCENUMBER,
+                            categoryName = context.TBL_DAILY_ACCRUAL_CATEGORY.Where(x => x.CATEGORYID == a.CATEGORYID).Select(x => x.CATEGORYNAME).FirstOrDefault(),
+                            currencyName = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
+                            dailyAccrualAmount = a.DAILYACCURALAMOUNT,
+                            date = a.DATE,
+                            exchangeRate = a.EXCHANGERATE,
+                            interestRate = a.INTERESTRATE,
+                            mainAmount = a.MAINAMOUNT,
+                            loanReferenceNumber = a.REFERENCENUMBER,
+                        }).ToList();
+            }
+            return data;
         }
     }
 }
