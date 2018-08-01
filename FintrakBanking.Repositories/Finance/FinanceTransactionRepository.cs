@@ -507,7 +507,9 @@ namespace FintrakBanking.Repositories.Finance
                     var rateCode = "TTB";
 
                     // integration.
-                    return integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
+                    var rate = integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
+
+                    return rate;
                 }
 
                 //return data;

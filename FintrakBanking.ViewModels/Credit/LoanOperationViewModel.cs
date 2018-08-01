@@ -58,4 +58,19 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
     }
 
+    public class loanPrepaymentViewModel : GeneralEntity
+    {
+        public string saveStatus;
+
+        public string loanReferenceNumber { get; set; }
+        public decimal amount { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public bool isPrincipalReduction { get; set; }
+        public bool isPreSubmission { get; set; }
+
+        public decimal newPrincipal { get; set; }
+        public decimal interestToDate { get; set; }
+        public decimal InterestAtMaturity { get; set; }
+        public decimal newMaturityAmount { get; set; }
+    }
 }

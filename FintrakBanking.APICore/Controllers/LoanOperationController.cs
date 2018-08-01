@@ -169,6 +169,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+    
+
         [HttpGet]
         [Route("loan-maturity-instructions")]
         public HttpResponseMessage GetLoanMaturityInstructions()
@@ -230,6 +232,38 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was Successful " });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("commercial-loan-prepayment/{loanReferenceNumber}")]
+        public HttpResponseMessage CommercialLoanPrepayment([FromBody] loanPrepaymentViewModel entity, string loanReferenceNumber)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.CommercialPaperPrepayment(loanReferenceNumber,entity);
+                if (data.saveStatus.ToLower() =="saved")
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Payment was successful" });
+                }
+                else if(data.saveStatus == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New payment result generated" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });

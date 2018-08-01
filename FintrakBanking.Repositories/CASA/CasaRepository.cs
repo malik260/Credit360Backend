@@ -675,7 +675,8 @@ namespace FintrakBanking.Repositories.CASA
                             accountNumber = a.PRODUCTACCOUNTNUMBER,
                             productAccountName = a.PRODUCTACCOUNTNAME,
                             availableBalance = a.AVAILABLEBALANCE, //transRepo.GetCASABalance(a.CASAACCOUNTID).availableBalance,
-                            currencyId = a.CURRENCYID
+                            currencyId = a.CURRENCYID,
+                            currencyCode = a.TBL_CURRENCY.CURRENCYCODE
                         });
             //foreach (var item in data)
             //{

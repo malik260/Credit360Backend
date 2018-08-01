@@ -446,7 +446,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, int branchId)
         {
             var thisStaff = this.context.TBL_STAFF.Find(staffId);
-            var unitId = thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID;
+            var unitId = 0;
+            if(thisStaff != null) unitId = thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID;
 
             var data = context.TBL_JOB_REQUEST
                .Where(t => (t.DEPARTMENTUNITID == unitId || t.SENDERSTAFFID == staffId || t.REASSIGNEDTO == staffId))

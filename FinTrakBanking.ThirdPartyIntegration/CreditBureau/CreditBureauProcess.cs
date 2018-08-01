@@ -97,7 +97,7 @@
                 return null;
             }
 
-            public byte[] GetFullSearchResultInPDF(SearchInput searchInput)
+            public byte[] GetXDSFullSearchResultInPDF(SearchInput searchInput)
             {
                 var xds = new XDSService();
 
@@ -242,7 +242,7 @@
             {
                 string result = string.Empty;
                 XDSService xds = new XDSService();
-                if (searchInfo.dateOfBirth == "01-Jan-0001") searchInfo.dateOfBirth = "";
+                if (searchInfo.dateOfBirth == "01-Jan-0001" || searchInfo.dateOfBirth == null) searchInfo.dateOfBirth = string.Empty;
                 var data = new XDSIndividualSearchViewModel
                 {
                     userName = searchInfo.userName,

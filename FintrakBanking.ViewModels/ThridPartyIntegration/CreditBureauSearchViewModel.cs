@@ -170,8 +170,11 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string branchCode { get; set; }
     }
 
-    public class MultiHitRequestViewModel
+    public class MultiHitRequestViewModel : GeneralEntity
     {
+        public short creditBureauId { get; set; }
+        public int customerId { get; set; }
+        public int companyDirectorId { get; set; }
         public string userName { get; set; }
         public string password { get; set; }
 
