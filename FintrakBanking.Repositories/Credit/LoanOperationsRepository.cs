@@ -5279,8 +5279,8 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
-           var model = (from a in context.TBL_LOAN
+           // var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+            var model = (from a in context.TBL_LOAN
                          where a.TERMLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                          select new LoanViewModel()
                          {
@@ -5448,7 +5448,7 @@ namespace FintrakBanking.Repositories.Credit
             addLoanArchive.NPLDATE = model.nplDate;
             addLoanArchive.CREATEDBY = model.createdBy;
             addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
-            addLoanArchive.SetARCHIVEBATCHCODE(archiveBatchCode);
+            addLoanArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
 
             loanArchive.Add(addLoanArchive);
@@ -5463,7 +5463,7 @@ namespace FintrakBanking.Repositories.Credit
         public RevolvingLoanViewModel ArchiveOverDraft(int overDraftId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+            //var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN_REVOLVING
                          where a.REVOLVINGLOANID == overDraftId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                          select new RevolvingLoanViewModel()
@@ -5587,7 +5587,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+           // var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                          where a.LOANID == loanId
                          select new LoanPaymentSchedulePeriodicViewModel()
@@ -5643,7 +5643,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanSchedulePeriodicArchive.CREATEDBY = item.createdBy;
                 addLoanSchedulePeriodicArchive.DATETIMECREATED = item.dateTimeCreated;
                 //addLoanSchedulePeriodicArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
-                addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = batchCode;
+                //addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = batchCode;
                 addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
                 loanSchedulePeriodicArchive.Add(addLoanSchedulePeriodicArchive);
@@ -5659,7 +5659,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+            //var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN_SCHEDULE_DAILY
                          where a.LOANID == loanId
                          select new LoanPaymentScheduleDailyViewModel()
@@ -5743,7 +5743,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleDailyArchive.CREATEDBY = item.createdBy;
                 addLoanScheduleDailyArchive.DATETIMECREATED = item.dateTimeCreated;
                 addLoanScheduleDailyArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
-                addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = batchCode;
+                //addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = batchCode;
                 addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
                 loanScheduleDailyArchive.Add(addLoanScheduleDailyArchive);
@@ -13200,28 +13200,6 @@ namespace FintrakBanking.Repositories.Credit
                 newLoanRecord.OUTSTANDINGPRINCIPAL = newLoanRecord.OUTSTANDINGPRINCIPAL - loanRecord.OUTSTANDINGPRINCIPAL;
             }
 
-            //ArchiveLoan(loanRecord.TERMLOANID, (short)OperationsEnum.CommercialPaperLoanBooking, batchCode);
-            ReBookLoan(newLoanRecord);
-
-            bool response;
-            var responseModel = new loanPrepaymentViewModel();
-            if (!model.isPreSubmission)
-            {
-                response = context.SaveChanges() > 0;
-                if (response)
-                {
-                    responseModel.saveStatus = "saved";
-                }
-            }
-
-            responseModel.interestToDate = accrual.Sum(x => x.DAILYACCURALAMOUNT);
-            responseModel.newPrincipal = newLoanRecord.OUTSTANDINGPRINCIPAL;
-            responseModel.InterestAtMaturity = newLoanRecord.OUTSTANDINGINTEREST;
-            responseModel.newMaturityAmount = newLoanRecord.OUTSTANDINGPRINCIPAL + newLoanRecord.OUTSTANDINGINTEREST;
-            
-            return responseModel;
-        }
-
         public IEnumerable<LoanApplicationDetailViewModel> ArchiveLoanApplicationDetails(int aplicationId)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -13865,75 +13843,6 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool ReBookLoan(TBL_LOAN newLoan)
-        {
-            var loanReferenceNumber = loan.GenerateLoanReferenceNumber(newLoan.CUSTOMERID, newLoan.PRODUCTID, newLoan.LOANSYSTEMTYPEID);
-
-            TBL_LOAN newLoanEntry = new TBL_LOAN();
-            newLoanEntry.PRODUCTPRICEINDEXRATE = newLoan.PRODUCTPRICEINDEXRATE;
-            newLoanEntry.CUSTOMERRISKRATINGID = newLoan.CUSTOMERRISKRATINGID;
-            newLoanEntry.LOANSYSTEMTYPEID = newLoan.LOANSYSTEMTYPEID;
-            newLoanEntry.CUSTOMERID = newLoan.CUSTOMERID;
-            newLoanEntry.PRODUCTID = newLoan.PRODUCTID;
-            newLoanEntry.COMPANYID = newLoan.COMPANYID;
-            newLoanEntry.LOANAPPLICATIONDETAILID = newLoan.LOANAPPLICATIONDETAILID;
-            newLoanEntry.CASAACCOUNTID = newLoan.CASAACCOUNTID;
-            newLoanEntry.CASAACCOUNTID2 = newLoan.CASAACCOUNTID2;
-            newLoanEntry.LOANSYSTEMTYPEID = newLoan.LOANSYSTEMTYPEID;
-            newLoanEntry.BRANCHID = newLoan.BRANCHID;
-            newLoanEntry.SUBSECTORID = newLoan.SUBSECTORID;
-            newLoanEntry.CURRENCYID = newLoan.CURRENCYID;
-            newLoanEntry.EXCHANGERATE = newLoan.EXCHANGERATE;
-            newLoanEntry.LOANREFERENCENUMBER = loanReferenceNumber;
-            newLoanEntry.RELATED_LOAN_REFERENCE_NUMBER = newLoan.LOANREFERENCENUMBER;
-            newLoanEntry.PRINCIPALNUMBEROFINSTALLMENT = newLoan.PRINCIPALNUMBEROFINSTALLMENT;
-            newLoanEntry.INTERESTNUMBEROFINSTALLMENT = newLoan.INTERESTINSTALLMENTLEFT;
-            newLoanEntry.RELATIONSHIPOFFICERID = newLoan.RELATIONSHIPOFFICERID;
-            newLoanEntry.RELATIONSHIPMANAGERID = newLoan.RELATIONSHIPMANAGERID;
-            newLoanEntry.MISCODE = newLoan.MISCODE;
-            newLoanEntry.TEAMMISCODE = newLoan.TEAMMISCODE;
-            newLoanEntry.INTERESTRATE = newLoan.INTERESTRATE;
-            newLoanEntry.EFFECTIVEDATE = newLoan.MATURITYDATE;
-            newLoanEntry.MATURITYDATE = newLoan.MATURITYDATE;
-            newLoanEntry.BOOKINGDATE = newLoan.BOOKINGDATE;
-            newLoanEntry.PRINCIPALINSTALLMENTLEFT = newLoan.PRINCIPALINSTALLMENTLEFT;
-            newLoanEntry.INTERESTINSTALLMENTLEFT = newLoan.INTERESTINSTALLMENTLEFT;
-            newLoanEntry.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-            newLoanEntry.APPROVERCOMMENT = newLoan.APPROVERCOMMENT;
-            newLoanEntry.LOANSTATUSID = (short)LoanStatusEnum.Active;
-            newLoanEntry.SCHEDULETYPEID = newLoan.SCHEDULETYPEID;
-            newLoanEntry.SCHEDULEDAYCOUNTCONVENTIONID = newLoan.SCHEDULEDAYCOUNTCONVENTIONID;
-            newLoanEntry.SCHEDULEDAYINTERESTTYPEID = newLoan.SCHEDULEDAYINTERESTTYPEID;
-            newLoanEntry.SHOULD_DISBURSE = newLoan.SHOULD_DISBURSE;
-            newLoanEntry.ISDISBURSED = newLoan.ISDISBURSED;
-            newLoanEntry.EQUITYCONTRIBUTION = newLoan.EQUITYCONTRIBUTION;
-            newLoanEntry.PASTDUEPRINCIPAL = newLoan.PASTDUEPRINCIPAL;
-            newLoanEntry.PASTDUEINTEREST = newLoan.PASTDUEINTEREST;
-            newLoanEntry.INTERESTONPASTDUEPRINCIPAL = newLoan.INTERESTONPASTDUEPRINCIPAL;
-            newLoanEntry.INTERESTONPASTDUEINTEREST = newLoan.INTERESTONPASTDUEINTEREST;
-            newLoanEntry.PENALCHARGEAMOUNT = newLoan.PENALCHARGEAMOUNT;
-            newLoanEntry.FIXEDPRINCIPAL = newLoan.FIXEDPRINCIPAL;
-            newLoanEntry.PROFILELOAN = newLoan.PROFILELOAN;
-            newLoanEntry.DISCHARGELETTER = newLoan.DISCHARGELETTER;
-            newLoanEntry.SUSPENDINTEREST = newLoan.SUSPENDINTEREST;
-            newLoanEntry.ALLOWFORCEDEBITREPAYMENT = newLoan.ALLOWFORCEDEBITREPAYMENT;
-
-            newLoanEntry.INT_PRUDENT_GUIDELINE_STATUSID = newLoan.INT_PRUDENT_GUIDELINE_STATUSID;
-            newLoanEntry.EXT_PRUDENT_GUIDELINE_STATUSID = newLoan.EXT_PRUDENT_GUIDELINE_STATUSID;
-            newLoanEntry.USER_PRUDENTIAL_GUIDE_STATUSID = newLoan.USER_PRUDENTIAL_GUIDE_STATUSID;
-            newLoanEntry.NPLDATE = newLoan.NPLDATE;
-            newLoanEntry.CREATEDBY = newLoan.CREATEDBY;
-            newLoanEntry.DATETIMECREATED = DateTime.Now;
-
-            newLoanEntry.PRINCIPALAMOUNT = newLoan.PRINCIPALAMOUNT;
-            newLoanEntry.OUTSTANDINGPRINCIPAL = newLoan.OUTSTANDINGPRINCIPAL;
-            newLoanEntry.OUTSTANDINGINTEREST = newLoan.OUTSTANDINGINTEREST;
-
-            context.TBL_LOAN.Add(newLoanEntry);
-
-            return context.SaveChanges() > 0;
-        }
-
         public IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType()
         {
             var data = from a in context.TBL_LOAN_MATURITY_INSTRU_TYPE
@@ -14121,7 +14030,38 @@ namespace FintrakBanking.Repositories.Credit
                         });
             return data.ToList();
         }
-      
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool CommercialPaperPrepayment(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId)
+        {
+            bool output = false;
+            var systemDate = generalSetup.GetApplicationDate();
+
+
+
+            TBL_LOAN_REVOLVING result = (from p in context.TBL_LOAN_REVOLVING
+                                         where p.LOANREFERENCENUMBER == refNo
+                                         select p).SingleOrDefault();
+
+
+            if (result.OVERDRAFTLIMIT == prepaymentAmount)
+            {
+                result.OVERDRAFTLIMIT = result.OVERDRAFTLIMIT - prepaymentAmount;
+                result.LOANSTATUSID = (short)LoanStatusEnum.Completed;
+            }
+            else
+            {
+                result.OVERDRAFTLIMIT = result.OVERDRAFTLIMIT - prepaymentAmount;
+            }
+
+
+            context.SaveChanges();
+
+            output = true;
+
+            return output;
+
+        }
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId)
         {
