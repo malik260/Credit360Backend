@@ -68,24 +68,34 @@
                     if (response.IsSuccessStatusCode)
                     {
                         exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
+
+                        if (exchangeRateAPI.webRequestStatus != "SUCCESS")
+                        {
+                            throw new APIErrorException("Core Banking API error - "+exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
+                        }
+
+                        var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
+                        exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
+                        exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
+                        exchangeRateOutput.currencyId = (short)currencyId;
+                        exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
+                        exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
+
                     }
 
-                    var currencyId = context.TBL_CURRENCY
-                        .FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
-                    exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
-                    exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
-                    exchangeRateOutput.currencyId = (short)currencyId;
-                    exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
-                    exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
+                    responseMessage = await response.Content.ReadAsStringAsync();
 
                     //handler.Dispose();
                     //client.Dispose();
 
                     return exchangeRateOutput;
                 }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.Message);
+                }
                 catch (Exception ex)
                 {
-                    // throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
                     throw new APIErrorException($"Error" + ex.Message);
                 }
                 finally

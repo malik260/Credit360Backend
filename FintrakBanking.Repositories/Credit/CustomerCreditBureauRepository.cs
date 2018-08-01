@@ -427,51 +427,65 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Could not resolve the selected Credit Bureau entity. Contact admin.");
 
             List<string> searchResult = new List<string>();
+            var feedBackString = string.Empty;
             try
             {
-                var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
+               // var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
+                var task = Task.Run(() => feedBackString = _creditBureau.XDSSearchCreditBureau(searchInfoList));
                 if (task.Wait(TimeSpan.FromSeconds(600)))
                 {
                     resultData = new XDSSearchResult()
                     {
-                        searchResult = searchResult,
+                        searchResult = feedBackString,
                         status = 0
                     };
-                    if (searchResult.Count <= 1)
+                    JObject json = JObject.Parse(feedBackString);
+                    
+                    if(json.Count >= 1)
                     {
-                        foreach (var strLine in searchResult)
+                        JObject jsonNoResult = json;
+                        Object CommercialID;
+                        if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
                         {
-                            JObject json = JObject.Parse(strLine);
-                            JObject jsonNoResult = JObject.Parse(strLine);
-                            Object CommercialID;
-                            Object noResult;
-                            if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
-                            {
-                                if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
-                                    CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString();
-                                else
-                                    CommercialID = json["ConsumerMtaching"]["MatchedConsumer"]["ConsumerID"].ToString();
-
-                                if (Convert.ToInt32(CommercialID) == 0)
-                                {
-                                    resultData.status = 1;
-                                }
-                            }
-                            else if (jsonNoResult["NoResult"] != null)
-                            {
-                                noResult = jsonNoResult["NoResult"];
-                                string stringNoResult = noResult.ToString();
-                                resultData.errorMessage = stringNoResult;
-                                resultData.errorOccured = true;
-                                resultData.status = 2;
-                            }
+                            if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
+                                try { CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString(); } catch { CommercialID = 1; }
                             else
                             {
-                                resultData.errorOccured = true;
-                                resultData.status = 3;
+                                try{CommercialID = json["ConsumerMtaching"]["ConsumerID"].ToString();} catch { CommercialID = 1; }
+                            }
+
+                            if (Convert.ToInt32(CommercialID) == 0)
+                            {
+                                resultData.status = 1;
                             }
                         }
+                        else if (jsonNoResult["NoResult"] != null)
+                        {
+                            string stringNoResult = "XDS API Response - " + feedBackString; // noResult.ToString();
+                            resultData.errorMessage = stringNoResult;
+                            resultData.errorOccured = true;
+                            resultData.status = 2;
+                        }
+                        else
+                        {
+                            resultData.errorOccured = true;
+                            resultData.status = 3;
+                        }
                     }
+                    else
+                    {
+                        resultData.errorOccured = true;
+                        resultData.status = 3;
+                    }
+  
+                    //if (searchResult.Count <= 1)
+                    //{
+                    //    foreach (var strLine in searchResult)
+                    //    {
+                    //        JObject json = JObject.Parse(strLine);
+                            
+                    //    }
+                    //}
                         
                     return resultData;
                 }
@@ -562,6 +576,9 @@ namespace FintrakBanking.Repositories.Credit
                     if (searchInfo.accountOrRegistrationNumber == null)
                         searchInfo.accountOrRegistrationNumber = string.Empty;
 
+                    if (searchInfo.identification == null)
+                        searchInfo.identification = string.Empty;
+
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
                     if (task.Wait(TimeSpan.FromSeconds(2000)))
@@ -613,9 +630,81 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public byte[] GetCRCFullCreditMergeReport(MultiHitRequestViewModel request)
+        {
+            var creditBureau = context.TBL_CREDIT_BUREAU.Find(request.creditBureauId);
+
+            var creditBureauInputs = new SearchInput()
+            {
+                applicationUrl = request.applicationUrl,
+                userBranchId = request.userBranchId,
+                staffId = request.staffId,
+                companyId = request.companyId,
+                createdBy = request.createdBy,
+                creditBureauId = request.creditBureauId,
+
+                customerCreditBureauUploadDetails = new LoanCreditBereauViewModel
+                {
+                    creditBureauId = request.creditBureauId,
+                    companyDirectorId = request.companyDirectorId,
+                    isReportOkay = true,
+                    customerId = request.customerId,
+                    chargeAmount = request.companyDirectorId != 0 ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT,
+                    usedIntegration = true,
+                    dateCompleted = DateTime.Now
+                }
+
+            };
+
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+            //var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
+            //if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+
+
+            using (var docTrans = docContext.Database.BeginTransaction())
+            using (var trans = context.Database.BeginTransaction())
+            {
+                CRCSearchResult searchResponse = null;
+                try
+                {
+                    var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauMerge(request));
+                    if (task.Wait(TimeSpan.FromSeconds(2000)))
+                    {
+                        byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
+
+                        var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
+                        if (SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                        {
+                            searchResponse.fileSaved = true;
+                            searchResponse.file = fileArray;
+                        }
+                        else
+                        {
+                            searchResponse.errorOccured = true;
+                            throw new ConditionNotMetException("Search could not save the result file");
+                        }
+
+                        context.SaveChanges();
+                        trans.Commit();
+                        docTrans.Commit();
+                        return fileArray;
+                    }
+                    throw new Exception("Application failed to fetch merge file");
+                    
+                }
+                catch (Exception ex)
+                {
+                    //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                    trans.Rollback();
+                    throw new BadLogicException(ex.Message.ToString());
+
+                }
+            }
+        }
+
+
         public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
         {
-
             CRCSearchResult searchResponse = null;// new CRCSearchResult();
 
             using (var docTrans = docContext.Database.BeginTransaction())
@@ -637,7 +726,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete) return true;
                         else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
                         {
-                            {   //System.Text.Encoding.ASCII.GetByteCount(searchResult.SearchResult)
+                            {   
                                 byte file = Convert.ToByte(searchResponse.SearchResult);
 
                                 byte[] fileArray = new byte[file];
@@ -674,6 +763,106 @@ namespace FintrakBanking.Repositories.Credit
                     throw new SecureException(ex.Message.ToString());
                 }
             }
+        }
+
+        public byte[] GetXDSFullSearchResultInPDF(SearchInput searchInput)
+        {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+            var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
+            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+
+            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+            var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
+
+            searchInput.userName = creditBureau.USERNAME;
+            searchInput.password = creditBureau.PASSWORD;
+
+            var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
+                : creditBureau.CORPORATE_CHARGEAMOUNT;
+
+
+            if (chargeAmount > accountBalance)
+                throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
+            else
+            {
+                DebitCustomer(creditBureau, casa, chargeAmount, searchInput);
+            }
+
+            byte[] binaryData;
+            var creditBureauProcess = new CreditBureauProcess();
+            try
+            {
+                binaryData = creditBureauProcess.GetXDSFullSearchResultInPDF(searchInput);
+                using (var docTrans = docContext.Database.BeginTransaction())
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
+                        if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
+                        {
+                            throw new SecureException("Could not save file");
+                        }
+                        context.SaveChanges();
+                        trans.Commit();
+                        docTrans.Commit();
+                        return binaryData;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new SecureException(ex.Message.ToString());
+                    }
+                }
+            }
+            catch
+            {
+                ReverseDebit(creditBureau, casa, chargeAmount, searchInput);
+                throw new SecureException("Download failed. This may have been cause by slow or no internet connection");
+            }
+        }
+
+        private bool SaveCreditBureauReportFile(int customerCreditBureauId, byte[] file, SearchInput model)
+        {
+            try
+            {
+                var creditBureau = context.TBL_CREDIT_BUREAU.Find(model.creditBureauId);
+                var b = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault();
+                var fileName = b != null ? b.CUSTOMERCODE + creditBureau.CREDITBUREAUNAME : "new" + creditBureau.CREDITBUREAUNAME;
+                var data = new Entities.DocumentModels.TBL_CUSTOMER_CREDIT_BUREAU
+                {
+                    CUSTOMERCREDITBUREAUID = customerCreditBureauId,
+                    DOCUMENT_TITLE = creditBureau.CREDITBUREAUNAME + " Report Document Upload",
+                    FILEEXTENSION = "pdf",
+                    FILENAME = fileName.Trim(), //context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
+                    FILEDATA = file,
+                    SYSTEMDATETIME = genSetup.GetApplicationDate(),
+                    DATETIMECREATED = DateTime.Now,
+                    CREATEDBY = model.createdBy
+                };
+
+                docContext.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
+
+                // Audit Section ---------------------------
+                var creditBureauInfo = context.TBL_CREDIT_BUREAU.Find(model.creditBureauId);
+                var mergeId = model.mergeList;
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Uploaded '{ creditBureauInfo.CREDITBUREAUNAME }' Credit Bureau Report generated for merge ID list : '{ model.mergeList }' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this.auditTrail.AddAuditTrail(audit);
+                // End of Audit Section ---------------------
+
+                docContext.SaveChanges();
+                return context.SaveChanges() != 0;
+            }
+            catch (Exception ex) { throw ex; }
         }
 
         private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
@@ -789,106 +978,7 @@ namespace FintrakBanking.Repositories.Credit
             inputTransactions.Add(credit);
             financeTransaction.PostTransaction(inputTransactions);
         }
-
-        public byte[] GetFullSearchResultInPDF(SearchInput searchInput)
-        {
-            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
-            var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
-            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
-
-            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
-            var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
-
-            searchInput.userName = creditBureau.USERNAME;
-            searchInput.password = creditBureau.PASSWORD;
-
-            var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
-                : creditBureau.CORPORATE_CHARGEAMOUNT;
-
-
-            if (chargeAmount > accountBalance)
-                throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
-            else
-            {
-                DebitCustomer(creditBureau, casa, chargeAmount, searchInput);
-            }
-
-            byte[] binaryData;
-            var creditBureauProcess = new CreditBureauProcess();
-            try
-            {
-                binaryData = creditBureauProcess.GetFullSearchResultInPDF(searchInput);
-                using (var docTrans = docContext.Database.BeginTransaction())
-                using (var trans = context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
-                        if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
-                        {
-                            throw new SecureException("Could not save file");
-                        }
-                        context.SaveChanges();
-                        trans.Commit();
-                        docTrans.Commit();
-                        return binaryData;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new SecureException(ex.Message.ToString());
-                    }
-                }
-            }
-            catch
-            {
-                ReverseDebit(creditBureau, casa, chargeAmount, searchInput);
-                throw new SecureException("Download failed. This may have been cause by slow or no internet connection");
-            }
-        }
-
-        private bool SaveCreditBureauReportFile(int customerCreditBureauId, byte[] file, SearchInput model)
-        {
-            try
-            {
-                var creditBureau = context.TBL_CREDIT_BUREAU.Find(model.creditBureauId);
-                var b = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault();
-                var fileName = b != null ? b.CUSTOMERCODE + creditBureau.CREDITBUREAUNAME : "new" + creditBureau.CREDITBUREAUNAME;
-                var data = new Entities.DocumentModels.TBL_CUSTOMER_CREDIT_BUREAU
-                {
-                    CUSTOMERCREDITBUREAUID = customerCreditBureauId,
-                    DOCUMENT_TITLE = creditBureau.CREDITBUREAUNAME + " Report Document Upload",
-                    FILEEXTENSION = "pdf",
-                    FILENAME = fileName.Trim(), //context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == model.customerCreditBureauUploadDetails.customerId).FirstOrDefault().CUSTOMERCODE + creditBureau.CREDITBUREAUNAME,
-                    FILEDATA = file,
-                    SYSTEMDATETIME = genSetup.GetApplicationDate(),
-                    DATETIMECREATED = DateTime.Now,
-                    CREATEDBY = model.createdBy
-                };
-
-                docContext.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
-
-                // Audit Section ---------------------------
-                var creditBureauInfo = context.TBL_CREDIT_BUREAU.Find(model.creditBureauId);
-                var mergeId = model.mergeList;
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
-                    STAFFID = model.createdBy,
-                    BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Uploaded '{ creditBureauInfo.CREDITBUREAUNAME }' Credit Bureau Report generated for merge ID list : '{ model.mergeList }' ",
-                    IPADDRESS = model.userIPAddress,
-                    URL = model.applicationUrl,
-                    APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
-                };
-                this.auditTrail.AddAuditTrail(audit);
-                // End of Audit Section ---------------------
-
-                docContext.SaveChanges();
-                return context.SaveChanges() != 0;
-            }
-            catch (Exception ex) { throw ex; }
-        }
+       
         #endregion
     }
 }
