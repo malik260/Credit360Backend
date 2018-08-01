@@ -211,7 +211,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
     public class XDSSearchResult
     {
         public string errorMessage { get; set; }
-        public List<string> searchResult { get; set; }
+        public string searchResult { get; set; }
         public bool errorOccured { get; set; }
         public int status { get; set; }
     }

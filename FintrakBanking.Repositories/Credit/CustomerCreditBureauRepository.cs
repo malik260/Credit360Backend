@@ -427,51 +427,65 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Could not resolve the selected Credit Bureau entity. Contact admin.");
 
             List<string> searchResult = new List<string>();
+            var feedBackString = string.Empty;
             try
             {
-                var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
+               // var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
+                var task = Task.Run(() => feedBackString = _creditBureau.XDSSearchCreditBureau(searchInfoList));
                 if (task.Wait(TimeSpan.FromSeconds(600)))
                 {
                     resultData = new XDSSearchResult()
                     {
-                        searchResult = searchResult,
+                        searchResult = feedBackString,
                         status = 0
                     };
-                    if (searchResult.Count <= 1)
+                    JObject json = JObject.Parse(feedBackString);
+                    
+                    if(json.Count >= 1)
                     {
-                        foreach (var strLine in searchResult)
+                        JObject jsonNoResult = json;
+                        Object CommercialID;
+                        if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
                         {
-                            JObject json = JObject.Parse(strLine);
-                            JObject jsonNoResult = JObject.Parse(strLine);
-                            Object CommercialID;
-                            Object noResult;
-                            if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
-                            {
-                                if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
-                                    CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString();
-                                else
-                                    CommercialID = json["ConsumerMtaching"]["MatchedConsumer"]["ConsumerID"].ToString();
-
-                                if (Convert.ToInt32(CommercialID) == 0)
-                                {
-                                    resultData.status = 1;
-                                }
-                            }
-                            else if (jsonNoResult["NoResult"] != null)
-                            {
-                                noResult = jsonNoResult["NoResult"];
-                                string stringNoResult = noResult.ToString();
-                                resultData.errorMessage = stringNoResult;
-                                resultData.errorOccured = true;
-                                resultData.status = 2;
-                            }
+                            if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
+                                try { CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString(); } catch { CommercialID = 1; }
                             else
                             {
-                                resultData.errorOccured = true;
-                                resultData.status = 3;
+                                try{CommercialID = json["ConsumerMtaching"]["ConsumerID"].ToString();} catch { CommercialID = 1; }
+                            }
+
+                            if (Convert.ToInt32(CommercialID) == 0)
+                            {
+                                resultData.status = 1;
                             }
                         }
+                        else if (jsonNoResult["NoResult"] != null)
+                        {
+                            string stringNoResult = "XDS API Response - " + feedBackString; // noResult.ToString();
+                            resultData.errorMessage = stringNoResult;
+                            resultData.errorOccured = true;
+                            resultData.status = 2;
+                        }
+                        else
+                        {
+                            resultData.errorOccured = true;
+                            resultData.status = 3;
+                        }
                     }
+                    else
+                    {
+                        resultData.errorOccured = true;
+                        resultData.status = 3;
+                    }
+  
+                    //if (searchResult.Count <= 1)
+                    //{
+                    //    foreach (var strLine in searchResult)
+                    //    {
+                    //        JObject json = JObject.Parse(strLine);
+                            
+                    //    }
+                    //}
                         
                     return resultData;
                 }
@@ -561,6 +575,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (searchInfo.accountOrRegistrationNumber == null)
                         searchInfo.accountOrRegistrationNumber = string.Empty;
+
+                    if (searchInfo.identification == null)
+                        searchInfo.identification = string.Empty;
 
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
