@@ -13986,6 +13986,13 @@ namespace FintrakBanking.Repositories.Credit
                         });
             return data.ToList();
         }
+
+        public loanPrepaymentViewModel CommercialPaperPrepayment(string refNo, loanPrepaymentViewModel model)
+        {
+            var c = new loanPrepaymentViewModel();
+            return c;
+        }
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperPrepayment(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId)
         {
