@@ -878,7 +878,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-            workflow.ExternalInitialization = true;
+            // workflow.ExternalInitialization = true;
             workflow.Comment = "New loan application";
 
             return workflow.LogActivity();
@@ -906,8 +906,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
             var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
-            var staffRoleLevelGroupPosition = staffRoleLevels.Min(x => x.groupPosition);
-            var staffRoleLevelLevelPosition = staffRoleLevels.Min(x => x.levelPosition);
             var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
             if (next == false) return staffRoleLevelId;
