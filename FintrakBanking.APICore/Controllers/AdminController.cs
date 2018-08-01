@@ -44,29 +44,7 @@ namespace FintrakBanking.APICore.Controllers
 
         private string username { get { return token.GetUsername; } }
 
-        #region DashBoard
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("dashboard")]
-        public HttpResponseMessage GetDashBoardUserRole()
-        {
-            try
-            {
-                var dash = repo.GetDashboardStaffRole(token.GetStaffId);
-
-                if (dash == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = dash });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
-        #endregion
-
+     
         #region Users
 
         // AdminController cont = new AdminController();

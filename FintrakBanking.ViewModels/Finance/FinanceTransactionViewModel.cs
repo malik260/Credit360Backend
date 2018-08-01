@@ -161,9 +161,29 @@ namespace FintrakBanking.ViewModels.Finance
         public int debitGlAccountId { get; set; }
         public int? creditCasaAccountId { get; set; }
         public int? debitCasaAccountId{ get; set; }
-        public int loanId { get; set; }
+        public int? loanId { get; set; }
 
 
 
+    }
+
+
+    public class InterestRateInquiryViewModel 
+    {
+        public string accountNumber { get; set; }
+        public decimal interestRateAmount { get; set; }
+        public string interestTableCode { get; set; }
+        public string accountType { get; set; }
+        public string tableCode { get; set; }
+        public string interestSerialNumber { get; set; }
+        public string startDate { get; set; }
+        public string endDate { get; set; }
+        public decimal accountInterestRate { get; set; }
+        public string lastChangedDate  { get; set; }
+        public string webRequestStatus { get; set; }
+        public DateTime webRequestDate { get; set; }
+        public string responseCode { get; set; }
+        public string serialNumber { get; set; }
+        public string message { get; set; }
     }
 }

@@ -21,7 +21,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId);
 
-        IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
+        // IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
+        LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId);
 
         IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId);
 

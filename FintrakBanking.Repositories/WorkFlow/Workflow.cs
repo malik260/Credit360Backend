@@ -684,13 +684,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (mappings.Any() == false)
             {
                 var operarion = context.TBL_OPERATIONS.Find(operationId);
-                var productclass = "NULL";
+                var productclass = "N/A";
                 if (productClassId != null)
                 {
                     var productClass = context.TBL_PRODUCT_CLASS.Find(productClassId);
                     productclass = productClass.PRODUCTCLASSNAME;
                 }
-                throw new ConditionNotMetException("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
+                throw new SecureException("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
             }
 
             var approvalLevels = mappings

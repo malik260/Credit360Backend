@@ -77,8 +77,6 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                IEnumerable<String> error = ex.Messages();
-
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }

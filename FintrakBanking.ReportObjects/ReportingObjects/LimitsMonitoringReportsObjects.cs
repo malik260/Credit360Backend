@@ -308,9 +308,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             return overDraft;
         } //done
 
-        public List<LoanViewModel> BondAndGuarantee(DateTime startDate, DateTime endDate , int status)
+        public List<LoanViewModel> BondAndGuarantee(DateTime startDate, DateTime endDate , int approvalStatus)
         {
-            if (status == (int)LoanStatusEnum.Expired)
+            if (approvalStatus == (int)LoanStatusEnum.Expired)
             {
                 List<LoanViewModel> bondAndGuarantee = (from a in context.TBL_LOAN_CONTINGENT
                                                         join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
@@ -348,7 +348,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                         join s in context.TBL_CASA on a.CASAACCOUNTID equals s.CASAACCOUNTID
                                                         join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                         join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
-                                                        where a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate && a.LOANSTATUSID == status
+                                                        where a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate && a.LOANSTATUSID == approvalStatus
                                                         select new LoanViewModel
                                                         {
                                                             applicationReferenceNumber = a.LOANREFERENCENUMBER,

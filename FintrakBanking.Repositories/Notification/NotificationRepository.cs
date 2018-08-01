@@ -47,19 +47,22 @@ namespace FintrakBanking.Repositories.Notification
                                      count = d.Count(),
                                      opreationId = d.FirstOrDefault().OPERATIONID
                                  }).FirstOrDefault();
-
-                    var filteredOp = operations.FirstOrDefault(x => x.OPERATIONID == trail.opreationId);
-                    var log = new NotificationViewModel
+                    if (trail != null)
                     {
-                        messageCount = trail.count,
-                        message = "You have " + trail.count.ToString() + " " + filteredOp.OPERATIONNAME + " request awaiting your action",
-                        operationURL = filteredOp.OPERATIONURL
-                    };
+                        var filteredOp = operations.FirstOrDefault(x => x.OPERATIONID == trail.opreationId);
+                        var log = new NotificationViewModel
+                        {
+                            messageCount = trail.count,
+                            message = "You have " + trail.count.ToString() + " " + filteredOp.OPERATIONNAME + " request awaiting your action",
+                            operationURL = filteredOp.OPERATIONURL
+                        };
 
-                    if (log != null)
-                    {
-                        logs.Add(log);
+                        if (log != null)
+                        {
+                            logs.Add(log);
+                        }
                     }
+            
                 }
 
             }

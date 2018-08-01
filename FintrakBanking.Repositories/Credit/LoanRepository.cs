@@ -2349,8 +2349,8 @@ namespace FintrakBanking.Repositories.Credit
                                     var model = new OverDraftNormalViewModel
                                     {
                                         accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                        applicationDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
-                                        documentDate = revolvingLoanRecord.BOOKINGDATE.ToString("dd-MMM-yyyy", null),
+                                        applicationDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                                        documentDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                                         expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
                                         sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
@@ -5654,7 +5654,7 @@ namespace FintrakBanking.Repositories.Credit
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        where a.ISDISBURSED == true && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft && //(int)LoanSystemTypeEnum.OverdraftFacility &&
-                                       e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                       e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.OPERATIONPERFORMED == false
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
@@ -5671,7 +5671,9 @@ namespace FintrakBanking.Repositories.Credit
                                            operationId = b.OPERATIONID,
                                            operationName = b.TBL_OPERATIONS.OPERATIONNAME,
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                           systemCurrentDate = currentDate
+                                           systemCurrentDate = currentDate,
+                                           lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
+
                                        }).ToList();
                 return allFilteredLoan;
             }
@@ -5845,6 +5847,7 @@ namespace FintrakBanking.Repositories.Credit
                                        join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                                      && b.OPERATIONPERFORMED == false
                                       && d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
@@ -5927,7 +5930,8 @@ namespace FintrakBanking.Repositories.Credit
                                            interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                            pastDueInterest = a.PASTDUEINTEREST,
                                            accrualedAmount = d.ACCRUEDINTEREST, //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,
-                                           systemCurrentDate = applicationDate
+                                           systemCurrentDate = applicationDate,
+                                           lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                        }).ToList();
 
                 return allFilteredLoan;
@@ -5950,6 +5954,7 @@ namespace FintrakBanking.Repositories.Credit
                                        join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
+                                      && b.OPERATIONPERFORMED == false
                                       && d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
@@ -6034,6 +6039,7 @@ namespace FintrakBanking.Repositories.Credit
                                            interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
                                            interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                            pastDueInterest = a.PASTDUEINTEREST,
+                                           lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                            accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).ACCRUEDINTEREST
                                        }).ToList();
 
@@ -6603,12 +6609,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int productTypeId, string searchQuery)
         {
-
-            if (searchQuery == "test1") throw new Exception("Exception 1");
-            if (searchQuery == "test2") throw new SecureException("SecuredException 2");
-            if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
-
-
+            //if (searchQuery == "test1") throw new Exception("Exception 1");
+            //if (searchQuery == "test2") throw new SecureException("SecuredException 2");
+            //if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
 
             bool all = performanceTypeId == 3;
             bool performing = performanceTypeId == 1;
