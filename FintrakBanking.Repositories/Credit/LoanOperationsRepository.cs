@@ -5279,7 +5279,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+           // var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN
                          where a.TERMLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                          select new LoanViewModel()
@@ -5448,7 +5448,7 @@ namespace FintrakBanking.Repositories.Credit
             addLoanArchive.NPLDATE = model.nplDate;
             addLoanArchive.CREATEDBY = model.createdBy;
             addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
-            addLoanArchive.SetARCHIVEBATCHCODE(archiveBatchCode);
+            addLoanArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
 
             loanArchive.Add(addLoanArchive);
@@ -5463,7 +5463,7 @@ namespace FintrakBanking.Repositories.Credit
         public RevolvingLoanViewModel ArchiveOverDraft(int overDraftId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+            //var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN_REVOLVING
                          where a.REVOLVINGLOANID == overDraftId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                          select new RevolvingLoanViewModel()
@@ -5587,7 +5587,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+           // var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                          where a.LOANID == loanId
                          select new LoanPaymentSchedulePeriodicViewModel()
@@ -5643,7 +5643,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanSchedulePeriodicArchive.CREATEDBY = item.createdBy;
                 addLoanSchedulePeriodicArchive.DATETIMECREATED = item.dateTimeCreated;
                 //addLoanSchedulePeriodicArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
-                addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = batchCode;
+                //addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = batchCode;
                 addLoanSchedulePeriodicArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
                 loanSchedulePeriodicArchive.Add(addLoanSchedulePeriodicArchive);
@@ -5659,7 +5659,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+            //var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN_SCHEDULE_DAILY
                          where a.LOANID == loanId
                          select new LoanPaymentScheduleDailyViewModel()
@@ -5743,7 +5743,7 @@ namespace FintrakBanking.Repositories.Credit
                 addLoanScheduleDailyArchive.CREATEDBY = item.createdBy;
                 addLoanScheduleDailyArchive.DATETIMECREATED = item.dateTimeCreated;
                 addLoanScheduleDailyArchive.ARCHIVEDATE = generalSetup.GetApplicationDate();
-                addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = batchCode;
+                //addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = batchCode;
                 addLoanScheduleDailyArchive.ARCHIVEBATCHCODE = archiveBatchCode;
 
                 loanScheduleDailyArchive.Add(addLoanScheduleDailyArchive);

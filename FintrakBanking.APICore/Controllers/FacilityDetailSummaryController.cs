@@ -358,12 +358,12 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-repayment/{relatedLoanRefNo}")]
-        public HttpResponseMessage GetLoanRepayment(string relatedLoanRefNo)
+        [Route("transaction-detail/{loanRefNo}")]
+        public HttpResponseMessage GetTransactionDetail(string loanRefNo)
         {
             try
             {
-                var data = repo.LoanRepayment(relatedLoanRefNo); ;
+                var data = repo.TransactionDetail(loanRefNo); ;
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
