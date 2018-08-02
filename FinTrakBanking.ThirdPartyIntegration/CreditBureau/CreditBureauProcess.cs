@@ -99,6 +99,11 @@
 
             public byte[] GetXDSFullSearchResultInPDF(SearchInput searchInput)
             {
+                if(searchInput.mergeList.Count() == 0)
+                {
+                    throw new ConditionNotMetException("There are items in the merge list." +"\n"+" Please select items to matched.");
+                }
+
                 var xds = new XDSService();
 
                 if (!xds.IsticketActive(searchInput.userName))
