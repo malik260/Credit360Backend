@@ -16,6 +16,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private readonly string support = ConfigurationManager.AppSettings["SupportEmailAddr"];
+        private WorkflowResponse response = new WorkflowResponse();
 
         public Workflow(FinTrakBankingContext context, IGeneralSetupRepository general)
         {
@@ -61,7 +62,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? toStaffId = null;
         private bool endProcess = false;
         private AlertPlaceholders placeholders = null;
-        private WorkflowResponse response = null;
+        //private WorkflowResponse response = null;
 
         private float? interestRateConcession = null;
         private float? feeRateConcession = null;
@@ -173,7 +174,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             SetResponseInformation();
 
-            if (this.comment == "flow_test") { throw new SecureException("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TOSTAFFID:" + this.toStaffId); }
+            if (this.comment == "flow_test") { throw new SecureException("status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
                    
             var trail = new TBL_APPROVAL_TRAIL
             {
@@ -204,8 +205,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void SetResponseInformation()
         {
-            var response = new WorkflowResponse();
-
             response.statusId = this.statusId;
             response.stateId = this.newStateId;
             response.nextLevelId = this.nextLevelId;
