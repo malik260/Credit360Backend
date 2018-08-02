@@ -12,6 +12,7 @@ using System.Web.Script.Serialization;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
     using FintrakBanking.Common.CustomException;
+    using FintrakBanking.ViewModels.Finance;
 
     namespace OverDraftTransactions
     {
@@ -674,6 +675,116 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 logContext.SaveChanges();
          
                 return responseMsg;
+            }
+
+            public async Task<ResponseMessage> APIOverDraftInterestRate(InterestRateInquiryViewModel model, string accountType)
+            {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+                InterestRateInquiryViewModel responseModel = new InterestRateInquiryViewModel();
+                bool output = false;
+                HttpClient client = new HttpClient(handler);
+                var objData = new JavaScriptSerializer().Serialize(model);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                ResponseMessage responseMsg = null;
+                string responseMessage = "";
+
+                try
+                {
+                    InterestRateInquiryIntegrationViewModel apiModel = new InterestRateInquiryIntegrationViewModel
+                    {
+                        accountNumber = model.accountNumber,
+                        accountType = accountType,
+                        interestTableCode = model.interestTableCode,
+                        startDate = model.startDate,
+                        endDate = model.endDate,
+                        interestRateAmount = model.interestRateAmount,
+
+                    };
+
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+                    handler.UseDefaultCredentials = true;
+
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+
+                    client.DefaultRequestHeaders.Authorization = token;
+
+
+                    ServicePointManager.ServerCertificateValidationCallback +=
+                        (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+                    response = client.PostAsync("api/InterestRateInquiry/PostInterestRate", new StringContent(
+                        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                    responseDateTime = DateTime.Now;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+
+                        responseModel = await response.Content.ReadAsAsync<InterestRateInquiryViewModel>();
+
+                        var res = new ResponseMessageViewModel
+                        {
+                            responseCode = responseModel.responseCode,
+                            webRequestDate = responseModel.webRequestDate,
+                            webRequestStatus = responseModel.webRequestStatus,
+
+                        };
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = res,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+                    else
+                    {
+                        responseMsg = new ResponseMessage
+                        {
+                            APIResponse = null,
+                            APIStatus = response.IsSuccessStatusCode,
+                            Message = response
+                        };
+                    }
+
+                    return responseMsg;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = "api/InterestRateInquiry/PostInterestRate",
+                        LOGTYPEID = 19,
+                        REFERENCENUMBER = model.accountNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = objData,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseModel.webRequestStatus,
+                    };
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
+                }
+
+
             }
 
             //public async Task<ResponseMessage> APIOverDraftTopUp(OverDraftTopUpAndRenewViewModel model)
