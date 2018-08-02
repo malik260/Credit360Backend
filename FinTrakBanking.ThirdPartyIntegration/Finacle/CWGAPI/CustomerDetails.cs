@@ -481,11 +481,11 @@
                         accountAPI = await response.Content.ReadAsAsync<InterestRateInquiryIntegrationViewModel>();
                         accountOutput.accountNumber = accountAPI.accountNumber;
                         accountOutput.accountType = accountAPI.accountType;
-                        accountOutput.tableCode = accountAPI.tableCode;
+                        accountOutput.interestTableCode = accountAPI.interestTableCode;
                         accountOutput.interestSerialNumber = accountAPI.interestSerialNumber;
                         accountOutput.startDate = accountAPI.startDate;
                         accountOutput.endDate = accountAPI.endDate;
-                        accountOutput.accountInterestRate = accountAPI.accountInterestRate;
+                        accountOutput.interestRateAmount = accountAPI.interestRateAmount;
                         accountOutput.lastChangedDate = accountAPI.lastChangedDate;
                     }
 

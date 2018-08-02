@@ -811,7 +811,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DESCRIPTION = "Roll Over";
                 addStaging.DESTINATIONBRANCHID = item.branchId;
                 addStaging.ISPOSTED = false;
-                addStaging.OPERATIONID = (int)OperationsEnum.CommercialPaperRollOver;///change to periodInterestAmount
+                addStaging.OPERATIONID = (int)OperationsEnum.CommercialLoanRollOver;///change to periodInterestAmount
                 addStaging.POSTEDBY = "SYSTEM";
                 addStaging.POSTEDDATE = applicationDate;
                 addStaging.SOURCEBRANCHID = item.branchId;
