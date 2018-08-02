@@ -25,7 +25,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.XDS
 
         private string GetStoredTicket(string userName)
         {
-            return innerContext.TBL_CREDIT_BUREAU.SingleOrDefault(x => x.CREDITBUREAUID == (short)CreditBureauEnum.XDSCreditBureau).TOKEN;
+            var token = innerContext.TBL_CREDIT_BUREAU.SingleOrDefault(x => x.CREDITBUREAUID == (short)CreditBureauEnum.XDSCreditBureau).TOKEN;
+            return token;
         }
 
         private void StoredTicket(string userName, string ticket)

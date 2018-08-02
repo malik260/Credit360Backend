@@ -136,6 +136,10 @@
 
                     return crc.CRCSearchRequest(request);
                 }
+                catch(TimeoutException ex)
+                {
+                    throw  new ConditionNotMetException("Connection timed out!");
+                }
                 catch (Exception ex)
                 {
 
@@ -150,6 +154,10 @@
                     CRCService crc = new CRCService();
 
                     return crc.CRCMergeReport(request);
+                }
+                catch (TimeoutException ex)
+                {
+                    throw ex;
                 }
                 catch (Exception ex)
                 {

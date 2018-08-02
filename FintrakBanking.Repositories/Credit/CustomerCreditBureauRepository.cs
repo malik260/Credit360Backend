@@ -579,7 +579,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
-                    if (task.Wait(TimeSpan.FromSeconds(2000)))
+                    if (task.Wait(TimeSpan.FromSeconds(2500)))
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {
