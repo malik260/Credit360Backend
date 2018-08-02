@@ -890,10 +890,45 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+<<<<<<< HEAD
             workflow.ExternalInitialization = true;
+=======
+            // workflow.ExternalInitialization = true;
+>>>>>>> e6ab9fbafca0b236b791a9faced49ed976e2c7db
             workflow.Comment = "New loan application";
 
             return workflow.LogActivity();
+        }
+   
+        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
         }
 
         public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)

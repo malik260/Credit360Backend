@@ -520,10 +520,6 @@ namespace FintrakBanking.Repositories.Credit
             searchInfo.userName = creditBureau.USERNAME;
             searchInfo.password = creditBureau.PASSWORD;
 
-            //var dateOfBirth = Convert.ToDateTime(searchInfo.dateOfBirth);
-            // searchInfo.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
-            //var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == searchInfo.currencyCode);
-
             var creditBureauInputs = new SearchInput()
             {
                 applicationUrl = searchInfo.applicationUrl,
