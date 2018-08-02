@@ -14025,9 +14025,9 @@ namespace FintrakBanking.Repositories.Credit
             var accrual = context.TBL_DAILY_ACCRUAL.Where(p => p.BASEREFERENCENUMBER == baseReferenceNumber
                                          || p.REFERENCENUMBER == baseReferenceNumber);
 
-            var accruedLoanDaysInYear = loan.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, systemDate.Subtract(TimeSpan.FromDays(1)));
-            var loanDaysInYear = loan.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE.Subtract(TimeSpan.FromDays(1)));
-            var dailyInterestAmount = loan.getDailyInterest(loanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, loanDaysInYear);
+            var accruedLoanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, systemDate.Subtract(TimeSpan.FromDays(1)));
+            var loanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE.Subtract(TimeSpan.FromDays(1)));
+            var dailyInterestAmount = loanGenerate.getDailyInterest(loanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, loanDaysInYear);
             if (model.effectiveDate < systemDate)
             {
                 // Back-dated payment. Do interest reversal
@@ -14035,13 +14035,13 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("Effective date cannot be lesser than the loan effective date");
 
                 var datediff = (systemDate - model.effectiveDate).Days;
-                var remainingDaysInYear = loan.getDaysInLoanPeriod(model.effectiveDate, loanRecord.MATURITYDATE.Subtract(TimeSpan.FromDays(1)));
+                var remainingDaysInYear = loanGenerate.getDaysInLoanPeriod(model.effectiveDate, loanRecord.MATURITYDATE.Subtract(TimeSpan.FromDays(1)));
 
                 var interestToDate = dailyInterestAmount * accruedLoanDaysInYear; //accrual.Sum(x => x.DAILYACCURALAMOUNT);
                 var interestToLastDate = interestToDate - (dailyInterestAmount * datediff);
 
                 newLoanRecord.OUTSTANDINGPRINCIPAL = loanRecord.OUTSTANDINGPRINCIPAL - model.amount;
-                var remainingInterestAmount = loan.getTotalInterest(newLoanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, remainingDaysInYear);
+                var remainingInterestAmount = loanGenerate.getTotalInterest(newLoanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, remainingDaysInYear);
 
                 newLoanRecord.OUTSTANDINGINTEREST = interestToLastDate + remainingInterestAmount;
 
@@ -14077,7 +14077,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ReBookLoan(TBL_LOAN newLoan)
         {
-            var loanReferenceNumber = loan.GenerateLoanReferenceNumber(newLoan.CUSTOMERID, newLoan.PRODUCTID, newLoan.LOANSYSTEMTYPEID);
+            var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(newLoan.CUSTOMERID, newLoan.PRODUCTID, newLoan.LOANSYSTEMTYPEID);
 
             TBL_LOAN newLoanEntry = new TBL_LOAN();
             newLoanEntry.PRODUCTPRICEINDEXRATE = newLoan.PRODUCTPRICEINDEXRATE;
