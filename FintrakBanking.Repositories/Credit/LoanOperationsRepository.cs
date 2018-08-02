@@ -1579,7 +1579,7 @@ namespace FintrakBanking.Repositories.Credit
                     results = financeTransaction.BulkIntegrationPosting(model);
                     result.AMOUNTCOLLECTED = item.amountCollected;
                     context.SaveChanges();
-                    if (model.operationId == (int)OperationsEnum.CommercialPaperRollOver)
+                    if (model.operationId == (int)OperationsEnum.CommercialLoanRollOver)
                     {
                         var loan = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == model.sourceReferenceNumber);
                         var instruction = context.TBL_LOAN_MATURITY_INSTRUCTION.FirstOrDefault(x => x.LOANID == loan.TERMLOANID);
