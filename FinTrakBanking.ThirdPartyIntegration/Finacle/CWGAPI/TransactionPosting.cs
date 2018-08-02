@@ -68,24 +68,34 @@
                     if (response.IsSuccessStatusCode)
                     {
                         exchangeRateAPI = await response.Content.ReadAsAsync<CurrencyExchangeRateIntegrationViewModel>();
+
+                        if (exchangeRateAPI.webRequestStatus != "SUCCESS")
+                        {
+                            throw new APIErrorException("Core Banking API error - "+exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
+                        }
+
+                        var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
+                        exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
+                        exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
+                        exchangeRateOutput.currencyId = (short)currencyId;
+                        exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
+                        exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
+
                     }
 
-                    var currencyId = context.TBL_CURRENCY
-                        .FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
-                    exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
-                    exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
-                    exchangeRateOutput.currencyId = (short)currencyId;
-                    exchangeRateOutput.date = exchangeRateAPI.webRequestDate;
-                    exchangeRateOutput.webRequestStatus = exchangeRateAPI.webRequestStatus;
+                    responseMessage = await response.Content.ReadAsStringAsync();
 
                     //handler.Dispose();
                     //client.Dispose();
 
                     return exchangeRateOutput;
                 }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.Message);
+                }
                 catch (Exception ex)
                 {
-                    // throw new APIErrorException("Could not establish connection to finacle. Please contact the system administrator.");
                     throw new APIErrorException($"Error" + ex.Message);
                 }
                 finally
@@ -140,6 +150,87 @@
                 return output;
 
             }
+
+
+
+            //public async Task<bool> APITransactionPosting(List<FinanceTransactionViewModel> model)
+            //{
+
+            //    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+            //    bool output = false;
+            //    var dta = context.TBL_SETUP_GLOBAL.ToList();
+            //    TransactionPostingViewModel responseModel = new TransactionPostingViewModel();
+            //    List<TransactionPostingViewModel> apiModel = new List<TransactionPostingViewModel>();
+            //    foreach (var item in model)
+            //    {
+
+
+            //        apiModel.Add(new TransactionPostingViewModel
+            //            {
+
+            //                accounts =
+            //                    item.casaAccountId
+            //                        .ToString(), //item.casaAccountId!= null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,                       
+            //                amounts = item.creditAmount > 0
+            //                    ? "C" + item.creditAmount.ToString()
+            //                    : "D" + item.debitAmount.ToString(),
+            //                //amounts = item.sourceReferenceNumber,
+            //                narration = item.description,
+            //                referenceNumber = item.batchCode,
+            //                currencyType = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId)
+            //                    .CURRENCYCODE,
+            //                operationId =
+            //                    item.operationId, // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
+            //            }
+            //        );
+            //    }
+
+            //    handler.UseDefaultCredentials = true;
+            //    HttpClient client = new HttpClient(handler);
+
+            //    httpClientInstance = new HttpClient();
+            //    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+            //    client.Timeout = TimeSpan.FromSeconds(60);
+            //    client.DefaultRequestHeaders.Authorization = token;
+            //    client.BaseAddress = new Uri(API_URL);
+            //    client.DefaultRequestHeaders.Accept.Clear();
+            //    client.DefaultRequestHeaders.Accept.Add(
+            //        new MediaTypeWithQualityHeaderValue("application/json"));
+
+            //    ServicePointManager.ServerCertificateValidationCallback +=
+            //        (sender, cert, chain, sslPolicyErrors) => true;
+            //    HttpResponseMessage response = client.PostAsync("api/Transactions/PostTransactions", new StringContent(
+            //        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+
+            //    if (response.IsSuccessStatusCode)
+            //    {
+            //        responseModel = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+            //    }
+
+            //    ResponseViewModel responseAPI = new ResponseViewModel();
+            //    responseAPI.responseCode = responseModel.responseCode;
+            //    responseAPI.webRequestDate = responseModel.webRequestDate;
+            //    responseAPI.webRequestStatus = responseModel.webRequestStatus;
+
+            //    handler.Dispose();
+            //    client.Dispose();
+            //    if (responseModel.responseCode == "0")
+            //    {
+            //        AddCustomTransactions(apiModel);
+            //        output = true;
+            //    }
+            //    else
+            //    {
+            //        output = false;
+            //        throw new SecureException($"Transaction {responseAPI.webRequestStatus}");
+            //    }
+
+            //    return output;
+
+
+            //}
+
             public async Task<ResponseMessage> ApiPostCrossCurrencyTransactions(List<TransactionPostingViewModel> model)
             {
                 HttpClientHandler handler = new HttpClientHandler();

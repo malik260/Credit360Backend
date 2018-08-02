@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -117,10 +118,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                int response = repo.ForwardAppraisalMemorandum(entity);
-
-                if (response == 0)
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "There was an error creating this record" });
+                WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
             }
@@ -170,7 +168,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetApprovedLoanDetail(loanApplicationId);
+                LoanApplicationDetailsViewModel data = repo.GetLoanApplicationDetail(loanApplicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)

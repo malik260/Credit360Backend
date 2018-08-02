@@ -1844,12 +1844,20 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
+                    int staffId = model.createdBy;
+                    int? receiverLevelId = null;
+
+                    receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.LoanAvailment, appl.PRODUCTCLASSID, true);
+
+                    workflow.StaffId = staffId;
+                    workflow.NextLevelId = receiverLevelId; // BREAKING!
+
                     workflow.OperationId = (int)OperationsEnum.LoanAvailment;
                     workflow.ProductClassId = appl.PRODUCTCLASSID;
                     workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     workflow.Comment = "Offer letter approved";
                     workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = true;
+
                     workflow.LogActivity();
                 }
             }
@@ -1857,39 +1865,36 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        //public bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model)
-        //{
-        //    try
-        //    {
-        //        var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
 
-        //        var entity = new ApprovalViewModel
-        //        {
-        //            staffId = model.createdBy,
-        //            companyId = model.companyId,
-        //            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-        //            targetId = target.LOANAPPLICATIONID,
-        //            operationId = model.operationId,
-        //            comment = model.comment,
-        //            amount = model.amount,
-        //            BranchId = model.BranchId,
-        //            externalInitialization = false
-        //        };
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
 
-        //        return workflow.LogForApproval(entity);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
-        //public IQueryable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId)
-        //{
-        //    var data = GetCamProcessedLoanApplications(companyId).Where(x => x.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview);
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
 
-        //    return data;
-        //}
+            return nextLevelId;
+        }
 
         #endregion OfferLetter & Availment Process
 

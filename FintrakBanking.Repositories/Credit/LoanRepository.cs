@@ -33,6 +33,7 @@ using System.Net.Sockets;
 using FintrakBanking.Entities.StagingModels;
 using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
 using FintrakBanking.Interfaces.Setups.Finance;
+using FinTrakBanking.ThirdPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -52,6 +53,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IOverRideRepository overrider;
         private IChartOfAccountRepository chartOfAccount;
+        private IntegrationWithFinacle integration;
         //private ICasaRepository casaRep;
 
         private IIntegrationWithFinacle finacle;
@@ -63,7 +65,7 @@ namespace FintrakBanking.Repositories.Credit
                                         IFinanceTransactionRepository _financeTransaction, IApprovalLevelStaffRepository _level,
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
                                         IChartOfAccountRepository _chartOfAccount,
-                                        IOverRideRepository _overrider,
+                                        IOverRideRepository _overrider, IntegrationWithFinacle _integration,
             IIntegrationWithFinacle finacle)
         {
             this.context = _context;
@@ -79,6 +81,7 @@ namespace FintrakBanking.Repositories.Credit
             this.casaLien = _casaLien;
             this.overrider = _overrider;
             this.chartOfAccount = _chartOfAccount;
+            this.integration = _integration;
             //this.casaRep = _casaRep;
             this.finacle = finacle;
 
@@ -130,6 +133,24 @@ namespace FintrakBanking.Repositories.Credit
         {
             var accountDetails = financeTransaction.GetCASABalance(casaAccountId);
             return accountDetails;
+        }
+
+        public CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
+        {
+            var rate = integration.GetExchangeRate(fromCurrencyCode, toCurrencyCode, rateCode);
+            return rate;
+        }
+
+        public IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId)
+        {
+            return (from data in context.TBL_LOAN_TRANSACTION_DYNAMICS where data.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                    select new TransactionDynamicsViewModel()
+                    {
+                       // dynamicsId = data.DYNAMICSID,
+                        dynamics = data.DYNAMICS,
+                        //productId = data.TBL_TRANSACTION_DYNAMICS.PRODUCTID,
+                       // loanDynamicsId = data.LOANDYNAMICSID
+                    });
         }
 
         /// <summary>
@@ -239,6 +260,8 @@ namespace FintrakBanking.Repositories.Credit
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
+            var product = context.TBL_PRODUCT.Find(model.productId);
+
             var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, model.productId, (short)LoanSystemTypeEnum.OverdraftFacility);
             //branchId, productId, serial
 
@@ -312,10 +335,19 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (AllfeeAmount > casaBalance)
                     {
-                        int custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, (short)OverrideEnum.TakeFeeAtDisbursement, loanReferenceNumber);
-
-                        if (custFeeOverridable > 0) model.feeOverride = true;
-                        else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+                        if(product.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
+                        {
+                            throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+                        }
+                        else
+                        {
+                            int custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, (short)OverrideEnum.TakeFeeAtDisbursement, loanReferenceNumber);
+                            if (custFeeOverridable > 0)
+                            {
+                                model.feeOverride = true;
+                            }
+                            else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
+                        }
                     }
                     // ...........End checking customer balance, and fee override ..........
                     //...................Adding Revolving Loan Record.........................
@@ -1066,11 +1098,6 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
-            //if (loans.Any())
-            //{
-            //    if (loans.First().OUTSTANDINGPRINCIPAL > 0)
-            //        throw new ConditionNotMetException("The customer already have a running FX-Loan which has not been paid down");
-            //}
 
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
@@ -1116,7 +1143,7 @@ namespace FintrakBanking.Repositories.Credit
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
                 NOSTROACCOUNTID = nostroAccountNumber,
-                BRANCHID = application.BRANCHID, //entity.branchId,
+                BRANCHID = application.BRANCHID,
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
                 RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
                 RELATIONSHIPMANAGERID = entity.relationshipManagerId,
@@ -1280,10 +1307,10 @@ namespace FintrakBanking.Repositories.Credit
                 var beneficiary = new TBL_LOAN_DISBURSEMENT
                 {
                     AMOUNTDISBURSED = model.amountDisbursed,
-                    CURRENCYID = model.beneficiaryCurrencyId,
+                   // CURRENCYID = model.beneficiaryCurrencyId,
                     NARRATION = model.beneficiaryReason,
-                    RATECODEID = model.beneficiaryRateCodeId,
-                    RATEAMOUNT = model.beneficiaryRateAmount,
+                   // RATECODEID = model.beneficiaryRateCodeId,
+                   // RATEAMOUNT = model.beneficiaryRateAmount,
                     TERMLOANID = model.loanId,
                     DATETIMECREATED = DateTime.Now,
                     CREATEDBY = model.createdBy,
@@ -2072,12 +2099,12 @@ namespace FintrakBanking.Repositories.Credit
                     DateTime newDate = startDate;
                     bool isLastdate = false;
 
-                    if (new DateTime(newDate.Year, 12, 31) >= endDate)
+                    if (new DateTime(year, 12, 31) >= endDate)
                         isLastdate = true;
 
-                    DateTime lastDate = !isLastdate ? new DateTime(newDate.Year, 12, 31) : endDate;
+                    DateTime lastDate = !isLastdate ? new DateTime(year, 12, 31) : endDate;
 
-                    var days = (int)(newDate - lastDate).TotalDays;
+                    var days = (int)(lastDate - newDate).TotalDays;
                     totalDays = +days;
                 }
             }
@@ -2088,7 +2115,7 @@ namespace FintrakBanking.Repositories.Credit
             return totalDays;
         }
 
-        public decimal getDailyInterest(int principal, double interestRate, int interestDaysPeriod )
+        public decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod )
         {
             return  decimal.Round(((decimal)(interestRate / 100) * principal * 1) / interestDaysPeriod, 4);
         }
@@ -5518,18 +5545,17 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
                 {
-
                     allFilteredLoan = (from a in context.TBL_LOAN
                                        join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                        join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                        where a.ISDISBURSED == true
                                        && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                                       // && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) 
-                                       && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
-                                       b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                       b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                       b.LASTNAME.ToLower().Contains(searchQuery) ||
-                                       c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                       && ((a.LOANREFERENCENUMBER.Contains(searchQuery)) ||
+                                            (b.CUSTOMERCODE.ToLower().Contains(searchQuery)) ||
+                                            (b.FIRSTNAME.ToLower().Contains(searchQuery)) ||
+                                            (b.LASTNAME.ToLower().Contains(searchQuery)) ||
+                                            (c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)))
                                        select new LoanViewModel
                                        {
                                            loanId = a.TERMLOANID,
@@ -6583,12 +6609,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int productTypeId, string searchQuery)
         {
-
-            if (searchQuery == "test1") throw new Exception("Exception 1");
-            if (searchQuery == "test2") throw new SecureException("SecuredException 2");
-            if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
-
-
+            //if (searchQuery == "test1") throw new Exception("Exception 1");
+            //if (searchQuery == "test2") throw new SecureException("SecuredException 2");
+            //if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
 
             bool all = performanceTypeId == 3;
             bool performing = performanceTypeId == 1;

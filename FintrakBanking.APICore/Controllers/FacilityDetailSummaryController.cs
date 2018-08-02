@@ -358,12 +358,12 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-repayment/{relatedLoanRefNo}")]
-        public HttpResponseMessage GetLoanRepayment(string relatedLoanRefNo)
+        [Route("transaction-detail/{loanRefNo}")]
+        public HttpResponseMessage GetTransactionDetail(string loanRefNo)
         {
             try
             {
-                var data = repo.LoanRepayment(relatedLoanRefNo); ;
+                var data = repo.TransactionDetail(loanRefNo); ;
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -427,6 +427,26 @@ namespace FintrakBanking.APICore.Controllers
                 //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
                 var data = repo.RelatedFacility(search.loanSystemTypeId, search.relatedloanReferenceNumber, search.loanReferenceNumber);
                 if (data==null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("daily-interest-accrual")]
+        public HttpResponseMessage DailyInterestAccrual([FromBody] SearchViewModel search)
+        {
+            try
+            {
+                var data = repo.DailyInterestAccrual(search.startDate,search.endDate,search.loanReferenceNumber);
+                if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = "No record found" });

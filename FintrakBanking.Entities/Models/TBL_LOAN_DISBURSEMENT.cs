@@ -30,14 +30,14 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public short CURRENCYID { get; set; }
+        //public short CURRENCYID { get; set; }
 
-        public short RATECODEID { get; set; }
+        //public short RATECODEID { get; set; }
 
-        [StringLength(1000)]
+        //[StringLength(1000)]
         public string NARRATION { get; set; }
 
-        public decimal? RATEAMOUNT { get; set; }
+        //public decimal? RATEAMOUNT { get; set; }
 
     }
 }

@@ -764,10 +764,22 @@ namespace FintrakBanking.Repositories.Credit
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
             var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+            bool MiddleOfficeCertified = true;
+
+            
             if (dat != null)
             {
                 foreach (var d in dat)
                 {
+                    //Replace hard-coding with a variable once defined
+                    if(d.APPROVEDPRODUCTID == 36)
+                    {
+                        if (context.TBL_JOB_REQUEST.Where(x => x.JOBTYPEID == (int)JobTypeEnum.middleOfficeVerification).Any())
+                        {
+                            MiddleOfficeCertified = true;
+                        }
+                        else MiddleOfficeCertified = false;
+                    }
                     var types = from a in context.TBL_CHECKLIST_TYPE select a;
                     foreach (var item in types)
                     {
@@ -835,7 +847,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
+            if (isCheckListDone && MiddleOfficeCertified  && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
                 return new LoanApplicationUpdateMessage
                 {
@@ -867,18 +879,53 @@ namespace FintrakBanking.Repositories.Credit
 
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
+            int? receiverLevelId = null;
+            receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CAM, appl.PRODUCTCLASSID);
+
             workflow.StaffId = staffId;
-            workflow.ToStaffId = staffId;
+            workflow.ToStaffId = staffId; //
+            workflow.NextLevelId = receiverLevelId; // BREAKING!
             workflow.OperationId = (int)OperationsEnum.CAM;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
-            workflow.ExternalInitialization = true;
+
             return workflow.LogActivity();
         }
+   
+        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
 
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
+        }
+         
         public string GetRefrenceNumber()
         {           
            var millisecond = DateTime.Now.Millisecond;
