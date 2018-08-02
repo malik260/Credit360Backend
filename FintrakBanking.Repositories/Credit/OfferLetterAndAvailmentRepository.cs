@@ -1830,11 +1830,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     int staffId = model.createdBy;
                     int? receiverLevelId = null;
-<<<<<<< HEAD
-                    receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CAM, appl.PRODUCTCLASSID, true);
-=======
+
                     receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.LoanAvailment, appl.PRODUCTCLASSID, true);
->>>>>>> e6ab9fbafca0b236b791a9faced49ed976e2c7db
 
                     workflow.StaffId = staffId;
                     workflow.NextLevelId = receiverLevelId; // BREAKING!
@@ -1874,11 +1871,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
             var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
-<<<<<<< HEAD
-            var staffRoleLevelGroupPosition = staffRoleLevels.Min(x => x.groupPosition);
-            var staffRoleLevelLevelPosition = staffRoleLevels.Min(x => x.levelPosition);
-=======
->>>>>>> e6ab9fbafca0b236b791a9faced49ed976e2c7db
             var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
             if (next == false) return staffRoleLevelId;
