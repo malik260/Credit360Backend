@@ -366,16 +366,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.neededNumberOfApproval = level.NumberOfApprovals;
             }
 
-            if (this.fromLevelId == null) // && externalInitialization == false
-            {
-                var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.STAFFID == this.staffId).FirstOrDefault(); // doing
-                if (levelStaff == null)
-                {
-                    throw new SecureException("Unable to resolve initiating level OR there may be no setup for this operation!");
-                }
-                this.fromLevelId = levelStaff.APPROVALLEVELID;
-                this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
-            }
+            //if (this.fromLevelId == null) // && externalInitialization == false
+            //{
+            //    var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.STAFFID == this.staffId).FirstOrDefault(); // doing
+            //    if (levelStaff == null)
+            //    {
+            //        throw new SecureException("Unable to resolve initiating level OR there may be no setup for this operation!");
+            //    }
+            //    this.fromLevelId = levelStaff.APPROVALLEVELID;
+            //    this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
+            //}
 
             if (this.statusId == (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.requestLevelId; } // default return back to sender
 

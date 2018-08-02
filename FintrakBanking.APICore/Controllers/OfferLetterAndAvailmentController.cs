@@ -492,16 +492,9 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
 
-                var data = repo.ApproveOfferLetterGeneration(entity);
-
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful!" });
+                var response = repo.ApproveOfferLetterGeneration(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { result = response, success = response.success, message = "Application sent to " + response.nextLevelName });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-            }
             catch (SecureException ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);

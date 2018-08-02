@@ -1796,7 +1796,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.LogActivity();
         }
 
-        public bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel model)
+        public WorkflowResponse ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel model)
         {
             var operationId = (int)OperationsEnum.OfferLetterApproval;
             var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
@@ -1862,7 +1862,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            return context.SaveChanges() > 0;
+            var success = context.SaveChanges() > 0;
+            return workflow.Response;
         }
 
         private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
