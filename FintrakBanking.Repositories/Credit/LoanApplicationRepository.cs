@@ -890,7 +890,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-            // workflow.ExternalInitialization = true;
             workflow.Comment = "New loan application";
 
             return workflow.LogActivity();
@@ -926,7 +925,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return nextLevelId;
         }
-
+         
         public string GetRefrenceNumber()
         {           
            var millisecond = DateTime.Now.Millisecond;
