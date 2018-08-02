@@ -37,6 +37,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralDetail { get; set; }
        
         public decimal stapedToCoverAmount { get; set; }
+
+        public decimal facilityAmount { get; set; }
     }
 
 
