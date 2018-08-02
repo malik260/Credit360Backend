@@ -5206,6 +5206,185 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
+        public bool OverdraftInterestRate(TwoFactorAutheticationViewModel twoFactorAuth, int loanId)
+        {
+
+            //using (var trans = context.Database.BeginTransaction())
+            //{
+            bool output = false;
+            ResponseMessageViewModel interestRateResult = new ResponseMessageViewModel();
+            InterestRateInquiryViewModel accountOutput = null;
+            try
+            {
+
+                var systemDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
+                DeleteLoanExist(loanId, systemDate);
+                ArchiveOverDraft(loanId, archiveBatchCode);
+                var model = (from a in context.TBL_LOAN_REVOLVING
+                             join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
+                             where a.REVOLVINGLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                             select new RevolvingLoanViewModel()
+                             {
+                                 loanId = a.REVOLVINGLOANID,
+                                 loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                 customerId = a.CUSTOMERID,
+                                 productId = a.PRODUCTID,
+                                 companyId = a.COMPANYID,
+                                 casaAccountId = a.CASAACCOUNTID,
+                                 branchId = a.BRANCHID,
+                                 currencyId = a.CURRENCYID,
+                                 loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                 exchangeRate = a.EXCHANGERATE,
+                                 loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                 relatedLoanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
+                                 subSectorId = a.SUBSECTORID,
+                                 relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                                 relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                                 misCode = a.MISCODE,
+                                 teamMiscode = a.TEAMMISCODE,
+                                 interestRate = (double)b.INTERATERATE,
+                                 effectiveDate = b.EFFECTIVEDATE,
+                                 maturityDate = (DateTime)b.MATURITYDATE,
+                                 bookingDate = DateTime.Today,
+                                 overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
+                                 pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                                 pastDueInterest = a.PASTDUEINTEREST,
+                                 interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                 interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                 penalChargeAmount = a.PENALCHARGEAMOUNT,
+                                 approvalStatusId = a.APPROVALSTATUSID,
+                                 approvedBy = (int)a.APPROVEDBY,
+                                 approverComment = a.APPROVERCOMMENT,
+                                 dateApproved = a.DATEAPPROVED,
+                                 loanStatusId = a.LOANSTATUSID,
+                                 isDisbursed = a.ISDISBURSED,
+                                 disbursedBy = a.DISBURSEDBY,
+                                 disburserComment = a.DISBURSERCOMMENT,
+                                 disburseDate = a.DISBURSEDATE,
+                                 operationId = b.OPERATIONTYPEID,
+                                 dischargeLetter = a.DISCHARGELETTER,
+                                 suspendInterest = a.SUSPENDINTEREST,
+                                 dayCountConventionId = a.DAYCOUNTCONVENTIONID,
+                                 internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                                 externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                                 nplDate = a.NPLDATE,
+                                 createdBy = a.CREATEDBY,
+                                 dateTimeCreated = DateTime.Today,
+                                 revolvingTypeId = a.REVOLVINGTYPEID,
+                                 productAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                 serialNumber = a.SERIALNUMBER,
+
+                             }).FirstOrDefault();
+
+                List<TBL_LOAN_REVOLVING> overDraft = new List<TBL_LOAN_REVOLVING>();
+
+
+
+                //foreach (var model in model)
+                //{
+                model.productTypeId = (int)LoanSystemTypeEnum.OverdraftFacility;
+                var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
+                TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
+
+                addOverDraft.CUSTOMERID = model.customerId;
+                addOverDraft.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+                addOverDraft.PRODUCTID = model.productId;
+                addOverDraft.COMPANYID = model.companyId;
+                addOverDraft.CASAACCOUNTID = model.casaAccountId;
+                addOverDraft.BRANCHID = model.branchId;
+                addOverDraft.CURRENCYID = model.currencyId;
+                addOverDraft.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+                addOverDraft.EXCHANGERATE = model.exchangeRate;
+                addOverDraft.LOANREFERENCENUMBER = loanReferenceNumber;
+                addOverDraft.RELATED_LOAN_REFERENCE_NUMBER = model.loanReferenceNumber;
+                addOverDraft.SUBSECTORID = model.subSectorId;
+                addOverDraft.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
+                addOverDraft.RELATIONSHIPMANAGERID = model.relationshipManagerId;
+                addOverDraft.MISCODE = model.misCode;
+                addOverDraft.TEAMMISCODE = model.teamMiscode;
+                addOverDraft.INTERESTRATE = model.interestRate;
+                addOverDraft.EFFECTIVEDATE = model.effectiveDate;
+                addOverDraft.MATURITYDATE = model.maturityDate;
+                addOverDraft.BOOKINGDATE = model.bookingDate;
+                addOverDraft.OVERDRAFTLIMIT = model.overdraftLimit;
+                addOverDraft.APPROVALSTATUSID = model.approvalStatusId;
+                addOverDraft.APPROVEDBY = model.approvedBy;
+                addOverDraft.APPROVERCOMMENT = model.approverComment;
+                addOverDraft.DATEAPPROVED = model.dateApproved;
+                addOverDraft.LOANSTATUSID = model.loanStatusId;
+                addOverDraft.ISDISBURSED = model.isDisbursed;
+                addOverDraft.DISBURSEDBY = model.disbursedBy;
+                addOverDraft.DISBURSERCOMMENT = model.disburserComment;
+                addOverDraft.DISBURSEDATE = model.disburseDate;
+                addOverDraft.OPERATIONID = model.operationId;
+                addOverDraft.CREATEDBY = model.createdBy;
+                addOverDraft.DATETIMECREATED = model.dateTimeCreated;
+                addOverDraft.DISCHARGELETTER = model.dischargeLetter;
+                addOverDraft.SUSPENDINTEREST = model.suspendInterest;
+                addOverDraft.DAYCOUNTCONVENTIONID = (short)model.dayCountConventionId;
+                addOverDraft.INT_PRUDENT_GUIDELINE_STATUSID = 1; //model.internalPrudentialGuidelineStatusId;
+                addOverDraft.EXT_PRUDENT_GUIDELINE_STATUSID = 1; //model.externalPrudentialGuidelineStatusId;
+                addOverDraft.USER_PRUDENTIAL_GUIDE_STATUSID = 1;
+                addOverDraft.NPLDATE = model.nplDate;
+                addOverDraft.CREATEDBY = model.createdBy;
+                addOverDraft.DATETIMECREATED = model.dateTimeCreated;
+                addOverDraft.REVOLVINGTYPEID = model.revolvingTypeId;
+
+
+                overDraft.Add(addOverDraft);
+                // }
+
+                this.context.TBL_LOAN_REVOLVING.AddRange(overDraft);
+
+                if (USE_THIRD_PARTY_INTEGRATION)
+                {
+
+                    var data1 = context.TBL_LOAN_REVOLVING.Find(loanId);
+
+                    if (data1.LOANSTATUSID != (int)LoanStatusEnum.Inactive)
+                    {
+                        var loan = model;
+                        var acctType = "DR";
+                        accountOutput = finacle.GetInterestRateInquiry(loan.productAccountNumber, acctType);                                           
+                        var reviewDate = data1.BOOKINGDATE.AddMonths(1);
+                        var data = new InterestRateInquiryViewModel
+                        {
+                            interestRateAmount = String.Format("{0:0.00}", loan.interestRate),
+                            interestTableCode = accountOutput.interestTableCode,
+                            accountNumber = loan.productAccountNumber,
+                            endDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                            accountType = acctType,
+                            startDate = loan.effectiveDate.ToString("dd-MMM-yyyy", null),
+                        };
+                        
+                        interestRateResult = finacle.OverDraftInterestRate(data, data.accountType, twoFactorAuth);
+                        //return true;
+
+                    }
+                    else
+                    {
+                        throw new SecureException("Limit has experied or is inactive");
+                    }
+                }
+                addOverDraft.SERIALNUMBER =  "1010101010";
+                var result = context.SaveChanges() > 0;
+                if (interestRateResult != null && result == true)
+                {
+                    //trans.Commit();
+                    output = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                //trans.Rollback();
+                throw new SecureException(ex.Message);
+                output = false;
+
+            }
+            return output;
+        }
+
         #endregion
 
         #region Re-phasement  Operation
@@ -11264,6 +11443,20 @@ namespace FintrakBanking.Repositories.Credit
                             output = false;
                         }
                     }
+
+                    else if ((int)OperationsEnum.OverdraftInterestRate == model.operationId)
+                    {
+                        result = OverdraftInterestRate(twoFactorAuth, loanId);
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+                    }
+                    
                     //}
                 }
                 else

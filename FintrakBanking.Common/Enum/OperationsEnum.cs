@@ -84,5 +84,6 @@ namespace FintrakBanking.Common.Enum
         CommercialLoanRollOver = 72,
         ForeignExchangeLoanBooking = 73,
         CommercialLoanSubAllocation = 74,
+        OverdraftInterestRate =75,
     }
 }
