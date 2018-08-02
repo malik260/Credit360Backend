@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workFlow;
         private IApprovalLevelStaffRepository level;
         private ICasaLienRepository casaLien;
-        private ILoanRepository loan;
+        private ILoanRepository loanGenerate;
         private IOverDraftValidation validate;
 
         private FinTrakBankingStagingContext stagingContext;
@@ -58,7 +58,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workFlow = _workFlow;
             this.level = _level;
             this.casaLien = _casaLien;
-            this.loan = _loan;
+            this.loanGenerate = _loan;
             this.finacle = finacle;
             this.stagingContext = _stagingContext;
 
@@ -4519,7 +4519,7 @@ namespace FintrakBanking.Repositories.Credit
                 //foreach (var model in model)
                 //{
                 model.productTypeId = (int)LoanSystemTypeEnum.OverdraftFacility;
-                var loanReferenceNumber = loan.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
+                var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
                 TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
 
                 addOverDraft.CUSTOMERID = model.customerId;
@@ -4698,7 +4698,7 @@ namespace FintrakBanking.Repositories.Credit
                 //foreach (var model in model)
                 //{
                 model.productTypeId = (int)LoanSystemTypeEnum.OverdraftFacility;
-                var loanReferenceNumber = loan.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
+                var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
                 TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
 
                 addOverDraft.CUSTOMERID = model.customerId;
@@ -4865,7 +4865,7 @@ namespace FintrakBanking.Repositories.Credit
                 //foreach (var model in model)
                 //{
                 model.productTypeId = (int)LoanSystemTypeEnum.OverdraftFacility;
-                var loanReferenceNumber = loan.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
+                var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
                 TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
 
                 addOverDraft.CUSTOMERID = model.customerId;
@@ -4958,7 +4958,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool ChangeOperativeAccount(int casaAccountId, int newCasaAccountId)
+        public bool ChangeOperativeAccount(int casaAccountId, int newCasaAccountId,int loanId)
         {
 
             //using (var trans = context.Database.BeginTransaction())
@@ -4966,14 +4966,29 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             try
             {
+                var data = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId && x.CASAACCOUNTID == casaAccountId).FirstOrDefault();
+                if (data != null)
+                {
+                    TBL_LOAN loanResult = (from p in context.TBL_LOAN
+                                           where p.CASAACCOUNTID == casaAccountId && p.TERMLOANID == loanId
+                                            && p.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                           select p).SingleOrDefault();
+                    var casa = this.context.TBL_CASA.Where(x => x.CASAACCOUNTID == newCasaAccountId && x.ACCOUNTSTATUSID == (short)CASAAccountStatusEnum.Active).FirstOrDefault().CASAACCOUNTID;
 
-                TBL_LOAN loanResult = (from p in context.TBL_LOAN
-                                       where p.CASAACCOUNTID == casaAccountId
-                                        && p.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                       select p).SingleOrDefault();
-                var casa = this.context.TBL_CASA.Where(x => x.CASAACCOUNTID == newCasaAccountId && x.ACCOUNTSTATUSID == (short)CASAAccountStatusEnum.Active).FirstOrDefault().CASAACCOUNTID;
+                    loanResult.CASAACCOUNTID = casa;
+                }
+                else
+                {
+                    TBL_LOAN_REVOLVING loanResult = (from p in context.TBL_LOAN_REVOLVING
+                                                     where p.CASAACCOUNTID == casaAccountId && p.REVOLVINGLOANID == loanId
+                                            && p.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                           select p).SingleOrDefault();
+                    var casa = this.context.TBL_CASA.Where(x => x.CASAACCOUNTID == newCasaAccountId && x.ACCOUNTSTATUSID == (short)CASAAccountStatusEnum.Active).FirstOrDefault().CASAACCOUNTID;
 
-                loanResult.CASAACCOUNTID = casa;
+                    loanResult.CASAACCOUNTID = casa;
+                }
+               
+            
                 var result = context.SaveChanges() > 0;
                 if (result)
                 {
@@ -5073,7 +5088,7 @@ namespace FintrakBanking.Repositories.Credit
                 //foreach (var model in model)
                 //{
                 model.productTypeId = (int)LoanSystemTypeEnum.OverdraftFacility;
-                var loanReferenceNumber = loan.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
+                var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(model.branchId, model.productId, model.productTypeId);
                 TBL_LOAN_REVOLVING addOverDraft = new TBL_LOAN_REVOLVING();
 
                 addOverDraft.CUSTOMERID = model.customerId;
@@ -8687,7 +8702,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Loan Outstanding Principal Balance"));
 
-                financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuth);
+                //financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuth);
 
                 TBL_LOAN results = (from p in context.TBL_LOAN
                                     where p.TERMLOANID == loanId
@@ -8697,7 +8712,9 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-                CreateLoan(loanId);
+               CreateLoan(loanId);
+
+               results.LOANSTATUSID = (short)LoanStatusEnum.Terminated;
                 var result = context.SaveChanges() > 0;
 
                 if (result)
@@ -8721,10 +8738,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanViewModel CreateLoan(int loanId)
         {
-            var refNo = CommonHelpers.GenerateRandomDigitCode(10);
+            
+            
+            var data  = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
+            var refNo = loanGenerate.GenerateLoanReferenceNumber((int)data.BRANCHID, (int)data.PRODUCTID, (int)LoanSystemTypeEnum.TermDisbursedFacility);
+            //var refNo = CommonHelpers.GenerateRandomDigitCode(10);
             var model = (from b in context.TBL_LOAN_REVIEW_OPERATION
                          join a in context.TBL_LOAN on b.LOANID equals a.TERMLOANID
-                         where a.LOANSTATUSID == (short)LoanStatusEnum.Terminated && b.LOANID == loanId && b.OPERATIONCOMPLETED == false
+                         where  b.LOANID == loanId && b.OPERATIONCOMPLETED == false
+                        // a.LOANSTATUSID == (short)LoanStatusEnum.Terminated &&
                          select new LoanViewModel()
                          {
                              productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
@@ -8755,7 +8777,7 @@ namespace FintrakBanking.Repositories.Credit
                              bookingDate = DateTime.Today,
                              // lastRestructureDate = (DateTime)a.LASTRESTRUCTUREDATE,
                              principalAmount = (decimal)b.PREPAYMENT,
-
+                             loanSystemTypeId = a.LOANSYSTEMTYPEID,
                              principalInstallmentLeft = 0,
                              interestInstallmentLeft = 0,
                              approvalStatusId = a.APPROVALSTATUSID,
@@ -8763,7 +8785,7 @@ namespace FintrakBanking.Repositories.Credit
                              approverComment = a.APPROVERCOMMENT,
                              dateApproved = DateTime.Today,
                              loanStatusId = (short)LoanStatusEnum.Active,
-                             scheduleTypeId = 1,///add column in table b
+                             scheduleTypeId = (short)b.SCHEDULETYPEID,//1,///add column in table b
                              scheduleDayCountConventionId = 0,
                              scheduleDayInterestTypeId = 0,
                              shouldDisbursed = a.SHOULD_DISBURSE,
@@ -8795,9 +8817,9 @@ namespace FintrakBanking.Repositories.Credit
                              scheduledPrepaymentAmount = a.SCHEDULEDPREPAYMENTAMOUNT,
                              scheduledPrepaymentDate = a.SCHEDULEDPREPAYMENTDATE,
                              scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPID,
-                             internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                             internalPrudentialGuidelineStatusId = 1,
                              externalPrudentialGuidelineStatusId = 1,
-                             userPrudentialGuidelineStatusId = null,
+                             userPrudentialGuidelineStatusId = 1,
                              nplDate = null,
                              createdBy = (int)SystemStaff.System,
                              dateTimeCreated = DateTime.Today,
@@ -8872,7 +8894,7 @@ namespace FintrakBanking.Repositories.Credit
             addLoan.ALLOWFORCEDEBITREPAYMENT = model.allowForceDebitRepayment;
             addLoan.SCHEDULEDPREPAYMENTAMOUNT = model.scheduledPrepaymentAmount;
             addLoan.SCHEDULEDPREPAYMENTDATE = model.scheduledPrepaymentDate;
-            addLoan.SCH_PREPAYMENT_FREQUENCY_TYPID = model.principalFrequencyTypeId;
+            addLoan.LOANSYSTEMTYPEID = model.loanSystemTypeId;
             addLoan.SCH_PREPAYMENT_FREQUENCY_TYPID = model.scheduledPrepaymentFrequencyTypeId;
             addLoan.INT_PRUDENT_GUIDELINE_STATUSID = (int)model.internalPrudentialGuidelineStatusId;
             addLoan.EXT_PRUDENT_GUIDELINE_STATUSID = (int)model.externalPrudentialGuidelineStatusId;
@@ -11959,7 +11981,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else if ((int)OperationsEnum.CASAAccountChange == model.operationId)
                         {
-                            result = ChangeOperativeAccount(model.oldCasaAccountId, (int)model.newCasaAccountId);
+                            result = ChangeOperativeAccount(model.oldCasaAccountId, (int)model.newCasaAccountId, loanId);
                             if (result == true)
                             {
                                 output = true;
@@ -13543,7 +13565,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            var loanReferenceNumber = loan.GenerateLoanReferenceNumber(result.CUSTOMERID, result.PRODUCTID, result.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID);
+            var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(result.CUSTOMERID, result.PRODUCTID, result.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPEID);
             var newEffectivedate = result.MATURITYDATE;
             switch (model.instructionTypeId)
             {
@@ -13659,10 +13681,10 @@ namespace FintrakBanking.Repositories.Credit
 
                 dateTimeCreated = DateTime.Now,
             };
-            loan.PostLoanFees(loanModel);
-            var loanScheduleModel = loan.BuildScheduleModel(model.loanId, model.createdBy);
-            var loanDisbursementModel = loan.BuildDisbursementModel(model.loanId, loanScheduleModel, model.createdBy);
-            loan.DisburseLoan(loanDisbursementModel);
+            loanGenerate.PostLoanFees(loanModel);
+            var loanScheduleModel = loanGenerate.BuildScheduleModel(model.loanId, model.createdBy);
+            var loanDisbursementModel = loanGenerate.BuildDisbursementModel(model.loanId, loanScheduleModel, model.createdBy);
+            loanGenerate.DisburseLoan(loanDisbursementModel);
 
             return context.SaveChanges() > 0;
         }
@@ -13707,7 +13729,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var existingData = context.TBL_LOAN.Find(loanId);
 
-            var loanReferenceNumber = loan.GenerateLoanReferenceNumber(existingData.CUSTOMERID, existingData.PRODUCTID, existingData.LOANSYSTEMTYPEID);
+            var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(existingData.CUSTOMERID, existingData.PRODUCTID, existingData.LOANSYSTEMTYPEID);
 
             TBL_LOAN newCommercialLoanEntry = new TBL_LOAN();
             newCommercialLoanEntry.PRODUCTPRICEINDEXRATE = existingData.PRODUCTPRICEINDEXRATE;
@@ -13770,8 +13792,8 @@ namespace FintrakBanking.Repositories.Credit
             newCommercialLoanEntry.OUTSTANDINGINTEREST = newInterest;
 
             var product = context.TBL_PRODUCT.Find(existingData.PRODUCTID);
-            int interestDaysPeriod = loan.getDaysInLoanPeriod(existingData.MATURITYDATE, existingData.MATURITYDATE.AddDays(additionalTenor)) - 1;
-            var totalInterest = loan.getTotalInterest(existingData.PRINCIPALAMOUNT, existingData.INTERESTRATE, interestDaysPeriod);
+            int interestDaysPeriod = loanGenerate.getDaysInLoanPeriod(existingData.MATURITYDATE, existingData.MATURITYDATE.AddDays(additionalTenor)) - 1;
+            var totalInterest = loanGenerate.getTotalInterest(existingData.PRINCIPALAMOUNT, existingData.INTERESTRATE, interestDaysPeriod);
 
             switch (instructionTypeId)
             {
