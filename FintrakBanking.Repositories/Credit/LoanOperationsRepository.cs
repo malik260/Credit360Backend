@@ -11943,7 +11943,7 @@ namespace FintrakBanking.Repositories.Credit
                             //DateTime nextPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.FirstOrDefault(x => x.TBL_LOAN.TERMLOANID == model.loanId && x.PAYMENTDATE >= systemDate).PAYMENTDATE;
                             //model.interestRate = model.newInterest;
                             //model.effectiveDate = model.newEffectiveDate;
-                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            //model.maturityDate = (DateTime)model.newMaturityDate;
                             model.interestRate = model.newInterest;
                             model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
                             model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
