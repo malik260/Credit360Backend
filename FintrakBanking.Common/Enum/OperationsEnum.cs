@@ -83,5 +83,6 @@ namespace FintrakBanking.Common.Enum
         NPLoanReviewApprovalAppraisal = 71,
         CommercialPaperRollOver = 72,
         ForeignExchangeLoanBooking = 73,
+        CommercialLoanSubAllocation = 74,
     }
 }
