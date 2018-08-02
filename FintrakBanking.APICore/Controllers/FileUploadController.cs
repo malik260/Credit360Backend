@@ -89,7 +89,7 @@ namespace FintrakBanking.APICore.Controllers
                         var postedFile = httpRequest.Files[file];
                         string filePath = Path.Combine(@"C:\DEV\LATEST\upload\", postedFile.FileName);
                         //var filePath = HttpContext.Current.Server.MapPath("~/UploadFile/" + postedFile.FileName);
-                        postedFile.SaveAs(filePath);
+                       // postedFile.SaveAs(filePath);
                     }
                 }
 

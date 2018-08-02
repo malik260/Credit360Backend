@@ -1830,6 +1830,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     int staffId = model.createdBy;
                     int? receiverLevelId = null;
+
                     receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.LoanAvailment, appl.PRODUCTCLASSID, true);
 
                     workflow.StaffId = staffId;
