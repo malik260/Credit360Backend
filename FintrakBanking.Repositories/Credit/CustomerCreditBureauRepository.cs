@@ -448,10 +448,12 @@ namespace FintrakBanking.Repositories.Credit
                         if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
                         {
                             if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
+                            {
                                 try { CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString(); } catch { CommercialID = 1; }
+                            }
                             else
                             {
-                                try{CommercialID = json["ConsumerMtaching"]["ConsumerID"].ToString();} catch { CommercialID = 1; }
+                                try{CommercialID = json["ConsumerMtaching"]["MatchedConsumer"]["ConsumerID"].ToString();} catch { CommercialID = 1; }
                             }
 
                             if (Convert.ToInt32(CommercialID) == 0)
@@ -518,10 +520,6 @@ namespace FintrakBanking.Repositories.Credit
             searchInfo.userName = creditBureau.USERNAME;
             searchInfo.password = creditBureau.PASSWORD;
 
-            //var dateOfBirth = Convert.ToDateTime(searchInfo.dateOfBirth);
-            // searchInfo.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
-            //var customer = context.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == searchInfo.currencyCode);
-
             var creditBureauInputs = new SearchInput()
             {
                 applicationUrl = searchInfo.applicationUrl,
@@ -581,7 +579,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
-                    if (task.Wait(TimeSpan.FromSeconds(2000)))
+                    if (task.Wait(TimeSpan.FromSeconds(2500)))
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {

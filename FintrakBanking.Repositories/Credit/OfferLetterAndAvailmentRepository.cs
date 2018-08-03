@@ -407,7 +407,11 @@ namespace FintrakBanking.Repositories.Credit
                                               select new TransactionDynamicsViewModel()
                                               {
                                                   dynamics = a.DYNAMICS,
-                                              }).ToList();
+                                              }).Distinct().ToList();
+
+           // var transactionDynamicsDetails = transactionDynamic.Select(x => x.dynamics).Distinct();
+
+
 
             var loanCollaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
                                    join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
@@ -416,7 +420,8 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        collateralDetail = x.COLLATERALDETAIL,
                                        collateralValue = x.COLLATERALVALUE,
-                                       stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
+                                       stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
+                                       facilityAmount = y.APPROVEDAMOUNT
                                    }).ToList();
 
 
@@ -427,11 +432,9 @@ namespace FintrakBanking.Repositories.Credit
                                           select new MonitoringTriggersViewModel()
                                           {
                                               monitoringTrigger = x.MONITORING_TRIGGER,
-                                          }).ToList();
+                                          }).Distinct().ToList();
 
-
-
-
+            //var loanMonitoringTriggers = monitoringTriggers.Select(x => x.monitoringTrigger).Distinct();
 
             var conditions = string.Empty;
 
@@ -663,7 +666,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
                     $"<strong> Interest </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
-                    $"<strong> Amount </strong></p></td>" +
+                    $"<strong> Limits N </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
                     $"<strong> Review Date </strong></td></tr>";
 
@@ -703,6 +706,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
                     $"<strong> Value(<s>N</s>) </strong></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
+                    $"<strong> Facility Amount (<s>N</s>) </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
                     $"<strong> Amount Stamped To Cover (<s>N</s>) </strong></td></tr>";
 
             foreach (var item in loanCollaterals)
@@ -712,7 +717,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfCollaterals}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralDetail}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount.ToString("N", new CultureInfo("en-US"))}</p> Days </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.facilityAmount.ToString("N", new CultureInfo("en-US"))}</p></td>" +
                     $"</tr>";
             }
 
@@ -914,6 +920,8 @@ namespace FintrakBanking.Repositories.Credit
                                    interestRate = e.INTERESTRATE,
                                    purpose = b.REVIEWDETAILS,
                                    applicationDate = applDate,
+                                   approvedAmount = b.APPROVEDAMOUNT
+                                   
                                }).ToList();
 
             var transactionDynamicsDetails = (from a in context.TBL_LMSR_TRANSACTION_DYNAMICS
@@ -926,7 +934,10 @@ namespace FintrakBanking.Repositories.Credit
                                               select new TransactionDynamicsViewModel()
                                               {
                                                   dynamics = a.DYNAMICS,
-                                              }).ToList();
+                                              }).Distinct().ToList();
+            
+            //var transactionDynamicsDetails = transactionDynamic.Select(x => x.dynamics).Distinct();
+            //transactionDynamic.Select(x => x.dynamics).Distinct();
 
             var loanCollaterals = (from x in context.TBL_LMSR_APPLICATION_COLLATRL2
                                        join y in context.TBL_LMSR_APPLICATION_DETAIL on x.LOANREVIEWAPPLICATIONID equals y.LOANREVIEWAPPLICATIONID
@@ -935,7 +946,8 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        collateralDetail = x.COLLATERALDETAIL,
                                        collateralValue = x.COLLATERALVALUE,
-                                       stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT
+                                       stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
+                                       facilityAmount = y.APPROVEDAMOUNT
                                    }).ToList();
 
 
@@ -945,10 +957,10 @@ namespace FintrakBanking.Repositories.Credit
                                           select new MonitoringTriggersViewModel()
                                           {
                                               monitoringTrigger = x.MONITORING_TRIGGER,
-                                          }).ToList();
+                                          }).Distinct().ToList();
 
 
-
+            //var loanMonitoringTriggers = monitoringTriggers.Select(x => x.monitoringTrigger).Distinct().ToList();
 
 
             var conditions = string.Empty;
@@ -1179,7 +1191,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:29.65pt; vertical-align:top; width:49.5pt'><p> &nbsp;</p>" +
                     $"<strong> Tenor </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
-                    $"<strong> Interest </strong></p></td>" +
+                    $"<strong>  Limits N </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
                     $"<strong> Review Date </strong></td></tr>";
 
@@ -1192,7 +1204,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate.ToString("N", new CultureInfo("en-US"))}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmount.ToString("N", new CultureInfo("en-US"))}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
@@ -1218,16 +1230,20 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
                     $"<strong> Value(<s>N</s>) </strong></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
+                    $"<strong> Facility Amount (<s>N</s>) </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
                     $"<strong> Amount Stamped To Cover (<s>N</s>) </strong></td></tr>";
 
             foreach (var item in loanCollaterals)
             {
-                loanCollateral = loanCollateral +
+                //facilityAmount
+                   loanCollateral = loanCollateral +
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfCollaterals}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralDetail}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount.ToString("N", new CultureInfo("en-US"))}</p> Days </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.facilityAmount.ToString("N", new CultureInfo("en-US"))}</p></td>" +
                     $"</tr>";
             }
 
@@ -1398,13 +1414,13 @@ namespace FintrakBanking.Repositories.Credit
                 body = reader.ReadToEnd();
             }
 
-            body = body.Replace("{@ApplicationDate}", applicationDate.ToLongDateString());
+            body = body.Replace("{@ApplicationDate}", applicationDate.ToString("dd-MMM-yyyy", null));
             body = body.Replace("{@ConditionPrecedents}", conditionPrecedent);
             body = body.Replace("{@Branch}", branch);
             body = body.Replace("{@Customer}", customer);
             body = body.Replace("{@Fees}", feecondition);
             body = body.Replace("{@facility}", facilitycondition);
-            body = body.Replace("{@CurrentDate}", currentDate.ToLongDateString());
+            body = body.Replace("{@CurrentDate}", currentDate.ToString("dd-MMM-yyyy", null));
             body = body.Replace("{@Collateral}", collateralcondition);
             body = body.Replace("{@monitoringTrigger}", monitoringTrigger);
             body = body.Replace("{@transactionDynamics}", transactionDynamics);
@@ -1780,7 +1796,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.LogActivity();
         }
 
-        public bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel model)
+        public WorkflowResponse ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel model)
         {
             var operationId = (int)OperationsEnum.OfferLetterApproval;
             var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
@@ -1828,52 +1844,58 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
+                    int staffId = model.createdBy;
+                    int? receiverLevelId = null;
+
+                    receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.LoanAvailment, appl.PRODUCTCLASSID, true);
+
+                    workflow.StaffId = staffId;
+                    workflow.NextLevelId = receiverLevelId; // BREAKING!
+
                     workflow.OperationId = (int)OperationsEnum.LoanAvailment;
                     workflow.ProductClassId = appl.PRODUCTCLASSID;
                     workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                     workflow.Comment = "Offer letter approved";
                     workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = true;
+
                     workflow.LogActivity();
                 }
             }
 
-            return context.SaveChanges() > 0;
+            var success = context.SaveChanges() > 0;
+            return workflow.Response;
         }
 
-        //public bool LogApplicationForApprovalDuringAvailment(LoanAvailmentApprovalViewModel model)
-        //{
-        //    try
-        //    {
-        //        var target = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber);
+        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
 
-        //        var entity = new ApprovalViewModel
-        //        {
-        //            staffId = model.createdBy,
-        //            companyId = model.companyId,
-        //            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-        //            targetId = target.LOANAPPLICATIONID,
-        //            operationId = model.operationId,
-        //            comment = model.comment,
-        //            amount = model.amount,
-        //            BranchId = model.BranchId,
-        //            externalInitialization = false
-        //        };
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
 
-        //        return workflow.LogForApproval(entity);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
-        //}
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
-        //public IQueryable<CamProcessedLoanViewModel> GetApplicationsUnderForReview(int companyId)
-        //{
-        //    var data = GetCamProcessedLoanApplications(companyId).Where(x => x.applicationStatusId == (short)LoanApplicationStatusEnum.ApplicationUnderReview);
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
 
-        //    return data;
-        //}
+            return nextLevelId;
+        }
 
         #endregion OfferLetter & Availment Process
 
@@ -1992,5 +2014,27 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
         }
 
+        public bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel model)
+        {
+            var operationId = (int)OperationsEnum.LoanAvailment;
+
+            // init
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = null;
+            workflow.ProductId = null;
+            // workflow.NextLevelId = model.receiverLevelId;
+            // workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            // log
+            workflow.LogActivity();
+
+            return context.SaveChanges() > 0;
+        }
     }
 }

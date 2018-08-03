@@ -23,14 +23,14 @@ namespace FintrakBanking.Common
             string str = "Application for credit by a borrower¬Reviewing of existing credit facilities¬Opening of new accounts (as part of KYC principle)¬Funds transfer of N 1, 000,000 (One Million Naira) and above¬Prospective/current employee checks¬Tenancy contracts (for identification purposes)¬Grant/review of insurance policies¬Acceptance of guarantee(s)¬Application for contracts/pre-paid services (telephone etc)¬Court judgement¬Credit scoring of the client by credit bureau¬A written consent from the client¬Legislation ";
             return str;
         }
-        public string FilePath()
-        {
-            string folderName = string.Empty;
-            string subFolderName = "CreditBureau";
-            string rootPath = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.FullName;
-            folderName = Path.Combine(rootPath, subFolderName);
-            return folderName;
-        }
+        //public string FilePath()
+        //{
+        //    string folderName = string.Empty;
+        //    string subFolderName = "CreditBureau";
+        //    string rootPath = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.FullName;
+        //    folderName = Path.Combine(rootPath, subFolderName);
+        //    return folderName;
+        //}
 
         public   string ConvertXmlToJson(XmlDocument xmldoc)
         {

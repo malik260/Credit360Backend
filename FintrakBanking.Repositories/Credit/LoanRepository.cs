@@ -146,10 +146,10 @@ namespace FintrakBanking.Repositories.Credit
             return (from data in context.TBL_LOAN_TRANSACTION_DYNAMICS where data.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                     select new TransactionDynamicsViewModel()
                     {
-                        dynamicsId = data.DYNAMICSID,
+                       // dynamicsId = data.DYNAMICSID,
                         dynamics = data.DYNAMICS,
-                        productId = data.TBL_TRANSACTION_DYNAMICS.PRODUCTID,
-                        loanDynamicsId = data.LOANDYNAMICSID
+                        //productId = data.TBL_TRANSACTION_DYNAMICS.PRODUCTID,
+                       // loanDynamicsId = data.LOANDYNAMICSID
                     });
         }
 
