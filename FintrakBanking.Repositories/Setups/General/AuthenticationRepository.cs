@@ -384,23 +384,23 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
 
-            throw new Exception("You cannot resume now.");
+            throw new SecureException("You cannot resume now.");
         }
 
 
         public bool PasswordStandard(string password)
         {
             if (profile_Setting.MINREQUIREDPASSWORDLENGTH > password.Length)
-                throw new Exception($"Password should not be {profile_Setting.MINREQUIREDPASSWORDLENGTH} less characters");
+                throw new SecureException($"Password should not be {profile_Setting.MINREQUIREDPASSWORDLENGTH} less characters");
 
             if (profile_Setting.MINREQUIREDNONALPHANUMERICCHAR > 0)
             {
                 if (!CommonHelpers.isAlphaNumeric(password))
                 {
-                    throw new Exception($"Password should alphanumeric.");
+                    throw new SecureException($"Password should alphanumeric.");
                 }
                 else
-                    throw new Exception($"Password should not be {profile_Setting.MINREQUIREDNONALPHANUMERICCHAR} less characters");
+                    throw new SecureException($"Password should not be {profile_Setting.MINREQUIREDNONALPHANUMERICCHAR} less characters");
 
             }
 
@@ -666,13 +666,13 @@ namespace FintrakBanking.Repositories.Setups.General
                         return context.SaveChanges() > 0;
                     }
                     else
-                        throw new Exception("Password is not valid");
+                        throw new SecureException("Password is not valid");
                 }
                 else
-                    throw new Exception($"You are not allow to re-use the previous {profile_Setting.ALLOWPASSWORDREUSEAFTER} passwords");
+                    throw new SecureException($"You are not allow to re-use the previous {profile_Setting.ALLOWPASSWORDREUSEAFTER} passwords");
             }
             else
-                throw new Exception("New Password should not be same as the Current Password");
+                throw new SecureException("New Password should not be same as the Current Password");
         }
         public bool ValidatePasswordPolicy(string password)
         {

@@ -11,19 +11,7 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int LOANARCHIVEID { get; set; }
-
-        private string aRCHIVEBATCHCODE;
-
-        public string GetARCHIVEBATCHCODE()
-        {
-            return aRCHIVEBATCHCODE;
-        }
-
-        public void SetARCHIVEBATCHCODE(string value)
-        {
-            aRCHIVEBATCHCODE = value;
-        }
-
+      
         //[Column(TypeName = "date")]
         public DateTime CHANGEEFFECTIVEDATE { get; set; }
 

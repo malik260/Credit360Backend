@@ -87,6 +87,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = null;
 
 
                 addStaging.SYSTEMDATETIME = item.date;
@@ -144,6 +145,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = null;
 
 
                 addStaging.SYSTEMDATETIME = item.date;
@@ -201,6 +203,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = null;
 
 
                 addStaging.SYSTEMDATETIME = item.date;
@@ -258,6 +261,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = null;
 
 
                 addStaging.SYSTEMDATETIME = item.date;
@@ -315,6 +319,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = null;
 
 
                 addStaging.SYSTEMDATETIME = item.date;
@@ -372,6 +377,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = null;
 
 
                 addStaging.SYSTEMDATETIME = item.date;
@@ -429,6 +435,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = null;
 
 
                 addStaging.SYSTEMDATETIME = item.date;
@@ -486,6 +493,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingInterest.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStagingInterest.CREDITCASAACCOUNTID = null;
                 addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
+                addStagingInterest.LOANID = item.loanId;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
                 //context.SaveChanges();
 
@@ -523,6 +531,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingPrincipal.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;// product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStagingPrincipal.CREDITCASAACCOUNTID = null;
                 addStagingPrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
+                addStagingPrincipal.LOANID = item.loanId;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPrincipal);
                 context.SaveChanges();
 
@@ -715,6 +724,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingInterest.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStagingInterest.CREDITCASAACCOUNTID = null;
                 addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
+                addStagingInterest.LOANID = item.loanId;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
                 //context.SaveChanges();
 
@@ -752,6 +762,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingPrincipal.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;// product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStagingPrincipal.CREDITCASAACCOUNTID = null;
                 addStagingPrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
+                addStagingPrincipal.LOANID = item.loanId;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPrincipal);
                 context.SaveChanges();
 
@@ -800,7 +811,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DESCRIPTION = "Roll Over";
                 addStaging.DESTINATIONBRANCHID = item.branchId;
                 addStaging.ISPOSTED = false;
-                addStaging.OPERATIONID = (int)OperationsEnum.CommercialPaperRollOver;///change to periodInterestAmount
+                addStaging.OPERATIONID = (int)OperationsEnum.CommercialLoanRollOver;///change to periodInterestAmount
                 addStaging.POSTEDBY = "SYSTEM";
                 addStaging.POSTEDDATE = applicationDate;
                 addStaging.SOURCEBRANCHID = item.branchId;
@@ -814,6 +825,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITGLACCOUNTID = product.PRINCIPALBALANCEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = casa.CASAACCOUNTID;
                 addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = item.loanId;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 

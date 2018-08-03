@@ -204,7 +204,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int staffName { get; set; }
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
+        public int lmsApplicationDetailId  { get; set; }
         
+
 
         public List<ApprovalLevelStaffViewModel> loanOperationApprovers { get; set; }
 
@@ -255,6 +257,29 @@ namespace FintrakBanking.ViewModels.Credit
         public int loadArchiveId { get; set; }
         public bool isTermLoam { get; set; }
         public bool isOD { get; set; }
+        public int postedByStaffId { get; set; }
+        public string batchNo { get; set; }
+        public decimal creditAmount { get; set; }
+        public decimal debitAmount { get; set; }
+        public string description { get; set; }
+        public DateTime valueDate { get; set; }
+        public DateTime postedDate { get; set; }
+        public DateTime postedTime { get; set; }
+        public double currencyRate { get; set; }
+        public string postCurrency { get; set; }
+        public string sourceReferenceNumber { get; set; }
+        public decimal requestedAmount { get; set; }
+        public string remark { get; set; }
+        public string nostroAccountId { get; set; }
+        public string nostroRateCode { get; set; }
+        public string notstroCurrency { get; set; }
+        public decimal? nostroRateAmount { get; set; }
+        public string baseReferenceNumber { get; set; }
+        public string categoryName { get; set; }
+        public string currencyName { get; set; }
+        public decimal dailyAccrualAmount { get; set; }
+        public DateTime date { get; set; }
+        public decimal mainAmount { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

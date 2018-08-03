@@ -33,7 +33,9 @@ namespace FintrakBanking.Interfaces.Credit
         #region Integration
         XDSSearchResult GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList);
 
-        byte[] GetFullSearchResultInPDF(SearchInput searchInput);
+        byte[] GetXDSFullSearchResultInPDF(SearchInput searchInput);
+
+        byte[] GetCRCFullCreditMergeReport(MultiHitRequestViewModel request);
 
         CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo);
         #endregion

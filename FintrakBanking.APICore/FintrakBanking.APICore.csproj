@@ -1059,24 +1059,25 @@
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
-    <EmbeddedResource Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
-    <EmbeddedResource Include="Reports\Report\Blacklist.rdlc" />
-    <EmbeddedResource Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <Content Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
+    <Content Include="Reports\Report\Blacklist.rdlc" />
+    <Content Include="Reports\Report\BondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
-    <EmbeddedResource Include="Reports\Report\AuditTrailReports.rdlc">
+    <Content Include="Reports\Report\AuditTrailReports.rdlc">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
+    </Content>
     <EmbeddedResource Include="Reports\Report\CollateralEstimated.rdlc" />
     <EmbeddedResource Include="Reports\Report\FacilityApprovedNotUtilised.rdlc" />
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
@@ -1090,7 +1091,7 @@
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
-    <EmbeddedResource Include="Reports\Report\BranchLimits.rdlc" />
+    <Content Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />

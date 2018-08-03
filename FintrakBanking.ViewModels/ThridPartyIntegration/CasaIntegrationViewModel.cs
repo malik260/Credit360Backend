@@ -136,4 +136,19 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     }
 
+
+    public class InterestRateInquiryIntegrationViewModel : GeneralEntity
+    {
+        public string accountNumber { get; set; }
+        public string accountType { get; set; }
+        public string interestSerialNumber { get; set; }
+        public string startDate { get; set; }
+        public string endDate { get; set; }
+        public string lastChangedDate { get; set; }
+        public string interestRateAmount { get; set; }
+        public string interestTableCode { get; set; }
+
+
+    }
+
 }

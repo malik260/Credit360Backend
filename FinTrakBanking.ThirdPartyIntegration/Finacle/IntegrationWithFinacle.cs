@@ -68,7 +68,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.message);
+                    throw new SecureException(result.APIResponse.message);
                 }
                 else
                 {
@@ -78,7 +78,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new Exception(result.Message.StatusCode + " " + result.Message.ReasonPhrase);
+                throw new SecureException(result.Message.StatusCode + " " + result.Message.ReasonPhrase);
             }
 
         }
@@ -104,7 +104,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.message);
+                    throw new SecureException(result.APIResponse.message);
                 }
                 else
                 {
@@ -114,7 +114,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
 
 
@@ -145,7 +145,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.message);
+                    throw new SecureException(result.APIResponse.message);
                 }
                 else
                 {
@@ -155,7 +155,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
 
@@ -182,7 +182,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.message);
+                    throw new SecureException(result.APIResponse.message);
                 }
                 else
                 {
@@ -192,7 +192,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
 
@@ -220,7 +220,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.message);
+                    throw new SecureException(result.APIResponse.message);
                 }
                 else
                 {
@@ -230,7 +230,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
 
@@ -257,7 +257,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.message);
+                    throw new SecureException(result.APIResponse.message);
                 }
                 else
                 {
@@ -267,12 +267,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-                throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
             //}
             //else
             //{
-            //    throw new Exception("Logging Finaco transaction failed, operation is truncated.");
+            //    throw new SecureException("Logging Finaco transaction failed, operation is truncated.");
             //}
 
         }
@@ -298,7 +298,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
-                    throw new Exception(result.APIResponse.message);
+                    throw new SecureException(result.APIResponse.message);
                 }
                 else
                 {
@@ -309,7 +309,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             else
             {
 
-                throw new Exception(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
 
@@ -354,7 +354,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             Task.Run(async () => data = await customer.BVNCustomerDetails(customerCode)).GetAwaiter().GetResult();
             if (data != null)
                 return data;
-            throw new Exception("Not Found ");
+            throw new SecureException("Not Found ");
 
         }
 
@@ -381,7 +381,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 }
             }
             catch  {
-                throw new Exception("Could not verify this fixed deposit account number");
+                throw new SecureException("Could not verify this fixed deposit account number");
             }
             return result;
         }
@@ -395,7 +395,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (result.APIResponse.webRequestStatus == "SUCCESS")
                     module = result.APIResponse;
             if (result.APIResponse.webRequestStatus == "FAILURE")
-                throw new Exception(result.APIResponse.errorMessage);
+                throw new SecureException(result.APIResponse.errorMessage);
             return module;
         }
 
@@ -597,6 +597,42 @@ namespace FinTrakBanking.ThirdPartyIntegration
             var glAccountCode = branchCode + accountCode; //"100" + accountCode;
 
             return glAccountCode;
+        }
+
+        public ResponseMessageViewModel OverDraftInterestRate(InterestRateInquiryViewModel model, string accountType,TwoFactorAutheticationViewModel twoFADetails = null)
+        {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
+            model.APIUrl = @"api/InterestRateInquiry/PostInterestRate";
+            ResponseMessage result = null;
+            Task.Run(async () => result = await overDraft.APIOverDraftInterestRate(model, accountType)).GetAwaiter().GetResult();
+
+            if (result.Message.IsSuccessStatusCode)
+            {
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                {
+                    throw new SecureException(result.APIResponse.message);
+                }
+                else
+                {
+                    //LogTemporaryOverDraft(model);
+                    return result.APIResponse;
+                }
+            }
+            else
+            {
+
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+            }
         }
 
 
@@ -801,6 +837,35 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return output;
 
         }
+
+        public InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType)
+        {
+            InterestRateInquiryViewModel accountOutput = null;
+
+            Task.Run(async () => accountOutput = await customer.GetInterestRateInquiry(accountNumber, accountType)).GetAwaiter()
+                .GetResult();
+
+            return accountOutput;
+        }
+
+        //private bool LogTemporaryOverDraft(InterestRateInquiryViewModel model)
+        //{
+        //    bool result = false;
+        //    {
+        //        var data = new TBL_CUSTOM_TEMPORARYOVERDRAFT
+        //        {
+        //            APIURL = model.APIUrl,
+        //            DATETIMECREATED = DateTime.Now,
+        //            TEMPORARYOVERDRAFTAMOUNT = model.interestRateAmount,
+        //            TEMPORARYOVERDRAFTDATE = model.TemporaryOverDraftDate,
+        //            TEMPORARYOVERDRAFTFLAG = model.TemporaryOverDraftFlag,
+        //            TEMPORARYOVERDRAFTNARATION = model.TemporaryOverDraftNaration
+        //        };
+        //        context.TBL_CUSTOM_TEMPORARYOVERDRAFT.Add(data);
+        //        result = context.SaveChanges() > 0;
+        //    }
+        //    return result;
+        //}
         #endregion
 
     }

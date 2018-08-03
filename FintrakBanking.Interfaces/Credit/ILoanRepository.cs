@@ -18,7 +18,10 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
-        decimal getDailyInterest(int principal, double interestRate, int interestDaysPeriod);
+        IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
+        decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod);
+
+        CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
 
         decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod);
 

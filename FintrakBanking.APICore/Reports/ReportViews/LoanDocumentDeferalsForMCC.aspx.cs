@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using FintrakBanking.Common.Extensions;
 using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 
@@ -15,13 +17,40 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
+               
+
                 int? branchCode = 0;
                 DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                 int companyId = Int32.Parse(Request.QueryString["companyId"]);
                 string branch = Request.QueryString["branchId"];
                 if (branch!=null)
                      branchCode = Int32.Parse(Request.QueryString["branchId"]);
+                string inputDateInfo = Request.QueryString["key1"];
+                string inputHashValue = Request.QueryString["key2"];
 
+                HashHelper hash = new HashHelper();
+
+                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+
+                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+
+                if (inputHashValue != incomingDateHash)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
+
+                var currentDate = DateTime.Now;
+
+                var dateDifference = currentDate - incomingDate;
+
+                if (dateDifference.Seconds > 10)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
 
 
 
