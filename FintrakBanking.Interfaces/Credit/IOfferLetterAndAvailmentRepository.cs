@@ -51,5 +51,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         Form3800ViewModel GenerateForm3800TemplateLMS(string refNumber);
 
+        bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel entity);
     }
 }

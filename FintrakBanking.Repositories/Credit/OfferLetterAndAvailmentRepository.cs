@@ -2014,5 +2014,27 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity();
         }
 
+        public bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel model)
+        {
+            var operationId = (int)OperationsEnum.LoanAvailment;
+
+            // init
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = operationId;
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = null;
+            workflow.ProductId = null;
+            // workflow.NextLevelId = model.receiverLevelId;
+            // workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            // log
+            workflow.LogActivity();
+
+            return context.SaveChanges() > 0;
+        }
     }
 }

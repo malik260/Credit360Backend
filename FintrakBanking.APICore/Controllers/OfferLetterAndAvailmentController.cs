@@ -447,6 +447,24 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-application/back-to-business")]
+        public HttpResponseMessage SendBackToBusinessAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            bool data = repo.SendBackToBusinessAvailment(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
+        }
+
         //[HttpPost]
         //[ClaimsAuthorization]
         //[Route("loan-application/availment/approval")]
