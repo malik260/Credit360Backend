@@ -146,7 +146,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
-            if (this.useOrganogram == true) { OrganogramRouting(); } // force to superior in organogram
+            if (this.useOrganogram == true)
+            {
+                bool route = OrganogramRouting();
+                if (route == false) { throw new SecureException("Could not resolve next organogram route!"); }
+            }
 
             if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
             {
@@ -553,18 +557,35 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool OrganogramRouting() // if workflow is forced to use organogram
         {
-
+            if (next == null) { return true; }
+            if (this.toStaffId != null) { return true; }
             if (this.externalInitialization == true) { return true; }
+
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return false; }
 
             var lineManager = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).FirstOrDefault();
-            if (lineManager != null && next != null)
+            if (lineManager == null) { return false; }
+            this.toStaffId = lineManager.STAFFID; // important!
+            if (lineManager.STAFFROLEID == next.DefaultRoleId) return true;
+
+            // second level deep
+            var currentLevel = approvalGrid.Where(x => x.DefaultRoleId == next.DefaultRoleId).First();
+            next = approvalGrid.FirstOrDefault(x =>
+                (x.GroupPosition > currentLevel.GroupPosition) // next group
+                || (x.LevelPosition > currentLevel.LevelPosition && x.GroupPosition == currentLevel.GroupPosition) // same group
+                );
+            if (lineManager.STAFFROLEID != next.DefaultRoleId)
             {
-                if (lineManager.STAFFROLEID == next.DefaultRoleId) this.toStaffId = lineManager.STAFFID;
+                this.smsNotification = next.CanRecieveSMS;
+                this.emailNotification = next.CanRecieveEmail;
+                this.nextLevelId = next.ApprovalLevelId;
+                this.slaInterval = next.SlaInterval;
+                this.useOrganogram = next.RouteViaStaffOrganogram;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         private void CheckApprovalLimits()
