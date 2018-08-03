@@ -44,12 +44,12 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("accredited-solicitors")]
-        public HttpResponseMessage GetAccreditedSolicitors()
+        [HttpGet, Route("accredited-solicitors-list/{accreditedConsultantId}")]
+        public HttpResponseMessage GetAccreditedSolicitors(int accreditedConsultantId)
         {
             try
             {
-                var response = repo.GetAccreditedConsultants(token.GetCompanyId);
+                var response = repo.GetAccreditedConsultants(token.GetCompanyId, accreditedConsultantId);
                 if (response != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });

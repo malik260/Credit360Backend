@@ -12,7 +12,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         //Solicitor
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId);
         IEnumerable<AccreditedConsultantTypeViewModel> GetAccreditedConsultantType();
-        IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId);
+        IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId, int accreditedConsultantId);
         Task<bool> AddAccreditedConsultants(AccreditedConsultantsViewModel entity);
         Task<bool> UpdateAccreditedConsultants(AccreditedConsultantsViewModel entity, int id);
         Task<bool> DeleteAccreditedConsultantStates(int id);

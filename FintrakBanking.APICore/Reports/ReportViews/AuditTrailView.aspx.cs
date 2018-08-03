@@ -1,9 +1,11 @@
-﻿using FintrakBanking.Interfaces.Setups.General;
+﻿using FintrakBanking.Common.Extensions;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ReportObjects.ReportingObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,6 +19,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
     {
      
         protected void Page_Load(object sender, EventArgs e)
+
         {
             if (!IsPostBack)
             {
@@ -25,6 +28,33 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                 DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
                 int auditTypeId = Int32.Parse( Request.QueryString["auditTypeId"]);
                 string username = Request.QueryString["username"];
+                string inputDateInfo = Request.QueryString["key1"];
+                string inputHashValue = Request.QueryString["key2"];
+
+                HashHelper hash = new HashHelper();
+
+                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+
+                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+
+                if (inputHashValue != incomingDateHash)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
+
+                var currentDate = DateTime.Now;
+
+                var dateDifference = currentDate - incomingDate;                
+
+                if (dateDifference.Seconds > 10)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
+
                 string logo = Server.MapPath("~/Content/icons/firstbank.png");
 
                 Audit audit = new Audit();
