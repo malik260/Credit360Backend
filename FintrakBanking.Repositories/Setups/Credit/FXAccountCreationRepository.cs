@@ -282,7 +282,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SCHEME_CODE,
-                                 ref_Desc = a.SCHEME_CODE + " - " + a.SCHEME_DESCRIPTION ,
+                                 ref_Desc = a.SCHEME_CODE + " - " + a.SCHEME_DESCRIPTION,
                                  // del_Flg = a.DEL_FLG,
                                  // bank_Id = a.BANK_ID
                              }).ToList();
@@ -304,7 +304,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public List<FXAccountCreationViewModel> GetAllGLSubHead()
         {
             var freecode1 = (from a in context.STG_GL_SUBHEAD_TBL
-                            orderby a.GL_SUB_HEAD_CODE
+                             orderby a.GL_SUB_HEAD_CODE
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.GL_SUB_HEAD_CODE,
@@ -362,15 +362,20 @@ namespace FintrakBanking.Repositories.Setups.Credit
         }
         public string ForeignCurrencyAccountCreation(CreateAccountViewModel entity, UserInfo user)
         {
-       //     try
-       //     {
+            try
+            {
                 string accountNumber = null;
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    var customerInfo = bankingContext.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERCODE == entity.customerCode);
+                    var customerInfo = bankingContext.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == entity.customerCode).Select(a => a).FirstOrDefault();
+                    var branchCode = bankingContext.TBL_BRANCH.Where(x => x.BRANCHID == user.BranchId).Select(k => k.BRANCHCODE).FirstOrDefault();
+                    entity.solId = branchCode;
+
                     var accountInfo = finacle.CreateForeignAccount(entity);
                     if (accountInfo != null)
                     {
+                        var currencyId = bankingContext.TBL_CURRENCY.Where(x => x.CURRENCYCODE.ToUpper() == entity.currencyCode.ToUpper()).Select(x => x.CURRENCYID).FirstOrDefault();
+
                         accountNumber = accountInfo.accountNumber;
                         var customerExist = (from a in bankingContext.TBL_CASA where a.PRODUCTACCOUNTNUMBER == accountInfo.accountNumber select a).Any();
                         if (!customerExist)
@@ -381,12 +386,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             addCustomerAcct.LEDGERBALANCE = 0;
                             addCustomerAcct.PRODUCTACCOUNTNAME = "Foreign Account";
                             addCustomerAcct.PRODUCTACCOUNTNUMBER = accountInfo.accountNumber;
-                            addCustomerAcct.PRODUCTID = 1;
+                            addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; ;
                             addCustomerAcct.COMPANYID = user.companyId;
                             addCustomerAcct.BRANCHID = (short)user.BranchId;
-                            addCustomerAcct.CURRENCYID = 1;
+                            addCustomerAcct.CURRENCYID = currencyId;
                             addCustomerAcct.ISCURRENTACCOUNT = true;
-                            addCustomerAcct.ACCOUNTSTATUSID = 1;
+                            addCustomerAcct.ACCOUNTSTATUSID = (short)CASAAccountStatusEnum.Active;
                             addCustomerAcct.LIENAMOUNT = 0;
                             addCustomerAcct.HASLIEN = false;
                             addCustomerAcct.POSTNOSTATUSID = 1;
@@ -408,28 +413,19 @@ namespace FintrakBanking.Repositories.Setups.Credit
                     auditTrail.AddAuditTrail(audit);
                     //end of Audit section -------------------------------
                 }
-            try
-            {
                 var output = bankingContext.SaveChanges() > 0;
                 if (output == true)
                 {
                     return accountNumber;
                 }
-            }
-            catch(Exception ex)
-            {
-
-            }
-                
-          
                 return null;
-            //}
-            //catch (Exception ex)
-            //{
-            //    return null;
-            //    throw new SecureException(ex.Message);
-            //}
-          
+            }
+            catch (Exception ex)
+            {
+                return null;
+                throw new Exception(ex.Message);
+            }
+
         }
 
     }

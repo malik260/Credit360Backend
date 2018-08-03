@@ -111,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The account has been created successfully" });
+                        new { success = true, result = data, message = $"The account has been created successfully. Account Number is {data}" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "There was an error creating this account" });
