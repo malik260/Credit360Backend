@@ -1,9 +1,11 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.Extensions;
+using FintrakBanking.Entities.Models;
 using FintrakBanking.ReportObjects.ReportingObjects;
 using FintrakBanking.Repositories.Setups.General;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -19,7 +21,32 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
             {
                 DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                 DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                string inputDateInfo = Request.QueryString["key1"];
+                string inputHashValue = Request.QueryString["key2"];
 
+                HashHelper hash = new HashHelper();
+
+                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+
+                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+
+                if (inputHashValue != incomingDateHash)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
+
+                var currentDate = DateTime.Now;
+
+                var dateDifference = currentDate - incomingDate;
+
+                if (dateDifference.Seconds > 10)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
                 LimitsMonitoringReportsObjects sla = new LimitsMonitoringReportsObjects();
                 var data = sla.CovenantsApproachingDueDate(startDate, endDate);
 

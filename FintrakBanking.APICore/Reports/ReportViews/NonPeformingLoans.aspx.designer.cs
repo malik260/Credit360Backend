@@ -31,13 +31,13 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
-        /// nplLoanRv control.
+        /// ReportViewer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Microsoft.Reporting.WebForms.ReportViewer nplLoanRv;
+        protected global::Microsoft.Reporting.WebForms.ReportViewer ReportViewer;
         
         /// <summary>
         /// odsNplLoan control.

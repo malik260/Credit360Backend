@@ -14171,6 +14171,11 @@ namespace FintrakBanking.Repositories.Credit
             BulkTransactionPosting flow = new BulkTransactionPosting();
             return flow.GetFlowTypes();
         }
+
+        public loanPrepaymentViewModel CommercialPaperPrepayment(string refNo, loanPrepaymentViewModel model)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

@@ -27,6 +27,7 @@ namespace FintrakBanking.Repositories.Setups.General
             _auditTrail = auditTrail;
         }
 
+        #region Employer functions
         public string addEmployer(EmployerViewModel employer)
         {
             if (employer!=null)
@@ -212,5 +213,209 @@ namespace FintrakBanking.Repositories.Setups.General
                        };
             return type;
         }
+
+
+        #endregion
+
+
+        #region Employer Type
+        public string addEmployerType(EmployerViewModel employerType)
+        {
+            if (employerType != null)
+            {
+                var employerDb = new TBL_CUSTOMER_EMPLOYER_TYPE
+                {
+                    EMPLOYER_TYPE_NAME = employerType.employerTypeName
+                };
+                _context.TBL_CUSTOMER_EMPLOYER_TYPE.Add(employerDb);
+
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
+                    STAFFID = employerType.staffId,
+                    BRANCHID = (short)employerType.userBranchId,
+                    DETAIL = $"Employer Type with {employerType.employerTypeName} name is added",
+                    IPADDRESS = employerType.userIPAddress,
+                    URL = employerType.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
+
+                return "The record has been added successful";
+
+            }
+            return "The record has not been added";
+        }
+
+        public string deleteEmployerType(int employerId, EmployerViewModel employerType)
+        {
+            var employerDel = _context.TBL_CUSTOMER_EMPLOYER_TYPE.Find(employerType.employerTypeId);
+            if (employerDel != null)
+            {
+                _context.TBL_CUSTOMER_EMPLOYER_TYPE.Remove(employerDel);
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
+                    STAFFID = employerType.staffId,
+                    BRANCHID = (short)employerType.userBranchId,
+                    DETAIL = $"Loan employer with {employerType.employerTypeName} name is deleted",
+                    IPADDRESS = employerType.userIPAddress,
+                    URL = employerType.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
+
+                return "The record has been deleted successful";
+
+            }
+            return "The record has not been deleted";
+        }
+
+        public string updateEmployerType(int employerTypeId, EmployerViewModel employerType)
+        {
+            var employerDel = _context.TBL_CUSTOMER_EMPLOYER_TYPE.Find(employerTypeId);
+            if (employerDel != null)
+            {
+                employerDel.EMPLOYER_TYPE_NAME = employerType.employerTypeName;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
+                    STAFFID = employerType.staffId,
+                    BRANCHID = (short)employerType.userBranchId,
+                    DETAIL = $"Loan employer with {employerType.companyId} id is updated",
+                    IPADDRESS = employerType.userIPAddress,
+                    URL = employerType.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
+
+                return "The record has been updated successful";
+
+            }
+            return "The record has not been updated";
+        }
+
+        public IEnumerable<EmployerType> getEmployerType(int employerTypeId)
+        {
+            var type = from a in _context.TBL_CUSTOMER_EMPLOYER_TYPE
+                       where a.EMPLOYER_TYPEID == employerTypeId
+                       select new EmployerType
+                       {
+                           EmployerTypeId = a.EMPLOYER_TYPEID,
+                           EmployerTypeName = a.EMPLOYER_TYPE_NAME
+                       };
+            return type;
+        }
+
+        #endregion
+
+        #region Employer Type
+        public string addEmployerSubType(EmployerViewModel employerSubType)
+        {
+            if (employerSubType != null)
+            {
+                var employerDb = new TBL_CUSTOMER_EMPLOYER_TYPE_SUB
+                {
+                    EMPLOYER_TYPEID = employerSubType.employerTypeId,
+                    EMPLOYER_SUB_TYPE_NAME = employerSubType.employerSubTypeName
+                };
+                _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB.Add(employerDb);
+
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
+                    STAFFID = employerSubType.staffId,
+                    BRANCHID = (short)employerSubType.userBranchId,
+                    DETAIL = $"Employer Sub Type with {employerSubType.employerSubTypeName} name is added",
+                    IPADDRESS = employerSubType.userIPAddress,
+                    URL = employerSubType.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
+
+                return "The record has been added successful";
+
+            }
+            return "The record has not been added";
+        }
+
+        public string deleteEmployerSubType(int employerId, EmployerViewModel employerSubType)
+        {
+            var employerDel = _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB.Find(employerSubType.employerSubTypeId);
+            if (employerDel != null)
+            {
+                _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB.Remove(employerDel);
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
+                    STAFFID = employerSubType.staffId,
+                    BRANCHID = (short)employerSubType.userBranchId,
+                    DETAIL = $"Loan employer sub type with {employerSubType.employerSubTypeName} name is deleted",
+                    IPADDRESS = employerSubType.userIPAddress,
+                    URL = employerSubType.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
+
+                return "The record has been deleted successful";
+
+            }
+            return "The record has not been deleted";
+        }
+
+        public string updateEmployerSubType(int employerTypeId, EmployerViewModel employerSubType)
+        {
+            var employerDel = _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB.Find(employerTypeId);
+            if (employerDel != null)
+            {
+                employerDel.EMPLOYER_SUB_TYPE_NAME = employerSubType.employerSubTypeName;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanPrincipalInserted,
+                    STAFFID = employerSubType.staffId,
+                    BRANCHID = (short)employerSubType.userBranchId,
+                    DETAIL = $"Loan employer sub type with {employerSubType.companyId} id is updated",
+                    IPADDRESS = employerSubType.userIPAddress,
+                    URL = employerSubType.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                this._auditTrail.AddAuditTrail(audit);
+                _context.SaveChanges();
+
+                return "The record has been updated successful";
+
+            }
+            return "The record has not been updated";
+        }
+
+        public IEnumerable<EmployerSubType> getEmployerSubType(int employerSubTypeId)
+        {
+            var type = from a in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB
+                       where a.EMPLOYER_SUB_TYPEID == employerSubTypeId
+                       select new EmployerSubType
+                       {
+                           EmployerSubTypeId = a.EMPLOYER_SUB_TYPEID,
+                           EmployerSubTypeName = a.EMPLOYER_SUB_TYPE_NAME
+                       };
+            return type;
+        }
+
+        #endregion
     }
+
 }
