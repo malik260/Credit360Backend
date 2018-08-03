@@ -820,7 +820,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
                         {
                             var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
-                            var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == targetId select b;
+                            var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID select b;
                             int x, k;
                             x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
 
