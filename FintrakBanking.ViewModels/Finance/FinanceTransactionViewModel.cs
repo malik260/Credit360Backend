@@ -171,7 +171,7 @@ namespace FintrakBanking.ViewModels.Finance
     public class InterestRateInquiryViewModel 
     {
         public string accountNumber { get; set; }
-        public decimal interestRateAmount { get; set; }
+        public string interestRateAmount { get; set; }
         public string interestTableCode { get; set; }
         public string accountType { get; set; }
         public string interestSerialNumber { get; set; }

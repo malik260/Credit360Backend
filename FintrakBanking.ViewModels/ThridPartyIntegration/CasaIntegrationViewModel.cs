@@ -145,7 +145,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string startDate { get; set; }
         public string endDate { get; set; }
         public string lastChangedDate { get; set; }
-        public decimal interestRateAmount { get; set; }
+        public string interestRateAmount { get; set; }
         public string interestTableCode { get; set; }
 
 
