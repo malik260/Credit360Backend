@@ -16,5 +16,15 @@ namespace FintrakBanking.Interfaces.Setups.General
         string deleteEmployer(int employerId, EmployerViewModel employer);
         IEnumerable<EmployerType> getEmployerType();
         IEnumerable<EmployerSubType> getEmployerSunType(int employerTypeId);
+
+
+        string addEmployerType(EmployerViewModel employerType);
+        string deleteEmployerType(int employerId, EmployerViewModel employerType);
+        string updateEmployerType(int employerTypeId, EmployerViewModel employerType);
+        IEnumerable<EmployerType> getEmployerType(int employerTypeId);
+        string addEmployerSubType(EmployerViewModel employerSubType);
+        string deleteEmployerSubType(int employerId, EmployerViewModel employerSubType);
+        string updateEmployerSubType(int employerTypeId, EmployerViewModel employerSubType);
+        IEnumerable<EmployerSubType> getEmployerSubType(int employerSubTypeId);
     }
 }

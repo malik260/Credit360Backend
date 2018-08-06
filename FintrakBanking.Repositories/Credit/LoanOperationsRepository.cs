@@ -14570,6 +14570,8 @@ namespace FintrakBanking.Repositories.Credit
             BulkTransactionPosting flow = new BulkTransactionPosting();
             return flow.GetFlowTypes();
         }
+
+        
         #endregion
     }
 }

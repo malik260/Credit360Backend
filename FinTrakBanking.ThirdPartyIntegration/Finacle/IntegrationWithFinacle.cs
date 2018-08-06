@@ -18,6 +18,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using AccountInformation;
     using FintrakBanking.Common.CustomException;
     using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+    using FintrakBanking.Common.Enum;
 
     public class IntegrationWithFinacle : IIntegrationWithFinacle
     {
@@ -505,7 +506,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.LEDGERBALANCE = item.ledgerBalance;
                 addCustomerAcct.PRODUCTACCOUNTNAME = item.productName;//item.productAccountName;
                 addCustomerAcct.PRODUCTACCOUNTNUMBER = item.productAccountNumber;
-                addCustomerAcct.PRODUCTID = (short)(item.productCode != "" ? 8 : 8);
+                addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; //(short)(item.productCode != "" ? 8 : 8);
                 addCustomerAcct.COMPANYID = 1;
                 addCustomerAcct.BRANCHID = (short)(item.branchCode != "" ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
                 addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
