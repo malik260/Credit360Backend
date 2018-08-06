@@ -8183,7 +8183,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId)
         {
             bool output = false;
             bool result = false;
@@ -9973,7 +9973,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool LoanTermination(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool LoanTermination(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId)
         {
             bool output = false;
             //using (var trans = context.Database.BeginTransaction())
@@ -10013,7 +10013,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Loan Outstanding Principal Balance"));
 
-                financeTransaction.PostTransaction(inputTransactions);
+                //financeTransaction.PostTransaction(inputTransactions);
 
                 TBL_LOAN results = (from p in context.TBL_LOAN
                                     where p.TERMLOANID == loanId
@@ -11803,13 +11803,22 @@ namespace FintrakBanking.Repositories.Credit
                                 updateLoanReviewOperation(loanReviewOperationsId, loanId);
                                 output = true;
                             }
-                            else
-                            {
-                                output = false;
-                            }
-
                         }
-                        //}
+                        else if ((int)OperationsEnum.LoanTermination == model.operationId)
+                            {
+                                model.interestRate = model.newInterest;
+                                model.effectiveDate = model.newEffectiveDate;
+                                model.maturityDate = (DateTime)model.newMaturityDate;
+                                model.scheduleMethodId = (short)LoanScheduleTypeEnum.IrregularSchedule;
+                                result = LoanTermination(loanId, model, twoFactorAuth, applicationDate, staffId);
+                                if (result == true)
+                                {
+                                    updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                    output = true;
+                                }
+
+                            }
+                        //}LoanReversal
                     }
                     else
                     {
@@ -12193,6 +12202,36 @@ namespace FintrakBanking.Repositories.Credit
                             }
 
                         }
+
+                        else if ((int)OperationsEnum.LoanTermination == model.operationId)
+                        {
+                            model.interestRate = model.newInterest;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            result = LoanTermination(loanId, model, twoFactorAuth, applicationDate, staffId);
+                            if (result == true)
+                            {
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                output = true;
+                            }
+
+                        }
+
+                        else if ((int)OperationsEnum.CancelUndisbursedLoan == model.operationId)
+                        {
+                            result = LoanCancellation(loanId, applicationDate, staffId);
+                            if (result == true)
+                            {
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                output = true;
+                            }
+                            else
+                            {
+                                output = false;
+                            }
+
+                        }
+                        //}LoanTermination
                         //}
                     }
 
