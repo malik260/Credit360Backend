@@ -85,9 +85,9 @@ namespace FintrakBanking.APICore.Controllers
                 //entity.functionCode = "A";
                 //entity.solId = "230";
                 //entity.currencyCode = "USD";
-            //    entity.customerCode = "230046318";
+                //    entity.customerCode = "230046318";
                 //entity.schemeCode = "CA208";
-                entity.generalLedgerSubHeadCode = "30000";
+                // entity.generalLedgerSubHeadCode = "30000";
                 //entity.channel = "FINTRAK";
                 //entity.sectorCode = "40900";
                 //entity.subSectorCode = "40110";
@@ -111,7 +111,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data, message = "The account has been created successfully" });
+                        new { success = true, result = data, message = $"The account has been created successfully. Account Number is {data}" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "There was an error creating this account" });

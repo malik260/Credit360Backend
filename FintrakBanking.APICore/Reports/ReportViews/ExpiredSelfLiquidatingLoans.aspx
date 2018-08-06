@@ -16,7 +16,7 @@
     
         <asp:ScriptManager ID="ScriptManager1" runat="server">
         </asp:ScriptManager>
-        <rsweb:ReportViewer ID="selfLiqLoanRv" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1300px">
+        <rsweb:ReportViewer ID="ReportViewer" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="1300px">
             <LocalReport ReportPath="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc">
                 <DataSources>
                     <rsweb:ReportDataSource DataSourceId="odsSelfLiqLoanExp" Name="SelfLiqLoanDetails" />

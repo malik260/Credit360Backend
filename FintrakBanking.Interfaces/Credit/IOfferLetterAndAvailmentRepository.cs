@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -38,7 +39,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         Form3800ViewModel GenerateForm3800Template(string applicationRefNumber);
 
-        bool ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity);
+        WorkflowResponse ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel entity);
 
         bool ForwardBondsAndGuarantee(ForwardViewModel entity);
 
@@ -50,5 +51,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         Form3800ViewModel GenerateForm3800TemplateLMS(string refNumber);
 
+        bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel entity);
     }
 }

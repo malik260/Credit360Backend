@@ -280,10 +280,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
            // int sectorId = context.TBL_SUB_SECTOR.Where(a => a.SUBSECTORID == subSectorId).FirstOrDefault().SECTORID.Value;
             //var sectorDetail = context.TBL_SUB_SECTOR.FirstOrDefault(a => a.SUBSECTORID == subSectorId);
             //int sectorId = sectorDetail.SECTORID.Value;
-            var data = from a in context.TBL_SECTOR
+            var data = (from a in context.TBL_SECTOR
                        where a.SECTORID == sectorId
                        let maximumLimit = a.LOAN_LIMIT
-                       select maximumLimit;
+                       select maximumLimit).FirstOrDefault();
 
            // var sector = context.TBL_SECTOR.Where(a => a.SECTORID == sectorId).FirstOrDefault();
 
@@ -308,7 +308,8 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             var sumOverdraftOutstandingBalance = OverdraftOutstandingBalance.Select(c => c.OVERDRAFTLIMIT).Sum();
 
             model.outstandingBalance = (double)(sumLoanOutstandingBalance + sumOverdraftOutstandingBalance);
-            model.limit = (double)data.FirstOrDefault();
+            if(data!=null)
+                model.limit = (double)data;
             model.difference = model.limit - model.outstandingBalance;
 
             return model;

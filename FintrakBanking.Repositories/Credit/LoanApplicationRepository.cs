@@ -772,14 +772,14 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var d in dat)
                 {
                     //Replace hard-coding with a variable once defined
-                    if(d.APPROVEDPRODUCTID == 36)
-                    {
-                        if (context.TBL_JOB_REQUEST.Where(x => x.JOBTYPEID == (int)JobTypeEnum.middleOfficeVerification).Any())
-                        {
-                            MiddleOfficeCertified = true;
-                        }
-                        else MiddleOfficeCertified = false;
-                    }
+                    //if(d.APPROVEDPRODUCTID == 36)
+                    //{
+                    //    if (context.TBL_JOB_REQUEST.Where(x => x.JOBTYPEID == (int)JobTypeEnum.middleOfficeVerification && x.TARGETID == d.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication).Any())
+                    //    {
+                    //        MiddleOfficeCertified = true;
+                    //    }
+                    //    else MiddleOfficeCertified = false;
+                    //}
                     var types = from a in context.TBL_CHECKLIST_TYPE select a;
                     foreach (var item in types)
                     {
@@ -829,25 +829,26 @@ namespace FintrakBanking.Repositories.Credit
                                 + " Please check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
                         }
-                        if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
-                        {
-                            var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
-                            var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == targetId select b;
-                            int x, k;
-                            x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
 
-                            if (esg_checklist_definition.Count() != esg_checklist_details.Count())
-                            {
-                                isCheckListDone = false;
-                                str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
-                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                            }
-                        }
+                        //if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
+                        //{
+                        //    var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
+                        //    var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID select b;
+                        //    int x, k;
+                        //    x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
+
+                        //    if (esg_checklist_definition.Count() != esg_checklist_details.Count())
+                        //    {
+                        //        isCheckListDone = false;
+                        //        str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                        //        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                        //    }
+                        //}
                     }
                 }
             }
-
-            if (isCheckListDone && MiddleOfficeCertified  && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
+            //&& MiddleOfficeCertified 
+            if (isCheckListDone  && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
                 return new LoanApplicationUpdateMessage
                 {

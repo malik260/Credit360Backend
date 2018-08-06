@@ -31,4 +31,10 @@ namespace FintrakBanking.Common.Enum
         CustomBond = 10,
         RetentionBond = 11
     }
+
+    public enum DefaultProductEnum
+    {
+        CASA = 8
+    
+    }
 }

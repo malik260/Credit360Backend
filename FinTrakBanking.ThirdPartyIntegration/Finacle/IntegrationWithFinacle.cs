@@ -18,6 +18,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using AccountInformation;
     using FintrakBanking.Common.CustomException;
     using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+    using FintrakBanking.Common.Enum;
 
     public class IntegrationWithFinacle : IIntegrationWithFinacle
     {
@@ -505,7 +506,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.LEDGERBALANCE = item.ledgerBalance;
                 addCustomerAcct.PRODUCTACCOUNTNAME = item.productName;//item.productAccountName;
                 addCustomerAcct.PRODUCTACCOUNTNUMBER = item.productAccountNumber;
-                addCustomerAcct.PRODUCTID = (short)(item.productCode != "" ? 8 : 8);
+                addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; //(short)(item.productCode != "" ? 8 : 8);
                 addCustomerAcct.COMPANYID = 1;
                 addCustomerAcct.BRANCHID = (short)(item.branchCode != "" ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
                 addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
@@ -608,6 +609,42 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 var glAccountCode = branchCode + accountCode; //"100" + accountCode;
 
                 return glAccountCode;
+            }
+        }
+
+        public ResponseMessageViewModel OverDraftInterestRate(InterestRateInquiryViewModel model, string accountType,TwoFactorAutheticationViewModel twoFADetails = null)
+        {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (twoFADetails == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
+            model.APIUrl = @"api/InterestRateInquiry/PostInterestRate";
+            ResponseMessage result = null;
+            Task.Run(async () => result = await overDraft.APIOverDraftInterestRate(model, accountType)).GetAwaiter().GetResult();
+
+            if (result.Message.IsSuccessStatusCode)
+            {
+                if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
+                {
+                    throw new SecureException(result.APIResponse.message);
+                }
+                else
+                {
+                    //LogTemporaryOverDraft(model);
+                    return result.APIResponse;
+                }
+            }
+            else
+            {
+
+                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
 
@@ -823,6 +860,25 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             return accountOutput;
         }
+
+        //private bool LogTemporaryOverDraft(InterestRateInquiryViewModel model)
+        //{
+        //    bool result = false;
+        //    {
+        //        var data = new TBL_CUSTOM_TEMPORARYOVERDRAFT
+        //        {
+        //            APIURL = model.APIUrl,
+        //            DATETIMECREATED = DateTime.Now,
+        //            TEMPORARYOVERDRAFTAMOUNT = model.interestRateAmount,
+        //            TEMPORARYOVERDRAFTDATE = model.TemporaryOverDraftDate,
+        //            TEMPORARYOVERDRAFTFLAG = model.TemporaryOverDraftFlag,
+        //            TEMPORARYOVERDRAFTNARATION = model.TemporaryOverDraftNaration
+        //        };
+        //        context.TBL_CUSTOM_TEMPORARYOVERDRAFT.Add(data);
+        //        result = context.SaveChanges() > 0;
+        //    }
+        //    return result;
+        //}
         #endregion
 
     }

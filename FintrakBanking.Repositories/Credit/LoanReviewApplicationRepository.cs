@@ -354,7 +354,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductClassId = null;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
-            workflow.ExternalInitialization = true;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 

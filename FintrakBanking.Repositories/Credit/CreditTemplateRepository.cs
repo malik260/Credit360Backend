@@ -349,7 +349,7 @@ namespace FintrakBanking.Repositories.Credit
                 title = doc.TITLE,
                 templateDocument = doc.TEMPLATEDOCUMENT, // placeholder find replace
                 canEdit = doc.CANEDIT,
-                editable = sectionIds.Contains(doc.TEMPLATESECTIONID),
+                editable = doc.CANEDIT && sectionIds.Contains(doc.TEMPLATESECTIONID),
             };
         }
 
