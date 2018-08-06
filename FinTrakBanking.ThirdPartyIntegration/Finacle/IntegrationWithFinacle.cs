@@ -586,17 +586,29 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
-            var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
+            var nostroAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE                               
+                               where gla.GLACCOUNTID == glAccountId
+                               select new { gl.ACCOUNTID, gl.ISNOSTROACCOUNT }).FirstOrDefault();
 
-            var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
-                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
-                               join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
-                               where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
-                               select gl.ACCOUNTID).FirstOrDefault();
+            if (nostroAccount.ISNOSTROACCOUNT == true)
+            {
+                return nostroAccount.ACCOUNTID;
+            }
+            else
+            {
+                var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
 
-            var glAccountCode = branchCode + accountCode; //"100" + accountCode;
+                var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                                   join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                                   join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
+                                   where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
+                                   select gl.ACCOUNTID).FirstOrDefault();
 
-            return glAccountCode;
+                var glAccountCode = branchCode + accountCode; //"100" + accountCode;
+
+                return glAccountCode;
+            }
         }
 
 

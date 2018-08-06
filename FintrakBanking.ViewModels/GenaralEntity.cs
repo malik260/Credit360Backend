@@ -17,6 +17,7 @@ namespace FintrakBanking.ViewModels
         public DateTime? dateTimeDeleted { get; set; }
         public bool canModified { get; set; }
         public short userBranchId { get; set; }
+        public short sourceBranchId { get; set; }
         public string userIPAddress { get; set; }
         public string applicationUrl { get; set; }
         public DateTime? systemCurrentDate { get; set; }

@@ -48,7 +48,6 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanViewModel : GeneralEntity
     {
         public short trailApprovalStatus { get; set; }
-        public string nostroAccount { get; set; }
         public string currencyCode { get; set; }
 
         public string ApprovalStatus { get; set; }
@@ -274,6 +273,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string nostroRateCode { get; set; }
         public string notstroCurrency { get; set; }
         public decimal? nostroRateAmount { get; set; }
+        public string nostroAccount { get; set; }
+        public int? nostroRateCodeId { get; set; }
         public string baseReferenceNumber { get; set; }
         public string categoryName { get; set; }
         public string currencyName { get; set; }
