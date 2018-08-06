@@ -829,20 +829,21 @@ namespace FintrakBanking.Repositories.Credit
                                 + " Please check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
                         }
-                        if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
-                        {
-                            var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
-                            var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID select b;
-                            int x, k;
-                            x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
 
-                            if (esg_checklist_definition.Count() != esg_checklist_details.Count())
-                            {
-                                isCheckListDone = false;
-                                str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
-                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                            }
-                        }
+                        //if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
+                        //{
+                        //    var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
+                        //    var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID select b;
+                        //    int x, k;
+                        //    x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
+
+                        //    if (esg_checklist_definition.Count() != esg_checklist_details.Count())
+                        //    {
+                        //        isCheckListDone = false;
+                        //        str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                        //        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                        //    }
+                        //}
                     }
                 }
             }
