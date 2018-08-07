@@ -25,7 +25,7 @@ namespace FintrakBanking.Common.Enum
         DailyInterestAccural = 15,
 
         InterestLoanRepayment = 16,
-        ChargeReversal = 17,
+        LoanReversal = 17,
         LoanPrepayment = 18,
         ContractualInterestRateChange = 19,
         OverdraftSubAllocation = 20,
