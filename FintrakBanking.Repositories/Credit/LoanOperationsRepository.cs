@@ -10297,7 +10297,7 @@ namespace FintrakBanking.Repositories.Credit
                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                    relationshipOfficerId = l.RELATIONSHIPOFFICERID,
                                    productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
-                                   systemCurrentDate = applicationDate
+                                   systemCurrentDate = applicationDate,
                                }).FirstOrDefault();
 
             return runningLoan;
@@ -12216,7 +12216,6 @@ namespace FintrakBanking.Repositories.Credit
                             }
 
                         }
-
                         else if ((int)OperationsEnum.CancelUndisbursedLoan == model.operationId)
                         {
                             result = LoanCancellation(loanId, applicationDate, staffId);
