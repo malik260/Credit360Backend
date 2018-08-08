@@ -382,7 +382,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("group-customer-loan-details/")]
+        public HttpResponseMessage SearchForGroupLoan(int loanId)
+        {
+            try
+            {
+                var data = loanRepo.GetGroupLoanByLoanId(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-convenant/")]
         public HttpResponseMessage GetLoanConvenant(int loanId)
         {

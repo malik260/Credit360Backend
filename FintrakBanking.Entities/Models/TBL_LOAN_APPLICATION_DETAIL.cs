@@ -111,6 +111,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
+        public int? CASAACOUNTID { get; set; }
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }

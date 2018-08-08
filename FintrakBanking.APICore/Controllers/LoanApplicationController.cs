@@ -865,6 +865,24 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("validate-invoice-details")]
+        public HttpResponseMessage ValidateInvoiceDetails([FromBody] ValidateNumberViewModel data)
+        {
+            try
+            {
+                var response = repo.ValidateDocumentNumber(data);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        
+
         [HttpGet, Route("loan-application-and-offer/rejected")]
         public HttpResponseMessage GetRejectedLoanApplications()
         {

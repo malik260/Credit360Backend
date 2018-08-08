@@ -33,5 +33,7 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         bool PresetRoute(PresetRouteViewModel entity);
         PresetRouteViewModel GetPresetRouteCollection(int operationId, int? classId);
         List<FintrakDropDownSelectList> GetApprovalLevelsByOperationIdAndProductClassId(int operationId, int? classId);
+        int GoForApproval(ApprovalLevelViewModel model);
+        List<ApprovalLevelViewModel> GetTempApprovalApprovalLevel(int staffId);
     }    
 }
