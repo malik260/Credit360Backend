@@ -761,6 +761,22 @@ namespace FintrakBanking.Repositories.Admin
             return context.SaveChanges() > 0;
         }
 
+        public bool IsSuperAdmin(int staffId)
+        {
+            var userId = (from a in context.TBL_PROFILE_USER                               
+                               where a.STAFFID == staffId
+                               select a.USERID).FirstOrDefault();
+
+            var userActivities = GetUserActivitiesByUser(userId);
+
+            var superAdmin = userActivities.Where(x => x.ToLower() == "super admin".ToLower()).FirstOrDefault();
+
+            if (superAdmin != null)
+                return true;
+            else
+                return false;            
+        }
+
         public List<string> GetUserActivitiesByUser(int userId)
         {
             List<string> listOfActivities = new List<string>();

@@ -10297,7 +10297,7 @@ namespace FintrakBanking.Repositories.Credit
                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                    relationshipOfficerId = l.RELATIONSHIPOFFICERID,
                                    productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
-                                   systemCurrentDate = applicationDate
+                                   systemCurrentDate = applicationDate,
                                }).FirstOrDefault();
 
             return runningLoan;
@@ -11818,6 +11818,20 @@ namespace FintrakBanking.Repositories.Credit
                                 }
 
                             }
+                        else if ((int)OperationsEnum.LoanReversal == model.operationId)
+                        {
+                            result = LoanReversal(loanId, model, twoFactorAuth, applicationDate, staffId);
+                            if (result == true)
+                            {
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                output = true;
+                            }
+                            else
+                            {
+                                output = false;
+                            }
+
+                        }
                         //}LoanReversal
                     }
                     else
@@ -12216,10 +12230,24 @@ namespace FintrakBanking.Repositories.Credit
                             }
 
                         }
-
                         else if ((int)OperationsEnum.CancelUndisbursedLoan == model.operationId)
                         {
                             result = LoanCancellation(loanId, applicationDate, staffId);
+                            if (result == true)
+                            {
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                output = true;
+                            }
+                            else
+                            {
+                                output = false;
+                            }
+
+                        }
+
+                        else if ((int)OperationsEnum.LoanReversal == model.operationId)
+                        {
+                            result = LoanReversal(loanId, model, twoFactorAuth, applicationDate, staffId);
                             if (result == true)
                             {
                                 updateLoanReviewOperation(loanReviewOperationsId, loanId);

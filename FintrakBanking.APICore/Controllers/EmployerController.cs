@@ -140,21 +140,6 @@ namespace FintrakBanking.APICore.Controllers
 
         #region employer type
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("employer-type")]
-        public HttpResponseMessage getEmployerTypes()
-        {
-            try
-            {
-                var data = repo.getEmployerType(token.GetCompanyId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
-            }
-        }
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -219,7 +204,7 @@ namespace FintrakBanking.APICore.Controllers
         #region employer sub type
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("employer-sub-type")]
+        [Route("all-employer-sub-type")]
         public HttpResponseMessage getEmployerSubTypes()
         {
             try
