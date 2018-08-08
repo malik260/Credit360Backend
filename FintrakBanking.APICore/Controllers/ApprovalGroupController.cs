@@ -110,7 +110,7 @@ namespace FintrakBanking.APICore.Controllers
                     model.userBranchId = (short)token.GetBranchId;
                     // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                      model.applicationUrl = HttpContext.Current.Request.Path;
-                    model.lastUpdatedBy = token.GetStaffId;
+                    model.staffId = token.GetStaffId;
                     model.companyId = token.GetCompanyId;
 
                     var data = repoMapping.UpdateApprovalGroupMapping(operationMappingId, model);
@@ -211,7 +211,7 @@ namespace FintrakBanking.APICore.Controllers
                   
         }
 
-      [HttpGet] [ClaimsAuthorization]  [Route("approval-group/{GroupId}")]
+        [HttpGet] [ClaimsAuthorization]  [Route("approval-group/{GroupId}")]
         public HttpResponseMessage GetApprovalGroup( int GroupId)
         { 
                 try
@@ -230,8 +230,50 @@ namespace FintrakBanking.APICore.Controllers
                  
             
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approval-group-list-for-approval")]
+        public HttpResponseMessage GetApprovalGroupForApproval()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repoMapping.GetTempApprovalGroupForApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = data, count = 1 });
+            }
+            catch (SecureException ex)
+            {
 
-       [HttpPut] [ClaimsAuthorization][Route("approval-group/{GroupId}")]
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"An error has accoured {ex.Message}" });
+            }
+
+
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("go-for-workflow-group-approval")]
+        public HttpResponseMessage GoForWorkflowGroupApproval([FromBody]ApprovalGroupMappingViewModel model)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.staffId = token.GetStaffId;
+                var data = repoMapping.GoForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = data, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"An error has accoured {ex.Message}" });
+            }
+
+
+        }
+        [HttpPut] [ClaimsAuthorization][Route("approval-group/{GroupId}")]
         public HttpResponseMessage UpdateApprovalGroup( int GroupId, [FromBody] ApprovalGroupViewModel model)
         { 
                 try

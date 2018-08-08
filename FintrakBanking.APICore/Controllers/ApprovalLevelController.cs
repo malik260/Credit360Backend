@@ -259,11 +259,55 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approval-level-list-for-approval")]
+        public HttpResponseMessage GetApprovalLevelForApproval()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetTempApprovalApprovalLevel(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = data, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"An error has accoured {ex.Message}" });
+            }
+
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("go-for-workflow-level-approval")]
+        public HttpResponseMessage GoForWorkflowLevelApproval([FromBody]ApprovalLevelViewModel model)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.staffId = token.GetStaffId;
+                var data = repo.GoForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = data, count = 1 });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"An error has accoured {ex.Message}" });
+            }
+
+
+        }
 
         #endregion preset route
 
         #region trail
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("workflowtracker/operation/{oId}/target/{tId}")]
         public HttpResponseMessage GetApprovalTrailByOperationIdAndTargetId(int oId, int tId)
         {

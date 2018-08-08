@@ -6,7 +6,9 @@ namespace FintrakBanking.ViewModels.Setups.Approval
 {
     public class ApprovalLevelViewModel : GeneralEntity
     {
+
         public int approvalLevelId { get; set; }
+        public int tempApprovalLevelId { get; set; }
         public string levelName { get; set; }
         public int position { get; set; }
         public int? tenor { get; set; }
@@ -45,6 +47,22 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public double? feeRate { get; set; }
         public double? interestRate { get; set; }
         public int slaNotificationInterval { get; set; }
+        public short approvalStatusId { get; set; }
+        public string comment { get; set; }
+        public string canEscalateValue { get; set; }
+        public string canResolveDisputeValue { get; set; }
+        public string canApproveUntenoredValue { get; set; }
+        public string isActiveValue { get; set; }
+        public string canViewDocumentValue { get; set; }
+        public string canEditValue { get; set; }
+        public string canViewUploadedFileValue { get; set; }
+        public string canUploadFileValue { get; set; }
+        public string canViewApprovalValue { get; set; }
+        public string canApproveValue { get; set; }
+        public string canRecieveSmsValue { get; set; }
+        public string canRecieveEmailValue { get; set; }
+        public string groupName { get; set; }
+        public string isPoliticallyExposedValue { get; set; }
     }
 
     public class PresetRouteViewModel : GeneralEntity

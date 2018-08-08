@@ -85,5 +85,7 @@ namespace FintrakBanking.Common.Enum
         ForeignExchangeLoanBooking = 73,
         CommercialLoanSubAllocation = 74,
         OverdraftInterestRate =75,
+        ApprovalWorkflowGroupModification = 76,
+        ApprovalWorkflowLevelModification = 77,
     }
 }
