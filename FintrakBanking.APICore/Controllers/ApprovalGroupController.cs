@@ -258,8 +258,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var token = new TokenDecryptionHelper();
-                model.staffId = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
                 var data = repoMapping.GoForApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = true, result = data, count = 1 });

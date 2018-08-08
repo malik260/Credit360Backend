@@ -326,7 +326,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var result = repo.GetXDSFullSearchResultInPDF(searchInput);
 
-                if (result != null)
+                if (!result.errorOccured)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, data = result, message = " download Completed" });

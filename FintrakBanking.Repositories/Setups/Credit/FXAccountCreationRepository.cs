@@ -41,6 +41,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_FREECODE1
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE1,
@@ -54,6 +55,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_FREECODE4
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE4,
@@ -67,6 +69,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_FREECODE5
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE5,
@@ -80,6 +83,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_FREECODE6
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE6,
@@ -93,6 +97,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_FREECODE7
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE7,
@@ -106,6 +111,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_FREECODE8
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE8,
@@ -119,6 +125,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_FREECODE9
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE9,
@@ -132,6 +139,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_FREECODE10
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.FREECODE10,
@@ -145,6 +153,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_MODE_OF_ADV
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.MODE_OF_ADVANCE,
@@ -158,6 +167,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_NAT_OF_ADV
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.NATURE_OF_ADVANCE,
@@ -171,6 +181,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_OCCUPATION_CODE
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.OCCUPATION_CODE,
@@ -184,6 +195,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_PURPOSE_OF_ADV
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.PURPOSE_OF_ADVANCE,
@@ -197,6 +209,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_ADVANCE_TYPE
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.ADVANCE_TYPE,
@@ -210,6 +223,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_BORROWER_CAT
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.BORROWER_CATEGORY,
@@ -223,6 +237,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_SUB_SECTOR
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SUB_SECTOR,
@@ -236,6 +251,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_SECTOR_CODE
                              where a.DEL_FLG == "N"
+                             orderby a.REF_DESC
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SECTOR_CODE,
@@ -249,6 +265,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_CURRENCY_TBL
                              where a.ENTITY_CRE_FLAG == "Y"
+                             orderby a.CURRENCY_NAME
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.CURRENCY,
@@ -261,10 +278,11 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public List<FXAccountCreationViewModel> GetAllSchemeCode()
         {
             var freecode1 = (from a in context.STG_SCHEMECODE_TBL
+                             orderby a.SCHEME_CODE
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SCHEME_CODE,
-                                 ref_Desc = a.SCHEME_CODE + " - " + a.SCHEME_DESCRIPTION ,
+                                 ref_Desc = a.SCHEME_CODE + " - " + a.SCHEME_DESCRIPTION,
                                  // del_Flg = a.DEL_FLG,
                                  // bank_Id = a.BANK_ID
                              }).ToList();
@@ -273,6 +291,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public List<FXAccountCreationViewModel> GetAllSolId()
         {
             var freecode1 = (from a in context.STG_SOL_TBL
+                             orderby a.BRANCH_NAME
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.SOL_ID,
@@ -285,6 +304,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public List<FXAccountCreationViewModel> GetAllGLSubHead()
         {
             var freecode1 = (from a in context.STG_GL_SUBHEAD_TBL
+                             orderby a.GL_SUB_HEAD_CODE
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.GL_SUB_HEAD_CODE,
@@ -298,6 +318,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
         {
             var freecode1 = (from a in context.STG_GL_SUBHEAD_TBL
                              where a.SCHM_CODE.ToLower().Trim() == schemeCode.ToLower().Trim()
+                             orderby a.GL_SUB_HEAD_CODE
                              select new FXAccountCreationViewModel
                              {
                                  fx_Code = a.GL_SUB_HEAD_CODE,
@@ -341,15 +362,20 @@ namespace FintrakBanking.Repositories.Setups.Credit
         }
         public string ForeignCurrencyAccountCreation(CreateAccountViewModel entity, UserInfo user)
         {
-       //     try
-       //     {
+            try
+            {
                 string accountNumber = null;
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    var customerInfo = bankingContext.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERCODE == entity.customerCode);
+                    var customerInfo = bankingContext.TBL_CUSTOMER.Where(x => x.CUSTOMERCODE == entity.customerCode).Select(a => a).FirstOrDefault();
+                    var branchCode = bankingContext.TBL_BRANCH.Where(x => x.BRANCHID == user.BranchId).Select(k => k.BRANCHCODE).FirstOrDefault();
+                    entity.solId = branchCode;
+
                     var accountInfo = finacle.CreateForeignAccount(entity);
                     if (accountInfo != null)
                     {
+                        var currencyId = bankingContext.TBL_CURRENCY.Where(x => x.CURRENCYCODE.ToUpper() == entity.currencyCode.ToUpper()).Select(x => x.CURRENCYID).FirstOrDefault();
+
                         accountNumber = accountInfo.accountNumber;
                         var customerExist = (from a in bankingContext.TBL_CASA where a.PRODUCTACCOUNTNUMBER == accountInfo.accountNumber select a).Any();
                         if (!customerExist)
@@ -360,12 +386,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             addCustomerAcct.LEDGERBALANCE = 0;
                             addCustomerAcct.PRODUCTACCOUNTNAME = "Foreign Account";
                             addCustomerAcct.PRODUCTACCOUNTNUMBER = accountInfo.accountNumber;
-                            addCustomerAcct.PRODUCTID = 1;
+                            addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; ;
                             addCustomerAcct.COMPANYID = user.companyId;
                             addCustomerAcct.BRANCHID = (short)user.BranchId;
-                            addCustomerAcct.CURRENCYID = 1;
+                            addCustomerAcct.CURRENCYID = currencyId;
                             addCustomerAcct.ISCURRENTACCOUNT = true;
-                            addCustomerAcct.ACCOUNTSTATUSID = 1;
+                            addCustomerAcct.ACCOUNTSTATUSID = (short)CASAAccountStatusEnum.Active;
                             addCustomerAcct.LIENAMOUNT = 0;
                             addCustomerAcct.HASLIEN = false;
                             addCustomerAcct.POSTNOSTATUSID = 1;
@@ -387,28 +413,19 @@ namespace FintrakBanking.Repositories.Setups.Credit
                     auditTrail.AddAuditTrail(audit);
                     //end of Audit section -------------------------------
                 }
-            try
-            {
                 var output = bankingContext.SaveChanges() > 0;
                 if (output == true)
                 {
                     return accountNumber;
                 }
-            }
-            catch(Exception ex)
-            {
-
-            }
-                
-          
                 return null;
-            //}
-            //catch (Exception ex)
-            //{
-            //    return null;
-            //    throw new SecureException(ex.Message);
-            //}
-          
+            }
+            catch (Exception ex)
+            {
+                return null;
+                throw new Exception(ex.Message);
+            }
+
         }
 
     }

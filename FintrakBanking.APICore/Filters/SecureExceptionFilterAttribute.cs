@@ -7,6 +7,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using System.Configuration;
+using System.Data.Entity.Validation;
 
 namespace FintrakBanking.APICore.Filters
 {
@@ -16,13 +17,25 @@ namespace FintrakBanking.APICore.Filters
         private readonly string support = ConfigurationManager.AppSettings["SupportEmailAddr"];
 
         public override void OnException(HttpActionExecutedContext context)
-        { 
-            var ctx = context;
+        {
+            context.Exception.Data["validation_error_message"] = String.Empty;
 
             if (context.Exception is SecureException)
             {
                 context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message });
                 return;
+            }
+
+            if (context.Exception is DbEntityValidationException)
+            {
+                var e = (DbEntityValidationException)context.Exception;
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        context.Exception.Data["validation_error_message"] = context.Exception.Data["validation_error_message"] + ve.ErrorMessage + ", ";
+                    }
+                }
             }
 
             Task.Run(() => LogUnhandledExceptionAsync(context));
@@ -40,7 +53,7 @@ namespace FintrakBanking.APICore.Filters
             var ex = httpContext.Exception;
             var endPoint = httpContext.Request.RequestUri;
             var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
-            var errorMessage = ex.Message;
+            var errorMessage = ex.Message + " " + ex.Data["validation_error_message"];
             var time = DateTime.Now;
 
             if (ex.InnerException != null)

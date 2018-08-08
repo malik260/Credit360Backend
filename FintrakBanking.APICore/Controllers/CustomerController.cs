@@ -154,7 +154,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = stagingRepo.GetIntegratedCustomerInformation(searchTerm);
-                if (data == null)
+                if (data.Count == 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });

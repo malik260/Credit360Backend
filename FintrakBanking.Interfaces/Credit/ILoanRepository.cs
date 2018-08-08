@@ -160,7 +160,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
-
+        IEnumerable<LoanViewModel> GetApprovedCommercialLoanReview();
+        IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
 
     }
 }

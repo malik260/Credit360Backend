@@ -203,6 +203,12 @@ namespace FintrakBanking.Entities.Models
 
         public string NOSTROACCOUNTID { get; set; }
 
+        public int? NOSTRORATECODEID { get; set; }
+        public decimal? NOSTRORATEAMOUNT { get; set; }
+
+        public int? NOSTROCURRENCYID { get; set; }
+       
+
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 
@@ -261,8 +267,6 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
 
         public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
-        public int? NOSTRORATECODEID { get; set; }
-        public decimal? NOSTRORATEAMOUNT { get; set; }
-        public int? NOSTROCURRENCYID { get; set; }
+        
     }
 }

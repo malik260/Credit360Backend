@@ -18,6 +18,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using AccountInformation;
     using FintrakBanking.Common.CustomException;
     using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+    using FintrakBanking.Common.Enum;
 
     public class IntegrationWithFinacle : IIntegrationWithFinacle
     {
@@ -505,7 +506,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 addCustomerAcct.LEDGERBALANCE = item.ledgerBalance;
                 addCustomerAcct.PRODUCTACCOUNTNAME = item.productName;//item.productAccountName;
                 addCustomerAcct.PRODUCTACCOUNTNUMBER = item.productAccountNumber;
-                addCustomerAcct.PRODUCTID = (short)(item.productCode != "" ? 8 : 8);
+                addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; //(short)(item.productCode != "" ? 8 : 8);
                 addCustomerAcct.COMPANYID = 1;
                 addCustomerAcct.BRANCHID = (short)(item.branchCode != "" ? context.TBL_BRANCH.FirstOrDefault(x => x.BRANCHCODE == item.branchCode).BRANCHID : 94);
                 addCustomerAcct.CURRENCYID = currencyId;//(short)(item.currency == "NGN" ? 1 : 0);
@@ -586,17 +587,29 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
-            var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
+            var nostroAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE                               
+                               where gla.GLACCOUNTID == glAccountId
+                               select new { gl.ACCOUNTID, gl.ISNOSTROACCOUNT }).FirstOrDefault();
 
-            var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
-                               join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
-                               join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
-                               where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
-                               select gl.ACCOUNTID).FirstOrDefault();
+            if (nostroAccount.ISNOSTROACCOUNT == true)
+            {
+                return nostroAccount.ACCOUNTID;
+            }
+            else
+            {
+                var branchCode = (from br in context.TBL_BRANCH where br.BRANCHID == branchId select br.BRANCHCODE).FirstOrDefault();
 
-            var glAccountCode = branchCode + accountCode; //"100" + accountCode;
+                var accountCode = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+                                   join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE
+                                   join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
+                                   where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
+                                   select gl.ACCOUNTID).FirstOrDefault();
 
-            return glAccountCode;
+                var glAccountCode = branchCode + accountCode; //"100" + accountCode;
+
+                return glAccountCode;
+            }
         }
 
         public ResponseMessageViewModel OverDraftInterestRate(InterestRateInquiryViewModel model, string accountType,TwoFactorAutheticationViewModel twoFADetails = null)
