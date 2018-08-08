@@ -1256,17 +1256,37 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<RecommendedCollateralViewModel> AddRecommendedCollateral(RecommendedCollateralViewModel entity)
         {
-            context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
+            try
             {
-                LOANAPPLICATIONID = entity.applicationId,
-                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
-                COLLATERALDETAIL = entity.collateralDetail,
-                COLLATERALVALUE = entity.collateralValue,
-                STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
-                DATETIMECREATED = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            });
-            context.SaveChanges();
+                var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
+                {
+                    LOANAPPLICATIONID = entity.applicationId,
+                    LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                    COLLATERALDETAIL = entity.collateralDetail,
+                    COLLATERALVALUE = entity.collateralValue,
+                    STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                    DATETIMECREATED = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                });
+
+                context.TBL_LOAN_APPLICATION_COLT2_LOG.Add(new TBL_LOAN_APPLICATION_COLT2_LOG
+                {
+                    COLLATERALBASICDETAILID = recommendation.COLLATERALBASICDETAILID,
+                    LOANAPPLICATIONID = entity.applicationId,
+                    LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                    COLLATERALDETAIL = entity.collateralDetail,
+                    COLLATERALVALUE = entity.collateralValue,
+                    STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                    DATETIMECREATED = general.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    CREATEDBY = entity.createdBy
+                });
+
+                context.SaveChanges();
+            }catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message+" -- "+ex.InnerException);
+            }
             return GetRecommendedCollateral(entity.applicationId);
         }
 
@@ -1277,6 +1297,20 @@ namespace FintrakBanking.Repositories.Credit
             recommendation.COLLATERALDETAIL = entity.collateralDetail;
             recommendation.COLLATERALVALUE = entity.collateralValue;
             recommendation.STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount;
+
+            context.TBL_LOAN_APPLICATION_COLT2_LOG.Add(new TBL_LOAN_APPLICATION_COLT2_LOG
+            {
+                COLLATERALBASICDETAILID = recommendation.COLLATERALBASICDETAILID,
+                LOANAPPLICATIONID = recommendation.LOANAPPLICATIONID,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                COLLATERALDETAIL = entity.collateralDetail,
+                COLLATERALVALUE = entity.collateralValue,
+                STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                DATETIMECREATED = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = entity.createdBy
+            });
+
             context.SaveChanges();
             return GetRecommendedCollateral(entity.applicationId);
         }
