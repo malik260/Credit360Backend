@@ -406,11 +406,13 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<EmployerSubType> getEmployerSubType(int employerSubTypeId)
         {
             var type = from a in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB
-                       where a.EMPLOYER_SUB_TYPEID == employerSubTypeId
+                       join b in _context.TBL_CUSTOMER_EMPLOYER_TYPE on a.EMPLOYER_TYPEID equals b.EMPLOYER_TYPEID
                        select new EmployerSubType
                        {
                            EmployerSubTypeId = a.EMPLOYER_SUB_TYPEID,
-                           EmployerSubTypeName = a.EMPLOYER_SUB_TYPE_NAME
+                           EmployerSubTypeName = a.EMPLOYER_SUB_TYPE_NAME,
+                           EmployerTypeName = b.EMPLOYER_TYPE_NAME,
+                           EmployerTypeId = b.EMPLOYER_TYPEID
                        };
             return type;
         }

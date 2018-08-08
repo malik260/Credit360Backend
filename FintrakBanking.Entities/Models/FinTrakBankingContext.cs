@@ -22,8 +22,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_TYPE> TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP> TBL_APPROVAL_GROUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
+        public virtual DbSet<TBL_TEMP_APPROVAL_GRP_MAPPING> TBL_TEMP_APPROVAL_GRP_MAPPING { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
+        public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
+        public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATE> TBL_APPROVAL_STATE { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATUS> TBL_APPROVAL_STATUS { get; set; }
         public virtual DbSet<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }

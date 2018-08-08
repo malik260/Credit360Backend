@@ -1547,6 +1547,8 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+  
+
         public IEnumerable<simpleStaffModel> GetStaffRelationshipManagerByStaffId(int staffId)
         {
             var data = from st in context.TBL_STAFF
