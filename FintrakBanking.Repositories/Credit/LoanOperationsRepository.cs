@@ -5473,7 +5473,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-           // var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+            // var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN
                          where a.TERMLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                          select new LoanViewModel()
@@ -13559,7 +13559,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool CommercialPaperTenorReview(TenorExtionViewModel userModel)
+        public bool addCommercialPaperTenorReview(TenorExtionViewModel userModel)
         {
             var refNo = string.Empty;
             var auditDetail = string.Empty;
@@ -13599,7 +13599,7 @@ namespace FintrakBanking.Repositories.Credit
                 auditDetail = $"Extended loan application detail tenor with reference number: {userModel.appRef} with {userModel.newTenor} extra";
             }
 
-            CommercialPaperTenorReviewDetails(userModel.id, userModel.newTenor);
+            addCommercialPaperLineTenorReview(userModel.id, userModel.newTenor);
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -13619,32 +13619,17 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool CommercialPaperTenorReviewDetails(int loanAplicationDetailId, int newTenor)
+        public bool addCommercialPaperLineTenorReview(int loanAplicationDetailId, int newTenor)
         {
             TBL_LOAN_APPLICATION_DETAIL result = (from p in context.TBL_LOAN_APPLICATION_DETAIL
                                                   where p.LOANAPPLICATIONDETAILID == loanAplicationDetailId
                                                   select p).SingleOrDefault();
-
 
             result.APPROVEDTENOR = result.APPROVEDTENOR + newTenor;
             if (result.EXPIRYDATE != null)
             {
                 var expiryDate = (DateTime)result.EXPIRYDATE;
                 result.EXPIRYDATE = expiryDate.AddDays(newTenor);
-
-                //List<TBL_LOAN> loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanAplicationDetailId).ToList();
-                //if(loans.Count > 0)
-                //{
-                //    foreach(var loan in loans)
-                //    {
-                //        var newMaturitydate = loan.MATURITYDATE;
-
-                //        if(newMaturitydate.AddDays(newTenor) <= result.EXPIRYDATE)
-                //        {
-                //            loan.MATURITYDATE = newMaturitydate.AddDays(newTenor);
-                //        }
-                //    }
-                //}
             }
 
             return context.SaveChanges() > 0;

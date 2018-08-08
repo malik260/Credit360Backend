@@ -313,7 +313,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.CommercialPaperTenorReview(entity);
+                var data = repo.addCommercialPaperTenorReview(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor successfully extended." });
