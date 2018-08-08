@@ -47,8 +47,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public string groupCustomerName { get; set; }
+
         public short trailApprovalStatus { get; set; }
-        public string nostroAccount { get; set; }
         public string currencyCode { get; set; }
 
         public string ApprovalStatus { get; set; }
@@ -242,7 +243,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal interestOnPastDuePrincipal { get; set; }
         public decimal interesrtOnPastDueInterest { get; set; }
         public decimal penalChargeAmount { get; set; }
-        public DateTime lastRestructureDate  { get; set; }
+        public DateTime? lastRestructureDate  { get; set; }
         public short loanSystemTypeId  { get; set; }
         public bool isPerforming { get; set; }
         public object loanPrincipal { get; set; }
@@ -274,6 +275,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string nostroRateCode { get; set; }
         public string notstroCurrency { get; set; }
         public decimal? nostroRateAmount { get; set; }
+        public string nostroAccount { get; set; }
+        public int? nostroRateCodeId { get; set; }
         public string baseReferenceNumber { get; set; }
         public string categoryName { get; set; }
         public string currencyName { get; set; }

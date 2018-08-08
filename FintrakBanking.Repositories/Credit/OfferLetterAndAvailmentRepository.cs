@@ -2019,6 +2019,28 @@ namespace FintrakBanking.Repositories.Credit
         public bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel model)
         {
             var operationId = (int)OperationsEnum.LoanAvailment;
+            var appl = context.TBL_LOAN_APPLICATION.Find(model.targetId);
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == appl.CREATEDBY).FirstOrDefault();
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == appl.PRODUCTCLASSID)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList()
+                     ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
             // init
             workflow.StaffId = model.createdBy;
@@ -2027,8 +2049,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = null;
             workflow.ProductId = null;
-            // workflow.NextLevelId = model.receiverLevelId;
-            // workflow.ToStaffId = model.receiverStaffId;
+            workflow.NextLevelId = staffRoleLevelId;
+            workflow.ToStaffId = appl.CREATEDBY;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;

@@ -20,6 +20,8 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         ApprovalGroupMappingViewModel GetApprovalGroupMapping(int operationMappingId);
 
         IEnumerable<ApprovalGroupMappingViewModel> GetApprovalGroupMapping(int operationId, short? productClassId, short? productId);
+        int GoForApproval(ApprovalGroupMappingViewModel model);
+        List<ApprovalGroupMappingViewModel> GetTempApprovalGroupForApproval(int staffId);
 
     }
 }

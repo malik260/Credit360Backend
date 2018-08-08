@@ -5473,7 +5473,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode)
         {
             var systemDate = generalSetup.GetApplicationDate();
-           // var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+            // var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
             var model = (from a in context.TBL_LOAN
                          where a.TERMLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                          select new LoanViewModel()
@@ -8183,7 +8183,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId)
         {
             bool output = false;
             bool result = false;
@@ -9973,7 +9973,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool LoanTermination(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool LoanTermination(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId)
         {
             bool output = false;
             //using (var trans = context.Database.BeginTransaction())
@@ -10013,7 +10013,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Loan Outstanding Principal Balance"));
 
-                financeTransaction.PostTransaction(inputTransactions);
+                //financeTransaction.PostTransaction(inputTransactions);
 
                 TBL_LOAN results = (from p in context.TBL_LOAN
                                     where p.TERMLOANID == loanId
@@ -10297,7 +10297,7 @@ namespace FintrakBanking.Repositories.Credit
                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                    relationshipOfficerId = l.RELATIONSHIPOFFICERID,
                                    productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
-                                   systemCurrentDate = applicationDate
+                                   systemCurrentDate = applicationDate,
                                }).FirstOrDefault();
 
             return runningLoan;
@@ -11803,13 +11803,36 @@ namespace FintrakBanking.Repositories.Credit
                                 updateLoanReviewOperation(loanReviewOperationsId, loanId);
                                 output = true;
                             }
+                        }
+                        else if ((int)OperationsEnum.LoanTermination == model.operationId)
+                            {
+                                model.interestRate = model.newInterest;
+                                model.effectiveDate = model.newEffectiveDate;
+                                model.maturityDate = (DateTime)model.newMaturityDate;
+                                model.scheduleMethodId = (short)LoanScheduleTypeEnum.IrregularSchedule;
+                                result = LoanTermination(loanId, model, twoFactorAuth, applicationDate, staffId);
+                                if (result == true)
+                                {
+                                    updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                    output = true;
+                                }
+
+                            }
+                        else if ((int)OperationsEnum.LoanReversal == model.operationId)
+                        {
+                            result = LoanReversal(loanId, model, twoFactorAuth, applicationDate, staffId);
+                            if (result == true)
+                            {
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                output = true;
+                            }
                             else
                             {
                                 output = false;
                             }
 
                         }
-                        //}
+                        //}LoanReversal
                     }
                     else
                     {
@@ -12193,6 +12216,50 @@ namespace FintrakBanking.Repositories.Credit
                             }
 
                         }
+
+                        else if ((int)OperationsEnum.LoanTermination == model.operationId)
+                        {
+                            model.interestRate = model.newInterest;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            result = LoanTermination(loanId, model, twoFactorAuth, applicationDate, staffId);
+                            if (result == true)
+                            {
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                output = true;
+                            }
+
+                        }
+                        else if ((int)OperationsEnum.CancelUndisbursedLoan == model.operationId)
+                        {
+                            result = LoanCancellation(loanId, applicationDate, staffId);
+                            if (result == true)
+                            {
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                output = true;
+                            }
+                            else
+                            {
+                                output = false;
+                            }
+
+                        }
+
+                        else if ((int)OperationsEnum.LoanReversal == model.operationId)
+                        {
+                            result = LoanReversal(loanId, model, twoFactorAuth, applicationDate, staffId);
+                            if (result == true)
+                            {
+                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                                output = true;
+                            }
+                            else
+                            {
+                                output = false;
+                            }
+
+                        }
+                        //}LoanTermination
                         //}
                     }
 
@@ -13492,7 +13559,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool CommercialPaperTenorReview(TenorExtionViewModel userModel)
+        public bool addCommercialPaperTenorReview(TenorExtionViewModel userModel)
         {
             var refNo = string.Empty;
             var auditDetail = string.Empty;
@@ -13532,7 +13599,7 @@ namespace FintrakBanking.Repositories.Credit
                 auditDetail = $"Extended loan application detail tenor with reference number: {userModel.appRef} with {userModel.newTenor} extra";
             }
 
-            CommercialPaperTenorReviewDetails(userModel.id, userModel.newTenor);
+            addCommercialPaperLineTenorReview(userModel.id, userModel.newTenor);
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -13552,32 +13619,17 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool CommercialPaperTenorReviewDetails(int loanAplicationDetailId, int newTenor)
+        public bool addCommercialPaperLineTenorReview(int loanAplicationDetailId, int newTenor)
         {
             TBL_LOAN_APPLICATION_DETAIL result = (from p in context.TBL_LOAN_APPLICATION_DETAIL
                                                   where p.LOANAPPLICATIONDETAILID == loanAplicationDetailId
                                                   select p).SingleOrDefault();
-
 
             result.APPROVEDTENOR = result.APPROVEDTENOR + newTenor;
             if (result.EXPIRYDATE != null)
             {
                 var expiryDate = (DateTime)result.EXPIRYDATE;
                 result.EXPIRYDATE = expiryDate.AddDays(newTenor);
-
-                //List<TBL_LOAN> loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanAplicationDetailId).ToList();
-                //if(loans.Count > 0)
-                //{
-                //    foreach(var loan in loans)
-                //    {
-                //        var newMaturitydate = loan.MATURITYDATE;
-
-                //        if(newMaturitydate.AddDays(newTenor) <= result.EXPIRYDATE)
-                //        {
-                //            loan.MATURITYDATE = newMaturitydate.AddDays(newTenor);
-                //        }
-                //    }
-                //}
             }
 
             return context.SaveChanges() > 0;
