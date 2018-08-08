@@ -2358,6 +2358,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 var reviewDate = revolvingLoanRecord.BOOKINGDATE.AddMonths(1);
                                 var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                                var acctType = "DR";
                                 if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
                                 {
                                     var model = new OverDraftNormalViewModel
@@ -2370,10 +2371,39 @@ namespace FintrakBanking.Repositories.Credit
                                         sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                                         sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
                                         sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
+                                        interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
                                     };
+                                    InterestRateInquiryViewModel accountOutput = finacle.GetInterestRateInquiry(model.accountNumber, acctType);
+                                    if(accountOutput.interestRateAmount == model.interestRateAmount)
+                                    {
+                                        ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
+                                        revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                                    }
+                                    else
+                                    {
+                                        var data = new InterestRateInquiryViewModel
+                                        {
+                                            interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                                            interestTableCode = accountOutput.interestTableCode,
+                                            accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                            endDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                                            accountType = acctType,
+                                            startDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                                        };
 
-                                    ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
-                                    revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                                        ResponseMessageViewModel interestRateResult = finacle.OverDraftInterestRate(data, data.accountType, twoFactorAuthDetails);
+                                        if (interestRateResult.message == "interest Rate Modified sucessfully")
+                                        {
+                                            ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
+                                            revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                                        }
+                                        else
+                                        {
+                                            throw new SecureException(interestRateResult.message);
+                                        }
+                                          
+                                    }
+                                    
                                 }
                                 if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalTemporaryOverdraft)
                                 {
