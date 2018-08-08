@@ -90,6 +90,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool isCollateralBacked { get; set; }
 
+        public string collateralDetail { get; set; }
         //private int _tenor;
 
         public int tenor { get; set; }
@@ -168,11 +169,13 @@ namespace FintrakBanking.ViewModels.Credit
     public class ValidateNumberViewModel
     {
         public string contractNumber { get; set; }
+        public int customerId { get; set; }
         public int productId { get; set; }
         public int principalId { get; set; }
         public bool invoiceStatus { get; set; }
         public string documentNo { get; set; }
         public string purchaseOrderNumber { get; set; }
+        public string certificateNumber { get; set; }
     }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
@@ -234,7 +237,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short statusId { get; set; }
 
-        public int casaAccountId { get; set; }
+        public int? casaAccountId { get; set; }
 
         public short sectorId { get; set; }
 
@@ -449,6 +452,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string contractNo { get; set; }
 
         public string purchaseOrderNumber { get; set; }
+
+        public string certificateNumber { get; set; }
 
         public string invoiceNo { get; set; }
 
