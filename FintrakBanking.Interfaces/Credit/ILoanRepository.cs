@@ -39,6 +39,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
 
+        LoanViewModel GetGroupLoanByLoanId(int loanId);
+
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
         IEnumerable<CamProcessedLoanViewModel> GetLoanApplicationDetails(int loanApplicationDetailId, int companyId);
