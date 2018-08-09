@@ -18,38 +18,47 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
         {
             if (!IsPostBack)
             {
-                string inputDateInfo = Request.QueryString["key1"];
-                string inputHashValue = Request.QueryString["key2"];
+                try
+                {
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
-                HashHelper hash = new HashHelper();
+                    HashHelper hash = new HashHelper();
 
-                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
-                if (inputHashValue != incomingDateHash)
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+                    FinTrakBankingContext context = new FinTrakBankingContext();
+                    GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
+                    ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());
+
+                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { date });
+                    ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
                 {
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                     this.ReportViewer.LocalReport.Refresh();
                     return;
                 }
-
-                var currentDate = DateTime.Now;
-
-                var dateDifference = currentDate - incomingDate;
-
-                if (dateDifference.Seconds > 10)
-                {
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    this.ReportViewer.LocalReport.Refresh();
-                    return;
-                }
-                FinTrakBankingContext context = new FinTrakBankingContext();
-                GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
-                ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());
-
-                ReportViewer.LocalReport.SetParameters(new ReportParameter[] { date });
-                ReportViewer.LocalReport.Refresh();
             }
         }
     }

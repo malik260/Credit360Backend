@@ -189,60 +189,60 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool AddApprovalLevel(ApprovalLevelViewModel model)
         {
-            if (admin.IsSuperAdmin(model.staffId) == true)
-            {
-                var data = new TBL_APPROVAL_LEVEL
-                {
-                    APPROVALLEVELID = model.approvalLevelId,
-                    LEVELNAME = model.levelName,
-                    POSITION = model.position,
-                    TENOR = model.tenor,
-                    MAXIMUMAMOUNT = model.maximumAmount,
-                    INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
-                    FEERATE = model.feeRate,
-                    INTERESTRATE = model.interestRate,
-                    NUMBEROFUSERS = model.numberOfUsers,
-                    NUMBEROFAPPROVALS = model.numberOfApprovals,
-                    SLAINTERVAL = model.slaInterval,
-                    ISPOLITICALLYEXPOSED = model.isPoliticallyExposed,
-                    CANESCALATE = model.canEscalate,
-                    CANAPPROVEUNTENORED = model.canApproveUntenored,
-                    CANRESOLVEDISPUTE = model.canResolveDispute,
-                    ISACTIVE = model.isActive,
-                    CANVIEWDOCUMENT = model.canViewDocument,
-                    CANEDIT = model.canEdit,
-                    CANVIEWUPLOAD = model.canViewUploadedFile,
-                    CANUPLOAD = model.canUploadFile,
-                    CANVIEWAPPROVAL = model.canViewApproval,
-                    CANAPPROVE = model.canApprove,
-                    CANRECIEVEEMAIL = model.canRecieveEmail,
-                    CANRECIEVESMS = model.canRecieveSms,
-                    ROUTEVIASTAFFORGANOGRAM = model.routeViaStaffOrganogram,
-                    CREATEDBY = model.createdBy,
-                    GROUPID = model.groupId,
-                    STAFFROLEID = model.roleId,
-                    DATETIMECREATED = genSetup.GetApplicationDate(),
-                    SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
-                };
+            //if (admin.IsSuperAdmin(model.staffId) == true)
+            //{
+            //    var data = new TBL_APPROVAL_LEVEL
+            //    {
+            //        APPROVALLEVELID = model.approvalLevelId,
+            //        LEVELNAME = model.levelName,
+            //        POSITION = model.position,
+            //        TENOR = model.tenor,
+            //        MAXIMUMAMOUNT = model.maximumAmount,
+            //        INVESTMENTGRADEAMOUNT = model.investmentGradeAmount,
+            //        FEERATE = model.feeRate,
+            //        INTERESTRATE = model.interestRate,
+            //        NUMBEROFUSERS = model.numberOfUsers,
+            //        NUMBEROFAPPROVALS = model.numberOfApprovals,
+            //        SLAINTERVAL = model.slaInterval,
+            //        ISPOLITICALLYEXPOSED = model.isPoliticallyExposed,
+            //        CANESCALATE = model.canEscalate,
+            //        CANAPPROVEUNTENORED = model.canApproveUntenored,
+            //        CANRESOLVEDISPUTE = model.canResolveDispute,
+            //        ISACTIVE = model.isActive,
+            //        CANVIEWDOCUMENT = model.canViewDocument,
+            //        CANEDIT = model.canEdit,
+            //        CANVIEWUPLOAD = model.canViewUploadedFile,
+            //        CANUPLOAD = model.canUploadFile,
+            //        CANVIEWAPPROVAL = model.canViewApproval,
+            //        CANAPPROVE = model.canApprove,
+            //        CANRECIEVEEMAIL = model.canRecieveEmail,
+            //        CANRECIEVESMS = model.canRecieveSms,
+            //        ROUTEVIASTAFFORGANOGRAM = model.routeViaStaffOrganogram,
+            //        CREATEDBY = model.createdBy,
+            //        GROUPID = model.groupId,
+            //        STAFFROLEID = model.roleId,
+            //        DATETIMECREATED = genSetup.GetApplicationDate(),
+            //        SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
+            //    };
 
-                context.TBL_APPROVAL_LEVEL.Add(data);
-
-                // Audit Section ---------------------------
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelAdded,
-                    STAFFID = model.createdBy,
-                    BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"New approval Level '{ model.levelName }' created ",
-                    IPADDRESS = model.userIPAddress,
-                    URL = model.applicationUrl,
-                    APPLICATIONDATE = genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
-                };
-                this.auditTrail.AddAuditTrail(audit);
-            }
-            else
-            {
+            //    context.TBL_APPROVAL_LEVEL.Add(data);
+                
+            //    // Audit Section ---------------------------
+            //    var audit = new TBL_AUDIT
+            //    {
+            //        AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelAdded,
+            //        STAFFID = model.createdBy,
+            //        BRANCHID = (short)model.userBranchId,
+            //        DETAIL = $"New approval Level '{ model.levelName }' created ",
+            //        IPADDRESS = model.userIPAddress,
+            //        URL = model.applicationUrl,
+            //        APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //        SYSTEMDATETIME = DateTime.Now
+            //    };
+            //    this.auditTrail.AddAuditTrail(audit);
+            //}
+            //else
+            //{
                 var data = new TBL_TEMP_APPROVAL_LEVEL
                 {
                     APPROVALLEVELID = model.approvalLevelId,
@@ -281,11 +281,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                 context.TBL_TEMP_APPROVAL_LEVEL.Add(data);
 
+                if (context.SaveChanges() > 0)
+                {
+                    model.tempApprovalLevelId = data.TEMPAPPROVALLEVELID;
+                }
 
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = data.APPROVALLEVELID;
+                workflow.TargetId = data.TEMPAPPROVALLEVELID;
                 workflow.Comment = $"New approval Level '{ model.levelName }' request for approval initiated";
                 workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowLevelModification;
                 workflow.DeferredExecution = true;
@@ -307,7 +311,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 };
                 this.auditTrail.AddAuditTrail(audit);
                 // End of Audit Section ---------------------
-            }
+            //}
             return context.SaveChanges() != 0;
         }
 
@@ -367,10 +371,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
             };
             context.TBL_TEMP_APPROVAL_LEVEL.Add(values);
 
+            if (context.SaveChanges()>0)
+            {
+                model.tempApprovalLevelId = values.TEMPAPPROVALLEVELID;
+            }
+
             workflow.StaffId = model.createdBy;
             workflow.CompanyId = model.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = data.APPROVALLEVELID;
+            workflow.TargetId = model.tempApprovalLevelId;
             workflow.Comment = $"Request to Update Approval Level '{model.levelName}' ";
             workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowLevelModification;
             workflow.DeferredExecution = true;
@@ -399,6 +408,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public async Task<bool> DeleteApprovalLevel(int id, UserInfo user)
         {
+            int tempApprovalLevelId = 0;
             var model = this.context.TBL_APPROVAL_LEVEL.Find(id);
             if (model!=null)
             {
@@ -439,12 +449,18 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     OPERATION="delete"
                 };
                 context.TBL_TEMP_APPROVAL_LEVEL.Add(values);
+
+                
+                if (context.SaveChanges() > 0)
+                {
+                   tempApprovalLevelId = values.TEMPAPPROVALLEVELID;
+                }
             }
 
-            workflow.StaffId = user.createdBy;
+            workflow.StaffId = user.staffId;
             workflow.CompanyId = user.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = model.APPROVALLEVELID;
+            workflow.TargetId = tempApprovalLevelId;
             workflow.Comment = $"Approval request to delete workflow approval level '{model.LEVELNAME}'";
             workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowLevelModification;
             workflow.DeferredExecution = true; 
@@ -577,7 +593,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (short)model.approvalStatusId;
-                workflow.TargetId = model.approvalLevelId;
+                workflow.TargetId = model.tempApprovalLevelId;
                 workflow.Comment = model.comment;
                 workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowLevelModification;
                 workflow.DeferredExecution = true;
@@ -615,7 +631,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private void UpdateMainApprovalLevel(ApprovalLevelViewModel ApprovalModel, short status)
         {
-            var data = this.context.TBL_TEMP_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == ApprovalModel.tempApprovalLevelId).Select(x => x).FirstOrDefault();
+            var data = this.context.TBL_TEMP_APPROVAL_LEVEL.Where(x => x.TEMPAPPROVALLEVELID == ApprovalModel.tempApprovalLevelId).Select(x => x).FirstOrDefault();
             if (data != null)
             {
                 if (data.OPERATION == "create")
@@ -738,7 +754,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ApprovalWorkflowLevelModification).ToList();
 
             var insurance = (from x in context.TBL_TEMP_APPROVAL_LEVEL
-                             join atrail in context.TBL_APPROVAL_TRAIL on x.APPROVALLEVELID equals atrail.TARGETID
+                             join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPAPPROVALLEVELID equals atrail.TARGETID
                              join a in context.TBL_APPROVAL_GROUP on x.GROUPID equals a.GROUPID
                              where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      && atrail.OPERATIONID == (int)OperationsEnum.ApprovalWorkflowLevelModification
@@ -782,7 +798,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                  groupId = (int)x.GROUPID,
                                  roleId = x.STAFFROLEID,
                                  groupName = a.GROUPNAME,
-                                // operationName = s.OPERATIONTYPENAME
+                                 operation = x.OPERATION
                              }).ToList();
 
             return insurance;

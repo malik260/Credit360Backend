@@ -389,6 +389,17 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public AccountCreationResponseMessageViewModel CreateForeignAccount(CreateAccountViewModel entity)
         {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (entity.username == null || entity.passCode == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(entity.username, entity.passCode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
             AccountCreationResponseMessageViewModel module = null;
             AccountCreationRespones result = null;
             Task.Run(async () => result = await account.CreateAccount(entity)).GetAwaiter().GetResult();

@@ -36,5 +36,6 @@ namespace FintrakBanking.Interfaces.Credit
         AccountCreationResponseMessageViewModel CreateForeignAccount(CreateAccountViewModel entity);
         ResponseMessageViewModel OverDraftInterestRate(InterestRateInquiryViewModel model, string accountType, TwoFactorAutheticationViewModel twoFADetails = null);
         InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType);
+        bool AddCustomerAccounts(string customerCode);
     }
 }

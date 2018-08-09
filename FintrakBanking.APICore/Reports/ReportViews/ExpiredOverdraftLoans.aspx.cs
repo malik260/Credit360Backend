@@ -18,27 +18,36 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
         {
             if (!IsPostBack)
             {
-                string inputDateInfo = Request.QueryString["key1"];
-                string inputHashValue = Request.QueryString["key2"];
-
-                HashHelper hash = new HashHelper();
-
-                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
-
-                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
-
-                if (inputHashValue != incomingDateHash)
+                try
                 {
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    this.ReportViewer.LocalReport.Refresh();
-                    return;
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
+
+                    HashHelper hash = new HashHelper();
+
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
                 }
-
-                var currentDate = DateTime.Now;
-
-                var dateDifference = currentDate - incomingDate;
-
-                if (dateDifference.Seconds > 10)
+                catch (Exception ex)
                 {
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                     this.ReportViewer.LocalReport.Refresh();

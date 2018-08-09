@@ -278,6 +278,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal stampedToCoverAmount { get; set; }
         public int applicationDetailId { get; set; }
         public string productCustomerName { get; set; }
+        public string staffName { get; set; }
         public int applicationId { get; set; }
     }
 
