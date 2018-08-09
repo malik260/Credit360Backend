@@ -54,6 +54,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
             };
 
             this.context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
+            if (this.context.SaveChanges() > 0)
+            {
+                model.tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+            }
+
 
             // Audit Section ---------------------------
             var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
@@ -93,6 +98,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool DeleteApprovalGroupMapping(int operationMappingId, UserInfo model)
         {
+            int tempGroupOperationMappingId = 0;
             var data = this.context.TBL_APPROVAL_GROUP_MAPPING.Find(operationMappingId);
 
             if (data == null)
@@ -114,15 +120,19 @@ namespace FintrakBanking.Repositories.Setups.Approval
             };
 
             context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
+            if (this.context.SaveChanges() > 0)
+            {
+                tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+            }
 
             // Audit Section ---------------------------
             var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == entity.OPERATIONID).OPERATIONNAME;
             var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == entity.GROUPID).GROUPNAME;
 
-            workflow.StaffId = model.createdBy;
+            workflow.StaffId = model.staffId;
             workflow.CompanyId = model.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = data.GROUPOPERATIONMAPPINGID;
+            workflow.TargetId = tempGroupOperationMappingId;
             workflow.Comment = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}";
             workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowGroupModification;
             workflow.DeferredExecution = true;
@@ -214,11 +224,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             var entity = new TBL_TEMP_APPROVAL_GRP_MAPPING
             {
-                OPERATIONID = data.OPERATIONID,
-                GROUPID = data.GROUPID,
-                PRODUCTCLASSID = data.PRODUCTCLASSID,
-                PRODUCTID = data.PRODUCTID,
-                POSITION = data.POSITION,
+                OPERATIONID = model.operationId,
+                GROUPID = model.groupId,
+                PRODUCTCLASSID = model.productClassId,
+                PRODUCTID = model.productId,
+                POSITION = model.position,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = generalSetup.GetApplicationDate(),
                 APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
@@ -227,6 +237,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
             };
 
             context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
+            if (this.context.SaveChanges() > 0)
+            {
+                model.tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+            }
 
             // Audit Section ---------------------------
             var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
@@ -235,7 +249,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             workflow.StaffId = model.createdBy;
             workflow.CompanyId = model.companyId;
             workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = operationMappingId;
+            workflow.TargetId = model.tempGroupOperationMappingId;
             workflow.Comment = $"Update approval request for group operation mapping for Operation: {operationName} in Group: {groupName}";
             workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowGroupModification;
             workflow.DeferredExecution = true;
@@ -307,7 +321,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private void UpdateMainApprovalGroupMapping(ApprovalGroupMappingViewModel ApprovalModel, short status)
         {
-            var data = this.context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x=>x.GROUPOPERATIONMAPPINGID==ApprovalModel.tempGroupOperationMappingId).Select(x=>x).FirstOrDefault();
+            var data = this.context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x=>x.TEMPGROUPOPERATIONMAPPINGID==ApprovalModel.tempGroupOperationMappingId).Select(x=>x).FirstOrDefault();
             if (data != null)
             {
                 if (data.OPERATION=="create")
@@ -330,19 +344,29 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private void CreateApprovalGroup(TBL_TEMP_APPROVAL_GRP_MAPPING data)
         {
-            var entity = new TBL_APPROVAL_GROUP_MAPPING
+          var updateData =  context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == data.OPERATIONID && x.GROUPID == data.GROUPID).Select(x =>x).FirstOrDefault();
+            if (updateData != null)
             {
-                OPERATIONID = data.OPERATIONID,
-                GROUPID = data.GROUPID,
-                PRODUCTCLASSID = data.PRODUCTCLASSID,
-                PRODUCTID = data.PRODUCTID,
-                POSITION = data.POSITION,
-                CREATEDBY = data.CREATEDBY,
-                DATETIMECREATED = generalSetup.GetApplicationDate(),
-                DELETED = false,
-            };
+                updateData.DELETED = false;
+                updateData.DELETEDBY = null;
+                updateData.DATETIMEDELETED = null;
+            }
+            else
+            {
+                var entity = new TBL_APPROVAL_GROUP_MAPPING
+                {
+                    OPERATIONID = data.OPERATIONID,
+                    GROUPID = data.GROUPID,
+                    PRODUCTCLASSID = data.PRODUCTCLASSID,
+                    PRODUCTID = data.PRODUCTID,
+                    POSITION = data.POSITION,
+                    CREATEDBY = data.CREATEDBY,
+                    DATETIMECREATED = generalSetup.GetApplicationDate(),
+                    DELETED = false,
+                };
 
-            context.TBL_APPROVAL_GROUP_MAPPING.Add(entity);
+                context.TBL_APPROVAL_GROUP_MAPPING.Add(entity);
+            }
         }
         private void UpdateApprovalGroup(TBL_TEMP_APPROVAL_GRP_MAPPING data)
         {
@@ -386,9 +410,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ApprovalWorkflowGroupModification).ToList();
 
             var insurance = (from x in context.TBL_TEMP_APPROVAL_GRP_MAPPING
-                             join s in context.TBL_OPERATIONS_TYPE on x.OPERATIONID equals s.OPERATIONTYPEID
-                             join atrail in context.TBL_APPROVAL_TRAIL on x.GROUPOPERATIONMAPPINGID equals atrail.TARGETID
-                             join a in context.TBL_APPROVAL_GROUP on x.GROUPID equals a.GROUPID
+                             join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPGROUPOPERATIONMAPPINGID equals atrail.TARGETID
                              where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      && atrail.OPERATIONID == (int)OperationsEnum.ApprovalWorkflowGroupModification
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
@@ -396,9 +418,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
                              select new ApprovalGroupMappingViewModel
                              {
                                  tempGroupOperationMappingId=x.TEMPGROUPOPERATIONMAPPINGID,
-                                 groupName = a.GROUPNAME,
-                                 operationName = s.OPERATIONTYPENAME
-
+                                  groupName = context.TBL_APPROVAL_GROUP.Where(a => a.GROUPID == x.GROUPID).Select(a => a.GROUPNAME).FirstOrDefault(),
+                                  operationName = context.TBL_OPERATIONS.Where(a => a.OPERATIONID == x.OPERATIONID).Select(a => a.OPERATIONNAME).FirstOrDefault(),
+                                  operation = x.OPERATION
                              }).ToList();
 
             return insurance;
