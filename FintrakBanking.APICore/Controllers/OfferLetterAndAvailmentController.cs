@@ -450,7 +450,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("loan-application/back-to-business")]
+        [Route("availment/loan-application/back-to-business")]
         public HttpResponseMessage SendBackToBusinessAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
         {
             entity.BranchId = token.GetBranchId;

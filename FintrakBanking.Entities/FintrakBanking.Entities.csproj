@@ -79,6 +79,7 @@
     <Compile Include="Models\TBL_DOC_TEMPLATE_DETAIL.cs" />
     <Compile Include="Models\TBL_DOC_TEMPLATE_SECTION.cs" />
     <Compile Include="Models\TBL_DOC_TEMPLATE_SECTION_ROLE.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_COLT2_LOG.cs" />
     <Compile Include="Models\TBL_PROFILE_PASSWORD_HISTORY.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN_CAMSOL.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />
