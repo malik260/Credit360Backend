@@ -386,6 +386,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.ProductClassId = null;
             workflow.StatusId = model.forwardAction;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.NextLevelId = model.receiverLevelId;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
