@@ -1256,37 +1256,31 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<RecommendedCollateralViewModel> AddRecommendedCollateral(RecommendedCollateralViewModel entity)
         {
-            try
+            var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
             {
-                var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
-                {
-                    LOANAPPLICATIONID = entity.applicationId,
-                    LOANAPPLICATIONDETAILID = entity.applicationDetailId,
-                    COLLATERALDETAIL = entity.collateralDetail,
-                    COLLATERALVALUE = entity.collateralValue,
-                    STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
-                    DATETIMECREATED = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
-                });
+                LOANAPPLICATIONID = entity.applicationId,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                COLLATERALDETAIL = entity.collateralDetail,
+                COLLATERALVALUE = entity.collateralValue,
+                STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                DATETIMECREATED = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
 
-                context.TBL_LOAN_APPLICATION_COLT2_LOG.Add(new TBL_LOAN_APPLICATION_COLT2_LOG
-                {
-                    COLLATERALBASICDETAILID = recommendation.COLLATERALBASICDETAILID,
-                    LOANAPPLICATIONID = entity.applicationId,
-                    LOANAPPLICATIONDETAILID = entity.applicationDetailId,
-                    COLLATERALDETAIL = entity.collateralDetail,
-                    COLLATERALVALUE = entity.collateralValue,
-                    STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
-                    DATETIMECREATED = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now,
-                    CREATEDBY = entity.createdBy
-                });
-
-                context.SaveChanges();
-            }catch(Exception ex)
+            context.TBL_LOAN_APPLICATION_COLT2_LOG.Add(new TBL_LOAN_APPLICATION_COLT2_LOG
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message+" -- "+ex.InnerException);
-            }
+                COLLATERALBASICDETAILID = recommendation.COLLATERALBASICDETAILID,
+                LOANAPPLICATIONID = entity.applicationId,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                COLLATERALDETAIL = entity.collateralDetail,
+                COLLATERALVALUE = entity.collateralValue,
+                STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                DATETIMECREATED = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = entity.createdBy
+            });
+
+            context.SaveChanges();
             return GetRecommendedCollateral(entity.applicationId);
         }
 
@@ -1313,6 +1307,24 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
             return GetRecommendedCollateral(entity.applicationId);
+        }
+
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateralHistory(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATION_COLT2_LOG.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a, b })
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL, ab => ab.a.LOANAPPLICATIONDETAILID, c => c.LOANAPPLICATIONDETAILID, (ab, c) => new { ab, c })
+               .Select(x => new RecommendedCollateralViewModel
+               {
+                   id = x.ab.a.COLLATERALBASICDETAILID,
+                   collateralDetail = x.ab.a.COLLATERALDETAIL,
+                   collateralValue = x.ab.a.COLLATERALVALUE,
+                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT,
+                   applicationDetailId = (int)x.ab.a.LOANAPPLICATIONDETAILID,
+                   productCustomerName = x.c.TBL_PRODUCT.PRODUCTNAME + " -- " + x.c.TBL_CUSTOMER.FIRSTNAME + " " + x.c.TBL_CUSTOMER.MIDDLENAME + " " + x.c.TBL_CUSTOMER.LASTNAME,
+                   staffName = x.ab.b.FIRSTNAME + " " + x.ab.b.MIDDLENAME + " " + x.ab.b.LASTNAME,
+               })
+               .ToList();
         }
 
         #region LMS APPROVAL
@@ -1420,23 +1432,25 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateralHistoryLms(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATION_COLT2_LOG.Where(x => x.LOANAPPLICATIONID == applicationId) // TBL_LOAN_APPLICATION_COLT2_LOG for LMS
+                .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a, b })
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL, ab => ab.a.LOANAPPLICATIONDETAILID, c => c.LOANAPPLICATIONDETAILID, (ab, c) => new { ab, c })
+               .Select(x => new RecommendedCollateralViewModel
+               {
+                   id = x.ab.a.COLLATERALBASICDETAILID,
+                   collateralDetail = x.ab.a.COLLATERALDETAIL,
+                   collateralValue = x.ab.a.COLLATERALVALUE,
+                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT,
+                   applicationDetailId = (int)x.ab.a.LOANAPPLICATIONDETAILID,
+                   productCustomerName = x.c.TBL_PRODUCT.PRODUCTNAME + " -- " + x.c.TBL_CUSTOMER.FIRSTNAME + " " + x.c.TBL_CUSTOMER.MIDDLENAME + " " + x.c.TBL_CUSTOMER.LASTNAME,
+                   staffName = x.ab.b.FIRSTNAME + " " + x.ab.b.MIDDLENAME + " " + x.ab.b.LASTNAME,
+               })
+               .ToList();
+        }
+
         #endregion LMS APPROVAL
 
-        //private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
-        //{
-        //    var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-        //    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-        //    var staff = context.TBL_STAFF.Find(staffId);
-        //    workflow.StaffId = staffId;
-        //    workflow.CompanyId = staff.COMPANYID;
-        //    workflow.OperationId = operationId;
-        //    workflow.TargetId = applicationId;
-        //    workflow.ProductClassId = null;
-        //    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-        //    workflow.Comment = comment;
-        //    workflow.ExternalInitialization = true;
-        //    workflow.DeferredExecution = false;
-        //    workflow.LogActivity();
-        //}
     }
 }

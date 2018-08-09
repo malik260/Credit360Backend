@@ -69,7 +69,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.customerSensitivityLevelId = 1;
                 var data = repo.AddCustomer(entity);
-                if (data)
+                if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });

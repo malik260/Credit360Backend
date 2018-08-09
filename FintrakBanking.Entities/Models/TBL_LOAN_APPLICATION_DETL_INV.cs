@@ -50,6 +50,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? APPROVEDDATETIME { get; set; }
 
+        public string CERTIFICATENO { get; set; }
+
         public bool REVALIDATED { get; set; }
 
         public int CREATEDBY { get; set; }
