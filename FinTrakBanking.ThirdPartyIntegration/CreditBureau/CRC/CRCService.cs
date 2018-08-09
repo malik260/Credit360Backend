@@ -94,7 +94,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
                         SearchResult = dataPacket
                     };
                 }
-              
             }
             else
             {

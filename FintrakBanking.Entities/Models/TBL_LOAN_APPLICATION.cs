@@ -133,6 +133,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool REQUIRECOLLATERAL { get; set; }
 
+        public string COLLATERALDETAIL { get; set; }
+
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }

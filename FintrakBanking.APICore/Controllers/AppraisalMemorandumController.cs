@@ -469,6 +469,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("recommended-collateral-history/{applicationId}")]
+        public HttpResponseMessage GetRecommendedCollateralHistory(int applicationId)
+        {
+            try
+            {
+                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralHistory(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("recommended-collateral")]
@@ -477,6 +492,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 entity.userBranchId = (short)token.GetBranchId;
+                entity.createdBy = (short)token.GetStaffId;
                 List<RecommendedCollateralViewModel> response = repo.AddRecommendedCollateral(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
@@ -494,6 +510,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 entity.userBranchId = (short)token.GetBranchId;
+                entity.createdBy = (short)token.GetStaffId;
                 List<RecommendedCollateralViewModel> response = repo.UpdateRecommendedCollateral(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
@@ -563,6 +580,21 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralLms(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("lms-recommended-collateral-history/{applicationId}")]
+        public HttpResponseMessage GetRecommendedCollateralHistoryLms(int applicationId)
+        {
+            try
+            {
+                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralHistoryLms(applicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
