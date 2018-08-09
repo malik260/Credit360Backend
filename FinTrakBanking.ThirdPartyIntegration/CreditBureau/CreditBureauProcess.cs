@@ -175,6 +175,7 @@
                 {
                     string result = string.Empty;
                     string mergeLst = MergeListToString(searchInput.mergeList);
+
                     XDSService xds = new XDSService();
                     var data = new SearchFullResultViewModel
                     {
@@ -217,7 +218,7 @@
                 }
             }
 
-            private string MergeListToString(List<int> mergeId)
+            private string MergeListToString(List<string> mergeId)
             {
                 string str = string.Empty;
                 foreach (var item in mergeId)

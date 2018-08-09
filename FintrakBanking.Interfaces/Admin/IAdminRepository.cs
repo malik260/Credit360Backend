@@ -74,6 +74,7 @@ namespace FintrakBanking.Interfaces.Admin
         bool TwoFactorAuthentication(string staffCode, string passCode);
         bool TwoFactorAuthenticationEnabled();
         bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId);
+        bool IsSuperAdmin(int staffId);
         #endregion
     }
 }

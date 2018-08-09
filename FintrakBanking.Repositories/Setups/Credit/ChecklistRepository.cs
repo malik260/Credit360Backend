@@ -1980,6 +1980,24 @@ namespace FintrakBanking.Repositories.Credit
             }
             return data.ToList();
         }
+        public IEnumerable<LoanApplicationDetailViewModel> GetAllFacilityDetails(int loanApplicationId, int companyId)
+        {
+            var esgDetailIds = (from a in context.TBL_ESG_CHECKLIST_DETAIL select a.LOANAPPLICATIONDETAILID).ToList();
+
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL
+                        on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        where a.LOANAPPLICATIONID == loanApplicationId && esgDetailIds.Contains(b.LOANAPPLICATIONDETAILID)
+                        && a.COMPANYID == companyId && a.DELETED == false
+                        select new LoanApplicationDetailViewModel()
+                        {
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+                        }).ToList();
+            return data;
+        }
         #endregion
     }
 }

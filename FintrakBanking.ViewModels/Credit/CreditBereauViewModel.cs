@@ -8,14 +8,22 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CreditBereauViewModel : GeneralEntity
     {
-        public bool appliedsearchForLoan;
-        public bool appliedSearchForLoan;
-        public bool isMandatory;
-        public bool useIntegration;
-        public bool hasFile;
-        public string fileName;
+        public bool debitRequest;
 
+        public bool appliedsearchForLoan { get; set; }
+        public bool appliedSearchForLoan { get; set; }
+        public bool isMandatory { get; set; }
+        public bool useIntegration { get; set; }
+        public bool hasFile { get; set; }
+        public string fileName { get; set; }
+        public decimal feeAmount { get; set; }
+        public decimal individualChargeAmount { get; set; }
+        public decimal corporateChargeAmount { get; set; }
+        public string referenceNumber { get; set; }
         public int customerId { get; set; }
+        public int casaAccountId { get; set; }
+        public int creditGl { get; set; }
+        public int debitGl { get; set; }
         public string accountNumber { get; set; }
         public string accountStatus { get; set; }
         public double outstandingBalance { get; set; }
@@ -25,7 +33,6 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short creditBureauId { get; set; }
         public string creditBureauName { get; set; }
-        public decimal corporateChargeAmount { get; set; }
         public decimal retailChargeAmount { get; set; }
         public bool inUse { get; set; }
         public LoanCreditBereauViewModel LoanCreditBereauReport { get; set; }

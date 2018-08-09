@@ -137,6 +137,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         [DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy}")]
         public string sanctionDate { get; set; }
         public int overdraftNormalId { get; set; }
+        public string interestRateAmount { get; set; }
     }
 
     public class OverDraftTopUpAndRenewViewModel

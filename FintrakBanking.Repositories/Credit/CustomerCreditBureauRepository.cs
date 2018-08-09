@@ -20,6 +20,7 @@ using FinTrakBanking.ThirdPartyIntegration;
 using FintrakBanking.Common.CustomException;
 using System.Text;
 using Newtonsoft.Json.Linq;
+using FintrakBanking.Interfaces.Setups.Finance;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -32,6 +33,7 @@ namespace FintrakBanking.Repositories.Credit
         private IFinanceTransactionRepository financeTransaction;
         private IntegrationWithFinacle integration;
         private CreditBureauProcess _creditBureau;
+        private IChartOfAccountRepository chartOfAccount;
 
         public CustomerCreditBureauRepository(
             IAuditTrailRepository _auditTrail,
@@ -39,7 +41,7 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingDocumentsContext _docContext,
             FinTrakBankingContext _context,
             IFinanceTransactionRepository _financials, IntegrationWithFinacle integration,
-            CreditBureauProcess creditBureau)
+            CreditBureauProcess creditBureau, IChartOfAccountRepository _chartOfAccount)
         {
             this.context = _context;
             docContext = _docContext;
@@ -48,6 +50,7 @@ namespace FintrakBanking.Repositories.Credit
             financeTransaction = _financials;
             this.integration = integration;
             _creditBureau = creditBureau;
+            chartOfAccount = _chartOfAccount;
         }
 
         #region Credit Bureau 
@@ -550,19 +553,25 @@ namespace FintrakBanking.Repositories.Credit
 
             if (casa == null) throw new SecureException("Norminated Account Does not Exist");
 
-            //var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
 
-            //var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
-            //    : creditBureau.CORPORATE_CHARGEAMOUNT;
+            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
+                : creditBureau.CORPORATE_CHARGEAMOUNT;
 
-            //if (chargeAmount > accountBalance)
-            //{
-            //    //throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
-            //}
-            //else
-            //{
-            //    //DebitCustomer(creditBureau, casa, chargeAmount, creditBureauInputs);
-            //}
+            if (chargeAmount > accountBalance)
+            {
+                throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+            }
+
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            var chargeModel = new CreditBereauViewModel();
+            chargeModel.feeAmount = chargeAmount;
+            chargeModel.createdBy = searchInfo.createdBy;
+            chargeModel.userBranchId = searchInfo.userBranchId;
+            chargeModel.companyId = searchInfo.companyId;
+            chargeModel.referenceNumber = referenceNumber;
+            chargeModel.casaAccountId = searchInfo.casaAccountId;
 
             CRCSearchResult searchResponse = null;
 
@@ -601,6 +610,8 @@ namespace FintrakBanking.Repositories.Credit
                                 throw new ConditionNotMetException("Search could not save the result file");
                             }
 
+                            DebitCustomer(chargeModel);
+
                             context.SaveChanges();
                             trans.Commit();
                             docTrans.Commit();
@@ -608,7 +619,6 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
-                            //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                             throw new ConditionNotMetException("Search Response -  error occured during search");
                         }
                     }
@@ -640,6 +650,8 @@ namespace FintrakBanking.Repositories.Credit
                 companyId = request.companyId,
                 createdBy = request.createdBy,
                 creditBureauId = request.creditBureauId,
+                casaAccountId = request.casaAccountId,
+                searchType = request.searchType,
 
                 customerCreditBureauUploadDetails = new LoanCreditBereauViewModel
                 {
@@ -654,10 +666,28 @@ namespace FintrakBanking.Repositories.Credit
 
             };
 
-            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
-            //var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
-            //if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+            var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
 
+            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+
+            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+
+            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
+                : creditBureau.CORPORATE_CHARGEAMOUNT;
+
+            if (chargeAmount > accountBalance)
+            {
+                throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+            }
+
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            var chargeModel = new CreditBereauViewModel();
+            chargeModel.feeAmount = chargeAmount;
+            chargeModel.createdBy = request.createdBy;
+            chargeModel.userBranchId = request.userBranchId;
+            chargeModel.companyId = request.companyId;
+            chargeModel.referenceNumber = referenceNumber;
 
             using (var docTrans = docContext.Database.BeginTransaction())
             using (var trans = context.Database.BeginTransaction())
@@ -763,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public byte[] GetXDSFullSearchResultInPDF(SearchInput searchInput)
+        public XDSSearchResult GetXDSFullSearchResultInPDF(SearchInput searchInput)
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
             var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
@@ -781,12 +811,19 @@ namespace FintrakBanking.Repositories.Credit
 
             if (chargeAmount > accountBalance)
                 throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
-            else
-            {
-                DebitCustomer(creditBureau, casa, chargeAmount, searchInput);
-            }
+
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+
+            var chargeModel = new CreditBereauViewModel();
+            chargeModel.feeAmount = chargeAmount;
+            chargeModel.createdBy = searchInput.createdBy;
+            chargeModel.userBranchId = searchInput.userBranchId;
+            chargeModel.companyId = searchInput.companyId;
+            chargeModel.referenceNumber = referenceNumber;
+            chargeModel.casaAccountId = searchInput.casaAccountId;
 
             byte[] binaryData;
+            var response = new XDSSearchResult();
             var creditBureauProcess = new CreditBureauProcess();
             try
             {
@@ -799,12 +836,26 @@ namespace FintrakBanking.Repositories.Credit
                         var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
                         if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
                         {
+                            response.fileSaved = false;
+                            response.errorOccured = true;
+                            response.status = 1;
                             throw new SecureException("Could not save file");
                         }
+                        else
+                        {
+                            response.file = binaryData;
+                            response.searchResult = Convert.ToBase64String(binaryData); //Encoding.ASCII.GetString(binaryData);
+                            response.errorOccured = false;
+                            response.status = 0;
+                            response.fileSaved = true;
+                        }
+
+                        DebitCustomer(chargeModel);
                         context.SaveChanges();
                         trans.Commit();
                         docTrans.Commit();
-                        return binaryData;
+
+                        return response;
                     }
                     catch (Exception ex)
                     {
@@ -812,10 +863,17 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            catch
+            catch (APIErrorException ex)
             {
-                ReverseDebit(creditBureau, casa, chargeAmount, searchInput);
-                throw new SecureException("Download failed. This may have been cause by slow or no internet connection");
+                throw new ConditionNotMetException(ex.ToString());
+            }
+            catch (ConditionNotMetException ex)
+            {
+                throw new ConditionNotMetException(ex.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.ToString());
             }
         }
 
@@ -863,120 +921,334 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { throw ex; }
         }
 
-        private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
+        private void DebitCustomer(CreditBereauViewModel entity)
         {
-            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+            if (entity.feeAmount <= 0)
+                return;
 
-            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
-            debit.description = creditBureau.CREDITBUREAUNAME + " search charge";
-            debit.valueDate = genSetup.GetApplicationDate();
-            debit.transactionDate = debit.valueDate;
-            debit.currencyId = casa.CURRENCYID;
-            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, creditBureauInputs.companyId).sellingRate;
-            debit.isApproved = true;
-            debit.postedBy = creditBureauInputs.createdBy;
-            debit.approvedBy = creditBureauInputs.createdBy;
-            debit.approvedDate = debit.transactionDate;
-            debit.approvedDateTime = DateTime.Now;
-            debit.sourceApplicationId = creditBureauInputs.creditBureauId;
-            debit.companyId = creditBureauInputs.companyId;
-            debit.batchCode = transactionCode;
-            debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL; 
-            debit.sourceReferenceNumber = transactionCode;
-            debit.casaAccountId = casa.CASAACCOUNTID;
-            debit.debitAmount = chargeAmount;
-            debit.creditAmount = 0;
-            debit.sourceBranchId = creditBureauInputs.userBranchId;
-            debit.destinationBranchId = casa.BRANCHID;
-
-            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
-            credit.description = creditBureau.CREDITBUREAUNAME + " search charge";
-            credit.valueDate = genSetup.GetApplicationDate();
-            credit.transactionDate = credit.valueDate;
-            credit.currencyId = casa.CURRENCYID;
-            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, creditBureauInputs.companyId).sellingRate;
-            credit.isApproved = true;
-            credit.postedBy = creditBureauInputs.createdBy;
-            credit.approvedBy = creditBureauInputs.createdBy;
-            credit.approvedDate = credit.transactionDate;
-            credit.approvedDateTime = DateTime.Now;
-            credit.sourceApplicationId = creditBureauInputs.creditBureauId;
-            credit.companyId = creditBureauInputs.companyId;
-            credit.batchCode = transactionCode;
-            credit.glAccountId = creditBureau.GLACCOUNTID;
-            credit.sourceReferenceNumber = transactionCode;
-            credit.casaAccountId = null;
-            credit.debitAmount = 0;
-            credit.creditAmount = chargeAmount;
-            credit.sourceBranchId = creditBureauInputs.userBranchId;
-            credit.destinationBranchId = creditBureauInputs.userBranchId;
-
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = entity.username,
+                passcode = entity.passCode
+            };
+            entity.debitRequest = true;
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            inputTransactions.Add(debit);
-            inputTransactions.Add(credit);
-            financeTransaction.PostTransaction(inputTransactions);
+            inputTransactions.AddRange(BuildCreditBureauFeesPosting(entity));
+
+            if (inputTransactions.Count > 0) financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
         }
 
-        private void ReverseDebit(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
+        private void ReverseCustomerDebit(CreditBereauViewModel entity)
         {
-            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
-
-            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
-            debit.description = creditBureau.CREDITBUREAUNAME + " search charge reversal";
-            debit.valueDate = genSetup.GetApplicationDate();
-            debit.transactionDate = debit.valueDate;
-            debit.currencyId = casa.CURRENCYID;
-            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, creditBureauInputs.companyId).sellingRate;
-            debit.isApproved = true;
-            debit.postedBy = creditBureauInputs.createdBy;
-            debit.approvedBy = creditBureauInputs.createdBy;
-            debit.approvedDate = debit.transactionDate;
-            debit.approvedDateTime = DateTime.Now;
-            debit.sourceApplicationId = creditBureauInputs.creditBureauId;
-            debit.companyId = creditBureauInputs.companyId;
-            debit.batchCode = transactionCode;
-            debit.glAccountId = creditBureau.GLACCOUNTID;
-            debit.sourceReferenceNumber = transactionCode;
-            debit.casaAccountId = null;
-            debit.debitAmount = chargeAmount;
-            debit.creditAmount = 0;
-            debit.sourceBranchId = creditBureauInputs.userBranchId;
-            debit.destinationBranchId = casa.BRANCHID;
-
-            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
-            credit.description = creditBureau.CREDITBUREAUNAME + " search charge";
-            credit.valueDate = genSetup.GetApplicationDate();
-            credit.transactionDate = credit.valueDate;
-            credit.currencyId = casa.CURRENCYID;
-            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, creditBureauInputs.companyId).sellingRate;
-            credit.isApproved = true;
-            credit.postedBy = creditBureauInputs.createdBy;
-            credit.approvedBy = creditBureauInputs.createdBy;
-            credit.approvedDate = credit.transactionDate;
-            credit.approvedDateTime = DateTime.Now;
-            credit.sourceApplicationId = creditBureauInputs.creditBureauId;
-            credit.companyId = creditBureauInputs.companyId;
-            credit.batchCode = transactionCode;
-            credit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
-            credit.sourceReferenceNumber = transactionCode;
-            credit.casaAccountId = casa.CASAACCOUNTID;
-            credit.debitAmount = 0;
-            credit.creditAmount = chargeAmount;
-            credit.sourceBranchId = creditBureauInputs.userBranchId;
-            credit.destinationBranchId = creditBureauInputs.userBranchId;
-
-
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = entity.username,
+                passcode = entity.passCode
+            };
+            entity.debitRequest = false;
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-            inputTransactions.Add(debit);
-            inputTransactions.Add(credit);
-            financeTransaction.PostTransaction(inputTransactions);
+
+            inputTransactions.AddRange(BuildCreditBureauFeesPosting(entity));
+
+            if (inputTransactions.Count > 0) financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
         }
-       
+
+        //private void DebitCustomer(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
+        //{
+        //    var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+        //    FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+        //    debit.operationId = (int)OperationsEnum.CreditBureauSearch;
+        //    debit.description = creditBureau.CREDITBUREAUNAME + " search charge";
+        //    debit.valueDate = genSetup.GetApplicationDate();
+        //    debit.transactionDate = debit.valueDate;
+        //    debit.currencyId = casa.CURRENCYID;
+        //    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, creditBureauInputs.companyId).sellingRate;
+        //    debit.isApproved = true;
+        //    debit.postedBy = creditBureauInputs.createdBy;
+        //    debit.approvedBy = creditBureauInputs.createdBy;
+        //    debit.approvedDate = debit.transactionDate;
+        //    debit.approvedDateTime = DateTime.Now;
+        //    debit.sourceApplicationId = creditBureauInputs.creditBureauId;
+        //    debit.companyId = creditBureauInputs.companyId;
+        //    debit.batchCode = transactionCode;
+        //    debit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL; 
+        //    debit.sourceReferenceNumber = transactionCode;
+        //    debit.casaAccountId = casa.CASAACCOUNTID;
+        //    debit.debitAmount = chargeAmount;
+        //    debit.creditAmount = 0;
+        //    debit.sourceBranchId = creditBureauInputs.userBranchId;
+        //    debit.destinationBranchId = casa.BRANCHID;
+
+        //    FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+        //    credit.operationId = (int)OperationsEnum.CreditBureauSearch;
+        //    credit.description = creditBureau.CREDITBUREAUNAME + " search charge";
+        //    credit.valueDate = genSetup.GetApplicationDate();
+        //    credit.transactionDate = credit.valueDate;
+        //    credit.currencyId = casa.CURRENCYID;
+        //    credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, creditBureauInputs.companyId).sellingRate;
+        //    credit.isApproved = true;
+        //    credit.postedBy = creditBureauInputs.createdBy;
+        //    credit.approvedBy = creditBureauInputs.createdBy;
+        //    credit.approvedDate = credit.transactionDate;
+        //    credit.approvedDateTime = DateTime.Now;
+        //    credit.sourceApplicationId = creditBureauInputs.creditBureauId;
+        //    credit.companyId = creditBureauInputs.companyId;
+        //    credit.batchCode = transactionCode;
+        //    credit.glAccountId = creditBureau.GLACCOUNTID;
+        //    credit.sourceReferenceNumber = transactionCode;
+        //    credit.casaAccountId = null;
+        //    credit.debitAmount = 0;
+        //    credit.creditAmount = chargeAmount;
+        //    credit.sourceBranchId = creditBureauInputs.userBranchId;
+        //    credit.destinationBranchId = creditBureauInputs.userBranchId;
+
+        //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+        //    inputTransactions.Add(debit);
+        //    inputTransactions.Add(credit);
+        //    financeTransaction.PostTransaction(inputTransactions);
+        //}
+
+        //private void ReverseDebit(TBL_CREDIT_BUREAU creditBureau, TBL_CASA casa, decimal chargeAmount, SearchInput creditBureauInputs)
+        //{
+        //    var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+        //    FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+        //    debit.operationId = (int)OperationsEnum.CreditBureauSearch;
+        //    debit.description = creditBureau.CREDITBUREAUNAME + " search charge reversal";
+        //    debit.valueDate = genSetup.GetApplicationDate();
+        //    debit.transactionDate = debit.valueDate;
+        //    debit.currencyId = casa.CURRENCYID;
+        //    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, creditBureauInputs.companyId).sellingRate;
+        //    debit.isApproved = true;
+        //    debit.postedBy = creditBureauInputs.createdBy;
+        //    debit.approvedBy = creditBureauInputs.createdBy;
+        //    debit.approvedDate = debit.transactionDate;
+        //    debit.approvedDateTime = DateTime.Now;
+        //    debit.sourceApplicationId = creditBureauInputs.creditBureauId;
+        //    debit.companyId = creditBureauInputs.companyId;
+        //    debit.batchCode = transactionCode;
+        //    debit.glAccountId = creditBureau.GLACCOUNTID;
+        //    debit.sourceReferenceNumber = transactionCode;
+        //    debit.casaAccountId = null;
+        //    debit.debitAmount = chargeAmount;
+        //    debit.creditAmount = 0;
+        //    debit.sourceBranchId = creditBureauInputs.userBranchId;
+        //    debit.destinationBranchId = casa.BRANCHID;
+
+        //    FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+        //    credit.operationId = (int)OperationsEnum.CreditBureauSearch;
+        //    credit.description = creditBureau.CREDITBUREAUNAME + " search charge";
+        //    credit.valueDate = genSetup.GetApplicationDate();
+        //    credit.transactionDate = credit.valueDate;
+        //    credit.currencyId = casa.CURRENCYID;
+        //    credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, creditBureauInputs.companyId).sellingRate;
+        //    credit.isApproved = true;
+        //    credit.postedBy = creditBureauInputs.createdBy;
+        //    credit.approvedBy = creditBureauInputs.createdBy;
+        //    credit.approvedDate = credit.transactionDate;
+        //    credit.approvedDateTime = DateTime.Now;
+        //    credit.sourceApplicationId = creditBureauInputs.creditBureauId;
+        //    credit.companyId = creditBureauInputs.companyId;
+        //    credit.batchCode = transactionCode;
+        //    credit.glAccountId = (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
+        //    credit.sourceReferenceNumber = transactionCode;
+        //    credit.casaAccountId = casa.CASAACCOUNTID;
+        //    credit.debitAmount = 0;
+        //    credit.creditAmount = chargeAmount;
+        //    credit.sourceBranchId = creditBureauInputs.userBranchId;
+        //    credit.destinationBranchId = creditBureauInputs.userBranchId;
+
+
+        //    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+        //    inputTransactions.Add(debit);
+        //    inputTransactions.Add(credit);
+        //    financeTransaction.PostTransaction(inputTransactions);
+        //}
+
+
+        public List<FinanceTransactionViewModel> BuildCreditBureauFeesPosting(CreditBereauViewModel model)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
+            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == (short)OperationsEnum.CreditBureauSearch);
+            if (searchCharges.Any())
+            {
+                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
+                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
+
+                foreach (var post in postingGroups)
+                {
+                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
+
+                    if (model.debitRequest)
+                    {
+                        foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                        {
+                            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                            decimal debitAmount = 0;
+                            if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                                debitAmount = (decimal)model.feeAmount * (decimal)(debits.VALUE / 100.0);
+                            else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                                debitAmount = (decimal)model.feeAmount;
+                           var v= model.feeAmount;
+                            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
+                            debit.description = $"Fee charge on {debits.DESCRIPTION}";
+                            debit.valueDate = genSetup.GetApplicationDate();
+                            debit.transactionDate = debit.valueDate;
+                            debit.currencyId = casa.CURRENCYID;
+                            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                            debit.isApproved = true;
+                            debit.postedBy = model.createdBy;
+                            debit.approvedBy = model.createdBy;
+                            debit.approvedDate = debit.transactionDate;
+                            debit.approvedDateTime = DateTime.Now;
+                            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                            debit.companyId = model.companyId;
+
+
+                            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                            debit.sourceReferenceNumber = model.referenceNumber;
+                            debit.batchCode = batchCode;
+                            debit.casaAccountId = casa.CASAACCOUNTID;
+                            debit.debitAmount = debitAmount;
+                            debit.creditAmount = 0;
+                            debit.sourceBranchId = model.userBranchId;
+                            debit.destinationBranchId = casa.BRANCHID;
+                            debit.rateCode = "TTB";
+                            debit.rateUnit = string.Empty;
+                            debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                            inputTransactions.Add(debit);
+                        }
+
+                        foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                        {
+                            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                            decimal creditAmount = 0;
+                            if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                                creditAmount = (decimal)model.feeAmount * (decimal)(credits.VALUE / 100.0);
+                            else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                                creditAmount = (decimal)model.feeAmount;
+
+
+                            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
+                            credit.description = $"Fee charge on {credits.DESCRIPTION}";
+                            credit.valueDate = genSetup.GetApplicationDate();
+                            credit.transactionDate = credit.valueDate;
+                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                            credit.isApproved = true;
+                            credit.postedBy = model.createdBy;
+                            credit.approvedBy = model.createdBy;
+                            credit.approvedDate = credit.transactionDate;
+                            credit.approvedDateTime = DateTime.Now;
+                            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                            credit.companyId = model.companyId;
+                            credit.glAccountId = (int)credits.GLACCOUNTID1;
+                            credit.sourceReferenceNumber = model.referenceNumber;
+                            credit.batchCode = batchCode;
+                            credit.casaAccountId = null;
+                            credit.debitAmount = 0;
+                            credit.creditAmount = creditAmount;
+                            credit.sourceBranchId = model.userBranchId;
+                            credit.destinationBranchId = model.userBranchId;
+                            credit.rateCode = "TTB";
+                            credit.rateUnit = string.Empty;
+                            credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                            inputTransactions.Add(credit);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                        {
+                            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                            decimal creditAmount = 0;
+                            if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                                creditAmount = (decimal)model.feeAmount * (decimal)(debits.VALUE / 100.0);
+                            else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                                creditAmount = (decimal)model.feeAmount;
+
+                            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
+                            debit.description = $"Fee charge reversal on {debits.DESCRIPTION}";
+                            debit.valueDate = genSetup.GetApplicationDate();
+                            debit.transactionDate = debit.valueDate;
+                            debit.currencyId = casa.CURRENCYID;
+                            debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                            debit.isApproved = true;
+                            debit.postedBy = model.createdBy;
+                            debit.approvedBy = model.createdBy;
+                            debit.approvedDate = debit.transactionDate;
+                            debit.approvedDateTime = DateTime.Now;
+                            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                            debit.companyId = model.companyId;
+
+
+                            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                            debit.sourceReferenceNumber = model.referenceNumber;
+                            debit.batchCode = batchCode;
+                            debit.casaAccountId = casa.CASAACCOUNTID;
+                            debit.debitAmount = 0;
+                            debit.creditAmount = creditAmount;
+                            debit.sourceBranchId = model.userBranchId;
+                            debit.destinationBranchId = casa.BRANCHID;
+                            debit.rateCode = "TTB";
+                            debit.rateUnit = string.Empty;
+                            debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                            inputTransactions.Add(debit);
+                        }
+
+                        foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                        {
+                            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                            decimal debitAmount = 0;
+                            if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                                debitAmount = (decimal)model.feeAmount * (decimal)(credits.VALUE / 100.0);
+                            else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                                debitAmount = (decimal)model.feeAmount;
+
+
+                            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
+                            credit.description = $"Fee charge reversal on {credits.DESCRIPTION}";
+                            credit.valueDate = genSetup.GetApplicationDate();
+                            credit.transactionDate = credit.valueDate;
+                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                            credit.isApproved = true;
+                            credit.postedBy = model.createdBy;
+                            credit.approvedBy = model.createdBy;
+                            credit.approvedDate = credit.transactionDate;
+                            credit.approvedDateTime = DateTime.Now;
+                            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                            credit.companyId = model.companyId;
+                            credit.glAccountId = (int)credits.GLACCOUNTID1;
+                            credit.sourceReferenceNumber = model.referenceNumber;
+                            credit.batchCode = batchCode;
+                            credit.casaAccountId = null;
+                            credit.debitAmount = debitAmount;
+                            credit.creditAmount = 0;
+                            credit.sourceBranchId = model.userBranchId;
+                            credit.destinationBranchId = model.userBranchId;
+                            credit.rateCode = "TTB";
+                            credit.rateUnit = string.Empty;
+                            credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                            inputTransactions.Add(credit);
+                        }
+                    }
+                }
+            }
+
+            return inputTransactions;
+        }
+
         #endregion
     }
 }
