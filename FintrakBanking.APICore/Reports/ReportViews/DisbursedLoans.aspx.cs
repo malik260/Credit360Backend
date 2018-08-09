@@ -1,7 +1,9 @@
-﻿using FintrakBanking.ReportObjects;
+﻿using FintrakBanking.Common.Extensions;
+using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -15,30 +17,64 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
-               int companyId = Int32.Parse( Request.QueryString["companyId"]);
-               short branchId = short.Parse(Request.QueryString["branchId"]);
-               string loanRefNo = Request.QueryString["loanRefNo"];
-               int productClassId = Int32.Parse(Request.QueryString["productClassId"]);
-               int staffId = Int32.Parse(Request.QueryString["staffId"]);
+                try
+                {
+                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    short branchId = short.Parse(Request.QueryString["branchId"]);
+                    string loanRefNo = Request.QueryString["loanRefNo"];
+                    int productClassId = Int32.Parse(Request.QueryString["productClassId"]);
+                    int staffId = Int32.Parse(Request.QueryString["staffId"]);
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
+                    HashHelper hash = new HashHelper();
 
-                LoanReportObjects dispursement = new LoanReportObjects();
-                var data = dispursement.GetDisburstLoans(startDate, endDate, companyId, loanRefNo, branchId, productClassId, staffId);
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                this.ReportViewer.LocalReport.DataSources.Clear();
-                ReportDataSource reportDataSource = new ReportDataSource();
-                reportDataSource.Value = data;
-                reportDataSource.Name = "DisbursedLoan";
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
-                ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
 
-                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDisbursement.rdlc");
-                ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate});
-                ReportViewer.LocalReport.Refresh();
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    LoanReportObjects dispursement = new LoanReportObjects();
+                    var data = dispursement.GetDisburstLoans(startDate, endDate, companyId, loanRefNo, branchId, productClassId, staffId);
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "DisbursedLoan";
+
+                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDisbursement.rdlc");
+                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+                    ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
             }
         }
     }

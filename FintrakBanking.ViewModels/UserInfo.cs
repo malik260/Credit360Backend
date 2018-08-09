@@ -23,6 +23,8 @@ namespace FintrakBanking.ViewModels
         public DateTime applicationDate { get; set; }
         public SessionStatusInfo sessionStatusInfo { get; set; }
         public DateTime? lastLoginDate { get; set; }
+        public string staffRole { get; set; }
+        public int staffRoleId { get; set; }
     }
 
 }

@@ -447,6 +447,24 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("availment/loan-application/back-to-business")]
+        public HttpResponseMessage SendBackToBusinessAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
+        {
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            bool data = repo.SendBackToBusinessAvailment(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
+        }
+
         //[HttpPost]
         //[ClaimsAuthorization]
         //[Route("loan-application/availment/approval")]
@@ -492,16 +510,9 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
                 entity.createdBy = token.GetStaffId;
 
-                var data = repo.ApproveOfferLetterGeneration(entity);
-
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful!" });
+                var response = repo.ApproveOfferLetterGeneration(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { result = response, success = response.success, message = "Application sent to " + response.nextLevelName });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-            }
             catch (SecureException ex)
             {
                 errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
@@ -586,6 +597,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("availment-checklist-validation")]
+        public HttpResponseMessage AvailmentChecklistValidation(int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.AvailmentChecklistValidation(loanApplicationId, token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
 
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
     }
 }

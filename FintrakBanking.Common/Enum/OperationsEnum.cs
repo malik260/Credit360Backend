@@ -25,7 +25,7 @@ namespace FintrakBanking.Common.Enum
         DailyInterestAccural = 15,
 
         InterestLoanRepayment = 16,
-        ChargeReversal = 17,
+        LoanReversal = 17,
         LoanPrepayment = 18,
         ContractualInterestRateChange = 19,
         OverdraftSubAllocation = 20,
@@ -81,7 +81,11 @@ namespace FintrakBanking.Common.Enum
         PenalFee=69, 
         CamsolBackbookModification =70,
         NPLoanReviewApprovalAppraisal = 71,
-        CommercialPaperRollOver = 72,
+        CommercialLoanRollOver = 72,
         ForeignExchangeLoanBooking = 73,
+        CommercialLoanSubAllocation = 74,
+        OverdraftInterestRate =75,
+        ApprovalWorkflowGroupModification = 76,
+        ApprovalWorkflowLevelModification = 77,
     }
 }

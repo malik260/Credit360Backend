@@ -324,7 +324,51 @@ namespace FintrakBanking.APICore.Controllers
                 searchInput.staffId = token.GetStaffId;
                 searchInput.userBranchId = (short)token.GetBranchId;
 
-                var result = repo.GetFullSearchResultInPDF(searchInput);
+                var result = repo.GetXDSFullSearchResultInPDF(searchInput);
+
+                if (!result.errorOccured)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = true, data = result, message = " download Completed" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = " download failed" });
+                }
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: An unhandles error occured" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("download-crc-credit-bureau-search-result-in-pdf")]
+        public HttpResponseMessage GetCRCFullCreditMergeReport([FromBody] MultiHitRequestViewModel searchInput)
+        {
+            try
+            {
+                searchInput.applicationUrl = HttpContext.Current.Request.Path;
+                searchInput.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                searchInput.createdBy = token.GetStaffId;
+                searchInput.companyId = token.GetCompanyId;
+                searchInput.staffId = token.GetStaffId;
+                searchInput.userBranchId = (short)token.GetBranchId;
+
+                var result = repo.GetCRCFullCreditMergeReport(searchInput);
 
                 if (result != null)
                 {
@@ -337,15 +381,25 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = true, message = " download failed" });
                 }
             }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"Error: {ex.Message}" });
             }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: An unhandles error occured" });
+            }
         }
 
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("xds-credit-bureau-search")]
         public HttpResponseMessage GetCustomerXDSCreditMatch([FromBody] CreditBureauSearchViewModel searchInfoList)
         {
@@ -422,6 +476,10 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $" {ex.Message}" });
             }
             catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
+            }
+            catch (TimeoutException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
             }

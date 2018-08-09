@@ -26,10 +26,10 @@ namespace FintrakBanking.Repositories.Setups.General
             this.auditTrail = _auditTrail;
         }
         #region Solicitors
-        public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId)
+        public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId,int accreditedConsultantId)
         {
             return (from m in context.TBL_ACCREDITEDCONSULTANT
-                    where m.COMPANYID == companyId
+                    where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTTYPEID == accreditedConsultantId
                     select new AccreditedConsultantsViewModel
                     {
                         accreditedConsultantId = m.ACCREDITEDCONSULTANTID,
@@ -37,7 +37,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         name = m.NAME,
                         firmName = m.FIRMNAME,
                         accreditedConsultantTypeId = m.ACCREDITEDCONSULTANTTYPEID,
-                        cityId = (short) m.CITYID,
+                        cityId = (short)m.CITYID,
                         accountNumber = m.ACCOUNTNUMBER,
                         solicitorBVN = m.SOLICITORBVN,
                         countryId = m.COUNTRYID,
@@ -51,10 +51,10 @@ namespace FintrakBanking.Repositories.Setups.General
                            {
                                accreditedConsultantStateCoveredID = k.CONSULT_STATE_COVREDID,
                                stateId = k.STATEID,
-                               stateName = context.TBL_STATE.FirstOrDefault(x=> x.STATEID == k.STATEID).STATENAME,
+                               stateName = context.TBL_STATE.FirstOrDefault(x => x.STATEID == k.STATEID).STATENAME,
                                accreditedConsultantId = k.ACCREDITEDCONSULTANTID
                            }).ToList()
-                    });
+                    }).ToList();
         }
 
         public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId)

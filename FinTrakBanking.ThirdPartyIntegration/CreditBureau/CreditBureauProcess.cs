@@ -97,8 +97,13 @@
                 return null;
             }
 
-            public byte[] GetFullSearchResultInPDF(SearchInput searchInput)
+            public byte[] GetXDSFullSearchResultInPDF(SearchInput searchInput)
             {
+                if(searchInput.mergeList.Count() == 0)
+                {
+                    throw new ConditionNotMetException("There are items in the merge list." +"\n"+" Please select items to matched.");
+                }
+
                 var xds = new XDSService();
 
                 if (!xds.IsticketActive(searchInput.userName))
@@ -131,10 +136,14 @@
 
                     return crc.CRCSearchRequest(request);
                 }
+                catch(TimeoutException ex)
+                {
+                    throw  new ConditionNotMetException("Connection timed out!");
+                }
                 catch (Exception ex)
                 {
 
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -146,10 +155,14 @@
 
                     return crc.CRCMergeReport(request);
                 }
+                catch (TimeoutException ex)
+                {
+                    throw ex;
+                }
                 catch (Exception ex)
                 {
 
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -162,6 +175,7 @@
                 {
                     string result = string.Empty;
                     string mergeLst = MergeListToString(searchInput.mergeList);
+
                     XDSService xds = new XDSService();
                     var data = new SearchFullResultViewModel
                     {
@@ -176,7 +190,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -200,11 +214,11 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
-            private string MergeListToString(List<int> mergeId)
+            private string MergeListToString(List<string> mergeId)
             {
                 string str = string.Empty;
                 foreach (var item in mergeId)
@@ -242,7 +256,10 @@
             {
                 string result = string.Empty;
                 XDSService xds = new XDSService();
-                if (searchInfo.dateOfBirth == "01-Jan-0001") searchInfo.dateOfBirth = "";
+                if (searchInfo.dateOfBirth == "01-Jan-0001" || searchInfo.dateOfBirth == null) searchInfo.dateOfBirth = string.Empty;
+                if (searchInfo.identification == null) searchInfo.identification = string.Empty;
+                if (searchInfo.customerName == null) searchInfo.customerName = string.Empty;
+
                 var data = new XDSIndividualSearchViewModel
                 {
                     userName = searchInfo.userName,
@@ -280,7 +297,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 
@@ -304,7 +321,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(ex.Message);
+                    throw new SecureException(ex.Message);
                 }
             }
 

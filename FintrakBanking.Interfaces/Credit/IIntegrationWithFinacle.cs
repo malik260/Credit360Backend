@@ -34,5 +34,7 @@ namespace FintrakBanking.Interfaces.Credit
         string GetGlAccountCode(int glAccountId, int currencyId, int branchId);
         CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
         AccountCreationResponseMessageViewModel CreateForeignAccount(CreateAccountViewModel entity);
+        ResponseMessageViewModel OverDraftInterestRate(InterestRateInquiryViewModel model, string accountType, TwoFactorAutheticationViewModel twoFADetails = null);
+        InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType);
     }
 }

@@ -1,4 +1,5 @@
 ﻿
+using FintrakBanking.Common.CustomException;
 using GemBox.Spreadsheet;
 using System;
 using System.Collections.Generic;
@@ -211,7 +212,7 @@ namespace FintrakBanking.Common.Extensions
             }
             catch(Exception ex) {
 
-                throw new Exception("" +ex);
+                throw new SecureException("" +ex);
             }
             finally
             {

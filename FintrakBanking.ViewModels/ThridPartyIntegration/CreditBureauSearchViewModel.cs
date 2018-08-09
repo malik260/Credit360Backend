@@ -51,7 +51,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public int searchType { get; set; }       // consumer/ commercial
 
         public int consumerID { get; set; }
-        public List<int> mergeList { get; set; }
+        public List<string> mergeList { get; set; }
         public string subscriberEnquiryEngineID { get; set; }
         public int enquiryID { get; set; }
         public LoanCreditBereauViewModel customerCreditBureauUploadDetails { get; set; }
@@ -91,6 +91,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public int EnquiryID { get; set; }
     }
 
+    
     public class CRCRequestViewModel : GeneralEntity
     {
         public string productId { get; set; }
@@ -170,8 +171,14 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string branchCode { get; set; }
     }
 
-    public class MultiHitRequestViewModel
+    public class MultiHitRequestViewModel : GeneralEntity
     {
+        public int casaAccountId;
+        public int searchType;
+
+        public short creditBureauId { get; set; }
+        public int customerId { get; set; }
+        public int companyDirectorId { get; set; }
         public string userName { get; set; }
         public string password { get; set; }
 
@@ -208,8 +215,12 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
     public class XDSSearchResult
     {
         public string errorMessage { get; set; }
-        public List<string> searchResult { get; set; }
+        public string searchResult { get; set; }
         public bool errorOccured { get; set; }
+        public bool fileSaved { get; set; }
+        public byte[] file { get; set; }
         public int status { get; set; }
     }
+
+    
 }

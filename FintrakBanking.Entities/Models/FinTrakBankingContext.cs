@@ -22,8 +22,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_TYPE> TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP> TBL_APPROVAL_GROUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
+        public virtual DbSet<TBL_TEMP_APPROVAL_GRP_MAPPING> TBL_TEMP_APPROVAL_GRP_MAPPING { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL> TBL_APPROVAL_LEVEL { get; set; }
+        public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL> TBL_TEMP_APPROVAL_LEVEL { get; set; }
         public virtual DbSet<TBL_APPROVAL_LEVEL_STAFF> TBL_APPROVAL_LEVEL_STAFF { get; set; }
+        public virtual DbSet<TBL_TEMP_APPROVAL_LEVEL_STAFF> TBL_TEMP_APPROVAL_LEVEL_STAFF { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATE> TBL_APPROVAL_STATE { get; set; }
         public virtual DbSet<TBL_APPROVAL_STATUS> TBL_APPROVAL_STATUS { get; set; }
         public virtual DbSet<TBL_APPROVAL_TRAIL> TBL_APPROVAL_TRAIL { get; set; }
@@ -195,6 +198,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_ARCHIVE> TBL_LOAN_APPLICATION_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COLLATERL> TBL_LOAN_APPLICATION_COLLATERL { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COLLATRL2> TBL_LOAN_APPLICATION_COLLATRL2 { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_COLT2_LOG> TBL_LOAN_APPLICATION_COLT2_LOG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COVENANT> TBL_LOAN_APPLICATION_COVENANT { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETAIL> TBL_LOAN_APPLICATION_DETAIL { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_ARCH> TBL_LOAN_APPLICATION_DETL_ARCH { get; set; }
@@ -385,6 +389,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LMSR_APPLICATION_COVENANT> TBL_LMSR_APPLICATION_COVENANT { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATN_DETL_MTRIG> TBL_LMSR_APPLICATN_DETL_MTRIG { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATION_COLLATRL2> TBL_LMSR_APPLICATION_COLLATRL2 { get; set; }
+       // public virtual DbSet<TBL_LOAN_APPLICATION_COLT2_LOG> TBL_LOAN_APPLICATION_COLT2_LOG { get; set; }
         public virtual DbSet<TBL_LMSR_CONDITION_PRECEDENT> TBL_LMSR_CONDITION_PRECEDENT { get; set; }
         public virtual DbSet<TBL_LMSR_TRANSACTION_DYNAMICS> TBL_LMSR_TRANSACTION_DYNAMICS { get; set; }
         public virtual DbSet<TBL_CUSTOM_API_LOGS> TBL_CUSTOM_API_LOGS { get; set; }
@@ -399,7 +404,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DOC_TEMPLATE_DETAIL> TBL_DOC_TEMPLATE_DETAIL { get; set; }
         public virtual DbSet<TBL_DOC_TEMPLATE_SECTION> TBL_DOC_TEMPLATE_SECTION { get; set; }
         public virtual DbSet<TBL_DOC_TEMPLATE_SECTION_ROLE> TBL_DOC_TEMPLATE_SECTION_ROLE { get; set; }
-
+        public virtual DbSet<TBL_PROFILE_PASSWORD_HISTORY> TBL_PROFILE_PASSWORD_HISTORY { get; set; }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var databaseUsername =

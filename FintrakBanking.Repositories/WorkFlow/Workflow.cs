@@ -16,6 +16,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private readonly string support = ConfigurationManager.AppSettings["SupportEmailAddr"];
+        private WorkflowResponse response = new WorkflowResponse();
 
         public Workflow(FinTrakBankingContext context, IGeneralSetupRepository general)
         {
@@ -61,6 +62,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? toStaffId = null;
         private bool endProcess = false;
         private AlertPlaceholders placeholders = null;
+        //private WorkflowResponse response = null;
 
         private float? interestRateConcession = null;
         private float? feeRateConcession = null;
@@ -97,6 +99,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool DeferredExecution { set { deferredExecution = value; } }
         public bool ForcefullyEndProcess { set { endProcess = value; keepPending = false; } } // <----------- this property is deprecated!!!
         public AlertPlaceholders Placeholders { set { placeholders = value; } }
+        public WorkflowResponse Response { get { return response; } set { response = value; } }
 
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
@@ -143,7 +146,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
-            if (this.useOrganogram == true) { OrganogramRouting(); } // force to superior in organogram
+            if (this.useOrganogram == true)
+            {
+                bool route = OrganogramRouting();
+                if (route == false) { throw new SecureException("Could not resolve next organogram route!"); }
+            }
 
             if (this.neededNumberOfApproval > 1 && ActionIsApprovalDecision())
             {
@@ -169,8 +176,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             SendNotifications();
 
-            if (this.comment == "flow_test") { throw new SecureException("flow_test: STATE: " + this.newStateId + ", STATUS:" + this.statusId + ", CURRL:" + this.fromLevelId + ", NEXTL:" + this.nextLevelId + ", TOSTAFFID:" + this.toStaffId); }
+            SetResponseInformation();
 
+            if (this.comment == "flow_test") { throw new SecureException("status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
+                   
             var trail = new TBL_APPROVAL_TRAIL
             {
                 FROMAPPROVALLEVELID = this.fromLevelId,
@@ -196,6 +205,32 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.saved) return true;
 
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
+        }
+
+        private void SetResponseInformation()
+        {
+            response.statusId = this.statusId;
+            response.stateId = this.newStateId;
+            response.nextLevelId = this.nextLevelId;
+            response.nextPersonId = this.toStaffId;
+
+            var s = context.TBL_APPROVAL_STATUS.Find(this.statusId);
+            response.statusName = s.APPROVALSTATUSNAME;
+
+            response.nextLevelName = String.Empty;
+            response.nextPersonName = String.Empty;
+
+            if (this.nextLevelId != null)
+            {
+                var l = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
+                response.nextLevelName = l.LEVELNAME;
+            }
+
+            if (this.toStaffId != null)
+            {
+                var p = context.TBL_STAFF.Find(this.toStaffId);
+                response.nextPersonName = p.STAFFCODE + " -- " + p.FIRSTNAME + " " + p.MIDDLENAME + " " + p.LASTNAME;
+            }
         }
 
         public void NextProcess(
@@ -335,16 +370,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.neededNumberOfApproval = level.NumberOfApprovals;
             }
 
-            if (this.fromLevelId == null) // && externalInitialization == false
-            {
-                var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.STAFFID == this.staffId).FirstOrDefault(); // doing
-                if (levelStaff == null)
-                {
-                    throw new SecureException("Unable to resolve initiating level OR there may be no setup for this operation!");
-                }
-                this.fromLevelId = levelStaff.APPROVALLEVELID;
-                this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
-            }
+            //if (this.fromLevelId == null) // && externalInitialization == false
+            //{
+            //    var levelStaff = approvalLevels.SelectMany(x => x.Staff).Where(x => x.STAFFID == this.staffId).FirstOrDefault(); // doing
+            //    if (levelStaff == null)
+            //    {
+            //        throw new SecureException("Unable to resolve initiating level OR there may be no setup for this operation!");
+            //    }
+            //    this.fromLevelId = levelStaff.APPROVALLEVELID;
+            //    this.neededNumberOfApproval = levelStaff.TBL_APPROVAL_LEVEL.NUMBEROFAPPROVALS;
+            //}
 
             if (this.statusId == (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.requestLevelId; } // default return back to sender
 
@@ -522,18 +557,35 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool OrganogramRouting() // if workflow is forced to use organogram
         {
-
+            if (next == null) { return true; }
+            if (this.toStaffId != null) { return true; }
             if (this.externalInitialization == true) { return true; }
+
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == this.staffId).FirstOrDefault();
             if (staff == null) { return false; }
 
             var lineManager = context.TBL_STAFF.Where(x => x.STAFFID == staff.SUPERVISOR_STAFFID).FirstOrDefault();
-            if (lineManager != null && next != null)
+            if (lineManager == null) { return false; }
+            this.toStaffId = lineManager.STAFFID; // important!
+            if (lineManager.STAFFROLEID == next.DefaultRoleId) return true;
+
+            // second level deep
+            var currentLevel = approvalGrid.Where(x => x.DefaultRoleId == next.DefaultRoleId).First();
+            next = approvalGrid.FirstOrDefault(x =>
+                (x.GroupPosition > currentLevel.GroupPosition) // next group
+                || (x.LevelPosition > currentLevel.LevelPosition && x.GroupPosition == currentLevel.GroupPosition) // same group
+                );
+            if (lineManager.STAFFROLEID != next.DefaultRoleId)
             {
-                if (lineManager.STAFFROLEID == next.DefaultRoleId) this.toStaffId = lineManager.STAFFID;
+                this.smsNotification = next.CanRecieveSMS;
+                this.emailNotification = next.CanRecieveEmail;
+                this.nextLevelId = next.ApprovalLevelId;
+                this.slaInterval = next.SlaInterval;
+                this.useOrganogram = next.RouteViaStaffOrganogram;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         private void CheckApprovalLimits()
@@ -684,13 +736,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (mappings.Any() == false)
             {
                 var operarion = context.TBL_OPERATIONS.Find(operationId);
-                var productclass = "NULL";
+                var productclass = "N/A";
                 if (productClassId != null)
                 {
                     var productClass = context.TBL_PRODUCT_CLASS.Find(productClassId);
                     productclass = productClass.PRODUCTCLASSNAME;
                 }
-                throw new ConditionNotMetException("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
+                throw new SecureException("There is no approval workflow setup for the OPERATION: " + operarion.OPERATIONNAME + ", PRODUCT CLASS: " + productclass);
             }
 
             var approvalLevels = mappings

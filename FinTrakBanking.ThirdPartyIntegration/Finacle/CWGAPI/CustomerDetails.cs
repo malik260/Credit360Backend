@@ -445,6 +445,92 @@
 
                 return data;
             }
+
+            public async Task<InterestRateInquiryViewModel> GetInterestRateInquiry(string accountNumber, string accountType)
+            {
+                HttpClient client = new HttpClient(handler);
+                DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                HttpResponseMessage response = null;
+                InterestRateInquiryIntegrationViewModel accountAPI = new InterestRateInquiryIntegrationViewModel();
+                ResponseMessageViewModel res = null;
+                string responseMessage = "";
+                try
+                {
+                    handler.UseDefaultCredentials = true;
+
+                    var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+                    httpClientInstance = new HttpClient();
+                    httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                    client.Timeout = TimeSpan.FromSeconds(60);
+                    client.BaseAddress = new Uri(API_URL);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Authorization = token;
+
+                    client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    InterestRateInquiryViewModel accountOutput = new InterestRateInquiryViewModel();
+
+                    ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+                    requestDatetime = DateTime.Now;
+                    response = await client.GetAsync($"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}");
+
+                    responseDateTime = DateTime.Now;
+                    if (response.IsSuccessStatusCode)
+                    {
+                        accountAPI = await response.Content.ReadAsAsync<InterestRateInquiryIntegrationViewModel>();
+                        accountOutput.accountNumber = accountAPI.accountNumber;
+                        accountOutput.accountType = accountAPI.accountType;
+                        accountOutput.interestTableCode = accountAPI.interestTableCode;
+                        accountOutput.interestSerialNumber = accountAPI.interestSerialNumber;
+                        accountOutput.startDate = accountAPI.startDate;
+                        accountOutput.endDate = accountAPI.endDate;
+                        accountOutput.interestRateAmount = accountAPI.interestRateAmount;
+                        accountOutput.lastChangedDate = accountAPI.lastChangedDate;
+                    }
+
+                    //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
+
+                    responseMessage = await response.Content.ReadAsStringAsync(); //.ReadAsAsync<CasaIntegrationViewModel>();
+
+                    handler.Dispose();
+                    client.Dispose();
+
+                    return accountOutput;
+                }
+                catch (Exception ex)
+                {
+                    var innerExceptionMessage = "";
+                    if (ex.InnerException != null)
+                        innerExceptionMessage = ex.InnerException.Message;
+
+                    throw new APIErrorException($"Core Banking API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                }
+
+                finally
+                {
+                    handler.Dispose();
+                    client.Dispose();
+
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = $"api/InterestRateInquiry/GetInterestRateInquiry?model.accountNumber={accountNumber}&model.accountType={accountType}",
+                        LOGTYPEID = 18,
+                        REFERENCENUMBER = accountNumber,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = accountNumber + '_' + accountType,
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = responseMessage,
+                    };
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
+
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+
+                    logContext.SaveChanges();
+                }
+            }
+
+
         }
     }
 

@@ -200,10 +200,10 @@ namespace FintrakBanking.Repositories.Credit
                         });
             return data.FirstOrDefault();
         }
-        public IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId , int companyId)
+        public IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId)
         {
-          var data =  GetLoanApplications(companyId).Where(c => c.customerId == customerId 
-          && c.approvalStatusId != (int)ApprovalStatusEnum.Approved && c.approvalStatusId != (int)ApprovalStatusEnum.Disapproved);
+            var data = GetLoanApplications(companyId).Where(c => c.customerId == customerId
+           && c.approvalStatusId != (int)ApprovalStatusEnum.Approved && c.approvalStatusId != (int)ApprovalStatusEnum.Disapproved);
             return data.ToList();
         }
 
@@ -241,7 +241,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationDate = a.APPLICATIONDATE,
                             applicationTenor = a.APPLICATIONTENOR,
                             applicationAmount = a.APPLICATIONAMOUNT,
-                            dateTimeCreated = a.DATETIMECREATED, 
+                            dateTimeCreated = a.DATETIMECREATED,
                             LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                              .Select(c => new LoanApplicationDetailViewModel()
                              {
@@ -261,7 +261,7 @@ namespace FintrakBanking.Repositories.Credit
                                  proposedAmount = c.PROPOSEDAMOUNT,
                                  proposedInterestRate = c.PROPOSEDINTERESTRATE,
                                  proposedProductId = c.PROPOSEDPRODUCTID,
-                                  proposedProductName = c.TBL_PRODUCT .PRODUCTNAME,
+                                 proposedProductName = c.TBL_PRODUCT.PRODUCTNAME,
                                  //proposedTenor = Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
                                  statusId = c.STATUSID
                              }).ToList()
@@ -338,7 +338,7 @@ namespace FintrakBanking.Repositories.Credit
                 TBL_CASA casa = new TBL_CASA();
                 var productNumber = "";
                 var productName = "";
-                if(casaAcct != 0 || casaAcct != null)
+                if (casaAcct != 0 || casaAcct != null)
                 {
                     casa = context.TBL_CASA.Where(x => x.CASAACCOUNTID == casaAcct).FirstOrDefault();
                     productName = casa.PRODUCTACCOUNTNAME;
@@ -466,11 +466,11 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).ToList();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
-             
+
             foreach (var i in data)
             {
                 var relationshipOfficer = context.TBL_STAFF.Where(s => s.STAFFID == i.relationshipOfficerId).FirstOrDefault();
@@ -627,15 +627,15 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<dynamic> GetLoanApplicationByRelationshipOfficerId(int relationshipOfficerId, int companyId)
         {
             var data = from a in context.TBL_LOAN_APPLICATION
-                       where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress 
+                       where a.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.ApplicationInProgress
                        && a.COMPANYID == companyId && a.DELETED == false
-                          && (a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId )
-                          && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress 
+                          && (a.CREATEDBY == relationshipOfficerId || a.RELATIONSHIPOFFICERID == relationshipOfficerId)
+                          && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                           && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
 
-                     
+
                        orderby a.APPLICATIONDATE descending
-                    
+
                        select new
                        {
                            requireCollateral = a.REQUIRECOLLATERAL,
@@ -764,14 +764,26 @@ namespace FintrakBanking.Repositories.Credit
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
             var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+            bool MiddleOfficeCertified = true;
+
+
             if (dat != null)
             {
                 foreach (var d in dat)
                 {
+                    //Replace hard-coding with a variable once defined
+                    //if(d.APPROVEDPRODUCTID == 36)
+                    //{
+                    //    if (context.TBL_JOB_REQUEST.Where(x => x.JOBTYPEID == (int)JobTypeEnum.middleOfficeVerification && x.TARGETID == d.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication).Any())
+                    //    {
+                    //        MiddleOfficeCertified = true;
+                    //    }
+                    //    else MiddleOfficeCertified = false;
+                    //}
                     var types = from a in context.TBL_CHECKLIST_TYPE select a;
                     foreach (var item in types)
                     {
-                       
+
                         int targetId = 0;
                         if (item.ISPRODUCT_BASED)
                         {
@@ -781,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             targetId = applicationId;
                         }
-                       
+
 
                         var detail = from a in context.TBL_CHECKLIST_DEFINITION
                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
@@ -793,10 +805,10 @@ namespace FintrakBanking.Repositories.Credit
 
                         //ids.Contains((int)a.APPROVALLEVELID) &&
                         var definition = (from a in context.TBL_CHECKLIST_DEFINITION
-                                         join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
-                                         where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
-                                         && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == PRODUCTID
-                                         select a).AsQueryable();
+                                          join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
+                                          where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
+                                          && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == PRODUCTID
+                                          select a).AsQueryable();
 
                         //var dd  = definition.Where(x=> x.APPROVALLEVELID.  ids.Contains((int)x.APPROVALLEVELID).
                         int i, j;
@@ -817,24 +829,25 @@ namespace FintrakBanking.Repositories.Credit
                                 + " Please check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
                         }
-                        if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
-                        {
-                            var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
-                            var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == targetId select b;
-                            int x, k;
-                            x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
 
-                            if (esg_checklist_definition.Count() != esg_checklist_details.Count())
-                            {
-                                isCheckListDone = false;
-                                str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
-                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                            }
-                        }
+                        //if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
+                        //{
+                        //    var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
+                        //    var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID select b;
+                        //    int x, k;
+                        //    x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
+
+                        //    if (esg_checklist_definition.Count() != esg_checklist_details.Count())
+                        //    {
+                        //        isCheckListDone = false;
+                        //        str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                        //        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                        //    }
+                        //}
                     }
                 }
             }
-
+            //&& MiddleOfficeCertified 
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
                 return new LoanApplicationUpdateMessage
@@ -867,22 +880,57 @@ namespace FintrakBanking.Repositories.Credit
 
             appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ChecklistCompleted;
 
+            int? receiverLevelId = null;
+            receiverLevelId = GetFirstReceiverLevel(staffId, (int)OperationsEnum.CAM, appl.PRODUCTCLASSID);
+
             workflow.StaffId = staffId;
-            workflow.ToStaffId = staffId;
+            workflow.ToStaffId = staffId; //
+            workflow.NextLevelId = receiverLevelId; // BREAKING!
             workflow.OperationId = (int)OperationsEnum.CAM;
             workflow.TargetId = appl.LOANAPPLICATIONID;
             workflow.CompanyId = appl.COMPANYID;
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.StatusId = (int)ApprovalStatusEnum.Pending;
             workflow.Comment = "New loan application";
-            workflow.ExternalInitialization = true;
+
             return workflow.LogActivity();
         }
 
+        public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
+        }
+
         public string GetRefrenceNumber()
-        {           
-           var millisecond = DateTime.Now.Millisecond;
-            string refnumber = CommonHelpers.GetLoanReferanceNumber().ToString() 
+        {
+            var millisecond = DateTime.Now.Millisecond;
+            string refnumber = CommonHelpers.GetLoanReferanceNumber().ToString()
                 + "" + CommonHelpers.AppendZeroString(millisecond, 3);
             return refnumber.ToString();
         }
@@ -907,16 +955,16 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-            loanData = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
+                loanData = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
 
-            if (loan.isNewApplication)
-            {
+                if (loan.isNewApplication)
+                {
                     if (loanData == null)
                     {
                         loan.applicationReferenceNumber = GetRefrenceNumber();// CommonHelpers.GetLoanReferanceNumber().ToString();
 
                         AddloanApplicationSub(loan);
-                    }                    
+                    }
 
                     if (loan.LoanApplicationDetail.Count > 0)
                     {
@@ -924,25 +972,25 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                 }
-            else
-            {
-                var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
-                var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
-
-                if (limit != 0)
+                else
                 {
-                    if (total != 0)
+                    var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                    var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
+                    var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
+
+                    if (limit != 0)
                     {
-                        if (total > (decimal)limit)
+                        if (total != 0)
                         {
-                            throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                            if (total > (decimal)limit)
+                            {
+                                throw new SecureException($"RM Limit Exceeded. The limit of this RM is {limit}");
+                            }
                         }
                     }
-                }
 
-                UpdateLoanApplication(loan);
-            }
+                    UpdateLoanApplication(loan);
+                }
 
                 response = context.SaveChanges();
 
@@ -1027,14 +1075,14 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                 APPLICATIONAMOUNT = loan.proposedAmount,
-                APPLICATIONTENOR = loan.proposedTenor ,
+                APPLICATIONTENOR = loan.proposedTenor,
                 ISINVESTMENTGRADE = loan.isInvestmentGrade,
                 LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
                 OPERATIONID = (int)OperationsEnum.CAM,
-                LOANAPPLICATIONTYPEID = loan.loanTypeId
-
+                LOANAPPLICATIONTYPEID = loan.loanTypeId,
+                COLLATERALDETAIL = loan.collateralDetail
             };
             if (isGroupLoan)
             {
@@ -1068,10 +1116,10 @@ namespace FintrakBanking.Repositories.Credit
 
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
-           
+
             var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
 
-            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a=> a.PROPOSEDAMOUNT);
+            decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
 
 
             this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;
@@ -1087,6 +1135,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.CASAACCOUNTID = loan.casaAccountId;
             this.loanData.APPLICATIONAMOUNT = loan.proposedAmount;
             this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
+            this.loanData.COLLATERALDETAIL = loan.collateralDetail;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -1134,7 +1183,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALID = c.principalId,
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = createdBy,
-                PURCHASEORDERNUMBER = c.purchaseOrderNumber
+                PURCHASEORDERNUMBER = c.purchaseOrderNumber,
+                CERTIFICATENO = c.certificateNumber
 
             });
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
@@ -1182,8 +1232,8 @@ namespace FintrakBanking.Repositories.Credit
                     SUBSECTORID = a.subSectorId,
                     CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
-                    LOANPURPOSE = a.loanPurpose
-
+                    LOANPURPOSE = a.loanPurpose,
+                    CASAACOUNTID = a.casaAccountId
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
@@ -1566,7 +1616,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                        where a.LOANAPPLICATIONID == loanApplicationId 
+                        where a.LOANAPPLICATIONID == loanApplicationId
                         && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                         && b.STATUSID == (short)LoanApplicationDetailsStatusEnum.Pending
                         // && b.HASDONECHECKLIST == false
@@ -1603,7 +1653,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanApplicationDetailViewModel()
                         {
                             loanApplicationId = b.LOANAPPLICATIONID,
-                           // applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            // applicationRefNo = a.APPLICATIONREFERENCENUMBER,
                             //customerId = b.CUSTOMERID,
                             //customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
@@ -1684,7 +1734,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationTypeId,int staffId)
+        public IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationTypeId, int staffId)
         {
             List<int> ids;
             string applicationType;
@@ -1697,15 +1747,15 @@ namespace FintrakBanking.Repositories.Credit
                 applications = context.TBL_LOAN_APPLICATION
                     .Join(context.TBL_LOAN_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Join(context.TBL_CUSTOMER, g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
-                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.CAM 
-                            && t.RESPONSESTAFFID == null  && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.CAM
+                            && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended
                             && ids.Contains((int)t.TOAPPROVALLEVELID)
-                        ), 
-                        q => q.g.a.LOANAPPLICATIONID, 
+                        ),
+                        q => q.g.a.LOANAPPLICATIONID,
                         t => t.TARGETID, (q, t) => new { q, t })
                     .Select(x => new CreditApplicationViewModel
                     {
-                        applicationType= applicationType,
+                        applicationType = applicationType,
                         firstName = x.q.c.FIRSTNAME,
                         middleName = x.q.c.MIDDLENAME,
                         lastName = x.q.c.LASTNAME,
@@ -1868,6 +1918,18 @@ namespace FintrakBanking.Repositories.Credit
             };
 
         }
+        public bool ValidateInvoiceDetails(ValidateNumberViewModel data)
+        {
+            var dat = (from a in context.TBL_LOAN_APPLICATION_DETL_INV
+                       join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                       where b.CUSTOMERID == data.customerId && (a.INVOICENO == data.documentNo
+                         || a.PURCHASEORDERNUMBER == data.purchaseOrderNumber || a.CONTRACTNO == data.contractNumber ||
+                         a.CERTIFICATENO == data.certificateNumber)
+                       select a).ToList();
+
+            return dat.Any();
+
+        }
 
         #region All Operation Applications
 
@@ -1914,7 +1976,7 @@ namespace FintrakBanking.Repositories.Credit
                 lastComment = x.b.COMMENT,
                 currentApprovalStateId = x.b.APPROVALSTATEID,
                 currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
-              //  currentApprovalLevel = x.b.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                //  currentApprovalLevel = x.b.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
                 loanInformation = x.a.LOANINFORMATION,
                 submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,

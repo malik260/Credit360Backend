@@ -1,7 +1,9 @@
-﻿using FintrakBanking.ReportObjects.ReportingObjects;
+﻿using FintrakBanking.Common.Extensions;
+using FintrakBanking.ReportObjects.ReportingObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,24 +19,57 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
-               int companyId = Int32.Parse( Request.QueryString["companyId"]);
-             int  approvalStatus = Int32.Parse(Request.QueryString["approvalStatus"]);
-              int  operationId = Int32.Parse(Request.QueryString["operationId"]);
+                try
+                {
+                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    int approvalStatus = Int32.Parse(Request.QueryString["approvalStatus"]);
+                    int operationId = Int32.Parse(Request.QueryString["operationId"]);
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
-                LimitsMonitoringReportsObjects sla = new LimitsMonitoringReportsObjects();
-                 var data =   sla.SLAMonitoring(startDate, endDate, approvalStatus, operationId);
+                    HashHelper hash = new HashHelper();
 
-                this.ReportViewer.LocalReport.DataSources.Clear();
-                ReportDataSource reportDataSource = new ReportDataSource();
-                reportDataSource.Value = data;
-                reportDataSource.Name = "SLATracker";
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/SLAMonitoringReport.rdlc");
-                this.ReportViewer.LocalReport.Refresh();
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+                    LimitsMonitoringReportsObjects sla = new LimitsMonitoringReportsObjects();
+                    var data = sla.SLAMonitoring(startDate, endDate, approvalStatus, operationId);
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "SLATracker";
+
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/SLAMonitoringReport.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
             }
         }
     }

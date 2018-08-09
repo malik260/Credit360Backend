@@ -109,12 +109,50 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [Route("exchange-rate/{fromCode}/{toCode}/{rateCode}")]
+        public HttpResponseMessage GetExchangeRate(string fromCode ,string toCode,string rateCode)
+        {
+            try
+            {
+                var data = repo.GetExchangeRate( fromCode,  toCode,  rateCode);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("revolving-types")]
         public HttpResponseMessage GetRevolvingLoanTypes()
         {
             try
             {
                 var data = repo.GetRevolvingLoanTypes();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
+        [Route("loan-transaction-dynamics/{loanApplicationDetailId}")]
+        public HttpResponseMessage GetLoanTransactionDynamics(int loanApplicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetLoanTransactionDynamics(loanApplicationDetailId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
             catch (ConditionNotMetException ce)

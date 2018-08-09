@@ -86,5 +86,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId);
 
         IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationType, int staffId);
+
+        bool ValidateInvoiceDetails(ValidateNumberViewModel data);
     }
 }

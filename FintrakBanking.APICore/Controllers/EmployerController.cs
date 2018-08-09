@@ -24,7 +24,9 @@ namespace FintrakBanking.APICore.Controllers
             repo = _repo;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        #region employer
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("employers")]
         public HttpResponseMessage getEmployer()
         {
@@ -39,7 +41,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("employer")]
         public HttpResponseMessage getEmployer(int employerId)
         {
@@ -106,7 +108,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("employer-type")]
         public HttpResponseMessage getEmployerType()
         {
@@ -134,5 +136,144 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
             }
         }
+        #endregion
+
+        #region employer type
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-employer-type")]
+        public HttpResponseMessage addEmployerType(EmployerViewModel employerType)
+        {
+            try
+            {
+                employerType.companyId = token.GetCompanyId;
+                employerType.staffId = token.GetStaffId;
+                employerType.userBranchId = (short)token.GetBranchId;
+
+                var data = repo.addEmployerType(employerType);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-employer-type/{employerTypeId}")]
+        public HttpResponseMessage updateEmployerType(int employerTypeId, EmployerViewModel employer)
+        {
+            try
+            {
+                employer.companyId = token.GetCompanyId;
+                employer.staffId = token.GetStaffId;
+                employer.userBranchId = (short)token.GetBranchId;
+
+                var data = repo.updateEmployerType(employerTypeId, employer);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-employer-type/{employerTypeId}")]
+
+        public HttpResponseMessage deleteEmployerType(int employerTypeId, EmployerViewModel employer)
+        {
+            try
+            {
+                var data = repo.deleteEmployerType(employerTypeId, employer);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        #endregion
+
+
+        #region employer sub type
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("all-employer-sub-type")]
+        public HttpResponseMessage getEmployerSubTypes()
+        {
+            try
+            {
+                var data = repo.getEmployerSubType(token.GetCompanyId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("add-employer-sub-type")]
+        public HttpResponseMessage addEmployerSubType(EmployerViewModel employerSubType)
+        {
+            try
+            {
+                employerSubType.companyId = token.GetCompanyId;
+                employerSubType.staffId = token.GetStaffId;
+                employerSubType.userBranchId = (short)token.GetBranchId;
+
+                var data = repo.addEmployerSubType(employerSubType);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("update-employer-sub-type/{employerSubTypeId}")]
+        public HttpResponseMessage updateEmployerSubType(int employerSubTypeId, EmployerViewModel employer)
+        {
+            try
+            {
+                employer.companyId = token.GetCompanyId;
+                employer.staffId = token.GetStaffId;
+                employer.userBranchId = (short)token.GetBranchId;
+
+                var data = repo.updateEmployerSubType(employerSubTypeId, employer);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-employer-type/{employerTypeId}")]
+
+        public HttpResponseMessage deleteEmployerSubType(int employerSubTypeId, EmployerViewModel employer)
+        {
+            try
+            {
+                var data = repo.deleteEmployerSubType(employerSubTypeId, employer);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = ex.Message });
+            }
+        }
+        #endregion
     }
 }

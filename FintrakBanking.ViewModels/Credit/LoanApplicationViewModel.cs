@@ -90,6 +90,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool isCollateralBacked { get; set; }
 
+        public string collateralDetail { get; set; }
         //private int _tenor;
 
         public int tenor { get; set; }
@@ -111,6 +112,19 @@ namespace FintrakBanking.ViewModels.Credit
         public short productClassProcessId { get; set; }
         public string approvalStatus { get; set; }
         public string responsiblePerson { get; set; }
+        public DateTime? timeIn { get; set; }
+        public DateTime? slaTime { get; set; }
+        public string tenorString
+        {
+            get
+            {
+                var units = applicationTenor == 1 ? " day" : " days";
+                if (applicationTenor < 15) return applicationTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(applicationTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " months";
+            }
+        }
     }
 
     public class LoanApplicationUpdateMessage
@@ -155,11 +169,13 @@ namespace FintrakBanking.ViewModels.Credit
     public class ValidateNumberViewModel
     {
         public string contractNumber { get; set; }
+        public int customerId { get; set; }
         public int productId { get; set; }
         public int principalId { get; set; }
         public bool invoiceStatus { get; set; }
         public string documentNo { get; set; }
         public string purchaseOrderNumber { get; set; }
+        public string certificateNumber { get; set; }
     }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
@@ -221,7 +237,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short statusId { get; set; }
 
-        public int casaAccountId { get; set; }
+        public int? casaAccountId { get; set; }
 
         public short sectorId { get; set; }
 
@@ -241,6 +257,28 @@ namespace FintrakBanking.ViewModels.Credit
         public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
         public string sectorName { get; set; }
         public string productClass { get; set; }
+        public string proposedTenorString
+        {
+            get
+            {
+                var units = proposedTenor == 1 ? " day" : " days";
+                if (proposedTenor < 15) return proposedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " months";
+            }
+        }
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = approvedTenor == 1 ? " day" : " days";
+                if (approvedTenor < 15) return approvedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " months";
+            }
+        }
     }
 
     public class ProductFeesViewModel// : GeneralEntity
@@ -278,6 +316,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int performanceTypeId { get; set; }
         public int productTypeId { get; set; }
         public string searchString { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public string relatedloanReferenceNumber { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
     }
 
     public class CommitteFilterViewModel
@@ -409,6 +452,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string contractNo { get; set; }
 
         public string purchaseOrderNumber { get; set; }
+
+        public string certificateNumber { get; set; }
 
         public string invoiceNo { get; set; }
 

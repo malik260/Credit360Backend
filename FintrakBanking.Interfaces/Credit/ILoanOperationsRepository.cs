@@ -39,7 +39,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanCovenantDetailViewModel> ProcessLPOExpiryAndlocking(DateTime applicationDate);
         IEnumerable<LoanPastDueViewModel> ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(DateTime applicationDate);
         bool LoanCancellation(int loanId, DateTime applicationDate, int staffId);
-        bool OverdraftTopUp(int loanId, decimal amount);
+        bool OverdraftTopUp(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, decimal amount);
+        //bool OverdraftTopUp(int loanId, decimal amount);
         IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension();
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue (DateTime applicationDate);
@@ -76,7 +77,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
         bool ProcessCommercialPaperManualRollOver(MaturityIntructionViewModel model, string refNo);
         //void CommercialPaperManualRollOver(DateTime applicationDate);
-        bool CommercialPaperTenorReview(TenorExtionViewModel userModel);
+        bool addCommercialPaperTenorReview(TenorExtionViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
         bool CommercialPaperRateReview(InterestReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetCommercialLoansLines(int companyId);
@@ -85,9 +86,9 @@ namespace FintrakBanking.Interfaces.Credit
         //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
         void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId);
         bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
-        bool CommercialPaperPrepayment(string refNo, decimal prepaymentAmount, DateTime applicationDate, int staffId);
+        loanPrepaymentViewModel CommercialPaperPrepayment(string refNo, loanPrepaymentViewModel model);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
-        bool CommercialPaperTenorReviewDetails(int loanAplicationDetailId, int newTenor);
+        bool addCommercialPaperLineTenorReview(int loanAplicationDetailId, int newTenor);
         bool GetRepaymentFromStaging();
         bool reBookCommercialLoan(int loanId, int additionalTenor, int staffId, short instructionTypeId);
         #endregion

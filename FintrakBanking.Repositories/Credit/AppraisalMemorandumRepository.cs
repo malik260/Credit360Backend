@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.ViewModels.Credit;
-using FintrakBanking.Common.Enum;
-using System.Linq;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.Repositories.WorkFlow;
-using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
-using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -268,7 +266,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() != 0;
         }
 
-        public int ForwardAppraisalMemorandum(ForwardViewModel model)
+        public WorkflowResponse ForwardAppraisalMemorandum(ForwardViewModel model)
         {
             bool updateApprovedAmount = false;
             int operationId = (int)OperationsEnum.CAM;
@@ -427,7 +425,8 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New pproved application", true, false);
             }
 
-            return lastStatus;
+            //workflow.Response.success = true;
+            return workflow.Response;
         }
 
         private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date)
@@ -641,81 +640,103 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
+        //public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
+        //{
+        //    var details = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
+        //        .Join(context.TBL_LOAN_APPLICATION_DETAIL,
+        //        a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
+        //        .Select(x => new ApprovedLoanDetailViewModel
+        //        {
+        //            loanApplicationDetailId = x.d.LOANAPPLICATIONDETAILID,
+        //            applicationId = x.d.LOANAPPLICATIONID,
+        //            customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
+        //            obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
+        //            currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
+
+        //            proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
+        //            proposedTenor = x.d.PROPOSEDTENOR,
+        //            proposedRate = x.d.PROPOSEDINTERESTRATE,
+        //            proposedAmount = x.d.PROPOSEDAMOUNT,
+        //            proposedProductId = x.d.PROPOSEDPRODUCTID,
+
+        //            approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
+        //            approvedTenor = x.d.APPROVEDTENOR,
+        //            approvedRate = x.d.APPROVEDINTERESTRATE,
+        //            approvedAmount = x.d.APPROVEDAMOUNT,
+        //            approvedProductId = x.d.APPROVEDPRODUCTID,
+
+        //            statusId = x.d.STATUSID,
+        //            exchangeRate = x.d.EXCHANGERATE,
+        //            terms = x.d.REPAYMENTTERMS,
+        //            schedule = x.d.REPAYMENTSCHEDULE
+        //        });
+
+        //    var test = details.ToList();
+
+        //    return details.ToList();
+        //}
+
+        public LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId)
         {
-            var details = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
-                .Join(context.TBL_LOAN_APPLICATION_DETAIL,
-                a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
-                .Select(x => new ApprovedLoanDetailViewModel
+            var details = new LoanApplicationDetailsViewModel();
+                var facilities = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL,
+                    a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
+                    .Select(x => new ApprovedLoanDetailViewModel
+                    {
+                        loanApplicationDetailId = x.d.LOANAPPLICATIONDETAILID,
+                        applicationId = x.d.LOANAPPLICATIONID,
+                        customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
+                        obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
+                        currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
+
+                        proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
+                        proposedTenor = x.d.PROPOSEDTENOR,
+                        proposedRate = x.d.PROPOSEDINTERESTRATE,
+                        proposedAmount = x.d.PROPOSEDAMOUNT,
+                        proposedProductId = x.d.PROPOSEDPRODUCTID,
+
+                        approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
+                        approvedTenor = x.d.APPROVEDTENOR,
+                        approvedRate = x.d.APPROVEDINTERESTRATE,
+                        approvedAmount = x.d.APPROVEDAMOUNT,
+                        approvedProductId = x.d.APPROVEDPRODUCTID,
+
+                        statusId = x.d.STATUSID,
+                        exchangeRate = x.d.EXCHANGERATE,
+                        terms = x.d.REPAYMENTTERMS,
+                        schedule = x.d.REPAYMENTSCHEDULE
+                    }).ToList();
+
+                var customerIds = facilities.Select(x => x.customerId).ToList();
+
+                var duplications = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => customerIds.Contains(x.CUSTOMERID)
+                    && x.DELETED == false
+                    && x.LOANAPPLICATIONID != applicationId
+                    && x.STATUSID == (int)ApprovalStatusEnum.Approved
+                )
+                .Join(
+                    context.TBL_LOAN_APPLICATION.Where(x => 
+                        x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                        , d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
+                .Select(x => new DedupeApplicationViewModel
                 {
-                    loanApplicationDetailId = x.d.LOANAPPLICATIONDETAILID,
-                    applicationId = x.d.LOANAPPLICATIONID,
-                    customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
-                    obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
-                    currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
+                    applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                    applicationDate = x.a.APPLICATIONDATE,
+                    applicationAmount = x.a.APPLICATIONAMOUNT,
+                    interestRate = x.a.INTERESTRATE,
+                    applicationTenor = x.a.APPLICATIONTENOR,
+                    branchName = x.a.TBL_BRANCH.BRANCHNAME,
+                    productName = x.d.TBL_PRODUCT.PRODUCTNAME,
+                })
+                .ToList();
 
-                    proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
-                    proposedTenor = x.d.PROPOSEDTENOR,
-                    proposedRate = x.d.PROPOSEDINTERESTRATE,
-                    proposedAmount = x.d.PROPOSEDAMOUNT,
-                    proposedProductId = x.d.PROPOSEDPRODUCTID,
-
-                    approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
-                    approvedTenor = x.d.APPROVEDTENOR,
-                    approvedRate = x.d.APPROVEDINTERESTRATE,
-                    approvedAmount = x.d.APPROVEDAMOUNT,
-                    approvedProductId = x.d.APPROVEDPRODUCTID,
-
-                    statusId = x.d.STATUSID,
-                    exchangeRate = x.d.EXCHANGERATE,
-                    terms = x.d.REPAYMENTTERMS,
-                    schedule = x.d.REPAYMENTSCHEDULE
-                });
-
-            var test = details.ToList();
-
-            return details.ToList();
+                details.duplications = duplications;
+                details.facilities = facilities;
+           
+            return details;
         }
-
-        /*public IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId)
-        {
-            var details = (from a in context.TBL_LOAN_APPLICATION
-                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                           join c in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals c.PRODUCTID
-                           join d in context.TBL_PRODUCT on b.APPROVEDPRODUCTID equals d.PRODUCTID
-                           join e in context.TBL_CUSTOMER on b.CUSTOMERID equals e.CUSTOMERID
-                           join f in context.TBL_CURRENCY on b.CURRENCYID equals f.CURRENCYID
-                           where a.LOANAPPLICATIONID == applicationId && b.DELETED == false
-                           select new ApprovedLoanDetailViewModel
-                           {
-                               loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
-                               applicationId = b.LOANAPPLICATIONID,
-                               customerId = e.CUSTOMERID,
-                               obligorName = e.FIRSTNAME + " " + e.MIDDLENAME + " " + e.LASTNAME,
-                               currencyCode = f.CURRENCYCODE,
-
-                               proposedProductName = c.PRODUCTNAME,
-                               proposedTenor = b.PROPOSEDTENOR,
-                               proposedRate = b.PROPOSEDINTERESTRATE,
-                               proposedAmount = b.PROPOSEDAMOUNT,
-                               proposedProductId = b.PROPOSEDPRODUCTID,
-
-                               approvedProductName = d.PRODUCTNAME, // <----------take note of 1
-                               approvedTenor = b.APPROVEDTENOR,
-                               approvedRate = b.APPROVEDINTERESTRATE,
-                               approvedAmount = b.APPROVEDAMOUNT,
-                               approvedProductId = b.APPROVEDPRODUCTID,
-
-                               statusId = b.STATUSID,
-                               exchangeRate = b.EXCHANGERATE,
-                               terms = b.REPAYMENTTERMS,
-                               schedule = b.REPAYMENTSCHEDULE
-                           });
-
-            // var test = details.ToList();
-
-            return details.ToList();
-        }*/
 
         public IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId)
         {
@@ -835,6 +856,8 @@ namespace FintrakBanking.Repositories.Credit
                 currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                 approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
                 toStaffId = x.b.TOSTAFFID,
+                timeIn = x.b.SYSTEMARRIVALDATETIME,
+                slaTime = x.b.SLADATETIME,
                 loanInformation = x.a.LOANINFORMATION,
                 submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                 customerInfoValidated = x.a.CUSTOMERINFOVALIDATED,
@@ -1233,7 +1256,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<RecommendedCollateralViewModel> AddRecommendedCollateral(RecommendedCollateralViewModel entity)
         {
-            context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
+            var recommendation = context.TBL_LOAN_APPLICATION_COLLATRL2.Add(new TBL_LOAN_APPLICATION_COLLATRL2
             {
                 LOANAPPLICATIONID = entity.applicationId,
                 LOANAPPLICATIONDETAILID = entity.applicationDetailId,
@@ -1243,6 +1266,20 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = general.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             });
+
+            context.TBL_LOAN_APPLICATION_COLT2_LOG.Add(new TBL_LOAN_APPLICATION_COLT2_LOG
+            {
+                COLLATERALBASICDETAILID = recommendation.COLLATERALBASICDETAILID,
+                LOANAPPLICATIONID = entity.applicationId,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                COLLATERALDETAIL = entity.collateralDetail,
+                COLLATERALVALUE = entity.collateralValue,
+                STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                DATETIMECREATED = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = entity.createdBy
+            });
+
             context.SaveChanges();
             return GetRecommendedCollateral(entity.applicationId);
         }
@@ -1254,8 +1291,40 @@ namespace FintrakBanking.Repositories.Credit
             recommendation.COLLATERALDETAIL = entity.collateralDetail;
             recommendation.COLLATERALVALUE = entity.collateralValue;
             recommendation.STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount;
+
+            context.TBL_LOAN_APPLICATION_COLT2_LOG.Add(new TBL_LOAN_APPLICATION_COLT2_LOG
+            {
+                COLLATERALBASICDETAILID = recommendation.COLLATERALBASICDETAILID,
+                LOANAPPLICATIONID = recommendation.LOANAPPLICATIONID,
+                LOANAPPLICATIONDETAILID = entity.applicationDetailId,
+                COLLATERALDETAIL = entity.collateralDetail,
+                COLLATERALVALUE = entity.collateralValue,
+                STAMPEDTOCOVERAMOUNT = entity.stampedToCoverAmount,
+                DATETIMECREATED = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = entity.createdBy
+            });
+
             context.SaveChanges();
             return GetRecommendedCollateral(entity.applicationId);
+        }
+
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateralHistory(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATION_COLT2_LOG.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a, b })
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL, ab => ab.a.LOANAPPLICATIONDETAILID, c => c.LOANAPPLICATIONDETAILID, (ab, c) => new { ab, c })
+               .Select(x => new RecommendedCollateralViewModel
+               {
+                   id = x.ab.a.COLLATERALBASICDETAILID,
+                   collateralDetail = x.ab.a.COLLATERALDETAIL,
+                   collateralValue = x.ab.a.COLLATERALVALUE,
+                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT,
+                   applicationDetailId = (int)x.ab.a.LOANAPPLICATIONDETAILID,
+                   productCustomerName = x.c.TBL_PRODUCT.PRODUCTNAME + " -- " + x.c.TBL_CUSTOMER.FIRSTNAME + " " + x.c.TBL_CUSTOMER.MIDDLENAME + " " + x.c.TBL_CUSTOMER.LASTNAME,
+                   staffName = x.ab.b.FIRSTNAME + " " + x.ab.b.MIDDLENAME + " " + x.ab.b.LASTNAME,
+               })
+               .ToList();
         }
 
         #region LMS APPROVAL
@@ -1363,23 +1432,25 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+        public List<RecommendedCollateralViewModel> GetRecommendedCollateralHistoryLms(int applicationId)
+        {
+            return context.TBL_LOAN_APPLICATION_COLT2_LOG.Where(x => x.LOANAPPLICATIONID == applicationId) // TBL_LOAN_APPLICATION_COLT2_LOG for LMS
+                .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a, b })
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL, ab => ab.a.LOANAPPLICATIONDETAILID, c => c.LOANAPPLICATIONDETAILID, (ab, c) => new { ab, c })
+               .Select(x => new RecommendedCollateralViewModel
+               {
+                   id = x.ab.a.COLLATERALBASICDETAILID,
+                   collateralDetail = x.ab.a.COLLATERALDETAIL,
+                   collateralValue = x.ab.a.COLLATERALVALUE,
+                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT,
+                   applicationDetailId = (int)x.ab.a.LOANAPPLICATIONDETAILID,
+                   productCustomerName = x.c.TBL_PRODUCT.PRODUCTNAME + " -- " + x.c.TBL_CUSTOMER.FIRSTNAME + " " + x.c.TBL_CUSTOMER.MIDDLENAME + " " + x.c.TBL_CUSTOMER.LASTNAME,
+                   staffName = x.ab.b.FIRSTNAME + " " + x.ab.b.MIDDLENAME + " " + x.ab.b.LASTNAME,
+               })
+               .ToList();
+        }
+
         #endregion LMS APPROVAL
 
-        //private void PassApplicationToOperation(int applicationId, int operationId, int staffId, string comment)
-        //{
-        //    var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
-        //    appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
-        //    var staff = context.TBL_STAFF.Find(staffId);
-        //    workflow.StaffId = staffId;
-        //    workflow.CompanyId = staff.COMPANYID;
-        //    workflow.OperationId = operationId;
-        //    workflow.TargetId = applicationId;
-        //    workflow.ProductClassId = null;
-        //    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-        //    workflow.Comment = comment;
-        //    workflow.ExternalInitialization = true;
-        //    workflow.DeferredExecution = false;
-        //    workflow.LogActivity();
-        //}
     }
 }

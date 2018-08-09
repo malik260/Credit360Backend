@@ -12,11 +12,7 @@ namespace FintrakBanking.Interfaces.Admin
 {
     public interface IAdminRepository
     {
-        #region 
-        LookupViewModel GetDashboardStaffRole(int staffId);
-        #endregion
-
-        #region Users
+              #region Users
         IEnumerable<UserViewModel> GetAllUsers();
 
         UserViewModel GetUsersByStaffId(int staffId);
@@ -78,6 +74,7 @@ namespace FintrakBanking.Interfaces.Admin
         bool TwoFactorAuthentication(string staffCode, string passCode);
         bool TwoFactorAuthenticationEnabled();
         bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId);
+        bool IsSuperAdmin(int staffId);
         #endregion
     }
 }

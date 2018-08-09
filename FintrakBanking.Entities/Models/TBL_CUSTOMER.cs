@@ -155,6 +155,10 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime? DATEVALIDATED { get; set; }
 
+        public string PROSPECTCUSTOMERCODE { get; set; }
+
+        public bool ISPROSPECT { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

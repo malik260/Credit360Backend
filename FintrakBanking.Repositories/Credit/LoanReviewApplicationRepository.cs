@@ -35,6 +35,10 @@ namespace FintrakBanking.Repositories.Credit
             int branchId = user.BranchId;
             int companyId = user.companyId;
 
+            bool ignoreBranch = true; // rm = false, ho = true
+
+            ignoreBranch = !ProcessInitiator(staffId, operationId, classId);
+
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
@@ -48,7 +52,7 @@ namespace FintrakBanking.Repositories.Credit
             ids.Add(71); // --------------- REMOVE!!!
 
             // query
-            var query = context.TBL_LMSR_APPLICATION
+            var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)
             .Join(context.TBL_BRANCH, a => a.BRANCHID, b => b.BRANCHID, (a, b) => new { a, b })
             .Join(context.TBL_CUSTOMER, ab => ab.a.CUSTOMERID, c => c.CUSTOMERID, (ab, c) => new { ab, c, b = ab.b })
             .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
@@ -109,6 +113,35 @@ namespace FintrakBanking.Repositories.Credit
             //var count = applications.Count();
             
             return applications; // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
+        }
+
+        private bool ProcessInitiator(int staffId, int operationId, int? productClassId)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+
+            return index == 1;
         }
 
         public SelectListViewModel GetAllSelectList()
@@ -354,7 +387,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ProductClassId = null;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
-            workflow.ExternalInitialization = true;
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
@@ -365,6 +397,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId && model.operationId != 71) // jump process OR end flag
                 {
+                    if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstReceiverLevel(model.lastUpdatedBy, (int)OperationsEnum.LoanReviewApprovalAvailment, null, true);
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
                 if (operationId == lastOperationId || model.operationId == 71) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
@@ -372,6 +405,37 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return lastStatusId;
+        }
+
+        private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
+        {
+            var staff = context.TBL_STAFF.Find(staffId);
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            if (next == false) return staffRoleLevelId;
+            int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
+            var nextLevelId = levels.Skip(index + 1).Take(1).Select(x => x.levelId).FirstOrDefault();
+
+            return nextLevelId;
         }
 
         public decimal GetCustomerTotalOutstandingBalance(int customerId)

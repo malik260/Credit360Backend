@@ -47,20 +47,7 @@ namespace FintrakBanking.Repositories.Admin
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
 
         }
-        #region DashBoard
-        public LookupViewModel GetDashboardStaffRole(int staffId)
-        {
-            var dash = (from st in context.TBL_STAFF
-                        join sr in context.TBL_STAFF_ROLE on st.STAFFROLEID equals sr.STAFFROLEID
-                        where st.STAFFID == staffId
-                        select new LookupViewModel
-                        {
-                            lookupId = (short)sr.STAFFROLEID,
-                            lookupName = sr.STAFFROLENAME
-                        }).FirstOrDefault();
-            return dash;
-        }
-        #endregion
+      
 
 
         #region Users
@@ -772,6 +759,22 @@ namespace FintrakBanking.Repositories.Admin
             }
 
             return context.SaveChanges() > 0;
+        }
+
+        public bool IsSuperAdmin(int staffId)
+        {
+            var userId = (from a in context.TBL_PROFILE_USER                               
+                               where a.STAFFID == staffId
+                               select a.USERID).FirstOrDefault();
+
+            var userActivities = GetUserActivitiesByUser(userId);
+
+            var superAdmin = userActivities.Where(x => x.ToLower() == "super admin".ToLower()).FirstOrDefault();
+
+            if (superAdmin != null)
+                return true;
+            else
+                return false;            
         }
 
         public List<string> GetUserActivitiesByUser(int userId)

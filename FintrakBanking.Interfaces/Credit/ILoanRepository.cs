@@ -18,7 +18,10 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
-        decimal getDailyInterest(int principal, double interestRate, int interestDaysPeriod);
+        IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
+        decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod);
+
+        CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
 
         decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod);
 
@@ -35,6 +38,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial();
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
+
+        LoanViewModel GetGroupLoanByLoanId(int loanId);
 
         IQueryable<LoanRepaymentScheduleViewModel> RunningLoans(int customerId, int companyId);
 
@@ -157,7 +162,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
-
+        IEnumerable<LoanViewModel> GetApprovedCommercialLoanReview();
+        IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
 
     }
 }

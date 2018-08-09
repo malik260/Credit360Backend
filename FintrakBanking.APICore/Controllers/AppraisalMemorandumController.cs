@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -117,10 +118,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                int response = repo.ForwardAppraisalMemorandum(entity);
-
-                if (response == 0)
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "There was an error creating this record" });
+                WorkflowResponse response = repo.ForwardAppraisalMemorandum(entity);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application has been acted on successfully" });
             }
@@ -170,7 +168,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetApprovedLoanDetail(loanApplicationId);
+                LoanApplicationDetailsViewModel data = repo.GetLoanApplicationDetail(loanApplicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)
@@ -471,6 +469,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("recommended-collateral-history/{applicationId}")]
+        public HttpResponseMessage GetRecommendedCollateralHistory(int applicationId)
+        {
+            try
+            {
+                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralHistory(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("recommended-collateral")]
@@ -479,6 +492,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 entity.userBranchId = (short)token.GetBranchId;
+                entity.createdBy = (short)token.GetStaffId;
                 List<RecommendedCollateralViewModel> response = repo.AddRecommendedCollateral(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
@@ -496,6 +510,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 entity.userBranchId = (short)token.GetBranchId;
+                entity.createdBy = (short)token.GetStaffId;
                 List<RecommendedCollateralViewModel> response = repo.UpdateRecommendedCollateral(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
@@ -565,6 +580,21 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralLms(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("lms-recommended-collateral-history/{applicationId}")]
+        public HttpResponseMessage GetRecommendedCollateralHistoryLms(int applicationId)
+        {
+            try
+            {
+                List<RecommendedCollateralViewModel> response = repo.GetRecommendedCollateralHistoryLms(applicationId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)

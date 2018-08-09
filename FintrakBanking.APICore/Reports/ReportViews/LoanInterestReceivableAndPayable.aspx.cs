@@ -1,7 +1,9 @@
-﻿using FintrakBanking.ReportObjects;
+﻿using FintrakBanking.Common.Extensions;
+using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -15,29 +17,62 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
+                try
+                {
+                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    int productClassId = Int32.Parse(Request.QueryString["productClassId"]);
+                    string searchParamemter = Request.QueryString["searchParamemter"];
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
-                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
-                int companyId = Int32.Parse(Request.QueryString["companyId"]);
-                int productClassId = Int32.Parse(Request.QueryString["productClassId"]);
-                string searchParamemter = Request.QueryString["searchParamemter"];
+                    HashHelper hash = new HashHelper();
 
-                LoanReportObjects sla = new LoanReportObjects();
-                var data = sla.GetLoansInterestReceivable(startDate, endDate,companyId, searchParamemter,productClassId);
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                this.ReportViewer.LocalReport.DataSources.Clear();
-                ReportDataSource reportDataSource = new ReportDataSource();
-                reportDataSource.Value = data;
-                reportDataSource.Name = "CommercialLoan";
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
-                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanInterestReceivableAndPayable.rdlc");
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
 
-                ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+                    var currentDate = DateTime.Now;
 
-                ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
-                ReportViewer.LocalReport.Refresh();
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+                    LoanReportObjects sla = new LoanReportObjects();
+                    var data = sla.GetLoansInterestReceivable(startDate, endDate, companyId, searchParamemter, productClassId);
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "CommercialLoan";
+
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanInterestReceivableAndPayable.rdlc");
+
+                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+
+                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+                    ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
             }
         }
     }

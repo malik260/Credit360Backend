@@ -79,6 +79,23 @@ namespace FintrakBanking.ViewModels.Credit
         public string schedule { get; set; }
     }
 
+    public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL
+    {
+        public List<DedupeApplicationViewModel> duplications { get; set; }
+        public List<ApprovedLoanDetailViewModel> facilities { get; set; }
+    }
+
+    public class DedupeApplicationViewModel
+    {
+        public string applicationReferenceNumber { get; set; }
+        public DateTime applicationDate { get; set; }
+        public decimal applicationAmount { get; set; }
+        public double interestRate { get; set; }
+        public int applicationTenor { get; set; }
+        public string branchName { get; set; }
+        public string productName { get; set; }
+    }
+
     public class PrivilegeViewModel : GeneralEntity
     {
         public bool viewCamDocument { get; set; }
@@ -261,6 +278,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal stampedToCoverAmount { get; set; }
         public int applicationDetailId { get; set; }
         public string productCustomerName { get; set; }
+        public string staffName { get; set; }
         public int applicationId { get; set; }
     }
 
