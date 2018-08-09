@@ -17,50 +17,58 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
+                try
+                {
 
-               int operationId = Int32.Parse( Request.QueryString["operationId"]);
-               int targetId = Int32.Parse(Request.QueryString["loanApplicationId"]);
-               int companyId = Int32.Parse(Request.QueryString["companyId"]);
-              int  staffId = Int32.Parse(Request.QueryString["staffId"]);
-                string inputDateInfo = Request.QueryString["key1"];
-                string inputHashValue = Request.QueryString["key2"];
+                    int operationId = Int32.Parse(Request.QueryString["operationId"]);
+                    int targetId = Int32.Parse(Request.QueryString["loanApplicationId"]);
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    int staffId = Int32.Parse(Request.QueryString["staffId"]);
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
-                HashHelper hash = new HashHelper();
+                    HashHelper hash = new HashHelper();
 
-                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
-                if (inputHashValue != incomingDateHash)
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    WorkFlowDesign workFlow = new WorkFlowDesign();
+                    var data = workFlow.TrackWorkFlow(operationId, companyId, targetId, staffId);
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "WorkFlowSLA";
+
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ApprovalTrailWithSLA.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
                 {
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                     this.ReportViewer.LocalReport.Refresh();
                     return;
                 }
-
-                var currentDate = DateTime.Now;
-
-                var dateDifference = currentDate - incomingDate;
-
-                if (dateDifference.Seconds > 10)
-                {
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    this.ReportViewer.LocalReport.Refresh();
-                    return;
-                }
-
-                WorkFlowDesign workFlow = new WorkFlowDesign();
-             var data =   workFlow.TrackWorkFlow(operationId, companyId, targetId, staffId);
-
-                this.ReportViewer.LocalReport.DataSources.Clear();
-                ReportDataSource reportDataSource = new ReportDataSource();
-                reportDataSource.Value = data;
-                reportDataSource.Name = "WorkFlowSLA";
-
-                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ApprovalTrailWithSLA.rdlc");
-                this.ReportViewer.LocalReport.Refresh();
-
             }
         }
     }

@@ -20,66 +20,74 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                int? branchId = 0;
-                int? PostedByStaffId = 0;
-                string imagePath = new Uri(Server.MapPath("~/Content/icons/firstbank-logo.jpg")).AbsoluteUri;
-                DateTime StartDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                DateTime EndDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);               
-                int glAccountId = int.Parse(Request.QueryString["glAccountId"]);
-                int companyId = int.Parse(Request.QueryString["companyId"]);
-                string inputDateInfo = Request.QueryString["key1"];
-                string inputHashValue = Request.QueryString["key2"];
-
-                HashHelper hash = new HashHelper();
-
-                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
-
-                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
-
-                if (inputHashValue != incomingDateHash)
+                try
                 {
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    this.ReportViewer.LocalReport.Refresh();
-                    return;
-                }
+                    int? branchId = 0;
+                    int? PostedByStaffId = 0;
+                    string imagePath = new Uri(Server.MapPath("~/Content/icons/firstbank-logo.jpg")).AbsoluteUri;
+                    DateTime StartDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime EndDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    int glAccountId = int.Parse(Request.QueryString["glAccountId"]);
+                    int companyId = int.Parse(Request.QueryString["companyId"]);
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
-                var currentDate = DateTime.Now;
+                    HashHelper hash = new HashHelper();
 
-                var dateDifference = currentDate - incomingDate;
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                if (dateDifference.Seconds > 10)
-                {
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    this.ReportViewer.LocalReport.Refresh();
-                    return;
-                }
-                var staffId = Request.QueryString["PostedByStaffId"];
-                    if (staffId!=null && staffId != "")
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+                    var staffId = Request.QueryString["PostedByStaffId"];
+                    if (staffId != null && staffId != "")
                         PostedByStaffId = int.Parse(Request.QueryString["PostedByStaffId"]);
-                string branch = Request.QueryString["branchId"];
-                if (branch != null && branch != "")
-                    branchId = Int32.Parse(Request.QueryString["branchId"]);
+                    string branch = Request.QueryString["branchId"];
+                    if (branch != null && branch != "")
+                        branchId = Int32.Parse(Request.QueryString["branchId"]);
 
-                FinanceRepotObject sla = new FinanceRepotObject();
-                var data = sla.FinanceTransaction(StartDate, EndDate, companyId,branchId,glAccountId,PostedByStaffId);
+                    FinanceRepotObject sla = new FinanceRepotObject();
+                    var data = sla.FinanceTransaction(StartDate, EndDate, companyId, branchId, glAccountId, PostedByStaffId);
 
-                this.ReportViewer.LocalReport.DataSources.Clear();
-                ReportDataSource reportDataSource = new ReportDataSource();
-                reportDataSource.Value = data;
-                reportDataSource.Name = "FinanceTransactions";
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "FinanceTransactions";
 
-                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/FinanceTransactions.rdlc");
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/FinanceTransactions.rdlc");
 
 
-                ReportParameter sDate = new ReportParameter("StartDate", StartDate.ToString());
-                ReportParameter eDate = new ReportParameter("EndDate", EndDate.ToString());
-                ReportParameter logoPath = new ReportParameter("logo", imagePath);
+                    ReportParameter sDate = new ReportParameter("StartDate", StartDate.ToString());
+                    ReportParameter eDate = new ReportParameter("EndDate", EndDate.ToString());
+                    ReportParameter logoPath = new ReportParameter("logo", imagePath);
 
-                this.ReportViewer.LocalReport.EnableExternalImages = true;
-                ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate, logoPath });
-                ReportViewer.LocalReport.Refresh();
-
+                    this.ReportViewer.LocalReport.EnableExternalImages = true;
+                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate, logoPath });
+                    ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
             }
         }
     }

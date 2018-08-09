@@ -2068,7 +2068,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (repo.ValidateCustomerCode(entity.customerCode))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = $"Customer With {entity.customerCode} already exist" });
+                       new { success = false, message = $"Customer with customer code {entity.customerCode} already exist" });
                 }
                 if (repo.ValidateModifiedCustomerRecord(entity.customerId))
                 {

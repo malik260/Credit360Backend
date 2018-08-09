@@ -19,54 +19,62 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-               
-                DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
-                string searchParamemter = Request.QueryString["searchParamemter"];
-                int companyId = Int32.Parse(Request.QueryString["companyId"]);
-                string inputDateInfo = Request.QueryString["key1"];
-                string inputHashValue = Request.QueryString["key2"];
+                try
+                {
+                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    string searchParamemter = Request.QueryString["searchParamemter"];
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
-                HashHelper hash = new HashHelper();
+                    HashHelper hash = new HashHelper();
 
-                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
-                if (inputHashValue != incomingDateHash)
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+
+                    FinanceRepotObject accru = new FinanceRepotObject();
+                    var data = accru.DailyAccrual(endDate, startDate, companyId, searchParamemter);
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "accrual";
+
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/DailyAccrualReport.rdlc");
+
+                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+                    //   ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+                    ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
                 {
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                     this.ReportViewer.LocalReport.Refresh();
                     return;
                 }
-
-                var currentDate = DateTime.Now;
-
-                var dateDifference = currentDate - incomingDate;
-
-                if (dateDifference.Seconds > 10)
-                {
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    this.ReportViewer.LocalReport.Refresh();
-                    return;
-                }
-
-
-                FinanceRepotObject accru = new FinanceRepotObject();
-                var data = accru.DailyAccrual(endDate, startDate, companyId, searchParamemter);
-
-                this.ReportViewer.LocalReport.DataSources.Clear();
-                ReportDataSource reportDataSource = new ReportDataSource();
-                reportDataSource.Value = data;
-                reportDataSource.Name = "accrual";
-
-                this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/DailyAccrualReport.rdlc");
-
-                ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
-             //   ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
-                ReportViewer.LocalReport.Refresh();
             }
         }
     }

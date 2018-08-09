@@ -189,7 +189,291 @@ namespace FintrakBanking.APICore.Controllers
 
 
         #region DOCUMENT TEMPLATE SETUP
-        // TODO
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-template-setup")]
+        public HttpResponseMessage GetAllDocumentTemplateSetup()
+
+        {
+            try
+            {
+                var data = repo.GetAllDocumentTemplateSetup();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-template-section-setup")]
+        public HttpResponseMessage GetAllDocumentTemplateSectionSetup(int templateId)
+
+        {
+            try
+            {
+                var data = repo.GetAllDocumentTemplateSectionSetup(templateId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("document-template-section-role-setup")]
+        public HttpResponseMessage GetAllDocumentTemplateSectionRoleSetup(int templatesectionId)
+
+        {
+            try
+            {
+                var data = repo.GetAllDocumentTemplateSectionRoleSetup(templatesectionId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("document-template")]
+        public HttpResponseMessage AddDocumentTemplate([FromBody] DocumentTemplateViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.AddDocumentTemplate(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("document-template/{documentTemplateId}")]
+        public HttpResponseMessage UpdateDocumentTemplate([FromBody] DocumentTemplateViewModel entity, int documentTemplateId)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.UpdateDocumentTemplate(entity, documentTemplateId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("document-template/")]
+        public HttpResponseMessage DeleteDocumentTemplate(int documentTemplateId)
+        {
+            try
+            {
+
+                var data = repo.DeleteDocumentTemplate(documentTemplateId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The record has been deleted successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+
+
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("document-template-section")]
+        public HttpResponseMessage AddDocumentTemplateSection([FromBody] DocumentTemplateSectionViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.AddDocumentTemplateSection(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("document-template-section/{documentTemplateSectionId}")]
+        public HttpResponseMessage UpdateDocumentTemplateSection([FromBody] DocumentTemplateSectionViewModel entity, int documentTemplateSectionId)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.UpdateDocumentTemplateSection(entity, documentTemplateSectionId);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("document-template-section/")]
+        public HttpResponseMessage DeleteDocumentTemplateSection(int documentTemplateSectionId)
+        {
+            try
+            {
+                var userBranchId = (short)token.GetBranchId;
+                var companyId = token.GetCompanyId;
+                var lastUpdatedBy = token.GetStaffId;
+                var applicationUrl = HttpContext.Current.Request.Path;
+                var userIPAddress = Request.RequestUri.Host;
+                var data = repo.DeleteDocumentTemplateSection(documentTemplateSectionId, userBranchId, companyId, lastUpdatedBy, applicationUrl, userIPAddress);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The record has been deleted successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("document-template-section-role")]
+        public HttpResponseMessage AddDocumentTemplateSectionRole([FromBody] DocumentTemplateSectionRoleViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.AddDocumentTemplateSectionRole(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("document-template-section-role/{sectionRoleId}")]
+        public HttpResponseMessage UpdateDocumentTemplateSectionRole([FromBody] DocumentTemplateSectionRoleViewModel entity, int sectionRoleId)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+
+                entity.sectionRoleId = sectionRoleId;
+                var data = repo.UpdateDocumentTemplateSectionRole(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("document-template-section-role/")]
+        public HttpResponseMessage DeleteDocumentTemplateSectionRole(int sectionRoleId)
+        {
+            try
+            {
+                var userBranchId = (short)token.GetBranchId;
+                var companyId = token.GetCompanyId;
+                var lastUpdatedBy = token.GetStaffId;
+                var applicationUrl = HttpContext.Current.Request.Path;
+                var userIPAddress = Request.RequestUri.Host;
+                var data = repo.DeleteDocumentTemplateSectionRole(sectionRoleId, userBranchId, companyId, lastUpdatedBy, applicationUrl, userIPAddress);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "The record has been deleted successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
+            }
+        }
         #endregion DOCUMENT TEMPLATE SETUP
 
 

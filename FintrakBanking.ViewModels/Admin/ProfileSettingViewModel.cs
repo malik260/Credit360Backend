@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Admin
 {
-    public class ProfileSettingViewModel
+    public class ProfileSettingViewModel: GeneralEntity
     {
         public int profileSettingId { get; set; }
 

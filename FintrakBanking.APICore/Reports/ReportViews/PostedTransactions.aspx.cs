@@ -15,51 +15,63 @@ namespace FintrakBanking.APICore.Reports.ReportViews
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-            DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
-            int companyId = Int32.Parse(Request.QueryString["companyId"]);
-            int PostedByStaffId = Int32.Parse(Request.QueryString["PostedByStaffId"]);
-            int glAccountId = Int32.Parse(Request.QueryString["glAccountId"]);
-            int branchId = Int32.Parse(Request.QueryString["branchId"]);
-            string inputDateInfo = Request.QueryString["key1"];
-            string inputHashValue = Request.QueryString["key2"];
-
-            HashHelper hash = new HashHelper();
-
-            DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
-
-            var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
-
-            if (inputHashValue != incomingDateHash)
+            if (!IsPostBack)
             {
-                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                this.ReportViewer.LocalReport.Refresh();
-                return;
+                try
+                {
+                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    int PostedByStaffId = Int32.Parse(Request.QueryString["PostedByStaffId"]);
+                    int glAccountId = Int32.Parse(Request.QueryString["glAccountId"]);
+                    int branchId = Int32.Parse(Request.QueryString["branchId"]);
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
+
+                    HashHelper hash = new HashHelper();
+
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+                    FinanceRepotObject tran = new FinanceRepotObject();
+                    var data = tran.FinanceTransaction(startDate, endDate, companyId, branchId, glAccountId, PostedByStaffId);
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "FacilityApp";
+
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/FinanceTransactions.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+
+                    ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
+                {
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
+                }
             }
-
-            var currentDate = DateTime.Now;
-
-            var dateDifference = currentDate - incomingDate;
-
-            if (dateDifference.Seconds > 10)
-            {
-                this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                this.ReportViewer.LocalReport.Refresh();
-                return;
-            }
-            FinanceRepotObject tran = new FinanceRepotObject();
-            var data = tran.FinanceTransaction(startDate, endDate, companyId,branchId,glAccountId,PostedByStaffId);
-
-            this.ReportViewer.LocalReport.DataSources.Clear();
-            ReportDataSource reportDataSource = new ReportDataSource();
-            reportDataSource.Value = data;
-            reportDataSource.Name = "FacilityApp";
-
-            this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-            this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/FinanceTransactions.rdlc");
-            this.ReportViewer.LocalReport.Refresh();
-
-            ReportViewer.LocalReport.Refresh();
         }
     }
 }

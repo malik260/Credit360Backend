@@ -194,16 +194,18 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public IEnumerable<LookupViewModel> GetAllOperations()
         {
-            return (from data in context.TBL_OPERATIONS                    
-                    select new LookupViewModel()
-                    {
-                        lookupId = (short)data.OPERATIONID,
-                        lookupName = data.OPERATIONNAME,
-                        lookupTypeId = data.OPERATIONTYPEID,
-                        lookupTypeName = data.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
-                    });
-        }
+            var data = (from a in context.TBL_OPERATIONS
+                        select new LookupViewModel()
+                        {
+                            lookupId = (short)a.OPERATIONID,
+                            lookupName = a.OPERATIONNAME,
+                            lookupTypeId = a.OPERATIONTYPEID,
+                            lookupTypeName = a.TBL_OPERATIONS_TYPE.OPERATIONTYPENAME
+                        }).ToList();
 
+            return data;
+        }
+      
         public IEnumerable<LookupViewModel> GetOperations(short operationTypeId)
         {
             return (from data in context.TBL_OPERATIONS
