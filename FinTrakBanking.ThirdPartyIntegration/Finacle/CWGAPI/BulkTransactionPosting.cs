@@ -88,15 +88,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-
-
                 addStaging.SYSTEMDATETIME = item.date;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
                
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
@@ -146,15 +142,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-
-
                 addStaging.SYSTEMDATETIME = item.date;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
@@ -204,15 +196,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-
-
                 addStaging.SYSTEMDATETIME = item.date;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
@@ -262,15 +250,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-
-
                 addStaging.SYSTEMDATETIME = item.date;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
@@ -320,15 +304,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-
-
                 addStaging.SYSTEMDATETIME = item.date;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
@@ -378,15 +358,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-
-
                 addStaging.SYSTEMDATETIME = item.date;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
@@ -436,8 +412,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-
-
                 addStaging.SYSTEMDATETIME = item.date;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
@@ -495,9 +469,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                 addStagingInterest.LOANID = item.loanId;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
-                //context.SaveChanges();
-
-                //WriteBulkPostingToStaging(applicationDate, "BL");
                 var addStagingPrincipal = new TBL_CUSTOM_TRANSACTION_BULK();
 
                 count++;
@@ -536,19 +507,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BL", batchCode);
-
         }
 
         private bool WriteBulkPostingToStagingSub(FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, DateTime applicationDate, string TransactionType, string batchCode)
         {
             bool output = false;
-            //using (var trans = context.Database.BeginTransaction())
-            //{
-            //    try
-            //    {
             var data = (from a in context.TBL_CUSTOM_TRANSACTION_BULK
                         where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
                         select new FinanceTransactionStagingViewModel()
@@ -568,10 +532,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                             bankId = a.BANKID,
                             branchId = (short)a.DESTINATIONBRANCHID,
                             sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
-
-                            //sid = a.SID,
-
-
                         }).ToList();
 
             List<FINTRAK_TRAN_PROC_DETAILS> staging = new List<FINTRAK_TRAN_PROC_DETAILS>();
@@ -602,7 +562,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.PSTD_DATE = applicationDate;
                 addStaging.DEL_FLG = "N";
                 addStaging.FAIL_FLG = "N";
-
                 staging.Add(addStaging);
 
             }
@@ -652,10 +611,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addMain.PSTD_DATE = applicationDate;
                 addMain.PSTD_FLG = "N";
                 addMain.DEL_FLG = "N";
-
-                //addMain.SID = 1;
-
-
                 main.Add(addMain);
 
             }
@@ -665,18 +620,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             var result = stagingContext.SaveChanges() > 0;
             if (result)
             {
-                //trans.Commit();
                 output = true;
-            }
-            //output = false;
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        trans.Rollback();
-            //        output = false;
-
-            //    }
-            //} 
+            } 
             return output;
         }
 
@@ -726,9 +671,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                 addStagingInterest.LOANID = item.loanId;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
-                //context.SaveChanges();
-
-                //WriteBulkPostingToStaging(applicationDate, "BL");
                 var addStagingPrincipal = new TBL_CUSTOM_TRANSACTION_BULK();
 
                 count++;
@@ -767,8 +709,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
@@ -830,8 +770,6 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-
-
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
