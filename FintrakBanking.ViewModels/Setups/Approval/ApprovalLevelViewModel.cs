@@ -63,6 +63,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public string canRecieveEmailValue { get; set; }
         public string groupName { get; set; }
         public string isPoliticallyExposedValue { get; set; }
+        public string operation { get; set; }
     }
 
     public class PresetRouteViewModel : GeneralEntity

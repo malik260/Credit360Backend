@@ -20,5 +20,6 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public short approvalStatusId { get; set; }
         public string comment { get; set; }
         public string systemOperationType { get; set; }
+        public string operation { get; set; }
     }
 }
