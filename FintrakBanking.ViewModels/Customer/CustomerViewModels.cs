@@ -81,6 +81,8 @@ namespace FintrakBanking.ViewModels.Customer
         public string customerBVN { get; set; }
         public short? riskRatingId { get; set; }
         public string riskRatingName { get; set; }
+        public string prospectCustomerCode { get; set; }
+        public bool isProspect { get; set; }
         public List<CustomerAddressViewModels> CustomerAddresses { get; set; }
         //public List<CustomerBvnViewModels> CustomerBvn { get; set; }
         public List<CustomerCompanyInfomationViewModels> CustomerCompanyInfomation { get; set; }

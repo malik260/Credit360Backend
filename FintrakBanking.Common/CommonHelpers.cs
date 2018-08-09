@@ -448,5 +448,40 @@ namespace FintrakBanking.Common
             }
             return newText.ToString();
         }
+
+        public static int GenerateRandomInteger(int min = 0, int max = 2147483647)
+        {
+            var randomNumberBuffer = new byte[10];
+            new RNGCryptoServiceProvider().GetBytes(randomNumberBuffer);
+            return new Random(BitConverter.ToInt32(randomNumberBuffer, 0)).Next(min, max);
+        }
+
+        public static string GenerateUniqueIntergers(int length = 10)
+        {
+            //var today = DateTime.UtcNow;
+            //string prefix = today.Year.ToString();
+
+            var chars = new char[62];
+
+            int concatresult = GenerateRandomInteger();
+
+            chars = concatresult.ToString().ToArray();
+            var size = length;
+
+            var data = new byte[1];
+
+            var crypto = new RNGCryptoServiceProvider();
+            data = new byte[size];
+            crypto.GetNonZeroBytes(data);
+            var result = new StringBuilder(size);
+
+            foreach (var bt in data)
+            {
+                result.Append(chars[bt % (chars.Length - 1)]);
+            }
+
+            return result.ToString();
+
+        }
     }
 }
