@@ -1924,9 +1924,9 @@ namespace FintrakBanking.Repositories.Customer
                            maritalStatus = a.MARITALSTATUS.Value,
                            title = a.TITLE,
                            middleName = a.MIDDLENAME,
-                        //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                        // customerTypeName =  context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
-                        misCode = a.MISCODE,
+                           //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                           // customerTypeName =  context.TBL_CUSTOMER_TYPE.FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
+                           misCode = a.MISCODE,
                            misStaff = a.MISSTAFF,
                            nationality = a.NATIONALITY,
                            occupation = a.OCCUPATION,
@@ -1941,185 +1941,185 @@ namespace FintrakBanking.Repositories.Customer
                            subSectorName = a.TBL_SUB_SECTOR.NAME,
                            taxNumber = a.TAXNUMBER,
                            riskRatingId = a.RISKRATINGID,
-                        //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
-                        customerBVN = a.CUSTOMERBVN,
-                        //CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
-                        //{
-                        //    address = x.ADDRESS,
-                        //    addressTypeId = x.ADDRESSTYPEID,
-                        //    cityId = x.CITYID,
-                        //    customerId = x.CUSTOMERID,
-                        //    homeTown = x.HOMETOWN,
-                        //    nearestLandmark = x.NEARESTLANDMARK,
-                        //    electricMeterNumber = x.ELECTRICMETERNUMBER,
-                        //    pobox = x.POBOX,
-                        //    stateId = x.STATEID,
-                        //    addressId = x.ADDRESSID
-                        //}).ToList(),
-                        //CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
-                        //{
-                        //    active = c.ACTIVE,
-                        //    customerId = c.CUSTOMERID,
-                        //    phone = c.PHONE,
-                        //    phoneContactId = c.PHONECONTACTID,
-                        //    phoneNumber = c.PHONENUMBER
-                        //}).ToList(),
-                        //CustomerCompanyInfomation = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(d => d.CUSTOMERID == a.CUSTOMERID).Select(d => new CustomerCompanyInfomationViewModels()
-                        //{
-                        //    annualTurnOver = d.ANNUALTURNOVER,
-                        //    companyEmail = d.COMPANYEMAIL,
-                        //    companyId = d.CUSTOMERID,
-                        //    companyName = d.COMPANYNAME,
-                        //    companyWebsite = d.COMPANYWEBSITE,
-                        //    companyInfomationId = d.COMPANYINFOMATIONID,
-                        //    corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
-                        //    createdBy = a.CREATEDBY,
-                        //    registeredOffice = d.REGISTEREDOFFICE,
-                        //    registrationNumber = d.REGISTRATIONNUMBER,
-                        //    paidUpCapital = d.PAIDUPCAPITAL,
-                        //    authorizedCapital = d.AUTHORISEDCAPITAL,
-                        //    shareholderFund = d.SHAREHOLDER_FUND
-                        //}).ToList(),
-                        //CustomerEmploymentHistory = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(s => s.CUSTOMERID == a.CUSTOMERID).Select(s => new CustomerEmploymentHistoryViewModels()
-                        //{
-                        //    active = s.ACTIVE,
-                        //    previousEmployer = s.PREVIOUSEMPLOYER,
-                        //    customerId = s.CUSTOMERID,
-                        //    employDate = s.EMPLOYDATE,
-                        //    placeOfWorkId = s.PLACEOFWORKID,
-                        //    employerAddress = s.EMPLOYERADDRESS,
-                        //    employerCountryId = s.EMPLOYERCOUNTRYID,
-                        //    employerName = s.EMPLOYERNAME,
-                        //    officePhone = s.OFFICEPHONE,
-                        //    employerStateId = s.EMPLOYERSTATEID
-                        //}).ToList(),
-                        //CustomerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
-                        //.Select(s => new CustomerCompanyDirectorsViewModels()
-                        //{
-                        //    companyDirectorId = s.COMPANYDIRECTORID,
-                        //    surname = s.SURNAME,
-                        //    firstname = s.FIRSTNAME,
-                        //    middlename = s.MIDDLENAME,
-                        //    customerNIN = s.CUSTOMERNIN,
-                        //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
-                        //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
-                        //    bankVerificationNumber = s.CUSTOMERBVN,
-                        //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                        //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                        //    customerId = s.CUSTOMERID,
-                        //    customerName = s.FIRSTNAME + " " + s.SURNAME,
-                        //    address = s.ADDRESS,
-                        //    phoneNumber = s.PHONENUMBER,
-                        //    email = s.EMAILADDRESS
-                        //}).ToList(),
-                        //CustomerCompanyShareholder = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder)
-                        //.Select(s => new CustomerCompanyShareholderViewModels()
-                        //{
-                        //    companyDirectorId = s.COMPANYDIRECTORID,
-                        //    surname = s.SURNAME,
-                        //    firstname = s.FIRSTNAME,
-                        //    middlename = s.MIDDLENAME,
-                        //    customerNIN = s.CUSTOMERNIN,
-                        //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
-                        //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
-                        //    bankVerificationNumber = s.CUSTOMERBVN,
-                        //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                        //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                        //    customerId = s.CUSTOMERID,
-                        //    customerName = s.FIRSTNAME + " " + s.SURNAME,
-                        //    address = s.ADDRESS,
-                        //    phoneNumber = s.PHONENUMBER,
-                        //    email = s.EMAILADDRESS
-                        //}).ToList(),
-                        //CustomerCompanyAccountSignatory = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory)
-                        //.Select(s => new CustomerCompanyAccountSignatoryViewModels()
-                        //{
-                        //    companyDirectorId = s.COMPANYDIRECTORID,
-                        //    surname = s.SURNAME,
-                        //    firstname = s.FIRSTNAME,
-                        //    middlename = s.MIDDLENAME,
-                        //    customerNIN = s.CUSTOMERNIN,
-                        //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
-                        //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
-                        //    bankVerificationNumber = s.CUSTOMERBVN,
-                        //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
-                        //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
-                        //    customerId = s.CUSTOMERID,
-                        //    customerName = s.FIRSTNAME + " " + s.SURNAME,
-                        //    address = s.ADDRESS,
-                        //    phoneNumber = s.PHONENUMBER,
-                        //    email = s.EMAILADDRESS
-                        //}).ToList(),
-                        //CustomerClientOrSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
-                        //.Select(cs => new CustomerClientOrSupplierViewModels()
-                        //{
-                        //    client_SupplierId = cs.CLIENT_SUPPLIERID,
-                        //    clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
-                        //    firstName = cs.FIRSTNAME,
-                        //    middleName = cs.MIDDLENAME,
-                        //    lastName = cs.LASTNAME,
-                        //    taxNumber = cs.TAX_NUMBER,
-                        //    rcNumber = cs.REGISTRATION_NUMBER,
-                        //    hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
-                        //    bankName = cs.BANKNAME,
-                        //    casaAccountNumber = cs.CASA_ACCOUNTNO,
-                        //    natureOfBusiness = cs.NATURE_OF_BUSINESS,
-                        //    contactPerson = cs.CONTACT_PERSON,
-                        //    client_SupplierAddress = cs.ADDRESS,
-                        //    client_SupplierPhoneNumber = cs.PHONENUMBER,
-                        //    client_SupplierEmail = cs.EMAILADDRESS,
-                        //    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                        //    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
-                        //}).ToList(),
-                        //CustomerSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
-                        //.Select(cs => new CustomerSupplierViewModels()
-                        //{
-                        //    client_SupplierId = cs.CLIENT_SUPPLIERID,
-                        //    clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
-                        //    firstName = cs.FIRSTNAME,
-                        //    middleName = cs.MIDDLENAME,
-                        //    lastName = cs.LASTNAME,
-                        //    taxNumber = cs.TAX_NUMBER,
-                        //    rcNumber = cs.REGISTRATION_NUMBER,
-                        //    hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
-                        //    bankName = cs.BANKNAME,
-                        //    casaAccountNumber = cs.CASA_ACCOUNTNO,
-                        //    contactPerson = cs.CONTACT_PERSON,
-                        //    natureOfBusiness = cs.NATURE_OF_BUSINESS,
-                        //    client_SupplierAddress = cs.ADDRESS,
-                        //    client_SupplierPhoneNumber = cs.PHONENUMBER,
-                        //    client_SupplierEmail = cs.EMAILADDRESS,
-                        //    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
-                        //    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
-                        //}).ToList(),
-                        //CustomerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID)
-                        //.Select(x => new CollateralViewModel()
-                        //{
-                        //    collateralId = x.COLLATERALCUSTOMERID,
-                        //    collateralTypeId = x.COLLATERALTYPEID,
-                        //    collateralSubTypeId = x.COLLATERALSUBTYPEID,
-                        //    customerId = x.CUSTOMERID,
-                        //    currencyId = x.CURRENCYID,
-                        //    currency = x.TBL_CURRENCY.CURRENCYNAME,
-                        //    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
-                        //    collateralCode = x.COLLATERALCODE,
-                        //    camRefNumber = x.CAMREFNUMBER,
-                        //    allowSharing = x.ALLOWSHARING,
-                        //    isLocationBased = (bool)x.ISLOCATIONBASED,
-                        //    valuationCycle = x.VALUATIONCYCLE,
-                        //    collateralValue = x.COLLATERALVALUE,
-                        //    haircut = x.HAIRCUT,
-                        //    approvalStatus = x.APPROVALSTATUS,
-                        //}).ToList(),
-                        //CustomerChildren = context.TBL_CUSTOMER_CHILDREN.Where(chd => chd.CUSTOMERID == a.CUSTOMERID)
-                        //.Select(kk => new CustomerChildrenViewModel()
-                        //{
-                        //    customerChildrenId = kk.CUSTOMERCHILDRENID,
-                        //    customerId = kk.CUSTOMERID,
-                        //    childName = kk.CHILDNAME,
-                        //    childDateOfBirth = kk.CHILDDATEOFBIRTH
-                        //}).ToList(),
-                    };
+                           //   riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+                           customerBVN = a.CUSTOMERBVN,
+                           //CustomerAddresses = context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == a.CUSTOMERID).Select(x => new CustomerAddressViewModels()
+                           //{
+                           //    address = x.ADDRESS,
+                           //    addressTypeId = x.ADDRESSTYPEID,
+                           //    cityId = x.CITYID,
+                           //    customerId = x.CUSTOMERID,
+                           //    homeTown = x.HOMETOWN,
+                           //    nearestLandmark = x.NEARESTLANDMARK,
+                           //    electricMeterNumber = x.ELECTRICMETERNUMBER,
+                           //    pobox = x.POBOX,
+                           //    stateId = x.STATEID,
+                           //    addressId = x.ADDRESSID
+                           //}).ToList(),
+                           //CustomerPhoneContact = context.TBL_CUSTOMER_PHONECONTACT.Where(c => c.CUSTOMERID == a.CUSTOMERID).Select(c => new CustomerPhoneContactViewModels
+                           //{
+                           //    active = c.ACTIVE,
+                           //    customerId = c.CUSTOMERID,
+                           //    phone = c.PHONE,
+                           //    phoneContactId = c.PHONECONTACTID,
+                           //    phoneNumber = c.PHONENUMBER
+                           //}).ToList(),
+                           //CustomerCompanyInfomation = context.TBL_CUSTOMER_COMPANYINFOMATION.Where(d => d.CUSTOMERID == a.CUSTOMERID).Select(d => new CustomerCompanyInfomationViewModels()
+                           //{
+                           //    annualTurnOver = d.ANNUALTURNOVER,
+                           //    companyEmail = d.COMPANYEMAIL,
+                           //    companyId = d.CUSTOMERID,
+                           //    companyName = d.COMPANYNAME,
+                           //    companyWebsite = d.COMPANYWEBSITE,
+                           //    companyInfomationId = d.COMPANYINFOMATIONID,
+                           //    corporateBusinessCategory = d.CORPORATEBUSINESSCATEGORY,
+                           //    createdBy = a.CREATEDBY,
+                           //    registeredOffice = d.REGISTEREDOFFICE,
+                           //    registrationNumber = d.REGISTRATIONNUMBER,
+                           //    paidUpCapital = d.PAIDUPCAPITAL,
+                           //    authorizedCapital = d.AUTHORISEDCAPITAL,
+                           //    shareholderFund = d.SHAREHOLDER_FUND
+                           //}).ToList(),
+                           //CustomerEmploymentHistory = context.TBL_CUSTOMER_EMPLOYMENTHISTORY.Where(s => s.CUSTOMERID == a.CUSTOMERID).Select(s => new CustomerEmploymentHistoryViewModels()
+                           //{
+                           //    active = s.ACTIVE,
+                           //    previousEmployer = s.PREVIOUSEMPLOYER,
+                           //    customerId = s.CUSTOMERID,
+                           //    employDate = s.EMPLOYDATE,
+                           //    placeOfWorkId = s.PLACEOFWORKID,
+                           //    employerAddress = s.EMPLOYERADDRESS,
+                           //    employerCountryId = s.EMPLOYERCOUNTRYID,
+                           //    employerName = s.EMPLOYERNAME,
+                           //    officePhone = s.OFFICEPHONE,
+                           //    employerStateId = s.EMPLOYERSTATEID
+                           //}).ToList(),
+                           //CustomerCompanyDirectors = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.BoardMember)
+                           //.Select(s => new CustomerCompanyDirectorsViewModels()
+                           //{
+                           //    companyDirectorId = s.COMPANYDIRECTORID,
+                           //    surname = s.SURNAME,
+                           //    firstname = s.FIRSTNAME,
+                           //    middlename = s.MIDDLENAME,
+                           //    customerNIN = s.CUSTOMERNIN,
+                           //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
+                           //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                           //    bankVerificationNumber = s.CUSTOMERBVN,
+                           //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                           //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                           //    customerId = s.CUSTOMERID,
+                           //    customerName = s.FIRSTNAME + " " + s.SURNAME,
+                           //    address = s.ADDRESS,
+                           //    phoneNumber = s.PHONENUMBER,
+                           //    email = s.EMAILADDRESS
+                           //}).ToList(),
+                           //CustomerCompanyShareholder = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Shareholder)
+                           //.Select(s => new CustomerCompanyShareholderViewModels()
+                           //{
+                           //    companyDirectorId = s.COMPANYDIRECTORID,
+                           //    surname = s.SURNAME,
+                           //    firstname = s.FIRSTNAME,
+                           //    middlename = s.MIDDLENAME,
+                           //    customerNIN = s.CUSTOMERNIN,
+                           //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
+                           //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                           //    bankVerificationNumber = s.CUSTOMERBVN,
+                           //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                           //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                           //    customerId = s.CUSTOMERID,
+                           //    customerName = s.FIRSTNAME + " " + s.SURNAME,
+                           //    address = s.ADDRESS,
+                           //    phoneNumber = s.PHONENUMBER,
+                           //    email = s.EMAILADDRESS
+                           //}).ToList(),
+                           //CustomerCompanyAccountSignatory = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(s => s.CUSTOMERID == a.CUSTOMERID && s.COMPANYDIRECTORTYPEID == (short)CompanyDirectorTypeEnum.Account_Signatory)
+                           //.Select(s => new CustomerCompanyAccountSignatoryViewModels()
+                           //{
+                           //    companyDirectorId = s.COMPANYDIRECTORID,
+                           //    surname = s.SURNAME,
+                           //    firstname = s.FIRSTNAME,
+                           //    middlename = s.MIDDLENAME,
+                           //    customerNIN = s.CUSTOMERNIN,
+                           //    numberOfShares = s.SHAREHOLDINGPERCENTAGE,
+                           //    isPoliticallyExposed = s.ISPOLITICALLYEXPOSED,
+                           //    bankVerificationNumber = s.CUSTOMERBVN,
+                           //    companyDirectorTypeId = s.COMPANYDIRECTORTYPEID,
+                           //    companyDirectorTypeName = s.TBL_CUSTOMER_COMPANY_DIREC_TYP.COMPANYDIRECTORYTYPENAME,
+                           //    customerId = s.CUSTOMERID,
+                           //    customerName = s.FIRSTNAME + " " + s.SURNAME,
+                           //    address = s.ADDRESS,
+                           //    phoneNumber = s.PHONENUMBER,
+                           //    email = s.EMAILADDRESS
+                           //}).ToList(),
+                           //CustomerClientOrSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Client)
+                           //.Select(cs => new CustomerClientOrSupplierViewModels()
+                           //{
+                           //    client_SupplierId = cs.CLIENT_SUPPLIERID,
+                           //    clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
+                           //    firstName = cs.FIRSTNAME,
+                           //    middleName = cs.MIDDLENAME,
+                           //    lastName = cs.LASTNAME,
+                           //    taxNumber = cs.TAX_NUMBER,
+                           //    rcNumber = cs.REGISTRATION_NUMBER,
+                           //    hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                           //    bankName = cs.BANKNAME,
+                           //    casaAccountNumber = cs.CASA_ACCOUNTNO,
+                           //    natureOfBusiness = cs.NATURE_OF_BUSINESS,
+                           //    contactPerson = cs.CONTACT_PERSON,
+                           //    client_SupplierAddress = cs.ADDRESS,
+                           //    client_SupplierPhoneNumber = cs.PHONENUMBER,
+                           //    client_SupplierEmail = cs.EMAILADDRESS,
+                           //    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                           //    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                           //}).ToList(),
+                           //CustomerSupplier = context.TBL_CUSTOMER_CLIENT_SUPPLIER.Where(cs => cs.CUSTOMERID == a.CUSTOMERID && cs.CLIENT_SUPPLIERTYPEID == (short)CompanyClientOrSupplierTypeEnum.Supplier)
+                           //.Select(cs => new CustomerSupplierViewModels()
+                           //{
+                           //    client_SupplierId = cs.CLIENT_SUPPLIERID,
+                           //    clientOrSupplierName = cs.FIRSTNAME + " " + cs.LASTNAME + " " + cs.MIDDLENAME,
+                           //    firstName = cs.FIRSTNAME,
+                           //    middleName = cs.MIDDLENAME,
+                           //    lastName = cs.LASTNAME,
+                           //    taxNumber = cs.TAX_NUMBER,
+                           //    rcNumber = cs.REGISTRATION_NUMBER,
+                           //    hasCASAAccount = (bool)cs.HAS_CASA_ACCOUNT,
+                           //    bankName = cs.BANKNAME,
+                           //    casaAccountNumber = cs.CASA_ACCOUNTNO,
+                           //    contactPerson = cs.CONTACT_PERSON,
+                           //    natureOfBusiness = cs.NATURE_OF_BUSINESS,
+                           //    client_SupplierAddress = cs.ADDRESS,
+                           //    client_SupplierPhoneNumber = cs.PHONENUMBER,
+                           //    client_SupplierEmail = cs.EMAILADDRESS,
+                           //    client_SupplierTypeId = cs.CLIENT_SUPPLIERTYPEID,
+                           //    client_SupplierTypeName = cs.TBL_CUSTOMER_CLIENT_SUPPLR_TYP.CLIENT_SUPPLIERTYPENAME
+                           //}).ToList(),
+                           //CustomerCollateral = context.TBL_COLLATERAL_CUSTOMER.Where(cc => cc.CUSTOMERID == a.CUSTOMERID)
+                           //.Select(x => new CollateralViewModel()
+                           //{
+                           //    collateralId = x.COLLATERALCUSTOMERID,
+                           //    collateralTypeId = x.COLLATERALTYPEID,
+                           //    collateralSubTypeId = x.COLLATERALSUBTYPEID,
+                           //    customerId = x.CUSTOMERID,
+                           //    currencyId = x.CURRENCYID,
+                           //    currency = x.TBL_CURRENCY.CURRENCYNAME,
+                           //    collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                           //    collateralCode = x.COLLATERALCODE,
+                           //    camRefNumber = x.CAMREFNUMBER,
+                           //    allowSharing = x.ALLOWSHARING,
+                           //    isLocationBased = (bool)x.ISLOCATIONBASED,
+                           //    valuationCycle = x.VALUATIONCYCLE,
+                           //    collateralValue = x.COLLATERALVALUE,
+                           //    haircut = x.HAIRCUT,
+                           //    approvalStatus = x.APPROVALSTATUS,
+                           //}).ToList(),
+                           //CustomerChildren = context.TBL_CUSTOMER_CHILDREN.Where(chd => chd.CUSTOMERID == a.CUSTOMERID)
+                           //.Select(kk => new CustomerChildrenViewModel()
+                           //{
+                           //    customerChildrenId = kk.CUSTOMERCHILDRENID,
+                           //    customerId = kk.CUSTOMERID,
+                           //    childName = kk.CHILDNAME,
+                           //    childDateOfBirth = kk.CHILDDATEOFBIRTH
+                           //}).ToList(),
+                       };
 
 
         }
@@ -2151,8 +2151,8 @@ namespace FintrakBanking.Repositories.Customer
                            maritalStatus = a.MARITALSTATUS.Value,
                            title = a.TITLE,
                            middleName = a.MIDDLENAME,
-                        //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
-                        customerTypeName = context.TBL_CUSTOMER_TYPE
+                           //customerAccountNo = context.TBL_CASA.FirstOrDefault(ca => ca.CUSTOMERID == a.CUSTOMERID).PRODUCTACCOUNTNUMBER,
+                           customerTypeName = context.TBL_CUSTOMER_TYPE
                                .FirstOrDefault(c => c.CUSTOMERTYPEID == a.CUSTOMERTYPEID).NAME,
                            misCode = a.MISCODE,
                            misStaff = a.MISSTAFF,
@@ -2280,6 +2280,7 @@ namespace FintrakBanking.Repositories.Customer
                 riskRatingId = a.RISKRATINGID,
                 // riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                 customerBVN = a.CUSTOMERBVN,
+                isProspect = a.ISPROSPECT
             });
         }
 
@@ -4552,6 +4553,135 @@ namespace FintrakBanking.Repositories.Customer
                 return true;
             }
             return false;
+        }
+        #endregion
+
+        #region Prospective Customer
+        public IEnumerable<CustomerViewModels> GetAllProspectiveCustomer()
+        {
+            var customers = (from x in GetCustomersLite()
+                             where x.isProspect == true
+                             select x);
+            var customerInfo = customers.ToList();
+
+            if (customerInfo.Count > 0)
+            {
+                return customerInfo;
+            }
+            return null;
+        }
+
+        public bool UpdatePropectToCustomer(int customerId, CustomerViewModels entity)
+        {
+            var customerMain = context.TBL_CUSTOMER.Find(customerId);
+            if (customerMain != null)
+            {
+                TBL_TEMP_CUSTOMER customer = new TBL_TEMP_CUSTOMER();
+                customer.CUSTOMERCODE = entity.customerCode;
+                customer.CUSTOMERTYPEID = entity.customerTypeId;
+                customer.FIRSTNAME = entity.firstName;
+                customer.MIDDLENAME = entity.middleName;
+                customer.LASTNAME = entity.lastName;
+
+                customer.CUSTOMERID = customerMain.CUSTOMERID;
+                customer.BRANCHID = customerMain.BRANCHID;
+                customer.COMPANYID = customerMain.COMPANYID;
+                customer.CUSTOMERSENSITIVITYLEVELID = customerMain.CUSTOMERSENSITIVITYLEVELID;
+                customer.DATEOFBIRTH = customerMain.DATEOFBIRTH;
+                customer.EMAILADDRESS = customerMain.EMAILADDRESS;
+                customer.GENDER = customerMain.GENDER;
+                customer.MAIDENNAME = customerMain.MAIDENNAME;
+                customer.MARITALSTATUS = customerMain.MARITALSTATUS;
+                customer.TITLE = customerMain.TITLE;
+                customer.MISCODE = customerMain.MISCODE;
+                customer.MISSTAFF = customerMain.MISSTAFF;
+                customer.NATIONALITY = customerMain.NATIONALITY;
+                customer.OCCUPATION = customerMain.OCCUPATION;
+                customer.PLACEOFBIRTH = customerMain.PLACEOFBIRTH;
+                customer.ISPOLITICALLYEXPOSED = customerMain.ISPOLITICALLYEXPOSED;
+                customer.ISINVESTMENTGRADE = customerMain.ISINVESTMENTGRADE;
+                customer.ISREALATEDPARTY = customerMain.ISREALATEDPARTY;
+                customer.RELATIONSHIPOFFICERID = customerMain.RELATIONSHIPOFFICERID;
+                customer.SPOUSE = customerMain.SPOUSE;
+                customer.SUBSECTORID = customerMain.SUBSECTORID;
+                customer.TAXNUMBER = customerMain.TAXNUMBER;
+                customer.RISKRATINGID = customerMain.RISKRATINGID;
+                customer.CUSTOMERBVN = customerMain.CUSTOMERBVN;
+                customer.CREATEDBY = customerMain.CREATEDBY;
+                customer.DATETIMECREATED = customerMain.DATETIMECREATED;
+                customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                customer.ISCURRENT = true;
+                context.TBL_TEMP_CUSTOMER.Add(customer);
+            }
+
+            var modified = new TBL_CUSTOMER_MODIFICATION
+            {
+                CUSTOMERID = entity.customerId,
+                TARGETID = entity.customerId,
+                MODIFICATIONTYPEID = (int)CustomerInformationTrackerEnum.General_Information,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now
+            };
+
+            
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerUpdated,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = "Updated TBL_CUSTOMER: " + entity.customerName + " with code: " + entity.customerCode +
+                         " on" + " (" + entity.customerId + ") ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    if (USE_THIRD_PARTY_INTEGRATION)
+                    {
+                        if (customerMain.ISPROSPECT == true)
+                        {
+                            finacle.AddCustomerAccounts(entity.customerCode);
+                        }
+                    }
+                    customerMain.ISPROSPECT = false;
+                    context.TBL_CUSTOMER_MODIFICATION.Add(modified);
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+
+                    var output = context.SaveChanges() > 0;
+
+                    var targetId = modified.CUSTOMERMODIFICATIONID;
+
+
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    workflow.TargetId = targetId;
+                    workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
+                    workflow.ExternalInitialization = true;
+
+                    var response = workflow.LogActivity();
+
+                    if (response)
+                    {
+                        trans.Commit();
+
+                        return output;
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+            }
         }
         #endregion
     }

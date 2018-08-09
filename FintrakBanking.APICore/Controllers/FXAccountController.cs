@@ -116,6 +116,11 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "There was an error creating this account" });
             }
+            catch (TwoFactorAuthenticationException et)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = false, message = $" {et.Message}" });
+            }
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,

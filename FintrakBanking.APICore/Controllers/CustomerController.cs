@@ -2030,6 +2030,70 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
+
+        #region Prospective Customer
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("prospect-customer")]
+        public HttpResponseMessage GetAllProspectiveCustomer()
+        {
+            try
+            {
+                var custInfo = repo.GetAllProspectiveCustomer();
+
+                if (custInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = custInfo });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("prospect-customer/")]
+        public HttpResponseMessage UpdatePropectToCustomer(int customerId, CustomerViewModels entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = (short)token.GetCompanyId;
+                //entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.customerSensitivityLevelId = 1;
+                if (repo.ValidateCustomerCode(entity.customerCode))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = $"Customer With {entity.customerCode} already exist" });
+                }
+                if (repo.ValidateModifiedCustomerRecord(entity.customerId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "Customer General Information is already undergoing approval." });
+                }
+                var data = repo.UpdatePropectToCustomer(customerId, entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = "The record has been updated successfully and undergoing approval." });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+
+        }
+        #endregion
+
     }
 }
 //Models
