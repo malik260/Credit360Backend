@@ -55,6 +55,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string freeCodeEight  {get; set;}
         public string freeCodeNine  {get; set;}
         public string freeCodeTen { get; set; }
+        public string username { get; set; }
+        public string passCode { get; set; }
         public HttpResponseMessage response { get; set; }
 
     }
