@@ -256,7 +256,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.CommercialPaperPrepayment(loanReferenceNumber,entity);
+                var data = repo.addCommercialLoanPrepayment(loanReferenceNumber,entity);
                 if (data.saveStatus.ToLower() =="saved")
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Payment was successful" });

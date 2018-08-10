@@ -86,11 +86,10 @@ namespace FintrakBanking.Interfaces.Credit
         //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
         void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId);
         bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
-        loanPrepaymentViewModel CommercialPaperPrepayment(string refNo, loanPrepaymentViewModel model);
+        loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         bool addCommercialPaperLineTenorReview(int loanAplicationDetailId, int newTenor);
         bool GetRepaymentFromStaging();
-        bool reBookCommercialLoan(int loanId, int additionalTenor, int staffId, short instructionTypeId);
         #endregion
 
         #region

@@ -435,6 +435,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     AddCustomTransactions(transactionList);
                     return true;
                 }
+                //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
+                //{
+                //    AddCustomTransactions(transactionList);
+                //    return true;
+                //}
                 else
                 {
                     throw new ConditionNotMetException(result.APIResponse.webRequestStatus);

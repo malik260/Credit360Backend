@@ -75,6 +75,7 @@
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
+    <Compile Include="Models\TBL_CUSTOM_CREDITBUREAU_ERROR.cs" />
     <Compile Include="Models\TBL_DOC_TEMPLATE.cs" />
     <Compile Include="Models\TBL_DOC_TEMPLATE_DETAIL.cs" />
     <Compile Include="Models\TBL_DOC_TEMPLATE_SECTION.cs" />
