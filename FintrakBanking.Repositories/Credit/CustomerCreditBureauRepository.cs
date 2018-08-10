@@ -21,6 +21,7 @@ using FintrakBanking.Common.CustomException;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using FintrakBanking.Interfaces.Setups.Finance;
+using System.Text.RegularExpressions;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -592,6 +593,20 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {
+                            JObject json = JObject.Parse(searchResponse.SearchResult);
+                            if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
+                            {
+                                string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
+                                errorCode.Replace("{", string.Empty);
+                                errorCode.Replace("}", string.Empty);
+                                var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
+                                if (errorLog.Any())
+                                {
+                                    searchResponse.SearchResult = errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: "+ errorCode;
+                                    searchResponse.SearchCompleted = (int)SearchCompletedStatusEnum.SearchError;
+                                    searchResponse.errorOccured = true;
+                                }
+                            }
                             return searchResponse;
                         }
                         else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)

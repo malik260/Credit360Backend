@@ -244,6 +244,11 @@ namespace FintrakBanking.Common.Enum
         AttemptedApproveOverrideRequest = 218,
         ForeignAccountCreation = 219,
         ForeignExchangeLoanAdded = 220,
+        LoanRolledOver = 230,
+        GroupLoanSubAllocated = 231,
+        LoanPrePaid = 232,
+
+
     };
 
 
