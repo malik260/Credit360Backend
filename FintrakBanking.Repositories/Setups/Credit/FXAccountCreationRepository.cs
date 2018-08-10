@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.Interfaces.Admin;
@@ -420,9 +421,12 @@ namespace FintrakBanking.Repositories.Setups.Credit
                 }
                 return null;
             }
+            catch (TwoFactorAuthenticationException et)
+            {
+                 throw new TwoFactorAuthenticationException(et.Message);
+            }
             catch (Exception ex)
             {
-                return null;
                 throw new Exception(ex.Message);
             }
 

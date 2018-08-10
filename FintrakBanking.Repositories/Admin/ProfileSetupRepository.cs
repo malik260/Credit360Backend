@@ -7,18 +7,51 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces;
 using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Interfaces.Setups.General;
 
 namespace FintrakBanking.Repositories
 {
     public class ProfileSetupRepository : IProfileSetupRepository
     {
         private FinTrakBankingContext _context;
+        private IAuditTrailRepository _auditTrail;
+        private IGeneralSetupRepository _genSetup;
 
-        public ProfileSetupRepository(FinTrakBankingContext context)
+        public ProfileSetupRepository(FinTrakBankingContext context,
+                                        IGeneralSetupRepository genSetup,
+                                        IAuditTrailRepository auditTrail)
         {
             this._context = context;
+            this._auditTrail = auditTrail;
+            this._genSetup = genSetup;
+
         }
 
+        public ProfileSettingViewModel GetProfileSettings()
+        {
+            var data = (from p in _context.TBL_PROFILE_SETTING
+                        select new ProfileSettingViewModel
+                        {
+                            profileSettingId = p.PROFILESETTINGID,
+                            minRequiredPasswordLength = p.MINREQUIREDPASSWORDLENGTH,
+                            minrequiredNonAlphanumericChar = p.MINREQUIREDNONALPHANUMERICCHAR,
+                            enablePasswordRetrieval = p.ENABLEPASSWORDRETRIEVAL,
+                            enablePasswordReset = p.ENABLEPASSWORDRESET,
+                            requiresQuestionAndAnswer = p.REQUIRESQUESTIONANDANSWER,
+                            requiresUniqueEmail = p.REQUIRESUNIQUEEMAIL,
+                            maxInvalidPasswordAttempts = p.MAXINVALIDPASSWORDATTEMPTS,
+                            allowPasswordReuseAfter = p.ALLOWPASSWORDREUSEAFTER,
+                            expirePasswordAfter = p.EXPIREPASSWORDAFTER,
+                            maxPeriodOfUserInactivity = p.MAXPERIODOFUSERINACTIVITY,
+                            sessionTimeOut = p.SESSIONTIMEOUT,
+                        }).FirstOrDefault();
+            return data;
+
+        }
+
+    
 
         public ProfileSettingViewModel UpdateProfileConfiguration(ProfileSettingViewModel entity)
         {
@@ -36,10 +69,37 @@ namespace FintrakBanking.Repositories
                 settings.REQUIRESQUESTIONANDANSWER = entity.requiresQuestionAndAnswer;
                 settings.REQUIRESUNIQUEEMAIL = entity.requiresUniqueEmail;
                 settings.SESSIONTIMEOUT = entity.sessionTimeOut;
-           //     settings.BusinessStartTime = entity.BusinessStartTime;
-           //     settings.BusinessCloseTime = entity.BusinessCloseTime;
+                //     settings.BusinessStartTime = entity.BusinessStartTime;
+                //     settings.BusinessCloseTime = entity.BusinessCloseTime;
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ProfileSettingsUpdated,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = (short)entity.userBranchId,
+                    DETAIL = $"Updated application profile setting",
+                IPADDRESS = entity.userIPAddress,
+                    URL = entity.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                };
+                this._auditTrail.AddAuditTrail(audit);
+               _context.SaveChanges();
 
-                _context.SaveChanges() ;
+
+                //var audit = new TBL_AUDIT();
+
+                //audit.AUDITTYPEID = (short)AuditTypeEnum.ProfileSettingsUpdated;
+                //audit.STAFFID = entity.createdBy;
+                //audit.BRANCHID = (short)entity.userBranchId;
+                //audit.DETAIL = $"Updated application profile setting";
+                //audit.IPADDRESS = entity.userIPAddress;
+                //audit.URL = entity.applicationUrl;
+                //audit.APPLICATIONDATE = _genSetup.GetApplicationDate();
+                //audit.SYSTEMDATETIME = DateTime.Now;
+                //_context.TBL_AUDIT.Add(audit);
+
+                //this.SaveAll();
+
             }
             else
             {
@@ -48,7 +108,10 @@ namespace FintrakBanking.Repositories
 
             return entity;
         }
-
+        private bool SaveAll()
+        {
+            return this._context.SaveChanges() > 0;
+        }
         public ProfileSettingViewModel GetProfileConfiguration()
         {
             var settings = _context.TBL_PROFILE_SETTING.Select(p => new ProfileSettingViewModel()

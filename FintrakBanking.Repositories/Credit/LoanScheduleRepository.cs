@@ -505,6 +505,8 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>         
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateMoratoriumAnnuityPeriodicSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
+            int principalPaymentMultiple;
+            int ppm;
             if (loanInput.effectiveDate == null)
                 throw new ConditionNotMetException("Please Enter Effective Date");
             if (loanInput.maturityDate == null)
@@ -543,7 +545,18 @@ namespace FintrakBanking.Repositories.Credit
 
             var principalPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == loanInput.principalFrequency).VALUE;
 
-            int principalPaymentMultiple = Convert.ToInt32(12 / principalPaymentsInAYear);
+            //principalPaymentMultiple  = Convert.ToInt32(12 / principalPaymentsInAYear);
+
+            ppm = Convert.ToInt32(12 / principalPaymentsInAYear);
+
+            if (ppm == 0)
+            {
+                principalPaymentMultiple = 1;
+            }
+            else
+            {
+                principalPaymentMultiple = ppm;
+            }
 
             var principalFirstPaymentNumber = (numberOfPayments - numberOfPrincipalPayments) + 1;
 

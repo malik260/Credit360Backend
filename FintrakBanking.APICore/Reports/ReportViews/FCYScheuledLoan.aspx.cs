@@ -15,39 +15,47 @@ namespace FintrakBanking.APICore.Reports.ReportViews
         {
             if (!IsPostBack)
             {
-                string inputDateInfo = Request.QueryString["key1"];
-                string inputHashValue = Request.QueryString["key2"];
+                try
+                {
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
-                HashHelper hash = new HashHelper();
+                    HashHelper hash = new HashHelper();
 
-                DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
-                if (inputHashValue != incomingDateHash)
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    var currentDate = DateTime.Now;
+
+                    var dateDifference = currentDate - incomingDate;
+
+                    if (dateDifference.Seconds > 10)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
+
+                    companyId.Text = Request.QueryString["companyId"]; //"1",
+
+                    loanId.Text = Request.QueryString["loanId"]; //"252"; 
+
+                    ReportViewer.LocalReport.Refresh();
+                }
+                catch (Exception ex)
                 {
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                     this.ReportViewer.LocalReport.Refresh();
                     return;
                 }
-
-                var currentDate = DateTime.Now;
-
-                var dateDifference = currentDate - incomingDate;
-
-                if (dateDifference.Seconds > 10)
-                {
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    this.ReportViewer.LocalReport.Refresh();
-                    return;
-                }
-
-                companyId.Text = Request.QueryString["companyId"]; //"1",
-
-                loanId.Text = Request.QueryString["loanId"]; //"252"; 
-
-                ReportViewer.LocalReport.Refresh();
-
             }
 
         }

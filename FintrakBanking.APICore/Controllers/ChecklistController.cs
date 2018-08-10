@@ -1483,6 +1483,28 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = $"There was an error fetching this record {ex.Message}" });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("checklist-facility-detail")]
+        public HttpResponseMessage GetAllFacilityDetails(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.GetAllFacilityDetails(loanApplicationId, token.GetCompanyId);
+                if (data.Count() > 0)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
         [HttpPost]
         [ClaimsAuthorization]
         [Route("esg-checklist-definition")]
