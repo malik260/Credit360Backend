@@ -10858,18 +10858,26 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool CommercialPaperRateReview(InterestReviewViewModel userModel)
         {
-            var result = (from p in context.TBL_LOAN_APPLICATION_DETAIL
-                          where p.LOANAPPLICATIONDETAILID == userModel.aplicationDetailId
-                          select p).SingleOrDefault();
-
-
-            ArchiveLoanApplicationDetails(result.LOANAPPLICATIONDETAILID);
-            result.APPROVEDINTERESTRATE = userModel.newRate;
-
-            var loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == result.LOANAPPLICATIONDETAILID);
-            foreach (var loan in loans)
+            var systemDate = generalSetup.GetApplicationDate();
+            if (userModel.loanId != 0)
             {
-                loan.INTERESTRATE = userModel.newRate;
+                changeLoanRate(userModel, userModel.loanId);
+            }
+            else if(userModel.aplicationDetailId != 0)
+            {
+                var result = (from p in context.TBL_LOAN_APPLICATION_DETAIL
+                              where p.LOANAPPLICATIONDETAILID == userModel.aplicationDetailId
+                              select p).SingleOrDefault();
+
+
+                ArchiveLoanApplicationDetails(result.LOANAPPLICATIONDETAILID);
+                result.APPROVEDINTERESTRATE = userModel.newRate;
+
+                var loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == result.LOANAPPLICATIONDETAILID);
+                foreach (var loan in loans)
+                {
+                    changeLoanRate(userModel, userModel.loanId);  //loan.INTERESTRATE = userModel.newRate;
+                };
 
                 //Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -10877,7 +10885,7 @@ namespace FintrakBanking.Repositories.Credit
                     AUDITTYPEID = (short)AuditTypeEnum.LoanInterestRateChange,
                     STAFFID = userModel.createdBy,
                     BRANCHID = (short)userModel.userBranchId,
-                    DETAIL = $"Interest rate changed on loan with reference number: {loan.LOANREFERENCENUMBER} to new rate {userModel.newRate}",
+                    DETAIL = $"Interest rate changed on line with application reference number: '{result.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER}' and detail Id '{result.LOANAPPLICATIONDETAILID}' to new rate {userModel.newRate}",
                     IPADDRESS = userModel.userIPAddress,
                     URL = userModel.applicationUrl,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
@@ -10886,8 +10894,54 @@ namespace FintrakBanking.Repositories.Credit
 
                 context.TBL_AUDIT.Add(audit);
                 //end of Audit section -------------------------------
-            };
+            }
+            else
+            {
+                return false;
+            }
+            
+            return context.SaveChanges() > 0;
+        }
 
+        private bool changeLoanRate(InterestReviewViewModel userModel, int loanId)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            if (userModel.loanId != 0)
+            {
+                TBL_LOAN loanRecord = context.TBL_LOAN.Find(loanId);
+                if (userModel.valueDate < systemDate)
+                {
+                    if (userModel.valueDate < loanRecord.EFFECTIVEDATE)
+                        throw new ConditionNotMetException("Effective date cannot be lesser than the loan effective date.");
+
+                    if (userModel.valueDate >= loanRecord.EFFECTIVEDATE)
+                        throw new ConditionNotMetException("Back-dating not allowed.");
+                }
+                else
+                {
+                    if (userModel.valueDate > systemDate)
+                        throw new ConditionNotMetException("Forward date is not allowed.");
+
+                    loanRecord.INTERESTRATE = userModel.newRate;
+                    
+                }
+
+                //Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanInterestRateChange,
+                    STAFFID = userModel.createdBy,
+                    BRANCHID = (short)userModel.userBranchId,
+                    DETAIL = $"Interest rate changed on loan with reference number: {loanRecord.LOANREFERENCENUMBER} to new rate {userModel.newRate}",
+                    IPADDRESS = userModel.userIPAddress,
+                    URL = userModel.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                context.TBL_AUDIT.Add(audit);
+                //end of Audit section -------------------------------
+            }
             return context.SaveChanges() > 0;
         }
 
@@ -10904,7 +10958,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new BadLogicException("You cannot extend tenor with a zero value");
 
             loan = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == userModel.loanRef).FirstOrDefault();
-            loanApp = (TBL_LOAN_APPLICATION_DETAIL)context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == loan.LOANAPPLICATIONDETAILID);
+            loanApp = context.TBL_LOAN_APPLICATION_DETAIL.Find(loan.LOANAPPLICATIONDETAILID);
 
             if (userModel.newTenor > loanApp.APPROVEDTENOR)
             {
@@ -10913,12 +10967,12 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanApp.EXPIRYDATE != null)
             {
-                if (loanApp.EXPIRYDATE < loanApp.EFFECTIVEDATE.Value.AddDays(userModel.newTenor))
+                if (loanApp.EXPIRYDATE < loan.MATURITYDATE.AddDays(userModel.newTenor))
                     throw new ConditionNotMetException("the resulting maturity date exceeded the line expiry date.");
             }
             else
             {
-                if (loanApp.EFFECTIVEDATE.Value.AddDays(loanApp.APPROVEDTENOR) < loanApp.EFFECTIVEDATE.Value.AddDays(userModel.newTenor))
+                if (loanApp.EFFECTIVEDATE.Value.AddDays(loanApp.APPROVEDTENOR) < loan.EFFECTIVEDATE.AddDays(userModel.newTenor))
                     throw new ConditionNotMetException("the resulting maturity date exceeded the line expiry date.");
             }
 
@@ -11126,8 +11180,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new ConditionNotMetException("Commercial Loan rollover transaction unable to complete.");
             }
-
-
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
@@ -11164,11 +11216,14 @@ namespace FintrakBanking.Repositories.Credit
 
                 var recalculatedInterestAmount = reCalculatedDailyInterestAmount * forwardDays;
 
+                //**********************************************************************
+                //INTEREST REVERSAL POSTING: THESE LINES OF CODE CALCULATES THE DIFFERENCE IN THE ACCRUED INTEREST AND POST THE DIFFERENCE
                 var accruedInterestDiff = interestToDate - reCalculatedDailyInterestAmount;
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                 LoanPaymentRestructureScheduleInputViewModel payStructureModel = new LoanPaymentRestructureScheduleInputViewModel();
                 inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(payStructureModel, accruedInterestDiff, loanRecord.TBL_PRODUCT.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", (short)OperationsEnum.Prepayment)); //change later));
+                //**************************************************************************
 
                 //var result = financeTransaction.PostTransaction(inputTransactions);
                 //TODO: 1. call method to reverse loan interest accrual from model effectivedate to system date account with interestToDate amount

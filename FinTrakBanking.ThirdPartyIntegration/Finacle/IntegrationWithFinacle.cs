@@ -660,7 +660,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             else
             {
 
-                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new APIErrorException("Core Banking API Error - " + result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
 
