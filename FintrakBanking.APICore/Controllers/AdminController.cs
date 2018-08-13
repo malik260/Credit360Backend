@@ -26,6 +26,7 @@ namespace FintrakBanking.APICore.Controllers
         private readonly IErrorLogRepository errorLogger;
         private readonly ICanAuthorizationRepository canAuthorization;
         private readonly IAuditTrailRepository audit;
+
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public AdminController(IAdminRepository _repo,
@@ -578,8 +579,58 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("profilesettings")]
+        public HttpResponseMessage GetAllApplicationProfileSettings()
+        {
+            try
+            {
+                var data = profileSetup.GetProfileSettings();
 
-        #endregion
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+         
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("updateprofilesettings")]
+        public IHttpActionResult UpdateProfileSettings([FromBody] ProfileSettingViewModel entity)
+        {
+            try
+            {
+                if (entity != null)
+                {
+                    string message = string.Empty;
+                    entity.lastUpdatedBy = token.GetUserId;
+                    entity.userBranchId = (short)token.GetBranchId;
+                    entity.createdBy = token.GetStaffId;
+                    entity.applicationUrl = HttpContext.Current.Request.Path;
+                    entity.userIPAddress = Request.RequestUri.Host;
+
+                    var data = profileSetup.UpdateProfileConfiguration(entity);
+                    if (data != null)
+                        return Ok(new { success = true, result = data, message = message == string.Empty ? $"Record Updated Successfully" : message });
+                }
+
+                return Ok(new { success = false, message = $"Record not fund" });
+            }
+            catch (SecureException ex)
+            {
+                return Ok(new { success = false, message = $"Action Failed" });
+            }
+
+        }
+        #endregion 
 
         #region Two Factor Authentication
         [HttpGet]

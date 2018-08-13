@@ -11,5 +11,7 @@ namespace FintrakBanking.Interfaces
   {
       ProfileSettingViewModel UpdateProfileConfiguration(ProfileSettingViewModel entity);
       ProfileSettingViewModel GetProfileConfiguration();
-  }
+        ProfileSettingViewModel GetProfileSettings();
+
+    }
 }

@@ -252,6 +252,9 @@ namespace FintrakBanking.Repositories.Credit
             if (totaloverdraftLimit > model.customerAvailableAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
+            if (model.effectiveDate > model.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
+
             //var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == model.productId).FirstOrDefault();
             //if (productBehaviour != null && productBehaviour.ISTEMPORARYOVERDRAFT == true && context.TBL_LOAN_REVOLVING.Where(x => x.CUSTOMERID == model.customerId && x.CASAACCOUNTID == model.casaAccountId).Any())
             //    throw new ConditionNotMetException("The customer already has an existing overdraft on the selected account");
@@ -421,6 +424,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
                 }
+                catch (TwoFactorAuthenticationException et)
+                {
+                    trans.Rollback();
+                    throw new TwoFactorAuthenticationException(et.Message);
+                }
                 catch (APIErrorException ae)
                 {
                     trans.Rollback();
@@ -463,6 +471,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+            if (entity.effectiveDate > entity.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
             var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
 
@@ -640,6 +651,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+            if (entity.effectiveDate > entity.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
@@ -885,6 +899,9 @@ namespace FintrakBanking.Repositories.Credit
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
+            if (entity.effectiveDate > entity.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
+
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
             if (loans.Any())
             {
@@ -1100,6 +1117,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+            if (entity.effectiveDate > entity.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
 
@@ -2331,6 +2351,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
+            var systemDate = generalSetup.GetApplicationDate();
             /* HANDLING APPROVALS THAT REACH LAST APPROVAL LEVEL */
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
@@ -2550,7 +2571,6 @@ namespace FintrakBanking.Repositories.Credit
 
                             /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-                            var systemDate = generalSetup.GetApplicationDate();
 
                             DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
@@ -2559,7 +2579,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
-                            loanRecord.EFFECTIVEDATE = DateTime.Now;
+                            loanRecord.EFFECTIVEDATE = systemDate;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                             loanRecord.DISBURSEDBY = user.createdBy;
                             loanRecord.APPROVEDBY = user.createdBy;
@@ -2611,14 +2631,12 @@ namespace FintrakBanking.Repositories.Credit
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             DisburseLoan(loanDisbursementModel);
 
-                            var systemDate = generalSetup.GetApplicationDate();
-
                             /*UPDATING STAFF MIS */
                             //this.updateloanStaffMIS(loanRecord);
 
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
-                            loanRecord.EFFECTIVEDATE = DateTime.Now;
+                            loanRecord.EFFECTIVEDATE = systemDate;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                             loanRecord.DISBURSEDBY = user.createdBy;
                             loanRecord.APPROVEDBY = user.createdBy;
@@ -2658,28 +2676,24 @@ namespace FintrakBanking.Repositories.Credit
                             else
                                 loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT;
 
-
                             /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
                             /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                             var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
-                            var systemDate = generalSetup.GetApplicationDate();
-
                             /*UPDATING STAFF MIS */
                             //this.updateloanStaffMIS(loanRecord);
 
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
-                            loanRecord.EFFECTIVEDATE = DateTime.Now;
+                            loanRecord.EFFECTIVEDATE = systemDate;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                             loanRecord.DISBURSEDBY = user.createdBy;
                             loanRecord.APPROVEDBY = user.createdBy;
                             loanRecord.APPROVERCOMMENT = user.comment;
                         }
                         break;
-
                 }
 
                 // Audit Section ---------------------------
@@ -6740,7 +6754,7 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && a.LOANSTATUSID == (short)LoanStatusEnum.Active && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -6771,7 +6785,7 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && a.LOANSTATUSID == (short)LoanStatusEnum.Active  && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -6802,7 +6816,7 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && a.LOANSTATUSID == (short)LoanStatusEnum.Active  && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||

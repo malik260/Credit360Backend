@@ -244,6 +244,19 @@ namespace FintrakBanking.Common.Enum
         AttemptedApproveOverrideRequest = 218,
         ForeignAccountCreation = 219,
         ForeignExchangeLoanAdded = 220,
+        //new by adeyemi to be added to databases
+        ProfileSettingsUpdated = 221,
+       DocumentTemplateAdded = 222,
+        DocumentTemplateUpdated = 223,
+        DocumentTemplateSectionAdded = 224,
+        DocumentTemplateSectionUpdated = 225,
+        DocumentTemplateSectionDeleted =226,
+        DocumentTemplateSectionRoleAdded = 227,
+        DocumentTemplateSectionRoleUpdated = 228,
+        DocumentTemplateSectionRoleDeleted = 229,
+        LoanRolledOver = 230,
+        GroupLoanSubAllocated = 231,
+        LoanPrePaid = 232,
     };
 
 
