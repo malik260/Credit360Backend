@@ -872,7 +872,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.ValidateDocumentNumber(data);
+                var response = repo.ValidateInvoiceDetails(data);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
