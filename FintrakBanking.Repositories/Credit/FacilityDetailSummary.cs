@@ -714,20 +714,20 @@ namespace FintrakBanking.Repositories.Credit
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
                                        RelatedloanReferenceNumber = a.RELATED_LOAN_REFERENCE_NUMBER,
-                                       customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                       customerName = b.FIRSTNAME + " " + b.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
-                                       applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                      // applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
                                        interestRate = a.INTERESTRATE,
                                        principalAmount = a.PRINCIPALAMOUNT,
                                        effectiveDate = a.EFFECTIVEDATE,
                                        maturityDate = a.MATURITYDATE,
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                       productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
-                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                     //  productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+                                       productName = context.TBL_PRODUCT.Where(x=>x.PRODUCTID==a.PRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID
-                                       
+
                                    });
             return allFilteredLoan.ToList();
         }

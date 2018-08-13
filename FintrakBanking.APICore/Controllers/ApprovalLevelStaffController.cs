@@ -50,8 +50,33 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("go-for-level-staff-approval")]
+        public HttpResponseMessage GoForWorkflowGroupApproval([FromBody]ApprovalLevelStaffViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                var data = repo.GoForApproval(model);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, result = data, count = 1 });
+            }
+            catch (SecureException ex)
+            {
 
-      [HttpGet] [ClaimsAuthorization]  
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"An error has accoured {ex.Message}" });
+            }
+
+
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level-staff/operations/{operationMappingId}")]
         public HttpResponseMessage GetAllApprovalLevelStaff(int operationMappingId)
         {
@@ -70,8 +95,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("temp-approval-level-staff")]
+        public HttpResponseMessage GetTempAllApprovalLevelStaff()
+        {
+            try
+            {
+                var data = repo.GetTempApprovalLevelStaff( token.GetStaffId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
 
-      [HttpGet] [ClaimsAuthorization]  
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet] [ClaimsAuthorization]  
         [Route("approval-level-staff/staff-level/{id}")]
         public HttpResponseMessage GetApprovalLevelStaffById(int id)
         {
@@ -141,7 +185,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Workflow Tracker
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("work-flow-tracker/operation/{operationId}/target/{targetId}")]
         public async Task<HttpResponseMessage> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId)
         {

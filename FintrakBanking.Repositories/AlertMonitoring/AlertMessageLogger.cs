@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Finance.ViewModels;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
@@ -2824,6 +2825,172 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 throw new SecureException(ex.Message);
             }
         }
+
+
+
+        public bool SendAlertsForLoanRepayment(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        {
+            TBL_MONITORING_ALERT_SETUP alertsetupForLoanRepayment = (from x in alertSetups
+                                                                        where x.MONITORING_ITEMID == (int)AlertMessageEnum.LoanRepayment
+                                                                     select x).FirstOrDefault();
+            DateTime currentDate = DateTime.Now;
+            List<LoanPaymentSchedulePeriodicViewModel> loanDetails = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
+                                               join l in context.TBL_LOAN on a.LOANID equals l.TERMLOANID
+                                               join p in context.TBL_CASA on l.CASAACCOUNTID equals p.CASAACCOUNTID
+                                               join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                               where l.LOANSTATUSID == (short)LoanStatusEnum.Active 
+                                               && p.AVAILABLEBALANCE < a.PERIODPAYMENTAMOUNT
+                                              && DbFunctions.DiffDays((DateTime?)a.PAYMENTDATE, (DateTime?)currentDate) < (int?)alertsetupForLoanRepayment.NOTIFICATION_PERIOD1
+                                               orderby a.PAYMENTDATE descending
+
+                                               select new LoanPaymentSchedulePeriodicViewModel()
+                                               {
+                                                   LoanReferenceNumber = l.LOANREFERENCENUMBER,
+                                                   customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                                                   startPrincipalAmount = (double)a.STARTPRINCIPALAMOUNT,
+                                                   interestRate = a.INTERESTRATE,
+                                                   casaBalance = p.AVAILABLEBALANCE,
+                                                   periodPaymentAmount =(double) a.PERIODPAYMENTAMOUNT,
+                                                   nextPaymentDate = a.PAYMENTDATE,
+                                                   relationshipManagerId = a.CREATEDBY,
+                                                   relationshipManagerEmail = c.EMAILADDRESS,
+                                                   notificationDuration = (int)DbFunctions.DiffDays((DateTime)a.PAYMENTDATE, (DateTime)currentDate)
+                                               }).ToList();
+            if (loanDetails.Count != 0)
+            {
+                SendAlertsForLoanRepaymentRM(loanDetails, alertsetupForLoanRepayment.MESSAGE_TITLE);
+                if (alertsetupForLoanRepayment.RECIPIENTEMAILS1.Trim() != string.Empty)
+                {
+                    List<LoanPaymentSchedulePeriodicViewModel> escalationLevelOne = (from x in loanDetails
+                                                                    where x.notificationDuration <= alertsetupForLoanRepayment.NOTIFICATION_PERIOD1
+                                                                    select x).ToList();
+                    if (escalationLevelOne.Count != 0)
+                    {
+                        SendAlertsForLoanRepaymentTeam(escalationLevelOne, alertsetupForLoanRepayment);
+                    }
+                }
+                if (alertsetupForLoanRepayment.RECIPIENTEMAILS2.Trim() != string.Empty)
+                {
+                    List<LoanPaymentSchedulePeriodicViewModel> escalationLevelTwo = (from x in loanDetails
+                                                                    where x.notificationDuration <= alertsetupForLoanRepayment.NOTIFICATION_PERIOD2
+                                                                    select x).ToList();
+                    if (escalationLevelTwo.Count != 0)
+                    {
+                        SendAlertsForLoanRepaymentTeam(escalationLevelTwo, alertsetupForLoanRepayment);
+                    }
+                }
+                if (alertsetupForLoanRepayment.RECIPIENTEMAILS3.Trim() != string.Empty)
+                {
+                    List<LoanPaymentSchedulePeriodicViewModel> escalationLevelThree = (from x in loanDetails
+                                                                      where x.notificationDuration <= alertsetupForLoanRepayment.NOTIFICATION_PERIOD3
+                                                                      select x).ToList();
+                    if (escalationLevelThree.Count != 0)
+                    {
+                        SendAlertsForLoanRepaymentTeam(escalationLevelThree, alertsetupForLoanRepayment);
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        public void SendAlertsForLoanRepaymentRM(List<LoanPaymentSchedulePeriodicViewModel> loanDetails, string title)
+        {
+            try
+            {
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
+                List<int> dataList = (from g in loanDetails
+                                      select g.relationshipManagerId).ToList();
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
+                {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+
+                    List<LoanPaymentSchedulePeriodicViewModel> mailList = (from x in loanDetails
+                                                          where x.relationshipManagerId == item2.STAFFID
+                                                          select x).ToList();
+                    string dataTable2 = "<table><tr><th>Loan Reference Number</th><th>Customer Name</th><th>Start Principal Amount</th><th>Interest Rate</th><th>Available Balance</th><th>Period Payment Amount</th><th>Next Payment Date</th></tr>";
+                    foreach (LoanPaymentSchedulePeriodicViewModel item3 in mailList)
+                    {
+                        dataTable2 = dataTable2 + $"<tr><td>{item3.LoanReferenceNumber}</td><td>{item3.customerName}</td><td>{item3.startPrincipalAmount}</td><td>{item3.interestRate}</td>" + $"<td>{item3.casaBalance}</td><td>{item3.periodPaymentAmount}</td><td>{item3.nextPaymentDate:d}</td></tr>";
+                    }
+                    dataTable2 += "</table>";
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Loans which will soon be due for repayment. Kindly follow up with the customer to fund his/her account. <br /><br />" + $"{dataTable2}";
+                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                    MessageLogViewModel messageModel = new MessageLogViewModel
+                    {
+                        MessageSubject = title,
+                        MessageBody = mailBody,
+                        MessageStatusId = 1,
+                        MessageTypeId = 1,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = recipient,
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now
+                    };
+                    if (SaveMessageDetails(messageModel) != 0)
+                    {
+                        response += (response = " loan due for Repayment was logged successfully, ");
+                    }
+                    else
+                    {
+                        response += (response = " loan due for Repayment logged has failed, ");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+        public void SendAlertsForLoanRepaymentTeam(List<LoanPaymentSchedulePeriodicViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups)
+        {
+            try
+            {
+                string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
+                string dataTable = "<table><tr><th>Loan Reference Number</th><th>Customer Name</th><th>Start Principal Amount</th><th>Interest Rate</th><th>Available Balance</th><th>Period Payment Amount</th><th>Next Payment Date</th></tr>";
+                foreach (LoanPaymentSchedulePeriodicViewModel item3 in loanDetails)
+                {
+                    dataTable = dataTable + $"<tr><td>{item3.LoanReferenceNumber}</td><td>{item3.customerName}</td><td>{item3.startPrincipalAmount}</td><td>{item3.interestRate}</td>" + $"<td>{item3.casaBalance}</td><td>{item3.periodPaymentAmount}</td><td>{item3.nextPaymentDate:d}</td></tr>";
+                }
+                dataTable += "</table>";
+                string messageSubject = alertSetups.MESSAGE_TITLE;
+                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Loans which would soon be due for repayment. The respective account's account need to be funded.  <br /><br />" + $"{dataTable}";
+                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = recipient,
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+                if (SaveMessageDetails(messageModel) != 0)
+                {
+                    response += (response = "loan due for Repayment was logged successfully, ");
+                }
+                else
+                {
+                    response += (response = " loan due for Repayment logged has failed, ");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+
 
 
 

@@ -34,6 +34,8 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         ApprovalLevelStaffViewModel GetAllApprovalLevelStaffByStaffId(int staffId, int companyId);
         List<WorkflowTrackerViewModel> GetAllApprovalStatus();
         List<WorkflowTrackerViewModel> GetAllApprovalOperations();
+        int GoForApproval(ApprovalLevelStaffViewModel model);
+        IEnumerable<ApprovalLevelStaffViewModel> GetTempApprovalLevelStaff(int staffId);
 
     }
 }
