@@ -179,10 +179,10 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Please Enter Loan Amount");
             if (loanInput.interestRate < 0)
                 throw new ConditionNotMetException("Please Enter Loan Interest Amount");
-            if (loanInput.principalFirstpaymentDate > loanInput.effectiveDate)
-                throw new ConditionNotMetException("First principal first payment date cannot be greater than effective date ");
-            if (loanInput.interestFirstpaymentDate > loanInput.effectiveDate)
-                throw new ConditionNotMetException("First interest first payment date cannot be greater than effective date ");
+            if (loanInput.principalFirstpaymentDate < loanInput.effectiveDate)
+                throw new ConditionNotMetException("First principal first payment date cannot be less than effective date ");
+            if (loanInput.interestFirstpaymentDate < loanInput.effectiveDate)
+                throw new ConditionNotMetException("First interest first payment date cannot be less than effective date ");
             if (loanInput.maturityDate < loanInput.effectiveDate)
                 throw new ConditionNotMetException("Maturity date cannot be less than effective date");
 

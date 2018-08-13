@@ -424,6 +424,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
                 }
+                catch (TwoFactorAuthenticationException et)
+                {
+                    trans.Rollback();
+                    throw new TwoFactorAuthenticationException(et.Message);
+                }
                 catch (APIErrorException ae)
                 {
                     trans.Rollback();
@@ -1652,7 +1657,7 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-
+                                
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,

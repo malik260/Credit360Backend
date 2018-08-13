@@ -23,6 +23,7 @@ namespace FintrakBanking.Common.AlertMonitoring
         TurnoverCovenantNotMet = 14,
         CollateralDueForRevaluation = 15,
         WatchListedAccount = 16,
-        AuathorizedAccount = 17
+        AuathorizedAccount = 17,
+        LoanRepayment = 18
     }
 }

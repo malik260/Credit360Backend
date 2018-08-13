@@ -115,7 +115,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
             //logger.SendAlertsOnOverDraftLoansAlmostDue(title, body, alertSetups);
 
-            //logger.SendAlertsOnSelfLiquidatingLoanExpiry(title, body, alertSetups);
+            logger.SendAlertsOnSelfLiquidatingLoanExpiry(title, body, alertSetups);
 
 
             return true;

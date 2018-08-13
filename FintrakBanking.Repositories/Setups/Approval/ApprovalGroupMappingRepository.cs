@@ -11,6 +11,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
@@ -40,6 +41,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public int AddApprovalGroupMapping(ApprovalGroupMappingViewModel model)
         {
+            var recordExist = context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.GROUPID == model.groupId && x.POSITION == model.position).Any();
+            if(recordExist)
+                throw new ConditionNotMetException("This operation has already been initiated and is apprival pending");
+
             var entity = new TBL_TEMP_APPROVAL_GRP_MAPPING
             {
                 OPERATIONID = model.operationId,
@@ -100,7 +105,11 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             int tempGroupOperationMappingId = 0;
             var data = this.context.TBL_APPROVAL_GROUP_MAPPING.Find(operationMappingId);
+            var dataExist = context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.GROUPID == data.GROUPID && x.OPERATIONID == data.OPERATIONID).Any();
 
+            if (dataExist)
+                throw new ConditionNotMetException("This operation has already been initiated and is apprival pending");
+            
             if (data == null)
                 return false;
 
@@ -324,21 +333,48 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var data = this.context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x=>x.TEMPGROUPOPERATIONMAPPINGID==ApprovalModel.tempGroupOperationMappingId).Select(x=>x).FirstOrDefault();
             if (data != null)
             {
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == data.OPERATIONID).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == data.GROUPID).GROUPNAME;
+
+                var audit = new TBL_AUDIT();
+
+
                 if (data.OPERATION=="create")
                 {
                     CreateApprovalGroup(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingAdded;
+                    audit.DETAIL = $"Approval Group Mapping for Operation: {operationName} in Group: {groupName} is added successfully";
+
                 }
                 else if (data.OPERATION == "update")
                 {
                     UpdateApprovalGroup(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingUpdated;
+                    audit.DETAIL = $"Approval Group Mapping for Operation: {operationName} in Group: {groupName} is updated successfully";
+
                 }
                 else if (data.OPERATION == "delete")
                 {
                     DeleteApprovalGroup(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted;
+                    audit.DETAIL = $"Approval Group Mapping for Operation: {operationName} in Group: {groupName} is delete successfully";
+
                 }
 
                 UpdateTempApprovalGroup(ApprovalModel, status);
 
+                audit.STAFFID = ApprovalModel.createdBy;
+                audit.BRANCHID = (short)ApprovalModel.userBranchId;
+                audit.IPADDRESS = ApprovalModel.userIPAddress;
+                audit.URL = ApprovalModel.applicationUrl;
+                audit.APPLICATIONDATE = generalSetup.GetApplicationDate();
+                audit.SYSTEMDATETIME = DateTime.Now;
+                audit.TARGETID = ApprovalModel.groupOperationMappingId;
+
+                context.TBL_AUDIT.Add(audit);
             }
         }
 

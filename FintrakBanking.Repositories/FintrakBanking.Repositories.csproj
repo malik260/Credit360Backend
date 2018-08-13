@@ -125,6 +125,7 @@
     <Compile Include="CASA\CasaLienRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CASA\OverRideRepository.cs" />
+    <Compile Include="Credit\CRMSRegulatories.cs" />
     <Compile Include="Credit\FacilityDetailSummary.cs" />
     <Compile Include="Credit\LaonCamSolRepository.cs" />
     <Compile Include="Helper\DataExport.cs" />
