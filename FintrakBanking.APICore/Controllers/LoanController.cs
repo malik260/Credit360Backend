@@ -368,6 +368,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
             }
+            catch (TwoFactorAuthenticationException fa)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
+            }
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });

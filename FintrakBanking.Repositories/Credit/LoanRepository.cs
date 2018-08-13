@@ -424,6 +424,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
                 }
+                catch (TwoFactorAuthenticationException et)
+                {
+                    trans.Rollback();
+                    throw new TwoFactorAuthenticationException(et.Message);
+                }
                 catch (APIErrorException ae)
                 {
                     trans.Rollback();
