@@ -913,7 +913,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
 
-            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+            var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
             var approvedAmount = applicationDetail.APPROVEDAMOUNT;
 
@@ -922,7 +922,7 @@ namespace FintrakBanking.Repositories.Credit
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.principalAmount);
 
             if (totalPrincipalAmount > (decimal)approvedAmount)
-                throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
+                throw new ConditionNotMetException("The loan amount cannot be greater than the available amount");
 
             var data = new TBL_LOAN
             {
