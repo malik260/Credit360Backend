@@ -435,6 +435,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     AddCustomTransactions(transactionList);
                     return true;
                 }
+                //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
+                //{
+                //    AddCustomTransactions(transactionList);
+                //    return true;
+                //}
                 else
                 {
                     throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
@@ -655,7 +660,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             else
             {
 
-                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new APIErrorException("Core Banking API Error - " + result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
 

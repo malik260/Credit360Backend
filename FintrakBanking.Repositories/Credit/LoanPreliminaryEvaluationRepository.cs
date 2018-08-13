@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Customer;
 using System.ServiceModel;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -147,22 +148,14 @@ namespace FintrakBanking.Repositories.Credit
                         workFlow.TargetId = penRecord.LOANPRELIMINARYEVALUATIONID;
                         workFlow.Comment = "Request Preliminary Evaluation";
                         workFlow.OperationId = (int)OperationsEnum.LoanPreliminaryEvaluation;
-                        workFlow.DeferredExecution = true; 
+                        workFlow.DeferredExecution = true;
                         workFlow.ExternalInitialization = true;
 
-                        try
-                        {
-                            workFlow.LogActivity();
-                            context.SaveChanges();
-                        }
-                        catch(Exception ex)
-                        {
-                            throw new ConditionNotMetException(ex.Message);
-                        }
-
-                        trans.Commit();
+                        workFlow.LogActivity();
+                        context.SaveChanges();
                     }
-                    else trans.Commit();
+
+                    trans.Commit();
 
                     if (output)
                     {
@@ -314,8 +307,9 @@ namespace FintrakBanking.Repositories.Credit
             int counter = data + 1;
             var penCode = string.Empty;
 
-            penCode = $"PEN -- {counter.ToString().PadLeft(4, '0')}";
-
+            //penCode = $"PEN -- {counter.ToString().PadLeft(10, '0')}";
+            penCode = $"PEN -- { CommonHelpers.GenerateZeroString(5) + counter.ToString().Right(5)}";
+            
             return penCode;
         }
 
@@ -342,8 +336,9 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.TBL_COMPANY on pen.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && pen.ISCURRENT == true
-                            && pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
+                        where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                            && pen.ISCURRENT == true 
+                            //&& pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
                             && atrail.RESPONSESTAFFID == null
                             && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation 
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
@@ -464,9 +459,12 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.TBL_COMPANY on pen.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
                         join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && pen.ISCURRENT == true
-                              && pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup && atrail.RESPONSESTAFFID == null
-                              && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                        where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                        && pen.ISCURRENT == true 
+                        //&& pen.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup 
+                        && atrail.RESPONSESTAFFID == null
+                        && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation 
+                        && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.COMPANYID,
@@ -612,6 +610,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
+                        if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                            return false;
+
                         var response = ApprovePreliminaryEvaluation(entity.targetId, (short)workFlow.StatusId, entity);
 
                         if (response)
@@ -640,7 +641,7 @@ namespace FintrakBanking.Repositories.Credit
             var penRecord = context.TBL_LOAN_PRELIMINARY_EVALUATN.Find(loanPenId);
 
             penRecord.ISCURRENT = false;
-            penRecord.APPROVALSTATUSID = approvalStatusId;
+            penRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
             penRecord.DATEAPPROVED = DateTime.Now;
             penRecord.DATETIMEUPDATED = DateTime.Now;
 
@@ -684,9 +685,9 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
-                        where p.ISCURRENT == false && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
-                        && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                        || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                        where //p.ISCURRENT == false //&& p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
+                        p.SENTFORLOANAPPLICATION == false 
+                        //|| p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.COMPANYID,
@@ -810,8 +811,8 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
                         where p.ISCURRENT == false 
                         && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup 
-                        && p.SENTFORLOANAPPLICATION == false || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                        || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                        && p.SENTFORLOANAPPLICATION == false 
+                        //|| p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = p.COMPANYID,
@@ -999,7 +1000,6 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now,
                 TARGETID = loanPenId
-
             };
 
             using (var trans = context.Database.BeginTransaction())
@@ -1013,28 +1013,20 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (model.sendForEvaluation)
                     {
-                        var entity = new ApprovalViewModel
-                        {
-                            staffId = penRecord.CREATEDBY,
-                            companyId = penRecord.COMPANYID,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            targetId = loanPenId,
-                            operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
-                            BranchId = model.userBranchId,
-                            //externalInitialization = true
-                        };
+                        workFlow.StaffId = penRecord.CREATEDBY;
+                        workFlow.OperationId = (int)OperationsEnum.LoanPreliminaryEvaluation;
+                        workFlow.TargetId = loanPenId;
+                        workFlow.CompanyId = penRecord.COMPANYID;
+                        workFlow.Comment = "Request Preliminary Evaluation";
+                        workFlow.ExternalInitialization = true;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
 
-                        var response = workFlow.LogForApproval(entity);
+                         workFlow.LogActivity();
 
-                        if (response)
-                        {
-                            trans.Commit();
-                        }
+                        context.SaveChanges();
                     }
-                    else
-                    {
-                        trans.Commit();
-                    }
+
+                    trans.Commit();
 
                 }
                 catch (Exception ex)

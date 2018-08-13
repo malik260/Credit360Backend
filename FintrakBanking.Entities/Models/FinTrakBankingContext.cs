@@ -389,7 +389,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LMSR_APPLICATION_COVENANT> TBL_LMSR_APPLICATION_COVENANT { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATN_DETL_MTRIG> TBL_LMSR_APPLICATN_DETL_MTRIG { get; set; }
         public virtual DbSet<TBL_LMSR_APPLICATION_COLLATRL2> TBL_LMSR_APPLICATION_COLLATRL2 { get; set; }
-       // public virtual DbSet<TBL_LOAN_APPLICATION_COLT2_LOG> TBL_LOAN_APPLICATION_COLT2_LOG { get; set; }
         public virtual DbSet<TBL_LMSR_CONDITION_PRECEDENT> TBL_LMSR_CONDITION_PRECEDENT { get; set; }
         public virtual DbSet<TBL_LMSR_TRANSACTION_DYNAMICS> TBL_LMSR_TRANSACTION_DYNAMICS { get; set; }
         public virtual DbSet<TBL_CUSTOM_API_LOGS> TBL_CUSTOM_API_LOGS { get; set; }
@@ -405,6 +404,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DOC_TEMPLATE_SECTION> TBL_DOC_TEMPLATE_SECTION { get; set; }
         public virtual DbSet<TBL_DOC_TEMPLATE_SECTION_ROLE> TBL_DOC_TEMPLATE_SECTION_ROLE { get; set; }
         public virtual DbSet<TBL_PROFILE_PASSWORD_HISTORY> TBL_PROFILE_PASSWORD_HISTORY { get; set; }
+        public virtual DbSet<TBL_CUSTOM_CREDITBUREAU_ERROR> TBL_CUSTOM_CREDITBUREAU_ERROR { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var databaseUsername =

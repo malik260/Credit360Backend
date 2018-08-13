@@ -1704,11 +1704,8 @@ namespace FintrakBanking.Repositories.Credit
                         //CHECKING FOR COMMERCIAL LOANS IN LOOP
                         foreach (var record in loanApplicationDetails)
                         {
-                            if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
-                            {
-                                record.EFFECTIVEDATE = DateTime.Now;
-                                record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
-                            }
+                            record.EFFECTIVEDATE = DateTime.Now;
+                            record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
 
                             if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                             {
