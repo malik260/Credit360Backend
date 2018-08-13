@@ -632,22 +632,50 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private void UpdateMainApprovalLevel(ApprovalLevelViewModel ApprovalModel, short status)
         {
             var data = this.context.TBL_TEMP_APPROVAL_LEVEL.Where(x => x.TEMPAPPROVALLEVELID == ApprovalModel.tempApprovalLevelId).Select(x => x).FirstOrDefault();
+
             if (data != null)
             {
+                var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
+                var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFROLEID));
+
+                var audit = new TBL_AUDIT();
+
+
                 if (data.OPERATION == "create")
                 {
                     CreateApprovalLevel(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelAdded;
+                    audit.DETAIL = $" Workflow approval level '{ApprovalModel.levelName}' has been added successfully";
+
                 }
                 else if (data.OPERATION == "update")
                 {
                     UpdateApprovalLevel(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelAdded;
+                    audit.DETAIL = $" Workflow approval level '{ApprovalModel.levelName}' has been updated successfully";
+
                 }
                 else if (data.OPERATION == "delete")
                 {
                     DeleteApprovalLevel(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted;
+                    audit.DETAIL = $" Workflow approval level '{ApprovalModel.levelName}' has been delete successfully";
                 }
 
                 UpdateTempApprovalLevel(ApprovalModel,status);
+
+                audit.STAFFID = ApprovalModel.createdBy;
+                audit.BRANCHID = (short)ApprovalModel.userBranchId;
+                audit.IPADDRESS = ApprovalModel.userIPAddress;
+                audit.URL = ApprovalModel.applicationUrl;
+                audit.APPLICATIONDATE = genSetup.GetApplicationDate();
+                audit.SYSTEMDATETIME = DateTime.Now;
+                audit.TARGETID = ApprovalModel.approvalLevelId;
+
+                context.TBL_AUDIT.Add(audit);
             }
         }
 

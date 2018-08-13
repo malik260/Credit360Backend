@@ -207,7 +207,11 @@ namespace FintrakBanking.Entities.Models
         public decimal? NOSTRORATEAMOUNT { get; set; }
 
         public int? NOSTROCURRENCYID { get; set; }
-       
+
+        public string CRMSCODE { get; set; }
+
+        public DateTime CRMSDATE { get; set; }
+
 
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }

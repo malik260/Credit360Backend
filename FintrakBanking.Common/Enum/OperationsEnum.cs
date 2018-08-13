@@ -86,6 +86,7 @@ namespace FintrakBanking.Common.Enum
         CommercialLoanSubAllocation = 74,
         OverdraftInterestRate =75,
         ApprovalWorkflowGroupModification = 76,
-        ApprovalWorkflowLevelModification = 77,
+        ApprovalWorkflowLevelModification=77,
+        ApprovalLevelStaffModification = 78,
     }
 }
