@@ -11063,6 +11063,9 @@ namespace FintrakBanking.Repositories.Credit
             }
             else result = context.TBL_LOAN.Find(model.loanId);
 
+            if (result == null)
+                throw new BadImageFormatException("No loan was selected.");
+
             if (model.valueDate == null) model.valueDate = result.MATURITYDATE;
 
             //if (model.valueDate < systemDate)

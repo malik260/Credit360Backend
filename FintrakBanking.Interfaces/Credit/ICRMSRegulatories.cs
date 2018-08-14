@@ -9,6 +9,9 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ICRMSRegulatories
     {
-        bool AddCRMSCode(CRMSViewModel code);
+        string AddCRMSCode(CRMSViewModel code);
+        List<CRMSRegulatoryViewModel> GetAllLoansWithCRMSCode(CRMSViewModel data);
+        //byte[] GenerateExportTemplate(CRMS300TemplateViewModel loanInput);
+        byte[] GenerateCRMS300Template(CRMSViewModel param);
     }
 }
