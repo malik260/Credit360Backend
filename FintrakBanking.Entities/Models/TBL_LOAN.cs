@@ -210,7 +210,7 @@ namespace FintrakBanking.Entities.Models
 
         public string CRMSCODE { get; set; }
 
-        public DateTime CRMSDATE { get; set; }
+        public DateTime? CRMSDATE { get; set; }
 
 
         //[Column(TypeName = "date")]

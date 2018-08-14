@@ -123,7 +123,7 @@ namespace FintrakBanking.Entities.Models
 
         public string CRMSCODE { get; set; }
 
-        public DateTime CRMSDATE { get; set; }
+        public DateTime? CRMSDATE { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
