@@ -1689,7 +1689,7 @@ namespace FintrakBanking.Repositories.Credit
                                 disburseDate = ln.DISBURSEDATE,
                                 disbursableAmount = ln.PRINCIPALAMOUNT,
                                 approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
 
                                 loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
@@ -1831,7 +1831,7 @@ namespace FintrakBanking.Repositories.Credit
                                 // approvedBy = (int)ln.APPROVEDBY,
                                 approverComment = ln.APPROVERCOMMENT,
                                 dateApproved = ln.DATEAPPROVED,
-
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 isDisbursed = ln.ISDISBURSED,
                                 disbursedBy = ln.DISBURSEDBY,
                                 disburserComment = ln.DISBURSERCOMMENT,
@@ -1970,7 +1970,7 @@ namespace FintrakBanking.Repositories.Credit
                             disbursedBy = ln.DISBURSEDBY,
                             disburserComment = ln.DISBURSERCOMMENT,
                             disburseDate = ln.DISBURSEDATE,
-
+                            loanSystemTypeId =ln.LOANSYSTEMTYPEID,
                             approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                             disbursableAmount = ln.CONTINGENTAMOUNT,
 
@@ -6767,12 +6767,12 @@ namespace FintrakBanking.Repositories.Credit
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
-                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                        interestRate = a.INTERESTRATE,
                                        principalAmount = a.PRINCIPALAMOUNT,
                                        effectiveDate = a.EFFECTIVEDATE,
                                        maturityDate = a.MATURITYDATE,
-                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1
@@ -6852,8 +6852,7 @@ namespace FintrakBanking.Repositories.Credit
             bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
 
-            try
-            {
+     
                 IEnumerable<LoanViewModel> allFilteredLoan = null;
                 if (!string.IsNullOrWhiteSpace(searchQuery))
                 {
@@ -6879,11 +6878,7 @@ namespace FintrakBanking.Repositories.Credit
                 //var x = allFilteredLoan.ToList();
 
                 return allFilteredLoan;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+           
         }
 
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)

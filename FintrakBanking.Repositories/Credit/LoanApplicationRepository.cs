@@ -1233,7 +1233,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose,
-                    CASAACOUNTID = a.casaAccountId
+                    CASAACCOUNTID = a.casaAccountId
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
