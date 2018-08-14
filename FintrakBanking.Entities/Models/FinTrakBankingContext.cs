@@ -1037,6 +1037,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.EQUITYCASAACCOUNTID);
 
             modelBuilder.Entity<TBL_CASA>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL1)
+                .WithOptional(e => e.TBL_CASA1)
+                .HasForeignKey(e => e.CASAACCOUNTID);
+
+            modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION)
                 .WithRequired(e => e.TBL_CASA)
                 .WillCascadeOnDelete(false);
@@ -6527,10 +6532,11 @@ namespace FintrakBanking.Entities.Models
                 .HasForeignKey(e => e.APPROVEDPRODUCTID)
                 .WillCascadeOnDelete(false);
 
+
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL1)
                 .WithRequired(e => e.TBL_CASA1)
-                .HasForeignKey(e => e.CASAACOUNTID)
+                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()
