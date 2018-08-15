@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -88,5 +89,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationType, int staffId);
 
         bool ValidateInvoiceDetails(ValidateNumberViewModel data);
+
+        WorkflowResponse RerouteWorkflowTarget(ForwardViewModel data);
+        
     }
 }

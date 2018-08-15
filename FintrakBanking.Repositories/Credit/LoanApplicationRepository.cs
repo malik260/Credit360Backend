@@ -1233,7 +1233,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose,
-                    CASAACOUNTID = a.casaAccountId
+                    // CASAACOUNTID = a.casaAccountId
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
@@ -2533,6 +2533,22 @@ namespace FintrakBanking.Repositories.Credit
                                 });
 
             return applications.GroupBy(x => x.loanApplicationDetailId).Select(d => d.FirstOrDefault()).ToList();
+        }
+
+        public WorkflowResponse RerouteWorkflowTarget(ForwardViewModel model)
+        {
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.LogActivity();
+            return workflow.Response;
         }
     }
 }

@@ -371,7 +371,6 @@
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
     <Compile Include="Controllers\EndOfDayController.cs" />
-    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\FacilityDetailSummaryController.cs" />
     <Compile Include="Controllers\FeeConcessionController.cs" />
     <Compile Include="Controllers\FinanceTransactionController.cs" />
