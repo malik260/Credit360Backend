@@ -10296,8 +10296,6 @@ namespace FintrakBanking.Repositories.Credit
                                 output = false;
                             }
 
-                            //}
-
                         }
                         else if ((int)OperationsEnum.Fee_chargeChange == model.operationId)
                         {
