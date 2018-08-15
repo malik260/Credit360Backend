@@ -29,28 +29,28 @@ namespace FintrakBanking.APICore.Controllers
         private readonly IAuthenticationRepository _repo;
         private readonly IAuditTrailRepository _auditTrail;
         private readonly IErrorLogRepository _errorLogger;
-        private IAdminRepository _adminRepo;
+       // private IAdminRepository _adminRepo;
         private readonly IGeneralSetupRepository _genSetup;
         private readonly FinTrakBankingContext _context;
 
         public AuthenticationController(
                 IAuthenticationRepository repo,
                 IErrorLogRepository errorLogger,
-                IAdminRepository adminRepo,
+               // IAdminRepository adminRepo,
                 IAuditTrailRepository auditTrail,
                 IGeneralSetupRepository genSetup,
                 FinTrakBankingContext context
             )
         {
             this._repo = repo;
-            _adminRepo = adminRepo;
+           // _adminRepo = adminRepo;
             this._errorLogger = errorLogger;
             this._auditTrail = auditTrail;
             _genSetup = genSetup;
             this._context = context;
         }
-
-        [HttpGet]
+      
+       [HttpGet]
         [ClaimsAuthorization]
         [Route("user")]
         public HttpResponseMessage GetAllUsers()

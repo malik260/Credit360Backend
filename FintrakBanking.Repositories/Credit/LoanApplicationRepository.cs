@@ -939,7 +939,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-
+            
                 if (loan.relationshipOfficerId != 0)
                 {
                     var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
@@ -2594,6 +2594,69 @@ namespace FintrakBanking.Repositories.Credit
                                 });
 
             return applications.GroupBy(x => x.loanApplicationDetailId).Select(d => d.FirstOrDefault()).ToList();
+        }
+
+        public WorkflowResponse RerouteWorkflowTarget(ForwardViewModel model)
+        {
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.LogActivity();
+            return workflow.Response;
+        }
+
+
+        public static List<OfferLetterDetailViewModel> GetLoanApplicationDetail()
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            try
+            {
+                var loanDetails = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                                   join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                                   from c in cc.DefaultIfEmpty()
+                                   join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
+                                   from e in dg.DefaultIfEmpty()
+                                   join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
+                                   from g in gg.DefaultIfEmpty()
+                                   join h in context.TBL_CURRENCY on a.CURRENCYID equals h.CURRENCYID into hh
+                                   from h in hh.DefaultIfEmpty()
+                                   where a.STATUSID == (int)ApprovalStatusEnum.Approved
+                                   select new OfferLetterDetailViewModel()
+                                   {
+                                       productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.APPROVEDPRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
+                                       currencyName = h.CURRENCYCODE,
+                                       tenor = a.APPROVEDTENOR,
+                                       interestRate = a.APPROVEDINTERESTRATE,
+                                       loanAmount = a.APPROVEDAMOUNT,
+                                       exchangeRate = a.EXCHANGERATE,
+                                       currencyId = a.CURRENCYID,
+                                       customerName = c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME ,
+                                       customerAddress = e.ADDRESS ?? " ", 
+                                       applicationDate = a.DATETIMECREATED,
+                                       customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                       customerPhoneNumber = g.PHONENUMBER,
+                                       repaymentSchedule = a.REPAYMENTSCHEDULE ?? "Not applicable",
+                                       repaymentTerms = a.REPAYMENTTERMS ?? "Not applicable",
+                                       purpose = a.LOANPURPOSE,
+                                   }).ToList();
+
+                return loanDetails;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+
+
         }
     }
 }
