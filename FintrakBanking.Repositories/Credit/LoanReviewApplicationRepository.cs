@@ -38,6 +38,8 @@ namespace FintrakBanking.Repositories.Credit
             int companyId = user.companyId;
 
             bool ignoreBranch = true; // rm = false, ho = true
+            ignoreBranch = !ProcessInitiator(staffId, 46, classId);
+            if (ignoreBranch) ignoreBranch = !ProcessInitiator(staffId, 71, classId);
 
             if (camOperationIds.Contains(operationId)) ignoreBranch = !ProcessInitiator(staffId, operationId, classId);
 

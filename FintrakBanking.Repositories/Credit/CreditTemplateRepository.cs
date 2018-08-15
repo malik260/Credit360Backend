@@ -370,6 +370,310 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion DOCUMENT TEMPLATE IMPL
 
+
+        #region DOCUMENT TEMPLATE SETUP
+        public IEnumerable<DocumentTemplateViewModel> GetAllDocumentTemplateSetup()
+        {
+            return this.context.TBL_DOC_TEMPLATE.Where(x => x.DELETED == false).Select(x => new DocumentTemplateViewModel
+            {
+                templateId = x.TEMPLATEID,
+                companyId = x.COMPANYID,
+                templateName = x.TEMPLATENAME,
+                staffRoleId = x.STAFFROLEID,
+                operationId = x.OPERATIONID,
+                //productClassId = x.ProductClassId,
+            });
+        }
+        public IEnumerable<DocumentTemplateSectionViewModel> GetAllDocumentTemplateSectionSetup(int templateId)
+        {
+            return this.context.TBL_DOC_TEMPLATE_SECTION.Where(x => x.DELETED == false && x.TEMPLATEID == templateId).Select(x => new DocumentTemplateSectionViewModel
+            {
+                templateSectionId = x.TEMPLATESECTIONID,
+                templateId = x.TEMPLATEID,
+                title = x.TITLE,
+                templateDocument = x.TEMPLATEDOCUMENT,
+                position = x.POSITION,
+                isDisabled = x.ISDISABLED,
+                canEdit = x.CANEDIT,
+            });
+        }
+        public IEnumerable<DocumentTemplateSectionRoleViewModel> GetAllDocumentTemplateSectionRoleSetup(int templateSectionId)
+        {
+            return this.context.TBL_DOC_TEMPLATE_SECTION_ROLE.Where(x => x.DELETED == false && x.TEMPLATESECTIONID == templateSectionId).Select(x => new DocumentTemplateSectionRoleViewModel
+            {
+                sectionRoleId = x.SECTIONROLEID,
+                templateSectionId = x.TEMPLATESECTIONID,
+                staffRoleId = x.STAFFROLEID,
+            });
+        }
+        public bool AddDocumentTemplate(DocumentTemplateViewModel model)
+        {
+            //if (String.IsNullOrEmpty(model.templateDocument)) { throw new SecureException("Document is blank. Cannot create a blank document!"); }
+
+            var data = new TBL_DOC_TEMPLATE
+            {
+                COMPANYID = model.companyId,
+                TEMPLATENAME = model.templateName,
+                STAFFROLEID = model.staffRoleId,
+                OPERATIONID = model.operationId,
+                //ProductClassId = model.productClassId,
+                CREATEDBY = (int)model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate()
+            };
+
+            context.TBL_DOC_TEMPLATE.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplateAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added DocumentTemplate '{ model.templateName }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateDocumentTemplate(DocumentTemplateViewModel model, int documentTemplateId)
+        {
+            var data = this.context.TBL_DOC_TEMPLATE.Find(documentTemplateId);
+            if (data == null)
+            {
+                return false;
+            }
+            data.COMPANYID = model.companyId;
+            data.TEMPLATENAME = model.templateName;
+            data.STAFFROLEID = model.staffRoleId;
+            data.OPERATIONID = model.operationId;
+            //data.ProductClassId = model.productClassId;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplateUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated DocumentTemplate '{ model.templateName }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+        public bool DeleteDocumentTemplate(int documentTemplateId)
+        {
+            var data = this.context.TBL_DOC_TEMPLATE.Find(documentTemplateId);
+            if (data != null)
+            {
+                data.DELETED = true;
+            }
+            return context.SaveChanges() != 0;
+        }
+
+
+
+
+        public bool AddDocumentTemplateSection(DocumentTemplateSectionViewModel model)
+        {
+            //if (String.IsNullOrEmpty(model.templateDocument)) { throw new SecureException("Document is blank. Cannot create a blank document!"); }
+
+            var data = new TBL_DOC_TEMPLATE_SECTION
+            {
+                TEMPLATEID = model.templateId,
+                TITLE = model.title,
+                TEMPLATEDOCUMENT = model.templateDocument,
+                POSITION = model.position,
+                CANEDIT = model.canEdit,
+                //ProductClassId = model.productClassId,
+                CREATEDBY = (int)model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate()
+            };
+
+            context.TBL_DOC_TEMPLATE_SECTION.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplateSectionAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added DocumentTemplateSection '{ model.title }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool UpdateDocumentTemplateSection(DocumentTemplateSectionViewModel model, int documentTemplateSectionId)
+        {
+            var data = this.context.TBL_DOC_TEMPLATE_SECTION.Find(documentTemplateSectionId);
+            if (data == null)
+            {
+                return false;
+            }
+            data.TEMPLATEID = model.templateId;
+            data.TITLE = model.title;
+            data.TEMPLATEDOCUMENT = model.templateDocument;
+            data.POSITION = model.position;
+            data.CANEDIT = model.canEdit;
+
+            //data.ProductClassId = model.productClassId;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplateSectionUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated DocumentTemplateSection '{ model.title }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+        public bool DeleteDocumentTemplateSection(int documentTemplateSectionId, short userBranchId, int companyId, int lastUpdatedBy, string applicationUrl, string userIPAddress)
+        {
+
+            var data = this.context.TBL_DOC_TEMPLATE_SECTION.Find(documentTemplateSectionId);
+            if (data != null)
+            {
+                data.DELETED = true;
+            }
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplateSectionDeleted,
+                STAFFID = lastUpdatedBy,
+                BRANCHID = userBranchId,
+                DETAIL = $"Deleted DocumentTemplateSection '{ data.TITLE }' ",
+                IPADDRESS = userIPAddress,
+                URL = applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+        public bool AddDocumentTemplateSectionRole(DocumentTemplateSectionRoleViewModel model)
+        {
+            //if (String.IsNullOrEmpty(model.templateDocument)) { throw new SecureException("Document is blank. Cannot create a blank document!"); }
+
+            var data = new TBL_DOC_TEMPLATE_SECTION_ROLE
+            {
+
+                TEMPLATESECTIONID = model.templateSectionId,
+                DELETED=false,
+                STAFFROLEID = model.staffRoleId,
+                CREATEDBY = (int)model.createdBy,
+                DATETIMECREATED = general.GetApplicationDate()
+            };
+
+            context.TBL_DOC_TEMPLATE_SECTION_ROLE.Add(data);
+            var section = this.context.TBL_DOC_TEMPLATE_SECTION.Find(data.TEMPLATESECTIONID);
+            var staff = this.context.TBL_STAFF_ROLE.Find(data.STAFFROLEID);
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplateSectionRoleAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added DocumentTemplateSectionRole for Section ' { section.TITLE } with Staff Role {staff.STAFFROLENAME } '",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+        public bool UpdateDocumentTemplateSectionRole(DocumentTemplateSectionRoleViewModel model)
+        {
+            var data = this.context.TBL_DOC_TEMPLATE_SECTION_ROLE.Find(model.sectionRoleId);
+            if (data == null)
+            {
+                return false;
+            }
+            data.STAFFROLEID = model.staffRoleId;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.DATETIMEUPDATED = general.GetApplicationDate();
+            var section = this.context.TBL_DOC_TEMPLATE_SECTION.Find(data.TEMPLATESECTIONID);
+            var staff = this.context.TBL_STAFF_ROLE.Find(data.STAFFROLEID);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplateSectionUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated DocumentTemplateSectionRole '{ model.sectionRoleId } Of Section { section.TITLE } with Staff Role {staff.STAFFROLENAME } ' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+        public bool DeleteDocumentTemplateSectionRole(int sectionRoleId, short userBranchId, int companyId, int lastUpdatedBy, string applicationUrl, string userIPAddress)
+        {
+
+            var data = this.context.TBL_DOC_TEMPLATE_SECTION_ROLE.Find(sectionRoleId);
+            if (data != null)
+            {
+                data.DELETED = true;
+            }
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.DocumentTemplateSectionDeleted,
+                STAFFID = lastUpdatedBy,
+                BRANCHID = userBranchId,
+                DETAIL = $"Deleted DocumentTemplateSectionRole '{ data.SECTIONROLEID }' ",
+                IPADDRESS = userIPAddress,
+                URL = applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+
+        #endregion
+
     }
 }
 

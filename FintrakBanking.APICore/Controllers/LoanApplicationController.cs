@@ -273,7 +273,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllLoanApplicationsDetails(id, token.GetCompanyId);
+                var data = repo.GetAllLoanApplicationsDetailsById(id, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
@@ -628,6 +628,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-pen-code")]
+        public HttpResponseMessage GetCustomerLoanPreliminaryEvaluations(int customerId, int loanTypeId, int customerGroupId = 0)
+        {
+            try
+            {
+                var data = repoLoanPEN.GetCustomerLoanPreliminaryEvaluations(customerId, loanTypeId, customerGroupId);
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+        
       [HttpGet] [ClaimsAuthorization]  
         [Route("loan/preliminary-evaluation/awaiting-approval/loan-type/{loanTypeId}")]
         public HttpResponseMessage GetLoanPreliminaryEvaluationsForAppprovalByLoanType(int loanTypeId)
@@ -813,7 +836,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-dedube-check/{customerId}")]
         public HttpResponseMessage GetLoanApplicationDedubeCheck([FromUri] int customerId)
         {
@@ -873,7 +897,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var response = repo.ValidateDocumentNumber(data);
+                var response = repo.ValidateInvoiceDetails(data);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
@@ -1034,6 +1058,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-detail/search/")]
+        public HttpResponseMessage SearchLoanApplicationDetails(string searchString)
+        {
+            try
+            {
+                var response = repo.SearchLoanApplicationDetails(token.GetCompanyId,searchString);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

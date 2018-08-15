@@ -365,6 +365,7 @@
     <Compile Include="Controllers\ConditionPrecedentController.cs" />
     <Compile Include="Controllers\ContingentLoanUsageController.cs" />
     <Compile Include="Controllers\CreditOperationsController.cs" />
+    <Compile Include="Controllers\CRMSController.cs" />
     <Compile Include="Controllers\CustomChartOfAccountController.cs" />
     <Compile Include="Controllers\CustomerCreditBureauController.cs" />
     <Compile Include="Controllers\EditorController.cs" />

@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationDetailId, int companyId);
 
-        IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetails(int loanApplicationId, int companyId);
+        IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetailsById(int loanApplicationId, int companyId);
 
         IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailByLoanApplicationId(int loanApplicationId, int companyId);
 
@@ -46,6 +46,8 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
+
+        IQueryable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
 
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
 

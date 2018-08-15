@@ -105,6 +105,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 join c in _context.TBL_CITY on a.CITYID equals c.CITYID
                                 join sb in _context.TBL_CUSTOMER_EMPLOYER_TYPE_SUB on a.EMPLOYER_SUB_TYPEID equals sb.EMPLOYER_SUB_TYPEID
                                 where a.COMPANYID == companyId & a.DELETED == false
+                                orderby a.EMPLOYER_NAME
                                 select new EmployerViewModel {
 
                                     employerName=a.EMPLOYER_NAME,

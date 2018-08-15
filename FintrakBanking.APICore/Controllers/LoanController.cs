@@ -351,7 +351,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 var data = repo.AddLoanBooking(entity);
                 if (data != "")
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan booking was successful and and is waiting for approval.\r\n Loan Reference Number: " + data });
+                    if(entity.productTypeId ==(short)LoanProductTypeEnum.CommercialPaper 
+                        || entity.productTypeId == (short)LoanProductTypeEnum.TermLoan 
+                        || entity.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating 
+                        || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
+                    }
+
+                    if(entity.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+
+                    if (entity.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+
+
+                    //This is not allowed
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Unknown facility type booked.\r\n Facility Account Number: " + data });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -367,6 +383,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (APIErrorException ae)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
+            }
+            catch (TwoFactorAuthenticationException fa)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
             }
             catch (SecureException ex)
             {

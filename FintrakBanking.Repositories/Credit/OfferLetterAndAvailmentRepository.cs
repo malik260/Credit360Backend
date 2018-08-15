@@ -1704,11 +1704,8 @@ namespace FintrakBanking.Repositories.Credit
                         //CHECKING FOR COMMERCIAL LOANS IN LOOP
                         foreach (var record in loanApplicationDetails)
                         {
-                            if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper)
-                            {
-                                record.EFFECTIVEDATE = DateTime.Now;
-                                record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
-                            }
+                            record.EFFECTIVEDATE = DateTime.Now;
+                            record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
 
                             if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                             {
@@ -2104,36 +2101,36 @@ namespace FintrakBanking.Repositories.Credit
                                      select b).ToList();
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
 
-                        if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.AvailmentCheckList)
-                        {
-                            var availmentDetail = (from a in context.TBL_CHECKLIST_DEFINITION
-                                          join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
-                                          equals b.CHECKLISTDEFINITIONID
-                                          where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-                                          && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanAvailment
-                                                   select b).ToList();
+                        //if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.AvailmentCheckList)
+                        //{
+                        //    var availmentDetail = (from a in context.TBL_CHECKLIST_DEFINITION
+                        //                  join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
+                        //                  equals b.CHECKLISTDEFINITIONID
+                        //                  where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                        //                  && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanAvailment
+                        //                           select b).ToList();
 
-                            var definition = (from a in context.TBL_CHECKLIST_DEFINITION
-                                              join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
-                                              where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
-                                              && a.OPERATIONID == (int)OperationsEnum.LoanAvailment && a.PRODUCTID == PRODUCTID
-                                              select a).ToList();
+                        //    var definition = (from a in context.TBL_CHECKLIST_DEFINITION
+                        //                      join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
+                        //                      where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
+                        //                      && a.OPERATIONID == (int)OperationsEnum.LoanAvailment && a.PRODUCTID == PRODUCTID
+                        //                      select a).ToList();
 
-                            if (definition.Count() != availmentDetail.Count())
-                            {
-                                isCheckListDone = false;
-                                str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete. ";
-                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                            }
-                            var avail = detail.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
-                            if (avail.Any())
-                            {
-                                isCheckListDone = false;
-                                str = str + $"One or more {item.CHECKLIST_TYPE_NAME} item(s) did not meet with the condition. " + Environment.NewLine
-                                    + " Please check your response to confirm. " + Environment.NewLine;
-                                checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
-                            }
-                        }
+                        //    if (definition.Count() != availmentDetail.Count())
+                        //    {
+                        //        isCheckListDone = false;
+                        //        str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete. ";
+                        //        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                        //    }
+                        //    var avail = detail.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
+                        //    if (avail.Any())
+                        //    {
+                        //        isCheckListDone = false;
+                        //        str = str + $"One or more {item.CHECKLIST_TYPE_NAME} item(s) did not meet with the condition. " + Environment.NewLine
+                        //            + " Please check your response to confirm. " + Environment.NewLine;
+                        //        checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
+                        //    }
+                        //}
                         var ab = detail.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null);
                         if (ab.Any())
                         {

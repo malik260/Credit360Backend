@@ -23,7 +23,6 @@ namespace FintrakBanking.Common.Enum
         RevolvingLoanBooking = 13,
         ContigentLoanBooking = 14,
         DailyInterestAccural = 15,
-
         InterestLoanRepayment = 16,
         LoanReversal = 17,
         LoanPrepayment = 18,
@@ -60,7 +59,6 @@ namespace FintrakBanking.Common.Enum
         FeeConcessionApproval = 49,
         CreditBureauSearch = 50,
         Restructured = 51,
-
         OverdraftTenorExtension = 52,
         OverdraftRenewal = 53,
         CollateralMaintenance = 54,
@@ -86,6 +84,7 @@ namespace FintrakBanking.Common.Enum
         CommercialLoanSubAllocation = 74,
         OverdraftInterestRate =75,
         ApprovalWorkflowGroupModification = 76,
-        ApprovalWorkflowLevelModification = 77,
+        ApprovalWorkflowLevelModification=77,
+        ApprovalLevelStaffModification = 78,
     }
 }

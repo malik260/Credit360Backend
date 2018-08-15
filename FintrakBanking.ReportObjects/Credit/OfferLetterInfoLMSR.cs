@@ -43,8 +43,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                           //from i in ii.DefaultIfEmpty()
                                           //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
                                           //from j in jj.DefaultIfEmpty()
-                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
-                                  a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
+                                      &&  a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                        && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       select new OfferLetterViewModel
                                       {
@@ -58,15 +58,15 @@ namespace FintrakBanking.ReportObjects.Credit
 
                                       }).FirstOrDefault();
 
-            if (offerLetterDetails.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
-            {
+            //if (offerLetterDetails.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
+            //{
                 offerLetterDetails.isFinal = true;
-            }
+            //}
 
-            if (offerLetterDetails != null)
-            {
-                return offerLetterDetails;
-            }
+            //if (offerLetterDetails != null)
+            //{
+            //    return offerLetterDetails;
+            //}
 
             return new OfferLetterViewModel();
         }

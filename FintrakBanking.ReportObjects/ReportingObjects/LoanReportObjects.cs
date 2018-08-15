@@ -63,12 +63,12 @@ namespace FintrakBanking.ReportObjects
             
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
+                //var staffSensitivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
                 var company = context.TBL_COMPANY.Where(c => c.COMPANYID == companyId).FirstOrDefault();
                 loan = (from a in context.TBL_LOAN
                         join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                         join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.TERMLOANID equals b.LOANID
-                        where a.COMPANYID == companyId && a.TERMLOANID == tearmLoanId && c.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
+                        where a.COMPANYID == companyId && a.TERMLOANID == tearmLoanId //&& c.CUSTOMERSENSITIVITYLEVELID <= staffSensitivityLevelId
                         select new LoanInformation()
                         {
                             accountNumber = context.TBL_CASA.Where(c => c.CASAACCOUNTID == a.CASAACCOUNTID).Select(c=>c.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
