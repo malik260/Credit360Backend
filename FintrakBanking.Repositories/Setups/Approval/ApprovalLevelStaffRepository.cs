@@ -21,16 +21,19 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IGeneralSetupRepository _genSetup;
         private IAuditTrailRepository auditTrail;
         private IWorkflow workflow;
+        private IAdminRepository admin;
 
         public ApprovalLevelStaffRepository(FinTrakBankingContext _context,
                                                     IGeneralSetupRepository genSetup,
                                                     IAuditTrailRepository _auditTrail,
-                                                       IWorkflow _workflow)
+                                                       IWorkflow _workflow,
+                                                         IAdminRepository _admin)
         {
             this.context = _context;
             this._genSetup = genSetup;
             auditTrail = _auditTrail;
             workflow = _workflow;
+            admin = _admin;
         }
 
         private IEnumerable<ApprovalLevelStaffViewModel> GetApprovalLevelStaff(int companyId)
@@ -146,65 +149,111 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model)
         {
-            var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
+            if (admin.IsSuperAdmin(model.staffId) == true)
             {
-                MAXIMUMAMOUNT = model.maximumAmount,
-                STAFFID = model.staffId,
-                APPROVALLEVELID = model.approvalLevelId,
-                POSITION = model.position,
-                PROCESSVIEWSCOPEID = (short)model.processViewScope,
-                CANVIEWDOCUMENT = model.canViewDocument,
-                CANVIEWUPLOAD = model.canViewUploadedFile,
-                CANVIEWAPPROVAL = model.canViewApproval,
-                CANAPPROVE = model.canApprove,
-                CANUPLOAD = model.canUploadFile,
-                //CANSENDJOBREQUEST = model.canSendRequest,
-                CANEDIT = model.canEdit,
-                VETOPOWER = model.vetoPower,
-                DATETIMECREATED = _genSetup.GetApplicationDate(),
-                CREATEDBY = (int)model.createdBy,
-                OPERATION = "create",
-                DELETED = false
-                
-            };
-            context.TBL_TEMP_APPROVAL_LEVEL_STAFF.Add(data);
+                var data = new TBL_APPROVAL_LEVEL_STAFF
+                {
+                    MAXIMUMAMOUNT = model.maximumAmount,
+                    STAFFID = model.staffId,
+                    APPROVALLEVELID = model.approvalLevelId,
+                    POSITION = model.position,
+                    PROCESSVIEWSCOPEID = (short)model.processViewScope,
+                    CANVIEWDOCUMENT = model.canViewDocument,
+                    CANVIEWUPLOAD = model.canViewUploadedFile,
+                    CANVIEWAPPROVAL = model.canViewApproval,
+                    CANAPPROVE = model.canApprove,
+                    CANUPLOAD = model.canUploadFile,
+                    //CANSENDJOBREQUEST = model.canSendRequest,
+                    CANEDIT = model.canEdit,
+                    VETOPOWER = model.vetoPower,
+                    DATETIMECREATED = _genSetup.GetApplicationDate(),
+                    CREATEDBY = (int)model.createdBy,
+                    DELETED = false
 
-            if (context.SaveChanges() > 0)
-            {
-                model.tempStaffLevelId= data.TEMPSTAFFLEVELID;
+                };
+                context.TBL_APPROVAL_LEVEL_STAFF.Add(data);
+
+                var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
+                var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
+                var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).Select(x => x.STAFFCODE));
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelStaffAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"The Approval-Level '{audit_staff_level?.LEVELNAME}' for user code '{audit_staff?.STAFFCODE}' is was created by the super-admin with id {admin}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = model.staffLevelId
+                };
+
+
+                this.auditTrail.AddAuditTrail(audit);
+
             }
-
-            // Audit Section ---------------------------
-            var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
-            var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
-
-            workflow.StaffId = model.createdBy;
-            workflow.CompanyId = model.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = model.tempStaffLevelId;
-            workflow.Comment = $"The Approval-Level '{audit_staff_level?.LEVELNAME}' for user code '{audit_staff?.STAFFCODE}' has been created and is going for approvals .";
-            workflow.OperationId = (int)OperationsEnum.ApprovalLevelStaffModification;
-            workflow.DeferredExecution = true;
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
-
-            var audit = new TBL_AUDIT
+            else
             {
-                AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelStaffAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"The Approval-Level '{audit_staff_level?.LEVELNAME}' for user code '{audit_staff?.STAFFCODE}' has been created and is going for approvals",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = model.staffLevelId
-            };
+                var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
+                {
+                    MAXIMUMAMOUNT = model.maximumAmount,
+                    STAFFID = model.staffId,
+                    APPROVALLEVELID = model.approvalLevelId,
+                    POSITION = model.position,
+                    PROCESSVIEWSCOPEID = (short)model.processViewScope,
+                    CANVIEWDOCUMENT = model.canViewDocument,
+                    CANVIEWUPLOAD = model.canViewUploadedFile,
+                    CANVIEWAPPROVAL = model.canViewApproval,
+                    CANAPPROVE = model.canApprove,
+                    CANUPLOAD = model.canUploadFile,
+                    //CANSENDJOBREQUEST = model.canSendRequest,
+                    CANEDIT = model.canEdit,
+                    VETOPOWER = model.vetoPower,
+                    DATETIMECREATED = _genSetup.GetApplicationDate(),
+                    CREATEDBY = (int)model.createdBy,
+                    OPERATION = "create",
+                    DELETED = false
 
-    
-            this.auditTrail.AddAuditTrail(audit);
+                };
+                context.TBL_TEMP_APPROVAL_LEVEL_STAFF.Add(data);
 
-            //end of Audit section -------------------------------
+                if (context.SaveChanges() > 0)
+                {
+                    model.tempStaffLevelId = data.TEMPSTAFFLEVELID;
+                }
+
+                // Audit Section ---------------------------
+                var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
+                var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
+
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.tempStaffLevelId;
+                workflow.Comment = $"The Approval-Level '{audit_staff_level?.LEVELNAME}' for user code '{audit_staff?.STAFFCODE}' has been created and is going for approvals .";
+                workflow.OperationId = (int)OperationsEnum.ApprovalLevelStaffModification;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelStaffAdded,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"The Approval-Level '{audit_staff_level?.LEVELNAME}' for user code '{audit_staff?.STAFFCODE}' has been created and is going for approvals",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = model.staffLevelId
+                };
+
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
 
             return context.SaveChanges() != 0;
         }
@@ -213,7 +262,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ApprovalLevelStaffModification).ToList();
 
-          
+
             var data = (from a in context.TBL_TEMP_APPROVAL_LEVEL_STAFF
                         join atrail in context.TBL_APPROVAL_TRAIL on a.TEMPSTAFFLEVELID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
@@ -235,10 +284,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                             //minimumAmount = a.tbl_Approval_Level.MaximumAmount,
                             position = a.POSITION,
                             approvalLevelId = a.APPROVALLEVELID,
-                            approvalLevelName = context.TBL_APPROVAL_LEVEL.Where(x=>x.APPROVALLEVELID==a.APPROVALLEVELID).Select(x=>x.LEVELNAME).FirstOrDefault(),
+                            approvalLevelName = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == a.APPROVALLEVELID).Select(x => x.LEVELNAME).FirstOrDefault(),
                             staffId = a.STAFFID,
                             staffLevelId = a.STAFFLEVELID,// added
-                            staffLevelName = context.TBL_STAFF.Where(x=>x.STAFFID==a.STAFFID).Select(x=>x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault(),
+                            staffLevelName = context.TBL_STAFF.Where(x => x.STAFFID == a.STAFFID).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault(),
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = (int)a.CREATEDBY,
                             tempStaffLevelId = a.TEMPSTAFFLEVELID
@@ -250,54 +299,37 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         public bool UpdateApprovalLevelStaff(int StaffLevelId, ApprovalLevelStaffViewModel model)
         {
-
-            if (model != null)
+            if (admin.IsSuperAdmin(model.staffId) == true)
             {
-                var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
-                {
-                    MAXIMUMAMOUNT = model.maximumAmount,
-                    STAFFID = model.staffId,
-                    APPROVALLEVELID = model.approvalLevelId,
-                    POSITION = model.position,
-                    PROCESSVIEWSCOPEID = (short)model.processViewScope,
-                    CANVIEWDOCUMENT = model.canViewDocument,
-                    CANVIEWUPLOAD = model.canViewUploadedFile,
-                    CANVIEWAPPROVAL = model.canViewApproval,
-                    CANAPPROVE = model.canApprove,
-                    CANUPLOAD = model.canUploadFile,
-                    CANEDIT = model.canEdit,
-                    VETOPOWER = model.vetoPower,
-                    DATETIMECREATED = _genSetup.GetApplicationDate(),
-                    CREATEDBY = (int)model.createdBy,
-                    OPERATION = "update",
-                    DELETED = false
-                };
-                context.TBL_TEMP_APPROVAL_LEVEL_STAFF.Add(data);
+                var data = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFLEVELID == StaffLevelId).Select(x => x).FirstOrDefault();
+                if (data == null) return false;
 
-                if (context.SaveChanges() > 0)
-                {
-                    model.tempStaffLevelId = data.TEMPSTAFFLEVELID;
-                }
+                data.MAXIMUMAMOUNT = model.maximumAmount;
+                data.STAFFID = model.staffId;
+                data.APPROVALLEVELID = model.approvalLevelId;
+                data.POSITION = model.position;
+                data.PROCESSVIEWSCOPEID = (short)model.processViewScope;
+                data.CANVIEWDOCUMENT = model.canViewDocument;
+                data.CANVIEWUPLOAD = model.canViewUploadedFile;
+                data.CANVIEWAPPROVAL = model.canViewApproval;
+                data.CANAPPROVE = model.canApprove;
+                data.CANUPLOAD = model.canUploadFile;
+                data.CANEDIT = model.canEdit;
+                data.VETOPOWER = model.vetoPower;
+                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.LASTUPDATEDBY = (int)model.createdBy;
 
                 var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == StaffLevelId));
-                var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
+                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == data.STAFFID).Select(x => x.STAFFCODE));
+                var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).Select(x => x.STAFFCODE));
 
-                workflow.StaffId = model.createdBy;
-                workflow.CompanyId = model.companyId;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = model.tempStaffLevelId;
-                workflow.Comment = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.staffLevelName}' is updated and is going for approval";
-                workflow.OperationId = (int)OperationsEnum.ApprovalLevelStaffModification;
-                workflow.DeferredExecution = true;
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
 
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelStaffUpdated,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.staffLevelName}' is updated and is going for approval",
+                    DETAIL = $"Approval Level for staff with code '{audit_staff}' to level {model.staffLevelName}' was updated by this super-admin {admin}",
                     IPADDRESS = model.userIPAddress,
                     URL = model.applicationUrl,
                     APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -307,8 +339,69 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                 this.auditTrail.AddAuditTrail(audit);
 
-                //end of Audit section -------------------------------
             }
+            else
+            {
+                if (model != null)
+                {
+                    var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
+                    {
+                        MAXIMUMAMOUNT = model.maximumAmount,
+                        STAFFID = model.staffId,
+                        APPROVALLEVELID = model.approvalLevelId,
+                        POSITION = model.position,
+                        PROCESSVIEWSCOPEID = (short)model.processViewScope,
+                        CANVIEWDOCUMENT = model.canViewDocument,
+                        CANVIEWUPLOAD = model.canViewUploadedFile,
+                        CANVIEWAPPROVAL = model.canViewApproval,
+                        CANAPPROVE = model.canApprove,
+                        CANUPLOAD = model.canUploadFile,
+                        CANEDIT = model.canEdit,
+                        VETOPOWER = model.vetoPower,
+                        DATETIMECREATED = _genSetup.GetApplicationDate(),
+                        CREATEDBY = (int)model.createdBy,
+                        OPERATION = "update",
+                        DELETED = false
+                    };
+                    context.TBL_TEMP_APPROVAL_LEVEL_STAFF.Add(data);
+
+                    if (context.SaveChanges() > 0)
+                    {
+                        model.tempStaffLevelId = data.TEMPSTAFFLEVELID;
+                    }
+
+                    var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == StaffLevelId));
+                    var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
+
+                    workflow.StaffId = model.createdBy;
+                    workflow.CompanyId = model.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = model.tempStaffLevelId;
+                    workflow.Comment = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.staffLevelName}' is updated and is going for approval";
+                    workflow.OperationId = (int)OperationsEnum.ApprovalLevelStaffModification;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelStaffUpdated,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.staffLevelName}' is updated and is going for approval",
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        TARGETID = model.staffLevelId
+                    };
+
+                    this.auditTrail.AddAuditTrail(audit);
+
+                    //end of Audit section -------------------------------
+                }
+            }
+
             return context.SaveChanges() != 0;
         }
 
@@ -316,71 +409,102 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             int tempStaffLevelId = 0;
 
-            var model = this.context.TBL_APPROVAL_LEVEL_STAFF.Where(x=>x.STAFFLEVELID==StaffLevelId).Select(x=>x).FirstOrDefault();
+            var model = this.context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFLEVELID == StaffLevelId).Select(x => x).FirstOrDefault();
             //var dataExist = context.TBL_TEMP_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.MAXIMUMAMOUNT == user. && x.OPERATIONID == data.OPERATIONID).Any();
 
             //if (dataExist)
             //    throw new ConditionNotMetException("This operation has already been initiated and is apprival pending");
 
+           
 
             if (model != null)
             {
-                var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
+                if (admin.IsSuperAdmin(user.staffId) == true)
                 {
-                    MAXIMUMAMOUNT = model.MAXIMUMAMOUNT,
-                    STAFFID = model.STAFFID,
-                    APPROVALLEVELID = model.APPROVALLEVELID,
-                    POSITION = model.POSITION,
-                    PROCESSVIEWSCOPEID = (short)model.PROCESSVIEWSCOPEID,
-                    CANVIEWDOCUMENT = model.CANVIEWDOCUMENT,
-                    CANVIEWUPLOAD = model.CANVIEWUPLOAD,
-                    CANVIEWAPPROVAL = model.CANVIEWAPPROVAL,
-                    CANAPPROVE = model.CANAPPROVE,
-                    CANUPLOAD = model.CANUPLOAD,
-                    //CANSENDJOBREQUEST = model.canSendRequest,
-                    CANEDIT = model.CANEDIT,
-                    VETOPOWER = model.VETOPOWER,
-                    DATETIMECREATED = _genSetup.GetApplicationDate(),
-                    CREATEDBY = (int)model.CREATEDBY,
-                    OPERATION = "delete",
-                    DELETED=false
-                };
-                context.TBL_TEMP_APPROVAL_LEVEL_STAFF.Add(data);
+                    model.DATETIMEDELETED = _genSetup.GetApplicationDate();
+                    model.DELETEDBY = (int)model.CREATEDBY;
+                    model.DELETED = true;
 
-                if (context.SaveChanges() > 0)
+                    var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == model.APPROVALLEVELID));
+                    var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == user.staffId));
+                    var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.STAFFID).Select(x => x.STAFFCODE));
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
+                        STAFFID = user.staffId,
+                        BRANCHID = (short)user.BranchId,
+                        DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete by this super-admin {admin}",
+                        IPADDRESS = user.userIPAddress,
+                        URL = user.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        TARGETID = model.STAFFLEVELID
+                    };
+
+                    this.auditTrail.AddAuditTrail(audit);
+                }
+                else
                 {
-                    tempStaffLevelId = data.TEMPSTAFFLEVELID;
+
+                    var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
+                    {
+                        MAXIMUMAMOUNT = model.MAXIMUMAMOUNT,
+                        STAFFID = model.STAFFID,
+                        APPROVALLEVELID = model.APPROVALLEVELID,
+                        POSITION = model.POSITION,
+                        PROCESSVIEWSCOPEID = (short)model.PROCESSVIEWSCOPEID,
+                        CANVIEWDOCUMENT = model.CANVIEWDOCUMENT,
+                        CANVIEWUPLOAD = model.CANVIEWUPLOAD,
+                        CANVIEWAPPROVAL = model.CANVIEWAPPROVAL,
+                        CANAPPROVE = model.CANAPPROVE,
+                        CANUPLOAD = model.CANUPLOAD,
+                        //CANSENDJOBREQUEST = model.canSendRequest,
+                        CANEDIT = model.CANEDIT,
+                        VETOPOWER = model.VETOPOWER,
+                        DATETIMECREATED = _genSetup.GetApplicationDate(),
+                        CREATEDBY = (int)model.CREATEDBY,
+                        OPERATION = "delete",
+                        DELETED = false
+                    };
+                    context.TBL_TEMP_APPROVAL_LEVEL_STAFF.Add(data);
+
+                    if (context.SaveChanges() > 0)
+                    {
+                        tempStaffLevelId = data.TEMPSTAFFLEVELID;
+                    }
+
+                    //Audit Section ---------------------------
+                    var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
+                    var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
+
+                    workflow.StaffId = data.CREATEDBY;
+                    workflow.CompanyId = 1;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = tempStaffLevelId;
+                    workflow.Comment = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete and the action is going for approval";
+                    workflow.OperationId = (int)OperationsEnum.ApprovalLevelStaffModification;
+                    workflow.DeferredExecution = true;
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
+                        STAFFID = user.staffId,
+                        BRANCHID = (short)user.BranchId,
+                        DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete and the action is going for approval ",
+                        IPADDRESS = user.userIPAddress,
+                        URL = user.applicationUrl,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        TARGETID = data.STAFFLEVELID
+                    };
+
+                    this.auditTrail.AddAuditTrail(audit);
                 }
 
-                //Audit Section ---------------------------
-                var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
-                var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
-
-                workflow.StaffId = data.CREATEDBY;
-                workflow.CompanyId = 1;
-                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                workflow.TargetId = tempStaffLevelId;
-                workflow.Comment = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete and the action is going for approval";
-                workflow.OperationId = (int)OperationsEnum.ApprovalLevelStaffModification;
-                workflow.DeferredExecution = true;
-                workflow.ExternalInitialization = true;
-                workflow.LogActivity();
-
-
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                    STAFFID = user.staffId,
-                    BRANCHID = (short)user.BranchId,
-                    DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete and the action is going for approval ",
-                    IPADDRESS = user.userIPAddress,
-                    URL = user.applicationUrl,
-                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now,
-                    TARGETID = data.STAFFLEVELID
-                };
-
-                this.auditTrail.AddAuditTrail(audit);
                 //end of Audit section -------------------------------
 
             }
@@ -445,12 +569,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private void ApprovalLevelStaffDelete(TBL_TEMP_APPROVAL_LEVEL_STAFF model)
         {
-             var data = new TBL_APPROVAL_LEVEL_STAFF
-                {
-                    DATETIMEDELETED = model.DATETIMECREATED,
-                    DELETEDBY = (int)model.CREATEDBY,
-                    DELETED = true
-                };
+            var data = new TBL_APPROVAL_LEVEL_STAFF
+            {
+                DATETIMEDELETED = model.DATETIMECREATED,
+                DELETEDBY = (int)model.CREATEDBY,
+                DELETED = true
+            };
         }
 
         private void ApprovalLevelStaffUpdate(TBL_TEMP_APPROVAL_LEVEL_STAFF model)
@@ -469,7 +593,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 CANUPLOAD = model.CANUPLOAD,
                 CANEDIT = model.CANEDIT,
                 VETOPOWER = model.VETOPOWER,
-                DATETIMEUPDATED =model.DATETIMECREATED,
+                DATETIMEUPDATED = model.DATETIMECREATED,
                 LASTUPDATEDBY = (int)model.CREATEDBY,
                 DELETED = false
             };
@@ -635,11 +759,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public List<WorkflowTrackerViewModel> GetAllApprovalStatus()
         {
-            var result =from x in context.TBL_APPROVAL_STATUS
-                        select(new WorkflowTrackerViewModel {
-                            approvalStatusId = x.APPROVALSTATUSID,
-                            approvalStatus = x.APPROVALSTATUSNAME
-            });
+            var result = from x in context.TBL_APPROVAL_STATUS
+                         select (new WorkflowTrackerViewModel
+                         {
+                             approvalStatusId = x.APPROVALSTATUSID,
+                             approvalStatus = x.APPROVALSTATUSNAME
+                         });
 
             return result.ToList();
         }
@@ -649,8 +774,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var result = from x in context.TBL_OPERATIONS
                          select (new WorkflowTrackerViewModel
                          {
-                            operationId = x.OPERATIONID,
-                            operationName = x.OPERATIONNAME
+                             operationId = x.OPERATIONID,
+                             operationName = x.OPERATIONNAME
                          });
 
             return result.ToList();

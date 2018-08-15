@@ -25,7 +25,7 @@ namespace FintrakBanking.Repositories.Admin
         private IWorkflow workFlow;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
-        private IApprovalLevelStaffRepository level;
+        //private IApprovalLevelStaffRepository level;
         private ITwoFactorAuthIntegrationService auth;
         bool USE_THIRD_PARTY_INTEGRATION = false;
 
@@ -33,7 +33,7 @@ namespace FintrakBanking.Repositories.Admin
             IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
             IWorkflow _workFlow,
-            IApprovalLevelStaffRepository _level,
+           // IApprovalLevelStaffRepository _level,
             ITwoFactorAuthIntegrationService _auth)
         {
             this.context = _context;
@@ -41,7 +41,7 @@ namespace FintrakBanking.Repositories.Admin
             this.genSetup = _genSetup;
             this.auth = _auth;
             workFlow = _workFlow;
-            level = _level;
+           // level = _level;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
