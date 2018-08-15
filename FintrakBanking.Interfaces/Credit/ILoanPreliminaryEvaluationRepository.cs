@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels.Credit;
+﻿using FintrakBanking.ViewModels;
+using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -30,5 +31,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanPreliminaryEvaluationsAwaitingApprovalByLoanTypeId(
             int staffId, int companyId, int loanTypeId);
+        IEnumerable<LookupViewModel> GetCustomerLoanPreliminaryEvaluations(int customerId, int loanTypeId, int customerGroupId = 0);
     }
 }
