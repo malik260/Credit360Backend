@@ -4899,6 +4899,8 @@ namespace FintrakBanking.Repositories.Credit
                             productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
                             productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                             productName = d.TBL_PRODUCT.PRODUCTNAME,
+                            productClassId = p.PRODUCTCLASSID,
+                            productClassProcessId = p.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
 
                             misCode = m.MISCODE,
                             teamMisCode = m.TEAMMISCODE,
@@ -6755,7 +6757,8 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && a.LOANSTATUSID == (short)LoanStatusEnum.Active && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && a.LOANSTATUSID != 7 &&
+                                   (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -6776,8 +6779,10 @@ namespace FintrakBanking.Repositories.Credit
                                        //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1
+                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
+                                       writtenOff = a.LOANSTATUSID == 7
                                    });
+
             return allFilteredLoan;
         }
 
@@ -6786,7 +6791,8 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && a.LOANSTATUSID == (short)LoanStatusEnum.Active  && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && a.LOANSTATUSID != 7 &&
+                                   (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -6807,7 +6813,8 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1
+                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
+                                       writtenOff = a.LOANSTATUSID == 7
                                    });
             return allFilteredLoan;
         }
@@ -6817,7 +6824,8 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && a.LOANSTATUSID == (short)LoanStatusEnum.Active  && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && a.LOANSTATUSID != 7 && 
+                                   (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -6838,7 +6846,8 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                       // isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1
+                                       // isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
+                                       writtenOff = a.LOANSTATUSID == 7
                                    });
             return allFilteredLoan;
         }
@@ -6849,39 +6858,41 @@ namespace FintrakBanking.Repositories.Credit
             //if (searchQuery == "test2") throw new SecureException("SecuredException 2");
             //if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
 
-            bool all = performanceTypeId == 3;
+            bool all = (performanceTypeId != 1) && (performanceTypeId != 2);
             bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
 
-     
-                IEnumerable<LoanViewModel> allFilteredLoan = null;
-                if (!string.IsNullOrWhiteSpace(searchQuery))
+            IEnumerable<LoanViewModel> allFilteredLoan = null;
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                if (productTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                 {
-                    searchQuery = searchQuery.ToLower();
+                    allFilteredLoan = SearchTermLoan(searchQuery).Where(x => x.isPerforming == performing || all);
+                }
+                else if (productTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
+                {
+                    allFilteredLoan = SearchRevolvingLoan(searchQuery).Where(x => x.isPerforming == performing || all);
+                }
+                else if (productTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
+                {
+                    allFilteredLoan = SearchContigentLoan(searchQuery);
                 }
 
-                if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
-                {
-                    if (productTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
-                    {
-                        allFilteredLoan = SearchTermLoan(searchQuery).Where(x => x.isPerforming == performing || all);
-                    }
-                    else if (productTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
-                    {
-                        allFilteredLoan = SearchRevolvingLoan(searchQuery).Where(x => x.isPerforming == performing || all);
-                    }
-                    else if (productTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
-                    {
-                        allFilteredLoan = SearchContigentLoan(searchQuery);
-                    }
-                }
+            }
 
-                //var x = allFilteredLoan.ToList();
+            if (performanceTypeId == 3) // writeoff
+            {
+                allFilteredLoan = allFilteredLoan.Where(x => x.writtenOff == true);
+            }
 
-                return allFilteredLoan;
-           
+            return allFilteredLoan;
         }
-
+        
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)
         {
             var data = (from l in context.TBL_LOAN
