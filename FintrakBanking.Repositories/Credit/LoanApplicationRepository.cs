@@ -1233,7 +1233,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose,
-                    CASAACOUNTID = a.casaAccountId
+                    CASAACCOUNTID = a.casaAccountId
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
@@ -1643,7 +1643,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetails(int loanApplicationId, int companyId)
+        public IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetailsById(int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL
@@ -1662,6 +1662,67 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
+
+        private IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsDetails(int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        where a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        && a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        select new LoanApplicationDetailViewModel()
+                        {
+                            requireCollateral = a.REQUIRECOLLATERAL,
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = b.TBL_CUSTOMER.LASTNAME,
+                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                            proposedProductId = b.PROPOSEDPRODUCTID,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedTenor = b.PROPOSEDTENOR,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+                            proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
+                        });
+            return data;
+        }
+
+
+        public IQueryable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery)
+        {
+            IQueryable<LoanApplicationDetailViewModel> allApplicationDetails = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allApplicationDetails = GetLoanApplicationsDetails(companyId)
+                    .Where(x => (x.applicationRefNo.Contains(searchQuery))
+                    || (x.customerName.Contains(searchQuery))
+                    || (x.customerAccountNumber.Contains(searchQuery))
+                    || (x.customerCode.Contains(searchQuery))
+                    || (x.firstName.Contains(searchQuery))
+                    //|| (x.lastName.Contains(searchQuery))
+                    //|| (x.middleName.Contains(searchQuery))
+                    );
+            }
+
+            var c = allApplicationDetails.ToList();
+            return allApplicationDetails;
+        }
+
         #endregion "Loan Applications Awaiting Checklist"
 
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)

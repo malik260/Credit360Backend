@@ -59,6 +59,7 @@ namespace FintrakBanking.Entities.Models
         public bool ISCURRENT { get; set; }
 
         public int APPROVALSTATUSID { get; set; }
+        public string OPERATION { get; set; }
 
         //public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

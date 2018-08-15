@@ -39,7 +39,13 @@ namespace FintrakBanking.ViewModels.Credit
         public double? previousInterestAmount  { get; set; }
         public double? previousPrincipalAmount { get; set; }
         public string archiveCode { get; set; }
-
+        public string LoanReferenceNumber { get; set; }
+        public string customerName { get; set; }
+        public decimal casaBalance { get; set; }
+        public DateTime nextPaymentDate { get; set; }
+        public int notificationDuration { get; set; }
+        public int relationshipManagerId { get; set; }
+        public string relationshipManagerEmail { get; set; }
     }
 
     public class LoanPaymentScheduleDailyViewModel: GeneralEntity

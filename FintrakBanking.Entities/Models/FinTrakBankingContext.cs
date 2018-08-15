@@ -404,6 +404,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DOC_TEMPLATE_SECTION> TBL_DOC_TEMPLATE_SECTION { get; set; }
         public virtual DbSet<TBL_DOC_TEMPLATE_SECTION_ROLE> TBL_DOC_TEMPLATE_SECTION_ROLE { get; set; }
         public virtual DbSet<TBL_PROFILE_PASSWORD_HISTORY> TBL_PROFILE_PASSWORD_HISTORY { get; set; }
+        public virtual DbSet<TBL_CUSTOM_CREDITBUREAU_ERROR> TBL_CUSTOM_CREDITBUREAU_ERROR { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var databaseUsername =
@@ -1033,6 +1035,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithOptional(e => e.TBL_CASA)
                 .HasForeignKey(e => e.EQUITYCASAACCOUNTID);
+
+            modelBuilder.Entity<TBL_CASA>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL1)
+                .WithOptional(e => e.TBL_CASA1)
+                .HasForeignKey(e => e.CASAACCOUNTID);
 
             modelBuilder.Entity<TBL_CASA>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION)
@@ -6523,6 +6530,13 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL1)
                 .WithRequired(e => e.TBL_PRODUCT1)
                 .HasForeignKey(e => e.APPROVEDPRODUCTID)
+                .WillCascadeOnDelete(false);
+
+
+            modelBuilder.Entity<TBL_CASA>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL1)
+                .WithRequired(e => e.TBL_CASA1)
+                .HasForeignKey(e => e.CASAACCOUNTID)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_PRODUCT>()

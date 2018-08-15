@@ -252,6 +252,9 @@ namespace FintrakBanking.Repositories.Credit
             if (totaloverdraftLimit > model.customerAvailableAmount)
                 throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
+            if (model.effectiveDate > model.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
+
             //var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == model.productId).FirstOrDefault();
             //if (productBehaviour != null && productBehaviour.ISTEMPORARYOVERDRAFT == true && context.TBL_LOAN_REVOLVING.Where(x => x.CUSTOMERID == model.customerId && x.CASAACCOUNTID == model.casaAccountId).Any())
             //    throw new ConditionNotMetException("The customer already has an existing overdraft on the selected account");
@@ -421,6 +424,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new ConditionNotMetException(ce.Message);
                 }
+                catch (TwoFactorAuthenticationException et)
+                {
+                    trans.Rollback();
+                    throw new TwoFactorAuthenticationException(et.Message);
+                }
                 catch (APIErrorException ae)
                 {
                     trans.Rollback();
@@ -463,6 +471,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+            if (entity.effectiveDate > entity.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
             var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
 
@@ -640,6 +651,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+            if (entity.effectiveDate > entity.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
@@ -885,6 +899,9 @@ namespace FintrakBanking.Repositories.Credit
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
+            if (entity.effectiveDate > entity.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
+
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
             if (loans.Any())
             {
@@ -901,7 +918,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
 
-            var loanReferenceNumber = GenerateLoanReferenceNumber(entity.customerId, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+            var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, entity.productId, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
             var approvedAmount = applicationDetail.APPROVEDAMOUNT;
 
@@ -910,7 +927,7 @@ namespace FintrakBanking.Repositories.Credit
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.principalAmount);
 
             if (totalPrincipalAmount > (decimal)approvedAmount)
-                throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
+                throw new ConditionNotMetException("The loan amount cannot be greater than the available amount");
 
             var data = new TBL_LOAN
             {
@@ -1100,6 +1117,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+            if (entity.effectiveDate > entity.maturityDate)
+                throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
 
@@ -1637,7 +1657,7 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-
+                                
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -1669,7 +1689,7 @@ namespace FintrakBanking.Repositories.Credit
                                 disburseDate = ln.DISBURSEDATE,
                                 disbursableAmount = ln.PRINCIPALAMOUNT,
                                 approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 customerGroupId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
 
                                 loanTypeId = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
@@ -1811,7 +1831,7 @@ namespace FintrakBanking.Repositories.Credit
                                 // approvedBy = (int)ln.APPROVEDBY,
                                 approverComment = ln.APPROVERCOMMENT,
                                 dateApproved = ln.DATEAPPROVED,
-
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 isDisbursed = ln.ISDISBURSED,
                                 disbursedBy = ln.DISBURSEDBY,
                                 disburserComment = ln.DISBURSERCOMMENT,
@@ -1950,7 +1970,7 @@ namespace FintrakBanking.Repositories.Credit
                             disbursedBy = ln.DISBURSEDBY,
                             disburserComment = ln.DISBURSERCOMMENT,
                             disburseDate = ln.DISBURSEDATE,
-
+                            loanSystemTypeId =ln.LOANSYSTEMTYPEID,
                             approvedAmount = ln.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
                             disbursableAmount = ln.CONTINGENTAMOUNT,
 
@@ -2331,6 +2351,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
+            var systemDate = generalSetup.GetApplicationDate();
             /* HANDLING APPROVALS THAT REACH LAST APPROVAL LEVEL */
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
@@ -2550,7 +2571,6 @@ namespace FintrakBanking.Repositories.Credit
 
                             /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-                            var systemDate = generalSetup.GetApplicationDate();
 
                             DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
@@ -2559,7 +2579,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
-                            loanRecord.EFFECTIVEDATE = DateTime.Now;
+                            loanRecord.EFFECTIVEDATE = systemDate;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                             loanRecord.DISBURSEDBY = user.createdBy;
                             loanRecord.APPROVEDBY = user.createdBy;
@@ -2611,14 +2631,12 @@ namespace FintrakBanking.Repositories.Credit
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             DisburseLoan(loanDisbursementModel);
 
-                            var systemDate = generalSetup.GetApplicationDate();
-
                             /*UPDATING STAFF MIS */
                             //this.updateloanStaffMIS(loanRecord);
 
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
-                            loanRecord.EFFECTIVEDATE = DateTime.Now;
+                            loanRecord.EFFECTIVEDATE = systemDate;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                             loanRecord.DISBURSEDBY = user.createdBy;
                             loanRecord.APPROVEDBY = user.createdBy;
@@ -2658,28 +2676,24 @@ namespace FintrakBanking.Repositories.Credit
                             else
                                 loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT;
 
-
                             /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
                             /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                             var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
                             var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
                             DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
 
-                            var systemDate = generalSetup.GetApplicationDate();
-
                             /*UPDATING STAFF MIS */
                             //this.updateloanStaffMIS(loanRecord);
 
                             loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                             loanRecord.ISDISBURSED = true;
-                            loanRecord.EFFECTIVEDATE = DateTime.Now;
+                            loanRecord.EFFECTIVEDATE = systemDate;
                             loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
                             loanRecord.DISBURSEDBY = user.createdBy;
                             loanRecord.APPROVEDBY = user.createdBy;
                             loanRecord.APPROVERCOMMENT = user.comment;
                         }
                         break;
-
                 }
 
                 // Audit Section ---------------------------
@@ -6753,12 +6767,12 @@ namespace FintrakBanking.Repositories.Credit
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
-                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                        interestRate = a.INTERESTRATE,
                                        principalAmount = a.PRINCIPALAMOUNT,
                                        effectiveDate = a.EFFECTIVEDATE,
                                        maturityDate = a.MATURITYDATE,
-                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       //loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1
@@ -6838,8 +6852,7 @@ namespace FintrakBanking.Repositories.Credit
             bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
 
-            try
-            {
+     
                 IEnumerable<LoanViewModel> allFilteredLoan = null;
                 if (!string.IsNullOrWhiteSpace(searchQuery))
                 {
@@ -6865,11 +6878,7 @@ namespace FintrakBanking.Repositories.Credit
                 //var x = allFilteredLoan.ToList();
 
                 return allFilteredLoan;
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
+           
         }
 
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)

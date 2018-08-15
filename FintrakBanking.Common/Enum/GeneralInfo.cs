@@ -254,6 +254,9 @@ namespace FintrakBanking.Common.Enum
         DocumentTemplateSectionRoleAdded = 227,
         DocumentTemplateSectionRoleUpdated = 228,
         DocumentTemplateSectionRoleDeleted = 229,
+        LoanRolledOver = 230,
+        GroupLoanSubAllocated = 231,
+        LoanPrePaid = 232,
     };
 
 
