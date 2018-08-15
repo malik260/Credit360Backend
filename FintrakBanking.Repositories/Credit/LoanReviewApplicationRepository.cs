@@ -36,8 +36,8 @@ namespace FintrakBanking.Repositories.Credit
             int companyId = user.companyId;
 
             bool ignoreBranch = true; // rm = false, ho = true
-
-            ignoreBranch = !ProcessInitiator(staffId, operationId, classId);
+            ignoreBranch = !ProcessInitiator(staffId, 46, classId);
+            if (ignoreBranch) ignoreBranch = !ProcessInitiator(staffId, 71, classId);
 
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
@@ -141,7 +141,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
 
-            return index == 1;
+            return index == 0;
         }
 
         public SelectListViewModel GetAllSelectList()
@@ -397,12 +397,12 @@ namespace FintrakBanking.Repositories.Credit
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId && model.operationId != 71) // jump process OR end flag
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved && operationId != lastOperationId/* && model.operationId != 71*/) // jump process OR end flag
                 {
                     if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstReceiverLevel(model.lastUpdatedBy, (int)OperationsEnum.LoanReviewApprovalAvailment, null, true);
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
-                if (operationId == lastOperationId || model.operationId == 71) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
+                if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
                 context.SaveChanges();
             }
 

@@ -8765,8 +8765,7 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = model.createdBy,
             };
 
-            //Audit Section ---------------------------
-
+            //Audit Section -----------------------------------
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.BulkRateLoanExcemption,
@@ -8783,7 +8782,6 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_BULK_INTEREST_REVIEW.Add(data);
             context.TBL_AUDIT.Add(audit);
             return context.SaveChanges() > 0;
-
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationType()
@@ -10296,8 +10294,6 @@ namespace FintrakBanking.Repositories.Credit
                                 output = false;
                             }
 
-                            //}
-
                         }
                         else if ((int)OperationsEnum.Fee_chargeChange == model.operationId)
                         {
@@ -11062,6 +11058,9 @@ namespace FintrakBanking.Repositories.Credit
                 result = (from p in context.TBL_LOAN where p.LOANREFERENCENUMBER == refNo select p).SingleOrDefault();
             }
             else result = context.TBL_LOAN.Find(model.loanId);
+
+            if (result == null)
+                throw new BadImageFormatException("No loan was selected.");
 
             if (model.valueDate == null) model.valueDate = result.MATURITYDATE;
 

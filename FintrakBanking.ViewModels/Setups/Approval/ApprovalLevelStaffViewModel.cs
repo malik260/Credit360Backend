@@ -27,5 +27,8 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         public bool canSendRequest { get; set; }
         public bool canEdit { get; set; }
         public bool vetoPower { get; set; }
+        public int tempStaffLevelId { get; set; }
+        public short approvalStatusId { get; set; }
+        public string comment { get; set; }
     }
 }

@@ -1643,7 +1643,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetails(int loanApplicationId, int companyId)
+        public IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetailsById(int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL
@@ -1662,6 +1662,67 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
+
+        private IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsDetails(int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        where a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        && a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        select new LoanApplicationDetailViewModel()
+                        {
+                            requireCollateral = a.REQUIRECOLLATERAL,
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = b.TBL_CUSTOMER.LASTNAME,
+                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                            proposedProductId = b.PROPOSEDPRODUCTID,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedTenor = b.PROPOSEDTENOR,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+                            proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
+                        });
+            return data;
+        }
+
+
+        public IQueryable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery)
+        {
+            IQueryable<LoanApplicationDetailViewModel> allApplicationDetails = null;
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
+            {
+                allApplicationDetails = GetLoanApplicationsDetails(companyId)
+                    .Where(x => (x.applicationRefNo.Contains(searchQuery))
+                    || (x.customerName.Contains(searchQuery))
+                    || (x.customerAccountNumber.Contains(searchQuery))
+                    || (x.customerCode.Contains(searchQuery))
+                    || (x.firstName.Contains(searchQuery))
+                    //|| (x.lastName.Contains(searchQuery))
+                    //|| (x.middleName.Contains(searchQuery))
+                    );
+            }
+
+            var c = allApplicationDetails.ToList();
+            return allApplicationDetails;
+        }
+
         #endregion "Loan Applications Awaiting Checklist"
 
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
@@ -2533,6 +2594,53 @@ namespace FintrakBanking.Repositories.Credit
                                 });
 
             return applications.GroupBy(x => x.loanApplicationDetailId).Select(d => d.FirstOrDefault()).ToList();
+        }
+
+
+        public static List<OfferLetterDetailViewModel> GetLoanApplicationDetail()
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            try
+            {
+                var loanDetails = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                                   join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                                   from c in cc.DefaultIfEmpty()
+                                   join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
+                                   from e in dg.DefaultIfEmpty()
+                                   join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
+                                   from g in gg.DefaultIfEmpty()
+                                   join h in context.TBL_CURRENCY on a.CURRENCYID equals h.CURRENCYID into hh
+                                   from h in hh.DefaultIfEmpty()
+                                   where a.STATUSID == (int)ApprovalStatusEnum.Approved
+                                   select new OfferLetterDetailViewModel()
+                                   {
+                                       productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.APPROVEDPRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
+                                       currencyName = h.CURRENCYCODE,
+                                       tenor = a.APPROVEDTENOR,
+                                       interestRate = a.APPROVEDINTERESTRATE,
+                                       loanAmount = a.APPROVEDAMOUNT,
+                                       exchangeRate = a.EXCHANGERATE,
+                                       currencyId = a.CURRENCYID,
+                                       customerName = c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME ,
+                                       customerAddress = e.ADDRESS ?? " ", 
+                                       applicationDate = a.DATETIMECREATED,
+                                       customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
+                                       customerPhoneNumber = g.PHONENUMBER,
+                                       repaymentSchedule = a.REPAYMENTSCHEDULE ?? "Not applicable",
+                                       repaymentTerms = a.REPAYMENTTERMS ?? "Not applicable",
+                                       purpose = a.LOANPURPOSE,
+                                   }).ToList();
+
+                return loanDetails;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+
+
         }
     }
 }
