@@ -2065,16 +2065,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.customerSensitivityLevelId = 1;
-                if (repo.ValidateCustomerCode(entity.customerCode))
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = $"Customer with customer code {entity.customerCode} already exist" });
-                }
-                if (repo.ValidateModifiedCustomerRecord(entity.customerId))
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "Customer General Information is already undergoing approval." });
-                }
+              
                 var data = repo.UpdatePropectToCustomer(customerId, entity);
                 if (data)
                 {
@@ -2084,6 +2075,11 @@ namespace FintrakBanking.APICore.Controllers
 
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "There was an error creating this record" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = ce.Message });
             }
             catch (SecureException e)
             {

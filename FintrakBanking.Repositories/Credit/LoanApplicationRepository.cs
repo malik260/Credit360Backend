@@ -939,7 +939,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-
+            
                 if (loan.relationshipOfficerId != 0)
                 {
                     var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
