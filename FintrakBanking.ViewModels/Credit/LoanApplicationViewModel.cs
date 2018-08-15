@@ -179,7 +179,7 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
-        public string customerType;
+        
 
         public LoanApplicationDetailViewModel()
         {
@@ -188,6 +188,16 @@ namespace FintrakBanking.ViewModels.Credit
             productFees = new List<ProductFeesViewModel>();
 
         }
+
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string branchName { get; set; }
+        public string customerGroupName { get; set; }
+
+        public string customerType { get; set; }
+        public string customerAccountNumber { get; set; }
 
         public bool requireCollateral { get; set; }
 

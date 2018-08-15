@@ -8765,8 +8765,7 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = model.createdBy,
             };
 
-            //Audit Section ---------------------------
-
+            //Audit Section -----------------------------------
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.BulkRateLoanExcemption,
@@ -8783,7 +8782,6 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_BULK_INTEREST_REVIEW.Add(data);
             context.TBL_AUDIT.Add(audit);
             return context.SaveChanges() > 0;
-
         }
 
         public IEnumerable<LoanOperationTypeViewModel> GetOperationType()
