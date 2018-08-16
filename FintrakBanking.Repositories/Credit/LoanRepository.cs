@@ -6628,7 +6628,7 @@ namespace FintrakBanking.Repositories.Credit
                                    customerSensitivityLevelId = b.CUSTOMERSENSITIVITYLEVELID,
                                    createdBy = a.CREATEDBY,
                                    dateTimeCreated = a.DATETIMECREATED,
-                                   // isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
+                                   //isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
                                    exchangeRate = a.EXCHANGERATE,
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME
