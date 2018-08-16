@@ -283,6 +283,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal dailyAccrualAmount { get; set; }
         public DateTime date { get; set; }
         public decimal mainAmount { get; set; }
+        public bool writtenOff { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

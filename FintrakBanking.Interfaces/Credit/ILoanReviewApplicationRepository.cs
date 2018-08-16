@@ -18,13 +18,13 @@ namespace FintrakBanking.Interfaces.Credit
 
         //List<LoanViewModel> LoanSearch(int getCompanyId, SearchViewModel search);
 
-        int SaveCam(CamViewModel cam);
+        //int SaveCam(CamViewModel cam);
 
-        CamViewModel GetCamDocument(int documentationId);
+        //CamViewModel GetCamDocument(int documentationId);
 
-        CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int staffId);
+        //CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int staffId);
         
-        List<CamViewModel> GetCamDocuments(int applicationId);
+        //List<CamViewModel> GetCamDocuments(int applicationId);
 
         int ForwardApplication(ForwardReviewViewModel model);
     }
