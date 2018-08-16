@@ -46,6 +46,11 @@ namespace FintrakBanking.ViewModels.Credit
         public int notificationDuration { get; set; }
         public int relationshipManagerId { get; set; }
         public string relationshipManagerEmail { get; set; }
+        public decimal principalAmount { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public string scheduleTypeName { get; set; }
+        public double interestRateArc { get; set; }
     }
 
     public class LoanPaymentScheduleDailyViewModel: GeneralEntity
