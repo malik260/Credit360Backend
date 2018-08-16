@@ -679,7 +679,33 @@ namespace FintrakBanking.Repositories.Credit
                     return new List<LoanPreliminaryEvaluationViewModel>();
             }
         }
-
+        public IEnumerable<LookupViewModel> GetCustomerLoanPreliminaryEvaluations(int customerId, int loanTypeId, int customerGroupId = 0)
+        {
+            if ((int)LoanTypeEnum.Single == loanTypeId)
+            {
+                var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
+                            where p.CUSTOMERID == customerId
+                            select new LookupViewModel()
+                            {
+                                lookupId = (short)p.LOANPRELIMINARYEVALUATIONID,
+                                lookupName = p.PRELIMINARYEVALUATIONCODE,
+                            }).ToList();
+                return data;
+            }
+            else 
+            {
+                var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
+                            join g in context. TBL_CUSTOMER_GROUP_MAPPING on p.CUSTOMERGROUPID equals g.CUSTOMERGROUPID
+                            where p.CUSTOMERGROUPID == customerGroupId
+                            select new LookupViewModel()
+                            {
+                                lookupId = (short)p.LOANPRELIMINARYEVALUATIONID,
+                                lookupName = p.PRELIMINARYEVALUATIONCODE,
+                            }).ToList();
+                return data;
+            }
+            
+        }
         public IEnumerable<LoanPreliminaryEvaluationViewModel> GetAllSingleCustomerLoanPreliminaryEvaluations()
         {
             var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN

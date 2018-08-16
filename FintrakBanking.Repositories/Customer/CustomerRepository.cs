@@ -70,12 +70,20 @@ namespace FintrakBanking.Repositories.Customer
 
         public string AddCustomer(CustomerViewModels entity)
         {
+            if (ValidateCustomerCode(entity.customerCode))
+            {
+               throw new ConditionNotMetException($"Customer with customer code {entity.customerCode} already exist");
+            }
+            if (ValidateModifiedCustomerRecord(entity.customerId))
+            {
+                throw new ConditionNotMetException("Customer General Information is already undergoing approval.");
+            }
             if (USE_THIRD_PARTY_INTEGRATION)
                 entity.isPoliticallyExposed = finacle.GetExposePersonStatus(entity.customerCode);
             if (entity.isProspect == true)
             {
-                string code = CommonHelpers.GenerateUniqueIntergers(6).ToString();
-                entity.prospectCustomerCode = "PRO" + code;
+                string code = CommonHelpers.GenerateUniqueIntergers(7).ToString();
+                entity.prospectCustomerCode = "PROS-" + code;
             }
 
             var customer = new TBL_CUSTOMER

@@ -921,9 +921,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool PresetRoute(PresetRouteViewModel entity)
         {
-            var appl = context.TBL_LOAN_APPLICATION.Find(entity.applicationId);
-            appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
-            appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
+            if (entity.moduleId == 1)
+            {
+                var appl = context.TBL_LOAN_APPLICATION.Find(entity.applicationId);
+                appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
+                appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
+            }
+
             return context.SaveChanges() > 0;
         }
 

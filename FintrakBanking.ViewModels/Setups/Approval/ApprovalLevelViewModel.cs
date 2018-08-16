@@ -68,6 +68,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
 
     public class PresetRouteViewModel : GeneralEntity
     {
+        public int moduleId { get; set; }
         public int applicationId { get; set; }
         public int finalApprovalLevelId { get; set; }
         public int nextApplicationStatusId { get; set; }

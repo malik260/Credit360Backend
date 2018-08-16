@@ -115,56 +115,56 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
-         [HttpPost] [ClaimsAuthorization]
-        [Route("loan-review-application/save-cam")]
-        public HttpResponseMessage SaveCam([FromBody] CamViewModel cam)
-        {
-            try
-            {
-                cam.userBranchId = (short)token.GetBranchId;
-                cam.companyId = token.GetCompanyId;
-                cam.lastUpdatedBy = token.GetStaffId;
-                cam.createdBy = token.GetStaffId;
-                cam.applicationUrl = HttpContext.Current.Request.Path;
+        // [HttpPost] [ClaimsAuthorization]
+        //[Route("loan-review-application/save-cam")]
+        //public HttpResponseMessage SaveCam([FromBody] CamViewModel cam)
+        //{
+        //    try
+        //    {
+        //        cam.userBranchId = (short)token.GetBranchId;
+        //        cam.companyId = token.GetCompanyId;
+        //        cam.lastUpdatedBy = token.GetStaffId;
+        //        cam.createdBy = token.GetStaffId;
+        //        cam.applicationUrl = HttpContext.Current.Request.Path;
 
-                int response = repo.SaveCam(cam);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        //        int response = repo.SaveCam(cam);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //    }
+        //    catch (SecureException e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("loan-review-application/get-cam")]
-        public HttpResponseMessage GetCamDocument(int applicationId)
-        {
-            try
-            {
-                CamViewModel data = repo.GetCamDocumentByApprovalLevel(applicationId,token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("loan-review-application/get-cam")]
+      //  public HttpResponseMessage GetCamDocument(int applicationId)
+      //  {
+      //      try
+      //      {
+      //          CamViewModel data = repo.GetCamDocumentByApprovalLevel(applicationId,token.GetStaffId);
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+      //      }
+      //      catch (SecureException ex)
+      //      {
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+      //      }
+      //  }
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("loan-review-application/get-cams/{applicationId}")]
-        public HttpResponseMessage GetCamDocuments(int applicationId)
-        {
-            try
-            {
-                List<CamViewModel> data = repo.GetCamDocuments(applicationId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("loan-review-application/get-cams/{applicationId}")]
+      //  public HttpResponseMessage GetCamDocuments(int applicationId)
+      //  {
+      //      try
+      //      {
+      //          List<CamViewModel> data = repo.GetCamDocuments(applicationId);
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+      //      }
+      //      catch (SecureException ex)
+      //      {
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+      //      }
+      //  }
 
          [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/forward-application")]
