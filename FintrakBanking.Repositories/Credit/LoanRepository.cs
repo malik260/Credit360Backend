@@ -1920,6 +1920,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ContingentLoanViewModel> GetContingentLoanBookingAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
+            
 
             var data = (from ln in context.TBL_LOAN_CONTINGENT
                         join coy in context.TBL_COMPANY on ln.COMPANYID equals coy.COMPANYID
@@ -4588,9 +4589,9 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { throw; }
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int companyId, int applicationDetailId, int loanBookingRequestId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int staffId, int companyId, int applicationDetailId, int loanBookingRequestId)
         {
-            var data = AvailedLoanApplicationsReadyForBookingByApplicationDetailId(companyId, applicationDetailId, loanBookingRequestId); //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Approved);
+            var data = AvailedLoanApplicationsReadyForBookingByApplicationDetailId(staffId, companyId, applicationDetailId, loanBookingRequestId); //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Approved);
 
             data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -4675,6 +4676,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId)
         {
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
+            var canReRouteBooking = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == staffId && x.ACTIVITYID == 177).Any();
+
+            if(ids.Count() > 0 || canReRouteBooking)
+            {
+
+            }
             //var detailIds = context.TBL_LOAN_APPLICATION_DETAIL.Select(x => x.LOANAPPLICATIONDETAILID).ToList();
             var newApplicationDate = generalSetup.GetApplicationDate();
             try
@@ -4687,8 +4695,6 @@ namespace FintrakBanking.Repositories.Credit
                             join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                             where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                             && s.DELETED == false
-                            // && detailIds.Contains(s.LOANAPPLICATIONDETAILID)// && d.DELETED == false
-                            // && d.STATUSID == (short)ApprovalStatusEnum.Approved
                             orderby s.LOAN_BOOKING_REQUESTID descending
                             select new CamProcessedLoanViewModel
                             {
@@ -4829,8 +4835,9 @@ namespace FintrakBanking.Repositories.Credit
         /// </summary>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsReadyForBookingByApplicationDetailId(int companyId, int applicationDetailId, int loanBookingRequestId)
+        private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsReadyForBookingByApplicationDetailId(int staffId,int companyId, int applicationDetailId, int loanBookingRequestId)
         {
+            var canReRouteBooking = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == staffId && x.ACTIVITYID == 177).Any();
             var newApplicationDate = generalSetup.GetApplicationDate();
             var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                         join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -4881,7 +4888,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationTenor = m.APPLICATIONTENOR,
                             effectiveDate = (DateTime)d.EFFECTIVEDATE,
                             expiryDate = (DateTime)d.EXPIRYDATE,
-
+                            canReRouteBooking = canReRouteBooking,
                             //isTemporaryOverdraft = p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault() != null ? p.TBL_PRODUCT_BEHAVIOUR.FirstOrDefault().ISTEMPORARYOVERDRAFT : false,
 
                             relationshipOfficerId = m.RELATIONSHIPOFFICERID,
@@ -5988,7 +5995,7 @@ namespace FintrakBanking.Repositories.Credit
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                      && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
+                                      && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement                                      
                                       && b.OPERATIONPERFORMED == false
                                       && d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
@@ -6094,11 +6101,12 @@ namespace FintrakBanking.Repositories.Credit
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                       join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
+                                       //join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
+                                       //join f in context.TBL_LOAN_CAMSOL on a.TERMLOANID equals f.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
                                       && b.OPERATIONPERFORMED == false
-                                      && d.DATE == DbFunctions.TruncateTime(applicationDate)
+                                      //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
@@ -6183,7 +6191,7 @@ namespace FintrakBanking.Repositories.Credit
                                            interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                            pastDueInterest = a.PASTDUEINTEREST,
                                            lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
-                                           accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).ACCRUEDINTEREST
+                                           //accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.FirstOrDefault(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).ACCRUEDINTEREST
                                        }).ToList();
 
                 return allFilteredLoan;
