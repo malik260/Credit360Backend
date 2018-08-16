@@ -2608,6 +2608,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ToStaffId = model.receiverStaffId;
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
+            // if(initiation == true) workflow.
             workflow.LogActivity();
             return workflow.Response;
         }
