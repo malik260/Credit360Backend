@@ -24,7 +24,9 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        #region DOCUMENT TEMPLATE DEPRECATED
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("credit-template")]
         public HttpResponseMessage GetCreditTemplate()
         {
@@ -187,6 +189,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        #endregion DOCUMENT TEMPLATE DEPRECATED
 
         #region DOCUMENT TEMPLATE SETUP
         [HttpGet]

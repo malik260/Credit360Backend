@@ -2663,14 +2663,14 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StatusId = (int)ApprovalStatusEnum.Processing;
             workflow.TargetId = data.tempApplicationCancellationId;
             workflow.Comment = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason}  ";
-            workflow.OperationId = (int)OperationsEnum.ApprovalLevelStaffModification;
+            workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
             workflow.DeferredExecution = true;
             workflow.ExternalInitialization = true;
             workflow.LogActivity();
 
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelStaffAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
                 STAFFID = data.createdBy,
                 BRANCHID = (short)data.userBranchId,
                 DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason} ",

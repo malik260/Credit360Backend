@@ -257,6 +257,7 @@ namespace FintrakBanking.Common.Enum
         LoanRolledOver = 230,
         GroupLoanSubAllocated = 231,
         LoanPrePaid = 232,
+        LoanApplicationCancellation=233,
     };
 
 
