@@ -92,7 +92,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool ValidateInvoiceDetails(ValidateNumberViewModel data);
 
-        WorkflowResponse RerouteWorkflowTarget(ForwardViewModel data);
-        
+        List<LoanApplicationViewModel> GetLoanApplication(string searchQuery);
+
+        WorkflowResponse RerouteWorkflowTarget(ForwardViewModel model);
     }
 }

@@ -221,6 +221,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string terminationAndReBook { get; set; }
         public string completeWriteOff { get; set; }
         public string cancelUndisbursedLoan { get; set; }
+        public string lmsLoanReferenceNumber { get; set; }
     }
 
 

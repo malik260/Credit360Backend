@@ -111,7 +111,8 @@ namespace FintrakBanking.APICore.Controllers
                     // model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                      model.applicationUrl = HttpContext.Current.Request.Path;
                     model.staffId = token.GetStaffId;
-                    model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
                     var data = repoMapping.UpdateApprovalGroupMapping(operationMappingId, model);
 
@@ -138,6 +139,7 @@ namespace FintrakBanking.APICore.Controllers
                         BranchId = token.GetBranchId,
                         companyId = token.GetCompanyId,
                         staffId = token.GetStaffId,
+                        createdBy = token.GetStaffId,
                         applicationUrl = HttpContext.Current.Request.Path,
                     };
 
@@ -165,6 +167,7 @@ namespace FintrakBanking.APICore.Controllers
                 //model.userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
                // model.applicationUrl = Request.Path.Value;
                 model.createdBy = token.GetStaffId;
+                model.staffId = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
                 var data = repoGroup.AddApprovalGroup(model);
@@ -263,6 +266,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.staffId = token.GetStaffId;
                 var data = repoMapping.GoForApproval(model);
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = true, result = data, count = 1 });
@@ -318,7 +322,8 @@ namespace FintrakBanking.APICore.Controllers
                         BranchId = token.GetBranchId,
                         companyId = token.GetCompanyId,
                         staffId = token.GetStaffId,
-                          applicationUrl = HttpContext.Current.Request.Path,
+                        createdBy = token.GetStaffId,
+                applicationUrl = HttpContext.Current.Request.Path,
                         // userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
                     };
 

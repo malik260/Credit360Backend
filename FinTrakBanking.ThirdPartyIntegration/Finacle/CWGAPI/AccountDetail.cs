@@ -137,7 +137,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 response = await client.GetAsync(
                     $"api/OfficeAccount/GetTermDepositAccountRecord?accountNumber={teamDepositAccountNumber}");
                 responseDateTime = DateTime.Now;
-                TDAccountRecordViewModel result = null;
+                var result = new TDAccountRecordViewModel();
                 if (response.IsSuccessStatusCode)
                 {
                     TDAccountRecordViewModel data = await response.Content.ReadAsAsync<TDAccountRecordViewModel>();
@@ -154,6 +154,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                         lienAmount = data.lienAmount,
                         productCode = data.productCode,
                         response = response,
+                        isSuccess = true
                     };
                     responseMessage = await response.Content.ReadAsStringAsync();
                     handler.Dispose();
@@ -171,13 +172,16 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     };
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
                     logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
+                    
                     logContext.SaveChanges();
                     return result;
                 }
-
+                string a = response.ReasonPhrase;
+                result.errorDesc =a;
+                result.isSuccess = false;
                 handler.Dispose();
                 client.Dispose();
+               
                 return result;
             }
 
