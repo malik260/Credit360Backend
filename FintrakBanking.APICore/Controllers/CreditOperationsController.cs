@@ -143,7 +143,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.SearchForLoan(searchQuery);
+              var data = loanRepo.SearchForLoan(searchQuery);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

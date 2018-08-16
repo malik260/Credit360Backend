@@ -87,6 +87,8 @@ namespace FintrakBanking.Common.Enum
         ApprovalWorkflowLevelModification=77,
         ApprovalLevelStaffModification = 78,
         LoanWorkOut = 80,
-        LoanApplicationCancellation =81
+        LoanApplicationCancellation =81,
+        ContingentRequestBooking = 83,
+        LoanAndOverdraftRequestBooking = 82
     }
 }
