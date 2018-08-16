@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (recordExist)
                 throw new ConditionNotMetException("This operation has already been initiated and is apprival pending");
 
-            if (admin.IsSuperAdmin(model.staffId) == true)
+            if (admin.IsSuperAdmin(model.createdBy) == true)
             {
                 var entity = new TBL_APPROVAL_GROUP_MAPPING
                 {
@@ -157,7 +157,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             if (data == null)
                 return false;
-            if (admin.IsSuperAdmin(model.staffId) == true)
+            if (admin.IsSuperAdmin(model.createdBy) == true)
             {
                 data.DELETEDBY = model.createdBy;
                 data.DATETIMEDELETED = generalSetup.GetApplicationDate();
@@ -169,7 +169,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted,
-                    STAFFID = (int)model.staffId,
+                    STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.BranchId,
                     DETAIL = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
                     IPADDRESS = model.userIPAddress,
@@ -209,7 +209,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == entity.OPERATIONID).OPERATIONNAME;
                 var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == entity.GROUPID).GROUPNAME;
 
-                workflow.StaffId = model.staffId;
+                workflow.StaffId = model.createdBy;
                 workflow.CompanyId = model.companyId;
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = tempGroupOperationMappingId;
@@ -222,7 +222,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted,
-                    STAFFID = (int)model.staffId,
+                    STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.BranchId,
                     DETAIL = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
                     IPADDRESS = model.userIPAddress,

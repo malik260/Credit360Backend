@@ -182,7 +182,7 @@ namespace FintrakBanking.Repositories.Credit
                     .ToList();
             }
 
-            return this.context.TBL_DOC_TEMPLATE_DETAIL
+            var sections = this.context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .OrderBy(x => x.POSITION)
                 .Select(x => new LoadedDocumentSectionViewModel
@@ -192,9 +192,13 @@ namespace FintrakBanking.Repositories.Credit
                     title = x.TITLE,
                     canEdit = x.CANEDIT, // system
                     editable = sectionIds.Contains(x.TEMPLATESECTIONID),
+                    templateSectionId = x.TEMPLATESECTIONID,
                     // templateDocument = x.TEMPLATEDOCUMENT,
                 })
+                .Distinct()
                 .ToList();
+
+            return sections;
         }
 
         public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId)
@@ -322,10 +326,14 @@ namespace FintrakBanking.Repositories.Credit
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity)
         {
             var doc = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);
-            doc.TEMPLATEDOCUMENT = entity.templateDocument;
-            doc.LASTUPDATEDBY = entity.staffId;
-            doc.DATETIMEUPDATED = DateTime.Now;
-            return context.SaveChanges() > 0;
+            if (doc != null)
+            {
+                doc.TEMPLATEDOCUMENT = entity.templateDocument;
+                doc.LASTUPDATEDBY = entity.staffId;
+                doc.DATETIMEUPDATED = DateTime.Now;
+                return context.SaveChanges() > 0;
+            }
+            return true;
         }
 
         public LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int sectionId)

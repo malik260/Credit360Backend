@@ -382,7 +382,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 }
             }
             catch  {
-                throw new SecureException("Could not verify this fixed deposit account number");
+                throw new APIErrorException(result.errorDesc);
             }
             return result;
         }
