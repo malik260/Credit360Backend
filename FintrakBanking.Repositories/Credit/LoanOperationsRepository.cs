@@ -9321,6 +9321,7 @@ namespace FintrakBanking.Repositories.Credit
                                 reviewDetails = op.REVIEWDETAILS,
                                 approvedAmount = ld.APPROVEDAMOUNT,
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x=>x.TBL_LMSR_APPLICATION_DETAIL.Where(a=>a.LOANAPPLICATIONID==x.LOANAPPLICATIONID).Select(a=>a.LOANID).FirstOrDefault()==ln.TERMLOANID).Select(x=>x.APPLICATIONREFERENCENUMBER).FirstOrDefault()
                             }).ToList();
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
@@ -9389,6 +9390,8 @@ namespace FintrakBanking.Repositories.Credit
                                          operationTypeName = tt.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
                                          newEffectiveDate = op.EFFECTIVEDATE,
                                          reviewDetails = op.REVIEWDETAILS,
+                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.REVOLVINGLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault()
+
                                      }).ToList();
 
             var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault());
