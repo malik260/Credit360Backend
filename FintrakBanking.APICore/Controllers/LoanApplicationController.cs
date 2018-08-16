@@ -1066,7 +1066,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("tranche-facility/{searchValue}")]
+        public HttpResponseMessage TrancheLoanDetails(string searchValue)
+        {
+            try
+            {
+                var response = repo.GetLoanApplication(searchValue);
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpDelete] [ClaimsAuthorization]
         [Route("loanApplicationDetail/{id}")]

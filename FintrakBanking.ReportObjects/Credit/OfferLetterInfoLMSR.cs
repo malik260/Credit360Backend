@@ -44,8 +44,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                           //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
                                           //from j in jj.DefaultIfEmpty()
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                                      &&  a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                       && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                      && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                       && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                       select new OfferLetterViewModel
                                       {
                                           companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
@@ -81,7 +81,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                  join b in context.TBL_STAFF on a.REQUESTSTAFFID equals b.STAFFID
                                  join c in context.TBL_LMSR_APPLICATION on a.TARGETID equals c.LOANAPPLICATIONID
                                  where c.APPLICATIONREFERENCENUMBER == applicationRefNumber && a.FROMAPPROVALLEVELID != null
-                                  && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                 // && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                  orderby (a.APPROVALTRAILID)
                                  select new SignatoryViewModel()
                                  {
@@ -150,7 +150,7 @@ namespace FintrakBanking.ReportObjects.Credit
                             join d in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                             join e in context.TBL_PRODUCT on b.OPERATIONID equals e.PRODUCTID
                             where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                             && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                     && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved //|| b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             select new ProductFeeViewModel()
                             {
                                 feeName = c.CHARGEFEENAME,
@@ -192,8 +192,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                    from g in gg.DefaultIfEmpty()
                                   // join h in context.TBL_CURRENCY on b.CURRENCYID equals h.CURRENCYID into hh
                                  //  from h in hh.DefaultIfEmpty()
-                                   where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
-                                         b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                   where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
+                                        // (b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
 
                                    select new OfferLetterDetailViewModel()
                                    {
@@ -244,7 +244,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                           join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
-                                           && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                    //  && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                           select new OfferLetterConditionPrecidentViewModel()
                                           {
                                               conditionPrecident = b.CONDITION,
@@ -266,7 +266,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                            join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
-                                            && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                         //   && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                            select new OfferLetterConditionPrecidentViewModel()
                                            {
                                                conditionPrecident = b.CONDITION,
@@ -292,9 +292,9 @@ namespace FintrakBanking.ReportObjects.Credit
                                   from b in cc.DefaultIfEmpty()
                                   join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
                                   from c in cg.DefaultIfEmpty()
-                                  where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
-                                  a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                   && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                  where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
+                                     // && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                    //   && d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || d.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                   select new OfferLetterViewModel
                                   {
                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
@@ -317,8 +317,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                from c in cc.DefaultIfEmpty()
                                join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
                                from d in cg.DefaultIfEmpty()
-                               where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower() &&
-                                     b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                               where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
+                                    //  && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                select new OfferLetterDetailViewModel()
                                {
                                    productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == b.PRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
@@ -359,7 +359,7 @@ namespace FintrakBanking.ReportObjects.Credit
             var conditionPrecedent = (from a in context.TBL_LMSR_APPLICATION
                                       join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISEXTERNAL == true
-                                       && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                    //  && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                       select new OfferLetterConditionPrecidentViewModel()
                                       {
                                           conditionPrecident = b.CONDITION,

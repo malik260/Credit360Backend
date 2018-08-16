@@ -90,5 +90,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationType, int staffId);
 
         bool ValidateInvoiceDetails(ValidateNumberViewModel data);
+
+        List<LoanApplicationViewModel> GetLoanApplication(string searchQuery);
     }
 }
