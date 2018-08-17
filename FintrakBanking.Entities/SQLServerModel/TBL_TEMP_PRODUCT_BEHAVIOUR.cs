@@ -46,5 +46,9 @@ namespace FintrakBanking.Entities.SQLServerModel
         public bool ISCURRENT { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
+
+        public short? TEMP_PRODUCTID { get; set; }
+
+        public virtual TBL_TEMP_PRODUCT TBL_TEMP_PRODUCT { get; set; }
     }
 }

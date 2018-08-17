@@ -118,15 +118,15 @@ namespace FintrakBanking.Repositories.Finance
             endOfDay.CREATEDBY = staffId;
             endOfDay.STARTDATETIME = DateTime.Now;
 
-            loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
+            //loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
             //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
             //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.ProcessDailyPastDueInterestAccrual(date);
+            //loanOperation.ProcessDailyPastDueInterestAccrual(date);
 
-            loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
+            //loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
@@ -142,7 +142,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
-            loanOperation.CalculateLoanClassification(date);
+            //loanOperation.CalculateLoanClassification(date);
 
            // loanOperation.GetRepaymentFromStaging();
 

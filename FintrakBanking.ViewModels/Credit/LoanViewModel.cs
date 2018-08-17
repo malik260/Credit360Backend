@@ -283,6 +283,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal dailyAccrualAmount { get; set; }
         public DateTime date { get; set; }
         public decimal mainAmount { get; set; }
+        public bool writtenOff { get; set; }
+        public DateTime firstPrincipalPaymentDate1 { get; set; }
+        public DateTime firstInterestPaymentDate1 { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//
@@ -506,6 +509,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool canReRouteBooking { get; set; }
+
         public decimal approveRequestAmount { get; set; }
         public decimal pendingRequestAmount { get; set; }
         public decimal allRequestAmount { get; set; }

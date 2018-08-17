@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool AddApprovalLevel(ApprovalLevelViewModel model)
         {
-            if (admin.IsSuperAdmin(model.staffId) == true)
+            if (admin.IsSuperAdmin(model.createdBy) == true)
             {
                 var data = new TBL_APPROVAL_LEVEL
                 {
@@ -334,7 +334,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var data = this.context.TBL_APPROVAL_LEVEL.Find(approvalLevelId);
             if (data == null) { return false; }
-            if (admin.IsSuperAdmin(model.staffId) == true)
+            if (admin.IsSuperAdmin(model.createdBy) == true)
             {
                 data.LEVELNAME = model.levelName;
                 data.POSITION = model.position;
@@ -469,7 +469,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             int tempApprovalLevelId = 0;
             var model = this.context.TBL_APPROVAL_LEVEL.Find(id);
-            if (admin.IsSuperAdmin(user.staffId) == true)
+            if (admin.IsSuperAdmin(user.createdBy) == true)
             {
                 model.DELETED = true;
                 model.DELETEDBY = user.staffId;
@@ -480,7 +480,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                    STAFFID = user.staffId,
+                    STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Workflow approval level '{model.LEVELNAME}' was deleted by this super-admin {audit_staff}",
                     IPADDRESS = user.userIPAddress,
@@ -540,7 +540,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     }
                 }
 
-                workflow.StaffId = user.staffId;
+                workflow.StaffId = user.createdBy;
                 workflow.CompanyId = user.companyId;
                 workflow.StatusId = (int)ApprovalStatusEnum.Processing;
                 workflow.TargetId = tempApprovalLevelId;
@@ -554,7 +554,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                    STAFFID = user.staffId,
+                    STAFFID = user.createdBy,
                     BRANCHID = (short)user.BranchId,
                     DETAIL = $"Approval request to delete workflow approval level '{model.LEVELNAME}'",
                     IPADDRESS = user.userIPAddress,
@@ -921,9 +921,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool PresetRoute(PresetRouteViewModel entity)
         {
-            var appl = context.TBL_LOAN_APPLICATION.Find(entity.applicationId);
-            appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
-            appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
+            if (entity.moduleId == 1)
+            {
+                var appl = context.TBL_LOAN_APPLICATION.Find(entity.applicationId);
+                appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
+                appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
+            }
+
             return context.SaveChanges() > 0;
         }
 

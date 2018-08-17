@@ -48,8 +48,6 @@ namespace FintrakBanking.Repositories.Admin
 
         }
       
-
-
         #region Users
 
         public bool isUserExist(string username)
@@ -837,7 +835,6 @@ namespace FintrakBanking.Repositories.Admin
         }
 
         #endregion Activies
-
 
         #region Administration
         public IEnumerable<ActiveUserDetails> GetActiveUsers(int companyId)

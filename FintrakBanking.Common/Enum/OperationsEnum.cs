@@ -66,7 +66,7 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityUsage = 56,
         ReassigningOfAccount = 57,
         LoanSales = 58,
-        LoanWorkOut = 59,
+        LoanRecapitilization = 59,
         CollateralApproval = 60,
         ItemPolicyApproval = 61,
         LoanPerformance = 62,
@@ -86,5 +86,9 @@ namespace FintrakBanking.Common.Enum
         ApprovalWorkflowGroupModification = 76,
         ApprovalWorkflowLevelModification=77,
         ApprovalLevelStaffModification = 78,
+        LoanWorkOut = 80,
+        LoanApplicationCancellation =81,
+        ContingentRequestBooking = 83,
+        LoanAndOverdraftRequestBooking = 82
     }
 }

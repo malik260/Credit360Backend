@@ -2596,51 +2596,99 @@ namespace FintrakBanking.Repositories.Credit
             return applications.GroupBy(x => x.loanApplicationDetailId).Select(d => d.FirstOrDefault()).ToList();
         }
 
-
-        public static List<OfferLetterDetailViewModel> GetLoanApplicationDetail()
+        public WorkflowResponse RerouteWorkflowTarget(ForwardViewModel model)
         {
-            FinTrakBankingContext context = new FinTrakBankingContext();
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = model.receiverLevelId;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.StatusId = model.forwardAction;
+            workflow.Comment = model.comment;
+            workflow.LogActivity();
+            return workflow.Response;
+        }
 
-            try
-            {
-                var loanDetails = (from a in context.TBL_LOAN_APPLICATION_DETAIL
-                                   join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
-                                   from c in cc.DefaultIfEmpty()
-                                   join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
-                                   from e in dg.DefaultIfEmpty()
-                                   join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
-                                   from g in gg.DefaultIfEmpty()
-                                   join h in context.TBL_CURRENCY on a.CURRENCYID equals h.CURRENCYID into hh
-                                   from h in hh.DefaultIfEmpty()
-                                   where a.STATUSID == (int)ApprovalStatusEnum.Approved
-                                   select new OfferLetterDetailViewModel()
+
+        public List<LoanApplicationViewModel> GetLoanApplication(string searchQuery)
+        {
+            var allFilteredLoan = (from a in context.TBL_LOAN_APPLICATION
+                                   join    r in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals r.LOANAPPLICATIONID
+                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                   join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                   where (a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
+                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
+                                   b.FIRSTNAME.ToLower().Contains(searchQuery) ||
+                                   b.LASTNAME.ToLower().Contains(searchQuery) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   select new LoanApplicationViewModel
                                    {
-                                       productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.APPROVEDPRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
-                                       currencyName = h.CURRENCYCODE,
-                                       tenor = a.APPROVEDTENOR,
-                                       interestRate = a.APPROVEDINTERESTRATE,
-                                       loanAmount = a.APPROVEDAMOUNT,
-                                       exchangeRate = a.EXCHANGERATE,
-                                       currencyId = a.CURRENCYID,
-                                       customerName = c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME ,
-                                       customerAddress = e.ADDRESS ?? " ", 
-                                       applicationDate = a.DATETIMECREATED,
-                                       customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                                       customerPhoneNumber = g.PHONENUMBER,
-                                       repaymentSchedule = a.REPAYMENTSCHEDULE ?? "Not applicable",
-                                       repaymentTerms = a.REPAYMENTTERMS ?? "Not applicable",
-                                       purpose = a.LOANPURPOSE,
-                                   }).ToList();
+                                       loanApplicationId = a.LOANAPPLICATIONID,
+                                       customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                       productName = r.TBL_PRODUCT.PRODUCTNAME,
+                                       applicationAmount = a.APPLICATIONAMOUNT,
+                                       applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER
+                                   });
+            return allFilteredLoan.ToList();
+        }
 
-                return loanDetails;
-            }
-            catch (Exception ex)
+        public bool SaveCancelledApplcation(LoanApplicationViewModel data)
+        {
+            var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.approvalLevelId).Select(x => x).FirstOrDefault();
+            if (application!=null)
             {
-                throw ex;
+                var cancelledApplication = new TBL_TEMP_LOAN_APPLTN_CANCELTN
+                {
+                       LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                       CANCELLATIONREASON = data.cancellationReason,
+                       APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                       CREATEDBY = data.staffId,
+                       DATETIMECREATED = genSetup.GetApplicationDate(),
+                       ISCURRENT = true,
+                };
+
+                context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Add(cancelledApplication);
+
+                if (context.SaveChanges()>0)
+                {
+                    data.tempApplicationCancellationId = cancelledApplication.TEMPAPPLICATIONCANCELLATIONID;
+                }
             }
 
+            workflow.StaffId = data.createdBy;
+            workflow.CompanyId = data.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = data.tempApplicationCancellationId;
+            workflow.Comment = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason}  ";
+            workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
+            workflow.DeferredExecution = true;
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
+                STAFFID = data.createdBy,
+                BRANCHID = (short)data.userBranchId,
+                DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason} ",
+                IPADDRESS = data.userIPAddress,
+                URL = data.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = application.LOANAPPLICATIONID,
+            };
 
 
+            this.auditTrail.AddAuditTrail(audit);
+
+            if (context.SaveChanges()>0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

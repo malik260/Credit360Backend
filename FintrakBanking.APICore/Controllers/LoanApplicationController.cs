@@ -4,6 +4,7 @@ using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.WorkFlow;
@@ -1089,7 +1090,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("tranche-facility/{searchValue}")]
+        public HttpResponseMessage TrancheLoanDetails(string searchValue)
+        {
+            try
+            {
+                var response = repo.GetLoanApplication(searchValue);
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpDelete] [ClaimsAuthorization]
         [Route("loanApplicationDetail/{id}")]
@@ -1117,6 +1133,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        
+        [HttpPost]
+        [Route("reroute-workflow-target")]
+        public HttpResponseMessage RerouteWorkflowTarget([FromBody] ForwardViewModel entity)
+        {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                WorkflowResponse response = repo.RerouteWorkflowTarget(entity);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Reroute done." });
+        }
+
+
 
     }
 }

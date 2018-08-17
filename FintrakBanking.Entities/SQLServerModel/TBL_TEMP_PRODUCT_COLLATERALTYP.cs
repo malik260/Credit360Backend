@@ -12,7 +12,7 @@ namespace FintrakBanking.Entities.SQLServerModel
         [Key]
         public int PRODUCTCOLLATERALTYPEID { get; set; }
 
-        public short PRODUCTID { get; set; }
+        public short TEMP_PRODUCTID { get; set; }
 
         public int COLLATERALTYPEID { get; set; }
 

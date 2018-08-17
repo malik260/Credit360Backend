@@ -250,7 +250,9 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public decimal balance { get; set; }
         public string branch { get; set; }
         public decimal lienAmount { get; set; }
+        public bool isSuccess { get; set; }
         public HttpResponseMessage response { get; set; }
+        public string errorDesc { get; set; }
     }
 
     public class ResponseMessage

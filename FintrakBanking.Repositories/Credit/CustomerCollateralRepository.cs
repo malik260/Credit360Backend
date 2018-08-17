@@ -23,6 +23,7 @@ using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using Newtonsoft.Json;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -3632,6 +3633,7 @@ namespace FintrakBanking.Repositories.Credit
         private void AddTempCasaCollateral(int collateralId, CollateralViewModel entity)
         {
             CasaBalanceViewModel casaDetail;
+            string errorDesc = "";
 
             try
             {
@@ -3639,7 +3641,14 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (casaDetail.isCasaAccountDetailAvailable == false)
                 {
-                    throw new SecureException(entity.collateralCode + " is not a valid CASA account number");
+                    if (casaDetail.accountName!=null)
+                    {
+                        var error = JsonConvert.DeserializeObject<List<API_Error>>(casaDetail.accountName);
+                        foreach (var a in error)
+                            errorDesc = a.errorDescription;
+                        throw new APIErrorException(errorDesc);
+
+                    }
                 }
                 else
                 {
@@ -3682,9 +3691,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
 
-                if (finacleBalance.accountNumber == null)
+                if (finacleBalance.isSuccess == false)
                 {
-                    throw new SecureException(entity.collateralCode + " is not a valid fixed depposit account number");
+                    throw new ConditionNotMetException(finacleBalance.errorDesc);
                 }
                 else
                 {
@@ -3714,7 +3723,12 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.ExternalInitialization = true;
                     workflow.LogActivity();
                 }
-            }catch(Exception ex)
+            }
+            catch (APIErrorException e)
+            {
+                throw new APIErrorException(e.Message);
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -5154,4 +5168,10 @@ namespace FintrakBanking.Repositories.Credit
 
     }
 
+}
+
+public class API_Error
+{
+    public string error { get; set; }
+    public string errorDescription { get; set; }
 }

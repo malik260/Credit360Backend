@@ -1595,19 +1595,15 @@ namespace FintrakBanking.Repositories.Setups.General
                    };
         }
 
-        public IQueryable<simpleStaffModel> SearchStaff(string searchQuery, int companyId)
+        public IQueryable<simpleStaffModel> SearchStaff(string searchQuery = "", int companyId=0)
         {
             IQueryable<simpleStaffModel> staff = null;
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
-            {
-                searchQuery = searchQuery.ToLower();
-            }
-
-            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
-            {
-                staff =
-                    context.TBL_STAFF.Where(x => x.DELETED == false)// && x.c == companyId)
+            { 
+                searchQuery = searchQuery.Trim().ToLower();
+            
+                staff = context.TBL_STAFF.Where(x => x.DELETED == false)// && x.c == companyId)
                     .Where(x => x.FIRSTNAME.ToLower().Contains(searchQuery)
                     || x.MIDDLENAME.ToLower().Contains(searchQuery)
                     || x.LASTNAME.ToLower().Contains(searchQuery)
@@ -1621,7 +1617,6 @@ namespace FintrakBanking.Repositories.Setups.General
                         staffCode = o.STAFFCODE,
                     })
                     .Take(12);
-
             }
 
             return staff;

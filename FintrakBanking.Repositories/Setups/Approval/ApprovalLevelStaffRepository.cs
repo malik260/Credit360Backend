@@ -149,12 +149,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool AddApprovalLevelStaff(ApprovalLevelStaffViewModel model)
         {
-            if (admin.IsSuperAdmin(model.staffId) == true)
+            if (admin.IsSuperAdmin(model.createdBy) == true)
             {
                 var data = new TBL_APPROVAL_LEVEL_STAFF
                 {
                     MAXIMUMAMOUNT = model.maximumAmount,
-                    STAFFID = model.staffId,
+                    STAFFID = model.createdBy,
                     APPROVALLEVELID = model.approvalLevelId,
                     POSITION = model.position,
                     PROCESSVIEWSCOPEID = (short)model.processViewScope,
@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                 var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == data.APPROVALLEVELID));
                 var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == data.STAFFID));
-                var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).Select(x => x.STAFFCODE));
+                var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
 
                 var audit = new TBL_AUDIT
                 {
@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                 {
                     MAXIMUMAMOUNT = model.maximumAmount,
-                    STAFFID = model.staffId,
+                    STAFFID = model.createdBy,
                     APPROVALLEVELID = model.approvalLevelId,
                     POSITION = model.position,
                     PROCESSVIEWSCOPEID = (short)model.processViewScope,
@@ -299,13 +299,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         public bool UpdateApprovalLevelStaff(int StaffLevelId, ApprovalLevelStaffViewModel model)
         {
-            if (admin.IsSuperAdmin(model.staffId) == true)
+            if (admin.IsSuperAdmin(model.createdBy) == true)
             {
                 var data = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFLEVELID == StaffLevelId).Select(x => x).FirstOrDefault();
                 if (data == null) return false;
 
                 data.MAXIMUMAMOUNT = model.maximumAmount;
-                data.STAFFID = model.staffId;
+                data.STAFFID = model.createdBy;
                 data.APPROVALLEVELID = model.approvalLevelId;
                 data.POSITION = model.position;
                 data.PROCESSVIEWSCOPEID = (short)model.processViewScope;
@@ -321,7 +321,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                 var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == StaffLevelId));
                 var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == data.STAFFID).Select(x => x.STAFFCODE));
-                var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).Select(x => x.STAFFCODE));
+                var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
 
 
                 var audit = new TBL_AUDIT
@@ -347,7 +347,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                     {
                         MAXIMUMAMOUNT = model.maximumAmount,
-                        STAFFID = model.staffId,
+                        STAFFID = model.createdBy,
                         APPROVALLEVELID = model.approvalLevelId,
                         POSITION = model.position,
                         PROCESSVIEWSCOPEID = (short)model.processViewScope,
