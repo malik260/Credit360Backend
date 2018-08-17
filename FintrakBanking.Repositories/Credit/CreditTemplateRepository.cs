@@ -20,6 +20,8 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private ILoanRepository loan;
 
+        private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
+
         public CreditTemplateRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, ILoanRepository loan)
         {
             this.context = context;
@@ -195,7 +197,6 @@ namespace FintrakBanking.Repositories.Credit
                     templateSectionId = x.TEMPLATESECTIONID,
                     // templateDocument = x.TEMPLATEDOCUMENT,
                 })
-                .Distinct()
                 .ToList();
 
             return sections;
@@ -268,7 +269,7 @@ namespace FintrakBanking.Repositories.Credit
                 content = content.Replace("@{{CustomerExposure}}", customerExposure);
             }
 
-            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal || operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal)
+            if (lmsCamOperationIds.Contains(operationId))
             {
 
             }
