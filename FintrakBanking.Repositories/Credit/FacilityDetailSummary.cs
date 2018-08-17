@@ -175,7 +175,15 @@ namespace FintrakBanking.Repositories.Credit
                                     amortisedPeriodInterestAmount = (double)sch.AMORTISEDPERIODINTERESTAMOUNT,
                                     amortisedPeriodPrincipalAmount = (double)sch.AMORTISEDPERIODPRINCIPALAMOUNT,
                                     amortisedEndPrincipalAmount = (double)sch.AMORTISEDENDPRINCIPALAMOUNT,
-                                    effectiveInterestRate = sch.EFFECTIVEINTERESTRATE
+                                    effectiveInterestRate = sch.EFFECTIVEINTERESTRATE,
+                                    principalAmount = context.TBL_LOAN_ARCHIVE.Where(x=>x.LOANID==sch.LOANID).Select(x=>x.PRINCIPALAMOUNT).FirstOrDefault(),
+                                    interestRateArc = context.TBL_LOAN_ARCHIVE.Where(x=>x.LOANID==sch.LOANID).Select(x=>x.INTERESTRATE).FirstOrDefault(),
+                                    effectiveDate = context.TBL_LOAN_ARCHIVE.Where(x=>x.LOANID==sch.LOANID).Select(x=>x.EFFECTIVEDATE).FirstOrDefault(),
+                                    maturityDate = context.TBL_LOAN_ARCHIVE.Where(x=>x.LOANID==sch.LOANID).Select(x=>x.MATURITYDATE).FirstOrDefault(),
+                                    scheduleTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x=>x.SCHEDULETYPEID==sch.PERIODICSCHEDULEID).Select(x=>x.SCHEDULETYPENAME).FirstOrDefault(),
+                                  //  effectiveInterestRate = context.TBL_LOAN_ARCHIVE.Where(x=>x.LOANID==sch.LOANID).Select(x=>x.eff).FirstOrDefault(),
+                                    
+
                                 }).ToList();
             return loanSchedule;
         }
@@ -581,7 +589,7 @@ namespace FintrakBanking.Repositories.Credit
                                    principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                    pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
                                    interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID != null ? (short)a.INTERESTFREQUENCYTYPEID : (short)0,
-                                   interestFrequencyTypeName = a.TBL_FREQUENCY_TYPE1.MODE,
+                                   interestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x=>x.FREQUENCYTYPEID==a.INTERESTFREQUENCYTYPEID).Select(x=>x.MODE).FirstOrDefault(),
                                    productTypeId = f.PRODUCTTYPEID,
                                    productName = f.PRODUCTNAME,
                                    productTypeName = pt.PRODUCTTYPENAME,
@@ -606,7 +614,7 @@ namespace FintrakBanking.Repositories.Credit
                                    dateApproved = a.DATEAPPROVED,
                                    loanStatusId = a.LOANSTATUSID,
                                    scheduleTypeId = a.SCHEDULETYPEID,
-                                   scheduleTypeName = a.TBL_LOAN_SCHEDULE_TYPE.SCHEDULETYPENAME,
+                                   scheduleTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x=>x.SCHEDULETYPEID==a.SCHEDULETYPEID).Select(x=>x.SCHEDULETYPENAME).FirstOrDefault(),
                                    isDisbursed = a.ISDISBURSED,
                                    isDisbursedState = a.ISDISBURSED ? "True" : "False",
                                    disbursedBy = a.DISBURSEDBY,
@@ -619,11 +627,11 @@ namespace FintrakBanking.Repositories.Credit
                                    casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
                                    productAccountName = c.PRODUCTACCOUNTNAME,
                                    customerGroupId = e.CUSTOMERGROUPID,
-                                   loanTypeId = e.LOANAPPLICATIONTYPEID,
-                                   loanTypeName = e.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                   loanTypeId =  e.LOANAPPLICATIONTYPEID,
+                                   loanTypeName = context.TBL_LOAN_APPLICATION_TYPE.Where(x=>x.LOANAPPLICATIONTYPEID==e.LOANAPPLICATIONTYPEID).Select(x=>x.LOANAPPLICATIONTYPENAME).FirstOrDefault(),
                                    equityContribution = a.EQUITYCONTRIBUTION,
-                                   firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
-                                   firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
+                                   firstPrincipalPaymentDate1 = (DateTime)a.FIRSTPRINCIPALPAYMENTDATE ,
+                                   firstInterestPaymentDate1 = (DateTime)a.FIRSTINTERESTPAYMENTDATE,
                                    outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
                                    outstandingInterest = a.OUTSTANDINGINTEREST,
                                    principalAdditionCount = a.PRINCIPALADDITIONCOUNT ?? 0,

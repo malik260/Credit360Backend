@@ -2634,5 +2634,61 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+
+        public bool SaveCancelledApplcation(LoanApplicationViewModel data)
+        {
+            var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.approvalLevelId).Select(x => x).FirstOrDefault();
+            if (application!=null)
+            {
+                var cancelledApplication = new TBL_TEMP_LOAN_APPLTN_CANCELTN
+                {
+                       LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                       CANCELLATIONREASON = data.cancellationReason,
+                       APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                       CREATEDBY = data.staffId,
+                       DATETIMECREATED = genSetup.GetApplicationDate(),
+                       ISCURRENT = true,
+                };
+
+                context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Add(cancelledApplication);
+
+                if (context.SaveChanges()>0)
+                {
+                    data.tempApplicationCancellationId = cancelledApplication.TEMPAPPLICATIONCANCELLATIONID;
+                }
+            }
+
+            workflow.StaffId = data.createdBy;
+            workflow.CompanyId = data.companyId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+            workflow.TargetId = data.tempApplicationCancellationId;
+            workflow.Comment = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason}  ";
+            workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
+            workflow.DeferredExecution = true;
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
+                STAFFID = data.createdBy,
+                BRANCHID = (short)data.userBranchId,
+                DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason} ",
+                IPADDRESS = data.userIPAddress,
+                URL = data.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = application.LOANAPPLICATIONID,
+            };
+
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            if (context.SaveChanges()>0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

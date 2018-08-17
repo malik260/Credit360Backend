@@ -114,6 +114,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string responsiblePerson { get; set; }
         public DateTime? timeIn { get; set; }
         public DateTime? slaTime { get; set; }
+        public string cancellationReason { get; set; }
+
         public string tenorString
         {
             get
@@ -125,6 +127,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " months";
             }
         }
+
+        public int tempApplicationCancellationId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
