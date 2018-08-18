@@ -130,5 +130,6 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId);
         bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity);
         bool UpdatePropectToCustomer(int customerId, CustomerViewModels entity);
+        IEnumerable<CustomerRelatedDirectorViewModel> DirectorRelatedCustomer(string bvn);
     }
 }
