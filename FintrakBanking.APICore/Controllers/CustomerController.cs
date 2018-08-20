@@ -918,32 +918,32 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
-                    if (repo.ValidateCustomerBVN(entity.customerId, entity.bankVerificationNumber))
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = false, message = "The BVN you entered already exist" });
-                    }
-                    if (entity.rcNumber != null && entity.customerTypeId == (int)CustomerTypeEnum.Corporate)
-                    {
-                        if (repo.ValidateCustomerRCnumber(entity.customerId, entity.rcNumber))
-                        {
-                            return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "The Registration Number you entered already exist" });
-                        }
-                    }
-                    if (repo.ValidateCustomerEmail(entity.customerId, entity.email))
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = false, message = "The Email Address you entered already exist" });
-                    }
-                    if (entity.taxNumber != null && entity.taxNumber != "")
-                    {
-                        if (repo.ValidateCustomerTIN(entity.customerId, entity.taxNumber))
-                        {
-                            return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "The Tax Identification Number you entered already exist" });
-                        }
-                    }
+                    //if (repo.ValidateCustomerBVN(entity.customerId, entity.bankVerificationNumber))
+                    //{
+                    //    return Request.CreateResponse(HttpStatusCode.OK,
+                    //       new { success = false, message = "The BVN you entered already exist" });
+                    //}
+                    //if (entity.rcNumber != null && entity.customerTypeId == (int)CustomerTypeEnum.Corporate)
+                    //{
+                    //    if (repo.ValidateCustomerRCnumber(entity.customerId, entity.rcNumber))
+                    //    {
+                    //        return Request.CreateResponse(HttpStatusCode.OK,
+                    //           new { success = false, message = "The Registration Number you entered already exist" });
+                    //    }
+                    //}
+                    //if (repo.ValidateCustomerEmail(entity.customerId, entity.email))
+                    //{
+                    //    return Request.CreateResponse(HttpStatusCode.OK,
+                    //       new { success = false, message = "The Email Address you entered already exist" });
+                    //}
+                    //if (entity.taxNumber != null && entity.taxNumber != "")
+                    //{
+                    //    if (repo.ValidateCustomerTIN(entity.customerId, entity.taxNumber))
+                    //    {
+                    //        return Request.CreateResponse(HttpStatusCode.OK,
+                    //           new { success = false, message = "The Tax Identification Number you entered already exist" });
+                    //    }
+                    //}
                 }
 
                 entity.userBranchId = (short)token.GetBranchId;
@@ -983,27 +983,27 @@ namespace FintrakBanking.APICore.Controllers
                 else
                 {
                     createUpdate = "created";
-                    if (repo.ValidateClientSupplierEmail(entity.customerId, entity.client_SupplierEmail))
-                    {
-                        return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = false, message = "The Email Address you entered already exist" });
-                    }
-                    if (entity.taxNumber != null && entity.taxNumber != "")
-                    {
-                        if (repo.ValidateClientSupplierTIN(entity.customerId, entity.taxNumber))
-                        {
-                            return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "The Tax Identification Number you entered already exist" });
-                        }
-                    }
-                    if (entity.rcNumber != "" && entity.rcNumber != null)
-                    {
-                        if (repo.ValidateClientSupplierRCnumber(entity.customerId, entity.rcNumber))
-                        {
-                            return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "The Registration Number you entered already exist" });
-                        }
-                    }
+                    //if (repo.ValidateClientSupplierEmail(entity.customerId, entity.client_SupplierEmail))
+                    //{
+                    //    return Request.CreateResponse(HttpStatusCode.OK,
+                    //       new { success = false, message = "The Email Address you entered already exist" });
+                    //}
+                    //if (entity.taxNumber != null && entity.taxNumber != "")
+                    //{
+                    //    if (repo.ValidateClientSupplierTIN(entity.customerId, entity.taxNumber))
+                    //    {
+                    //        return Request.CreateResponse(HttpStatusCode.OK,
+                    //           new { success = false, message = "The Tax Identification Number you entered already exist" });
+                    //    }
+                    //}
+                    //if (entity.rcNumber != "" && entity.rcNumber != null)
+                    //{
+                    //    if (repo.ValidateClientSupplierRCnumber(entity.customerId, entity.rcNumber))
+                    //    {
+                    //        return Request.CreateResponse(HttpStatusCode.OK,
+                    //           new { success = false, message = "The Registration Number you entered already exist" });
+                    //    }
+                    //}
                 }
 
                 entity.userBranchId = (short)token.GetBranchId;
@@ -2089,7 +2089,26 @@ namespace FintrakBanking.APICore.Controllers
 
         }
         #endregion
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("director-related-customer")]
+        public HttpResponseMessage DirectorRelatedCustomer(string bvn)
+        {
+            try
+            {
+                var custInfo = repo.DirectorRelatedCustomer(bvn);
 
+                if (custInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = custInfo });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
 //Models
