@@ -117,8 +117,11 @@ namespace FintrakBanking.Repositories.Credit
                              join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                              join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
                              join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                             join e in context.TBL_PRODUCT on b.PRODUCTID equals e.PRODUCTID
+                             join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
-                             && a.PAYMENTDATE == c.PAYMENTDATE && b.PRODUCTID != (short)ProductClassEnum.Commercial
+                             && a.PAYMENTDATE == c.PAYMENTDATE && 
+                             (f.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialPaper || f.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
 
                              select new DailyInterestAccrualViewModel()
                              {
@@ -140,7 +143,10 @@ namespace FintrakBanking.Repositories.Credit
                              }).ToList();
 
                 var data2 = (from a in context.TBL_LOAN
-                             where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTID == (short)ProductClassEnum.Commercial
+                             join e in context.TBL_PRODUCT on a.PRODUCTID equals e.PRODUCTID
+                             join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
+                             where a.LOANSTATUSID == (short)LoanStatusEnum.Active &&
+                              (f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper || f.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
                              && a.MATURITYDATE == DbFunctions.TruncateTime(applicationDate)
 
 
@@ -7626,7 +7632,7 @@ namespace FintrakBanking.Repositories.Credit
                 lien.createdBy = (int)SystemStaff.System;
                 lien.description = "lien placed due to Loan Write Off";
 
-                var lienReference = casaLien.PlaceLien(lien, twoFactorAuth);
+               var lienReference = casaLien.PlaceLien(lien, twoFactorAuth);
 
 
 
@@ -10587,14 +10593,24 @@ namespace FintrakBanking.Repositories.Credit
 
                         else if ((int)OperationsEnum.Restructured == model.operationId)
                         {
-                            model.interestRate = model.newInterest;
-                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
-                            model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
-                            model.maturityDate = (DateTime)model.newMaturityDate;
-                            model.effectiveDate = model.newEffectiveDate;
-                            model.tenor = model.newTenor;
-                            model.interestFrequency = (short)model.newInterestFrequency;
-                            model.principalFrequency = (short)model.newPrincipalFrequency;
+                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment || scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
+                            {
+                                model.interestRate = model.newInterest;
+                                model.maturityDate = (DateTime)model.newMaturityDate;
+                                model.effectiveDate = model.newEffectiveDate;
+                                model.tenor = model.newTenor;
+                            }
+                            else
+                            {
+                                model.interestRate = model.newInterest;
+                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
+                                model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
+                                model.maturityDate = (DateTime)model.newMaturityDate;
+                                model.effectiveDate = model.newEffectiveDate;
+                                model.tenor = model.newTenor;
+                                model.interestFrequency = (short)model.newInterestFrequency;
+                                model.principalFrequency = (short)model.newPrincipalFrequency;
+                            }
                             result = Restructured(loanId, model, applicationDate, staffId);
                             if (result == true)
                             {
