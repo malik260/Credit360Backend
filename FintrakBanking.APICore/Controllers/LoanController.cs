@@ -351,7 +351,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 var data = repo.AddLoanBooking(entity);
                 if (data != "")
                 {
-                    if(entity.productTypeId ==(short)LoanProductTypeEnum.CommercialPaper 
+                    if(entity.productTypeId ==(short)LoanProductTypeEnum.CommercialLoan 
                         || entity.productTypeId == (short)LoanProductTypeEnum.TermLoan 
                         || entity.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating 
                         || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)

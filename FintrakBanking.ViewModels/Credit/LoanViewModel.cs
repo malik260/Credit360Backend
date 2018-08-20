@@ -507,6 +507,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public object isBooked { get; set; }
+
+        public bool isUnderApproval { get; set; }
+        public bool isApprovalOwner { get; set; }
         public bool canReRouteBooking { get; set; }
 
         public decimal approveRequestAmount { get; set; }

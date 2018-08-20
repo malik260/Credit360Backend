@@ -1148,6 +1148,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Reroute done." });
         }
 
+        [HttpPost]
+        [Route("route-workflow-target")]
+        public HttpResponseMessage RouteWorkflowTarget([FromBody] ForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            WorkflowResponse response = repo.RouteWorkflowTarget(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Reroute done." });
+        }
+
 
 
     }

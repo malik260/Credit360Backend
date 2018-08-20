@@ -153,7 +153,7 @@ namespace FintrakBanking.Repositories.Credit
                         middleName = director.MIDDLENAME,
                         creditBureauCount = directorCount,
                     };
-                    allCorporate.Add(shareholdersData);
+                    if(directorCount >0)allCorporate.Add(shareholdersData);
                 }
             }
             if (isExternal)
@@ -165,16 +165,16 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         try
                         {
-                            integration.AddCustomerAccounts(item.customerCode);
+                            var i = integration.AddCustomerAccounts(item.customerCode);
                         }
-                        catch(APIErrorException ex)
+                        catch (APIErrorException ex)
                         {
                             return allCorporate;
                             //throw new APIErrorException(ex.Message);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            throw ex; // new SecureException(ex.Message);
+                            return allCorporate;  //throw ex; // new SecureException(ex.Message);
                         }
                     }
                 }

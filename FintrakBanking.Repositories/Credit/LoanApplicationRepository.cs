@@ -1703,23 +1703,42 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                searchQuery = searchQuery.ToLower();
-            }
+                searchQuery = searchQuery.Trim().ToLower();
 
-            if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
-            {
-                allApplicationDetails = GetLoanApplicationsDetails(companyId)
-                    .Where(x => (x.applicationRefNo.Contains(searchQuery))
-                    || (x.customerName.Contains(searchQuery))
-                    || (x.customerAccountNumber.Contains(searchQuery))
-                    || (x.customerCode.Contains(searchQuery))
-                    || (x.firstName.Contains(searchQuery))
-                    //|| (x.lastName.Contains(searchQuery))
-                    //|| (x.middleName.Contains(searchQuery))
-                    );
+                allApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.TBL_LOAN_APPLICATION.COMPANYID ==companyId && x.DELETED == false
+                && x.TBL_LOAN_APPLICATION.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)// && x.c == companyId)
+                    .Where(x => x.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(searchQuery)
+                    || x.TBL_CUSTOMER.MIDDLENAME.ToLower().Contains(searchQuery)
+                    || x.TBL_CUSTOMER.LASTNAME.ToLower().Contains(searchQuery)
+                    || x.TBL_CUSTOMER.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                    || x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery))
+                    .Select(o => new LoanApplicationDetailViewModel
+                    {
+                        requireCollateral = o.TBL_LOAN_APPLICATION.REQUIRECOLLATERAL,
+                        loanApplicationId = o.LOANAPPLICATIONID,
+                        applicationRefNo = o.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                        customerId = o.CUSTOMERID,
+                        customerName = o.TBL_CUSTOMER.FIRSTNAME + " " + o.TBL_CUSTOMER.MIDDLENAME + " " + o.TBL_CUSTOMER.LASTNAME,
+                        firstName = o.TBL_CUSTOMER.FIRSTNAME,
+                        middleName = o.TBL_CUSTOMER.MIDDLENAME,
+                        lastName = o.TBL_CUSTOMER.LASTNAME,
+                        customerCode = o.TBL_CUSTOMER.CUSTOMERCODE,
+                        loanApplicationDetailId = o.LOANAPPLICATIONDETAILID,
+                        proposedProductId = o.PROPOSEDPRODUCTID,
+                        proposedProductName = o.TBL_PRODUCT.PRODUCTNAME,
+                        proposedTenor = o.PROPOSEDTENOR,
+                        proposedAmount = o.PROPOSEDAMOUNT,
+                        proposedInterestRate = o.PROPOSEDINTERESTRATE,
+                        productClassProcessId = o.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                        productClassId = (short?)o.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                        customerType = o.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                        //branchName = o.TBL_BRANCH.BRANCHNAME,
+                        //customerGroupName = o.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                        customerAccountNumber = o.TBL_CASA.PRODUCTACCOUNTNUMBER
+                    })
+                    .Take(12);
             }
-
-            var c = allApplicationDetails.ToList();
+            
             return allApplicationDetails;
         }
 
@@ -2609,6 +2628,26 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StatusId = model.forwardAction;
             workflow.Comment = model.comment;
             workflow.LogActivity();
+            return workflow.Response;
+        }
+
+        public WorkflowResponse RouteWorkflowTarget(ForwardViewModel model)
+        {
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = model.companyId;
+            workflow.Comment = model.comment;
+            workflow.ToStaffId = model.receiverStaffId;
+            workflow.ExternalInitialization = true;
+            workflow.StatusId = (short)ApprovalStatusEnum.Pending;
+            workflow.Amount = model.amount;
+
+            workflow.LogActivity();
+
+            context.SaveChanges();
+
             return workflow.Response;
         }
 

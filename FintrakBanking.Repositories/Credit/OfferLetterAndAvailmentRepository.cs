@@ -1716,6 +1716,7 @@ namespace FintrakBanking.Repositories.Credit
                                         AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
                                         APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                         LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                                        ISUSED = false,
                                         DATETIMECREATED = DateTime.Now,
                                         CREATEDBY = entity.staffId,
                                     };
@@ -1736,6 +1737,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
                                                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                                 LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                                                ISUSED = false,
                                                 DATETIMECREATED = DateTime.Now,
                                                 CREATEDBY = entity.staffId,
                                             };
