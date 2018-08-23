@@ -2781,7 +2781,10 @@ namespace FintrakBanking.Repositories.Credit
                             LaonApplcationCancelllationCompelted(data);
 
                             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
-                            string messageBoby = $"Dear Team, <br /><br />This is to bring your attention the following loan with {data.applicationReferenceNumber} application refernence number has covenants which are approaching their due date. <br /><br />";
+                            var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x=>x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                            string messageBoby = $"Dear Team, <br /><br />This is to bring your attention the loan with {data.applicationReferenceNumber} application refernence number which was going through approval for cancellation has been successfully approved by {staffName}, . <br /><br />";
+                            string alertSubject = $"Loan Application Cancellation Approval Notification";
+                            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
                         }
                     }
 
@@ -2826,7 +2829,7 @@ namespace FintrakBanking.Repositories.Credit
             val.APPROVALSTATUSID = (int)LoanApplicationStatusEnum.CancellationInProgress;
         }
 
-        private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string recipients, string alertSubject)
+        private void LogEmailAlertForLoanApplicationCancellation(string messageBody,  string alertSubject, string recipients)
         {
             try
             {
@@ -2887,6 +2890,29 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new SecureException(ex.Message);
             }
+        }
+
+        private string GetLoanApplicationEmailRecipients(int targetId)
+        {
+           string recipientEmailAddresses = string.Empty;
+            int? staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).Select(x => x.TOSTAFFID).FirstOrDefault();
+            if (staffId!=null)
+            {
+              return context.TBL_STAFF.Where(x => x.STAFFID == staffId).Select(x => x.EMAIL).FirstOrDefault();
+
+            }
+            else
+            {
+               int? approvalLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).Select(x => x.TOAPPROVALLEVELID).FirstOrDefault();
+                var staffIds = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == approvalLevelId).Select(x => 
+                new StaffInfoViewModel {
+                  staffId =  (int)x.STAFFROLEID }).ToList();
+                    foreach (var a in staffIds)
+                        recipientEmailAddresses = context.TBL_STAFF.Where(x => x.STAFFID == a.staffId).Select(x => x.EMAIL).FirstOrDefault() + ";";
+
+               return recipientEmailAddresses.TrimEnd(';');
+            }
+
         }
 
     }

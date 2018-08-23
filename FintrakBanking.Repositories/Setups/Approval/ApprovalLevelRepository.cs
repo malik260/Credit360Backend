@@ -336,6 +336,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (data == null) { return false; }
             if (admin.IsSuperAdmin(model.createdBy) == true)
             {
+                if (data == null) { return false; }
+
                 data.LEVELNAME = model.levelName;
                 data.POSITION = model.position;
                 data.TENOR = model.tenor;
@@ -375,22 +377,20 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 data.STAFFROLEID = model.roleId;
                 data.LASTUPDATEDBY = model.lastUpdatedBy;
 
-                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
-
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelUpdated,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Approval Level '{model.levelName}' was Updated by the super-admin with id {audit_staff} ",
+                    DETAIL = $"Updated Approval Level '{model.levelName}'. ",
                     IPADDRESS = model.userIPAddress,
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = model.approvalLevelId
                 };
-                //this.auditTrail.AddAuditTrail(audit);
+
             }
             else
             {
