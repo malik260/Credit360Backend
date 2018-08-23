@@ -8790,7 +8790,7 @@ namespace FintrakBanking.Repositories.Credit
                                    maturityDate = l.MATURITYDATE,
                                    scheduleTypeId = l.SCHEDULETYPEID,
                                    scheduleTypeCategoryId = l.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
-                                   teno = days,
+                                   tenor = days,
                                    newtenor = 0,
                                    accrualedAmount = accruedInterest,
                                    totalAmount = totalamount,

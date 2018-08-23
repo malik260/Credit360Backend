@@ -47,6 +47,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public string customerType { get; set; }
+
         public string groupCustomerName { get; set; }
 
         public short trailApprovalStatus { get; set; }
@@ -163,7 +165,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
         public int? customerRiskRatingId { get; set; }
-        public int teno { get; set; }
+        public int tenor { get; set; }
 
         // public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }

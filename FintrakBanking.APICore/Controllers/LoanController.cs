@@ -222,6 +222,34 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [Route("loan-application-detail-covenant/{applicationDetailId}")]
+        public HttpResponseMessage GetLoanApplicationDetailCovenantById(int applicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetLoanApplicationDetailCovenantById(applicationDetailId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
         [Route("loan-schedule-category")]
         public HttpResponseMessage GetAllLoanScheduleCategory()
         {
