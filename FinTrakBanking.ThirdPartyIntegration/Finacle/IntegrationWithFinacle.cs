@@ -510,6 +510,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             //Task.Run(async () => { data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode); })
             //    .GetAwaiter().GetResult();
 
+
             Task.Run(async () => data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
 
             foreach (var item in data)
