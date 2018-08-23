@@ -95,5 +95,13 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanApplicationViewModel> GetLoanApplication(string searchQuery);
 
         WorkflowResponse RerouteWorkflowTarget(ForwardViewModel model);
+
+        List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId);
+
+        bool SaveCancelledApplcation(LoanApplicationViewModel data);
+
+        LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel data);
+
+        int GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data);
     }
 }
