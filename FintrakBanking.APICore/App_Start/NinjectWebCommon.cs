@@ -222,6 +222,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IStaffMIS>().To<StaffMIS>();
             kernel.Bind<IFacilityDetailSummary>().To<FacilityDetailSummary>();
             kernel.Bind<ICRMSRegulatories>().To<CRMSRegulatories>();
+            kernel.Bind<IMemorandumRepository>().To<MemorandumRepository>();
         }
 
     }

@@ -20,7 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
 
-        private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // ======== recovery ========
+        private List<int> camOperationIds = new List<int> { 46, 71, 79 };
 
         public LoanReviewApplicationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
         {

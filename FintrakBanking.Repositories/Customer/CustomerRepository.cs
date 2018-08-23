@@ -72,7 +72,7 @@ namespace FintrakBanking.Repositories.Customer
         {
             if (ValidateCustomerCode(entity.customerCode))
             {
-               throw new ConditionNotMetException($"Customer with customer code {entity.customerCode} already exist");
+                throw new ConditionNotMetException($"Customer with customer code {entity.customerCode} already exist");
             }
             if (ValidateModifiedCustomerRecord(entity.customerId))
             {
@@ -4631,7 +4631,7 @@ namespace FintrakBanking.Repositories.Customer
                 DATETIMECREATED = DateTime.Now
             };
 
-            
+
             // Audit Section ----------------------------
             var audit = new TBL_AUDIT
             {
@@ -4692,6 +4692,39 @@ namespace FintrakBanking.Repositories.Customer
             }
         }
         #endregion
+        public IEnumerable<CustomerRelatedDirectorViewModel> DirectorRelatedCustomer(string bvn)
+        {
+            List<CustomerRelatedDirectorViewModel> relatedCust = new List<CustomerRelatedDirectorViewModel>();
+
+
+            relatedCust = (from a in context.TBL_CUSTOMER
+                           join b in context.TBL_CUSTOMER_COMPANY_DIRECTOR on a.CUSTOMERID equals b.CUSTOMERID
+                           //     join c in context.TBL_CUSTOMER_COMPANY_BENEFICIA on b.COMPANYDIRECTORTYPEID equals c.COMPANYDIRECTORID
+                           where b.CUSTOMERBVN == bvn
+                           select new CustomerRelatedDirectorViewModel
+                           {
+                               customerId = a.CUSTOMERID,
+                               customerName = a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME,
+                               customerTypeId = a.CUSTOMERTYPEID,
+                               customerTypeName = context.TBL_CUSTOMER_TYPE.Where(x => x.CUSTOMERTYPEID == a.CUSTOMERTYPEID).FirstOrDefault().NAME,
+                               directorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.Where(x => x.COMPANYDIRECTORYTYPEID == b.COMPANYDIRECTORTYPEID).FirstOrDefault().COMPANYDIRECTORYTYPENAME,
+                           }).ToList();
+
+            var ultimateBeneficial = (from a in context.TBL_CUSTOMER
+                                      join b in context.TBL_CUSTOMER_COMPANY_DIRECTOR on a.CUSTOMERID equals b.CUSTOMERID
+                                      join c in context.TBL_CUSTOMER_COMPANY_BENEFICIA on b.COMPANYDIRECTORTYPEID equals c.COMPANYDIRECTORID
+                                      where c.CUSTOMERBVN == bvn
+                                      select new CustomerRelatedDirectorViewModel
+                                      {
+                                          customerId = a.CUSTOMERID,
+                                          customerName = a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME,
+                                          customerTypeId = a.CUSTOMERTYPEID,
+                                          customerTypeName = context.TBL_CUSTOMER_TYPE.Where(x => x.CUSTOMERTYPEID == a.CUSTOMERTYPEID).FirstOrDefault().NAME,
+                                          directorTypeName = context.TBL_CUSTOMER_COMPANY_DIREC_TYP.Where(x => x.COMPANYDIRECTORYTYPEID == b.COMPANYDIRECTORTYPEID).FirstOrDefault().COMPANYDIRECTORYTYPENAME,
+                                      }).ToList();
+
+            return relatedCust.Concat(ultimateBeneficial);
+        }
     }
 }
 
