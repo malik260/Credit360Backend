@@ -220,12 +220,14 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     searchString = searchString.Trim().ToLower();
                     items = items.Where(x =>
-                        x.applicationReferenceNumber.Contains(searchString)
+                        x.applicationReferenceNumber == searchString
                         //|| x.applicationAmount.ToString().Contains(searchString)
-                        || x.customerName.ToLower().Contains(searchString)
-                        || x.customerGroupName.ToLower().Contains(searchString)
+                        //|| x.customerName.ToLower().Contains(searchString)
+                        //|| x.customerGroupName.ToLower().Contains(searchString)
                         ).Take(itemsPerPage);
                 }
+
+                var list = items.ToList();
 
                 var data = items
                     .OrderByDescending(x => x.loanApplicationId) // OrderBy() must be called for Skip() to work!
