@@ -11,7 +11,8 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int TEMPPRODUCT_BEHAVIOURID { get; set; }
-
+        public int? TEMP_PRODUCTID { get; set; }
+       // public int PRODUCTID { get; set; }
         [Required]
         [StringLength(50)]
         public string PRODUCTCODE { get; set; }
@@ -44,5 +45,9 @@ namespace FintrakBanking.Entities.Models
         public bool ISCURRENT { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
+        public int? CRMSREGULATORYID { get; set; }
+
+        //public virtual TBL_TEMP_PRODUCT TBL_TEMP_PRODUCT { get; set; }
+
     }
 }

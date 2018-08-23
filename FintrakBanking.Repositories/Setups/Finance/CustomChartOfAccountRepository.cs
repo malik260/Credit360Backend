@@ -39,6 +39,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 ACCOUNTNAME = model.accountName,
                 CURRENCYCODE = model.currencyCode,
                 PLACEHOLDERID = model.placeholderId,
+                ISNOSTROACCOUNT =  model.isNostroAccount,
             };
 
             context.TBL_CUSTOM_CHART_OF_ACCOUNT.Add(data);
@@ -88,7 +89,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             data.ACCOUNTNAME = model.accountName;
             data.CURRENCYCODE = model.currencyCode;
             data.PLACEHOLDERID = model.placeholderId;
-
+            data.ISNOSTROACCOUNT = model.isNostroAccount;
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {

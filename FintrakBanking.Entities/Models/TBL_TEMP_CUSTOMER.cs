@@ -116,7 +116,11 @@ namespace FintrakBanking.Entities.Models
         public bool ISCURRENT { get; set; }
 
         public short APPROVALSTATUSID { get; set; }
+        public int? CRMSLEGALSTATUSID { get; set; }
 
+        public int? CRMSCOMPANYSIZEID { get; set; }
+
+        public int? CRMSRELATIONSHIPTYPEID { get; set; }
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }

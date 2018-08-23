@@ -87,5 +87,8 @@ namespace FintrakBanking.Common.Enum
         OverdraftInterestRate =75,
         ApprovalWorkflowGroupModification = 76,
         ApprovalWorkflowLevelModification = 77,
+        //Added by Yemi
+        StaffReliefCreation = 84,
+
     }
 }

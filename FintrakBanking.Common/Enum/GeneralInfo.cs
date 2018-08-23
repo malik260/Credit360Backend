@@ -254,8 +254,25 @@ namespace FintrakBanking.Common.Enum
         DocumentTemplateSectionRoleAdded = 227,
         DocumentTemplateSectionRoleUpdated = 228,
         DocumentTemplateSectionRoleDeleted = 229,
-    };
+        CrmsRegulatorySetupAdded = 233,
+        CrmsRegulatorySetupUpdated = 234,
+        CrmsRegulatorySetupDeleted = 235,
+        ApprovalReliefApproved = 243
 
+    };
+    public enum RegulatoryTypeEnum
+    {
+        LoanType = 1,
+        FeeType = 2,
+        RepaymentAgreementType = 3,
+        SecuredCollateralType = 4,
+        UnsecuredCollateralType = 5,
+        RepaymentSourceType = 6,
+        LegalStatusType = 7,
+        RelationshipType = 9,
+        CompanySize = 10,
+        FundingSource = 11,
+    }
 
     public static class General
     {

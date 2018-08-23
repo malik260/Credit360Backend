@@ -167,6 +167,7 @@
     <Compile Include="Setups\Credit\CollateralLocationsViewModel.cs" />
     <Compile Include="Setups\Credit\CollateralTypeViewModel.cs" />
     <Compile Include="Setups\Credit\CreditTemplateViewModel.cs" />
+    <Compile Include="Setups\Credit\CrmsRegulatoryViewModel.cs" />
     <Compile Include="Setups\Credit\CustomerProductFeeViewModel.cs" />
     <Compile Include="Setups\Credit\CustomFieldsViewModel.cs" />
     <Compile Include="Setups\Credit\ESGChecklistViewModel.cs" />

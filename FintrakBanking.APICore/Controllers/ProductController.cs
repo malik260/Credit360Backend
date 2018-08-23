@@ -938,7 +938,7 @@ namespace FintrakBanking.APICore.Controllers
                 var token = new TokenDecryptionHelper();
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
-                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.applicationUrl = HttpContext.Current.Request.Path; 
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
@@ -1023,12 +1023,31 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: An unhandled error occured." });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type")]
+        public HttpResponseMessage GetAllCRMSType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSType();
 
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         #endregion Product Region
 
         #region Product Price Index
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product-price-index")]
         public HttpResponseMessage GetAllProductPriceIndex()
         {

@@ -10,6 +10,13 @@ namespace FintrakBanking.ViewModels.Customer
         public string rcNumber;
         public string customerAccountNo;
 
+        public int? crmsLegalStatusId { get; set; }
+        public int? crmsCompanySizeId { get; set; }
+        public int? crmsRelationshipTypeId { get; set; }
+        public string crmsLegalStatusName { get; set; }
+        public string crmsCompanySizeName { get; set; }
+        public string crmsRelationshipTypeName { get; set; }
+
         public int creditBureauCount { get; set; }
         public bool isCreditBureauUploadCompleted { get; set; }
         public double numberOfShares { get; set; }

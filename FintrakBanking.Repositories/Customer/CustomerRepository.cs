@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using FinTrakBanking.ThirdPartyIntegration;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common;
+using FintrakBanking.ViewModels.Setups.Credit;
 
 namespace FintrakBanking.Repositories.Customer
 {
@@ -113,7 +114,10 @@ namespace FintrakBanking.Repositories.Customer
                 RISKRATINGID = entity.riskRatingId,
                 CUSTOMERBVN = entity.customerBVN,
                 PROSPECTCUSTOMERCODE = entity.prospectCustomerCode,
-                ISPROSPECT = entity.isProspect
+                ISPROSPECT = entity.isProspect,
+                CRMSCOMPANYSIZEID = entity.crmsCompanySizeId,
+                CRMSLEGALSTATUSID=entity.crmsLegalStatusId,
+                CRMSRELATIONSHIPTYPEID = entity.crmsRelationshipTypeId
             };
             context.TBL_CUSTOMER.Add(customer);
 
@@ -1829,6 +1833,9 @@ namespace FintrakBanking.Repositories.Customer
                        where a.DELETED == false
                        select new CustomerViewModels
                        {
+                           crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                           crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                           crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
                            accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                            branchId = a.BRANCHID,
                            branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -1905,6 +1912,9 @@ namespace FintrakBanking.Repositories.Customer
 
                        new CustomerViewModels
                        {
+                           crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                           crmsLegalStatusId= a.CRMSLEGALSTATUSID,
+                           crmsCompanySizeId =a.CRMSCOMPANYSIZEID,
                            accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                            branchId = a.BRANCHID,
                            branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -2132,6 +2142,9 @@ namespace FintrakBanking.Repositories.Customer
                    select
                        new CustomerViewModels
                        {
+                           crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                           crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                           crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
                            accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                            branchId = a.BRANCHID,
                            branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -2278,6 +2291,9 @@ namespace FintrakBanking.Repositories.Customer
                 subSectorName = a.TBL_SUB_SECTOR.NAME,
                 taxNumber = a.TAXNUMBER,
                 riskRatingId = a.RISKRATINGID,
+                crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
                 // riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                 customerBVN = a.CUSTOMERBVN,
             });
@@ -2289,6 +2305,7 @@ namespace FintrakBanking.Repositories.Customer
                         where cs.CUSTOMERGROUPID == groupId
                         select new CustomerViewModels()
                         {
+
                             customerId = cs.CUSTOMERID,
                             fullName = cs.TBL_CUSTOMER.LASTNAME + " " + cs.TBL_CUSTOMER.FIRSTNAME + "(" +
                                        cs.TBL_CUSTOMER.CUSTOMERCODE + ")",
@@ -2400,7 +2417,9 @@ namespace FintrakBanking.Repositories.Customer
             var customerMain = context.TBL_CUSTOMER.Find(customerId);
             if (customerMain != null && customerMain.ACCOUNTCREATIONCOMPLETE == false && entity.canModified == true)
             {
-
+                customerMain.CRMSCOMPANYSIZEID = entity.crmsCompanySizeId;
+                customerMain.CRMSLEGALSTATUSID = entity.crmsLegalStatusId;
+                customerMain.CRMSRELATIONSHIPTYPEID = entity.crmsRelationshipTypeId;
                 customerMain.BRANCHID = entity.userBranchId;
                 customerMain.COMPANYID = entity.companyId;
                 customerMain.CUSTOMERCODE = entity.customerCode;
@@ -2450,6 +2469,9 @@ namespace FintrakBanking.Repositories.Customer
                 if (existingTempCustomer != null)
                 {
                     customer = existingTempCustomer;
+                    customer.CRMSCOMPANYSIZEID = entity.crmsCompanySizeId;
+                    customer.CRMSLEGALSTATUSID = entity.crmsLegalStatusId;
+                    customer.CRMSRELATIONSHIPTYPEID = entity.crmsRelationshipTypeId;
                     customer.BRANCHID = entity.userBranchId;
                     customer.COMPANYID = entity.companyId;
                     customer.CUSTOMERCODE = entity.customerCode;
@@ -2484,6 +2506,9 @@ namespace FintrakBanking.Repositories.Customer
                 else
                 {
                     customer = new TBL_TEMP_CUSTOMER();
+                    customer.CRMSCOMPANYSIZEID = entity.crmsCompanySizeId;
+                    customer.CRMSLEGALSTATUSID = entity.crmsLegalStatusId;
+                    customer.CRMSRELATIONSHIPTYPEID = entity.crmsRelationshipTypeId;
                     customer.CUSTOMERID = entity.customerId;
                     customer.BRANCHID = entity.userBranchId;
                     customer.COMPANYID = entity.companyId;
@@ -2781,6 +2806,9 @@ namespace FintrakBanking.Repositories.Customer
                         where a.DELETED == false && a.CUSTOMERCODE == customerCode
                         select new CustomerViewModels
                         {
+                            crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                            crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                            crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
                             accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                             branchId = a.BRANCHID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -2831,6 +2859,9 @@ namespace FintrakBanking.Repositories.Customer
                         where a.DELETED == false && a.CUSTOMERID == customerId
                         select new CustomerViewModels
                         {
+                            crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
+                            crmsLegalStatusId = a.CRMSLEGALSTATUSID,
+                            crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
                             accountCreationComplete = a.ACCOUNTCREATIONCOMPLETE,
                             branchId = a.BRANCHID,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -2864,6 +2895,7 @@ namespace FintrakBanking.Repositories.Customer
                             subSectorId = (short)a.SUBSECTORID,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             taxNumber = a.TAXNUMBER,
+
                             relationshipOfficerName = context.TBL_STAFF.Where(f => f.STAFFID == a.RELATIONSHIPOFFICERID)
                                 .Select(f => f.FIRSTNAME + " " + f.FIRSTNAME).FirstOrDefault(),
                             riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
@@ -2909,6 +2941,14 @@ namespace FintrakBanking.Repositories.Customer
                             isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
                             relationshipOfficerId = a.RELATIONSHIPOFFICERID.Value,
                             spouse = a.SPOUSE,
+                            crmsRelationshipTypeId=a.CRMSRELATIONSHIPTYPEID,
+                            crmsLegalStatusId=a.CRMSLEGALSTATUSID,
+                            crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
+                            crmsCompanySizeName = context.TBL_CRMS_REGULATORY.FirstOrDefault(x => x.CRMSREGULATORYID==a.CRMSCOMPANYSIZEID).CODE+"-"+ context.TBL_CRMS_REGULATORY.FirstOrDefault(x => x.CRMSREGULATORYID == a.CRMSCOMPANYSIZEID).DESCRIPTION,
+                            crmsLegalStatusName = context.TBL_CRMS_REGULATORY.FirstOrDefault(x => x.CRMSREGULATORYID == a.CRMSLEGALSTATUSID).CODE +"-"+ context.TBL_CRMS_REGULATORY.FirstOrDefault(x => x.CRMSREGULATORYID == a.CRMSLEGALSTATUSID).DESCRIPTION,
+                            crmsRelationshipTypeName = context.TBL_CRMS_REGULATORY.FirstOrDefault(x => x.CRMSREGULATORYID == a.CRMSRELATIONSHIPTYPEID).CODE+"-"+ context.TBL_CRMS_REGULATORY.FirstOrDefault(x => x.CRMSREGULATORYID == a.CRMSRELATIONSHIPTYPEID).DESCRIPTION,
+
+
                             //  sectorId = context.TBL_SUB_SECTOR.FirstOrDefault(c=>c.SUBSECTORID == (short)a.SUBSECTORID).SECTORID,
                             // sectorName = context.TBL_SECTOR.FirstOrDefault(d=>d.TBL_SUB_SECTOR.FirstOrDefault(l=>l.SUBSECTORID==a.SUBSECTORID).NAME,
                             subSectorId = (short)a.SUBSECTORID,
@@ -2935,6 +2975,7 @@ namespace FintrakBanking.Repositories.Customer
                           where d.CUSTOMERID == customerId
                           select new CustomerCompanyInfomationViewModels()
                           {
+
                               annualTurnOver = d.ANNUALTURNOVER,
                               companyEmail = d.COMPANYEMAIL,
                               companyId = d.CUSTOMERID,
@@ -3889,6 +3930,9 @@ namespace FintrakBanking.Repositories.Customer
 
             if (entity != null) //Update existing customer information with temp record
             {
+                entity.CRMSCOMPANYSIZEID = temp.CRMSCOMPANYSIZEID;
+                entity.CRMSLEGALSTATUSID = temp.CRMSLEGALSTATUSID;
+                entity.CRMSRELATIONSHIPTYPEID = temp.CRMSRELATIONSHIPTYPEID;
                 entity.ACCOUNTCREATIONCOMPLETE = temp.ACCOUNTCREATIONCOMPLETE;
                 entity.CREATIONMAILSENT = temp.CREATIONMAILSENT;
                 entity.CUSTOMERCODE = temp.CUSTOMERCODE;
@@ -4465,6 +4509,64 @@ namespace FintrakBanking.Repositories.Customer
 
             return context.SaveChanges() > 0;
         }
+
+        public IEnumerable<LookupViewModel> GetAllCRMSLegalStatus()
+        {
+     
+            var data = context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.LegalStatusType).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupcustomerId = x.CUSTOMERTYPEID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+            return data;
+        }
+        public IEnumerable<LookupViewModel> GetAllCRMSCompanySize()
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.CompanySize).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupcustomerId = x.CUSTOMERTYPEID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
+        public IEnumerable<LookupViewModel> GetAllCRMSRelationshipType()
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.RelationshipType).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupcustomerId = x.CUSTOMERTYPEID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
+
+        public IEnumerable<LookupViewModel> GetAllCRMSLegalStatusByType(int type)
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.LegalStatusType && x.CUSTOMERTYPEID == type).Select(x => new LookupViewModel()
+            {   lookupId = (short)x.CRMSREGULATORYID,
+                lookupcustomerId = x.CUSTOMERTYPEID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
+        public IEnumerable<LookupViewModel> GetAllCRMSCompanySizeByType(int type)
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.CompanySize && x.CUSTOMERTYPEID == type).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupcustomerId = x.CUSTOMERTYPEID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
+        public IEnumerable<LookupViewModel> GetAllCRMSRelationshipTypeByType(int type)
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.RelationshipType && x.CUSTOMERTYPEID==type).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupcustomerId = x.CUSTOMERTYPEID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
+
         #region Customer Related Party
         public IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId)
         {

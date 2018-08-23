@@ -330,6 +330,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STAFF_ACCOUNT_HISTORY> TBL_STAFF_ACCOUNT_HISTORY { get; set; }
         public virtual DbSet<TBL_STAFF_JOBTITLE> TBL_STAFF_JOBTITLE { get; set; }
         public virtual DbSet<TBL_STAFF_RELIEF> TBL_STAFF_RELIEF { get; set; }
+        public virtual DbSet<TBL_TEMP_STAFF_RELIEF> TBL_TEMP_STAFF_RELIEF { get; set; }
+
         public virtual DbSet<TBL_STAFF_ROLE> TBL_STAFF_ROLE { get; set; }
         public virtual DbSet<TBL_STATE> TBL_STATE { get; set; }
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
@@ -405,6 +407,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_DOC_TEMPLATE_SECTION> TBL_DOC_TEMPLATE_SECTION { get; set; }
         public virtual DbSet<TBL_DOC_TEMPLATE_SECTION_ROLE> TBL_DOC_TEMPLATE_SECTION_ROLE { get; set; }
         public virtual DbSet<TBL_PROFILE_PASSWORD_HISTORY> TBL_PROFILE_PASSWORD_HISTORY { get; set; }
+        public virtual DbSet<TBL_CRMS_CREDIT_TYPE_PRODUCT> TBL_CRMS_CREDIT_TYPE_PRODUCT { get; set; }
+        public virtual DbSet<TBL_CRMS_FEE_TYPE> TBL_CRMS_FEE_TYPE { get; set; }
+        public virtual DbSet<TBL_CRMS_LEGAL_STATUS_CUSTOMER> TBL_CRMS_LEGAL_STATUS_CUSTOMER { get; set; }
+        public virtual DbSet<TBL_CRMS_REGULATORY> TBL_CRMS_REGULATORY { get; set; }
+        public virtual DbSet<TBL_CRMS_TYPE> TBL_CRMS_TYPE { get; set; }
+
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var databaseUsername =
@@ -8502,6 +8511,10 @@ namespace FintrakBanking.Entities.Models
             //modelBuilder.Entity<TBL_TEMP_PRODUCT>()
             //    .Property(e => e.EQUITYCONTRIBUTION)
             //    .HasPrecision(38, 0);
+            //modelBuilder.Entity<TBL_TEMP_PRODUCT>()
+            //.HasMany(e => e.TBL_TEMP_PRODUCT_BEHAVIOUR)
+            //.WithRequired(e => e.TBL_TEMP_PRODUCT)
+            //.WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_TEMP_PRODUCT>()
                 .HasMany(e => e.TBL_TEMP_PRODUCT_CHARGE_FEE)

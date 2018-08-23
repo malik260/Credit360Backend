@@ -68,6 +68,7 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public int? CRMSREGULATORYID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CHARGE_FEE_DETAIL> TBL_CHARGE_FEE_DETAIL { get; set; }

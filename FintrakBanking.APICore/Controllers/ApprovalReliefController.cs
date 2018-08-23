@@ -13,6 +13,7 @@ using FintrakBanking.APICore.core;
 using System.Web;
 using FintrakBanking.APICore.Filters;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -31,16 +32,17 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("approval-relief")]
-        public HttpResponseMessage AddApprovalRelief([FromBody] ApprovalReliefViewModel model)
+        public async Task<HttpResponseMessage> AddApprovalRelief([FromBody] ApprovalReliefViewModel model)
         {
             try
             {
                 model.userBranchId = (short)token.GetBranchId;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.AddApprovalRelief(model);
-                if (data)
+                var data = await repo.AddApprovalRelief(model);
+                if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = true, result = data, message = "The record has been created successfully" });
@@ -83,16 +85,17 @@ namespace FintrakBanking.APICore.Controllers
 
        [HttpPut] [ClaimsAuthorization]
         [Route("approval-relief/{reliefId}")]
-        public HttpResponseMessage UpdateApprovalRelief(int ReliefId, [FromBody] ApprovalReliefViewModel model)
+        public async Task<HttpResponseMessage> UpdateApprovalRelief(int ReliefId, [FromBody] ApprovalReliefViewModel model)
         {
             try
             {
                 model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
-
-                var data = repo.UpdateApprovalRelief(ReliefId, model);
+                model.reliefId = ReliefId;
+                var data = await repo.UpdateApprovalRelief(ReliefId, model);
 
                 if (data)
                 {
@@ -109,6 +112,53 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-       
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("approval-relief-awaiting-approval")]
+        public HttpResponseMessage GetApprovalReliefAwaitingApproval()
+        {
+            try
+            {
+                var data = repo.GetApprovalReliefAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("approval-relief-approval")]
+        public HttpResponseMessage GoForApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForApproval(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Staff Role has been approved successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
