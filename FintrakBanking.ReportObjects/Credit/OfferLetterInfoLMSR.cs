@@ -68,7 +68,7 @@ namespace FintrakBanking.ReportObjects.Credit
             //    return offerLetterDetails;
             //}
 
-            return new OfferLetterViewModel();
+            return offerLetterDetails;
         }
 
         public static List<SignatoryViewModel> GetLoanApplicationSignatory(string applicationRefNumber)

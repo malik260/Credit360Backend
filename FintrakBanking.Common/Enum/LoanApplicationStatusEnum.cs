@@ -28,5 +28,7 @@ namespace FintrakBanking.Common.Enum
         BondAndGuaranteesInProgress = 18,
         ApplicationRejected = 19,
         OfferLetterRejected = 20,
+        CancellationInProgress=21,
+        CancellationCompleted =22
     }
 }

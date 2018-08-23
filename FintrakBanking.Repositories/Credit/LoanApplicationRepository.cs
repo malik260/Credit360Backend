@@ -19,6 +19,7 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
+using System.Configuration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -2676,15 +2677,21 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.approvalLevelId).Select(x => x).FirstOrDefault();
+            var exist = context.TBL_LOAN_APPLICATION.Where(x => x.APPROVALSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
+
+            if (exist == true)
+                throw new ConditionNotMetException(" This Loan is currently going cancellation approvals");
+
+
+            var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             if (application!=null)
             {
                 var cancelledApplication = new TBL_TEMP_LOAN_APPLTN_CANCELTN
                 {
-                       LOANAPPLICATIONID = application.LOANAPPLICATIONID,
+                       LOANAPPLICATIONID = data.loanApplicationId,
                        CANCELLATIONREASON = data.cancellationReason,
                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                       CREATEDBY = data.staffId,
+                       CREATEDBY = data.createdBy,
                        DATETIMECREATED = genSetup.GetApplicationDate(),
                        ISCURRENT = true,
                 };
@@ -2695,33 +2702,37 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     data.tempApplicationCancellationId = cancelledApplication.TEMPAPPLICATIONCANCELLATIONID;
                 }
+
+                LaonApplcationCancelllationInPregress(data);
+
+                //EMAIL TO NOTIFY STACK HOLDERS ON PENDING CANCELLATION
+
+                workflow.StaffId = data.createdBy;
+                workflow.CompanyId = data.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = data.tempApplicationCancellationId;
+                workflow.Comment = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason}  ";
+                workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                //var audit = new TBL_AUDIT
+                //{
+                //    AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
+                //    STAFFID = data.createdBy,
+                //    BRANCHID = (short)data.userBranchId,
+                //    DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason} ",
+                //    IPADDRESS = data.userIPAddress,
+                //    URL = data.applicationUrl,
+                //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                //    SYSTEMDATETIME = DateTime.Now,
+                //    TARGETID = application.LOANAPPLICATIONID,
+                //};
+
+
+                //this.auditTrail.AddAuditTrail(audit);
             }
-
-            workflow.StaffId = data.createdBy;
-            workflow.CompanyId = data.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = data.tempApplicationCancellationId;
-            workflow.Comment = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason}  ";
-            workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
-            workflow.DeferredExecution = true;
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationCancellation,
-                STAFFID = data.createdBy,
-                BRANCHID = (short)data.userBranchId,
-                DETAIL = $"Cancellation request for Loan Application ID with '{data.loanApplicationId}' has been initiated. Reason being : {data.cancellationReason} ",
-                IPADDRESS = data.userIPAddress,
-                URL = data.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = application.LOANAPPLICATIONID,
-            };
-
-
-            this.auditTrail.AddAuditTrail(audit);
 
             if (context.SaveChanges()>0)
             {
@@ -2729,5 +2740,193 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
+        public List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId)
+        {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanApplicationCancellation).ToList();
+
+
+            var applications = (from t in context.TBL_TEMP_LOAN_APPLTN_CANCELTN
+                                join a in context.TBL_LOAN_APPLICATION on t.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                join g in context.TBL_CUSTOMER on a.CUSTOMERID equals g.CUSTOMERID
+                                join atrail in context.TBL_APPROVAL_TRAIL on t.TEMPAPPLICATIONCANCELLATIONID equals atrail.TARGETID
+                                where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                        && atrail.OPERATIONID == (int)OperationsEnum.LoanApplicationCancellation
+                                        && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                                        && atrail.RESPONSESTAFFID == null
+                                select new LoanApplicationViewModel
+                                {
+                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                    customerName = g.FIRSTNAME + "" + g.MIDDLENAME + "" + g.LASTNAME,
+                                    loanApplicationId = a.LOANAPPLICATIONID,
+                                    applicationDate = a.APPLICATIONDATE,
+                                    applicationAmount = a.APPLICATIONAMOUNT,
+                                    approvedAmount = a.APPROVEDAMOUNT,
+                                    interestRate = a.INTERESTRATE,
+                                    applicationTenor = a.APPLICATIONTENOR,
+                                    submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
+                                    customerInfoValidated = a.CUSTOMERINFOVALIDATED,
+                                    isRelatedParty = a.ISRELATEDPARTY,
+                                    isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                                    approvalStatusId = (short)a.APPROVALSTATUSID,
+                                    //  approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+                                    applicationStatusId = a.APPLICATIONSTATUSID,
+                                    branchName = a.TBL_BRANCH.BRANCHNAME,
+                                    createdBy = a.CREATEDBY,
+                                    loanPreliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
+                                    operationId = a.OPERATIONID,
+                                    tempApplicationCancellationId = t.TEMPAPPLICATIONCANCELLATIONID
+                                });
+
+            var list = applications.ToList();
+
+            return list;
+
+        }
+        public LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel values)
+        {
+            var data = Search(values.applicationReferenceNumber);
+            if (data!=null)
+            {
+                var newData = data.FirstOrDefault(x => x.applicationReferenceNumber == values.applicationReferenceNumber);
+                newData.operationId = values.operationId;
+                return newData;
+            }
+            return new LoanApplicationViewModel();
+        }
+
+        public int GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data)
+        {
+            int responce = 0;
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                workflow.StaffId = data.createdBy;
+                workflow.CompanyId = data.companyId;
+                workflow.StatusId = (short)data.approvalStatusId;
+                workflow.TargetId = data.tempApplicationCancellationId;
+                workflow.Comment = data.comment;
+                workflow.OperationId = (int)OperationsEnum.LoanApplicationCancellation;
+                workflow.DeferredExecution = true;
+                //workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                try
+                {
+                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        if (data.approvalStatusId != (int)ApprovalStatusEnum.Disapproved)
+                        {
+                            UpdateLoanApplicationCancellationTempTable(data, (short)workflow.StatusId);
+                            LaonApplcationCancelllationCompelted(data);
+
+                            //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
+                            string messageBoby = $"Dear Team, <br /><br />This is to bring your attention the following loan with {data.applicationReferenceNumber} application refernence number has covenants which are approaching their due date. <br /><br />";
+                        }
+                    }
+
+                    responce = context.SaveChanges();
+                    transaction.Commit();
+
+                    if (responce > 0)
+                    {
+                        return data.approvalStatusId;
+                    }
+                    return 0;
+                }
+                catch (Exception ex)
+                {
+
+                    transaction.Rollback();
+
+
+                    throw ex;
+                }
+                //return false;
+            }
+            
+        }
+        private void UpdateLoanApplicationCancellationTempTable(LoanApplicationViewModel data, short statusId)
+        {
+            var val = context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Where(x => x.TEMPAPPLICATIONCANCELLATIONID == data.tempApplicationCancellationId).Select(x=>x).FirstOrDefault();
+            val.ISCURRENT = false;
+            val.APPROVALSTATUSID = statusId;
+            val.LASTUPDATEDBY = data.createdBy;
+            val.DATETIMEUPDATED = genSetup.GetApplicationDate();
+        }
+
+        private void LaonApplcationCancelllationCompelted(LoanApplicationViewModel data)
+        {
+            var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
+            val.APPROVALSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+        }
+        private void LaonApplcationCancelllationInPregress(LoanApplicationViewModel data)
+        {
+            var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
+            val.APPROVALSTATUSID = (int)LoanApplicationStatusEnum.CancellationInProgress;
+        }
+
+        private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string recipients, string alertSubject)
+        {
+            try
+            {
+                string recipient = recipients.Trim();
+
+                string messageSubject = alertSubject;
+                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which are approaching their due date. <br /><br />";
+                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+                if (SaveMessageDetails(messageModel) != 0)
+                {
+                    //response += (response = " Covenants Approaching Due Date was logged successfully, ");
+                }
+                else
+                {
+                    //response += (response = " Covenants Approaching Due Date looging has failed, ");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+
+        public int SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+
+            try
+            {
+                return context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+
     }
 }

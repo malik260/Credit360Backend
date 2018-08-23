@@ -6169,7 +6169,6 @@ namespace FintrakBanking.Repositories.Credit
                                            interestRate = a.INTERESTRATE,
                                            effectiveDate = a.EFFECTIVEDATE,
                                            maturityDate = a.MATURITYDATE,
-                                           tenor = (a.MATURITYDATE - a.EFFECTIVEDATE).Days,
                                            bookingDate = a.BOOKINGDATE,
                                            principalAmount = a.PRINCIPALAMOUNT,
                                            principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,

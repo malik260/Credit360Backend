@@ -47,6 +47,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public int tenorLeft;
+
         public string customerType { get; set; }
 
         public string groupCustomerName { get; set; }
@@ -165,7 +167,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short scheduleDayCountConventionId { get; set; }
         public short scheduleDayInterestTypeId { get; set; }
         public int? customerRiskRatingId { get; set; }
-        public int tenor { get; set; }
+        public int teno { get; set; }
 
         // public double productPriceIndexRate { get; set; }
         public bool allowForceDebitRepayment { get; set; }
@@ -286,6 +288,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime date { get; set; }
         public decimal mainAmount { get; set; }
         public bool writtenOff { get; set; }
+        public DateTime firstPrincipalPaymentDate1 { get; set; }
+        public DateTime firstInterestPaymentDate1 { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

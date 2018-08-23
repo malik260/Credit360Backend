@@ -1319,7 +1319,7 @@ namespace FintrakBanking.Repositories.Credit
                    id = x.ab.a.COLLATERALBASICDETAILID,
                    collateralDetail = x.ab.a.COLLATERALDETAIL,
                    collateralValue = x.ab.a.COLLATERALVALUE,
-                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT,
+                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT, 
                    applicationDetailId = (int)x.ab.a.LOANAPPLICATIONDETAILID,
                    productCustomerName = x.c.TBL_PRODUCT.PRODUCTNAME + " -- " + x.c.TBL_CUSTOMER.FIRSTNAME + " " + x.c.TBL_CUSTOMER.MIDDLENAME + " " + x.c.TBL_CUSTOMER.LASTNAME,
                    staffName = x.ab.b.FIRSTNAME + " " + x.ab.b.MIDDLENAME + " " + x.ab.b.LASTNAME,

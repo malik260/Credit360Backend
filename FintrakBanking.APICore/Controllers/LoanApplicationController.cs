@@ -1043,7 +1043,42 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application/cancellation")]
+        public HttpResponseMessage LoanApplicationCancellation()
+        {
+            try
+            {
+                var response = repo.GetAllRequestsForLoanCancellation(token.GetStaffId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true,  result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-application/loan-cancellation")]
+        public HttpResponseMessage LoanApplicationCancellationRequest([FromBody] LoanApplicationViewModel data)
+        {
+            try
+            {
+                data.createdBy = token.GetStaffId;
+                data.companyId = token.GetCompanyId;
+                var response = repo.SaveCancelledApplcation(data);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true,  result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application/search")]
         public HttpResponseMessage SearchLoanApplication(string searchString)
         {
@@ -1162,7 +1197,41 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Reroute done." });
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-application-cancellation")]
+        public HttpResponseMessage ViewLaonApplicationCancellationDetails([FromBody] LoanApplicationViewModel data)
+        {
+            try
+            {
+                var response = repo.ViewLaonApplicationCancellationDetails(data);
 
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-application-cancellation-approval")]
+        public HttpResponseMessage GoForLoanApplicationCancellationApproval([FromBody] LoanApplicationViewModel data)
+        {
+            try
+            {
+                data.userBranchId = (short)token.GetBranchId;
+                data.companyId = token.GetCompanyId;
+                data.createdBy = token.GetStaffId;
+                var response = repo.GoForLoanApplicationCancellationApproval(data);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }
