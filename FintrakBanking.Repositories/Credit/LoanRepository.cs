@@ -383,17 +383,17 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Revolving Loan Record.........................
                     var loan = context.TBL_LOAN_REVOLVING.Add(data);
 
-                    //...................Move to next Approval Level Staff.......................
-                    workflow.StaffId = model.createdBy;
-                    workflow.CompanyId = model.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Approved;
-                    workflow.TargetId = model.loanBookingRequestId;
-                    workflow.Comment = model.comment;
-                    workflow.OperationId = model.operationId.Value;
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = false;
+                    ////...................Move to next Approval Level Staff.......................
+                    //workflow.StaffId = model.createdBy;
+                    //workflow.CompanyId = model.companyId;
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Approved;
+                    //workflow.TargetId = model.loanBookingRequestId;
+                    //workflow.Comment = model.comment;
+                    //workflow.OperationId = model.operationId.Value;
+                    //workflow.DeferredExecution = true;
+                    //workflow.ExternalInitialization = false;
 
-                    workflow.LogActivity();
+                    //workflow.LogActivity();
 
                     if (model.monitoringTriggers.Count > 0)
                         AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
@@ -419,28 +419,32 @@ namespace FintrakBanking.Repositories.Credit
                     };
 
                     //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                    //if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
+
+                    if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
+                    {
+                        //............save Loan Covenant..........
+                        AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+                        //............save Loan Fees..........
+                        AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model.companyId, model.feeOverride);
+
+                        model.loanReferenceNumber = loanReferenceNumber;
+
+                        //...................Saving Loan Collaterals Mapping.......................
+                        AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+
+                        //...................Saving Loan Collaterals Mapping.......................
+                        if (model.monitoringTriggers.Count > 0)
+                            AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+
+                        if (!model.feeOverride) PostLoanFees(model);
+                        context.SaveChanges();
+
+                        //.....Commit transaction ............
+                        trans.Commit();
+                    }
+
+
                     //.......................END OF APPROVAL LOG......................................................
-
-                    //............save Loan Covenant..........
-                    AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-                    //............save Loan Fees..........
-                    AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model.companyId, model.feeOverride);
-
-                    model.loanReferenceNumber = loanReferenceNumber;
-
-                    //...................Saving Loan Collaterals Mapping.......................
-                    AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-
-                    //...................Saving Loan Collaterals Mapping.......................
-                    if (model.monitoringTriggers.Count > 0)
-                        AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-
-                    if (!model.feeOverride) PostLoanFees(model);
-                    context.SaveChanges();
-
-                    //.....Commit transaction ............
-                    trans.Commit();
 
                     if (dataCount > 0)
                         return loanReferenceNumber;
@@ -595,19 +599,19 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Contingent Loan Record.........................
                     var loan = context.TBL_LOAN_CONTINGENT.Add(data);
 
-                    //...................Move to next Approval Level Staff.......................
-                    workflow.StaffId = entity.createdBy;
-                    workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Approved;
-                    workflow.TargetId = entity.loanBookingRequestId;
-                    workflow.Comment = entity.comment;
-                    workflow.OperationId = entity.operationId.Value;
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = false;
+                    ////...................Move to next Approval Level Staff.......................
+                    //workflow.StaffId = entity.createdBy;
+                    //workflow.CompanyId = entity.companyId;
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Approved;
+                    //workflow.TargetId = entity.loanBookingRequestId;
+                    //workflow.Comment = entity.comment;
+                    //workflow.OperationId = entity.operationId.Value;
+                    //workflow.DeferredExecution = true;
+                    //workflow.ExternalInitialization = false;
 
-                    workflow.LogActivity();
+                    //workflow.LogActivity();
 
-                    //...................Update the Loan Request table.......................
+                    ////...................Update the Loan Request table.......................
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
 
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
@@ -626,29 +630,29 @@ namespace FintrakBanking.Repositories.Credit
                         amount = contingentLoanInput.approvedAmount,
                     };
 
-                    //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                    //if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
+                    if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
+                    {
+                        //............save Loan Covenant..........
+                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+                        //............save Loan Fees..........
+                        AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity.companyId, entity.feeOverride);
+                        entity.loanReferenceNumber = loanReferenceNumber;
+
+                        //...................Saving Loan Collaterals Mapping.......................
+                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+
+                        //...................Mapping Loan Monitoring Trigger.......................
+                        if (entity.monitoringTriggers.Count > 0)
+                            AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+
+                        if (!entity.feeOverride) PostLoanFees(entity);
+
+                        context.SaveChanges();
+
+                        //.....Commit transaction ............
+                        trans.Commit();
+                    }
                     //.......................END OF APPROVAL LOG......................................................
-
-                    //............save Loan Covenant..........
-                    AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
-                    //............save Loan Fees..........
-                    AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity.companyId, entity.feeOverride);
-                    entity.loanReferenceNumber = loanReferenceNumber;
-
-                    //...................Saving Loan Collaterals Mapping.......................
-                    AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
-
-                    //...................Mapping Loan Monitoring Trigger.......................
-                    if (entity.monitoringTriggers.Count > 0)
-                        AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
-
-                    if (!entity.feeOverride) PostLoanFees(entity);
-
-                    context.SaveChanges();
-
-                    //.....Commit transaction ............
-                    trans.Commit();
 
                     if (dataCount > 0)
                         return loanReferenceNumber;
@@ -840,17 +844,17 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Term Loan Record.........................
                     var loan = context.TBL_LOAN.Add(data);
 
-                    //...................Move to next Approval Level Staff.......................
-                    workflow.StaffId = entity.createdBy;
-                    workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Approved;
-                    workflow.TargetId = entity.loanBookingRequestId;
-                    workflow.Comment = entity.comment;
-                    workflow.OperationId = entity.operationId.Value;
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = false;
+                    ////...................Move to next Approval Level Staff.......................
+                    //workflow.StaffId = entity.createdBy;
+                    //workflow.CompanyId = entity.companyId;
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Approved;
+                    //workflow.TargetId = entity.loanBookingRequestId;
+                    //workflow.Comment = entity.comment;
+                    //workflow.OperationId = entity.operationId.Value;
+                    //workflow.DeferredExecution = true;
+                    //workflow.ExternalInitialization = false;
 
-                    workflow.LogActivity();
+                    //workflow.LogActivity();
 
                     //...................Update the Loan Request table.......................
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
@@ -871,41 +875,38 @@ namespace FintrakBanking.Repositories.Credit
                         };
 
                         //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                        //if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
-                        //.......................END OF APPROVAL LOG......................................................
-
-                        if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
+                        if (LogApproval(approvalModel, (int)OperationsEnum.TermLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
                         {
-                            foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
+                            if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.IrregularSchedule)
                             {
-                                var irregularRecordData = new TBL_LOAN_SCHEDULE_IREGUL_INPUT
+                                foreach (var irregular in entity.loanScheduleInput.irregularPaymentSchedule)
                                 {
-                                    LOANID = loan.TERMLOANID,
-                                    PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
-                                    PAYMENTDATE = irregular.paymentDate,
-                                    CREATEDBY = entity.createdBy,
-                                    DATETIMECREATED = DateTime.Now,
-                                };
-                                context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
+                                    var irregularRecordData = new TBL_LOAN_SCHEDULE_IREGUL_INPUT
+                                    {
+                                        LOANID = loan.TERMLOANID,
+                                        PAYMENTAMOUNT = (decimal)irregular.paymentAmount,
+                                        PAYMENTDATE = irregular.paymentDate,
+                                        CREATEDBY = entity.createdBy,
+                                        DATETIMECREATED = DateTime.Now,
+                                    };
+                                    context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
+                                }
+
                             }
+                            AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
+                            AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
+                            if (entity.monitoringTriggers.Count > 0)
+                                AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                            entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+                            if (!entity.feeOverride) PostLoanFees(entity);
+                            context.SaveChanges();
+
+                            trans.Commit();
                         }
-                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                        AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        if (entity.monitoringTriggers.Count > 0)
-                            AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-
-                        if (!entity.feeOverride)
-                        {
-                            PostLoanFees(entity);
-                        }
-
-                        context.SaveChanges();
-                        trans.Commit();
+                        //.......................END OF APPROVAL LOG......................................................
 
                         return loanReferenceNumber;
                     }
@@ -1325,19 +1326,19 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Commercial Loan Record.........................
                     var loan = context.TBL_LOAN.Add(data);
 
-                    //...................Move to next Approval Level Staff.......................
-                    workflow.StaffId = entity.createdBy;
-                    workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Approved;
-                    workflow.TargetId = entity.loanBookingRequestId;
-                    workflow.Comment = entity.comment;
-                    workflow.OperationId = entity.operationId.Value;
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = false;
+                    ////...................Move to next Approval Level Staff.......................
+                    //workflow.StaffId = entity.createdBy;
+                    //workflow.CompanyId = entity.companyId;
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Approved;
+                    //workflow.TargetId = entity.loanBookingRequestId;
+                    //workflow.Comment = entity.comment;
+                    //workflow.OperationId = entity.operationId.Value;
+                    //workflow.DeferredExecution = true;
+                    //workflow.ExternalInitialization = false;
 
-                    workflow.LogActivity();
+                    //workflow.LogActivity();
 
-                    //...................Update the Loan Request table.......................
+                    ////...................Update the Loan Request table.......................
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
                     application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
 
@@ -1355,32 +1356,36 @@ namespace FintrakBanking.Repositories.Credit
                         };
 
                         //.....................LOG FX LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                        //(LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved) ; 
-                        //.......................END OF APPROVAL LOG......................................................
-
-                        //...................Saving FX Loan Collaterals Mapping.......................
-                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                        AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
-
-                        //...................Saving FX Loan Collaterals Mapping.......................
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        //...................Mapping FX Loan Monitoring Trigger.......................
-                        if (entity.monitoringTriggers.Count > 0)
-                            AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        if (entity.loanBeneficiary.Count > 0)
+                        if (LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
                         {
-                            foreach (var item in entity.loanBeneficiary)
+                            AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
+
+                            //...................Saving FX Loan Collaterals Mapping.......................
+                            AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                            //...................Mapping FX Loan Monitoring Trigger.......................
+                            if (entity.monitoringTriggers.Count > 0)
+                                AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                            if (entity.loanBeneficiary.Count > 0)
                             {
-                                item.loanId = loan.TERMLOANID;
-                            };
-                            addLoanBeneficiary(entity.loanBeneficiary);
+                                foreach (var item in entity.loanBeneficiary)
+                                {
+                                    item.loanId = loan.TERMLOANID;
+                                };
+                                addLoanBeneficiary(entity.loanBeneficiary);
+                            }
+
+                            entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+                            if (!entity.feeOverride) PostLoanFees(entity);
+                            context.SaveChanges();
+
+                            //.....Commit transaction ............
+                            trans.Commit();
                         }
 
-                        entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-                        if (!entity.feeOverride) PostLoanFees(entity);
-                        context.SaveChanges();
+                        //.......................END OF APPROVAL LOG......................................................
 
                         //.....Commit transaction ............
                         trans.Commit();
@@ -1731,7 +1736,8 @@ namespace FintrakBanking.Repositories.Credit
                             join atrail in context.TBL_APPROVAL_TRAIL on ln.TERMLOANID equals atrail.TARGETID
                             where (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                                   && operationIds.Contains(atrail.OPERATIONID)
-                                  && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                                  && req.DELETED == false
+                                  && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                   && ln.LOANSTATUSID == (short)LoanStatusEnum.Inactive
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                   && atrail.RESPONSESTAFFID == null
@@ -4732,6 +4738,7 @@ namespace FintrakBanking.Repositories.Credit
                         AMOUNT_REQUESTED = entity.amount_Requested,
                         APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                         LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
+                        ISUSED = false,
                         DATETIMECREATED = DateTime.Now,
                         CREATEDBY = entity.createdBy,
 
@@ -4780,266 +4787,84 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId)
         {
-            IEnumerable<CamProcessedLoanViewModel> data = null;
-            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
-            var cIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentRequestBooking).ToList();
-            List<int> operationIds = new List<int>();
+            var newApplicationDate = generalSetup.GetApplicationDate();
+            var data = (from s in context.TBL_LOAN_BOOKING_REQUEST
+                        join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+                        join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+                        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+                        join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+                        join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                        where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        && s.DELETED == false // && d.DELETED == false
+                                              // && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                        orderby s.LOAN_BOOKING_REQUESTID descending
+                        select new CamProcessedLoanViewModel
+                        {
+                            bookingAmountRequested = s.AMOUNT_REQUESTED,
+                            loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
+                            bookingRequestStatusId = s.APPROVALSTATUSID,
+                            requestDate = s.DATETIMECREATED,
+                            requestedBy = "",
+                            requestedAmount = s.AMOUNT_REQUESTED,
+                            requestOperationId = (short)OperationsEnum.LoanBookingRequest,
+                            approvalStatusId = (short)m.APPROVALSTATUSID,
+                            loanApplicationId = m.LOANAPPLICATIONID,
+                            loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                            applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
+                            applicationStatusId = m.APPLICATIONSTATUSID,
 
-            var canReRouteBooking = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == staffId && x.ACTIVITYID == 177).Any();
+                            customerId = d.CUSTOMERID,
+                            customerCode = cust.CUSTOMERCODE,
+                            customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+                            customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
+                            customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
+                            customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            newApplicationDate = newApplicationDate,
 
+                            loanInformation = m.LOANINFORMATION,
+                            companyId = m.COMPANYID,
+                            branchId = m.BRANCHID,
+                            branchName = m.TBL_BRANCH.BRANCHNAME,
+                            subSectorId = d.SUBSECTORID,
+                            subSectorName = d.TBL_SUB_SECTOR.NAME,
+                            sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
+                            applicationTenor = m.APPLICATIONTENOR,
+                            effectiveDate = (DateTime)d.EFFECTIVEDATE,
+                            expiryDate = (DateTime)d.EXPIRYDATE,
 
-            if(ids.Count() > 0 || canReRouteBooking || cIds.Count() > 0)
-            {
-                if (canReRouteBooking)
-                {
-                    data = (from s in context.TBL_LOAN_BOOKING_REQUEST
-                            join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                            join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                            join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                            join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
-                            join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                            where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                             && s.ISUSED == false  && s.DELETED == false && pt.PRODUCTTYPEID != (short)LoanProductTypeEnum.ContingentLiability
-                            orderby s.LOAN_BOOKING_REQUESTID descending
-                            select new CamProcessedLoanViewModel
-                            {
-                                bookingAmountRequested = s.AMOUNT_REQUESTED,
-                                loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
-                                bookingRequestStatusId = s.APPROVALSTATUSID,
-                                requestDate = s.DATETIMECREATED,
-                                requestedBy = "",
-                                requestedAmount = s.AMOUNT_REQUESTED,
-                                requestOperationId = (short)OperationsEnum.LoanBookingRequest,
-                                approvalStatusId = (short)m.APPROVALSTATUSID,
-                                loanApplicationId = m.LOANAPPLICATIONID,
-                                loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-                                applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
-                                applicationStatusId = m.APPLICATIONSTATUSID,
+                            currencyId = d.CURRENCYID,
+                            currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                            exchangeRate = d.EXCHANGERATE,
+                            loanTypeId = m.LOANAPPLICATIONTYPEID,
+                            loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
+                            productId = d.APPROVEDPRODUCTID,
+                            productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+                            productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                            productName = d.TBL_PRODUCT.PRODUCTNAME,
 
-                                customerId = d.CUSTOMERID,
-                                customerCode = cust.CUSTOMERCODE,
-                                customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
-                                customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
-                                customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                                customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
-                                customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            misCode = m.MISCODE,
+                            teamMisCode = m.TEAMMISCODE,
 
-                                applicationTenor = m.APPLICATIONTENOR,
-                                effectiveDate = (DateTime)d.EFFECTIVEDATE,
-                                expiryDate = (DateTime)d.EXPIRYDATE,
+                            interestRate = d.APPROVEDINTERESTRATE,
+                            submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
+                            approvedAmount = d.APPROVEDAMOUNT,
+                            groupApprovedAmount = m.APPROVEDAMOUNT,
+                            availmentDate = m.AVAILMENTDATE,
+                            isBidbond = d.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
+                            isOverdraft = d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
+                            repaymentTerms = d.REPAYMENTTERMS,
+                            repaymentSchedule = d.REPAYMENTSCHEDULE,
+                            approvedTenor = d.APPROVEDTENOR,
+                            createdBy = m.CREATEDBY,
+                            applicationDate = m.APPLICATIONDATE,
+                            dateTimeCreated = d.DATETIMECREATED,
 
-                                ////currencyId = d.CURRENCYID,
-                                currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
-                                exchangeRate = d.EXCHANGERATE,
-                                loanTypeId = m.LOANAPPLICATIONTYPEID,
-                                loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                productId = d.APPROVEDPRODUCTID,
-                                productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
-                                productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                                productName = d.TBL_PRODUCT.PRODUCTNAME,
+                        }).ToList().Take(500);
 
-                                interestRate = d.APPROVEDINTERESTRATE,
-                                approvedAmount = d.APPROVEDAMOUNT,
-                                groupApprovedAmount = m.APPROVEDAMOUNT,
-                                availmentDate = m.AVAILMENTDATE,
-                                approvedTenor = d.APPROVEDTENOR,
-                            }).ToList();
-                    var c = data.ToList();
-                }
-                else if(ids.Count() > 0)
-                {
-                    operationIds.Add((int)OperationsEnum.TermLoanBooking);
-                    operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
-                    operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
-                    //***TODO : Remove once routing is finalized
-                    //data = (from s in context.TBL_LOAN_BOOKING_REQUEST
-                    //        join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                    //        join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                    //        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                    //        join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
-                    //        join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                    //        where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                    //        && s.DELETED == false
-                    //        orderby s.LOAN_BOOKING_REQUESTID descending
-                    //        select new CamProcessedLoanViewModel
-                    //        {
-                    //            bookingAmountRequested = s.AMOUNT_REQUESTED,
-                    //            loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
-                    //            bookingRequestStatusId = s.APPROVALSTATUSID,
-                    //            requestDate = s.DATETIMECREATED,
-                    //            requestedBy = "",
-                    //            requestedAmount = s.AMOUNT_REQUESTED,
-                    //            requestOperationId = (short)OperationsEnum.LoanBookingRequest,
-                    //            approvalStatusId = (short)m.APPROVALSTATUSID,
-                    //            loanApplicationId = m.LOANAPPLICATIONID,
-                    //            loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-                    //            applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
-                    //            applicationStatusId = m.APPLICATIONSTATUSID,
-
-                    //            customerId = d.CUSTOMERID,
-                    //            customerCode = cust.CUSTOMERCODE,
-                    //            customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
-                    //            customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
-                    //            customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                    //            customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
-                    //            customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-
-                    //            applicationTenor = m.APPLICATIONTENOR,
-                    //            effectiveDate = (DateTime)d.EFFECTIVEDATE,
-                    //            expiryDate = (DateTime)d.EXPIRYDATE,
-
-                    //            //currencyId = d.CURRENCYID,
-                    //            currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
-                    //            exchangeRate = d.EXCHANGERATE,
-                    //            loanTypeId = m.LOANAPPLICATIONTYPEID,
-                    //            loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                    //            productId = d.APPROVEDPRODUCTID,
-                    //            productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
-                    //            productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                    //            productName = d.TBL_PRODUCT.PRODUCTNAME,
-
-                    //            interestRate = d.APPROVEDINTERESTRATE,
-                    //            approvedAmount = d.APPROVEDAMOUNT,
-                    //            groupApprovedAmount = m.APPROVEDAMOUNT,
-                    //            availmentDate = m.AVAILMENTDATE,
-                    //            approvedTenor = d.APPROVEDTENOR,
-
-                    //        }).ToList();
-                    //***
-                    data = (from s in context.TBL_LOAN_BOOKING_REQUEST
-                            join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
-                            join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                            join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                            join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                            join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
-                            join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                            where m.COMPANYID == companyId
-                            && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
-                            && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                            && operationIds.Contains(atrail.OPERATIONID)
-                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                            && atrail.RESPONSESTAFFID == null
-                            orderby s.LOAN_BOOKING_REQUESTID descending
-                            select new CamProcessedLoanViewModel()
-                            {
-                                bookingAmountRequested = s.AMOUNT_REQUESTED,
-                                loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
-                                bookingRequestStatusId = s.APPROVALSTATUSID,
-                                requestDate = s.DATETIMECREATED,
-                                requestedBy = "",
-                                requestedAmount = s.AMOUNT_REQUESTED,
-                                requestOperationId = (short)OperationsEnum.LoanBookingRequest,
-                                approvalStatusId = (short)m.APPROVALSTATUSID,
-                                loanApplicationId = m.LOANAPPLICATIONID,
-                                loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-                                applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
-                                applicationStatusId = m.APPLICATIONSTATUSID,
-
-                                customerId = d.CUSTOMERID,
-                                customerCode = cust.CUSTOMERCODE,
-                                customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
-                                customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
-                                customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                                customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
-                                customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-
-                                applicationTenor = m.APPLICATIONTENOR,
-                                effectiveDate = (DateTime)d.EFFECTIVEDATE,
-                                expiryDate = (DateTime)d.EXPIRYDATE,
-
-                                //currencyId = d.CURRENCYID,
-                                currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
-                                exchangeRate = d.EXCHANGERATE,
-                                loanTypeId = m.LOANAPPLICATIONTYPEID,
-                                loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                productId = d.APPROVEDPRODUCTID,
-                                productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
-                                productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                                productName = d.TBL_PRODUCT.PRODUCTNAME,
-
-                                interestRate = d.APPROVEDINTERESTRATE,
-                                approvedAmount = d.APPROVEDAMOUNT,
-                                groupApprovedAmount = m.APPROVEDAMOUNT,
-                                availmentDate = m.AVAILMENTDATE,
-                                approvedTenor = d.APPROVEDTENOR,
-                            }).ToList(); 
-                }
-                else
-                {
-                    operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
-
-                    data = (from s in context.TBL_LOAN_BOOKING_REQUEST
-                            join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-                            join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-                            join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-                            join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
-                            join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-                            where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-                            && s.ISUSED == false && s.DELETED == false && pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
-                            orderby s.LOAN_BOOKING_REQUESTID descending
-                            select new CamProcessedLoanViewModel
-                            {
-                                bookingAmountRequested = s.AMOUNT_REQUESTED,
-                                loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
-                                bookingRequestStatusId = s.APPROVALSTATUSID,
-                                requestDate = s.DATETIMECREATED,
-                                requestedBy = "",
-                                requestedAmount = s.AMOUNT_REQUESTED,
-                                requestOperationId = (short)OperationsEnum.LoanBookingRequest,
-                                approvalStatusId = (short)m.APPROVALSTATUSID,
-                                loanApplicationId = m.LOANAPPLICATIONID,
-                                loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-                                applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
-                                applicationStatusId = m.APPLICATIONSTATUSID,
-
-                                customerId = d.CUSTOMERID,
-                                customerCode = cust.CUSTOMERCODE,
-                                customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
-                                customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
-                                customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                                customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
-                                customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-
-                                applicationTenor = m.APPLICATIONTENOR,
-                                effectiveDate = (DateTime)d.EFFECTIVEDATE,
-                                expiryDate = (DateTime)d.EXPIRYDATE,
-
-                                //currencyId = d.CURRENCYID,
-                                currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
-                                exchangeRate = d.EXCHANGERATE,
-                                loanTypeId = m.LOANAPPLICATIONTYPEID,
-                                loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                productId = d.APPROVEDPRODUCTID,
-                                productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
-                                productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-                                productName = d.TBL_PRODUCT.PRODUCTNAME,
-                                interestRate = d.APPROVEDINTERESTRATE,
-                                approvedAmount = d.APPROVEDAMOUNT,
-                                groupApprovedAmount = m.APPROVEDAMOUNT,
-                                availmentDate = m.AVAILMENTDATE,
-                                approvedTenor = d.APPROVEDTENOR,
-                            }).ToList();
-                }
-            }
-          
             foreach (var item in data)
             {
-                item.isBooked = context.TBL_LOAN.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId).Any();
-
-                int operationId = 0;
-                if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
-                    operationId = (short)OperationsEnum.ContigentLoanBooking;
-                if (item.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
-                    operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
-                if (item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
-                    operationId = (short)OperationsEnum.CommercialLoanBooking;
-                if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
-                    operationId = (short)OperationsEnum.TermLoanBooking;
-
-                var trailInfo = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == item.loanBookingRequestId);
-                if (trailInfo.Any())
-                    item.isUnderApproval = true;
-
                 var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
@@ -5095,147 +4920,277 @@ namespace FintrakBanking.Repositories.Credit
                         break;
                 }
             }
-            data = (from a in data where ((a.customerAvailableAmount >= 0)) select a).ToList();
-            return data;
-
-            //var detailIds = context.TBL_LOAN_APPLICATION_DETAIL.Select(x => x.LOANAPPLICATIONDETAILID).ToList();
-            //var newApplicationDate = generalSetup.GetApplicationDate();
-            //data = (from s in context.TBL_LOAN_BOOKING_REQUEST
-            //        join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-            //        join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
-            //        join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
-            //        join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
-            //        join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
-            //        where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
-            //        && s.DELETED == false
-            //        orderby s.LOAN_BOOKING_REQUESTID descending
-            //        select new CamProcessedLoanViewModel
-            //        {
-            //            bookingAmountRequested = s.AMOUNT_REQUESTED,
-            //            loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
-            //            bookingRequestStatusId = s.APPROVALSTATUSID,
-            //            requestDate = s.DATETIMECREATED,
-            //            requestedBy = "",
-            //            requestedAmount = s.AMOUNT_REQUESTED,
-            //            requestOperationId = (short)OperationsEnum.LoanBookingRequest,
-            //            approvalStatusId = (short)m.APPROVALSTATUSID,
-            //            loanApplicationId = m.LOANAPPLICATIONID,
-            //            loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
-            //            applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
-            //            applicationStatusId = m.APPLICATIONSTATUSID,
-
-            //            customerId = d.CUSTOMERID,
-            //            customerCode = cust.CUSTOMERCODE,
-            //            customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
-            //            customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
-            //            customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-            //            customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
-            //            customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-            //            //newApplicationDate = newApplicationDate,
-
-            //            loanInformation = m.LOANINFORMATION,
-            //            companyId = m.COMPANYID,
-            //            branchId = m.BRANCHID,
-            //            branchName = m.TBL_BRANCH.BRANCHNAME,
-            //            subSectorId = d.SUBSECTORID,
-            //            subSectorName = d.TBL_SUB_SECTOR.NAME,
-            //            sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-            //            applicationTenor = m.APPLICATIONTENOR,
-            //            effectiveDate = (DateTime)d.EFFECTIVEDATE,
-            //            expiryDate = (DateTime)d.EXPIRYDATE,
-
-            //            currencyId = d.CURRENCYID,
-            //            currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
-            //            exchangeRate = d.EXCHANGERATE,
-            //            loanTypeId = m.LOANAPPLICATIONTYPEID,
-            //            loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-            //            //camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
-            //            productId = d.APPROVEDPRODUCTID,
-            //            productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
-            //            productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
-            //            productName = d.TBL_PRODUCT.PRODUCTNAME,
-
-            //            misCode = m.MISCODE,
-            //            teamMisCode = m.TEAMMISCODE,
-
-            //            interestRate = d.APPROVEDINTERESTRATE,
-            //            //submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
-            //            approvedAmount = d.APPROVEDAMOUNT,
-            //            groupApprovedAmount = m.APPROVEDAMOUNT,
-            //            availmentDate = m.AVAILMENTDATE,
-            //            //isBidbond = d.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
-            //            //isOverdraft = d.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
-            //            repaymentTerms = d.REPAYMENTTERMS,
-            //            repaymentSchedule = d.REPAYMENTSCHEDULE,
-            //            approvedTenor = d.APPROVEDTENOR,
-            //            createdBy = m.CREATEDBY,
-            //            applicationDate = m.APPLICATIONDATE,
-            //            dateTimeCreated = d.DATETIMECREATED,
-
-            //        }).ToList().Take(500);
-            //foreach (var item in data)
-            //{
-
-            //    var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-            //    var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-            //    var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
-            //    switch (item.productTypeId)
-            //    {
-            //        case (short)LoanProductTypeEnum.TermLoan:
-            //            decimal customerAvailableAmount = 0;
-            //            foreach (var loan in loans)
-            //            {
-            //                if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount = customerAvailableAmount + loan.PRINCIPALAMOUNT;
-            //            }
-            //            item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount;
-            //            break;
-            //        case (short)LoanProductTypeEnum.CommercialPaper:
-            //            decimal customerAvailableAmount2 = 0;
-            //            foreach (var loan in loans)
-            //            {
-            //                if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount2 = customerAvailableAmount2 + loan.PRINCIPALAMOUNT;
-            //            }
-            //            item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount2;
-            //            break;
-            //        case (short)LoanProductTypeEnum.SelfLiquidating:
-            //            decimal customerAvailableAmount3 = 0;
-            //            foreach (var loan in loans)
-            //            {
-            //                if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount3 = customerAvailableAmount3 + loan.PRINCIPALAMOUNT;
-            //            }
-            //            item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount3;
-            //            break;
-            //        case (short)LoanProductTypeEnum.RevolvingLoan:
-            //            decimal overdraftBal = 0;
-            //            foreach (var overdraft in overdrafts)
-            //            {
-            //                if (overdraft.OVERDRAFTLIMIT > 0) overdraftBal = overdraftBal + overdraft.OVERDRAFTLIMIT;
-            //            }
-            //            item.customerAvailableAmount = item.approvedAmount - overdraftBal;
-            //            break;
-            //        case (short)LoanProductTypeEnum.ContingentLiability:
-            //            decimal contingentBal = 0;
-            //            foreach (var contingent in contingents)
-            //            {
-            //                if (contingent.CONTINGENTAMOUNT > 0) contingentBal = contingentBal + contingent.CONTINGENTAMOUNT;
-            //            }
-            //            item.customerAvailableAmount = item.approvedAmount - contingentBal;
-            //            break;
-            //        case (short)LoanProductTypeEnum.ForeignXRevolving:
-            //            decimal customerAvailableAmount4 = 0;
-            //            foreach (var loan in loans)
-            //            {
-            //                if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount4 = customerAvailableAmount4 + loan.PRINCIPALAMOUNT;
-            //            }
-            //            item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount4;
-            //            break;
-            //    }
-            //}
-            //data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
-            //return data; 
-
-
+            data = (from a in data where ((a.customerAvailableAmount >= 0) || (a.customerAvailableAmount == null)) select a).ToList();
+            return data; //.Where(x => x.bookingRequestStatusId == (int)ApprovalStatusEnum.Pending).ToList();
         }
+
+
+        //public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId)
+        //{
+        //    IEnumerable<CamProcessedLoanViewModel> data = null;
+        //    var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
+        //    var cIds = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentRequestBooking).ToList();
+        //    List<int> operationIds = new List<int>();
+
+        //    var canReRouteBooking = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == staffId && x.ACTIVITYID == 177).Any();
+
+
+        //    if(ids.Count() > 0 || canReRouteBooking || cIds.Count() > 0)
+        //    {
+        //        if (canReRouteBooking)
+        //        {
+        //            data = (from s in context.TBL_LOAN_BOOKING_REQUEST
+        //                    join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+        //                    join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+        //                    join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+        //                    join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+        //                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+        //                    where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+        //                     && s.ISUSED == false  && s.DELETED == false && pt.PRODUCTTYPEID != (short)LoanProductTypeEnum.ContingentLiability
+        //                    orderby s.LOAN_BOOKING_REQUESTID descending
+        //                    select new CamProcessedLoanViewModel
+        //                    {
+        //                        bookingAmountRequested = s.AMOUNT_REQUESTED,
+        //                        loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
+        //                        bookingRequestStatusId = s.APPROVALSTATUSID,
+        //                        requestDate = s.DATETIMECREATED,
+        //                        requestedBy = "",
+        //                        requestedAmount = s.AMOUNT_REQUESTED,
+        //                        requestOperationId = (short)OperationsEnum.LoanBookingRequest,
+        //                        approvalStatusId = (short)m.APPROVALSTATUSID,
+        //                        loanApplicationId = m.LOANAPPLICATIONID,
+        //                        loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+        //                        applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
+        //                        applicationStatusId = m.APPLICATIONSTATUSID,
+
+        //                        customerId = d.CUSTOMERID,
+        //                        customerCode = cust.CUSTOMERCODE,
+        //                        customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+        //                        customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
+        //                        customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+        //                        customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
+        //                        customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+
+        //                        applicationTenor = m.APPLICATIONTENOR,
+        //                        effectiveDate = (DateTime)d.EFFECTIVEDATE,
+        //                        expiryDate = (DateTime)d.EXPIRYDATE,
+
+        //                        ////currencyId = d.CURRENCYID,
+        //                        currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+        //                        exchangeRate = d.EXCHANGERATE,
+        //                        loanTypeId = m.LOANAPPLICATIONTYPEID,
+        //                        loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                        productId = d.APPROVEDPRODUCTID,
+        //                        productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+        //                        productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+        //                        productName = d.TBL_PRODUCT.PRODUCTNAME,
+
+        //                        interestRate = d.APPROVEDINTERESTRATE,
+        //                        approvedAmount = d.APPROVEDAMOUNT,
+        //                        groupApprovedAmount = m.APPROVEDAMOUNT,
+        //                        availmentDate = m.AVAILMENTDATE,
+        //                        approvedTenor = d.APPROVEDTENOR,
+        //                    }).ToList();
+        //            var c = data.ToList();
+        //        }
+        //        else if(ids.Count() > 0)
+        //        {
+        //            operationIds.Add((int)OperationsEnum.TermLoanBooking);
+        //            operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
+        //            operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
+
+        //            data = (from s in context.TBL_LOAN_BOOKING_REQUEST
+        //                    join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
+        //                    join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+        //                    join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+        //                    join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+        //                    join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+        //                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+        //                    where m.COMPANYID == companyId
+        //                    && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
+        //                    && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
+        //                    && operationIds.Contains(atrail.OPERATIONID)
+        //                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+        //                    && atrail.RESPONSESTAFFID == null
+        //                    orderby s.LOAN_BOOKING_REQUESTID descending
+        //                    select new CamProcessedLoanViewModel()
+        //                    {
+        //                        bookingAmountRequested = s.AMOUNT_REQUESTED,
+        //                        loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
+        //                        bookingRequestStatusId = s.APPROVALSTATUSID,
+        //                        requestDate = s.DATETIMECREATED,
+        //                        requestedBy = "",
+        //                        requestedAmount = s.AMOUNT_REQUESTED,
+        //                        requestOperationId = (short)OperationsEnum.LoanBookingRequest,
+        //                        approvalStatusId = (short)m.APPROVALSTATUSID,
+        //                        loanApplicationId = m.LOANAPPLICATIONID,
+        //                        loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+        //                        applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
+        //                        applicationStatusId = m.APPLICATIONSTATUSID,
+
+        //                        customerId = d.CUSTOMERID,
+        //                        customerCode = cust.CUSTOMERCODE,
+        //                        customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+        //                        customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
+        //                        customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+        //                        customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
+        //                        customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+
+        //                        applicationTenor = m.APPLICATIONTENOR,
+        //                        effectiveDate = (DateTime)d.EFFECTIVEDATE,
+        //                        expiryDate = (DateTime)d.EXPIRYDATE,
+
+        //                        //currencyId = d.CURRENCYID,
+        //                        currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+        //                        exchangeRate = d.EXCHANGERATE,
+        //                        loanTypeId = m.LOANAPPLICATIONTYPEID,
+        //                        loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                        productId = d.APPROVEDPRODUCTID,
+        //                        productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+        //                        productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+        //                        productName = d.TBL_PRODUCT.PRODUCTNAME,
+
+        //                        interestRate = d.APPROVEDINTERESTRATE,
+        //                        approvedAmount = d.APPROVEDAMOUNT,
+        //                        groupApprovedAmount = m.APPROVEDAMOUNT,
+        //                        availmentDate = m.AVAILMENTDATE,
+        //                        approvedTenor = d.APPROVEDTENOR,
+        //                    }).ToList(); 
+        //        }
+        //        else
+        //        {
+        //            operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
+
+        //            data = (from s in context.TBL_LOAN_BOOKING_REQUEST
+        //                    join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+        //                    join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
+        //                    join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
+        //                    join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
+        //                    join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+        //                    where m.COMPANYID == companyId && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+        //                    && s.ISUSED == false && s.DELETED == false && pt.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability
+        //                    orderby s.LOAN_BOOKING_REQUESTID descending
+        //                    select new CamProcessedLoanViewModel
+        //                    {
+        //                        bookingAmountRequested = s.AMOUNT_REQUESTED,
+        //                        loanBookingRequestId = s.LOAN_BOOKING_REQUESTID,
+        //                        bookingRequestStatusId = s.APPROVALSTATUSID,
+        //                        requestDate = s.DATETIMECREATED,
+        //                        requestedBy = "",
+        //                        requestedAmount = s.AMOUNT_REQUESTED,
+        //                        requestOperationId = (short)OperationsEnum.LoanBookingRequest,
+        //                        approvalStatusId = (short)m.APPROVALSTATUSID,
+        //                        loanApplicationId = m.LOANAPPLICATIONID,
+        //                        loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+        //                        applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
+        //                        applicationStatusId = m.APPLICATIONSTATUSID,
+
+        //                        customerId = d.CUSTOMERID,
+        //                        customerCode = cust.CUSTOMERCODE,
+        //                        customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+        //                        customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
+        //                        customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+        //                        customerGroupCode = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPCODE : "",
+        //                        customerType = d.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+
+        //                        applicationTenor = m.APPLICATIONTENOR,
+        //                        effectiveDate = (DateTime)d.EFFECTIVEDATE,
+        //                        expiryDate = (DateTime)d.EXPIRYDATE,
+
+        //                        //currencyId = d.CURRENCYID,
+        //                        currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+        //                        exchangeRate = d.EXCHANGERATE,
+        //                        loanTypeId = m.LOANAPPLICATIONTYPEID,
+        //                        loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+        //                        productId = d.APPROVEDPRODUCTID,
+        //                        productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+        //                        productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+        //                        productName = d.TBL_PRODUCT.PRODUCTNAME,
+        //                        interestRate = d.APPROVEDINTERESTRATE,
+        //                        approvedAmount = d.APPROVEDAMOUNT,
+        //                        groupApprovedAmount = m.APPROVEDAMOUNT,
+        //                        availmentDate = m.AVAILMENTDATE,
+        //                        approvedTenor = d.APPROVEDTENOR,
+        //                    }).ToList();
+        //        }
+        //    }
+
+        //    foreach (var item in data)
+        //    {
+        //        item.isBooked = context.TBL_LOAN.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId).Any();
+
+        //        int operationId = 0;
+        //        if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+        //            operationId = (short)OperationsEnum.ContigentLoanBooking;
+        //        if (item.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+        //            operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+        //        if (item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
+        //            operationId = (short)OperationsEnum.CommercialLoanBooking;
+        //        if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
+        //            operationId = (short)OperationsEnum.TermLoanBooking;
+
+        //        var trailInfo = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == item.loanBookingRequestId);
+        //        if (trailInfo.Any())
+        //            item.isUnderApproval = true;
+
+        //        var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+        //        var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+        //        var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
+        //        switch (item.productTypeId)
+        //        {
+        //            case (short)LoanProductTypeEnum.TermLoan:
+        //                decimal customerAvailableAmount = 0;
+        //                foreach (var loan in loans)
+        //                {
+        //                    if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount = customerAvailableAmount + loan.PRINCIPALAMOUNT;
+        //                }
+        //                item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount;
+        //                break;
+        //            case (short)LoanProductTypeEnum.CommercialLoan:
+        //                decimal customerAvailableAmount2 = 0;
+        //                foreach (var loan in loans)
+        //                {
+        //                    if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount2 = customerAvailableAmount2 + loan.PRINCIPALAMOUNT;
+        //                }
+        //                item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount2;
+        //                break;
+        //            case (short)LoanProductTypeEnum.SelfLiquidating:
+        //                decimal customerAvailableAmount3 = 0;
+        //                foreach (var loan in loans)
+        //                {
+        //                    if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount3 = customerAvailableAmount3 + loan.PRINCIPALAMOUNT;
+        //                }
+        //                item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount3;
+        //                break;
+        //            case (short)LoanProductTypeEnum.RevolvingLoan:
+        //                decimal overdraftBal = 0;
+        //                foreach (var overdraft in overdrafts)
+        //                {
+        //                    if (overdraft.OVERDRAFTLIMIT > 0) overdraftBal = overdraftBal + overdraft.OVERDRAFTLIMIT;
+        //                }
+        //                item.customerAvailableAmount = item.approvedAmount - overdraftBal;
+        //                break;
+        //            case (short)LoanProductTypeEnum.ContingentLiability:
+        //                decimal contingentBal = 0;
+        //                foreach (var contingent in contingents)
+        //                {
+        //                    if (contingent.CONTINGENTAMOUNT > 0) contingentBal = contingentBal + contingent.CONTINGENTAMOUNT;
+        //                }
+        //                item.customerAvailableAmount = item.approvedAmount - contingentBal;
+        //                break;
+        //            case (short)LoanProductTypeEnum.ForeignXRevolving:
+        //                decimal customerAvailableAmount4 = 0;
+        //                foreach (var loan in loans)
+        //                {
+        //                    if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount4 = customerAvailableAmount4 + loan.PRINCIPALAMOUNT;
+        //                }
+        //                item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount4;
+        //                break;
+        //        }
+        //    }
+        //    data = (from a in data where ((a.customerAvailableAmount >= 0)) select a).ToList();
+        //    return data;
+        //}
 
         /// <summary>
         /// Gets the appraisal memorandum processed loan applications.
