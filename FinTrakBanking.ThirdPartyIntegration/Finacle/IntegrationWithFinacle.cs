@@ -508,7 +508,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             List<TBL_CASA> customerAcct = new List<TBL_CASA>();
 
             //Task.Run(async () => { data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode); })
-                //.GetAwaiter().GetResult();
+            //    .GetAwaiter().GetResult();
+
 
             Task.Run(async () => data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
 
