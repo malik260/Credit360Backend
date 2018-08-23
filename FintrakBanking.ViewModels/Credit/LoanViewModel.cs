@@ -47,6 +47,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public int tenorLeft;
+
+        public string customerType { get; set; }
+
         public string groupCustomerName { get; set; }
 
         public short trailApprovalStatus { get; set; }
@@ -509,6 +513,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public object isBooked { get; set; }
+
+        public bool isUnderApproval { get; set; }
+        public bool isApprovalOwner { get; set; }
         public bool canReRouteBooking { get; set; }
 
         public decimal approveRequestAmount { get; set; }
