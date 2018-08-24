@@ -2644,7 +2644,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ExternalInitialization = true;
             workflow.StatusId = (short)ApprovalStatusEnum.Pending;
             workflow.Amount = model.amount;
-            
+
             workflow.LogActivity();
 
             context.SaveChanges();
