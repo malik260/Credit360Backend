@@ -1092,16 +1092,16 @@ namespace FintrakBanking.Repositories.Credit
                     var loan = context.TBL_LOAN.Add(data);
 
                     //...................Move to next Approval Level Staff.......................
-                    workflow.StaffId = entity.createdBy;
-                    workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Approved;
-                    workflow.TargetId = entity.loanBookingRequestId;
-                    workflow.Comment = entity.comment;
-                    workflow.OperationId = entity.operationId.Value;
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = false;
+                    //workflow.StaffId = entity.createdBy;
+                    //workflow.CompanyId = entity.companyId;
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Approved;
+                    //workflow.TargetId = entity.loanBookingRequestId;
+                    //workflow.Comment = entity.comment;
+                    //workflow.OperationId = entity.operationId.Value;
+                    //workflow.DeferredExecution = true;
+                    //workflow.ExternalInitialization = false;
 
-                    workflow.LogActivity();
+                    //workflow.LogActivity();
 
                     //...................Update the Loan Request table.......................
                     //request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
@@ -1121,25 +1121,27 @@ namespace FintrakBanking.Repositories.Credit
                         };
 
                         //.....................LOG COMMERCIAL LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-                        //(LogApproval(approvalModel, (int)OperationsEnum.CommercialLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
+                        if (LogApproval(approvalModel, (int)OperationsEnum.CommercialLoanBooking, true, (int)ApprovalStatusEnum.Pending).Saved)
+                        {
+                            AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
+
+                            //...................Saving Commercial Loan Collaterals Mapping.......................
+                            AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                            //...................Mapping Commercial Loan Monitoring Trigger.......................
+                            if (entity.monitoringTriggers.Count > 0)
+                                AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+
+                            entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
+                            if (!entity.feeOverride) PostLoanFees(entity);
+                            context.SaveChanges();
+
+                            //.....Commit transaction ............
+                            trans.Commit();
+                        }
+
                         //.......................END OF APPROVAL LOG......................................................
-
-                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-                        AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
-
-                        //...................Saving Commercial Loan Collaterals Mapping.......................
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        //...................Mapping Commercial Loan Monitoring Trigger.......................
-                        if (entity.monitoringTriggers.Count > 0)
-                            AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
-
-                        entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
-                        if (!entity.feeOverride) PostLoanFees(entity);
-                        context.SaveChanges();
-
-                        //.....Commit transaction ............
-                        trans.Commit();
 
                         return loanReferenceNumber;
                     }
