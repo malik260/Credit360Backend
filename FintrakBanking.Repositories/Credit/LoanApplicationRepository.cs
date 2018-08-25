@@ -2634,13 +2634,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse RouteWorkflowTarget(ForwardViewModel model)
         {
-
             workflow.StaffId = model.createdBy;
             workflow.OperationId = model.operationId;
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             workflow.Comment = model.comment;
             workflow.ToStaffId = model.receiverStaffId;
+            workflow.NextLevelId = model.receiverLevelId;
             workflow.ExternalInitialization = true;
             workflow.StatusId = (short)ApprovalStatusEnum.Pending;
             workflow.Amount = model.amount;

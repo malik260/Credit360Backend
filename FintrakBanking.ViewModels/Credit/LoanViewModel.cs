@@ -47,7 +47,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-        public int tenorLeft;
+
+        public int tenorLeft { get; set; }
 
         public string customerType { get; set; }
 
@@ -87,7 +88,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string RelatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
-        public int tenorUsed { get { return (DateTime.Now - this.effectiveDate).Days; } }
+        public int tenorUsed { get; set; }
         public short ? principalFrequencyTypeId { get; set; }
         public short ? interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
