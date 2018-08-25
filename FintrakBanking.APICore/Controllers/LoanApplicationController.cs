@@ -140,7 +140,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application-detail/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanApplicationDetailById([FromUri] int loanApplicationDetailId)
         {
@@ -1225,6 +1225,39 @@ namespace FintrakBanking.APICore.Controllers
                 data.companyId = token.GetCompanyId;
                 data.createdBy = token.GetStaffId;
                 var response = repo.GoForLoanApplicationCancellationApproval(data);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("transaction/dynamics/{loanApplicationId}")]
+        public HttpResponseMessage GetTransactionDynamics(int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.GetTrnasactionDynamics(loanApplicationId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan/condition-precident/{loanApplicationId}")]
+        public HttpResponseMessage GetConditionPrecidents(int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.GetConditionPrecidents(loanApplicationId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
