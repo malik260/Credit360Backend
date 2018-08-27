@@ -83,15 +83,16 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<FeeConcessionViewModel> GetAllConcessionFeeAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
-            int staffApprovalLevelId = 0;
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+            var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.FeeConcessionApproval).ToList();
+            //var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
+            //int staffApprovalLevelId = 0;
+            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             var feeConcession = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION
                                  join atrail in context.TBL_APPROVAL_TRAIL on a.CONCESSIONID equals atrail.TARGETID
                                  where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                                  && atrail.OPERATIONID == (int)OperationsEnum.FeeConcessionApproval
-                                 && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                                 && ids.Contains((int)atrail.TOAPPROVALLEVELID) //atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                                  && atrail.RESPONSESTAFFID == null
                                  orderby a.DATETIMECREATED descending
                                  select new FeeConcessionViewModel()
@@ -128,7 +129,7 @@ namespace FintrakBanking.Repositories.Credit
                     data.DATETIMEUPDATED = DateTime.Now;
                     data.LASTUPDATEDBY = model.createdBy;
                 }
-            } 
+            }
             else
             {
                 data = new TBL_LOAN_RATE_FEE_CONCESSION();
@@ -194,20 +195,43 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 if (context.SaveChanges() > 0)
-                    return data.CONCESSIONID; 
+                    return data.CONCESSIONID;
             }
             return 0;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.FeeConcessionApproval;
-            entity.externalInitialization = false;
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    workFlow.LogForApproval(entity);
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.ExternalInitialization = false;
+                    workFlow.OperationId = (int)OperationsEnum.FeeConcessionApproval;
+                    workFlow.LogActivity();
+
+                    // workFlow.LogForApproval(entity);
+
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var feeConcessionRecord = (from s in context.TBL_LOAN_RATE_FEE_CONCESSION
+                                                   where s.CONCESSIONID == entity.targetId
+                                                   select s).FirstOrDefault();
+                        if(feeConcessionRecord != null)
+                        {
+                            feeConcessionRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return 2;
+                        }    
+                    }
+
+
                     var b = workFlow.NextLevelId ?? 0;
                     if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
                     {
@@ -222,14 +246,14 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             trans.Commit();
                         }
-                        return true;
+                        return 1;
                     }
                     else
                     {
                         trans.Commit();
                     }
 
-                    return false;
+                    return 0;
                 }
                 catch (Exception ex)
                 {
@@ -269,7 +293,7 @@ namespace FintrakBanking.Repositories.Credit
             else if (workFlow.NewState == (int)ApprovalState.Ended)
             {
                 feeConcessionRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                if (loanDetailRecord != null && feeConcessionRecord.CONCESSIONTYPEID == (short)FeeConcessionTypeEnum.Interest )
+                if (loanDetailRecord != null && feeConcessionRecord.CONCESSIONTYPEID == (short)FeeConcessionTypeEnum.Interest)
                 {
                     loanDetailRecord.APPROVEDINTERESTRATE = feeConcessionRecord.CONCESSION;
                 }
@@ -279,7 +303,7 @@ namespace FintrakBanking.Repositories.Credit
                     feeRecord.CONSESSIONREASON = feeConcessionRecord.CONSESSIONREASON;
                     feeRecord.RECOMMENDED_FEERATEVALUE = (decimal)feeConcessionRecord.CONCESSION;
                     feeRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                }        
+                }
             }
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -324,9 +348,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool returnVal = false;
             var isApproved = (from a in context.TBL_LOAN_RATE_FEE_CONCESSION
-                         where a.CONCESSIONID == concessionId &&
-                           a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                         select a).FirstOrDefault();
+                              where a.CONCESSIONID == concessionId &&
+                                a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                              select a).FirstOrDefault();
 
             if (isApproved != null)
             {

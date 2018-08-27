@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Credit
                              join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                              && a.PAYMENTDATE == c.PAYMENTDATE && 
-                             (f.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialPaper || f.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
+                             (f.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
 
                              select new DailyInterestAccrualViewModel()
                              {
@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.Credit
                              join e in context.TBL_PRODUCT on a.PRODUCTID equals e.PRODUCTID
                              join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
                              where a.LOANSTATUSID == (short)LoanStatusEnum.Active &&
-                              (f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialPaper || f.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                              (f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
                              && a.MATURITYDATE == DbFunctions.TruncateTime(applicationDate)
 
 
@@ -9019,7 +9019,7 @@ namespace FintrakBanking.Repositories.Credit
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
-                        operationTypeName = data.OPERATIONNAME
+                        operationTypeName = data.OPERATIONNAME,
                     });
         }
 
@@ -9636,7 +9636,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     workFlow.StaffId = entity.staffId;
                     workFlow.CompanyId = entity.companyId;
-                    workFlow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
                     workFlow.TargetId = entity.targetId;
                     workFlow.Comment = entity.comment;
                     workFlow.OperationId = entity.operationId;
@@ -9653,12 +9653,22 @@ namespace FintrakBanking.Repositories.Credit
                                            && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                             && s.OPERATIONCOMPLETED == false
                                             select s).FirstOrDefault();
+
+                        if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                        {
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return 2;
+                        }
+
+
                         if (workFlow.NewState != (int)ApprovalState.Ended)
                         {
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             output = context.SaveChanges() > 0;
                             trans.Commit();
-                            data = 1;
+                            data = 3;
                         }
                         else if (workFlow.NewState == (int)ApprovalState.Ended)
                         {
@@ -9671,7 +9681,7 @@ namespace FintrakBanking.Repositories.Credit
                             if (output == true && result == true)
                             {
                                 trans.Commit();
-                                data = 2;
+                                data = 1;
                             }
 
                         }
@@ -11137,7 +11147,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loanRecord.Any())
                 {
                     var loan = loanRecord.FirstOrDefault();
-                    ArchiveLoan(loan.TERMLOANID, (short)OperationsEnum.CommercialPaperLoanBooking, archiveBatchCode);
+                    ArchiveLoan(loan.TERMLOANID, (short)OperationsEnum.CommercialLoanBooking, archiveBatchCode);
                     loan.PRINCIPALAMOUNT = model.newPrincipalAmount;
                     loan.OUTSTANDINGPRINCIPAL = model.newPrincipalAmount;
                     loan.LASTRESTRUCTUREDATE = generalSetup.GetApplicationDate();
@@ -11562,7 +11572,7 @@ namespace FintrakBanking.Repositories.Credit
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
 
             TBL_LOAN loanRecord = (from p in context.TBL_LOAN where p.LOANREFERENCENUMBER == refNo select p).FirstOrDefault();
-            ArchiveLoan(loanRecord.TERMLOANID, (short)OperationsEnum.CommercialPaperLoanBooking, batchCode);
+            ArchiveLoan(loanRecord.TERMLOANID, (short)OperationsEnum.CommercialLoanBooking, batchCode);
 
             var loanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE.Subtract(TimeSpan.FromDays(1)));
             var dailyInterestAmount = loanGenerate.getDailyInterest(loanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, loanDaysInYear);
@@ -11749,7 +11759,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from ln in context.TBL_LOAN
                         where ln.MATURITYDATE > DateTime.Now
                         && ln.LOANSTATUSID == (short)LoanStatusEnum.Active
-                        && ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                        && ln.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
                         && ln.COMPANYID == companyId
                         orderby ln.MATURITYDATE descending
                         select new LoanReviewOperationApprovalViewModel
@@ -11936,7 +11946,7 @@ namespace FintrakBanking.Repositories.Credit
                        join ln in context.TBL_LOAN on a.LOANAPPLICATIONDETAILID equals ln.LOANAPPLICATIONDETAILID
                        where //ln.MATURITYDATE < DateTime.Now
                              //ln.LOANSTATUSID == (short)LoanStatusEnum.Completed || ln.LOANSTATUSID == (short)LoanStatusEnum.Active
-                        ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                        ln.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
                        && ln.COMPANYID == companyId
                        orderby ln.MATURITYDATE descending
                        select new LoanReviewOperationParentChildViewModel
@@ -11971,7 +11981,7 @@ namespace FintrakBanking.Repositories.Credit
                         where ln.LOANAPPLICATIONDETAILID == loanApplicationDetailID
                         ////&& ln.MATURITYDATE < DateTime.Now
                         ////&& ln.LOANSTATUSID == (short)LoanStatusEnum.Active || ln.LOANSTATUSID == (short)LoanStatusEnum.Completed
-                        && ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                        && ln.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
                         && ln.COMPANYID == companyId
                         orderby ln.MATURITYDATE descending
                         select new LoanReviewOperationApprovalViewModel
@@ -12041,7 +12051,7 @@ namespace FintrakBanking.Repositories.Credit
             var date = DateTime.Now.Date;
             var data = (from ln in context.TBL_LOAN
                         where //ln.MATURITYDATE < DateTime.Now &&
-                         ln.OPERATIONID == (int)OperationsEnum.CommercialPaperLoanBooking
+                         ln.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
                         && ln.COMPANYID == companyId
                         orderby ln.MATURITYDATE descending
                         select new LoanReviewOperationApprovalViewModel

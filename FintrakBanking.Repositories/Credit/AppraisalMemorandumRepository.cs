@@ -1183,11 +1183,11 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity)
+        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel model)
         {
-            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
-            detail.REPAYMENTTERMS = entity.terms;
-            detail.REPAYMENTSCHEDULE = entity.schedule;
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.applicationDetailId);
+            detail.REPAYMENTTERMS = model.terms;
+            detail.REPAYMENTSCHEDULE = model.schedule;
             context.SaveChanges();
             return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID && x.DELETED == false)
                 .Select(x => new RepaymentScheduleTermsViewModel
@@ -1197,6 +1197,8 @@ namespace FintrakBanking.Repositories.Credit
                     schedule = x.REPAYMENTSCHEDULE,
                     productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
                 }).ToList();
+
+            //return new List<RepaymentScheduleTermsViewModel>();
         }
 
         public List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity)
@@ -1319,7 +1321,7 @@ namespace FintrakBanking.Repositories.Credit
                    id = x.ab.a.COLLATERALBASICDETAILID,
                    collateralDetail = x.ab.a.COLLATERALDETAIL,
                    collateralValue = x.ab.a.COLLATERALVALUE,
-                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT,
+                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT, 
                    applicationDetailId = (int)x.ab.a.LOANAPPLICATIONDETAILID,
                    productCustomerName = x.c.TBL_PRODUCT.PRODUCTNAME + " -- " + x.c.TBL_CUSTOMER.FIRSTNAME + " " + x.c.TBL_CUSTOMER.MIDDLENAME + " " + x.c.TBL_CUSTOMER.LASTNAME,
                    staffName = x.ab.b.FIRSTNAME + " " + x.ab.b.MIDDLENAME + " " + x.ab.b.LASTNAME,

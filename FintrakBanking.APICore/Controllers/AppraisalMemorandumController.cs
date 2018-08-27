@@ -218,17 +218,25 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
+
                     searchString = searchString.Trim().ToLower();
-                    items = items.Where(x =>
-                        x.applicationReferenceNumber.Contains(searchString)
-                        //|| x.applicationAmount.ToString().Contains(searchString)
-                        || x.customerName.ToLower().Contains(searchString)
-                        || x.customerGroupName.ToLower().Contains(searchString)
-                        ).Take(itemsPerPage);
+                    items = (from x in items
+                             where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+                             || x.applicantName.ToLower().StartsWith(searchString)
+                              //|| x.customerGroupName.ToLower().StartsWith(searchString)
+                             select x);
+
+                    items = items.Take(itemsPerPage);
+
+                    //items = items.Where(x =>
+                    //    (searchString.StartsWith(x.applicationReferenceNumber))
+                    //    || (searchString.StartsWith(x.customerName.ToLower()))
+                    //    || (searchString.StartsWith(x.customerGroupName.ToLower()))
+                    //    ).Take(itemsPerPage);
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.loanApplicationId) // OrderBy() must be called for Skip() to work!
+                    .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
                     .Skip(page)
                     .Take(itemsPerPage)
                     .ToList();
@@ -390,19 +398,19 @@ namespace FintrakBanking.APICore.Controllers
         #endregion MONITORING TRIGGERS
 
         [HttpPost]
-        [ClaimsAuthorization]
+        //[ClaimsAuthorization]
         [Route("repayment-schedule-terms")]
         public HttpResponseMessage SaveRepaymentScheduleAndTerms([FromBody] RepaymentScheduleTermsViewModel entity)
         {
-            try
-            {
+            //try
+            //{
                 List<RepaymentScheduleTermsViewModel> response = repo.SaveRepaymentScheduleAndTerms(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
         }
 
         [HttpPost]

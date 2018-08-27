@@ -451,6 +451,8 @@ namespace FintrakBanking.Repositories.Credit
                                join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                join f in context.TBL_PRODUCT on a.PRODUCTID equals f.PRODUCTID
                                join pt in context.TBL_PRODUCT_TYPE on f.PRODUCTTYPEID equals pt.PRODUCTTYPEID
+                               //let fpp = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Select(x => x.FIRSTPRINCIPALPAYMENTDATE).FirstOrDefault()
+                               //let ipp = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Select(x => x.FIRSTINTERESTPAYMENTDATE).FirstOrDefault()
                                join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                join cur in context.TBL_CURRENCY on a.CURRENCYID equals cur.CURRENCYID
@@ -648,7 +650,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME,
                                    productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
-                                   //   RelatedloanReferenceNumber = a.re,
+                                   lastRestructureDate=a.LASTRESTRUCTUREDATE,
                                    ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                                    approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
                                    approvedComment = a.APPROVERCOMMENT,
@@ -716,6 +718,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
                                    c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -734,7 +737,8 @@ namespace FintrakBanking.Repositories.Credit
                                      //  productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = context.TBL_PRODUCT.Where(x=>x.PRODUCTID==a.PRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
-                                       loanSystemTypeId = a.LOANSYSTEMTYPEID
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                       outstandingPrincipal = a.OUTSTANDINGPRINCIPAL
 
                                    });
             return allFilteredLoan.ToList();
@@ -771,6 +775,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loadArchiveId = a.LOANARCHIVEID,
                                        loanId = a.LOANID,
                                      //  archiveCode =a.ARCHIVEBATCHCODE,
+                                     lastRestructureDate = a.LASTRESTRUCTUREDATE,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -818,7 +823,7 @@ namespace FintrakBanking.Repositories.Credit
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
-                                       loanSystemTypeId = a.LOANSYSTEMTYPEID
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    });
             return allFilteredLoan.ToList();
         }
@@ -870,7 +875,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                       loanSystemTypeId = a.LOANSYSTEMTYPEID
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    });
             return allFilteredLoan.ToList();
         }
@@ -984,6 +989,8 @@ namespace FintrakBanking.Repositories.Credit
                                join f in context.TBL_PRODUCT on a.PRODUCTID equals f.PRODUCTID
                                join pt in context.TBL_PRODUCT_TYPE on f.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                                join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                               //let fpp = context.TBL_LOAN.Where(x => x.RELATED_LOAN_REFERENCE_NUMBER == relatedLaonRefNo).Select(x => x.FIRSTPRINCIPALPAYMENTDATE).FirstOrDefault()
+                               //let ipp = context.TBL_LOAN.Where(x => x.RELATED_LOAN_REFERENCE_NUMBER == relatedLaonRefNo).Select(x => x.FIRSTINTERESTPAYMENTDATE).FirstOrDefault()
                                join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                join cur in context.TBL_CURRENCY on a.CURRENCYID equals cur.CURRENCYID
                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
@@ -1314,16 +1321,13 @@ namespace FintrakBanking.Repositories.Credit
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 data = (from a in context.TBL_DAILY_ACCRUAL
-                        join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
-                        join l in context.TBL_LOAN on a.REFERENCENUMBER equals l.LOANREFERENCENUMBER
-                        join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                         where a.DATE >= startDate && a.DATE <= endDate
                         && a.REFERENCENUMBER==loanReferenceNumber
                         orderby a.DAILYACCURALID descending
                         select new LoanViewModel()
                         {
                             baseReferenceNumber = a.BASEREFERENCENUMBER,
-                            categoryName = context.TBL_DAILY_ACCRUAL_CATEGORY.Where(x => x.CATEGORYID == a.CATEGORYID).Select(x => x.CATEGORYNAME).FirstOrDefault(),
+                           // categoryName = context.TBL_DAILY_ACCRUAL_CATEGORY.Where(x => x.CATEGORYID == a.CATEGORYID).Select(x => x.CATEGORYNAME).FirstOrDefault(),
                             currencyName = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.CURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
                             dailyAccrualAmount = a.DAILYACCURALAMOUNT,
                             date = a.DATE,

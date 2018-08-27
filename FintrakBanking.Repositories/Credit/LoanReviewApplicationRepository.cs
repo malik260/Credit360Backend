@@ -38,14 +38,12 @@ namespace FintrakBanking.Repositories.Credit
             int companyId = user.companyId;
 
             bool ignoreBranch = true; // rm = false, ho = true
-            ignoreBranch = !ProcessInitiator(staffId, 46, classId);
-            if (ignoreBranch) ignoreBranch = !ProcessInitiator(staffId, 71, classId);
-
             if (camOperationIds.Contains(operationId)) ignoreBranch = !ProcessInitiator(staffId, operationId, classId);
 
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(79);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
@@ -54,6 +52,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var ids = levelIds.ToList();
             ids.Add(71); // --------------- REMOVE!!!
+            ids.Add(79); // --------------- REMOVE!!!
 
             // query
             var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)
@@ -102,6 +101,13 @@ namespace FintrakBanking.Repositories.Credit
                     loanSystemTypeName = d.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
                     productId = d.PRODUCTID,
                     customerId = d.CUSTOMERID,
+                    obligorName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+                    proposedTenor = d.PROPOSEDTENOR,
+                    proposedRate = d.PROPOSEDINTERESTRATE,
+                    proposedAmount = d.PROPOSEDAMOUNT,
+                    approvedTenor = d.APPROVEDTENOR,
+                    approvedRate = d.APPROVEDINTERESTRATE,
+                    approvedAmount = d.APPROVEDAMOUNT,
                 })
                 
             })
@@ -404,7 +410,44 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
-            context.SaveChanges();
+            context.SaveChanges(); // redundant !
+
+
+            // DETAIL CHANGES
+            List<TBL_LMSR_APPLICATION_DETAIL> items = null;
+            if (model.recommendedChanges.Count() > 0) // only approving authority
+            {
+                //updateApprovedAmount = true;
+                items = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).ToList();
+                foreach (var changed in model.recommendedChanges)
+                {
+                    var detail = items.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == changed.detailId);
+                    if (detail != null)
+                    {
+                        //detail.APPROVEDPRODUCTID = (short)changed.productId;
+                        detail.APPROVEDAMOUNT = changed.amount;
+                        detail.APPROVEDINTERESTRATE = changed.interestRate;
+                        detail.APPROVEDTENOR = changed.tenor;
+                        //detail.STATUSID = (short)changed.statusId;
+                        //detail.EXCHANGERATE = changed.exchangeRate;
+                        //detail.LASTUPDATEDBY = model.createdBy;
+                        //detail.DATETIMEUPDATED = DateTime.Now;
+
+                        //if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                        //{
+                        //    if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
+                        //    else
+                        //    {
+                        //        detail.PROPOSEDPRODUCTID = (short)changed.productId;
+                        //        detail.PROPOSEDAMOUNT = changed.amount;
+                        //        detail.PROPOSEDINTERESTRATE = changed.interestRate;
+                        //        detail.PROPOSEDTENOR = changed.tenor;
+                        //    }
+                        //}
+                    }
+                }
+            }
+
 
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)

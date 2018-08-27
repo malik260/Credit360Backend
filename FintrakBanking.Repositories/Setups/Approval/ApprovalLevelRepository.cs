@@ -227,7 +227,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
                 context.TBL_APPROVAL_LEVEL.Add(data);
 
-                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).Select(x => x.STAFFCODE));
+                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.STAFFCODE));
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -336,9 +336,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (data == null) { return false; }
             if (admin.IsSuperAdmin(model.createdBy) == true)
             {
+                if (data == null) { return false; }
+
                 data.LEVELNAME = model.levelName;
                 data.POSITION = model.position;
                 data.TENOR = model.tenor;
+                //data.TenorModeId = 1; // model.tenorModeId;
                 data.MAXIMUMAMOUNT = model.maximumAmount;
                 data.INVESTMENTGRADEAMOUNT = model.investmentGradeAmount;
                 data.FEERATE = model.feeRate;
@@ -346,29 +349,33 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 data.NUMBEROFUSERS = model.numberOfUsers;
                 data.NUMBEROFAPPROVALS = model.numberOfApprovals;
                 data.SLAINTERVAL = model.slaInterval;
+                //data.CANROUTEBACK = model.canRouteBack;
                 data.ISPOLITICALLYEXPOSED = model.isPoliticallyExposed;
                 data.CANESCALATE = model.canEscalate;
                 data.CANAPPROVEUNTENORED = model.canApproveUntenored;
                 data.CANRESOLVEDISPUTE = model.canResolveDispute;
                 data.ISACTIVE = model.isActive;
+
                 data.CANVIEWDOCUMENT = model.canViewDocument;
                 data.CANEDIT = model.canEdit;
-                data.CANVIEWUPLOAD = model.canViewDocument;
+                data.CANVIEWUPLOAD = model.canViewUploadedFile;
                 data.CANUPLOAD = model.canUploadFile;
                 data.CANVIEWAPPROVAL = model.canViewApproval;
                 data.CANAPPROVE = model.canApprove;
+                //data.CANDORISKASSESSMENT = model.canDoRiskAssessment;
+                //data.CANRECIEVEADJUSTMENT = model.canRecieveAdjustment;
                 data.CANRECIEVEEMAIL = model.canRecieveEmail;
                 data.CANRECIEVESMS = model.canRecieveSms;
+                //data.HASCHECKLIST = model.hasChecklist;
+                //data.CANPERFORMFINANCIALANALYSIS = model.canPerformFinancialAnalysis;
+                //data.REQUIREAUTHORISATION = model.requireAuthorisation;
+                //data.CANOVERIDEAUTHORISATION = model.canOverideAuthorisation;
                 data.ROUTEVIASTAFFORGANOGRAM = model.routeViaStaffOrganogram;
                 data.LASTUPDATEDBY = model.lastUpdatedBy;
-                data.DATETIMEUPDATED = genSetup.GetApplicationDate();
+                data.DATETIMEUPDATED = DateTime.Now;
                 data.GROUPID = model.groupId;
-                data.STAFFROLEID = model.staffId;
-                data.SLANOTIFICATIONINTERVAL = model.slaNotificationInterval;
-                data.APPROVALLEVELID = model.approvalLevelId;
-                data.CREATEDBY = model.createdBy;
-
-                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == model.staffId).Select(x => x.STAFFCODE));
+                data.STAFFROLEID = model.roleId;
+                data.LASTUPDATEDBY = model.lastUpdatedBy;
 
                 // Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -376,14 +383,14 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelUpdated,
                     STAFFID = model.createdBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Approval Level '{model.levelName}' was Updated by the super-admin with id {audit_staff} ",
+                    DETAIL = $"Updated Approval Level '{model.levelName}'. ",
                     IPADDRESS = model.userIPAddress,
                     URL = model.applicationUrl,
                     APPLICATIONDATE = genSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now,
                     TARGETID = model.approvalLevelId
                 };
-                //this.auditTrail.AddAuditTrail(audit);
+
             }
             else
             {
@@ -418,9 +425,8 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     GROUPID = model.groupId,
                     STAFFROLEID = model.roleId,
                     SLANOTIFICATIONINTERVAL = model.slaNotificationInterval,
-                    APPROVALLEVELID = data.APPROVALLEVELID,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                    CREATEDBY = model.staffId,
+                    CREATEDBY = model.createdBy,
                     OPERATION = "update"
                 };
                 context.TBL_TEMP_APPROVAL_LEVEL.Add(values);
@@ -472,10 +478,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (admin.IsSuperAdmin(user.createdBy) == true)
             {
                 model.DELETED = true;
-                model.DELETEDBY = user.staffId;
+                model.DELETEDBY = user.createdBy;
                 model.DATETIMEDELETED = genSetup.GetApplicationDate();
 
-                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == user.staffId).Select(x => x.STAFFCODE));
+                var audit_staff = (context.TBL_STAFF.Where(x => x.STAFFID == user.createdBy).Select(x => x.STAFFCODE));
 
                 var audit = new TBL_AUDIT
                 {
@@ -527,7 +533,6 @@ namespace FintrakBanking.Repositories.Setups.Approval
                         GROUPID = model.GROUPID,
                         STAFFROLEID = model.STAFFROLEID,
                         SLANOTIFICATIONINTERVAL = model.SLANOTIFICATIONINTERVAL,
-                        APPROVALLEVELID = model.APPROVALLEVELID,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
                         CREATEDBY = model.CREATEDBY,
                         OPERATION = "delete"

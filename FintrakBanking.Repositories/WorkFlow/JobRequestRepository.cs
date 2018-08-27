@@ -447,7 +447,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var thisStaff = this.context.TBL_STAFF.Find(staffId);
             var unitId = 0;
-            if(thisStaff != null) unitId = thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID;
+            unitId = thisStaff.TBL_DEPARTMENT_UNIT != null ? thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID : 0;
 
             var data = context.TBL_JOB_REQUEST
                .Where(t => (t.DEPARTMENTUNITID == unitId || t.SENDERSTAFFID == staffId || t.REASSIGNEDTO == staffId))
