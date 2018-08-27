@@ -129,6 +129,8 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public int tempApplicationCancellationId { get; set; }
+        public IQueryable<string> staffName { get; set; }
+        public string comment { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -619,5 +621,5 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanApplicationDatailViewModel> details { get; set; }
         public string customerCode { get; set; }
     }
-
+    
 }

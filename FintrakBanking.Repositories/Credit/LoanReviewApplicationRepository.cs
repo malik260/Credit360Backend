@@ -20,7 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
 
-        private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // ======== recovery ========
+        private List<int> camOperationIds = new List<int> { 46, 71, 79 };
 
         public LoanReviewApplicationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
         {
@@ -38,14 +38,12 @@ namespace FintrakBanking.Repositories.Credit
             int companyId = user.companyId;
 
             bool ignoreBranch = true; // rm = false, ho = true
-            ignoreBranch = !ProcessInitiator(staffId, 46, classId);
-            if (ignoreBranch) ignoreBranch = !ProcessInitiator(staffId, 71, classId);
-
             if (camOperationIds.Contains(operationId)) ignoreBranch = !ProcessInitiator(staffId, operationId, classId);
 
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
             if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add((int)OperationsEnum.NPLoanReviewApprovalAppraisal);
+            if (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) operationIds.Add(79);
 
             IQueryable<LoanReviewApplicationViewModel> applications = null;
 
@@ -54,6 +52,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var ids = levelIds.ToList();
             ids.Add(71); // --------------- REMOVE!!!
+            ids.Add(79); // --------------- REMOVE!!!
 
             // query
             var query = context.TBL_LMSR_APPLICATION.Where(x => x.BRANCHID == user.BranchId || ignoreBranch)

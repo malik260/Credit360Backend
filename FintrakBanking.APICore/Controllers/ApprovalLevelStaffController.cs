@@ -35,7 +35,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.userBranchId = (short)token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
-                model.staffId = token.GetStaffId;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
@@ -61,7 +60,6 @@ namespace FintrakBanking.APICore.Controllers
                 model.userBranchId = (short)token.GetBranchId;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.applicationUrl = HttpContext.Current.Request.Path;
-                model.staffId = token.GetStaffId;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 var data = repo.GoForApproval(model);
@@ -140,7 +138,6 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.userBranchId = (short)token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
-                model.staffId = token.GetStaffId;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
@@ -168,7 +165,6 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     BranchId = token.GetBranchId,
                     companyId = token.GetCompanyId,
-                    staffId = token.GetStaffId,
                 createdBy = token.GetStaffId,
             };
 

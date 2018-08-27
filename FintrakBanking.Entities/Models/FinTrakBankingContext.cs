@@ -870,6 +870,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_BRANCH>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION)
+                .WithRequired(e => e.TBL_BRANCH)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_BRANCH>()
                 .HasMany(e => e.TBL_LOAN_ARCHIVE)
                 .WithRequired(e => e.TBL_BRANCH)
                 .WillCascadeOnDelete(false);
