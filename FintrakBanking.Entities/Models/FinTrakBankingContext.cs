@@ -3187,6 +3187,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WithRequired(e => e.TBL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_ARCH)
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
@@ -4528,6 +4533,10 @@ namespace FintrakBanking.Entities.Models
             //    .HasPrecision(38, 0);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
+                .Property(e => e.PROPOSEDAMOUNT)
+                .HasPrecision(38, 2);
+
+            modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
                 .Property(e => e.PROPOSEDAMOUNT)
                 .HasPrecision(38, 2);
 
@@ -8720,6 +8729,8 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LMSR_APPLICATN_DETL_MTRIG)
                 .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
+
+            //modelBuilder.Entity<TBL_CUSTOMER>().Ignore(x => x.FULLNAME);
 
         }
     }

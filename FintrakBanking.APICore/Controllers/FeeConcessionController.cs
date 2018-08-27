@@ -173,17 +173,23 @@ namespace FintrakBanking.APICore.Controllers
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
-                entity.operationId = (int)OperationsEnum.FeeConcessionApproval;
+
                 var data = repo.GoForApproval(entity);
 
-                if (data)
+                if (data == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Record has been approved successfully" });
+                } else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "Record has been disapproved successfully" });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
             }
             catch (SecureException e)
             {

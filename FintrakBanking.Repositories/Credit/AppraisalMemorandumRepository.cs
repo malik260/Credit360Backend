@@ -1183,12 +1183,11 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel entity)
+        public List<RepaymentScheduleTermsViewModel> SaveRepaymentScheduleAndTerms(RepaymentScheduleTermsViewModel model)
         {
-            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
-            detail.REPAYMENTTERMS = entity.terms;
-            detail.REPAYMENTSCHEDULE = entity.schedule;
-            context.Entry(detail).State = System.Data.Entity.EntityState.Modified;
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.applicationDetailId);
+            detail.REPAYMENTTERMS = model.terms;
+            detail.REPAYMENTSCHEDULE = model.schedule;
             context.SaveChanges();
             return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID && x.DELETED == false)
                 .Select(x => new RepaymentScheduleTermsViewModel

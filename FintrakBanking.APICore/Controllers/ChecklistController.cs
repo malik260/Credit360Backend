@@ -951,7 +951,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("validate-checklist-details")]
-        public HttpResponseMessage ValidateChecklistDetail([FromBody] ValidateChecklistDetailViewModel model)
+        public HttpResponseMessage ValidateChecklistDetail([FromBody] List<ValidateChecklistDetailViewModel> model)
         {
             try
             {
@@ -1237,14 +1237,21 @@ namespace FintrakBanking.APICore.Controllers
                 entity.operationId = (int)OperationsEnum.ChecklistApproval;
                 var data = repo.GoForApproval(entity);
 
-                if (data)
+                if (data == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Record has been approved successfully" });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been disapproved successfully." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
             }
             catch (SecureException e)
             {

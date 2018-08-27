@@ -109,5 +109,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<TransactionDynamicsViewModel> GetTrnasactionDynamics(int loanApplicationId);
 
         List<ConditionPrecedentViewModel> GetConditionPrecidents(int loanApplicationId);
+
+        LoanApplicationViewModel GetSingleLoanApplicationById(int loanApplicationId, int companyId);
     }
 }

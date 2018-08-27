@@ -22,7 +22,7 @@ namespace FintrakBanking.Interfaces.Setups
         bool AddMultipleChecklistDefinitionWithMultipleItems(ChecklistDefinitionViewModel model);
         bool UpdateChecklistDefinition(int CheckListDefinitionId, ChecklistDefinitionViewModel model);
         bool DeleteChecklistDefinition(int CheckListDefinitionId, UserInfo user);
-        bool ValidateChecklistDetail(ValidateChecklistDetailViewModel entity);
+        bool ValidateChecklistDetail(List<ValidateChecklistDetailViewModel> entity);
         IEnumerable<ChecklistDefinitionViewModel> GetAllMappedChecklistDefinitionByApprovalLevelAndProduct(int approvalLevelId, int productId);
         IEnumerable<ChecklistItemViewModel> GetAllUnmappedChecklistItemsToApprovalLevelAndProduct(int approvalLevelId, int productId);
         IEnumerable<ChecklistDefinitionViewModel> GetUnmappedChecklistDefintionToApprovalLevel(int approvalLevelId);
@@ -60,6 +60,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistTargetType();
         #endregion
         #region Checklist Validation
+        
         bool ValidateChecklistDetailEntry(int checklistDefinitionId, int targetId);
         bool ValidateConditionPrecedentDetail(ConditionPrecedentViewModel entity);
         bool ValidateChecklistForDefferalOrWaival(int conditionId);
@@ -69,7 +70,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklist(int loanApplicationId, bool isAvailment);
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklistStatus(int loanApplicationId, bool isAvailment);
         bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model);
-        bool GoForApproval(ApprovalViewModel entity);
+        int GoForApproval(ApprovalViewModel entity);
         bool ExtendChecklistDeferralDate(ConditionPrecedentViewModel model);
         bool UpdateProvidedChecklist(ConditionPrecedentViewModel model);
         bool ValidateDeferralDateExpiration(int conditionId);

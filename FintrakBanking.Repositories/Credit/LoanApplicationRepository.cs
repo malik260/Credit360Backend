@@ -313,6 +313,11 @@ namespace FintrakBanking.Repositories.Credit
             return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId).ToList();
         }
 
+        public LoanApplicationViewModel GetSingleLoanApplicationById(int loanApplicationId, int companyId)
+        {
+            return GetLoanApplications(companyId).Where(c => c.loanApplicationId == loanApplicationId).FirstOrDefault();
+        }
+
         public dynamic GetLoanAppById(int loanApplicationDetailId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
@@ -944,7 +949,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loan.relationshipOfficerId != 0)
                 {
                     var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
-                    var loanAmt = loan.LoanApplicationDetail.Sum(x => x.proposedAmount);
+                    var loanAmt = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
 
                     if (limit != 0)
                     {
