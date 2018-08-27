@@ -621,5 +621,5 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanApplicationDatailViewModel> details { get; set; }
         public string customerCode { get; set; }
     }
-
+    
 }

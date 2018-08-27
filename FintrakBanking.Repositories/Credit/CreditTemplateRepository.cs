@@ -19,9 +19,9 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private ILoanRepository loan;
-        private IMemorandumRepository memo;
+        private MemorandumRepository memo;
 
-        public CreditTemplateRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, ILoanRepository loan, IMemorandumRepository memo)
+        public CreditTemplateRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, ILoanRepository loan, MemorandumRepository memo)
         {
             this.context = context;
             this.general = general;
@@ -260,15 +260,14 @@ namespace FintrakBanking.Repositories.Credit
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity) // dont call if not editable
         {
             var section = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);
+
+            if (section == null) return true;
             if (section.CANEDIT == false) return true;
-            if (section != null)
-            {
-                section.TEMPLATEDOCUMENT = entity.templateDocument;
-                section.LASTUPDATEDBY = entity.staffId;
-                section.DATETIMEUPDATED = DateTime.Now;
-                return context.SaveChanges() > 0;
-            }
-            return true;
+
+            section.TEMPLATEDOCUMENT = entity.templateDocument;
+            section.LASTUPDATEDBY = entity.staffId;
+            section.DATETIMEUPDATED = DateTime.Now;
+            return context.SaveChanges() > 0;
         }
 
         public LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId)
