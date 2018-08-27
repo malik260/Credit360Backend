@@ -203,7 +203,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();
 
-            var data = context.TBL_LOAN_APPLICATION
+            var data = context.TBL_LOAN_APPLICATION.Where(d =>d.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
+                             && d.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted)
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanAvailment && ids.Contains((int)x.TOAPPROVALLEVELID)
