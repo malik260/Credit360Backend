@@ -1317,7 +1317,7 @@
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Bold</FontWeight>
-                      <Format>d MMM yyyy</Format>
+                      <Format>d MMMM, yyyy</Format>
                     </Style>
                   </TextRun>
                 </TextRuns>
