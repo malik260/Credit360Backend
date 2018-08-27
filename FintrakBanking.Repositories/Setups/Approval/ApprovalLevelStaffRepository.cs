@@ -154,7 +154,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var data = new TBL_APPROVAL_LEVEL_STAFF
                 {
                     MAXIMUMAMOUNT = model.maximumAmount,
-                    STAFFID = model.createdBy,
+                    STAFFID = model.staffId,
                     APPROVALLEVELID = model.approvalLevelId,
                     POSITION = model.position,
                     PROCESSVIEWSCOPEID = (short)model.processViewScope,
@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                 {
                     MAXIMUMAMOUNT = model.maximumAmount,
-                    STAFFID = model.createdBy,
+                    STAFFID = model.staffId,
                     APPROVALLEVELID = model.approvalLevelId,
                     POSITION = model.position,
                     PROCESSVIEWSCOPEID = (short)model.processViewScope,
@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 if (data == null) return false;
 
                 data.MAXIMUMAMOUNT = model.maximumAmount;
-                data.STAFFID = model.createdBy;
+                data.STAFFID = model.staffId;
                 data.APPROVALLEVELID = model.approvalLevelId;
                 data.POSITION = model.position;
                 data.PROCESSVIEWSCOPEID = (short)model.processViewScope;
@@ -347,7 +347,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                     {
                         MAXIMUMAMOUNT = model.maximumAmount,
-                        STAFFID = model.createdBy,
+                        STAFFID = model.staffId,
                         APPROVALLEVELID = model.approvalLevelId,
                         POSITION = model.position,
                         PROCESSVIEWSCOPEID = (short)model.processViewScope,
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             if (model != null)
             {
-                if (admin.IsSuperAdmin(user.staffId) == true)
+                if (admin.IsSuperAdmin(user.createdBy) == true)
                 {
                     model.DATETIMEDELETED = _genSetup.GetApplicationDate();
                     model.DELETEDBY = (int)model.CREATEDBY;
@@ -492,7 +492,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     var audit = new TBL_AUDIT
                     {
                         AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                        STAFFID = user.staffId,
+                        STAFFID = user.createdBy,
                         BRANCHID = (short)user.BranchId,
                         DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete and the action is going for approval ",
                         IPADDRESS = user.userIPAddress,

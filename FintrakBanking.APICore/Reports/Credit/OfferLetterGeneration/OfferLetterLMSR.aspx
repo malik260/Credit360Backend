@@ -16,18 +16,24 @@
         <rsweb:ReportViewer ID="offerLetterReport" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="685px" WaitMessageFont-Names="Verdana" WaitMessageFont-Size="14pt" Width="751px">
             <LocalReport ReportPath="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc">
                 <DataSources>
-                    <rsweb:ReportDataSource DataSourceId="odsOfferLetter" Name="OfferLetterDetails" />
+                    <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="OfferLetterDetails" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterDetails" Name="OfferLetterLoanDetail" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterConditionPrecedent" Name="OfferLetterConditionPrecident" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterConditionSubsequent" Name="OfferLetterConditionSubsequent" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterFee" Name="OfferLetterFee" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterSignatory" Name="OfferLetterSignatory" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterCollateral" Name="OfferLetterCollateral" />
-                        <rsweb:ReportDataSource DataSourceId="odsOfferLetterBorrowerDetail" Name="OfferLetterBorrowerDetail" />
+                    <rsweb:ReportDataSource DataSourceId="odsOfferLetterBorrowerDetail" Name="OfferLetterBorrowerDetail" />
 
                 </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
+
+        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+            </SelectParameters>
+        </asp:ObjectDataSource>
     
         <asp:ObjectDataSource ID="odsOfferLetter" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
             <SelectParameters>

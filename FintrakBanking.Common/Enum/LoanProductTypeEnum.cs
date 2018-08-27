@@ -9,7 +9,7 @@
         LPO = 15,
         CFF =16,
         IDF = 17,
-        CommercialPaper = 40,
+        CommercialLoan = 40,
         ForeignXRevolving = 41,
     };
 

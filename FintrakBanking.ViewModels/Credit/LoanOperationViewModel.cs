@@ -14,6 +14,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int operationTypeId { get; set; }
         public string operationTypeName { get; set; }
+        public bool required { get; set; }
     }
 
     public class LoanBulkInterestReviewViewModel : GeneralEntity

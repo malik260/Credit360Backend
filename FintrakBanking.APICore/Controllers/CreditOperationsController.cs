@@ -184,11 +184,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("running-commercial-loan-search/")]
-        public HttpResponseMessage SearchRunningCommercialForLoans(string searchQuery)
+        public HttpResponseMessage SearchRunningCommercialAndFXLoans(string searchQuery)
         {
             try
             {
-                var data = loanRepo.SearchRunningCommercialForLoans(searchQuery);
+                var data = loanRepo.SearchRunningCommercialAndFXLoans(searchQuery);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -611,12 +611,17 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userIPAddress = Request.RequestUri.Host;
                 var data = repo.GoForApproval(entity);
 
-                if (data == 2)
+                if (data == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Operation has been approved successfully" });
+                        new { success = true, message = "Operation has been approved successfully." });
                 }
-                else if(data == 1)
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation has been disapproved successfully." });
+                }
+                else if (data == 3)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
