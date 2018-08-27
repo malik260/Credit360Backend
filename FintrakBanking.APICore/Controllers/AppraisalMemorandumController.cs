@@ -390,19 +390,18 @@ namespace FintrakBanking.APICore.Controllers
         #endregion MONITORING TRIGGERS
 
         [HttpPost]
-        [ClaimsAuthorization]
         [Route("repayment-schedule-terms")]
         public HttpResponseMessage SaveRepaymentScheduleAndTerms([FromBody] RepaymentScheduleTermsViewModel entity)
         {
-            try
-            {
+            //try
+            //{
                 List<RepaymentScheduleTermsViewModel> response = repo.SaveRepaymentScheduleAndTerms(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
         }
 
         [HttpPost]
