@@ -9624,7 +9624,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     workFlow.StaffId = entity.staffId;
                     workFlow.CompanyId = entity.companyId;
-                    workFlow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
                     workFlow.TargetId = entity.targetId;
                     workFlow.Comment = entity.comment;
                     workFlow.OperationId = entity.operationId;
@@ -9641,12 +9641,22 @@ namespace FintrakBanking.Repositories.Credit
                                            && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                             && s.OPERATIONCOMPLETED == false
                                             select s).FirstOrDefault();
+
+                        if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                        {
+                            reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return 2;
+                        }
+
+
                         if (workFlow.NewState != (int)ApprovalState.Ended)
                         {
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                             output = context.SaveChanges() > 0;
                             trans.Commit();
-                            data = 1;
+                            data = 3;
                         }
                         else if (workFlow.NewState == (int)ApprovalState.Ended)
                         {
@@ -9659,7 +9669,7 @@ namespace FintrakBanking.Repositories.Credit
                             if (output == true && result == true)
                             {
                                 trans.Commit();
-                                data = 2;
+                                data = 1;
                             }
 
                         }

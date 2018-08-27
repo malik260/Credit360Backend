@@ -1951,14 +1951,21 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.GoForApproval(entity);
 
-                if (data)
+                if (data == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Customer record has been approved successfully" });
+                        new { success = true, message = "Customer record has been approved successfully." });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer record has been disapproved successfully." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
             }
             catch (SecureException ex)
             {

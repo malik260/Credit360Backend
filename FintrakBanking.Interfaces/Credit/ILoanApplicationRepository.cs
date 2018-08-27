@@ -95,5 +95,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanApplicationViewModel> GetLoanApplication(string searchQuery);
 
         WorkflowResponse RerouteWorkflowTarget(ForwardViewModel model);
+
+        LoanApplicationViewModel GetSingleLoanApplicationById(int loanApplicationId, int companyId);
     }
 }
