@@ -927,21 +927,30 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() != 0;
         }
-        public bool ValidateChecklistDetail(ValidateChecklistDetailViewModel entity)
+        public bool ValidateChecklistDetail(List<ValidateChecklistDetailViewModel> entity)
         {
             if (entity == null) return false;
+            List<TBL_CHECKLIST_DETAIL> checklistDetails = new List<TBL_CHECKLIST_DETAIL>();
+            foreach (var item in entity)
+            {
+                var data = this.context.TBL_CHECKLIST_DETAIL.Find(item.checklistId);
+                if (data != null)
+                {
+                    if (item.isCAMchecklist == true)
+                    {
+                        data.CHECKLISTSTATUSID2 = item.checkListStatusId2;
+                    }
+                    if (item.isAvailmentChecklist == true)
+                    {
+                        data.CHECKLISTSTATUSID3 = item.checkListStatusId3;
+                    }
+                }
+                checklistDetails.Add(data);
+            }
 
-            var data = this.context.TBL_CHECKLIST_DETAIL.Find(entity.checklistId);
-            if (data == null) return false;
-            if (entity.isCAMchecklist == true)
-            {
-                data.CHECKLISTSTATUSID2 = entity.checkListStatusId2;
-            }
-            if (entity.isAvailmentChecklist == true)
-            {
-                data.CHECKLISTSTATUSID3 = entity.checkListStatusId3;
-            }
-            return context.SaveChanges() != 0;
+
+
+            return context.SaveChanges() > 0;
         }
 
         #endregion
@@ -1347,7 +1356,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
             entity.externalInitialization = false;
 
@@ -1365,7 +1374,27 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.LogActivity();
 
 
-                    //workFlow.LogForApproval(entity);
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
+                                               where s.LOANCONDITIONID == entity.targetId
+                                               select s).FirstOrDefault();
+                        var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                                              where s.LOANCONDITIONID == entity.targetId
+                                             select s).FirstOrDefault();
+                        if (checklistRecord != null || deferredRecord != null)
+                        {
+                            deferredRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                            checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return 2;
+                        }
+
+                     
+                 
+                        
+                    }
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
@@ -1375,12 +1404,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             trans.Commit();
                         }
-                        return true;
+                        return 1;
                     }
                     else
                     {
                         trans.Commit();
-                        return false;
+                        return 0;
                     }
 
                 }
