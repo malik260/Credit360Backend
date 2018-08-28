@@ -553,7 +553,7 @@ namespace FintrakBanking.APICore.Controllers
                     var response = repo.AddOperationReview(model);
                     if (response)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record created successfully, now waiting for approval" });
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
@@ -566,7 +566,7 @@ namespace FintrakBanking.APICore.Controllers
                     var response = repo.AddOperationReview(model);
                     if (response)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record created successfully, now waiting for approval" });
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }
@@ -587,7 +587,7 @@ namespace FintrakBanking.APICore.Controllers
                     var response = repo.AddOperationReview(model);
                     if (response)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Record created successfully, now waiting for approval" });
                     }
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
                 }

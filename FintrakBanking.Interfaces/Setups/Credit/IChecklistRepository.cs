@@ -97,5 +97,7 @@ namespace FintrakBanking.Interfaces.Setups
         bool AddESGChecklistDetail(List<ESGChecklistDetailViewModel> models);
         bool AddESGChecklistSummary(ESGChecklistSummaryViewModel models);
         #endregion
+
+        bool RegulatoryChecklistAutomapping(int customerId, ChecklistDetailViewModel model);
     }
 }

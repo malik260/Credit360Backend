@@ -186,6 +186,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 GROUPCODE = custGroupModel.groupCode,
                 GROUPNAME = custGroupModel.groupName,
                 GROUPDESCRIPTION = custGroupModel.groupDescription,
+                RISKRATINGID = custGroupModel.riskRatingId,
                 CREATEDBY = (int)custGroupModel.createdBy,
                 DATETIMECREATED = genSetup.GetApplicationDate(),
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -271,13 +272,17 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
         private IQueryable<CustomerGroupViewModel> GetAllCustomerGroups()
         {
-            var data = (from a in context.TBL_CUSTOMER_GROUP
+            var data = (from a in context.TBL_CUSTOMER_GROUP 
+                        join b in context.TBL_CUSTOMER_RISK_RATING on a.RISKRATINGID equals b.RISKRATINGID
+                        into bb from b in bb.DefaultIfEmpty()
                         where a.DELETED == false
                         select new CustomerGroupViewModel
                         {
                             groupCode = a.GROUPCODE,
                             groupName = a.GROUPNAME,
                             groupDescription = a.GROUPDESCRIPTION,
+                            riskRating = b.RISKRATING,
+                            riskRatingId = a.RISKRATINGID,
                             customerGroupId = a.CUSTOMERGROUPID,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = a.CREATEDBY
@@ -287,7 +292,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
         public IEnumerable<CustomerGroupViewModel> GetCustomerGroup()
         {
-            var customerGroup = GetAllCustomerGroups();
+            var customerGroup = GetAllCustomerGroups().ToList();
 
             return customerGroup;
         }
@@ -306,6 +311,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             group.GROUPCODE = entity.groupCode;
             group.GROUPNAME = entity.groupName;
             group.GROUPDESCRIPTION = entity.groupDescription;
+            group.RISKRATINGID = entity.riskRatingId;
             group.LASTUPDATEDBY = (int)entity.createdBy;
             group.DATETIMEUPDATED = genSetup.GetApplicationDate();
 
@@ -358,6 +364,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 tempGroupToUpdate.GROUPCODE = entity.groupCode;
                 tempGroupToUpdate.GROUPNAME = entity.groupName;
                 tempGroupToUpdate.GROUPDESCRIPTION = entity.groupDescription;
+                tempGroupToUpdate.RISKRATINGID = entity.riskRatingId;
                 tempGroupToUpdate.CREATEDBY = entity.createdBy;
                 tempGroupToUpdate.DATETIMEUPDATED = DateTime.Now;
                 tempGroupToUpdate.COMPANYID = entity.companyId;
@@ -373,6 +380,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     GROUPCODE = entity.groupCode, // targetGroup?.GROUPCODE,
                     GROUPNAME = entity.groupName,
                     GROUPDESCRIPTION = entity.groupDescription,
+                    RISKRATINGID = entity.riskRatingId,
                     CREATEDBY = entity.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     COMPANYID = entity.companyId,
@@ -452,6 +460,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 existingCustomerGroup.GROUPCODE = customerGroupModel?.GROUPCODE;
                 existingCustomerGroup.GROUPNAME = customerGroupModel?.GROUPNAME;
                 existingCustomerGroup.GROUPDESCRIPTION = customerGroupModel?.GROUPDESCRIPTION;
+                existingCustomerGroup.RISKRATINGID = customerGroupModel?.RISKRATINGID;
                 existingCustomerGroup.CREATEDBY = customerGroupModel.CREATEDBY;
                 existingCustomerGroup.DATETIMEUPDATED = DateTime.Now;
             }
@@ -462,6 +471,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     GROUPCODE = customerGroupModel.GROUPCODE,
                     GROUPNAME = customerGroupModel.GROUPNAME,
                     GROUPDESCRIPTION = customerGroupModel.GROUPDESCRIPTION,
+                    RISKRATINGID = customerGroupModel.RISKRATINGID,
                     CREATEDBY = customerGroupModel.CREATEDBY,
                     DATETIMECREATED = genSetup.GetApplicationDate()
                 };
@@ -508,6 +518,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                         customerGroupId = c.CUSTOMERGROUPID,
                         groupName = c.GROUPNAME,
                         groupCode = c.GROUPCODE,
+                        riskRating = context.TBL_RISK_RATING.Where(x => x.RISKRATINGID == c.RISKRATINGID).FirstOrDefault().RATESDESCRIPTION,
+                        riskRatingId = c.RISKRATINGID,
                         groupDescription = c.GROUPDESCRIPTION,
                         operationId = atrail.OPERATIONID,
                     });
@@ -742,17 +754,17 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                 List<GroupCustomerMembersViewModel> lstCustomer = new List<GroupCustomerMembersViewModel>();
 
                 var data = (from b in context.TBL_CUSTOMER_GROUP_MAPPING
-                          join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
-                           where b.CUSTOMERGROUPID == customerGroupId && b.DELETED == false
-                           && c.COMPANYID == companyId
-                          && c.ACCOUNTCREATIONCOMPLETE == true
-                           select new GroupCustomerMembersViewModel
-                           {
-                               customerId = b.CUSTOMERID,
-                               customerCode = c.CUSTOMERCODE,
-                               lastName = c.LASTNAME,
-                               firstName = c.FIRSTNAME
-                           }).ToList();
+                            join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                            where b.CUSTOMERGROUPID == customerGroupId && b.DELETED == false
+                            && c.COMPANYID == companyId
+                           && c.ACCOUNTCREATIONCOMPLETE == true
+                            select new GroupCustomerMembersViewModel
+                            {
+                                customerId = b.CUSTOMERID,
+                                customerCode = c.CUSTOMERCODE,
+                                lastName = c.LASTNAME,
+                                firstName = c.FIRSTNAME
+                            }).ToList();
 
                 foreach (var item in data)
                 {
@@ -762,7 +774,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     }
                 }
 
-                return lstCustomer.OrderBy(x=> x.customerName);
+                return lstCustomer.OrderBy(x => x.customerName);
 
 
 
