@@ -176,7 +176,66 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-secured-collateral-type")]
+        public HttpResponseMessage GetAllCRMSSecuredCollateralType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSSecuredCollateralType(token.GetCompanyId);
 
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-all-collateral-type")]
+        public HttpResponseMessage GetAllCRMSCollateralType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSAllCollateralType(token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-unsecured-collateral-type")]
+        public HttpResponseMessage GetAllCRMSUnsecuredCollateralType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSUnsecuredCollateralType(token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [Route("appraisal-memorandum/loan-detail-fees/{loanApplicationId}")]
         public HttpResponseMessage GetLoanDetailsFee(int loanApplicationId)
@@ -190,6 +249,36 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
+        }
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("save-collateral-type-crms")]
+        public async Task<HttpResponseMessage> UpdateApprovalRelief([FromBody] ApprovedLoanDetailViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                int applicationId = model.loanApplicationDetailId;
+                var data = await repo.UpdateLoadDetails(applicationId, model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
         }
 
         [HttpGet]
@@ -218,17 +307,25 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
+
                     searchString = searchString.Trim().ToLower();
-                    items = items.Where(x =>
-                        x.applicationReferenceNumber.Contains(searchString)
-                        //|| x.applicationAmount.ToString().Contains(searchString)
-                        || x.customerName.ToLower().Contains(searchString)
-                        || x.customerGroupName.ToLower().Contains(searchString)
-                        ).Take(itemsPerPage);
+                    items = (from x in items
+                             where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+                             || x.applicantName.ToLower().StartsWith(searchString)
+                              //|| x.customerGroupName.ToLower().StartsWith(searchString)
+                             select x);
+
+                    items = items.Take(itemsPerPage);
+
+                    //items = items.Where(x =>
+                    //    (searchString.StartsWith(x.applicationReferenceNumber))
+                    //    || (searchString.StartsWith(x.customerName.ToLower()))
+                    //    || (searchString.StartsWith(x.customerGroupName.ToLower()))
+                    //    ).Take(itemsPerPage);
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.loanApplicationId) // OrderBy() must be called for Skip() to work!
+                    .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
                     .Skip(page)
                     .Take(itemsPerPage)
                     .ToList();

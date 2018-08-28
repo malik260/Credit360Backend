@@ -122,7 +122,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
                 this.context.TBL_PRODUCT_COLLATERALTYPE.Add(tempProductCollateralEntity);
                 // Audit Section ---------------------------
-                var product = this.context.TBL_TEMP_PRODUCT.FirstOrDefault(x => x.PRODUCTID == productCollateral.productId);
+                var product = this.context.TBL_TEMP_PRODUCT.FirstOrDefault(x => x.TEMP_PRODUCTID == productCollateral.productId);
                 var collateralInfo = this.context.TBL_COLLATERAL_TYPE.FirstOrDefault(x => x.COLLATERALTYPEID == productCollateral.collateralTypeId);
                 var audit = new TBL_AUDIT
                 {
@@ -158,7 +158,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public void ApproveProductCollateral(int productId, UserInfo user)
         {
-            var productCollateralTypeModel = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(x => x.PRODUCTID == productId
+            var productCollateralTypeModel = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(x => x.TEMP_PRODUCTID == productId
                                                                         && x.DELETED == false
                                                                         && x.ISCURRENT == true);
             var productToUpdate = context.TBL_PRODUCT.Find(productId);
@@ -167,7 +167,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             {
                 var productCollateralType = new TBL_PRODUCT_COLLATERALTYPE()
                 {
-                    PRODUCTID = p.PRODUCTID,
+                    PRODUCTID = p.TEMP_PRODUCTID,
                     COMPANYID = p.COMPANYID,
                     CREATEDBY = p.CREATEDBY,
                     DATETIMECREATED = _genSetup.GetApplicationDate(),
@@ -234,11 +234,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
         public IEnumerable<ProductCollateralTypeViewModel> GetMappedCollateralTypeByProduct(int productId)
         {
             var response = (from data in context.TBL_TEMP_PRODUCT_COLLATERALTYP
-                            where data.PRODUCTID == productId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
+                            where data.TEMP_PRODUCTID == productId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
                             select new ProductCollateralTypeViewModel()
                             {
                                 productCollateralId = data.PRODUCTCOLLATERALTYPEID,
-                                productId = (short)data.PRODUCTID,
+                                productId = (short)data.TEMP_PRODUCTID,
                                 collateralTypeId = data.COLLATERALTYPEID,
                                 collateralTypeName = data.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
                                 companyId = data.COMPANYID,

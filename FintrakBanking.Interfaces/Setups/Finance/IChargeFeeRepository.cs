@@ -19,6 +19,8 @@ namespace FintrakBanking.Interfaces.Setups.Finance
 
         IEnumerable<LookupViewModel> GetAllPostingType();
         IEnumerable<LookupViewModel> GetAllFeeType();
+        IEnumerable<LookupViewModel> GetAllCRMSFeeType();
+
         IEnumerable<LookupViewModel> GetAllChargeFeeDetailType();
         IEnumerable<LookupViewModel> GetAllChargeFeeDetailClass();
 

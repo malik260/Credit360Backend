@@ -1411,7 +1411,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model)
+        public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBureauViewModel model)
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId && c.CUSTOMERID == model.customerId).FirstOrDefault();
 
@@ -1421,7 +1421,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
+        public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBureauViewModel> model)
         {
             foreach (var item in model)
             {
@@ -1811,10 +1811,10 @@ namespace FintrakBanking.Repositories.Credit
                             accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                         })
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.firstName.ToLower() == searchString
-                        || x.lastName.ToLower() == searchString
-                        || x.middleName.ToLower() == searchString
-                        || x.customerCode.ToLower() == searchString
+                        || x.firstName.ToLower().StartsWith(searchString)
+                        || x.lastName.ToLower().StartsWith(searchString)
+                        || x.middleName.ToLower().StartsWith(searchString)
+                        || x.customerCode.ToLower().StartsWith(searchString)
                         )
                     ;
 
@@ -2654,7 +2654,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ExternalInitialization = true;
             workflow.StatusId = (short)ApprovalStatusEnum.Pending;
             workflow.Amount = model.amount;
-
+            
             workflow.LogActivity();
 
             context.SaveChanges();
