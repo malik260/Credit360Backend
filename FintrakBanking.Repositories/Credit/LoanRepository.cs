@@ -2427,7 +2427,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
                     {
-                        var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID && x.CUSTOMERID == loanRecord.CUSTOMERID).FirstOrDefault();
+                        var casa = context.TBL_CASA.Find(loanRecord.CASAACCOUNTID2);
 
                         var lienModel = new CasaLienViewModel
                         {
@@ -2489,9 +2489,7 @@ namespace FintrakBanking.Repositories.Credit
                     else
                     {
                         loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT;
-
                     }
-
                 }
 
                 loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
@@ -2507,7 +2505,9 @@ namespace FintrakBanking.Repositories.Credit
                 context.SaveChanges();
                 /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
                 var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
-                this.loanSchedule.AddLoanSchedule(loanId, loanScheduleModel, user.createdBy);
+
+                if (user.operationId == (int)OperationsEnum.TermLoanBooking)
+                    this.loanSchedule.AddLoanSchedule(loanId, loanScheduleModel, user.createdBy);
 
                 /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                 var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
