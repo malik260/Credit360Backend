@@ -24,7 +24,9 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = repo;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        #region DOCUMENT TEMPLATE DEPRECATED
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("credit-template")]
         public HttpResponseMessage GetCreditTemplate()
         {
@@ -187,6 +189,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        #endregion DOCUMENT TEMPLATE DEPRECATED
 
         #region DOCUMENT TEMPLATE SETUP
         [HttpGet]
@@ -498,12 +501,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("document-section/operation/{operationId}/section/{sectionId}")]
-        public HttpResponseMessage GetDocumentSection(int operationId, int sectionId)
+        [Route("document-section/operation/{operationId}/target/{targetId}/section/{sectionId}")]
+        public HttpResponseMessage GetDocumentSection(int operationId, int targetId, int sectionId)
         {
             try
             {
-                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId,operationId,sectionId);
+                LoadedDocumentSectionViewModel response = repo.GetDocumentSection(token.GetStaffId,operationId,targetId,sectionId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "", result = response });
             }
             catch (SecureException ex)

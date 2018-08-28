@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -17,7 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationDetailId, int companyId);
 
-        IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetails(int loanApplicationId, int companyId);
+        IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetailsById(int loanApplicationId, int companyId);
 
         IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailByLoanApplicationId(int loanApplicationId, int companyId);
 
@@ -45,6 +46,8 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsAwaitingCheckList(int companyId);
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
+
+        IQueryable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
 
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
 
@@ -88,5 +91,19 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CreditApplicationViewModel> CommitteeCreditApplications(int applicationType, int staffId);
 
         bool ValidateInvoiceDetails(ValidateNumberViewModel data);
+
+        List<LoanApplicationViewModel> GetLoanApplication(string searchQuery);
+
+        WorkflowResponse RerouteWorkflowTarget(ForwardViewModel model);
+
+        WorkflowResponse RouteWorkflowTarget(ForwardViewModel model);
+
+        List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId);
+
+        bool SaveCancelledApplcation(LoanApplicationViewModel data);
+
+        LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel data);
+
+        int GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data);
     }
 }

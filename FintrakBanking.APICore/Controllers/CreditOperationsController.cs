@@ -143,7 +143,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.SearchForLoan(searchQuery);
+              var data = loanRepo.SearchForLoan(searchQuery);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -184,11 +184,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("running-commercial-loan-search/")]
-        public HttpResponseMessage SearchRunningCommercialForLoans(string searchQuery)
+        public HttpResponseMessage SearchRunningCommercialAndFXLoans(string searchQuery)
         {
             try
             {
-                var data = loanRepo.SearchRunningCommercialForLoans(searchQuery);
+                var data = loanRepo.SearchRunningCommercialAndFXLoans(searchQuery);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

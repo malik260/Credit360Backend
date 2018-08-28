@@ -11,6 +11,7 @@ namespace FintrakBanking.Interfaces.Customer
     public interface ICustomerRepository
     {
         CustomerViewModels GetCustomer(int custormerId);
+        IEnumerable<CustomerViewModels> GetAllProspectiveCustomer();
         IEnumerable<CustomerViewModels> GetCustomerInGroupByGroupId(int groupId);
         IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLoanId(int loanApplicationId);
 
@@ -32,7 +33,7 @@ namespace FintrakBanking.Interfaces.Customer
 
         IEnumerable<CustomerViewModels> GetCustomerByTypeId(int customerTypeId);
 
-        IEnumerable<GroupCustomerMembersViewModel> GetCustomerAndType(int custormerId);     
+        IEnumerable<GroupCustomerMembersViewModel> GetCustomerAndType(int custormerId);
 
         dynamic GetCustomerRating(int custormerId);
 
@@ -134,6 +135,8 @@ namespace FintrakBanking.Interfaces.Customer
         #endregion
 
         IEnumerable<CustomerRelatedPartyViewModel> GetCustomerRelatedParty(int customerId);
-      bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity);
+        bool AddUpdateCustomerRelatedParty(CustomerRelatedPartyViewModel entity);
+        bool UpdatePropectToCustomer(int customerId, CustomerViewModels entity);
+        IEnumerable<CustomerRelatedDirectorViewModel> DirectorRelatedCustomer(string bvn);
     }
 }

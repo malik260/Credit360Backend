@@ -77,6 +77,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public string terms { get; set; }
         public string schedule { get; set; }
+        public bool securedByCollateral { get; set; }
+        public int? crmsCollateralTypeId { get; set; }
+
     }
 
     public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL

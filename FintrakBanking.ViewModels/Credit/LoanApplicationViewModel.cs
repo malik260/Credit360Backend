@@ -114,6 +114,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string responsiblePerson { get; set; }
         public DateTime? timeIn { get; set; }
         public DateTime? slaTime { get; set; }
+        public string cancellationReason { get; set; }
+
         public string tenorString
         {
             get
@@ -125,6 +127,10 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " months";
             }
         }
+
+        public int tempApplicationCancellationId { get; set; }
+        public IQueryable<string> staffName { get; set; }
+        public string comment { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -179,7 +185,7 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
-        public string customerType;
+        
 
         public LoanApplicationDetailViewModel()
         {
@@ -188,6 +194,16 @@ namespace FintrakBanking.ViewModels.Credit
             productFees = new List<ProductFeesViewModel>();
 
         }
+
+        public string firstName { get; set; }
+        public string middleName { get; set; }
+        public string lastName { get; set; }
+        public string customerCode { get; set; }
+        public string branchName { get; set; }
+        public string customerGroupName { get; set; }
+
+        public string customerType { get; set; }
+        public string customerAccountNumber { get; set; }
 
         public bool requireCollateral { get; set; }
 

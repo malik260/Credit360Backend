@@ -382,13 +382,24 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 }
             }
             catch  {
-                throw new SecureException("Could not verify this fixed deposit account number");
+                throw new APIErrorException(result.errorDesc);
             }
             return result;
         }
 
         public AccountCreationResponseMessageViewModel CreateForeignAccount(CreateAccountViewModel entity)
         {
+            if (USE_TWO_FACTOR_AUTHENTICATION)
+            {
+                if (entity.username == null || entity.passCode == null)
+                    throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+
+                var authenticated = twoFactorAuth.Authenticate(entity.username, entity.passCode);
+
+                if (authenticated == false)
+                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+            }
+
             AccountCreationResponseMessageViewModel module = null;
             AccountCreationRespones result = null;
             Task.Run(async () => result = await account.CreateAccount(entity)).GetAwaiter().GetResult();
@@ -424,6 +435,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     AddCustomTransactions(transactionList);
                     return true;
                 }
+                //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
+                //{
+                //    AddCustomTransactions(transactionList);
+                //    return true;
+                //}
                 else
                 {
                     throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
@@ -491,8 +507,11 @@ namespace FinTrakBanking.ThirdPartyIntegration
             var data = new List<CasaViewModel>();
             List<TBL_CASA> customerAcct = new List<TBL_CASA>();
 
-            Task.Run(async () => { data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode); })
-                .GetAwaiter().GetResult();
+            //Task.Run(async () => { data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode); })
+            //    .GetAwaiter().GetResult();
+
+
+            Task.Run(async () => data = await customer.GetCustomerAccountsBalanceByCustomerCode(customerCode)).GetAwaiter().GetResult();
 
             foreach (var item in data)
             {
@@ -644,7 +663,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             else
             {
 
-                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new APIErrorException("Core Banking API Error - " + result.Message.StatusCode + "" + result.Message.ReasonPhrase);
             }
         }
 

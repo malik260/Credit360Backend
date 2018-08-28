@@ -222,6 +222,34 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [Route("loan-application-detail-covenant/{applicationDetailId}")]
+        public HttpResponseMessage GetLoanApplicationDetailCovenantById(int applicationDetailId)
+        {
+            try
+            {
+                var data = repo.GetLoanApplicationDetailCovenantById(applicationDetailId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
         [Route("loan-schedule-category")]
         public HttpResponseMessage GetAllLoanScheduleCategory()
         {
@@ -351,7 +379,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 var data = repo.AddLoanBooking(entity);
                 if (data != "")
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The Loan booking was successful and and is waiting for approval.\r\n Loan Reference Number: " + data });
+                    if(entity.productTypeId ==(short)LoanProductTypeEnum.CommercialLoan 
+                        || entity.productTypeId == (short)LoanProductTypeEnum.TermLoan 
+                        || entity.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating 
+                        || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
+                    }
+
+                    if(entity.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+
+                    if (entity.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+
+
+                    //This is not allowed
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Unknown facility type booked.\r\n Facility Account Number: " + data });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -367,6 +411,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (APIErrorException ae)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ae.Message}" });
+            }
+            catch (TwoFactorAuthenticationException fa)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
             }
             catch (SecureException ex)
             {
@@ -1485,7 +1533,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             TokenDecryptionHelper token = new TokenDecryptionHelper();
             try
             {
-                var response = repo.GetAvailedLoanApplicationDetailById(token.GetCompanyId, applicationDetailId, loanBookingRequestId);
+                var response = repo.GetAvailedLoanApplicationDetailById(token.GetStaffId,token.GetCompanyId, applicationDetailId, loanBookingRequestId);
                 if (!response.Any())
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

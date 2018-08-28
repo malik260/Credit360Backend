@@ -405,7 +405,7 @@ namespace FintrakBanking.Repositories.Credit
                 principalAmount = loan.PRINCIPALAMOUNT,
                 currency = loan.TBL_CURRENCY.CURRENCYNAME,
                 loanReferenceNumber = loan.LOANREFERENCENUMBER,
-                effectiveDate = applicationDate,//DateTime.Now,
+                effectiveDate = applicationDate,
                 previousEffectiveDate = loan.EFFECTIVEDATE,
                 equityContribution = 0,
                 maintainTenor = true,

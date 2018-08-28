@@ -111,11 +111,17 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
-        public int? CASAACOUNTID { get; set; }
+        public int? CASAACCOUNTID { get; set; } //CASAACCOUNTID
+
+        public bool SECUREDBYCOLLATERAL { get; set; }
+
+        public int? CRMSCOLLATERALTYPEID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
+
+        public virtual TBL_CASA TBL_CASA1 { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 

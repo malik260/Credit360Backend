@@ -38,7 +38,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId);
         bool LoadDocumentTemplate(DocumentTemplateViewModel entity);
         bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity);
-        LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int sectionId);
+        LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId);
         List<DocumentTemplateViewModel> GetDocumentTemplates(int staffId, int operationId, int companyId);
 
 

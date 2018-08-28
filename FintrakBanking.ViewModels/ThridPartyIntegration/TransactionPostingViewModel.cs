@@ -55,6 +55,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string freeCodeEight  {get; set;}
         public string freeCodeNine  {get; set;}
         public string freeCodeTen { get; set; }
+        public string username { get; set; }
+        public string passCode { get; set; }
         public HttpResponseMessage response { get; set; }
 
     }
@@ -248,7 +250,9 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public decimal balance { get; set; }
         public string branch { get; set; }
         public decimal lienAmount { get; set; }
+        public bool isSuccess { get; set; }
         public HttpResponseMessage response { get; set; }
+        public string errorDesc { get; set; }
     }
 
     public class ResponseMessage

@@ -71,7 +71,7 @@
 
         // public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 
-        // public virtual TBL_BRANCH TBL_BRANCH { get; set; }
+        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         // public virtual TBL_CASA TBL_CASA { get; set; }
 
@@ -95,30 +95,3 @@
         public int? OPERATIONID { get; set; }
     }
 }
-/*DESC TBL_LMSR_APPLICATION
-Name                       Null     Type              
--------------------------- -------- ----------------- 
-LOANAPPLICATIONID          NOT NULL NUMBER(10)        
-APPLICATIONREFERENCENUMBER NOT NULL VARCHAR2(50 CHAR) 
-RELATEDREFERENCENUMBER              VARCHAR2(50 CHAR) 
-COMPANYID                  NOT NULL NUMBER(10)        
-CUSTOMERID                          NUMBER(10)        
-BRANCHID                   NOT NULL NUMBER(10)        
-CUSTOMERGROUPID                     NUMBER(10)        
-CREATEDBY                  NOT NULL NUMBER(10)        
-DATETIMECREATED            NOT NULL DATE              
-LASTUPDATEDBY                       NUMBER(10)        
-DATETIMEUPDATED                     DATE              
-DELETED                    NOT NULL NUMBER(10)        
-DELETEDBY                           NUMBER(10)        
-DATETIMEDELETED                     DATE              
-SYSTEMDATETIME             NOT NULL DATE              
-APPROVALSTATUSID           NOT NULL NUMBER(10)        
-APPLICATIONSTATUSID        NOT NULL NUMBER(10)        
-FINALAPPROVAL_LEVELID               NUMBER(10)        
-NEXTAPPLICATIONSTATUSID             NUMBER(10)        
-DISPUTED                   NOT NULL NUMBER(10)        
-REQUIRECOLLATERAL          NOT NULL NUMBER(10)        
-AVAILMENTDATE                       DATE              
-APPROVEDDATE                        DATE              
-APPLICATIONDATE                     DATE  */

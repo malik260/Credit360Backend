@@ -11,6 +11,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -675,7 +676,31 @@ namespace FintrakBanking.Repositories.Credit
 
         //    return details.ToList();
         //}
+        public IEnumerable<LookupViewModel> GetAllCRMSAllCollateralType(int companyid)
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.SecuredCollateralType || x.CRMSTYPEID == (int)RegulatoryTypeEnum.UnsecuredCollateralType && x.COMPANYID == companyid).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupName = x.DESCRIPTION
 
+            }).ToList();
+        }
+        public IEnumerable<LookupViewModel> GetAllCRMSSecuredCollateralType(int companyid)
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.SecuredCollateralType && x.COMPANYID==companyid).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
+        public IEnumerable<LookupViewModel> GetAllCRMSUnsecuredCollateralType(int companyid)
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.UnsecuredCollateralType && x.COMPANYID == companyid).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
         public LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId)
         {
             var details = new LoanApplicationDetailsViewModel();
@@ -705,7 +730,9 @@ namespace FintrakBanking.Repositories.Credit
                         statusId = x.d.STATUSID,
                         exchangeRate = x.d.EXCHANGERATE,
                         terms = x.d.REPAYMENTTERMS,
-                        schedule = x.d.REPAYMENTSCHEDULE
+                        schedule = x.d.REPAYMENTSCHEDULE,
+                        securedByCollateral = x.d.SECUREDBYCOLLATERAL,
+                        crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID
                     }).ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
@@ -1188,6 +1215,7 @@ namespace FintrakBanking.Repositories.Credit
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.applicationDetailId);
             detail.REPAYMENTTERMS = entity.terms;
             detail.REPAYMENTSCHEDULE = entity.schedule;
+            context.Entry(detail).State = System.Data.Entity.EntityState.Modified;
             context.SaveChanges();
             return context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == detail.LOANAPPLICATIONID && x.DELETED == false)
                 .Select(x => new RepaymentScheduleTermsViewModel
@@ -1197,6 +1225,8 @@ namespace FintrakBanking.Repositories.Credit
                     schedule = x.REPAYMENTSCHEDULE,
                     productCustomerName = x.TBL_PRODUCT.PRODUCTNAME + " -- " + x.TBL_CUSTOMER.FIRSTNAME + " " + x.TBL_CUSTOMER.MIDDLENAME + " " + x.TBL_CUSTOMER.LASTNAME
                 }).ToList();
+
+            //return new List<RepaymentScheduleTermsViewModel>();
         }
 
         public List<ProductLimitValidationViewModel> SaveProductLimitValidation(ProductLimitValidationViewModel entity)
@@ -1237,6 +1267,55 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return limits;
+        }
+        public async Task<bool> UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model)
+        {
+            bool output = false;
+            var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
+            LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
+            LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+
+            var auditRec = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffReliefUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Record Added For CRMS Collateral On Loan Detail '{model.applicationId}'",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.applicationId
+            };
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+
+
+                    this.audit.AddAuditTrail(auditRec);
+                    //end of Audit section -------------------------------
+
+
+                    output = await context.SaveChangesAsync() > 0;
+
+                 
+                    if (output)
+                    {
+                        trans.Commit();
+
+                        return output;
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+            }
         }
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId)
@@ -1319,7 +1398,7 @@ namespace FintrakBanking.Repositories.Credit
                    id = x.ab.a.COLLATERALBASICDETAILID,
                    collateralDetail = x.ab.a.COLLATERALDETAIL,
                    collateralValue = x.ab.a.COLLATERALVALUE,
-                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT,
+                   stampedToCoverAmount = x.ab.a.STAMPEDTOCOVERAMOUNT, 
                    applicationDetailId = (int)x.ab.a.LOANAPPLICATIONDETAILID,
                    productCustomerName = x.c.TBL_PRODUCT.PRODUCTNAME + " -- " + x.c.TBL_CUSTOMER.FIRSTNAME + " " + x.c.TBL_CUSTOMER.MIDDLENAME + " " + x.c.TBL_CUSTOMER.LASTNAME,
                    staffName = x.ab.b.FIRSTNAME + " " + x.ab.b.MIDDLENAME + " " + x.ab.b.LASTNAME,

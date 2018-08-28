@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var data = this.context.TBL_APPROVAL_GROUP.Find(GroupId);
             data.DELETED = true;
-            data.DELETEDBY = (int)user.staffId;
+            data.DELETEDBY = (int)user.createdBy;
             data.DATETIMEDELETED = _genSetup.GetApplicationDate();
 
             //Audit Section ---------------------------

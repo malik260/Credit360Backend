@@ -14,6 +14,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int operationTypeId { get; set; }
         public string operationTypeName { get; set; }
+        public bool required { get; set; }
     }
 
     public class LoanBulkInterestReviewViewModel : GeneralEntity
@@ -50,6 +51,9 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public double newRate { get; set; }
         public int aplicationDetailId { get; set; }
+        public int loanId { get; set; }
+        public string loanReferenceNumber { get; set; }
+        public DateTime valueDate { get; set; }
     }
 
     public class subAllocationViewModel : GeneralEntity

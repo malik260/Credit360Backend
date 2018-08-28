@@ -176,7 +176,66 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-secured-collateral-type")]
+        public HttpResponseMessage GetAllCRMSSecuredCollateralType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSSecuredCollateralType(token.GetCompanyId);
 
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-all-collateral-type")]
+        public HttpResponseMessage GetAllCRMSCollateralType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSAllCollateralType(token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-unsecured-collateral-type")]
+        public HttpResponseMessage GetAllCRMSUnsecuredCollateralType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSUnsecuredCollateralType(token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [Route("appraisal-memorandum/loan-detail-fees/{loanApplicationId}")]
         public HttpResponseMessage GetLoanDetailsFee(int loanApplicationId)
@@ -190,6 +249,36 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
+        }
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("save-collateral-type-crms")]
+        public async Task<HttpResponseMessage> UpdateApprovalRelief([FromBody] ApprovedLoanDetailViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                int applicationId = model.loanApplicationDetailId;
+                var data = await repo.UpdateLoadDetails(applicationId, model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
         }
 
         [HttpGet]
@@ -390,19 +479,19 @@ namespace FintrakBanking.APICore.Controllers
         #endregion MONITORING TRIGGERS
 
         [HttpPost]
-        [ClaimsAuthorization]
+        //[ClaimsAuthorization]
         [Route("repayment-schedule-terms")]
         public HttpResponseMessage SaveRepaymentScheduleAndTerms([FromBody] RepaymentScheduleTermsViewModel entity)
         {
-            try
-            {
+            //try
+            //{
                 List<RepaymentScheduleTermsViewModel> response = repo.SaveRepaymentScheduleAndTerms(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
         }
 
         [HttpPost]

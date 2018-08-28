@@ -254,13 +254,17 @@ namespace FintrakBanking.Common.Enum
         DocumentTemplateSectionRoleAdded = 227,
         DocumentTemplateSectionRoleUpdated = 228,
         DocumentTemplateSectionRoleDeleted = 229,
+        LoanRolledOver = 230,
+        GroupLoanSubAllocated = 231,
+        LoanPrePaid = 232,
+        LoanApplicationCancellation=242,
+
         CrmsRegulatorySetupAdded = 233,
         CrmsRegulatorySetupUpdated = 234,
         CrmsRegulatorySetupDeleted = 235,
         ApprovalReliefApproved = 243
-
     };
-    public enum RegulatoryTypeEnum
+   public enum RegulatoryTypeEnum
     {
         LoanType = 1,
         FeeType = 2,

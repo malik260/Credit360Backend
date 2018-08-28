@@ -175,4 +175,15 @@ namespace FintrakBanking.ViewModels.Customer
         public string propertyOriginalValue { get; set; }
         public string propertyCurrentValue { get; set; }
     }
-}
+        public class CustomerRelatedDirectorViewModel
+        {
+            public int customerId { get; set; }
+            public string customerName { get; set; }
+            public short? customerTypeId { get; set; }
+            public string customerTypeName { get; set; }
+            public short? directorTypeId { get; set; }
+            public string directorTypeName { get; set; }
+          //  public int customerTypeId { get; set; }
+          //  public string customerTypeName { get; set; }
+        }
+    }

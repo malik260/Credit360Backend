@@ -11,6 +11,7 @@ using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Common.Enum;
 using System.ComponentModel.Composition;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
@@ -20,17 +21,20 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository generalSetup;
         private IWorkflow workflow;
+        private IAdminRepository admin;
 
 
         public ApprovalGroupMappingRepository(FinTrakBankingContext _context,
                                                 IAuditTrailRepository _auditTrail,
                                                 IGeneralSetupRepository genSetup,
-                                                IWorkflow _workflow)
+                                                IWorkflow _workflow,
+                                                IAdminRepository _admin)
         {
             this.context = _context;
             this.generalSetup = genSetup;
             this.auditTrail = _auditTrail;
             this.workflow = _workflow;
+            this.admin = _admin;
         }
 
         private bool SaveAll()
@@ -40,123 +44,203 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public int AddApprovalGroupMapping(ApprovalGroupMappingViewModel model)
         {
-            var entity = new TBL_TEMP_APPROVAL_GRP_MAPPING
-            {
-                OPERATIONID = model.operationId,
-                GROUPID = model.groupId,
-                PRODUCTCLASSID = model.productClassId,
-                PRODUCTID = model.productId,
-                POSITION = model.position,
-                CREATEDBY = model.createdBy,
-                DATETIMECREATED = generalSetup.GetApplicationDate(),
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                OPERATION = "create"
-            };
+            var recordExist = context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.GROUPID == model.groupId && x.POSITION == model.position).Any();
+            if (recordExist)
+                throw new ConditionNotMetException("This operation has already been initiated and is apprival pending");
 
-            this.context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
-            if (this.context.SaveChanges() > 0)
+            if (admin.IsSuperAdmin(model.createdBy) == true)
             {
-                model.tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+                var entity = new TBL_APPROVAL_GROUP_MAPPING
+                {
+                    OPERATIONID = model.operationId,
+                    GROUPID = model.groupId,
+                    PRODUCTCLASSID = model.productClassId,
+                    PRODUCTID = model.productId,
+                    POSITION = model.position,
+
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = generalSetup.GetApplicationDate(),
+                    DELETED=false
+                };
+
+                this.context.TBL_APPROVAL_GROUP_MAPPING.Add(entity);
+
+                // Audit Section ---------------------------
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingAdded,
+                    STAFFID = (int)model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Added Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    SYSTEMDATETIME = DateTime.Now,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    TARGETID = entity.GROUPOPERATIONMAPPINGID
+                };
+                this.auditTrail.AddAuditTrail(audit);
+
+                var status = this.SaveAll();
+
+                if (status)
+                    return entity.GROUPOPERATIONMAPPINGID;
+                else
+                    return -1;
+            }
+            else
+            {
+
+                var entity = new TBL_TEMP_APPROVAL_GRP_MAPPING
+                {
+                    OPERATIONID = model.operationId,
+                    GROUPID = model.groupId,
+                    PRODUCTCLASSID = model.productClassId,
+                    PRODUCTID = model.productId,
+                    POSITION = model.position,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = generalSetup.GetApplicationDate(),
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    OPERATION = "create"
+                };
+
+                this.context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
+                if (this.context.SaveChanges() > 0)
+                {
+                    model.tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+                }
+
+
+                // Audit Section ---------------------------
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
+
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.tempGroupOperationMappingId;
+                workflow.Comment = $"New approval request for group operation mapping for Operation: {operationName} in Group: {groupName}";
+                workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowGroupModification;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingAdded,
+                    STAFFID = (int)model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Approval Group Mapping for Operation: {operationName} in Group: {groupName} was added and is going for approval",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    SYSTEMDATETIME = DateTime.Now,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    TARGETID = entity.GROUPOPERATIONMAPPINGID
+                };
+                this.auditTrail.AddAuditTrail(audit);
+
+                var status = this.SaveAll();
+
+                if (status)
+                    return entity.GROUPOPERATIONMAPPINGID;
+                else
+                    return -1;
             }
 
-
-            // Audit Section ---------------------------
-            var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
-            var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
-
-            workflow.StaffId = model.createdBy;
-            workflow.CompanyId = model.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = model.tempGroupOperationMappingId;
-            workflow.Comment = $"New approval request for group operation mapping for Operation: {operationName} in Group: {groupName}";
-            workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowGroupModification;
-            workflow.DeferredExecution = true;
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingAdded,
-                STAFFID = (int)model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                SYSTEMDATETIME = DateTime.Now,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                TARGETID = entity.GROUPOPERATIONMAPPINGID
-            };
-            this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
-            var status = this.SaveAll();
 
-            if (status)
-                return entity.GROUPOPERATIONMAPPINGID;
-            else
-                return -1;
         }
 
         public bool DeleteApprovalGroupMapping(int operationMappingId, UserInfo model)
         {
             int tempGroupOperationMappingId = 0;
             var data = this.context.TBL_APPROVAL_GROUP_MAPPING.Find(operationMappingId);
+            var dataExist = context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && x.GROUPID == data.GROUPID && x.OPERATIONID == data.OPERATIONID).Any();
+
+            if (dataExist)
+                throw new ConditionNotMetException("This operation has already been initiated and is apprival pending");
 
             if (data == null)
                 return false;
-
-            var entity = new TBL_TEMP_APPROVAL_GRP_MAPPING
+            if (admin.IsSuperAdmin(model.createdBy) == true)
             {
-                OPERATIONID = data.OPERATIONID,
-                GROUPID = data.GROUPID,
-                PRODUCTCLASSID = data.PRODUCTCLASSID,
-                PRODUCTID = data.PRODUCTID,
-                POSITION = data.POSITION,
-                CREATEDBY = model.createdBy,
-                DATETIMECREATED = generalSetup.GetApplicationDate(),
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                GROUPOPERATIONMAPPINGID = data.GROUPOPERATIONMAPPINGID,
-                OPERATION="delete"
-               
-            };
+                data.DELETEDBY = model.createdBy;
+                data.DATETIMEDELETED = generalSetup.GetApplicationDate();
+                data.DELETED = true;
 
-            context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
-            if (this.context.SaveChanges() > 0)
-            {
-                tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == data.OPERATIONID).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == data.GROUPID).GROUPNAME;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted,
+                    STAFFID = (int)model.createdBy,
+                    BRANCHID = (short)model.BranchId,
+                    DETAIL = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    SYSTEMDATETIME = DateTime.Now,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    TARGETID = data.GROUPOPERATIONMAPPINGID,
+
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
             }
-
-            // Audit Section ---------------------------
-            var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == entity.OPERATIONID).OPERATIONNAME;
-            var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == entity.GROUPID).GROUPNAME;
-
-            workflow.StaffId = model.staffId;
-            workflow.CompanyId = model.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = tempGroupOperationMappingId;
-            workflow.Comment = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}";
-            workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowGroupModification;
-            workflow.DeferredExecution = true;
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
-
-            var audit = new TBL_AUDIT
+            else
             {
-                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted,
-                STAFFID = (int)model.staffId,
-                BRANCHID = (short)model.BranchId,
-                DETAIL = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                SYSTEMDATETIME = DateTime.Now,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                TARGETID = entity.GROUPOPERATIONMAPPINGID,
+                var entity = new TBL_TEMP_APPROVAL_GRP_MAPPING
+                {
+                    OPERATIONID = data.OPERATIONID,
+                    GROUPID = data.GROUPID,
+                    PRODUCTCLASSID = data.PRODUCTCLASSID,
+                    PRODUCTID = data.PRODUCTID,
+                    POSITION = data.POSITION,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = generalSetup.GetApplicationDate(),
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    GROUPOPERATIONMAPPINGID = data.GROUPOPERATIONMAPPINGID,
+                    OPERATION = "delete"
 
-            };
+                };
 
-            this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
+                context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
+                if (this.context.SaveChanges() > 0)
+                {
+                    tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+                }
 
-           // context.TBL_TEMP_APPROVAL_GROUP_MAPPING.Remove(entity);
+                // Audit Section ---------------------------
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == entity.OPERATIONID).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == entity.GROUPID).GROUPNAME;
+
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = tempGroupOperationMappingId;
+                workflow.Comment = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}";
+                workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowGroupModification;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted,
+                    STAFFID = (int)model.createdBy,
+                    BRANCHID = (short)model.BranchId,
+                    DETAIL = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    SYSTEMDATETIME = DateTime.Now,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    TARGETID = entity.GROUPOPERATIONMAPPINGID,
+
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
 
             return this.context.SaveChanges() > 0;
         }
@@ -222,55 +306,88 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (data == null)
                 return false;
 
-            var entity = new TBL_TEMP_APPROVAL_GRP_MAPPING
+            if (admin.IsSuperAdmin(model.staffId) == true)
             {
-                OPERATIONID = model.operationId,
-                GROUPID = model.groupId,
-                PRODUCTCLASSID = model.productClassId,
-                PRODUCTID = model.productId,
-                POSITION = model.position,
-                CREATEDBY = model.createdBy,
-                DATETIMECREATED = generalSetup.GetApplicationDate(),
-                APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                GROUPOPERATIONMAPPINGID = operationMappingId,
-                OPERATION="update"
-            };
+                data.OPERATIONID = model.operationId;
+                data.GROUPID = model.groupId;
+                data.PRODUCTCLASSID = model.productClassId;
+                data.PRODUCTID = model.productId;
+                data.POSITION = model.position;
+                data.CREATEDBY = model.createdBy;
+                data.DATETIMECREATED = generalSetup.GetApplicationDate();
+                data.GROUPOPERATIONMAPPINGID = operationMappingId;
 
-            context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
-            if (this.context.SaveChanges() > 0)
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingUpdated,
+                    STAFFID = (int)model.lastUpdatedBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $" Approval Group Mapping for Operation: {operationName} in Group: {groupName} was updated by a super-admin",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    SYSTEMDATETIME = DateTime.Now,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    TARGETID = data.GROUPOPERATIONMAPPINGID
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
+            else
             {
-                model.tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+                var entity = new TBL_TEMP_APPROVAL_GRP_MAPPING
+                {
+                    OPERATIONID = model.operationId,
+                    GROUPID = model.groupId,
+                    PRODUCTCLASSID = model.productClassId,
+                    PRODUCTID = model.productId,
+                    POSITION = model.position,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = generalSetup.GetApplicationDate(),
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    GROUPOPERATIONMAPPINGID = operationMappingId,
+                    OPERATION = "update"
+                };
+
+                context.TBL_TEMP_APPROVAL_GRP_MAPPING.Add(entity);
+                if (this.context.SaveChanges() > 0)
+                {
+                    model.tempGroupOperationMappingId = entity.TEMPGROUPOPERATIONMAPPINGID;
+                }
+
+                // Audit Section ---------------------------
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
+
+                workflow.StaffId = model.createdBy;
+                workflow.CompanyId = model.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = model.tempGroupOperationMappingId;
+                workflow.Comment = $"Update approval request for group operation mapping for Operation: {operationName} in Group: {groupName}";
+                workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowGroupModification;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingUpdated,
+                    STAFFID = (int)model.lastUpdatedBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Updated Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    SYSTEMDATETIME = DateTime.Now,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    TARGETID = entity.GROUPOPERATIONMAPPINGID
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+                //end of Audit section -------------------------------
             }
 
-            // Audit Section ---------------------------
-            var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
-            var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
-
-            workflow.StaffId = model.createdBy;
-            workflow.CompanyId = model.companyId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-            workflow.TargetId = model.tempGroupOperationMappingId;
-            workflow.Comment = $"Update approval request for group operation mapping for Operation: {operationName} in Group: {groupName}";
-            workflow.OperationId = (int)OperationsEnum.ApprovalWorkflowGroupModification;
-            workflow.DeferredExecution = true;
-            workflow.ExternalInitialization = true;
-            workflow.LogActivity();
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingUpdated,
-                STAFFID = (int)model.lastUpdatedBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Updated Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                SYSTEMDATETIME = DateTime.Now,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                TARGETID = entity.GROUPOPERATIONMAPPINGID
-            };
-
-            this.auditTrail.AddAuditTrail(audit);
-            //end of Audit section -------------------------------
 
             return this.context.SaveChanges() > 0;
         }
@@ -321,30 +438,57 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         private void UpdateMainApprovalGroupMapping(ApprovalGroupMappingViewModel ApprovalModel, short status)
         {
-            var data = this.context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x=>x.TEMPGROUPOPERATIONMAPPINGID==ApprovalModel.tempGroupOperationMappingId).Select(x=>x).FirstOrDefault();
+            var data = this.context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x => x.TEMPGROUPOPERATIONMAPPINGID == ApprovalModel.tempGroupOperationMappingId).Select(x => x).FirstOrDefault();
             if (data != null)
             {
-                if (data.OPERATION=="create")
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == data.OPERATIONID).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == data.GROUPID).GROUPNAME;
+
+                var audit = new TBL_AUDIT();
+
+
+                if (data.OPERATION == "create")
                 {
                     CreateApprovalGroup(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingAdded;
+                    audit.DETAIL = $"Approval Group Mapping for Operation: {operationName} in Group: {groupName} is added successfully";
+
                 }
                 else if (data.OPERATION == "update")
                 {
                     UpdateApprovalGroup(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingUpdated;
+                    audit.DETAIL = $"Approval Group Mapping for Operation: {operationName} in Group: {groupName} is updated successfully";
+
                 }
                 else if (data.OPERATION == "delete")
                 {
                     DeleteApprovalGroup(data);
+
+                    audit.AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted;
+                    audit.DETAIL = $"Approval Group Mapping for Operation: {operationName} in Group: {groupName} is delete successfully";
+
                 }
 
                 UpdateTempApprovalGroup(ApprovalModel, status);
 
+                audit.STAFFID = ApprovalModel.createdBy;
+                audit.BRANCHID = (short)ApprovalModel.userBranchId;
+                audit.IPADDRESS = ApprovalModel.userIPAddress;
+                audit.URL = ApprovalModel.applicationUrl;
+                audit.APPLICATIONDATE = generalSetup.GetApplicationDate();
+                audit.SYSTEMDATETIME = DateTime.Now;
+                audit.TARGETID = ApprovalModel.groupOperationMappingId;
+
+                context.TBL_AUDIT.Add(audit);
             }
         }
 
         private void CreateApprovalGroup(TBL_TEMP_APPROVAL_GRP_MAPPING data)
         {
-          var updateData =  context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == data.OPERATIONID && x.GROUPID == data.GROUPID).Select(x =>x).FirstOrDefault();
+            var updateData = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == data.OPERATIONID && x.GROUPID == data.GROUPID).Select(x => x).FirstOrDefault();
             if (updateData != null)
             {
                 updateData.DELETED = false;
@@ -370,9 +514,9 @@ namespace FintrakBanking.Repositories.Setups.Approval
         }
         private void UpdateApprovalGroup(TBL_TEMP_APPROVAL_GRP_MAPPING data)
         {
-          var updateData=  context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.GROUPOPERATIONMAPPINGID == data.GROUPOPERATIONMAPPINGID).Select(x => x).FirstOrDefault();
+            var updateData = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.GROUPOPERATIONMAPPINGID == data.GROUPOPERATIONMAPPINGID).Select(x => x).FirstOrDefault();
 
-            if (updateData!=null)
+            if (updateData != null)
             {
                 updateData.OPERATIONID = data.OPERATIONID;
                 updateData.GROUPID = data.GROUPID;
@@ -399,7 +543,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         private void UpdateTempApprovalGroup(ApprovalGroupMappingViewModel data, short status)
         {
             var update = context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x => x.TEMPGROUPOPERATIONMAPPINGID == data.tempGroupOperationMappingId).Select(x => x).FirstOrDefault();
-            if (update!=null)
+            if (update != null)
             {
                 update.APPROVALSTATUSID = status;
             }
@@ -417,10 +561,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                      && atrail.RESPONSESTAFFID == null
                              select new ApprovalGroupMappingViewModel
                              {
-                                 tempGroupOperationMappingId=x.TEMPGROUPOPERATIONMAPPINGID,
-                                  groupName = context.TBL_APPROVAL_GROUP.Where(a => a.GROUPID == x.GROUPID).Select(a => a.GROUPNAME).FirstOrDefault(),
-                                  operationName = context.TBL_OPERATIONS.Where(a => a.OPERATIONID == x.OPERATIONID).Select(a => a.OPERATIONNAME).FirstOrDefault(),
-                                  operation = x.OPERATION
+                                 tempGroupOperationMappingId = x.TEMPGROUPOPERATIONMAPPINGID,
+                                 groupName = context.TBL_APPROVAL_GROUP.Where(a => a.GROUPID == x.GROUPID).Select(a => a.GROUPNAME).FirstOrDefault(),
+                                 operationName = context.TBL_OPERATIONS.Where(a => a.OPERATIONID == x.OPERATIONID).Select(a => a.OPERATIONNAME).FirstOrDefault(),
+                                 operation = x.OPERATION
                              }).ToList();
 
             return insurance;

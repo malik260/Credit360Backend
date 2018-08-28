@@ -466,6 +466,7 @@
                 //TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+                string responseJson = "";
 
                 try
                 {
@@ -558,6 +559,8 @@
                         };
                     }
 
+                    responseJson = await response.Content.ReadAsStringAsync();
+
                     return responseMsg;
                 }
                 catch (Exception ex)
@@ -581,7 +584,7 @@
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = objData,
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = responseModel.webRequestStatus,
+                        RESPONSEMESSAGE = responseJson,
                     };
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
 

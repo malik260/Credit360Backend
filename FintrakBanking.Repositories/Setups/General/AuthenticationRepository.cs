@@ -28,8 +28,6 @@ namespace FintrakBanking.Repositories.Setups.General
             profile_Setting = _context.TBL_PROFILE_SETTING.FirstOrDefault();
         }
 
-
-
         public async Task<bool> CreateUser(UserViewModel user)
         {
             //if (user.createdBy != null)

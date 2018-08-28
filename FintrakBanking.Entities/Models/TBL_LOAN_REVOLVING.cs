@@ -154,6 +154,11 @@ namespace FintrakBanking.Entities.Models
 
         public string FIELD10 { get; set; }
 
+        public string CRMSCODE { get; set; }
+
+        public DateTime? CRMSDATE { get; set; }
+
+        public int? LOAN_BOOKING_REQUESTID { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

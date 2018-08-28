@@ -21,6 +21,7 @@ using FintrakBanking.Common.CustomException;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using FintrakBanking.Interfaces.Setups.Finance;
+using System.Text.RegularExpressions;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -152,7 +153,7 @@ namespace FintrakBanking.Repositories.Credit
                         middleName = director.MIDDLENAME,
                         creditBureauCount = directorCount,
                     };
-                    allCorporate.Add(shareholdersData);
+                    if(directorCount >0)allCorporate.Add(shareholdersData);
                 }
             }
             if (isExternal)
@@ -164,16 +165,16 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         try
                         {
-                            integration.AddCustomerAccounts(item.customerCode);
+                            var i = integration.AddCustomerAccounts(item.customerCode);
                         }
-                        catch(APIErrorException ex)
+                        catch (APIErrorException ex)
                         {
                             return allCorporate;
                             //throw new APIErrorException(ex.Message);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            throw ex; // new SecureException(ex.Message);
+                            return allCorporate;  //throw ex; // new SecureException(ex.Message);
                         }
                     }
                 }
@@ -592,6 +593,20 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {
+                            JObject json = JObject.Parse(searchResponse.SearchResult);
+                            if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
+                            {
+                                string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
+                                errorCode.Replace("{", string.Empty);
+                                errorCode.Replace("}", string.Empty);
+                                var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
+                                if (errorLog.Any())
+                                {
+                                    searchResponse.SearchResult = errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: "+ errorCode;
+                                    searchResponse.SearchCompleted = (int)SearchCompletedStatusEnum.SearchError;
+                                    searchResponse.errorOccured = true;
+                                }
+                            }
                             return searchResponse;
                         }
                         else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
