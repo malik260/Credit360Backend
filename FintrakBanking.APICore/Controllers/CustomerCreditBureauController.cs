@@ -142,7 +142,7 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("loan/customer/credit-bureau-charge")]
-        public HttpResponseMessage AddCustomerCreditBureauCharge(LoanCreditBereauViewModel model)
+        public HttpResponseMessage AddCustomerCreditBureauCharge(LoanCreditBureauViewModel model)
         {
             try
             {
@@ -174,7 +174,7 @@ namespace FintrakBanking.APICore.Controllers
 
        [HttpPut] [ClaimsAuthorization]
         [Route("credit-bureau-customer-report-status/{status}")]
-        public HttpResponseMessage UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel entity)
+        public HttpResponseMessage UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBureauViewModel entity)
         {
             try
             {
@@ -206,7 +206,7 @@ namespace FintrakBanking.APICore.Controllers
 
        [HttpPut] [ClaimsAuthorization]
         [Route("multiple-credit-bureau-customer-report-status/{status}")]
-        public HttpResponseMessage UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
+        public HttpResponseMessage UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBureauViewModel> model)
         {
             try
             {
@@ -265,7 +265,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
 
-                var loanCreditBureauModel = new LoanCreditBereauViewModel();
+                var loanCreditBureauModel = new LoanCreditBureauViewModel();
 
                 var companyDirectorId = 0;
                 if(provider.FormData["companyDirectorId"] != null && provider.FormData["companyDirectorId"] != "null") companyDirectorId = Convert.ToInt32(provider.FormData["companyDirectorId"]);

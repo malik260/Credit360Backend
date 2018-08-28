@@ -270,7 +270,7 @@ namespace FintrakBanking.ViewModels.Credit
         public TraderLoanViewModel traderLoan { get; set; }
         public List<ProductFeesViewModel> productFees { get; set; }
         public BondsAndGuranty bondDetails { get; set; }
-        public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
+        public IEnumerable<LoanCreditBureauViewModel> LoanCreditBereauReport { get; set; }
         public string sectorName { get; set; }
         public string productClass { get; set; }
         public string proposedTenorString
@@ -281,7 +281,7 @@ namespace FintrakBanking.ViewModels.Credit
                 if (proposedTenor < 15) return proposedTenor.ToString() + units;
                 var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
-                return months.ToString() + " months";
+                return months.ToString() + " " + units;
             }
         }
         public string approvedTenorString
@@ -292,7 +292,7 @@ namespace FintrakBanking.ViewModels.Credit
                 if (approvedTenor < 15) return approvedTenor.ToString() + units;
                 var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
-                return months.ToString() + " months";
+                return months.ToString() + " " + units;
             }
         }
     }
@@ -605,6 +605,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isBusiness { get; set; }
         public float? interestRateConcession { get; set; }
         public float? feeRateConcession { get; set; }
+        public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
     }
 
     public class CreditApplicationViewModel
@@ -621,5 +622,5 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanApplicationDatailViewModel> details { get; set; }
         public string customerCode { get; set; }
     }
-
+    
 }

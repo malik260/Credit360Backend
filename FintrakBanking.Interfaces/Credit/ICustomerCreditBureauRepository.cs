@@ -15,18 +15,18 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId, bool isExternal);
 
         bool VerifyCustomerValidCreditBureau(int customerId);
-        int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity);
-        int AddCustomerCreditBureauUpload(LoanCreditBereauViewModel entity, LoanDocumentViewModel docModel, byte[] file);
+        int AddCustomerCreditBureauCharge(LoanCreditBureauViewModel entity);
+        int AddCustomerCreditBureauUpload(LoanCreditBureauViewModel entity, LoanDocumentViewModel docModel, byte[] file);
 
-        bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model);
+        bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBureauViewModel model);
 
-        bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model);
+        bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBureauViewModel> model);
 
         IEnumerable<CreditBereauViewModel> GetCreditBureauInformation();
 
         IEnumerable<CRCBureauFacilityViewModel> GetCRCBureauFacilities();
 
-        List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId);
+        List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId);
 
         #endregion
 

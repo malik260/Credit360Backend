@@ -47,6 +47,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+
         public int tenorLeft { get; set; }
 
         public string customerType { get; set; }
@@ -87,7 +88,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string RelatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
-        public int tenorUsed { get { return (DateTime.Now - this.effectiveDate).Days; } }
+        public int tenorUsed { get; set; }
         public short ? principalFrequencyTypeId { get; set; }
         public short ? interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
@@ -566,6 +567,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime requestDate { get; set; }
         public string requestedBy { get; set; }
         public short requestOperationId { get; set; }
+        public decimal amountDisbursed { get; set; }
         public int loanBookingRequestId { get; set; }
         public string purpose { get; set; }
         //......Loan Relational Table View Mapping Models..............//
@@ -578,6 +580,7 @@ namespace FintrakBanking.ViewModels.Credit
         public CustomerCompanyInfomationViewModels companyInformation { get; set; }
         public List<CamDocumentViewModel> camDocuments { get; set; }
         public short? productClassProcessId { get; set; }
+        public bool undergoingConcession { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

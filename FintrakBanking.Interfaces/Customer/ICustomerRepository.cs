@@ -120,7 +120,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool ValidateModifiedPhoneRecord(int customerId);
         #endregion
         IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId);
-        bool GoForApproval(ApprovalViewModel entity);
+        int GoForApproval(ApprovalViewModel entity);
 
         #region Customer Temporary Information 
         CustomerViewModels GetSingleCustomerGeneralInfoByCustomerId(int customerId, int targetId);

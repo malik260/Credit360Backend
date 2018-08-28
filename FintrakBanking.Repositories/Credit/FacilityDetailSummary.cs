@@ -650,7 +650,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = cur.CURRENCYNAME,
                                    productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
-                                   //   RelatedloanReferenceNumber = a.re,
+                                   lastRestructureDate=a.LASTRESTRUCTUREDATE,
                                    ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
                                    approvedByName = context.TBL_STAFF.Where(x => x.STAFFID == a.APPROVEDBY).Select(x => x.FIRSTNAME + "" + x.LASTNAME).FirstOrDefault(),
                                    approvedComment = a.APPROVERCOMMENT,
@@ -718,6 +718,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
                                    c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -736,7 +737,8 @@ namespace FintrakBanking.Repositories.Credit
                                      //  productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = context.TBL_PRODUCT.Where(x=>x.PRODUCTID==a.PRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
-                                       loanSystemTypeId = a.LOANSYSTEMTYPEID
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                       outstandingPrincipal = a.OUTSTANDINGPRINCIPAL
 
                                    });
             return allFilteredLoan.ToList();
@@ -773,6 +775,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loadArchiveId = a.LOANARCHIVEID,
                                        loanId = a.LOANID,
                                      //  archiveCode =a.ARCHIVEBATCHCODE,
+                                     lastRestructureDate = a.LASTRESTRUCTUREDATE,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -820,7 +823,7 @@ namespace FintrakBanking.Repositories.Credit
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
-                                       loanSystemTypeId = a.LOANSYSTEMTYPEID
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    });
             return allFilteredLoan.ToList();
         }
@@ -872,7 +875,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                       loanSystemTypeId = a.LOANSYSTEMTYPEID
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    });
             return allFilteredLoan.ToList();
         }

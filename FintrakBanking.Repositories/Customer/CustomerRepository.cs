@@ -3804,7 +3804,7 @@ namespace FintrakBanking.Repositories.Customer
 
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.CustomerInformationApproval;
             entity.externalInitialization = false;
@@ -3814,14 +3814,26 @@ namespace FintrakBanking.Repositories.Customer
                 {
                     workflow.StaffId = entity.staffId;
                     workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved)
-                        ? (short)ApprovalStatusEnum.Processing
-                        : (short)entity.approvalStatusId;
+                    workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
                     workflow.TargetId = entity.targetId;
                     workflow.Comment = entity.comment;
                     workflow.OperationId = (int)OperationsEnum.CustomerInformationApproval;
 
                     workflow.LogActivity();
+
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var mod = context.TBL_CUSTOMER_MODIFICATION.Find(entity.targetId);
+                        if (mod != null)
+                        {
+                            var pp = mod.MODIFICATIONTYPEID;
+                            UpdateCustomerInformationDisapproval(mod.MODIFICATIONTYPEID, entity.targetId);
+                            mod.APPROVALCOMPLETED = true;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return 2;
+                        }
+                    }
 
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
@@ -3832,14 +3844,14 @@ namespace FintrakBanking.Repositories.Customer
                             trans.Commit();
                         }
 
-                        return true;
+                        return 1;
                     }
                     else
                     {
                         trans.Commit();
                     }
 
-                    return false;
+                    return 0;
                 }
                 catch (Exception ex)
                 {
@@ -4517,6 +4529,94 @@ namespace FintrakBanking.Repositories.Customer
             //end of Audit section -------------------------------
 
             return context.SaveChanges() > 0;
+        }
+
+        private void UpdateCustomerInformationDisapproval(int modificationTypeId, int targetId)
+        {
+            if (modificationTypeId == (int)CustomerInformationTrackerEnum.General_Information)
+            {
+                var temp = context.TBL_TEMP_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == targetId);
+                if (temp != null)
+                {
+                    temp.ISCURRENT = false;
+                    temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                }
+            }
+            else if (modificationTypeId == (int)CustomerInformationTrackerEnum.Corporate_Information)
+            {
+                var temp = context.TBL_TEMP_CUSTOMER_COMPANYINFO.FirstOrDefault(x => x.CUSTOMERID == targetId);
+                if (temp != null)
+                {
+                    temp.ISCURRENT = false;
+                    temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                }
+            }
+            else if (modificationTypeId == (int)CustomerInformationTrackerEnum.Address_Addition ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Address_Modification)
+            {
+                var temp = context.TBL_TEMP_CUSTOMER_ADDRESS.FirstOrDefault(x => x.TEMPADDRESSID == targetId);
+                if (temp != null)
+                {
+                    temp.ISCURRENT = false;
+                    temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                }
+            }
+            else if (modificationTypeId == (int)CustomerInformationTrackerEnum.Phone_Number_Addition ||
+                    modificationTypeId == (int)CustomerInformationTrackerEnum.Phone_Number_Modification)
+            {
+                var temp = context.TBL_TEMP_CUSTOMER_PHONCONTACT.FirstOrDefault(x => x.TEMPPHONECONTACTID == targetId);
+                if (temp != null)
+                {
+                    temp.ISCURRENT = false;
+                    temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                }
+            }
+            else if (modificationTypeId == (int)CustomerInformationTrackerEnum.Employement_History_Addition ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Employment_History_Modification)
+            {
+                var temp = context.TBL_TEMP_CUSTOMEREMPLOYMENT.FirstOrDefault(x => x.TEMPPLACEOFWORKID == targetId);
+                if (temp != null)
+                {
+                    temp.ISCURRENT = false;
+                    temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                }
+            }
+            else if (modificationTypeId == (int)CustomerInformationTrackerEnum.Next_of_Kin_Modification ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Next_of_Kin_Addition)
+            {
+                var temp = context.TBL_TEMP_CUSTOMER_NEXTOFKIN.FirstOrDefault(x => x.TEMPNEXTOFKINID == targetId);
+                if (temp != null)
+                {
+                    temp.ISCURRENT = false;
+                    temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                }
+            }
+            else if (modificationTypeId == (int)CustomerInformationTrackerEnum.Client_Addition ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Client_Modification ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Suplier_Modification ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Supplier_Addition)
+            {
+                var temp = context.TBL_TEMP_CUST_CLIENT_SUPPLIER.FirstOrDefault(x => x.TEMPCLIENT_SUPPLIERID == targetId);
+                if (temp != null)
+                {
+                    temp.ISCURRENT = false;
+                    temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                }
+            }
+            else if (modificationTypeId == (int)CustomerInformationTrackerEnum.Director_Modification ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Director_Addition ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Shareholder_Modification ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Shareholder_Addition ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Signatory_Adition ||
+                     modificationTypeId == (int)CustomerInformationTrackerEnum.Signatory_Modification)
+            {
+                var temp = context.TBL_TEMP_CUSTOMER_DIRECTOR.FirstOrDefault(x => x.TEMPCOMPANYDIRECTORID == targetId);
+                if (temp != null)
+                {
+                    temp.ISCURRENT = false;
+                    temp.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                }
+            }
         }
 
         public IEnumerable<LookupViewModel> GetAllCRMSLegalStatus()
