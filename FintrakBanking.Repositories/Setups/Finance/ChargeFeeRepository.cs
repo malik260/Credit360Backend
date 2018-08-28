@@ -200,7 +200,8 @@ namespace FintrakBanking.Repositories.Setups.Finance
                             ISCURRENT = true,
                             TBL_TEMP_CHARGE_FEE_DETAIL = tempFeeDetail,
                             DELETED = false,
-                            ISUPDATESTATUS = false
+                            ISUPDATESTATUS = false,
+                            CRMSREGULATORYID = model.crmsRegulatoryId,
                         };
                         context.TBL_TEMP_CHARGE_FEE.Add(temChargeFee);
                     }
@@ -273,7 +274,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             {
                 return false;
             }
-
+            data.CRMSREGULATORYID = model.crmsRegulatoryId;
             data.CHARGEFEENAME = model.chargeName;
             data.FEEINTERVALID = model.frequencyTypeId;
             data.PRODUCTTYPEID = model.productTypeId;
@@ -330,7 +331,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
             };
             this.auditTrail.AddAuditTrail(audit);
             // End of Audit Section ---------------------
-
+             
             return context.SaveChanges() != 0;
         }
         public IEnumerable<ChargeFeeViewModel> GetChargeFeeAwaitingApprovals(int staffId, int companyId)
@@ -346,6 +347,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                           && ids.Contains((int)t.TOAPPROVALLEVELID)
                           select new ChargeFeeViewModel
                           {
+                              crmsRegulatoryId = a.CRMSREGULATORYID,
                               chargeFeeId = a.TEMPCHARGEFEEID,
                               chargeName = a.CHARGEFEENAME,
                               frequencyTypeId = a.FEEINTERVALID,
@@ -447,6 +449,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     targetCharge.FEETYPEID = tempCharge.FEETYPEID;
                     targetCharge.RECURRING = tempCharge.RECURRING;
                     targetCharge.TBL_CHARGE_FEE_DETAIL = details;
+                    targetCharge.CRMSREGULATORYID = tempCharge.CRMSREGULATORYID;
                 };
             }
             else
@@ -469,7 +472,9 @@ namespace FintrakBanking.Repositories.Setups.Finance
                     COMPANYID = tempCharge.COMPANYID,
                     CREATEDBY = (int)tempCharge.CREATEDBY,
                     DATETIMECREATED = general.GetApplicationDate(),
-                    TBL_CHARGE_FEE_DETAIL = details
+                    TBL_CHARGE_FEE_DETAIL = details,
+                    CRMSREGULATORYID = tempCharge.CRMSREGULATORYID,
+                    
                 };
                 context.TBL_CHARGE_FEE.Add(targetCharge);
             }
@@ -552,7 +557,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                         }
                         context.SaveChanges();
                         trans.Commit();
-                    }
+                    } 
 
                     return false;
                 }
@@ -566,7 +571,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public IEnumerable<ChargeFeeViewModel> GetAllChargeFee()
         {
-            return this.context.TBL_CHARGE_FEE.Where(x => x.DELETED == false).Select(x => new ChargeFeeViewModel
+            var data = this.context.TBL_CHARGE_FEE.Where(x => x.DELETED == false).Select(x => new ChargeFeeViewModel
             {
                 chargeFeeId = x.CHARGEFEEID,
                 chargeName = x.CHARGEFEENAME,
@@ -584,36 +589,41 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 amount = x.AMOUNT,
                 rate = x.RATE,
                 feeTypeId = x.FEETYPEID,
-                recurring = (bool)x.RECURRING,
+               recurring = (bool)x.RECURRING,
+                crmsRegulatoryId = x.CRMSREGULATORYID,
                 ranges = context.TBL_CHARGE_RANGE.Where(r => r.CHARGEFEEID == x.CHARGEFEEID)
-                    .Select(r => new ChargeRangeViewModel
-                    {
-                        chargeRangeId = r.CHARGERANGEID,
-                        minimum = r.MINIMUM,
-                        maximum = r.MAXIMUM,
-                        amount = r.AMOUNT,
-                        rate = r.RATE,
-                        minimumAndAbove = r.MINIMUMANDABOVE,
-                        maximumAndBelow = r.MAXIMUMANDBELOW,
-                        chargeFeeId = r.CHARGEFEEID
-                    }).ToList(),
+                     .Select(r => new ChargeRangeViewModel
+                     {
+                         chargeRangeId = r.CHARGERANGEID,
+                         minimum = r.MINIMUM,
+                         maximum = r.MAXIMUM,
+                         amount = r.AMOUNT,
+                         rate = r.RATE,
+                         minimumAndAbove = r.MINIMUMANDABOVE,
+                         maximumAndBelow = r.MAXIMUMANDBELOW,
+                         chargeFeeId = r.CHARGEFEEID
+                     }).ToList(),
                 chargeFeeDetails = context.TBL_CHARGE_FEE_DETAIL.Where(q => q.CHARGEFEEID == x.CHARGEFEEID).
-                Select(q => new ChargeFeeDetailsViewModel
-                {
-                    chargeFeeDetailId = q.CHARGEFEEDETAILID,
-                    description = q.DESCRIPTION,
-                    chargeFeeId = q.CHARGEFEEID,
-                    glAccountId1 = q.GLACCOUNTID1,
-                    glAccountId2 = q.GLACCOUNTID2,
-                    detailTypeId = q.DETAILTYPEID,
-                    postingTypeId = q.POSTINGTYPEID,
-                    amount = q.VALUE,
-                    rate = q.VALUE,
-                    feeTypeId = q.FEETYPEID,
-                    requireAmortization = q.REQUIREAMORTISATION,
-                    postingGroup = q.POSTINGGROUP
-                }).ToList(),
+                 Select(q => new ChargeFeeDetailsViewModel
+                 {
+                     chargeFeeDetailId = q.CHARGEFEEDETAILID,
+                     description = q.DESCRIPTION,
+                     chargeFeeId = q.CHARGEFEEID,
+                     glAccountId1 = q.GLACCOUNTID1,
+                     glAccountId2 = q.GLACCOUNTID2,
+                     detailTypeId = q.DETAILTYPEID,
+                     postingTypeId = q.POSTINGTYPEID,
+                     amount = q.VALUE,
+                     rate = q.VALUE,
+                     feeTypeId = q.FEETYPEID,
+                     requireAmortization = q.REQUIREAMORTISATION,
+                     postingGroup = q.POSTINGGROUP
+                 }).ToList(),
             });
+
+            var test = data.ToList();
+
+            return data;
         }
         public ChargeFeeViewModel GetChargeFee(int chargeProductFeeId)
         {
@@ -640,6 +650,7 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 rate = data.RATE,
                 feeTypeId = data.FEETYPEID,
                 recurring = (bool)data.RECURRING,
+                crmsRegulatoryId = data.CRMSREGULATORYID,
                 ranges = context.TBL_CHARGE_RANGE.Where(r => r.CHARGEFEEID == data.CHARGEFEEID)
                     .Select(r => new ChargeRangeViewModel
                     {
@@ -679,6 +690,14 @@ namespace FintrakBanking.Repositories.Setups.Finance
                 lookupId = x.FEETYPEID,
                 lookupName = x.FEETYPENAME
             });
+        }
+        public IEnumerable<LookupViewModel> GetAllCRMSFeeType()
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.FeeType).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION 
+            }).ToList();
         }
         public IEnumerable<LookupViewModel> GetAllPostingType()
         {

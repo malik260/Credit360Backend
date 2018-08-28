@@ -173,7 +173,11 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public int? CRMSLEGALSTATUSID { get; set; }
 
+        public int? CRMSCOMPANYSIZEID { get; set; }
+
+        public int? CRMSRELATIONSHIPTYPEID { get; set; }
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

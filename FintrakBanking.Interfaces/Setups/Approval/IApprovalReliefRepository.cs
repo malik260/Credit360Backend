@@ -5,13 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.Approval;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.Interfaces.Setups.Approval
 {
     public interface IApprovalReliefRepository
     {
-        bool AddApprovalRelief(ApprovalReliefViewModel model);
-        IEnumerable<ApprovalReliefViewModel> GetAllApprovalRelief(int companyId);
-        bool UpdateApprovalRelief(int reliefId, ApprovalReliefViewModel model);
+        Task<ApprovalReliefViewModel> AddApprovalRelief(ApprovalReliefViewModel model); 
+        IEnumerable<ApprovalReliefViewModel> GetAllApprovalRelief(int companyId); 
+        Task<bool> UpdateApprovalRelief(int reliefId, ApprovalReliefViewModel model);
+        IEnumerable<ApprovalReliefViewModel> GetApprovalReliefAwaitingApprovals(int staffId, int companyId);
+        bool GoForApproval(ApprovalViewModel entity);
+
+
     }
 }

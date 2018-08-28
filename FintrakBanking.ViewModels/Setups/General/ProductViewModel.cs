@@ -35,6 +35,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? principalBalanceGl2;
         public string principalBalanceGl2Code;
         public bool? requireCasaAccount;
+        public string operation { get; set; }
 
         public int productId { get; set; }
         public short productTypeId { get; set; }
@@ -171,6 +172,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool allowFundUsage { get; set; }
         //public bool isCurrent { get; set; }
         //public short approvalStatusId { get; set; }
+        public int? crmsRegulatoryId { get; set; }
+
     }
 
     public class ProductClassProcessViewModel
