@@ -113,6 +113,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? CASAACCOUNTID { get; set; } //CASAACCOUNTID
 
+        
+       public bool SECUREDBYCOLLATERAL { get; set; }
+        public int? CRMSCOLLATERALTYPEID { get; set; }
+
         public int? CRMSFUNDINGSOURCEID { get; set; }
 
         public int? CRMSREPAYMENTSOURCEID { get; set; }
