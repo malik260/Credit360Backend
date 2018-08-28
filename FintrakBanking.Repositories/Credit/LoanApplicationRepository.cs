@@ -1239,7 +1239,12 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose,
-                    CASAACCOUNTID = a.casaAccountId
+                    CASAACCOUNTID = a.casaAccountId,
+                    REPAYMENTTERMS = a.repaymentTerm,
+                    CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
+                    CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
+                    CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
+                    CRMS_ECCI_NUMBER = a.crms_ECCI_Number
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
