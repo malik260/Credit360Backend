@@ -2295,462 +2295,79 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanRecord = context.TBL_LOAN_REVOLVING.Find(loanId);
             var contingentLoanRecord = context.TBL_LOAN_CONTINGENT.Find(loanId);
             var loanReferenceNumber = string.Empty;
+            var systemDate = generalSetup.GetApplicationDate();
 
             var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
             {
                 username = user.userName,
                 passcode = user.passCode
             };
-            /* HANDLING APPROVAL THAT ARE STILL IN PROCESSING STATE */
+
             if (workflow.NewState != (int)ApprovalState.Ended)
             {
-                switch (user.operationId)
+                if ((user.operationId == (int)OperationsEnum.TermLoanBooking || user.operationId == (int)OperationsEnum.CommercialLoanBooking
+                        || user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking) && user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                 {
-                    case (int)OperationsEnum.TermLoanBooking:
-                        /* SETTING THE TERM LOAN TABLE STATUS TO DISAPPROVE */
-                        loanReferenceNumber = loanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                            loanRecord.APPROVEDBY = user.staffId;
-                            loanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        else
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                            context.SaveChanges();
-                            return true;
-                        }
-                        break;
-                    case (int)OperationsEnum.CommercialLoanBooking:
-                        /* SETTING THE TERM LOAN TABLE STATUS TO DISAPPROVE */
-                        loanReferenceNumber = loanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                            loanRecord.APPROVEDBY = user.staffId;
-                            loanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        else
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                            context.SaveChanges();
-                            return true;
-                        }
-                        break;
-                    case (int)OperationsEnum.ForeignExchangeLoanBooking:
-                        /* SETTING THE TERM LOAN TABLE STATUS TO DISAPPROVE */
-                        loanReferenceNumber = loanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                            loanRecord.APPROVEDBY = user.staffId;
-                            loanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        else
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                            context.SaveChanges();
-                            return true;
-                        }
-                        break;
-                    case (int)OperationsEnum.ContigentLoanBooking:
-                        /* SETTING THE CONTINGENT TABLE STATUS TO DISAPPROVE */
-                        loanReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
-                        {
-                            contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            contingentLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                            contingentLoanRecord.APPROVEDBY = user.staffId;
-                            contingentLoanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        else
-                        {
-                            contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                            context.SaveChanges();
-                            return true;
-                        }
-                        break;
-                    case (int)OperationsEnum.RevolvingLoanBooking:
-                        /* SETTING THE REVOLVING LOAN TABLE STATUS TO DISAPPROVE */
-                        loanReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                        {
-                            revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            revolvingLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                            revolvingLoanRecord.APPROVEDBY = user.staffId;
-                            revolvingLoanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        else
-                        {
-                            revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                            context.SaveChanges();
-                            return true;
-                        }
-                        break;
+                    loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
+                    loanRecord.APPROVEDBY = user.staffId;
+                    loanRecord.APPROVERCOMMENT = user.comment;
+                }
+                else if ((user.operationId == (int)OperationsEnum.TermLoanBooking || user.operationId == (int)OperationsEnum.CommercialLoanBooking
+                        || user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking) && user.approvalStatusId != (short)ApprovalStatusEnum.Disapproved)
+                {
+                    loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    context.SaveChanges();
+                    return true;
+                }
+
+                if (user.operationId == (int)OperationsEnum.RevolvingLoanBooking && user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                {
+                    revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    revolvingLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
+                    revolvingLoanRecord.APPROVEDBY = user.staffId;
+                    revolvingLoanRecord.APPROVERCOMMENT = user.comment;
+                }
+                else if (user.operationId == (int)OperationsEnum.RevolvingLoanBooking && user.approvalStatusId != (short)ApprovalStatusEnum.Disapproved)
+                {
+                    revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    context.SaveChanges();
+                    return true;
+                }
+
+                if (user.operationId == (int)OperationsEnum.ContigentLoanBooking && user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                {
+                    contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                    contingentLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
+                    contingentLoanRecord.APPROVEDBY = user.staffId;
+                    contingentLoanRecord.APPROVERCOMMENT = user.comment;
+                }
+                else if (user.operationId == (int)OperationsEnum.ContigentLoanBooking && user.approvalStatusId != (short)ApprovalStatusEnum.Disapproved)
+                {
+                    contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    context.SaveChanges();
+                    return true;
                 }
             }
 
-            var systemDate = generalSetup.GetApplicationDate();
-            /* HANDLING APPROVALS THAT REACH LAST APPROVAL LEVEL */
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                decimal totalBookedAmount = 0;
-                switch (user.operationId)
+                if(user.operationId == (int)OperationsEnum.RevolvingLoanBooking)
                 {
-                    case (int)OperationsEnum.RevolvingLoanBooking:
-                        /* REVOLVING LOAN APPROVAL TRANSACTION ENTRIES.. */
-                        loanReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                        {
-                            revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            revolvingLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                        }
-                        else
-                        {
-                            totalBookedAmount = (from a in context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == revolvingLoanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.OVERDRAFTLIMIT);
-                            if (totalBookedAmount >= revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
-                            {
-                                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
-                                loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
-                            }
-
-                            if (USE_THIRD_PARTY_INTEGRATION)
-                            {
-                                var reviewDate = revolvingLoanRecord.BOOKINGDATE.AddMonths(1);
-                                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                                var acctType = "DR";
-                                if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
-                                {
-                                    var model = new OverDraftNormalViewModel
-                                    {
-                                        accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                        applicationDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                                        documentDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                                        expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                                        reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                                        sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                                        sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
-                                        sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
-                                        interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
-                                    };
-                                    InterestRateInquiryViewModel accountOutput = finacle.GetInterestRateInquiry(model.accountNumber, acctType);
-                                    if(accountOutput.interestRateAmount == model.interestRateAmount)
-                                    {
-                                        ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
-                                        revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
-                                    }
-                                    else
-                                    {
-                                        var data = new InterestRateInquiryViewModel
-                                        {
-                                            interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
-                                            interestTableCode = accountOutput.interestTableCode,
-                                            accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                            endDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
-                                            accountType = acctType,
-                                            startDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
-                                        };
-
-                                        ResponseMessageViewModel interestRateResult = finacle.OverDraftInterestRate(data, data.accountType, twoFactorAuthDetails);
-                                        if (interestRateResult.message == "interest Rate Modified sucessfully")
-                                        {
-                                            ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
-                                            revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
-                                        }
-                                        else
-                                        {
-                                            throw new SecureException(interestRateResult.message);
-                                        }
-                                          
-                                    }
-                                    
-                                }
-                                if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalTemporaryOverdraft)
-                                {
-                                    var model = new TemporaryOverDraftViewModel
-                                    {
-                                        AccountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                        TemporaryOverDraftFlag = "true",
-                                        TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
-                                        TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                                        TemporaryOverDraftNaration = "Normal Temporary Overdraft",
-                                        TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
-                                    };
-                                    ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model, twoFactorAuthDetails);
-                                    revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
-                                }
-                                if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.SingleLimitTemporaryOverdraft)
-                                {
-                                    var model = new TemporaryOverDraftViewModel
-                                    {
-                                        AccountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                                        TemporaryOverDraftFlag = "true",
-                                        TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
-                                        TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
-                                        TemporaryOverDraftNaration = "Single Limit Temporary Overdraft",
-                                        TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
-                                    };
-                                    ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model, twoFactorAuthDetails);
-                                    revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
-                                }
-                            }
-
-                            /*UPDATING STAFF MIS */
-                            //this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
-
-                            /* BUILD FEE MODEL & HANDLE FEE POSTING */
-                            var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
-                            var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
-                            if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
-
-                            revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
-                            revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-                            revolvingLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
-                            revolvingLoanRecord.ISDISBURSED = true;
-                            //revolvingLoanRecord.EFFECTIVEDATE = DateTime.Now;
-                            revolvingLoanRecord.APPROVEDBY = user.createdBy;
-                            revolvingLoanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        break;
-                    case (int)OperationsEnum.ContigentLoanBooking:
-                        /* CONTINGENT APPROVAL TRANSACTION ENTRIES */
-                        loanReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                        {
-                            contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            contingentLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                        }
-                        else
-                        {
-                            totalBookedAmount = (from a in context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == contingentLoanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.CONTINGENTAMOUNT);
-                            if (totalBookedAmount >= contingentLoanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
-                            {
-                                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(contingentLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
-                                loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
-                            }
-
-                            contingentLoanRecord.DATEAPPROVED = DateTime.Now;
-                            contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
-
-                            var loanProductInfo = context.TBL_PRODUCT.Find(contingentLoanRecord.PRODUCTID);
-                            var proBehaviour = loanProductInfo.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID);
-                            if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && proBehaviour.Any() && proBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == true)
-                            {   /* LIENABLE BOND AND GAURANTEE SPECIFIC TRANSACTION ENTRIES WHERE PRODUCT ALLOW FUND USAGE */
-                                var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID && x.CUSTOMERID == contingentLoanRecord.CUSTOMERID).FirstOrDefault();
-
-                                var lienModel = new CasaLienViewModel
-                                {
-                                    productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
-                                    sourceReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER,
-                                    userBranchId = (short)user.BranchId,
-                                    branchId = (short)user.BranchId,
-                                    companyId = user.companyId,
-                                    lienAmount = contingentLoanRecord.CONTINGENTAMOUNT,
-                                    description = "Lien for APG Fund",
-                                    lienTypeId = (short)LienTypeEnum.APGBooking,
-                                    createdBy = user.createdBy,
-                                    userIPAddress = user.userIPAddress,
-                                    applicationUrl = user.applicationUrl,
-                                };
-                                casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
-                            }
-                            else if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && proBehaviour.Any() && proBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == false)
-                            {   /* DEBIT B&G CUSTOMER WHERE PRODUCT DOES NOT ALLOW FUND USAGE */
-                                var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID).FirstOrDefault();
-                                var basicPostInputs = new BasicTrasactionSourceInputModel
-                                {
-                                    sourceApplicationId = (short)contingentLoanRecord.CONTINGENTLOANID,
-                                    applicationUrl = user.applicationUrl,
-                                    description = "APG Transaction Booking",
-                                    companyId = user.companyId,
-                                    createdBy = user.createdBy,
-                                    userBranchId = (short)user.BranchId,
-                                    userIPAddress = user.userIPAddress
-                                };
-
-                                DebitAccount((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, casa, contingentLoanRecord.CONTINGENTAMOUNT, null, basicPostInputs);
-                            }
-
-                            var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
-                            var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
-                            if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
-
-                            /*UPDATING STAFF MIS */
-                            //this.updateLoanContingentStaffMIS(contingentLoanRecord);
-
-                            contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
-                            contingentLoanRecord.ISDISBURSED = true;
-                            contingentLoanRecord.APPROVEDBY = user.createdBy;
-                            contingentLoanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        break;
-                    case (int)OperationsEnum.TermLoanBooking:
-                        /* HANDLING TERM LOAN APPROVAL TRANSACTION ENTRIES */
-                        loanReferenceNumber = loanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                        }
-                        else
-                        {
-                            loanRecord.DATEAPPROVED = DateTime.Now;
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-
-                            totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
-                            if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
-                            {
-                                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
-                                loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
-                            }
-
-                            var firstPrincipalPaymentDaysInterval = (loanRecord.FIRSTPRINCIPALPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
-                            var firstInterestPayementDaysInterval = (loanRecord.FIRSTINTERESTPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
-                            loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
-                            loanRecord.ISDISBURSED = true;
-                            
-                            if (loanRecord.EFFECTIVEDATE != systemDate)
-                            {
-                                loanRecord.EFFECTIVEDATE = systemDate;
-                                loanRecord.FIRSTPRINCIPALPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstPrincipalPaymentDaysInterval);
-                                loanRecord.FIRSTINTERESTPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstInterestPayementDaysInterval);
-                            }
-
-                            loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
-                            loanRecord.DISBURSEDBY = user.createdBy;
-                            loanRecord.APPROVEDBY = user.createdBy;
-                            loanRecord.APPROVERCOMMENT = user.comment;
-                            context.SaveChanges();
-
-                            /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
-                            var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
-                            this.loanSchedule.AddLoanSchedule(loanId, loanScheduleModel, user.createdBy);
-
-                            /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
-                            var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-
-                            DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
-
-                            /*UPDATING STAFF MIS */
-                            // this.updateloanStaffMIS(loanRecord);
-                            
-                        }
-                        break;
-                    case (int)OperationsEnum.CommercialLoanBooking:
-                        /* HANDLING TERM LOAN APPROVAL TRANSACTION ENTRIES */
-                        loanReferenceNumber = loanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                        }
-                        else
-                        {
-                            loanRecord.DATEAPPROVED = DateTime.Now;
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-
-                            totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
-                            if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
-                            {
-                                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
-                                loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
-                            }
-
-                            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanRecord.LOANAPPLICATIONDETAILID);
-                            var product = context.TBL_PRODUCT.Find(loanRecord.PRODUCTID);
-
-                            //int daysInAYear = GetDaysInAYear(DayCountConventionEnum.Actual_365);
-                            //var interestDaysPeriod = (loanRecord.MATURITYDATE - loanRecord.EFFECTIVEDATE).TotalDays - 1;
-                            //Decimal totalInterest2 = (decimal)((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 );
-                            //Decimal dailyInterest = decimal.Round(((decimal)(loanRecord.INTERESTRATE / 100) * loanRecord.PRINCIPALAMOUNT * 1) / interestDaysPeriod, 4);
-                            //Decimal totalInterest = (decimal)(dailyInterest * (decimal)interestDaysPeriod);
-
-                            int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE) - 1;
-                            var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
-                          
-                            loanRecord.OUTSTANDINGINTEREST = totalInterest;
-
-                            if (product.DEALTYPEID == (short)DealTypeEnum.Upfront)
-                                loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT - totalInterest;
-                            else
-                                loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT;
-
-                            /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
-                            /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
-                            var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
-                            var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-                            DisburseLoan(loanDisbursementModel);
-
-                            /*UPDATING STAFF MIS */
-                            //this.updateloanStaffMIS(loanRecord);
-
-                            loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
-                            loanRecord.ISDISBURSED = true;
-                            loanRecord.EFFECTIVEDATE = systemDate;
-                            loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
-                            loanRecord.DISBURSEDBY = user.createdBy;
-                            loanRecord.APPROVEDBY = user.createdBy;
-                            loanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        break;
-                    case (int)OperationsEnum.ForeignExchangeLoanBooking:
-                        /* HANDLING TERM LOAN APPROVAL TRANSACTION ENTRIES */
-                        loanReferenceNumber = loanRecord.LOANREFERENCENUMBER;
-                        if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                        {
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
-                            loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
-                        }
-                        else
-                        {
-                            loanRecord.DATEAPPROVED = DateTime.Now;
-                            loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-
-                            totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
-                            if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
-                            {
-                                var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
-                                loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
-                            }
-
-                            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanRecord.LOANAPPLICATIONDETAILID);
-                            var product = context.TBL_PRODUCT.Find(loanRecord.PRODUCTID);
-
-                            int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE) - 1;
-                            var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
-
-                            loanRecord.OUTSTANDINGINTEREST = totalInterest;
-
-                            if (product.DEALTYPEID == (short)DealTypeEnum.Upfront)
-                            {
-                                loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT - totalInterest;
-                            }
-                            else { loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT; }
-                                
-
-                            /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
-                            /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
-                            var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
-                            var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
-                            DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
-
-                            /*UPDATING STAFF MIS */
-                            //this.updateloanStaffMIS(loanRecord);
-
-                            loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
-                            loanRecord.ISDISBURSED = true;
-                            loanRecord.EFFECTIVEDATE = systemDate;
-                            loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
-                            loanRecord.DISBURSEDBY = user.createdBy;
-                            loanRecord.APPROVEDBY = user.createdBy;
-                            loanRecord.APPROVERCOMMENT = user.comment;
-                        }
-                        break;
+                    ProcessRevolvingLoanFacilityApproval(loanId, twoFactorAuthDetails, revolvingLoanRecord, user);
                 }
+
+                if (user.operationId == (int)OperationsEnum.ContigentLoanBooking)
+                {
+                    ProcessContingentLiabilityApproval(loanId, twoFactorAuthDetails, contingentLoanRecord, user);
+                }
+
+                if (user.operationId == (int)OperationsEnum.TermLoanBooking || user.operationId == (int)OperationsEnum.CommercialLoanBooking
+                    || user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking)
+                {
+                    ProcessLoanBookingApproval(loanId, twoFactorAuthDetails, loanRecord, user);
+                }
+                
 
                 // Audit Section ---------------------------
                 var action = user.approvalStatusId == (short)ApprovalStatusEnum.Approved ? "Approved" : "Disapproved";
@@ -2770,9 +2387,324 @@ namespace FintrakBanking.Repositories.Credit
 
                 var request = context.TBL_LOAN_BOOKING_REQUEST.Find(loanBookingRequestId);
                 if (request != null)
+                {
                     request.ISUSED = true;
+                }
+                    
             }
             return this.context.SaveChanges() > 0;
+        }
+
+        private void ProcessLoanBookingApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN loanRecord, ApprovalViewModel user)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            var loanReferenceNumber = loanRecord.LOANREFERENCENUMBER;
+            decimal totalBookedAmount = 0;
+
+            if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+            {
+                loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                loanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
+            }
+            else
+            {
+                loanRecord.DATEAPPROVED = DateTime.Now;
+                loanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                totalBookedAmount = (from a in context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.PRINCIPALAMOUNT);
+                if (totalBookedAmount >= loanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
+                {
+                    var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+                    loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
+
+                }
+
+                var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanRecord.LOANAPPLICATIONDETAILID);
+                var loanProductInfo = context.TBL_PRODUCT.Find(loanRecord.PRODUCTID);
+
+                if (user.operationId == (int)OperationsEnum.TermLoanBooking)
+                {
+
+                    if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
+                    {
+                        var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID && x.CUSTOMERID == loanRecord.CUSTOMERID).FirstOrDefault();
+
+                        var lienModel = new CasaLienViewModel
+                        {
+                            productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                            sourceReferenceNumber = loanRecord.LOANREFERENCENUMBER,
+                            userBranchId = (short)user.BranchId,
+                            branchId = (short)user.BranchId,
+                            companyId = user.companyId,
+                            lienAmount = loanRecord.PRINCIPALAMOUNT + loanRecord.OUTSTANDINGINTEREST,
+                            description = "Lien for IDF Booking",
+                            lienTypeId = (short)LienTypeEnum.IDFBooking,
+                            createdBy = user.createdBy,
+                            userIPAddress = user.userIPAddress,
+                            applicationUrl = user.applicationUrl,
+                        };
+                        casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
+                    }
+
+                    var firstPrincipalPaymentDaysInterval = (loanRecord.FIRSTPRINCIPALPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
+                    var firstInterestPayementDaysInterval = (loanRecord.FIRSTINTERESTPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
+
+                    if (loanRecord.EFFECTIVEDATE != systemDate)
+                    {
+                        loanRecord.EFFECTIVEDATE = systemDate;
+                        loanRecord.FIRSTPRINCIPALPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstPrincipalPaymentDaysInterval);
+                        loanRecord.FIRSTINTERESTPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstInterestPayementDaysInterval);
+                    }
+                }
+
+                if (user.operationId == (int)OperationsEnum.CommercialLoanBooking)
+                {
+                    int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE) - 1;
+                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
+
+                    loanRecord.OUTSTANDINGINTEREST = totalInterest;
+
+                    if (loanProductInfo.DEALTYPEID == (short)DealTypeEnum.Upfront)
+                    {
+                        loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT - totalInterest;
+                    }
+                    else
+                    {
+                        loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT;
+                    }
+                }
+
+                if (user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking)
+                {
+
+                    int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE) - 1;
+                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
+
+                    loanRecord.OUTSTANDINGINTEREST = totalInterest;
+
+                    if (loanProductInfo.DEALTYPEID == (short)DealTypeEnum.Upfront)
+                    {
+                        loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT - totalInterest;
+                    }
+                    else
+                    {
+                        loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.PRINCIPALAMOUNT;
+
+                    }
+
+                }
+
+                loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
+                loanRecord.DISBURSEDATE = generalSetup.GetApplicationDate();
+                loanRecord.ISDISBURSED = true;
+                loanRecord.DISBURSEDBY = user.createdBy;
+                loanRecord.APPROVEDBY = user.createdBy;
+                loanRecord.APPROVERCOMMENT = user.comment;
+
+                /*UPDATING STAFF MIS */
+                this.updateloanStaffMIS(loanRecord);
+
+                context.SaveChanges();
+                /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
+                var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
+                this.loanSchedule.AddLoanSchedule(loanId, loanScheduleModel, user.createdBy);
+
+                /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
+                var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
+
+                DisburseLoan(loanDisbursementModel, twoFactorAuthDetails);
+            }
+        }
+
+        private void ProcessRevolvingLoanFacilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_REVOLVING revolvingLoanRecord, ApprovalViewModel user)
+        {
+            decimal totalBookedAmount = 0;
+            var loanReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER;
+            if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+            {
+                revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                revolvingLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
+            }
+            else
+            {
+                totalBookedAmount = (from a in context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == revolvingLoanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.OVERDRAFTLIMIT);
+                if (totalBookedAmount >= revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
+                {
+                    var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(revolvingLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+                    loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
+                }
+
+                if (USE_THIRD_PARTY_INTEGRATION)
+                {
+                    var reviewDate = revolvingLoanRecord.BOOKINGDATE.AddMonths(1);
+                    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                    var acctType = "DR";
+                    if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
+                    {
+                        var model = new OverDraftNormalViewModel
+                        {
+                            accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            applicationDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                            documentDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                            expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                            reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                            sanctionDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                            sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                            sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
+                            interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                        };
+                        InterestRateInquiryViewModel accountOutput = finacle.GetInterestRateInquiry(model.accountNumber, acctType);
+                        if (accountOutput.interestRateAmount == model.interestRateAmount)
+                        {
+                            ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
+                            revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                        }
+                        else
+                        {
+                            var data = new InterestRateInquiryViewModel
+                            {
+                                interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                                interestTableCode = accountOutput.interestTableCode,
+                                accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                endDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
+                                accountType = acctType,
+                                startDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                            };
+
+                            ResponseMessageViewModel interestRateResult = finacle.OverDraftInterestRate(data, data.accountType, twoFactorAuthDetails);
+                            if (interestRateResult.message == "interest Rate Modified sucessfully")
+                            {
+                                ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
+                                revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                            }
+                            else
+                            {
+                                throw new SecureException(interestRateResult.message);
+                            }
+                        }
+                    }
+                    if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalTemporaryOverdraft)
+                    {
+                        var model = new TemporaryOverDraftViewModel
+                        {
+                            AccountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            TemporaryOverDraftFlag = "true",
+                            TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                            TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                            TemporaryOverDraftNaration = "Normal Temporary Overdraft",
+                            TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                        };
+                        ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model, twoFactorAuthDetails);
+                        revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                    }
+                    if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.SingleLimitTemporaryOverdraft)
+                    {
+                        var model = new TemporaryOverDraftViewModel
+                        {
+                            AccountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            TemporaryOverDraftFlag = "true",
+                            TemporaryOverDraftAmount = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
+                            TemporaryOverDraftDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                            TemporaryOverDraftNaration = "Single Limit Temporary Overdraft",
+                            TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                        };
+                        ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model, twoFactorAuthDetails);
+                        revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                    }
+                }
+
+                /*UPDATING STAFF MIS */
+                //this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
+
+                /* BUILD FEE MODEL & HANDLE FEE POSTING */
+                var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
+                var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
+
+                if (feePostings.Count() > 0)
+                    financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails);
+
+                revolvingLoanRecord.DATEAPPROVED = DateTime.Now;
+                revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                revolvingLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
+                revolvingLoanRecord.ISDISBURSED = true;
+                revolvingLoanRecord.APPROVEDBY = user.createdBy;
+                revolvingLoanRecord.APPROVERCOMMENT = user.comment;
+            }
+        }
+
+        private void ProcessContingentLiabilityApproval(int loanId, TwoFactorAutheticationViewModel twoFactorAuthDetails, TBL_LOAN_CONTINGENT contingentLoanRecord, ApprovalViewModel user)
+        {
+            decimal totalBookedAmount = 0;
+            var loanReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER;
+            if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+            {
+                contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                contingentLoanRecord.LOANSTATUSID = (int)LoanStatusEnum.Cancelled;
+            }
+            else
+            {
+                totalBookedAmount = (from a in context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == contingentLoanRecord.LOANAPPLICATIONDETAILID) select a).Sum(s => s.CONTINGENTAMOUNT);
+                if (totalBookedAmount >= contingentLoanRecord.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT)
+                {
+                    var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(contingentLoanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
+                    loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
+                }
+
+                contingentLoanRecord.DATEAPPROVED = DateTime.Now;
+                contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+
+                var loanProductInfo = context.TBL_PRODUCT.Find(contingentLoanRecord.PRODUCTID);
+                var proBehaviour = loanProductInfo.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID);
+                if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && proBehaviour.Any() && proBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == true)
+                {   /* LIENABLE BOND AND GAURANTEE SPECIFIC TRANSACTION ENTRIES WHERE PRODUCT ALLOW FUND USAGE */
+                    var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID && x.CUSTOMERID == contingentLoanRecord.CUSTOMERID).FirstOrDefault();
+
+                    var lienModel = new CasaLienViewModel
+                    {
+                        productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                        sourceReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER,
+                        userBranchId = (short)user.BranchId,
+                        branchId = (short)user.BranchId,
+                        companyId = user.companyId,
+                        lienAmount = contingentLoanRecord.CONTINGENTAMOUNT,
+                        description = "Lien for APG Fund",
+                        lienTypeId = (short)LienTypeEnum.APGBooking,
+                        createdBy = user.createdBy,
+                        userIPAddress = user.userIPAddress,
+                        applicationUrl = user.applicationUrl,
+                    };
+                    casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
+                }
+                else if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && proBehaviour.Any() && proBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == false)
+                {   /* DEBIT B&G CUSTOMER WHERE PRODUCT DOES NOT ALLOW FUND USAGE */
+                    var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID).FirstOrDefault();
+                    var basicPostInputs = new BasicTrasactionSourceInputModel
+                    {
+                        sourceApplicationId = (short)contingentLoanRecord.CONTINGENTLOANID,
+                        applicationUrl = user.applicationUrl,
+                        description = "APG Transaction Booking",
+                        companyId = user.companyId,
+                        createdBy = user.createdBy,
+                        userBranchId = (short)user.BranchId,
+                        userIPAddress = user.userIPAddress
+                    };
+
+                    DebitAccount((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, casa, contingentLoanRecord.CONTINGENTAMOUNT, null, basicPostInputs);
+                }
+
+                var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
+                var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
+                if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
+
+                /*UPDATING STAFF MIS */
+                //this.updateLoanContingentStaffMIS(contingentLoanRecord);
+
+                contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
+                contingentLoanRecord.ISDISBURSED = true;
+                contingentLoanRecord.APPROVEDBY = user.createdBy;
+                contingentLoanRecord.APPROVERCOMMENT = user.comment;
+            }
+            context.SaveChanges();
         }
 
         private void updateLoanRevolvingStaffMIS(TBL_LOAN_REVOLVING revolvingLoanRecord)
