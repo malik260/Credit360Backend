@@ -1739,9 +1739,8 @@ namespace FintrakBanking.Repositories.Credit
                 record.EFFECTIVEDATE = DateTime.Now;
                 record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
 
-                if (
-                    (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-                && (record.STATUSID == (short)ApprovalStatusEnum.Approved))
+                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                    && (record.STATUSID == (short)ApprovalStatusEnum.Approved))
                     {
                         context.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
                         {
