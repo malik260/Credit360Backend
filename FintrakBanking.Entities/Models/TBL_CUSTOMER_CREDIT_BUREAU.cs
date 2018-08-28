@@ -50,6 +50,11 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
+        [StringLength(50)]
+        public string ACCOUNTNUMBER { get; set; }
+
+        public bool DEBITBUSINESS { get; set; }
+
         public virtual TBL_CUSTOMER_COMPANY_DIRECTOR TBL_CUSTOMER_COMPANY_DIRECTOR { get; set; }
 
         public virtual TBL_CREDIT_BUREAU TBL_CREDIT_BUREAU { get; set; }

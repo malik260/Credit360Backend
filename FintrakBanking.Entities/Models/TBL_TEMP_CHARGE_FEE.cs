@@ -48,7 +48,7 @@ namespace FintrakBanking.Entities.Models
         public bool? RECURRING { get; set; }
 
         public int COMPANYID { get; set; }
-
+        public int? CRMSREGULATORYID { get; set; }
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

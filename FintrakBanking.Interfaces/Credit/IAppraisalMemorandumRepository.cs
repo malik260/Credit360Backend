@@ -24,6 +24,11 @@ namespace FintrakBanking.Interfaces.Credit
 
         // IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId);
+        IEnumerable<LookupViewModel> GetAllCRMSSecuredCollateralType(int companyid);
+        IEnumerable<LookupViewModel> GetAllCRMSAllCollateralType(int companyid);
+
+        IEnumerable<LookupViewModel> GetAllCRMSUnsecuredCollateralType(int companyid);
+        Task<bool> UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model);
 
         IEnumerable<LoanDetailsFeeViewModel> GetLoanDetailsFee(int applicationId);
 

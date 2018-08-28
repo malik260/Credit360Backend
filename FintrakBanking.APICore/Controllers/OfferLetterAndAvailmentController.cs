@@ -424,7 +424,6 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Availment completed, now proceeding to booking" });
                 }
-
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
             }

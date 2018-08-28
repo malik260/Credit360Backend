@@ -15,11 +15,12 @@ namespace FintrakBanking.Entities.Models
             TBL_TEMP_PRODUCT_COLLATERALTYP = new HashSet<TBL_TEMP_PRODUCT_COLLATERALTYP>();
             TBL_TEMP_PRODUCT_CURRENCY = new HashSet<TBL_TEMP_PRODUCT_CURRENCY>();
             TBL_TEMP_PRODUCT_CHARGE_FEE = new HashSet<TBL_TEMP_PRODUCT_CHARGE_FEE>();
-            
+            //TBL_TEMP_PRODUCT_BEHAVIOUR = new HashSet<TBL_TEMP_PRODUCT_BEHAVIOUR>();
         }
 
         [Key]
-        public short PRODUCTID { get; set; }
+        public short TEMP_PRODUCTID { get; set; }
+        public int? PRODUCTID { get; set; }
 
         public int COMPANYID { get; set; }
 
@@ -119,6 +120,7 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
+        public string OPERATION { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
 
@@ -165,6 +167,7 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_PRODUCT_CHARGE_FEE> TBL_TEMP_PRODUCT_CHARGE_FEE { get; set; }
 
-        
+        //public virtual ICollection<TBL_TEMP_PRODUCT_BEHAVIOUR> TBL_TEMP_PRODUCT_BEHAVIOUR { get; set; }
+
     }
 }

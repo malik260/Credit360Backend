@@ -89,9 +89,6 @@ namespace FintrakBanking.Common.Enum
         LoanWorkOut = 80,
         LoanApplicationCancellation =81,
         ContingentRequestBooking = 83,
-        LoanAndOverdraftRequestBooking = 82,
-
-        //Added by Yemi
-        StaffReliefCreation = 84,
+        LoanAndOverdraftRequestBooking = 82
     }
 }

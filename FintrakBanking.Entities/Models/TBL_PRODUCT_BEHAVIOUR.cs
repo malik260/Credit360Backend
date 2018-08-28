@@ -32,5 +32,7 @@ namespace FintrakBanking.Entities.Models
         public bool? ISTEMPORARYOVERDRAFT { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
+        public int? CRMSREGULATORYID { get; set; }
+
     }
 }
