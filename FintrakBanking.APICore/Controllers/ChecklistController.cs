@@ -1608,5 +1608,52 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("regulatory-checklist-automapping")]
+        public HttpResponseMessage RegulatoryChecklistAutomapping(int customerId, int targetId)
+        {
+            try
+            {
+                ChecklistDetailViewModel model = new ChecklistDetailViewModel();
+                model.targetId = targetId;
+                string createUpdate = "";
+                if (model.checklistId != 0 || model.checklistId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateChecklistDetailEntry(model.checkListDefinitionId, model.targetId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                new { success = false, message = "This checklist item is checked already" });
+                    }
+                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.RegulatoryChecklistAutomapping(customerId, model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
     }
 }

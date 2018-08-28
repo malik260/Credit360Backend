@@ -63,8 +63,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-fee-type")]
+        public HttpResponseMessage GetAllCRMSFeeType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSFeeType();
 
-      [HttpGet] [ClaimsAuthorization]  
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet] [ClaimsAuthorization]  
         [Route("fee-detail-type")]
         public HttpResponseMessage GetAllChargeFeeDetailType()
         {
@@ -112,6 +131,11 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetAllChargeFee();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)

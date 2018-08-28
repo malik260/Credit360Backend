@@ -119,6 +119,118 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-legal-status")]
+        public HttpResponseMessage GetAllCRMSLegalStatus()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSLegalStatus();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-company-size")]
+        public HttpResponseMessage GetAllCRMSCompanySize()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSCompanySize();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-relationship-type")]
+        public HttpResponseMessage GetAllCRMSRelationshipType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSRelationshipType();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-relationship-type-by-customer-type/")]
+        public HttpResponseMessage GetAllCRMSRelationshipTypeByType(int type)
+        {
+            try
+            {
+                var data = repo.GetAllCRMSRelationshipTypeByType(type);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-legal-status-by-customer-type/")]
+        public HttpResponseMessage GetAllCRMSLegalStatusByType(int type)
+        {
+            try
+            {
+
+                var data = repo.GetAllCRMSLegalStatusByType(type);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
+
+
+
+
 
         [HttpGet]
         [ClaimsAuthorization]

@@ -71,6 +71,13 @@ namespace FintrakBanking.Interfaces.Customer
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
         IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery);
         IEnumerable<KYCDocumentTypeViewModel> GetKYCDocumentType();
+        IEnumerable<LookupViewModel> GetAllCRMSLegalStatus();
+        IEnumerable<LookupViewModel> GetAllCRMSCompanySize();
+        IEnumerable<LookupViewModel> GetAllCRMSRelationshipType();
+
+        IEnumerable<LookupViewModel> GetAllCRMSLegalStatusByType(int type);
+        IEnumerable<LookupViewModel> GetAllCRMSCompanySizeByType(int type);
+        IEnumerable<LookupViewModel> GetAllCRMSRelationshipTypeByType(int type);
 
 
         #region Single Customer Information By CustomerID

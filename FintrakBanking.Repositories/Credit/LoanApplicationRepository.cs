@@ -1239,7 +1239,12 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
                     LOANPURPOSE = a.loanPurpose,
-                    CASAACCOUNTID = a.casaAccountId
+                    CASAACCOUNTID = a.casaAccountId,
+                    REPAYMENTTERMS = a.repaymentTerm,
+                    CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
+                    CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
+                    CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
+                    CRMS_ECCI_NUMBER = a.crms_ECCI_Number
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
@@ -1406,7 +1411,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model)
+        public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBureauViewModel model)
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId && c.CUSTOMERID == model.customerId).FirstOrDefault();
 
@@ -1416,7 +1421,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
+        public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBureauViewModel> model)
         {
             foreach (var item in model)
             {
@@ -2649,7 +2654,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ExternalInitialization = true;
             workflow.StatusId = (short)ApprovalStatusEnum.Pending;
             workflow.Amount = model.amount;
-
+            
             workflow.LogActivity();
 
             context.SaveChanges();

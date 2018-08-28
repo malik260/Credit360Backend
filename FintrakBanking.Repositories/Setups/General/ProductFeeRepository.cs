@@ -105,7 +105,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public int AddTempProductFee(ProductFeeViewModel productFee)
         {
-            var dataExist = this.context.TBL_TEMP_PRODUCT_CHARGE_FEE.FirstOrDefault(x => x.PRODUCTID == productFee.productId
+            var dataExist = this.context.TBL_TEMP_PRODUCT_CHARGE_FEE.FirstOrDefault(x => x.TEMP_PRODUCTID == productFee.productId
                                                                 && x.PRODUCTFEEID == productFee.feeId
                                                                 && x.DELETED == true); // .Find(accountId);
 
@@ -137,7 +137,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 this.context.TBL_TEMP_PRODUCT_CHARGE_FEE.Add(tempProductFeeEntity);
                 // Audit Section ---------------------------
-                var productName = this.context.TBL_TEMP_PRODUCT.FirstOrDefault(x => x.PRODUCTID == productFee.productId)?.PRODUCTNAME;
+                var productName = this.context.TBL_TEMP_PRODUCT.FirstOrDefault(x => x.TEMP_PRODUCTID == productFee.productId)?.PRODUCTNAME;
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ProductFeeAdded,
@@ -172,7 +172,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public void ApproveProductFee(int productId, UserInfo user)
         {
-            var productFeeModel = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.PRODUCTID == productId
+            var productFeeModel = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.TEMP_PRODUCTID == productId
                                                                         && x.DELETED == false);
                                                                        
             var productToUpdate = context.TBL_PRODUCT.Find(productId);
@@ -181,7 +181,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 var product = new TBL_PRODUCT_CHARGE_FEE()
                 {
-                    PRODUCTID = p.PRODUCTID,
+                    PRODUCTID = p.TEMP_PRODUCTID,
                     CHARGEFEEID = p.CHARGEFEEID,
                     COMPANYID = p.COMPANYID,
 
@@ -297,11 +297,11 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<ProductFeeViewModel> GetAllMappedFeeByTempProduct(int productId)
         {
             return (from data in context.TBL_TEMP_PRODUCT_CHARGE_FEE
-                    where data.PRODUCTID == productId && data.DELETED == false
+                    where data.TEMP_PRODUCTID == productId && data.DELETED == false
                     select new ProductFeeViewModel()
                     {
                         productFeeId = data.PRODUCTFEEID,
-                        productId = data.PRODUCTID,
+                        productId = data.TEMP_PRODUCTID,
                         feeId = data.CHARGEFEEID,
                         feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
                         feeIntervalName = data.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
@@ -327,13 +327,13 @@ namespace FintrakBanking.Repositories.Setups.General
         public List<ProductFeeViewModel> GetProductFeeAwaitingApprovals(int tempProductId)
         {
             return (from data in context.TBL_TEMP_PRODUCT_CHARGE_FEE
-                    join p in context.TBL_TEMP_PRODUCT on data.PRODUCTID equals p.PRODUCTID
-                    where data.PRODUCTID == tempProductId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
+                    join p in context.TBL_TEMP_PRODUCT on data.TEMP_PRODUCTID equals p.TEMP_PRODUCTID
+                    where data.TEMP_PRODUCTID == tempProductId && data.DELETED == false //orderby account.AccountCode ascending, account.AccountName ascending
                     select new ProductFeeViewModel()
                     {
                         productFeeId = data.PRODUCTFEEID,
                         productName = p.PRODUCTNAME,
-                        productId = data.PRODUCTID,
+                        productId = data.TEMP_PRODUCTID,
                         feeId = data.PRODUCTFEEID,
                         feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
                         companyId = data.COMPANYID,
@@ -373,7 +373,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     select new ProductFeeViewModel()
                     {
                         productFeeId = data.PRODUCTFEEID,
-                        productId = (short)data.PRODUCTID,
+                        productId = (short)data.TEMP_PRODUCTID,
                         feeId = data.PRODUCTFEEID,
                         feeName = data.TBL_CHARGE_FEE.CHARGEFEENAME,
                         companyId = data.COMPANYID,

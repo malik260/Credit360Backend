@@ -263,6 +263,16 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string loanPurpose { get; set; }
 
+        public string repaymentTerm { get; set; }
+
+        public int  crmsFundingSourceId { get; set; }
+
+        public int crmsPaymentSourceId { get; set; }
+
+        public string crmsFundingSourceCategory { get; set; }
+
+        public string crms_ECCI_Number { get; set; }
+        
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
         public EducationLoanViewModel educationLoan { get; set; }
@@ -270,7 +280,7 @@ namespace FintrakBanking.ViewModels.Credit
         public TraderLoanViewModel traderLoan { get; set; }
         public List<ProductFeesViewModel> productFees { get; set; }
         public BondsAndGuranty bondDetails { get; set; }
-        public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
+        public IEnumerable<LoanCreditBureauViewModel> LoanCreditBereauReport { get; set; }
         public string sectorName { get; set; }
         public string productClass { get; set; }
         public string proposedTenorString
