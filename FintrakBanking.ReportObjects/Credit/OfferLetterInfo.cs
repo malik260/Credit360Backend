@@ -55,6 +55,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           customerPhoneNumber = g.PHONENUMBER,
                                           isFinal = h.ISFINAL,
                                           producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+                                          loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
 
                                       }).FirstOrDefault();
 
@@ -67,6 +68,8 @@ namespace FintrakBanking.ReportObjects.Credit
             {
                 return offerLetterDetails;
             }
+
+            
 
             return new OfferLetterViewModel();
         }

@@ -61,7 +61,7 @@
 
         // public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
-        // public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 

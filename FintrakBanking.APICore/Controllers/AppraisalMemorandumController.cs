@@ -218,19 +218,25 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (!String.IsNullOrEmpty(searchString))
                 {
+
                     searchString = searchString.Trim().ToLower();
-                    items = items.Where(x =>
-                        x.applicationReferenceNumber == searchString
-                        //|| x.applicationAmount.ToString().Contains(searchString)
-                        //|| x.customerName.ToLower().Contains(searchString)
-                        //|| x.customerGroupName.ToLower().Contains(searchString)
-                        ).Take(itemsPerPage);
+                    items = (from x in items
+                             where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
+                             || x.applicantName.ToLower().StartsWith(searchString)
+                              //|| x.customerGroupName.ToLower().StartsWith(searchString)
+                             select x);
+
+                    items = items.Take(itemsPerPage);
+
+                    //items = items.Where(x =>
+                    //    (searchString.StartsWith(x.applicationReferenceNumber))
+                    //    || (searchString.StartsWith(x.customerName.ToLower()))
+                    //    || (searchString.StartsWith(x.customerGroupName.ToLower()))
+                    //    ).Take(itemsPerPage);
                 }
 
-                var list = items.ToList();
-
                 var data = items
-                    .OrderByDescending(x => x.loanApplicationId) // OrderBy() must be called for Skip() to work!
+                    .OrderByDescending(x => x.applicationReferenceNumber) // OrderBy() must be called for Skip() to work!
                     .Skip(page)
                     .Take(itemsPerPage)
                     .ToList();

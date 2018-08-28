@@ -1806,10 +1806,10 @@ namespace FintrakBanking.Repositories.Credit
                             accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                         })
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.firstName.ToLower() == searchString
-                        || x.lastName.ToLower() == searchString
-                        || x.middleName.ToLower() == searchString
-                        || x.customerCode.ToLower() == searchString
+                        || x.firstName.ToLower().StartsWith(searchString)
+                        || x.lastName.ToLower().StartsWith(searchString)
+                        || x.middleName.ToLower().StartsWith(searchString)
+                        || x.customerCode.ToLower().StartsWith(searchString)
                         )
                     ;
 

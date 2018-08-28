@@ -107,6 +107,7 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
+                    undergoingConcession = exceptIds.Contains(x.c.a.LOANAPPLICATIONID)
                 });
 
             data = data.Where(x =>
@@ -1679,7 +1680,6 @@ namespace FintrakBanking.Repositories.Credit
             else
                 return false;
         }
-
         public int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
             int operationId = (int)OperationsEnum.LoanAvailment;

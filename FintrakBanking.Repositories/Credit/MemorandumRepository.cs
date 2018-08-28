@@ -208,8 +208,8 @@ namespace FintrakBanking.Repositories.Credit
         public string GetApprovalLevel()
         {
             string levelName = "N/A";
-            var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x => x.OPERATIONID == operationId
-                && x.TARGETID == targetId
+            var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x => x.OPERATIONID == operationId 
+                && x.TARGETID == targetId 
                 && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
             );
             if (trail != null) levelName = trail.TBL_APPROVAL_LEVEL.LEVELNAME;
@@ -219,7 +219,7 @@ namespace FintrakBanking.Repositories.Credit
         // monitoring triggers
         public IEnumerable<MonitoringTriggersViewModel> GetMonitoringTriggers()
         {
-            if (operationId == (int)OperationsEnum.CAM) return memo.GetApplicationMonitoringTriggers(targetId);
+            if (operationId== (int)OperationsEnum.CAM) return memo.GetApplicationMonitoringTriggers(targetId);
             return memo.GetApplicationMonitoringTriggersLms(targetId);
         }
 
@@ -352,44 +352,4 @@ namespace FintrakBanking.Repositories.Credit
     Industry Risk Rating:
     Review Type – Annual/Interim/Initial
 
-
-
-
-
-
-
-    
-                exposure = from a in context.TBL_LOAN_REVOLVING
-                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                           select new CurrentCustomerExposure
-                           {
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = a.OVERDRAFTLIMIT,
-                               proposedLimit = a.OVERDRAFTLIMIT,
-                               recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
-                               PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                               reviewDate = DateTime.Now,
-                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                               loanStatus = "Running"
-                           };
-
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
-
-                exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
-                           where a.CUSTOMERID == item.customerId && a.TBL_LOAN_APPLICATION.COMPANYID == companyId && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                           select new CurrentCustomerExposure
-                           {
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = 0,
-                               proposedLimit = a.PROPOSEDAMOUNT,
-                               recommendedLimit = a.APPROVEDAMOUNT,
-                               PastDueObligationsInterest = 0,
-                               PastDueObligationsPrincipal = 0,
-                               reviewDate = DateTime.Now,
-                               prudentialGuideline = "Processing",
-                               loanStatus = "Processing"
-                           };
-
-                if (exposure.Count() > 0) exposures.AddRange(exposure);
 */
