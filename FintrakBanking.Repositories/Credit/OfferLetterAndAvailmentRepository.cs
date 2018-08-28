@@ -1709,9 +1709,9 @@ namespace FintrakBanking.Repositories.Credit
                 //if (invalids > 0) throw new SecureException("Before availment validation failed!");
                 loanApplication.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                 loanApplication.AVAILMENTDATE = DateTime.Now;
+                LogLoanBookingRequest(entity, loanApplication.PRODUCTCLASSID, loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID, loanApplicationDetails); // austin!
             }
 
-            LogLoanBookingRequest(entity, loanApplication.PRODUCTCLASSID, loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID, loanApplicationDetails); // austin!
 
             context.SaveChanges();
 
@@ -1734,47 +1734,40 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLoanBookingRequest(LoanAvailmentApprovalViewModel entity, short? productClassId, int processId, IQueryable<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails)
         {
-            foreach (var record in loanApplicationDetails)
+            foreach (var record in loanApplicationDetails.ToList())
             {
                 record.EFFECTIVEDATE = DateTime.Now;
                 record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
 
-                if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-                {
-                    if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
+                if (
+                    (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                && (record.STATUSID == (short)ApprovalStatusEnum.Approved))
                     {
-                        var request = new TBL_LOAN_BOOKING_REQUEST
+                        context.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
                         {
                             AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
                             APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                             LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now,
                             CREATEDBY = entity.staffId,
-                        };
-                        context.TBL_LOAN_BOOKING_REQUEST.Add(request);
-                    }
+                        });
                 }
 
-                if (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
-                {
-                    if (productClassId != 0 && productClassId != null)
-                    {
-                        if (processId == (short)ProductClassProcessEnum.ProductBased)
+                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
+                && (productClassId != 0 && productClassId != null)
+                   && (processId == (short)ProductClassProcessEnum.ProductBased))
                         {
                             if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                             {
-                                var request = new TBL_LOAN_BOOKING_REQUEST
+                                context.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
                                 {
                                     AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
                                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                     LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                                     DATETIMECREATED = DateTime.Now,
                                     CREATEDBY = entity.staffId,
-                                };
-                                context.TBL_LOAN_BOOKING_REQUEST.Add(request);
+                                });
                             }
-                        }
-                    }
                 }
             };
         }
