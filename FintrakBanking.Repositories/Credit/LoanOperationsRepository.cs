@@ -6481,7 +6481,8 @@ namespace FintrakBanking.Repositories.Credit
                         this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                         this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
-                                                                                                  //context.SaveChanges();
+                             
+                        context.SaveChanges();
 
                         MergePeriodicSchedule(loanId, applicationDate);
                         MergeDailySchedule(loanId, applicationDate);
@@ -8358,7 +8359,7 @@ namespace FintrakBanking.Repositories.Credit
                     this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
-                    //context.SaveChanges();
+                    context.SaveChanges();
                     MergeDailySchedule(loanId, applicationDate);
                     MergePeriodicSchedule(loanId, applicationDate);
 
@@ -8803,7 +8804,7 @@ namespace FintrakBanking.Repositories.Credit
             int days = (int)difference.TotalDays;
             decimal accruedInterest = 0;
             var accInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY
-                               where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.PAYMENTDATE == applicationDate
+                               where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.DATE == applicationDate
                                select a).FirstOrDefault();
             if (accInterest != null)
             {
