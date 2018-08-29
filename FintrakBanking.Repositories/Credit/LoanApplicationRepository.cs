@@ -945,7 +945,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-            
+
                 if (loan.relationshipOfficerId != 0)
                 {
                     var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
@@ -1244,7 +1244,8 @@ namespace FintrakBanking.Repositories.Credit
                     CRMSFUNDINGSOURCEID = a.crmsFundingSourceId,
                     CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
                     CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
-                    CRMS_ECCI_NUMBER = a.crms_ECCI_Number
+                    CRMS_ECCI_NUMBER = a.crms_ECCI_Number,
+                    FIELD1 = a.listOfCommodities
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
@@ -1621,7 +1622,36 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
-
+        public LoanApplicationDetailViewModel GetSingleLoanApplicationsDetails(int loanApplicationDetailId, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL
+                        on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        where b.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                        && a.COMPANYID == companyId && a.DELETED == false
+                        select new LoanApplicationDetailViewModel()
+                        {
+                            requireCollateral = a.REQUIRECOLLATERAL,
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                            proposedProductId = b.PROPOSEDPRODUCTID,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedTenor = b.PROPOSEDTENOR,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+                            proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            conditionPrecedent = b.CONDITIONPRECIDENT,
+                            conditionSubsequent = b.CONDITIONSUBSEQUENT,
+                            transactionDynamics = b.TRANSACTIONDYNAMICS
+                            // LoanCreditBereauReport = GetCustomerLoanCreditBureauReportChargesByApplicationId(b.CUSTOMERID, a.LOANAPPLICATIONID).ToList()
+                        }).FirstOrDefault();
+            return data;
+        }
         public IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationsDetails(int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
@@ -1648,6 +1678,9 @@ namespace FintrakBanking.Repositories.Credit
                             productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
                             productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            conditionPrecedent = b.CONDITIONPRECIDENT,
+                            conditionSubsequent = b.CONDITIONSUBSEQUENT,
+                            transactionDynamics = b.TRANSACTIONDYNAMICS
                             // LoanCreditBereauReport = GetCustomerLoanCreditBureauReportChargesByApplicationId(b.CUSTOMERID, a.LOANAPPLICATIONID).ToList()
                         }).ToList();
             return data;
@@ -1716,7 +1749,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 searchQuery = searchQuery.Trim().ToLower();
 
-                allApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.TBL_LOAN_APPLICATION.COMPANYID ==companyId && x.DELETED == false
+                allApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.TBL_LOAN_APPLICATION.COMPANYID == companyId && x.DELETED == false
                 && x.TBL_LOAN_APPLICATION.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)// && x.c == companyId)
                     .Where(x => x.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(searchQuery)
                     || x.TBL_CUSTOMER.MIDDLENAME.ToLower().Contains(searchQuery)
@@ -1749,7 +1782,7 @@ namespace FintrakBanking.Repositories.Credit
                     })
                     .Take(12);
             }
-            
+
             return allApplicationDetails;
         }
 
@@ -2654,7 +2687,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ExternalInitialization = true;
             workflow.StatusId = (short)ApprovalStatusEnum.Pending;
             workflow.Amount = model.amount;
-            
+
             workflow.LogActivity();
 
             context.SaveChanges();
@@ -2666,7 +2699,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanApplicationViewModel> GetLoanApplication(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_APPLICATION
-                                   join    r in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals r.LOANAPPLICATIONID
+                                   join r in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals r.LOANAPPLICATIONID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where (a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
@@ -2694,21 +2727,21 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
-            if (application!=null)
+            if (application != null)
             {
                 var cancelledApplication = new TBL_TEMP_LOAN_APPLTN_CANCELTN
                 {
-                       LOANAPPLICATIONID = data.loanApplicationId,
-                       CANCELLATIONREASON = data.cancellationReason,
-                       APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                       CREATEDBY = data.createdBy,
-                       DATETIMECREATED = genSetup.GetApplicationDate(),
-                       ISCURRENT = true,
+                    LOANAPPLICATIONID = data.loanApplicationId,
+                    CANCELLATIONREASON = data.cancellationReason,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    CREATEDBY = data.createdBy,
+                    DATETIMECREATED = genSetup.GetApplicationDate(),
+                    ISCURRENT = true,
                 };
 
                 context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Add(cancelledApplication);
 
-                if (context.SaveChanges()>0)
+                if (context.SaveChanges() > 0)
                 {
                     data.tempApplicationCancellationId = cancelledApplication.TEMPAPPLICATIONCANCELLATIONID;
                 }
@@ -2719,7 +2752,7 @@ namespace FintrakBanking.Repositories.Credit
                 var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                 string messageBoby = $"Dear Team, <br /><br />This is to bring your attention a request for loan application cancellation has been initiated by {staffName} on {data.applicationReferenceNumber} application refernence number. The Loan application is currently under going approval. <br /><br />";
                 string alertSubject = $"Loan Application Cancellation Approval Notification";
-                 LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
+                LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
 
                 workflow.StaffId = data.createdBy;
                 workflow.CompanyId = data.companyId;
@@ -2751,7 +2784,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-            if (context.SaveChanges()>0)
+            if (context.SaveChanges() > 0)
             {
                 return true;
             }
@@ -2803,7 +2836,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel values)
         {
             var data = Search(values.applicationReferenceNumber);
-            if (data!=null)
+            if (data != null)
             {
                 var newData = data.FirstOrDefault(x => x.applicationReferenceNumber == values.applicationReferenceNumber);
                 newData.operationId = values.operationId;
@@ -2837,7 +2870,7 @@ namespace FintrakBanking.Repositories.Credit
                             LaonApplcationCancelllationCompelted(data);
 
                             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
-                            var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x=>x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                            var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
                             string messageBoby = $"Dear Team, <br /><br />This is to bring your attention the loan with {data.applicationReferenceNumber} application refernence number which was going through approval for cancellation has been successfully approved by {staffName}. <br /><br />";
                             string alertSubject = $"Loan Application Cancellation Approval Notification";
                             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
@@ -2863,11 +2896,11 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 //return false;
             }
-            
+
         }
         private void UpdateLoanApplicationCancellationTempTable(LoanApplicationViewModel data, short statusId)
         {
-            var val = context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Where(x => x.TEMPAPPLICATIONCANCELLATIONID == data.tempApplicationCancellationId).Select(x=>x).FirstOrDefault();
+            var val = context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Where(x => x.TEMPAPPLICATIONCANCELLATIONID == data.tempApplicationCancellationId).Select(x => x).FirstOrDefault();
             val.ISCURRENT = false;
             val.APPROVALSTATUSID = statusId;
             val.LASTUPDATEDBY = data.createdBy;
@@ -2885,7 +2918,7 @@ namespace FintrakBanking.Repositories.Credit
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
         }
 
-        private void LogEmailAlertForLoanApplicationCancellation(string messageBody,  string alertSubject, string recipients)
+        private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients)
         {
             try
             {
@@ -2930,27 +2963,29 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             context.TBL_MESSAGE_LOG.Add(message);
-           
+
         }
 
         private string GetLoanApplicationEmailRecipients(int targetId)
         {
-           string recipientEmailAddresses = string.Empty;
+            string recipientEmailAddresses = string.Empty;
             int? staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).Select(x => x.TOSTAFFID).FirstOrDefault();
-            if (staffId!=null)
+            if (staffId != null)
             {
-              return context.TBL_STAFF.Where(x => x.STAFFID == staffId).Select(x => x.EMAIL).FirstOrDefault();
+                return context.TBL_STAFF.Where(x => x.STAFFID == staffId).Select(x => x.EMAIL).FirstOrDefault();
 
             }
             else
             {
-               int? approvalLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).OrderByDescending(x=>x.SYSTEMARRIVALDATETIME).Select(x => x.TOAPPROVALLEVELID).FirstOrDefault();
-                var staffIds = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == approvalLevelId).Select(x => 
-                new StaffInfoViewModel {
-                  staffId =  (int)x.STAFFROLEID }).ToList();
-                    foreach (var a in staffIds)
-                        recipientEmailAddresses = context.TBL_STAFF.Where(x => x.STAFFID == a.staffId).Select(x => x.EMAIL).FirstOrDefault() + ";";
-                    var emails = recipientEmailAddresses.TrimEnd(';');
+                int? approvalLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).OrderByDescending(x => x.SYSTEMARRIVALDATETIME).Select(x => x.TOAPPROVALLEVELID).FirstOrDefault();
+                var staffIds = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == approvalLevelId).Select(x =>
+                new StaffInfoViewModel
+                {
+                    staffId = (int)x.STAFFROLEID
+                }).ToList();
+                foreach (var a in staffIds)
+                    recipientEmailAddresses = context.TBL_STAFF.Where(x => x.STAFFID == a.staffId).Select(x => x.EMAIL).FirstOrDefault() + ";";
+                var emails = recipientEmailAddresses.TrimEnd(';');
                 return emails;
             }
 
@@ -2963,9 +2998,9 @@ namespace FintrakBanking.Repositories.Credit
                     where x.LOANAPPLICATIONDETAILID == detailId
                     select new TransactionDynamicsViewModel
                     {
-                       dynamicsId = x.DYNAMICSID,
-                       dynamics = x.DYNAMICS,
-                       loanApplicationDetailId = x.LOANAPPLICATIONDETAILID
+                        dynamicsId = x.DYNAMICSID,
+                        dynamics = x.DYNAMICS,
+                        loanApplicationDetailId = x.LOANAPPLICATIONDETAILID
                     }).ToList();
         }
         public List<ConditionPrecedentViewModel> GetConditionPrecidents(int loanApplicationId)
@@ -2978,6 +3013,36 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationDetailId = x.LOANAPPLICATIONDETAILID,
                         condition = x.CONDITION
                     }).ToList();
+        }
+        public bool updateSuggestionsLoanApplicationdetail(LoanApplicationDetailViewModel model)
+        {
+            if (model == null) return false;
+
+            var loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(model.loanApplicationDetailId);
+            if (loanDetail != null)
+            {
+                loanDetail.CONDITIONPRECIDENT = model.conditionPrecedent;
+                loanDetail.CONDITIONSUBSEQUENT = model.conditionSubsequent;
+                loanDetail.TRANSACTIONDYNAMICS = model.transactionDynamics;
+            }
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanApplicationUpdate,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated loan application detail with with applicationdetailId : {model.loanApplicationDetailId}",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.loanApplicationDetailId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            return context.SaveChanges() > 0;
         }
     }
 }

@@ -87,6 +87,7 @@
     <Compile Include="Models\TBL_TEMP_APPROVAL_GROUP_MAPPING.cs" />
     <Compile Include="Models\TBL_TEMP_APPROVAL_LEVEL.cs" />
     <Compile Include="Models\TBL_TEMP_APPROVAL_LEVEL_STAFF.cs" />
+    <Compile Include="Models\TBL_TEMP_CUSTOMER_COMP_BENEFIC.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN_APPLTN_CANCELTN.cs" />
     <Compile Include="Models\TBL_TEMP_LOAN_CAMSOL.cs" />
     <Compile Include="DocumentModels\TBL_LOAN_COMMITTEE_MINUTES.cs" />

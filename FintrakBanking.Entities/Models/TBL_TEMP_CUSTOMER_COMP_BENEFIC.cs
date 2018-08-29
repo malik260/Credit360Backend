@@ -1,4 +1,4 @@
-namespace FintrakBanking.Entities.Models
+﻿namespace FintrakBanking.Entities.Models
 {
     using System;
     using System.Collections.Generic;
@@ -6,13 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_CUSTOMER_COMPANY_BENEFICIA")]
-    public partial class TBL_CUSTOMER_COMPANY_BENEFICIA
+    [Table("TBL_TEMP_CUSTOMER_COMP_BENEFIC")]
+    public partial class TBL_TEMP_CUSTOMER_COMP_BENEFIC
     {
         [Key]
-        public int COMPANY_BENEFICIARYID { get; set; }
+        public int TEMPCOMPANY_BENEFICIARYID { get; set; }
 
-        public int COMPANYDIRECTORID { get; set; }
+        public int TEMPCOMPANYDIRECTORID { get; set; }
+
+        public int? COMPANY_BENEFICIARYID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -58,7 +60,11 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+
+        public bool ISCURRENT { get; set; }
+
+        public int APPROVALSTATUSID { get; set; }
        
-        public virtual TBL_CUSTOMER_COMPANY_DIRECTOR TBL_CUSTOMER_COMPANY_DIRECTOR { get; set; }
     }
 }
+
