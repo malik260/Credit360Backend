@@ -1298,7 +1298,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Format(Parameters!currentDate.Value,"dd/mm/yyyy")</Value>
+                    <Value>=Parameters!currentDate.Value</Value>
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
