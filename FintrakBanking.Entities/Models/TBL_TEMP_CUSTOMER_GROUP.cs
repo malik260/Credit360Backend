@@ -23,6 +23,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(1000)]
         public string GROUPDESCRIPTION { get; set; }
 
+        public int? RISKRATINGID { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

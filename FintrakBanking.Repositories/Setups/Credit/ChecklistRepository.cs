@@ -15,6 +15,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -1381,7 +1382,7 @@ namespace FintrakBanking.Repositories.Credit
                                                select s).FirstOrDefault();
                         var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
                                               where s.LOANCONDITIONID == entity.targetId
-                                             select s).FirstOrDefault();
+                                              select s).FirstOrDefault();
                         if (checklistRecord != null || deferredRecord != null)
                         {
                             deferredRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
@@ -1391,9 +1392,9 @@ namespace FintrakBanking.Repositories.Credit
                             return 2;
                         }
 
-                     
-                 
-                        
+
+
+
                     }
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
@@ -2028,5 +2029,50 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
         #endregion
+
+        public bool RegulatoryChecklistAutomapping(int customerId, ChecklistDetailViewModel model)
+        {
+            bool output = false;
+            var credit = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+                          where a.CUSTOMERID == customerId
+                          orderby a.DATECOMPLETED descending
+                          select a).GroupBy(c => c.CREDITBUREAUID).Select(y => y.FirstOrDefault()).ToList();
+
+            var checklistItem = (from f in context.TBL_CHECKLIST_ITEM
+                                 join g in context.TBL_CHECKLIST_DEFINITION on f.CHECKLISTITEMID equals g.CHECKLISTITEMID
+                                 where g.CHECKLIST_TYPEID == (int)CheckTypeEnum.RegulatoryChecklist
+                                 select new
+                                 {
+                                     itemName = f.CHECKLISTITEMNAME,
+                                     itemDefinitionId = g.CHECKLISTDEFINITIONID
+                                 }).ToList();
+
+            foreach (var item in credit)
+            {
+                model.checkListStatusId = item.ISREPORTOKAY == true ? model.checkListStatusId = (int)CheckListStatusEnum.Yes : model.checkListStatusId = (int)CheckListStatusEnum.No;
+                model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist;
+                var creditBureauType = (from c in context.TBL_CREDIT_BUREAU
+                                        where c.CREDITBUREAUID == item.CREDITBUREAUID
+                                        select c).FirstOrDefault().CREDITBUREAUNAME;
+
+                foreach (var id in checklistItem)
+                {
+                    if (CommonHelpers.Left(id.itemName.ToUpper().Trim(), 3) == CommonHelpers.Left(creditBureauType.ToUpper().Trim(), 3))
+                    {
+                        model.checkListDefinitionId = id.itemDefinitionId;
+                    }
+                }
+                if (ValidateChecklistDetailEntry(model.checkListDefinitionId, model.targetId))
+                {
+                    output = false;
+                }
+                else
+                {
+                    output = AddChecklistDetail(model);
+                }
+            }
+            //      if ( == (short)CreditBureauEnum.CRMS) hascrms = true;
+            return output;
+        }
     }
 }

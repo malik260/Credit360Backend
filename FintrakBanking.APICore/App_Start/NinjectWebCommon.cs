@@ -223,7 +223,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IFacilityDetailSummary>().To<FacilityDetailSummary>();
             kernel.Bind<ICRMSRegulatories>().To<CRMSRegulatories>();
             kernel.Bind<IMemorandumRepository>().To<MemorandumRepository>();
-kernel.Bind<ICrmsRegulatoryRepository>().To<CrmsRegulatoryRepository>();
+            kernel.Bind<ICrmsRegulatoryRepository>().To<CrmsRegulatoryRepository>();
         }
 
     }

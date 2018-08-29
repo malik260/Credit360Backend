@@ -125,6 +125,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("business-accounts")]
+        public HttpResponseMessage GetBusinessAccounts()
+        {
+            try
+            {
+                var data = repo.GetBusinessAccounts(token.GetCompanyId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+        }
+
         [Route("account-owner-by-account-number/")]
         public HttpResponseMessage GetAccountOwnerByAccountNumber(string accountNumber)
         {
