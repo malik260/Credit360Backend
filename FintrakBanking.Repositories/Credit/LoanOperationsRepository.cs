@@ -1297,6 +1297,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     transPastDue.Add(pastDue);
                     updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+                    updateloanPastDueDate(pastDue.LOANID, item.transactionDate);
 
 
                     CasaLienViewModel lien = new CasaLienViewModel();
@@ -1346,6 +1347,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     transPastDue.Add(pastDue);
                     updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+                    updateloanPastDueDate(pastDue.LOANID, item.transactionDate);
 
                     CasaLienViewModel lien = new CasaLienViewModel();
                     lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
@@ -1390,6 +1392,24 @@ namespace FintrakBanking.Repositories.Credit
                                select p).SingleOrDefault();
 
             result.OUTSTANDINGINTEREST = result.OUTSTANDINGINTEREST - amoumt;
+
+
+            context.SaveChanges();
+        }
+
+        public void updateloanPastDueDate(int loanId,DateTime applicationdate)
+        {
+            var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
+
+            if (loan.PASTDUEDATE == null)
+            {
+                TBL_LOAN result = (from p in context.TBL_LOAN
+                                   where p.TERMLOANID == loanId
+                                   select p).SingleOrDefault();
+
+                result.PASTDUEDATE = applicationdate;
+            }
+            
 
 
             context.SaveChanges();

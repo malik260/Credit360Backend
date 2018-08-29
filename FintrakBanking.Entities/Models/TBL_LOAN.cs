@@ -218,6 +218,8 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 
+        public DateTime? PASTDUEDATE { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

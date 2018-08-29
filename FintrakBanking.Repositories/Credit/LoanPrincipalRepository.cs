@@ -101,6 +101,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from o in _context.TBL_LOAN_PRINCIPAL
                         where o.COMPANYID == conpanyId & o.DELETED == false
+                        orderby o.NAME
                         select new LoanPrincipalViewModel
                         {
 

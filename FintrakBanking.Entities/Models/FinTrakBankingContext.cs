@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }
         public virtual DbSet<TBL_ACCOUNT_CATEGORY> TBL_ACCOUNT_CATEGORY { get; set; }
         public virtual DbSet<TBL_ACCOUNT_TYPE> TBL_ACCOUNT_TYPE { get; set; }
-        public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
+        public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; } 
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_TYPE> TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
@@ -331,8 +331,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_STAFF_ACCOUNT_HISTORY> TBL_STAFF_ACCOUNT_HISTORY { get; set; }
         public virtual DbSet<TBL_STAFF_JOBTITLE> TBL_STAFF_JOBTITLE { get; set; }
         public virtual DbSet<TBL_STAFF_RELIEF> TBL_STAFF_RELIEF { get; set; }
-        public virtual DbSet<TBL_TEMP_STAFF_RELIEF> TBL_TEMP_STAFF_RELIEF { get; set; }
-
         public virtual DbSet<TBL_STAFF_ROLE> TBL_STAFF_ROLE { get; set; }
         public virtual DbSet<TBL_STATE> TBL_STATE { get; set; }
         public virtual DbSet<TBL_STOCK_COMPANY> TBL_STOCK_COMPANY { get; set; }
@@ -409,8 +407,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PROFILE_PASSWORD_HISTORY> TBL_PROFILE_PASSWORD_HISTORY { get; set; }
         public virtual DbSet<TBL_CUSTOM_CREDITBUREAU_ERROR> TBL_CUSTOM_CREDITBUREAU_ERROR { get; set; }
         public virtual DbSet<TBL_TEMP_LOAN_APPLTN_CANCELTN> TBL_TEMP_LOAN_APPLTN_CANCELTN { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_COMMENT> TBL_LOAN_APPLICATION_COMMENT  { get; set; }
+        
         public virtual DbSet<TBL_CRMS_REGULATORY> TBL_CRMS_REGULATORY { get; set; }
         public virtual DbSet<TBL_CRMS_TYPE> TBL_CRMS_TYPE { get; set; }
+        public virtual DbSet<TBL_TEMP_STAFF_RELIEF> TBL_TEMP_STAFF_RELIEF { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

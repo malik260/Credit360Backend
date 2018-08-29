@@ -457,6 +457,19 @@ namespace FintrakBanking.Repositories.Credit
 
             //var loanMonitoringTriggers = monitoringTriggers.Select(x => x.monitoringTrigger).Distinct();
 
+
+            var loanComments = (from x in context.TBL_LOAN_APPLICATION_COMMENT 
+                                join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                                   where y.APPLICATIONREFERENCENUMBER == applicationRefNumber && x.OPERATIONID == (int)CommentsTypeEnum.LOS
+                                select new LoanApplicationCommentViewModel()
+                                   {
+                                      comments = x.COMMENTS,
+                                   }).ToList();
+
+
+
+
+
             var conditions = string.Empty;
 
             var fee = string.Empty;
@@ -464,6 +477,8 @@ namespace FintrakBanking.Repositories.Credit
             var loanDetail = string.Empty;
 
             var loanCollateral = string.Empty;
+
+            var loanComment = string.Empty;
 
             var loanMonitoringTrigger = string.Empty;
 
@@ -491,6 +506,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var collateral = string.Empty;
 
+            var comment = string.Empty;
+
             var monitoringTrigger = string.Empty;
 
             var transactionDynamics = string.Empty;
@@ -500,6 +517,8 @@ namespace FintrakBanking.Repositories.Credit
             int noOfFees = 0;
 
             int noOfCollaterals = 0;
+
+            int noOfComments = 0; 
 
             int noOfMonitoringTriggers = 0;
 
@@ -752,6 +771,40 @@ namespace FintrakBanking.Repositories.Credit
             var loanCollateralData = $"{collateral}";
 
 
+
+            ////comments
+
+            loanComment = $" ";//<p><strong> Collateral: </strong></p>
+
+            loanComment = loanComment +
+                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> S/No </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:1.25in'><p> &nbsp;</p>" +
+                    $"<strong> Comments </strong></p></td></tr>";
+
+            foreach (var item in loanComments)
+            {
+                loanComment = loanComment +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfComments}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.comments}</p></td>" +
+                    $"</tr>";
+            }
+
+            noOfComments = 0;
+
+            loanComment = loanComment + "</tbody></table><p> &nbsp;</p>";
+
+            comment += loanComment;
+
+            var loanCommentData = $"{comment}";
+
+            ////comments end
+
+
+
             loanMonitoringTrigger = $"<p><strong> Monitoring Triggers: </strong></p>";
 
             loanMonitoringTrigger = loanMonitoringTrigger +
@@ -831,7 +884,7 @@ namespace FintrakBanking.Repositories.Credit
             var branch = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).TBL_BRANCH.BRANCHNAME;
             //var info = data;
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData, currentDate, loanCollateralData, monitoringTriggerData, transactionDynamicsData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData, currentDate, loanCollateralData, monitoringTriggerData, transactionDynamicsData, loanCommentData);
 
             if (preparedTemplate != null)
             {
@@ -975,6 +1028,14 @@ namespace FintrakBanking.Repositories.Credit
                                    }).ToList();
 
 
+            var loanComments = (from x in context.TBL_LOAN_APPLICATION_COMMENT
+                                join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                                where y.APPLICATIONREFERENCENUMBER == applicationRefNumber && x.OPERATIONID == (int)CommentsTypeEnum.LMS
+                                select new LoanApplicationCommentViewModel()
+                                {
+                                    comments = x.COMMENTS,
+                                }).ToList();
+
             var loanMonitoringTriggers = (from x in context.TBL_LMSR_APPLICATN_DETL_MTRIG
                                           join y in context.TBL_LMSR_APPLICATION_DETAIL on x.LOANREVIEWAPPLICATIONID equals y.LOANREVIEWAPPLICATIONID
                                           where y.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
@@ -986,6 +1047,14 @@ namespace FintrakBanking.Repositories.Credit
 
             //var loanMonitoringTriggers = monitoringTriggers.Select(x => x.monitoringTrigger).Distinct().ToList();
 
+
+            ////
+            var loanComment = string.Empty;
+            var comment = string.Empty;
+            int noOfComments = 0;
+
+
+            ////
 
             var conditions = string.Empty;
 
@@ -1280,6 +1349,38 @@ namespace FintrakBanking.Repositories.Credit
             var loanCollateralData = $"{collateral}";
 
 
+            ////comments
+
+            loanComment = $" ";//<p><strong> Collateral: </strong></p>
+
+            loanComment = loanComment +
+                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> S/No </strong></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:1.25in'><p> &nbsp;</p>" +
+                    $"<strong> Comments </strong></p></td></tr>";
+
+            foreach (var item in loanComments)
+            {
+                loanComment = loanComment +
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfComments}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.comments}</p></td>" +
+                    $"</tr>";
+            }
+
+            noOfComments = 0;
+
+            loanComment = loanComment + "</tbody></table><p> &nbsp;</p>";
+
+            comment += loanComment;
+
+            var loanCommentData = $"{comment}";
+
+            ////comments end
+
+
             loanMonitoringTrigger = $"<p><strong> Monitoring Triggers: </strong></p>";
 
             loanMonitoringTrigger = loanMonitoringTrigger +
@@ -1351,7 +1452,7 @@ namespace FintrakBanking.Repositories.Credit
             var branch = context.TBL_LMSR_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER).BRANCHID.ToString();
             //var info = data;
 
-            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData, currentDate, loanCollateralData, monitoringTriggerData, transactionDynamicsData);
+            var preparedTemplate = PopulateTemplatePlaceholders(applDate, conditionPrecedentData, templateLink, branch, customer, feeData, loanDetailData, currentDate, loanCollateralData, monitoringTriggerData, transactionDynamicsData, loanCommentData);
 
             if (preparedTemplate != null)
             {
@@ -1427,7 +1528,7 @@ namespace FintrakBanking.Repositories.Credit
             //return templateLink;
         }
 
-        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition, DateTime currentDate, string collateralcondition, string monitoringTrigger, string transactionDynamics)
+        private static string PopulateTemplatePlaceholders(DateTime applicationDate, string conditionPrecedent, string template, string branch, string customer, string feecondition, string facilitycondition, DateTime currentDate, string collateralcondition, string monitoringTrigger, string transactionDynamics, string loanComments)
         {
             string body;
 
@@ -1448,6 +1549,7 @@ namespace FintrakBanking.Repositories.Credit
             body = body.Replace("{@Collateral}", collateralcondition);
             body = body.Replace("{@monitoringTrigger}", monitoringTrigger);
             body = body.Replace("{@transactionDynamics}", transactionDynamics);
+            body = body.Replace("{@loanComments}", loanComments);
 
             return body;
         }
