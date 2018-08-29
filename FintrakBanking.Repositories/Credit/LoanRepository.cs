@@ -5164,6 +5164,12 @@ namespace FintrakBanking.Repositories.Credit
                         item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount4;
                         break;
                 }
+
+                var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
+                if (disbursedLoan.Any())
+                {
+                    item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
+                }
             }
             data = (from a in data where ((a.customerAvailableAmount >= 0)) select a).ToList();
             return data;
