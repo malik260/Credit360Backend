@@ -32,50 +32,97 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-
-                var data = new Entities.DocumentModels.TBL_MEDIA_LOAN_DOCUMENTS
+                var record = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x=>x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber).FirstOrDefault();
+                if (record != null)
                 {
-                    FILEDATA = file,
-                    LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
-                    LOANREFERENCENUMBER = model.loanReferenceNumber,
-                    DOCUMENTTITLE = model.documentTitle,
-                    DOCUMENTTYPEID = model.documentTypeId,
-                    LOAN_BOOKING_REQUESTID = model.SourceId,
-                    FILENAME = model.fileName,
-                    FILEEXTENSION = model.fileExtension,
-                    SYSTEMDATETIME = DateTime.Now,
-                    PHYSICALFILENUMBER = model.physicalFileNumber,
-                    PHYSICALLOCATION = model.physicalLocation,
-                    ISPRIMARYDOCUMENT = model.isPrimaryDocument,
-                    CREATEDBY = (int)model.createdBy,
-                    
-                    
-                };
-
-                context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
-
-                // Audit Section ---------------------------
-                var audit = new TBL_AUDIT
+                    return this.UpdateLoanDocument(model, record.DOCUMENTID, file);
+                }
+                else
                 {
-                    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
-                    STAFFID = model.createdBy,
-                    BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Added Loan Document with title : '{ model.documentTitle }' ",
-                    IPADDRESS = model.userIPAddress,
-                    URL = model.applicationUrl,
-                    APPLICATIONDATE = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
-                };
-                this.audit.AddAuditTrail(audit);
-                // End of Audit Section ---------------------
+                    var data = new Entities.DocumentModels.TBL_MEDIA_LOAN_DOCUMENTS
+                    {
+                        FILEDATA = file,
+                        LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
+                        LOANREFERENCENUMBER = model.loanReferenceNumber,
+                        DOCUMENTTITLE = model.documentTitle,
+                        DOCUMENTTYPEID = model.documentTypeId,
+                        LOAN_BOOKING_REQUESTID = model.SourceId,
+                        FILENAME = model.fileName,
+                        FILEEXTENSION = model.fileExtension,
+                        SYSTEMDATETIME = DateTime.Now,
+                        PHYSICALFILENUMBER = model.physicalFileNumber,
+                        PHYSICALLOCATION = model.physicalLocation,
+                        ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                        CREATEDBY = (int)model.createdBy,
 
-                return context.SaveChanges() != 0;
+
+                    };
+
+                    context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Added Loan Document with title : '{ model.documentTitle }' ",
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
+
+                    return context.SaveChanges() != 0;
+                }
+
             }
             catch (Exception ex)
             {
 
                 throw ex;
             }
+        }
+
+        public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId, byte[] file)
+        {
+            var data = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Find(documentId);
+            if (data == null)
+            {
+                return false;
+            }
+
+            data.FILEDATA = file;
+            data.LOANAPPLICATIONNUMBER = model.loanApplicationNumber;
+            data.LOANREFERENCENUMBER = model.loanReferenceNumber;
+            data.DOCUMENTTITLE = model.documentTitle;
+            data.DOCUMENTTYPEID = model.documentTypeId;
+            //data
+            data.FILENAME = model.fileName;
+            data.FILEEXTENSION = model.fileExtension;
+            data.SYSTEMDATETIME = DateTime.Now;
+            data.PHYSICALFILENUMBER = model.physicalFileNumber;
+            data.PHYSICALLOCATION = model.physicalLocation;
+            data.ISPRIMARYDOCUMENT = model.isPrimaryDocument;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Loan Document with title : '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
         }
 
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId)
