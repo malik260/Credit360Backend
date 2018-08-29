@@ -71,6 +71,12 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal proposedAmount { get; set; } 
     }
 
-    
+    public class LoanApplicationCommentViewModel 
+    {
+        public int applicationId { get; set; }
+
+        public string comments { get; set; }
+
+    }
 
 }
