@@ -153,7 +153,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isScheduledPrepayment { get; set; }
         public decimal? scheduledPrepaymentAmount { get; set; }
         public DateTime? scheduledPrepaymentDate { get; set; }
-        public short scheduledPrepaymentFrequencyTypeId { get; set; }
+        public short? scheduledPrepaymentFrequencyTypeId { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
@@ -169,8 +169,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int internalPrudentialGuidelineStatusId { get; set; }
         public int externalPrudentialGuidelineStatusId { get; set; }
         public DateTime nplDate { get; set; }
-        public short scheduleDayCountConventionId { get; set; }
-        public short scheduleDayInterestTypeId { get; set; }
+        public short? scheduleDayCountConventionId { get; set; }
+        public short? scheduleDayInterestTypeId { get; set; }
         public int customerRiskRatingId { get; set; }
 
         // public double productPriceIndexRate { get; set; }
@@ -205,10 +205,10 @@ namespace FintrakBanking.ViewModels.Credit
         //Loan Review Operation
         public int loanReviewOperationsId { get; set; }
         public int operationTypeId { get; set; }
-        public string operationTypeName { get; set; }
+        public string operationTypeName { get; set; } 
         public DateTime newEffectiveDate { get; set; }
         public string reviewDetails { get; set; }
-        public decimal? newInterateRate { get; set; }
+        public double? newInterateRate { get; set; }
         public decimal? prepayment { get; set; }
         public int? newPrincipalFrequencyTypeId { get; set; }
         public int? newInterestFrequencyTypeId { get; set; }
@@ -216,12 +216,15 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? newInterestFirstPaymentDate { get; set; }
         public int? newTenor { get; set; }
         public int? cASA_AccountId { get; set; }
+        public string cASA_AccountName { get; set; }
+
         public decimal? overDraftTopup { get; set; }
         public decimal? fee_Charges { get; set; }
         public string terminationAndReBook { get; set; }
         public string completeWriteOff { get; set; }
         public string cancelUndisbursedLoan { get; set; }
         public string lmsLoanReferenceNumber { get; set; }
+        public DateTime? newMaturityDate { get; set; }
     }
 
 

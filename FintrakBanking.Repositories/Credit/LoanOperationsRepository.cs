@@ -6481,7 +6481,8 @@ namespace FintrakBanking.Repositories.Credit
                         this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                         this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
-                                                                                                  //context.SaveChanges();
+                             
+                        context.SaveChanges();
 
                         MergePeriodicSchedule(loanId, applicationDate);
                         MergeDailySchedule(loanId, applicationDate);
@@ -8358,7 +8359,7 @@ namespace FintrakBanking.Repositories.Credit
                     this.context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.AddRange(tblPeriodicScheduleTemp);////change to Temp table
 
                     this.context.TBL_LOAN_SCHEDULE_DAILY_TEMP.AddRange(tblDailyScheduleTemp); ////change to Temp table
-                    //context.SaveChanges();
+                    context.SaveChanges();
                     MergeDailySchedule(loanId, applicationDate);
                     MergePeriodicSchedule(loanId, applicationDate);
 
@@ -8803,7 +8804,7 @@ namespace FintrakBanking.Repositories.Credit
             int days = (int)difference.TotalDays;
             decimal accruedInterest = 0;
             var accInterest = (from a in context.TBL_LOAN_SCHEDULE_DAILY
-                               where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.PAYMENTDATE == applicationDate
+                               where a.TBL_LOAN.TERMLOANID == data.TERMLOANID && a.DATE == applicationDate
                                select a).FirstOrDefault();
             if (accInterest != null)
             {
@@ -9315,7 +9316,7 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == false
-                            orderby op.LOANID descending
+                            orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
                                 loanId = ln.TERMLOANID,
@@ -9389,9 +9390,25 @@ namespace FintrakBanking.Repositories.Credit
                                 operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
                                 newEffectiveDate = op.EFFECTIVEDATE,
                                 reviewDetails = op.REVIEWDETAILS,
+                                prepayment = op.PREPAYMENT,
+                                newInterateRate = op.INTERATERATE,
+                                newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                newTenor = op.TENOR,
+                                cASA_AccountId = op.CASA_ACCOUNTID,
+                                cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                overDraftTopup = op.OVERDRAFTTOPUP,
+                                fee_Charges=op.FEE_CHARGES, 
+                                scheduleDayCountConventionId=op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                scheduleDayInterestTypeId= op.SCHEDULEDAYINTERESTTYPEID,
+                                scheduledPrepaymentFrequencyTypeId= op.SCHEDULETYPEID,
+                                newInterestFirstPaymentDate  = op.INTERESTFIRSTPAYMENTDATE,
+                                newMaturityDate = op.MATURITYDATE,
                                 approvedAmount = ld.APPROVEDAMOUNT,
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
-                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x=>x.TBL_LMSR_APPLICATION_DETAIL.Where(a=>a.LOANAPPLICATIONID==x.LOANAPPLICATIONID).Select(a=>a.LOANID).FirstOrDefault()==ln.TERMLOANID).Select(x=>x.APPLICATIONREFERENCENUMBER).FirstOrDefault()
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x=>x.TBL_LMSR_APPLICATION_DETAIL.Where(a=>a.LOANAPPLICATIONID==x.LOANAPPLICATIONID).Select(a=>a.LOANID).FirstOrDefault()==ln.TERMLOANID).Select(x=>x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                                dateTimeCreated = op.DATECREATED
                             }).ToList();
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
@@ -9411,7 +9428,7 @@ namespace FintrakBanking.Repositories.Credit
                                      && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == false
-                                     orderby op.LOANID descending
+                                     orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
                                          loanId = ln.REVOLVINGLOANID,
@@ -9460,12 +9477,28 @@ namespace FintrakBanking.Repositories.Credit
                                          operationTypeName = tt.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
                                          newEffectiveDate = op.EFFECTIVEDATE,
                                          reviewDetails = op.REVIEWDETAILS,
-                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.REVOLVINGLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault()
+                                         prepayment = op.PREPAYMENT,
+                                         newInterateRate = op.INTERATERATE,
+                                         newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                         newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                         newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                         newTenor = op.TENOR,
+                                         cASA_AccountId = op.CASA_ACCOUNTID,
+                                         cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x=>x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                         overDraftTopup = op.OVERDRAFTTOPUP,
+                                         fee_Charges = op.FEE_CHARGES,
+                                         scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                         scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                         scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                         newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                         newMaturityDate = op.MATURITYDATE,
+                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.REVOLVINGLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
+                                         dateTimeCreated = op.DATECREATED
 
                                      }).ToList();
 
-            var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault());
-            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault());
+            var termLoanData = dataLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x=> x.dateTimeCreated);
+            var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var data = termLoanData.Union(revolvingLoanData);
             return data;
         }
@@ -9476,7 +9509,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
                             where op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && op.OPERATIONCOMPLETED == false
-                            orderby op.OPERATIONTYPEID descending
+                            orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
                                 loanId = ln.TERMLOANID,
@@ -9557,13 +9590,14 @@ namespace FintrakBanking.Repositories.Credit
                                 cASA_AccountId = op.CASA_ACCOUNTID,
                                 overDraftTopup = op.OVERDRAFTTOPUP,
                                 fee_Charges = op.FEE_CHARGES,
-                            }).ToList();
+                                dateTimeCreated = op.DATECREATED
+                            }).ToList().OrderByDescending(x => x.dateTimeCreated);
 
 
             var dataRevolving = (from ln in context.TBL_LOAN_REVOLVING
                                  join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
                                  where op.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && op.OPERATIONCOMPLETED == false
-                                 orderby op.OPERATIONTYPEID descending
+                                 orderby op.DATECREATED descending
                                  select new LoanReviewOperationApprovalViewModel
                                  {
                                      loanId = ln.REVOLVINGLOANID,
@@ -9621,7 +9655,8 @@ namespace FintrakBanking.Repositories.Credit
                                      cASA_AccountId = op.CASA_ACCOUNTID,
                                      overDraftTopup = op.OVERDRAFTTOPUP,
                                      fee_Charges = op.FEE_CHARGES,
-                                 }).ToList();
+                                     dateTimeCreated = op.DATECREATED
+                                 }).ToList().OrderByDescending(x => x.dateTimeCreated);
             var data = dataLoan.Union(dataRevolving);
             return data;
         }

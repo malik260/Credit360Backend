@@ -13,6 +13,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddLoanDocument(LoanDocumentViewModel model, byte[] file);
 
         bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId);
+        bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId, byte[] file);
 
         bool DeleteLoanDocument(string invoiceNo, string applicationNumber);
 
