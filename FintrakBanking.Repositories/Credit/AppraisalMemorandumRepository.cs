@@ -415,7 +415,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.comment == "debug_test") throw new SecureException("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
-            LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate); // LOG CHANGES
+            LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate,model.vote); // LOG CHANGES
             context.SaveChanges();
 
             var lastStatus = workflow.StatusId; // prevents the nex
@@ -430,7 +430,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-        private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date)
+        private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date, short? decision)
         {
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false);
             foreach (var detail in details)
@@ -447,6 +447,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = staffId,
                     DATETIMECREATED = date,
                     SYSTEMDATETIME = DateTime.Now,
+                    DECISION = decision
                 });
             }
             //context.SaveChanges();
@@ -464,11 +465,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId)
         {
+            int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
+                (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
+            (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
+                (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
+            ,(int)OperationsEnum.ContigentLoanBooking};
+
             var allstaff = this.GetAllStaffNames();
 
-            return this.context.TBL_APPROVAL_TRAIL
-                .Where(x => x.OPERATIONID == operationId && x.TARGETID == applicationId)
-                .Select(x => new ApprovalTrailViewModel
+            var data =  (from x in this.context.TBL_APPROVAL_TRAIL
+                where operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId
+                select new ApprovalTrailViewModel
                 {
                     approvalTrailId = x.APPROVALTRAILID,
                     targetId = x.TARGETID,
@@ -485,9 +492,10 @@ namespace FintrakBanking.Repositories.Credit
                     approvalStatusId = x.APPROVALSTATUSID,
                     approvalState = x.TBL_APPROVAL_STATE.APPROVALSTATE,
                     approvalStatus = x.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                    comment = x.COMMENT,
                     staffName = allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REQUESTSTAFFID).name,
                 }).OrderByDescending(x => x.approvalTrailId);
+
+            return data;
         }
 
         public PrivilegeViewModel GetUserPrivilege(AuthoritySignatureViewModel entity)
@@ -803,6 +811,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedProductId = x.a.APPROVEDPRODUCTID,
                     statusId = x.a.STATUSID,
                     exchangeRate = x.a.EXCHANGERATE,
+                    decision = x.a.DECISION,
                     customerName = x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
                     approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
                     staffName = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
@@ -841,7 +850,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // query
             var query = context.TBL_LOAN_APPLICATION.Where(x =>
-                    x.DELETED == false
+                    x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                     && x.COMPANYID == companyId
                     //&& (x.BRANCHID == branchId || isHeadOffice) // branch filter
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
@@ -923,7 +932,7 @@ namespace FintrakBanking.Repositories.Credit
             int productBasedId = (int)ProductClassProcessEnum.ProductBased;
 
             var applications = context.TBL_LOAN_APPLICATION.Where(x =>
-                x.DELETED == false
+                x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                 && x.COMPANYID == user.companyId
                 //&& (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
                 // && x.PRODUCT_CLASS_PROCESSID == productBasedId
@@ -1094,7 +1103,8 @@ namespace FintrakBanking.Repositories.Credit
             if (region == null) { throw new SecureException("This user does not have a region mapped to him."); }
             var branches = context.TBL_BRANCH.Where(x => x.REGIONID == region.REGIONID).Select(x => x.BRANCHID);
 
-            var applications = context.TBL_LOAN_APPLICATION.Where(x => branches.Contains(x.BRANCHID)
+            var applications = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                    && branches.Contains(x.BRANCHID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                     && x.SUBMITTEDFORAPPRAISAL == true

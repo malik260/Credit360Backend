@@ -42,5 +42,11 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedentByDetailIdLms(int detailid);
         List<ConditionPrecedentViewModel> GetConditionPrecedentDefaultByDetailIdLms(int detailId);
         bool DeleteConditionPrecedentTemplate(UserInfo user, int id);
+
+        // additional comment condition
+        List<AdditionalCommentViewModel> GetAdditionalComment(int applicationId, int callerId);
+        bool AddAdditionalComment(AdditionalCommentViewModel entity);
+        bool EditAdditionalComment(int id, AdditionalCommentViewModel entity);
+        bool RemoveAdditionalComment(int id, UserInfo user);
     }
 }
