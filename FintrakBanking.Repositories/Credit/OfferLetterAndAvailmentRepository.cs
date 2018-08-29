@@ -1782,6 +1782,7 @@ namespace FintrakBanking.Repositories.Credit
             else
                 return false;
         }
+
         public int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
             int operationId = (int)OperationsEnum.LoanAvailment;
@@ -1851,6 +1852,7 @@ namespace FintrakBanking.Repositories.Credit
                             APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                             LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now,
+                            ISUSED = false,
                             CREATEDBY = entity.staffId,
                         });
                 }
@@ -1867,6 +1869,7 @@ namespace FintrakBanking.Repositories.Credit
                                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                     LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                                     DATETIMECREATED = DateTime.Now,
+                                    ISUSED = false,
                                     CREATEDBY = entity.staffId,
                                 });
                             }

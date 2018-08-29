@@ -65,7 +65,16 @@ namespace FintrakBanking.ViewModels.Credit
         public List<int> selectedIds { get; set; }
         public int detailId { get; set; }
     }
+
+    public class AdditionalCommentViewModel : GeneralEntity
+    {
+        public int id { get; set; }
+        public int callerId { get; set; }
+        public int applicationId { get; set; }
+        public string additionalComment { get; set; }
+    }
+
+
+    
 }
-
-
 

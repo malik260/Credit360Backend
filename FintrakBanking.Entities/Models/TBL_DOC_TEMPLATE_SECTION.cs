@@ -15,6 +15,8 @@ namespace FintrakBanking.Entities.Models
 
         public string TITLE { get; set; }
 
+        public string DESCRIPTION { get; set; }
+
         public string TEMPLATEDOCUMENT { get; set; }
 
         public int POSITION { get; set; }

@@ -26,6 +26,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int position { get; set; }
         public bool canEdit { get; set; }
         public bool editable { get; set; }
+        public string description { get; set; }
     }
 
     public class DocumentTemplateViewModel : GeneralEntity

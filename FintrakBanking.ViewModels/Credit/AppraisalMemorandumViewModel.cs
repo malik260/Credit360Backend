@@ -195,6 +195,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationId { get; set; }
 
         public string staffName { get; set; }
+        public short? decision { get; set; }
     }
 
     public class CAMApprovalLevelStaffViewModel
