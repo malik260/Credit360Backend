@@ -9492,7 +9492,6 @@ namespace FintrakBanking.Repositories.Credit
                                          scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
                                          newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
                                          newMaturityDate = op.MATURITYDATE,
-                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.REVOLVINGLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault()
                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.REVOLVINGLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                          dateTimeCreated = op.DATECREATED
 
