@@ -1680,6 +1680,7 @@ namespace FintrakBanking.Repositories.Credit
             else
                 return false;
         }
+
         public int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
             int operationId = (int)OperationsEnum.LoanAvailment;
