@@ -388,8 +388,6 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion LMS conditions
 
-
-
         #region Compliance Timeline template
 
         [HttpGet]
@@ -485,5 +483,93 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion Compliance Timeline template
+
+        #region Additional Comments
+
+        [HttpGet]
+        [Route("additional-comment/application/{applicationId}/caller/{callerId}")]
+        public HttpResponseMessage GetAdditionalComment(int applicationId, int callerId)
+        {
+            try
+            {
+                List<AdditionalCommentViewModel> response = repo.GetAdditionalComment(applicationId, callerId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("additional-comment")]
+        public HttpResponseMessage AddAdditionalComment([FromBody] AdditionalCommentViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                bool response = repo.AddAdditionalComment(entity);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpPut]
+        [Route("additional-comment/{id}")]
+        public HttpResponseMessage EditAdditionalComment([FromBody] AdditionalCommentViewModel entity, int id)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.lastUpdatedBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                bool response = repo.EditAdditionalComment(id, entity);
+                if (response) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been modified successfully" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        [HttpDelete]
+        [Route("additional-comment/{id}")]
+        public HttpResponseMessage RemoveAdditionalComment(int id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+                bool response = repo.RemoveAdditionalComment(id, user);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been removed successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}", error = ex.InnerException });
+            }
+        }
+
+        #endregion Additional Comments
+
+
+
+
     }
 }
