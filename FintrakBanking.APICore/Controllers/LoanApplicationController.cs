@@ -1333,5 +1333,45 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-funding-source")]
+        public HttpResponseMessage GetAllCRMSFundingSource()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSFundingSource();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-repayment-source")]
+        public HttpResponseMessage GetAllCRMSRepaymentSource()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSRepaymentSource();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
