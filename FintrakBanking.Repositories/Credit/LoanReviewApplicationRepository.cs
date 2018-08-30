@@ -38,7 +38,8 @@ namespace FintrakBanking.Repositories.Credit
             int companyId = user.companyId;
 
             bool ignoreBranch = true; // rm = false, ho = true
-            if (camOperationIds.Contains(operationId)) ignoreBranch = !ProcessInitiator(staffId, operationId, classId);
+            if (operationId == 47) if (ProcessInitiator(staffId, operationId, classId, 2)) ignoreBranch = false;
+            if (camOperationIds.Contains(operationId)) if (ProcessInitiator(staffId, operationId, classId, 1)) ignoreBranch = false;
 
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
@@ -125,7 +126,7 @@ namespace FintrakBanking.Repositories.Credit
             return applications; // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        private bool ProcessInitiator(int staffId, int operationId, int? productClassId)
+        private bool ProcessInitiator(int staffId, int operationId, int? productClassId, int position)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
@@ -151,7 +152,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
 
-            return index == 0;
+            return index == (position - 1);
         }
 
         public SelectListViewModel GetAllSelectList()
@@ -175,7 +176,7 @@ namespace FintrakBanking.Repositories.Credit
             return list;
         }
 
-        public bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
+        public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
@@ -233,12 +234,13 @@ namespace FintrakBanking.Repositories.Credit
 
             // ------------AUDIT CODE HERE! -------------
 
-            if (context.SaveChanges() == 0) return false; // this save is necessary to grab targetid
+            if (context.SaveChanges() == 0) throw new SecureException("An error occured while saving the data!"); // this save is necessary to grab targetid
 
             workflow.ToStaffId = model.createdBy;
             workflow.NextProcess(model.companyId, model.createdBy, camOperationId, application.LOANAPPLICATIONID, null, "NIL", true, true);
 
-            return context.SaveChanges() > 0;
+            if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
+            throw new SecureException("An error occured while saving the data!");
         }
 
         private int GetCamOperation(int performanceTypeId)
@@ -381,7 +383,7 @@ namespace FintrakBanking.Repositories.Credit
         //    };
         //}
 
-        public int ForwardApplication(ForwardReviewViewModel model)
+        public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
         {
             int nextProcessId = model.operationId + 1;
             int operationId = model.operationId; // beware of nplappraisal!
@@ -461,7 +463,8 @@ namespace FintrakBanking.Repositories.Credit
                 context.SaveChanges();
             }
 
-            return lastStatusId;
+            //return lastStatusId;
+            return workflow.Response;
         }
 
         private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)

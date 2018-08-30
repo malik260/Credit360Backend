@@ -13,6 +13,7 @@ using System.Linq;
 using System.Collections.Generic;
 using FintrakBanking.APICore.Filters;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -87,7 +88,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/submit")]
         public HttpResponseMessage SubmitLoanReviewApplication([FromBody] LoanReviewApplicationViewModel entity)
         {
@@ -96,8 +97,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy =  token.GetStaffId;
                 entity.companyId =  token.GetCompanyId;
                 entity.branchId =  (short)token.GetBranchId;
-                bool response = repo.SubmitLoanReviewApplication(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Application submitted successfully.", result = response });
+                string response = repo.SubmitLoanReviewApplication(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
             }
             catch (SecureException ex)
             {
@@ -178,7 +179,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
 
-                int response = repo.ForwardApplication(model);
+                WorkflowResponse response = repo.ForwardApplication(model);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException e)
