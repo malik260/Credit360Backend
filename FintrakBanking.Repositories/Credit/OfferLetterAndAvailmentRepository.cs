@@ -1854,6 +1854,7 @@ namespace FintrakBanking.Repositories.Credit
                             APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                             LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                             DATETIMECREATED = DateTime.Now,
+                            ISUSED = false,
                             CREATEDBY = entity.staffId,
                         });
                 }
@@ -1870,6 +1871,7 @@ namespace FintrakBanking.Repositories.Credit
                                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
                                     LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
                                     DATETIMECREATED = DateTime.Now,
+                                    ISUSED = false,
                                     CREATEDBY = entity.staffId,
                                 });
                             }

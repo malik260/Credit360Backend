@@ -111,5 +111,9 @@ namespace FintrakBanking.Interfaces.Credit
         List<ConditionPrecedentViewModel> GetConditionPrecidents(int loanApplicationId);
 
         LoanApplicationViewModel GetSingleLoanApplicationById(int loanApplicationId, int companyId);
+
+        bool updateSuggestionsLoanApplicationdetail(LoanApplicationDetailViewModel model);
+
+        LoanApplicationDetailViewModel GetSingleLoanApplicationsDetails(int loanApplicationDetailId, int companyId);
     }
 }

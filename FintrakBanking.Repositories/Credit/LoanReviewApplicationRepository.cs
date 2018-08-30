@@ -38,7 +38,8 @@ namespace FintrakBanking.Repositories.Credit
             int companyId = user.companyId;
 
             bool ignoreBranch = true; // rm = false, ho = true
-            if (camOperationIds.Contains(operationId)) ignoreBranch = !ProcessInitiator(staffId, operationId, classId);
+            if (operationId == 47) if (ProcessInitiator(staffId, operationId, classId, 2)) ignoreBranch = false;
+            if (camOperationIds.Contains(operationId)) if (ProcessInitiator(staffId, operationId, classId, 1)) ignoreBranch = false;
 
             List<int> operationIds = new List<int>();
             operationIds.Add(operationId);
@@ -125,7 +126,7 @@ namespace FintrakBanking.Repositories.Credit
             return applications; // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
-        private bool ProcessInitiator(int staffId, int operationId, int? productClassId)
+        private bool ProcessInitiator(int staffId, int operationId, int? productClassId, int position)
         {
             var staff = context.TBL_STAFF.Find(staffId);
 
@@ -151,7 +152,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
 
-            return index == 0;
+            return index == (position - 1);
         }
 
         public SelectListViewModel GetAllSelectList()
