@@ -2299,9 +2299,9 @@ namespace FintrakBanking.Repositories.Customer
                 subSectorName = a.TBL_SUB_SECTOR.NAME,
                 taxNumber = a.TAXNUMBER,
                 riskRatingId = a.RISKRATINGID,
-                crmsRelationshipTypeId = a.CRMSRELATIONSHIPTYPEID,
-                crmsLegalStatusId = a.CRMSLEGALSTATUSID,
-                crmsCompanySizeId = a.CRMSCOMPANYSIZEID,
+                crmsRelationshipTypeId = (int)a.CRMSRELATIONSHIPTYPEID,
+                crmsLegalStatusId = (int)a.CRMSLEGALSTATUSID,
+                crmsCompanySizeId = (int)a.CRMSCOMPANYSIZEID,
                 // riskRatingName = a.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                 customerBVN = a.CUSTOMERBVN,
                 isProspect = a.ISPROSPECT

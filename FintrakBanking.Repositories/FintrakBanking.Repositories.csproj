@@ -126,6 +126,7 @@
     <Compile Include="CASA\CasaLienRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CASA\OverRideRepository.cs" />
+    <Compile Include="Credit\DashboardRepository.cs" />
     <Compile Include="Credit\MemorandumRepository.cs" />
     <Compile Include="Credit\CRMSRegulatories.cs" />
     <Compile Include="Credit\FacilityDetailSummary.cs" />
