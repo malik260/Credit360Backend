@@ -1222,8 +1222,16 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                  //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
 
-                var data = repo.DeleteChild(childId);
+                var data = repo.DeleteChild(childId, user);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1238,7 +1246,37 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error deleting this record {e.Message}" });
             }
         }
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("company-ultimate-beneficial/{companyBeneficialId}")]
+        public HttpResponseMessage DeleteUltimateBeneficial(int companyBeneficialId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
 
+                var data = repo.DeleteUltimateBeneficial(companyBeneficialId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error delete this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
 
         #region Single Customer Information By CustomerID
         [HttpGet]

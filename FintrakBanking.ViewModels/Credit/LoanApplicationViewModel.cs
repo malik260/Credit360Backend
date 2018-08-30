@@ -265,14 +265,22 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string repaymentTerm { get; set; }
 
-        public int  crmsFundingSourceId { get; set; }
+        public int?  crmsFundingSourceId { get; set; }
 
-        public int crmsPaymentSourceId { get; set; }
+        public int? crmsPaymentSourceId { get; set; }
 
         public string crmsFundingSourceCategory { get; set; }
 
         public string crms_ECCI_Number { get; set; }
-        
+
+        public string conditionPrecedent { get; set; }
+
+        public string conditionSubsequent { get; set; }
+
+        public string transactionDynamics { get; set; }
+
+        public string listOfCommodities { get; set; }
+
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
         public EducationLoanViewModel educationLoan { get; set; }

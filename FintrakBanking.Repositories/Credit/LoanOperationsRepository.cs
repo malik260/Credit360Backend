@@ -3280,7 +3280,7 @@ namespace FintrakBanking.Repositories.Credit
                 var systemDate = generalSetup.GetApplicationDate();
                 var chargeDetails = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == loanId && x.OPERATIONTYPEID == operationId
                 && x.OPERATIONCOMPLETED == false);
-                int productType = chargeDetails.PRODUCTTYPEID;
+                int productType = chargeDetails.LOANSYSTEMTYPEID;
 
                 var tax = this.context.TBL_CHARGE_FEE_DETAIL.Where(x => x.CHARGEFEEID == chargeDetails.INTERESTFREQUENCYTYPEID);
                 decimal NewTaxRate = (decimal)tax.FirstOrDefault().VALUE;
@@ -9181,7 +9181,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new TBL_LOAN_REVIEW_OPERATION
             {
                 LOANID = model.loanId,
-                PRODUCTTYPEID = model.productTypeId,
+                LOANSYSTEMTYPEID = model.productTypeId,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,

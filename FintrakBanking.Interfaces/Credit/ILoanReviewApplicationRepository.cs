@@ -1,4 +1,5 @@
-﻿using FintrakBanking.ViewModels;
+﻿using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         SelectListViewModel GetAllSelectList();
 
-        bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel entity);
+        string SubmitLoanReviewApplication(LoanReviewApplicationViewModel entity);
 
         //List<LoanViewModel> LoanSearch(int getCompanyId, SearchViewModel search);
 
@@ -23,9 +24,9 @@ namespace FintrakBanking.Interfaces.Credit
         //CamViewModel GetCamDocument(int documentationId);
 
         //CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int staffId);
-        
+
         //List<CamViewModel> GetCamDocuments(int applicationId);
 
-        int ForwardApplication(ForwardReviewViewModel model);
+        WorkflowResponse ForwardApplication(ForwardReviewViewModel model);
     }
 }

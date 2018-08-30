@@ -99,5 +99,6 @@ namespace FintrakBanking.Interfaces.Setups
         #endregion
 
         bool RegulatoryChecklistAutomapping(int customerId, ChecklistDetailViewModel model);
+        bool DeleteLoanConditionPrecedenceStatus(int conditionId, UserInfo user);
     }
 }

@@ -1687,7 +1687,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             //var l = context.TBL_LOAN.Find(loanId);
 
-
             var collaterals = context.TBL_CUSTOMER
                 .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
                 .Join(context.TBL_LOAN_APPLICATION, cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
@@ -1762,30 +1761,10 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool ApproveCollateralRelease(ApprovalViewModel entity, int staffId, GeneralEntity model)
+        public bool ApproveCollateralRelease(ApprovalViewModel entity, int staffId, GeneralEntity user)
         {
-            var mapping = context.TBL_LOAN_COLLATERAL_MAPPING.Find(entity.targetId);
-            context.Entry(mapping).State = EntityState.Modified;
-            mapping.RELEASEAPPROVALSTATUSID = (short)entity.approvalStatusId;
-            mapping.ISRELEASED = entity.approvalStatusId == (int)ApprovalStatusEnum.Approved ? true : false;
-
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.CollateralReleaseApproval,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Collateral Release Approval '{ mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.auditTrail.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            workflow.StaffId = model.createdBy;
-            workflow.CompanyId = model.companyId;
+            workflow.StaffId = user.createdBy;
+            workflow.CompanyId = user.companyId;
             workflow.StatusId = (short)entity.approvalStatusId;
             workflow.TargetId = entity.targetId;
             workflow.Comment = entity.comment;
@@ -1793,21 +1772,70 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
-            // Release Lien
-            var collateralCode = mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE;
-            var casalien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == collateralCode);
+
+            var mapping = context.TBL_LOAN_COLLATERAL_MAPPING.Find(entity.targetId);
+
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
             {
-                lien.ReleaseLien(new CasaLienViewModel
+                var mainCollateral = (from x in context.TBL_COLLATERAL_CUSTOMER
+                                      join t in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals t.COLLATERALTYPEID
+                                      where x.COLLATERALCUSTOMERID == mapping.COLLATERALCUSTOMERID
+                                      select new { x.COLLATERALTYPEID, x.COLLATERALCUSTOMERID, t.REQUIREINSURANCEPOLICY, t.REQUIREVISITATION, x.COLLATERALCODE, x.COLLATERALVALUE }).FirstOrDefault();
+
+
+                if (mainCollateral.COLLATERALTYPEID > 0)
                 {
-                    lienReferenceNumber = casalien.LIENREFERENCENUMBER,
-                    sourceReferenceNumber = collateralCode,
-                    productAccountNumber = casalien.PRODUCTACCOUNTNUMBER,
-                    description = "Collateral Release",
-                    branchId = casalien.BRANCHID,
-                    lienTypeId = casalien.LIENTYPEID,
-                    lienAmount = casalien.LIENAMOUNT,
-                });
+                    var description = "Callateral lien release";
+                    decimal securityValue = 0;
+
+                    if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
+                    {
+                        description = "CASA callateral lien release";
+                        var collateral = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == mainCollateral.COLLATERALCUSTOMERID);
+                        if (collateral != null) securityValue = collateral.SECURITYVALUE;
+                    }
+
+                    if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit)
+                    {
+                        description = "Deposit callateral lien release";
+                        var collateral = context.TBL_COLLATERAL_DEPOSIT.FirstOrDefault(x => x.COLLATERALCUSTOMERID == mainCollateral.COLLATERALCUSTOMERID);
+                        if (collateral != null) securityValue = collateral.SECURITYVALUE;
+                    }
+
+                    CasaLienViewModel model = new CasaLienViewModel
+                    {
+                        productAccountNumber = mainCollateral.COLLATERALCODE,
+                        lienAmount = securityValue,
+                        description = description,
+                        lienTypeId = (int)LienTypeEnum.CollateralCreation,
+                        sourceReferenceNumber = mainCollateral.COLLATERALCODE,
+                        dateTimeCreated = DateTime.Now,
+                        createdBy = user.createdBy,
+                        companyId = user.companyId,
+                        branchId = (short)user.userBranchId
+                    };
+
+                    lien.ReleaseLien(model);
+
+                    mapping.RELEASEAPPROVALSTATUSID = (short)entity.approvalStatusId;
+                    mapping.ISRELEASED = true;
+                    context.Entry(mapping).State = EntityState.Modified;
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CollateralReleaseApproval,
+                        STAFFID = user.createdBy,
+                        BRANCHID = (short)user.userBranchId,
+                        DETAIL = $"Collateral Release Approval '{ mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE }' ",
+                        IPADDRESS = user.userIPAddress,
+                        URL = user.applicationUrl,
+                        APPLICATIONDATE = genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.auditTrail.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
+                }
             }
 
             return context.SaveChanges() > 0;
