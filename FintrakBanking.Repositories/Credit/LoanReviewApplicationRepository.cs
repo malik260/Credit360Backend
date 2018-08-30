@@ -176,7 +176,7 @@ namespace FintrakBanking.Repositories.Credit
             return list;
         }
 
-        public bool SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
+        public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
@@ -234,12 +234,13 @@ namespace FintrakBanking.Repositories.Credit
 
             // ------------AUDIT CODE HERE! -------------
 
-            if (context.SaveChanges() == 0) return false; // this save is necessary to grab targetid
+            if (context.SaveChanges() == 0) throw new SecureException("An error occured while saving the data!"); // this save is necessary to grab targetid
 
             workflow.ToStaffId = model.createdBy;
             workflow.NextProcess(model.companyId, model.createdBy, camOperationId, application.LOANAPPLICATIONID, null, "NIL", true, true);
 
-            return context.SaveChanges() > 0;
+            if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
+            throw new SecureException("An error occured while saving the data!");
         }
 
         private int GetCamOperation(int performanceTypeId)
@@ -382,7 +383,7 @@ namespace FintrakBanking.Repositories.Credit
         //    };
         //}
 
-        public int ForwardApplication(ForwardReviewViewModel model)
+        public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
         {
             int nextProcessId = model.operationId + 1;
             int operationId = model.operationId; // beware of nplappraisal!
@@ -462,7 +463,8 @@ namespace FintrakBanking.Repositories.Credit
                 context.SaveChanges();
             }
 
-            return lastStatusId;
+            //return lastStatusId;
+            return workflow.Response;
         }
 
         private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
