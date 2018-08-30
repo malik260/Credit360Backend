@@ -407,7 +407,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PROFILE_PASSWORD_HISTORY> TBL_PROFILE_PASSWORD_HISTORY { get; set; }
         public virtual DbSet<TBL_CUSTOM_CREDITBUREAU_ERROR> TBL_CUSTOM_CREDITBUREAU_ERROR { get; set; }
         public virtual DbSet<TBL_TEMP_LOAN_APPLTN_CANCELTN> TBL_TEMP_LOAN_APPLTN_CANCELTN { get; set; }
-        public virtual DbSet<TBL_LOAN_APPLICATION_COMMENT> TBL_LOAN_APPLICATION_COMMENT  { get; set; }
         
         public virtual DbSet<TBL_CRMS_REGULATORY> TBL_CRMS_REGULATORY { get; set; }
         public virtual DbSet<TBL_CRMS_TYPE> TBL_CRMS_TYPE { get; set; }

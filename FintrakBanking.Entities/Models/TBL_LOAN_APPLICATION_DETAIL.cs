@@ -125,6 +125,12 @@ namespace FintrakBanking.Entities.Models
 
         public string CRMS_ECCI_NUMBER { get; set; }
 
+        public string TRANSACTIONDYNAMICS { get; set; }
+
+        public string CONDITIONPRECIDENT { get; set; }
+
+        public string CONDITIONSUBSEQUENT { get; set; }
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }

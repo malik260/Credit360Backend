@@ -1786,7 +1786,7 @@ namespace FintrakBanking.Repositories.Credit
         public int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
             int operationId = (int)OperationsEnum.LoanAvailment;
-            var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == operationId).ToList();
+            // var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == operationId).ToList();
             var loanApplication = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
 
@@ -1812,7 +1812,9 @@ namespace FintrakBanking.Repositories.Credit
                 //if (invalids > 0) throw new SecureException("Before availment validation failed!");
                 loanApplication.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                 loanApplication.AVAILMENTDATE = DateTime.Now;
-                LogLoanBookingRequest(entity, loanApplication.PRODUCTCLASSID, loanApplication.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID, loanApplicationDetails); // austin!
+
+                short? productProcessId = loanApplication.TBL_PRODUCT_CLASS?.PRODUCT_CLASS_PROCESSID;
+                LogLoanBookingRequest(entity, loanApplication.PRODUCTCLASSID, productProcessId, loanApplicationDetails); // austin!
             }
 
 
@@ -1835,7 +1837,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        private void LogLoanBookingRequest(LoanAvailmentApprovalViewModel entity, short? productClassId, int processId, IQueryable<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails)
+        private void LogLoanBookingRequest(LoanAvailmentApprovalViewModel entity, short? productClassId, short? processId, IQueryable<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails)
         {
             foreach (var record in loanApplicationDetails.ToList())
             {
