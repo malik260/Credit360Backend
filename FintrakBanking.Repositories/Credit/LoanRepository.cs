@@ -409,18 +409,18 @@ namespace FintrakBanking.Repositories.Credit
                     if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                     {
                         //............save Loan Covenant..........
-                        AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+                        AddLoanCovenant(model, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
                         //............save Loan Fees..........
                         AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model.companyId, model.feeOverride);
 
                         model.loanReferenceNumber = loanReferenceNumber;
 
                         //...................Saving Loan Collaterals Mapping.......................
-                        AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+                        AddLoanCollateralMapping(model.loanApplicationId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
 
                         //...................Saving Loan Collaterals Mapping.......................
-                        if (model.monitoringTriggers.Count > 0)
-                            AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+                        //if (model.monitoringTriggers.Count > 0)
+                        //    AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
 
                         if (!model.feeOverride) PostLoanFees(model);
                         context.SaveChanges();
@@ -795,17 +795,17 @@ namespace FintrakBanking.Repositories.Credit
                     if (LogApproval(approvalModel, (int)OperationsEnum.ContigentLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                     {
                         //............save Loan Covenant..........
-                        AddLoanCovenant(entity.loanCovenant, entity.loanApplicationDetailId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+                        AddLoanCovenant(entity, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
                         //............save Loan Fees..........
                         AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability, entity.companyId, entity.feeOverride);
                         entity.loanReferenceNumber = loanReferenceNumber;
 
                         //...................Saving Loan Collaterals Mapping.......................
-                        AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+                        AddLoanCollateralMapping(entity.loanApplicationId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
 
                         //...................Mapping Loan Monitoring Trigger.......................
-                        if (entity.monitoringTriggers.Count > 0)
-                            AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
+                        //if (entity.monitoringTriggers.Count > 0)
+                        //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
 
                         if (!entity.feeOverride) PostLoanFees(entity);
 
@@ -1037,12 +1037,12 @@ namespace FintrakBanking.Repositories.Credit
                                     context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.Add(irregularRecordData);
                                 }
                             }
-                            AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
                             AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
-                            AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
-                            if (entity.monitoringTriggers.Count > 0)
-                                AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            //if (entity.monitoringTriggers.Count > 0)
+                            //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
@@ -1250,15 +1250,15 @@ namespace FintrakBanking.Repositories.Credit
                         //.....................LOG COMMERCIAL LOAN BOOKING TRANSACTION FOR APPROVAL......................................
                         if (LogApproval(approvalModel, (int)OperationsEnum.CommercialLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
-                            AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
                             AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
 
                             //...................Saving Commercial Loan Collaterals Mapping.......................
-                            AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             //...................Mapping Commercial Loan Monitoring Trigger.......................
-                            if (entity.monitoringTriggers.Count > 0)
-                                AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            //if (entity.monitoringTriggers.Count > 0)
+                            //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
@@ -1480,15 +1480,15 @@ namespace FintrakBanking.Repositories.Credit
                         //.....................LOG FX LOAN BOOKING TRANSACTION FOR APPROVAL......................................
                         if (LogApproval(approvalModel, (int)OperationsEnum.ForeignExchangeLoanBooking, false, (int)ApprovalStatusEnum.Processing))
                         {
-                            AddLoanCovenant(entity.loanCovenant, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanCovenant(entity, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
                             AddLoanFees(entity.loanChargeFee, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility, entity.companyId, entity.feeOverride);
 
                             //...................Saving FX Loan Collaterals Mapping.......................
-                            AddLoanCollateralMapping(entity.loanCollateral, entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             //...................Mapping FX Loan Monitoring Trigger.......................
-                            if (entity.monitoringTriggers.Count > 0)
-                                AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            //if (entity.monitoringTriggers.Count > 0)
+                            //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             if (entity.loanBeneficiary.Count > 0)
                             {
@@ -3618,22 +3618,23 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="loanId">The loan identifier.</param>
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
-        private bool AddLoanCovenant(List<LoanCovenantDetailViewModel> covenantModel, int loanApplicationId, int loanId, short loanSystemTypeId)
+        private bool AddLoanCovenant(LoanViewModel model, int loanId, short loanSystemTypeId)
         {
-            foreach (LoanCovenantDetailViewModel entity in covenantModel)
+            var covenantModel = context.TBL_LOAN_APPLICATION_COVENANT.Where(x => x.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).ToList();
+            foreach (var entity in covenantModel)
             {
                 var covenant = new TBL_LOAN_COVENANT_DETAIL
                 {
-                    COMPANYID = entity.companyId,
-                    COVENANTAMOUNT = entity.covenantAmount,
-                    COVENANTDATE = entity.covenantDate,
-                    COVENANTDETAIL = entity.covenantDetail,
-                    COVENANTTYPEID = entity.covenantTypeId,
-                    CREATEDBY = entity.createdBy,
+                    COMPANYID = model.companyId,
+                    COVENANTAMOUNT = entity.COVENANTAMOUNT,
+                    COVENANTDATE = entity.COVENANTDATE,
+                    COVENANTDETAIL = entity.COVENANTDETAIL,
+                    COVENANTTYPEID = entity.COVENANTTYPEID,
+                    CREATEDBY = entity.CREATEDBY,
                     DATETIMECREATED = DateTime.Now,
-                    FREQUENCYTYPEID = entity.frequencyTypeId,
+                    FREQUENCYTYPEID = entity.FREQUENCYTYPEID,
                     LOANID = loanId,
-                    CASAACCOUNTID = entity.casaAccountId,
+                    CASAACCOUNTID = entity.CASAACCOUNTID,
                     LOANSYSTEMTYPEID = loanSystemTypeId,
                 };
 
@@ -3707,38 +3708,24 @@ namespace FintrakBanking.Repositories.Credit
             return covenant;
         }
 
-        /// <summary>
-        /// Adds the loan collateral mapping.
-        /// </summary>
-        /// <param name="collateralModel">The collateral model.</param>
-        /// <param name="loanApplicationId">The loan application identifier.</param>
-        /// <returns></returns>
-        public bool AddLoanCollateralMapping(List<LoanCollateralMappingViewModel> collateralModel, int loanApplicationId, int loanId, short loanSystemTypeId)
+
+        public bool AddLoanCollateralMapping( int loanApplicationId, int loanId, short loanSystemTypeId)
         {
-            foreach (LoanCollateralMappingViewModel entity in collateralModel)
+            var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+            foreach (var entity in collateralModel)
             {
                 var collateral = new TBL_LOAN_COLLATERAL_MAPPING
-                {
-                    COLLATERALCUSTOMERID = entity.collateralId,
+                {  
+                    COLLATERALCUSTOMERID = entity.COLLATERALCUSTOMERID,
                     LOANID = loanId,
                     LOANSYSTEMTYPEID = loanSystemTypeId,
                     ISRELEASED = false,
                 };
                 context.TBL_LOAN_COLLATERAL_MAPPING.Add(collateral);
             }
-            //return context.SaveChanges() > 0;
             return true;
-
         }
 
-        /// <summary>
-        /// Adds the loan fees.
-        /// </summary>
-        /// <param name="feeModel">The fee model.</param>
-        /// <param name="loanId">The loan identifier.</param>
-        /// <param name="productTypeId">The product type identifier.</param>
-        /// <returns></returns>
-        /// 
         private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short loanSystemTypeId, int companyId, bool feeOverride)
         {
             foreach (var ent in feeModel)
