@@ -194,6 +194,7 @@ namespace FintrakBanking.Repositories.Credit
                     position = x.POSITION,
                     sectionId = x.DOCUMENTDETAILID,
                     title = x.TITLE,
+                    description = x.DESCRIPTION,
                     canEdit = x.CANEDIT, // system
                     editable = sectionIds.Contains(x.TEMPLATESECTIONID),
                     templateSectionId = x.TEMPLATESECTIONID,
@@ -216,6 +217,7 @@ namespace FintrakBanking.Repositories.Credit
                     position = x.POSITION,
                     sectionId = x.DOCUMENTDETAILID,
                     title = x.TITLE,
+                    description = x.DESCRIPTION,
                     canEdit = x.CANEDIT, // system
                     // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
                     templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
@@ -247,6 +249,7 @@ namespace FintrakBanking.Repositories.Credit
                     TARGETID = entity.targetId,
                     TEMPLATESECTIONID = temp.TEMPLATESECTIONID,
                     TITLE = temp.TITLE,
+                    DESCRIPTION = temp.DESCRIPTION,
                     TEMPLATEDOCUMENT = temp.TEMPLATEDOCUMENT,
                     POSITION = temp.POSITION,
                     CANEDIT = temp.CANEDIT,
@@ -291,6 +294,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 sectionId = doc.DOCUMENTDETAILID,
                 title = doc.TITLE,
+                description = doc.DESCRIPTION,
                 templateDocument = memo.Replace(doc.TEMPLATEDOCUMENT),
                 canEdit = doc.CANEDIT,
                 editable = doc.CANEDIT && sectionIds.Contains(doc.TEMPLATESECTIONID),
