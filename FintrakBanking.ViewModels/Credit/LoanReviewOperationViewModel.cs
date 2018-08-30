@@ -222,6 +222,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string completeWriteOff { get; set; }
         public string cancelUndisbursedLoan { get; set; }
         public string lmsLoanReferenceNumber { get; set; }
+        public string firstPrincipalPaymentDateString { get; set; }
+        public string firstInterestPaymentDateString { get; set; }
     }
 
 

@@ -9297,7 +9297,7 @@ namespace FintrakBanking.Repositories.Credit
             int staffApprovalLevelId = 0;
             if (levelResult != null) staffApprovalLevelId = levelResult.APPROVALLEVELID;
 
-            var dataLoan = (from ln in context.TBL_LOAN
+            var dataLoan1 = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
                             join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANID equals atrail.TARGETID
@@ -9391,8 +9391,10 @@ namespace FintrakBanking.Repositories.Credit
                                 reviewDetails = op.REVIEWDETAILS,
                                 approvedAmount = ld.APPROVEDAMOUNT,
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
-                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x=>x.TBL_LMSR_APPLICATION_DETAIL.Where(a=>a.LOANAPPLICATIONID==x.LOANAPPLICATIONID).Select(a=>a.LOANID).FirstOrDefault()==ln.TERMLOANID).Select(x=>x.APPLICATIONREFERENCENUMBER).FirstOrDefault()
-                            }).ToList();
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.TERMLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault()
+                            });
+
+     var       dataLoan = dataLoan1.ToList();
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
