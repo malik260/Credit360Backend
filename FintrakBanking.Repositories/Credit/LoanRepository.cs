@@ -872,7 +872,7 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.effectiveDate > generalSetup.GetApplicationDate())
                 throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
-            if(application.TBL_PRODUCT_CLASS.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
+            if(application.TBL_PRODUCT_CLASS != null && application.TBL_PRODUCT_CLASS.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
             {
                 if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                     throw new ConditionNotMetException("Specify the collection account.");

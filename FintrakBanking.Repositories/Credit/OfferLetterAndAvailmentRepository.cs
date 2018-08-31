@@ -1896,6 +1896,7 @@ namespace FintrakBanking.Repositories.Credit
             if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan)
                 operationId = (short)OperationsEnum.TermLoanBooking;
 
+
             if (operationId > 0)
             {
                 workflow.StaffId = entity.createdBy;
