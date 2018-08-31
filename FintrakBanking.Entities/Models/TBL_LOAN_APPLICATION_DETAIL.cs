@@ -132,7 +132,7 @@ namespace FintrakBanking.Entities.Models
         public string CONDITIONSUBSEQUENT { get; set; }
 
         public string FIELD1 { get; set; }
-        
+
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }

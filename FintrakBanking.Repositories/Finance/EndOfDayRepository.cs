@@ -128,7 +128,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
 
-            loanOperation.ProcessLoanRepaymentPostingPastDue(date);
+            //loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
 
             //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
@@ -144,7 +144,7 @@ namespace FintrakBanking.Repositories.Finance
 
             //loanOperation.CalculateLoanClassification(date);
 
-           // loanOperation.GetRepaymentFromStaging();
+           loanOperation.GetRepaymentFromStaging();
 
             endOfDay.ENDDATETIME = DateTime.Now;
 
