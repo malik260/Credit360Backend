@@ -1213,6 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
                                   conditionId = c.LOANCONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
                                   isExternal = c.ISEXTERNAL
 
@@ -1231,13 +1232,46 @@ namespace FintrakBanking.Repositories.Credit
                                   conditionId = c.LOANCONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
                                   isExternal = c.ISEXTERNAL
                               }).ToList();
                 return status;
             }
         }
-        public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
+        public bool DeleteLoanConditionPrecedenceStatus(int conditionId, UserInfo user)
+        {
+            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionId);
+            if (data == null) return false;
+
+         
+            if (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)
+            {
+                var deferral = context.TBL_LOAN_CONDITION_DEFERRAL.Where(x=> x.LOANCONDITIONID == data.LOANCONDITIONID).FirstOrDefault();
+                if (deferral != null)
+                {
+                    context.TBL_LOAN_CONDITION_DEFERRAL.Remove(deferral);
+                }
+            }
+            data.CHECKLISTSTATUSID = null;
+            data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Loan Condition Precedent with Id: {conditionId}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+            return context.SaveChanges()>0;
+        }
+            public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
         {
             var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
             if (data == null) return false;

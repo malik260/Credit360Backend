@@ -1258,6 +1258,39 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error submitting this record {e.Message}" });
             }
         }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-loan-condition-checkstatus/{conditionId}")]
+        public HttpResponseMessage DeleteLoanConditionPrecedenceStatus(int conditionId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = CommonHelpers.GetUserIP()
+                };
+
+            var data =    repo.DeleteChecklistDetail(conditionId, user);
+                if(data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                              new { success = true, result = conditionId, message = "Record has been deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false,  message = "Error deleting record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = ex.Message });
+            }
+
+        }
         #endregion
 
         #region Checklist Type Mapping

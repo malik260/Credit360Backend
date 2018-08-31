@@ -86,6 +86,7 @@
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
     <Compile Include="Credit\CallMemoViewModel.cs" />
     <Compile Include="Credit\CRMSRegulatoryViewModel.cs" />
+    <Compile Include="Credit\DashboardViewModel.cs" />
     <Compile Include="Credit\LoanCAMSOLViewModel.cs" />
     <Compile Include="Credit\ChecklistApprovalViewModel.cs" />
     <Compile Include="Credit\CollateralCustomerViewModel.cs" />
