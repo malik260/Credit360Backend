@@ -1578,14 +1578,6 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        /// <summary>
-        /// Logs the approval.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <param name="operationId">The operation identifier.</param>
-        /// <param name="externalInitialization">if set to <c>true</c> [external initialization].</param>
-        /// <param name="ApprovalStatusId">The approval status identifier.</param>
-        /// <returns></returns>
         public bool LogApproval(ForwardViewModel model, int operationId, bool externalInitialization, int ApprovalStatusId)
         {
             if (externalInitialization)
@@ -1618,10 +1610,6 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() >0;
         }
 
-        /// <summary>
-        /// Disburses the loan.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
         public void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null)
         {
             //PostLoanDisbursment(entity);
@@ -1697,6 +1685,24 @@ namespace FintrakBanking.Repositories.Credit
                     else if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                        //var operationId = 0;
+                        //if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                        //    operationId = (short)OperationsEnum.CommercialLoanBooking;
+                        //if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                        //    operationId = (short)OperationsEnum.ContigentLoanBooking;
+                        //if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan)
+                        //    operationId = (short)OperationsEnum.TermLoanBooking;
+
+                        //var approvalModel = new ForwardViewModel
+                        //{
+                        //    createdBy = entity.createdBy,
+                        //    companyId = entity.companyId,
+                        //    applicationId = request.LOAN_BOOKING_REQUESTID,
+                        //    comment = "A request for booking needs your attention",
+                        //    amount = request.AMOUNT_REQUESTED,
+                        //};
+
+                        //if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);
                         context.SaveChanges();
                         trans.Commit();
                         return 0;
@@ -1864,7 +1870,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="staffId">The staff identifier.</param>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public IEnumerable<LoanViewModel> GetTermLoanBookingAwaitingApproval(int staffId, int companyId)
+        public IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
             List<int> operationIds = new List<int>();
@@ -2027,7 +2033,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="staffId">The staff identifier.</param>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanBookingAwaitingApproval(int staffId, int companyId)
+        public IEnumerable<RevolvingLoanViewModel> GetRevolvingFacilityBookingAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
             try
@@ -2161,7 +2167,7 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="staffId">The staff identifier.</param>
         /// <param name="companyId">The company identifier.</param>
         /// <returns></returns>
-        public IEnumerable<ContingentLoanViewModel> GetContingentLoanBookingAwaitingApproval(int staffId, int companyId)
+        public IEnumerable<ContingentLoanViewModel> GetContingentFacilityBookingAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
             

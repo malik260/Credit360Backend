@@ -1842,9 +1842,25 @@ namespace FintrakBanking.Repositories.Credit
                 record.EFFECTIVEDATE = DateTime.Now;
                 record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
 
-                if (
-                    (record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-                && (record.STATUSID == (short)ApprovalStatusEnum.Approved))
+                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                     && (record.STATUSID == (short)ApprovalStatusEnum.Approved))
+                {
+                    context.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
+                    {
+                        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                        DATETIMECREATED = DateTime.Now,
+                        ISUSED = false,
+                        CREATEDBY = entity.staffId,
+                    });
+                }
+
+                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
+                && (productClassId != 0 && productClassId != null)
+                   && (processId == (short)ProductClassProcessEnum.ProductBased))
+                {
+                    if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                     {
                         context.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
                         {
@@ -1855,24 +1871,7 @@ namespace FintrakBanking.Repositories.Credit
                             ISUSED = false,
                             CREATEDBY = entity.staffId,
                         });
-                }
-
-                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
-                && (productClassId != 0 && productClassId != null)
-                   && (processId == (short)ProductClassProcessEnum.ProductBased))
-                        {
-                            if (record.STATUSID == (short)ApprovalStatusEnum.Approved)
-                            {
-                                context.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
-                                {
-                                    AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                                    LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                                    DATETIMECREATED = DateTime.Now,
-                                    ISUSED = false,
-                                    CREATEDBY = entity.staffId,
-                                });
-                            }
+                    }
                 }
             };
         }
