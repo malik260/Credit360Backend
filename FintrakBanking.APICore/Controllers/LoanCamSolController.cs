@@ -9,6 +9,11 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using System.Threading.Tasks;
+using System.Web;
+using FintrakBanking.Interfaces.ErrorLogger;
+using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -16,11 +21,15 @@ namespace FintrakBanking.APICore.Controllers
     public class LoanCamSolController : ApiControllerBase
     {
         private ILaonCamSolRepository repo;
+        private IErrorLogRepository errorLogger;
+
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        public LoanCamSolController(ILaonCamSolRepository _repo)
+        public LoanCamSolController(ILaonCamSolRepository _repo, IErrorLogRepository _errorLogger)
         {
             repo = _repo;
+            this.errorLogger = _errorLogger;
+
         }
         [HttpGet]
         [ClaimsAuthorization]
@@ -56,7 +65,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-camsol-approval")]
-        public HttpResponseMessage GetLoanCamsolAwaitingApproval ()
+        public HttpResponseMessage GetLoanCamsolAwaitingApproval()
         {
             try
             {
@@ -71,6 +80,73 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("bulk-approval")]
+        public HttpResponseMessage GoForBulkApproval([FromBody]List<LoanCAMSOLViewModel> entity)
+        {
+            var val = new List<string>();
+            try
+            {
+                foreach(var data in entity)
+                {
+                    data.createdBy = token.GetStaffId;
+                    data.BranchId = (short?)token.GetBranchId;
+                    data.companyId = token.GetCompanyId;
+                    data.staffId = token.GetStaffId;
+                    data.applicationUrl = HttpContext.Current.Request.Path;
+                    data.userIPAddress = Request.RequestUri.Host;
+                    //var data = repo.GoForBulkApproval(entity, info);
+                    var record = repo.GoForBulkApproval(data);
+                    var result = "";
+                    if (record == true)
+                    {
+                       result = "Record Approved";
+                    }
+                    else
+                    {
+                        result = "Record Not Approved";
+                    }
+
+                    val.Add(result);
+                }
+                if (val.Count() != 0)
+                {
+                      
+                    return Request.CreateResponse(HttpStatusCode.OK,
+    new { success = true, message = "Camsol record has been approved successfully" });
+                   // return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = val });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("go-for-camsol-approval")]
+        public HttpResponseMessage goForApproval([FromBody] LoanCAMSOLViewModel data)
+        {
+            try
+            {
+                data.companyId = token.GetCompanyId;
+                data.createdBy = (short)token.GetStaffId;
+                var val = repo.goForApproval(data);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = val });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -134,24 +210,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("go-for-camsol-approval")]
-        public HttpResponseMessage goForApproval([FromBody] LoanCAMSOLViewModel data)
-        {
-            try
-            {
-                data.companyId = token.GetCompanyId;
-                data.createdBy = (short)token.GetStaffId;
-                var val = repo.goForApproval(data);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = val });
-
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
-            }
-        }
+ 
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -183,5 +242,68 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("multiple-camsol-data")]
+        public async Task<HttpResponseMessage> UploadCamsolData()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                //int uploadType;
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
+                //}
+
+                var entity = new CamsolDocumentViewModel
+                {
+                    customerCode = provider.FormData["customerCode"],
+                    documentTitle = provider.FormData["documentTitle"],
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.branchId = (short)token.GetBranchId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = repo.UploadCamsolData(entity, buffer);
+
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Staff data was successfully uploaded" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading staff data" });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " + ex.Message });
+            }
+        }
+
+
     }
 }
