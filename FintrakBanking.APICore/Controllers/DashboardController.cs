@@ -27,7 +27,68 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = dashboard.LoanApplicationsBySector(val.startDate, val.endDate);
+                var data = dashboard.LoanApplicationsBySector(val.startDate, val.endDate, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("loan-performamce")]
+        public HttpResponseMessage GetLoanPerformaceByStatus(DateRange val)
+        {
+           
+            try
+            {
+                var data = dashboard.LoanPerformance(val.startDate, val.endDate, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("loans-on-pipeline")]
+        public HttpResponseMessage GetLoansOnPipeline(DateRange val)
+        {
+            try
+            {
+                var data = dashboard.LoanOnThePipeline(val.startDate, val.endDate, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("loans-risk-exposure")]
+        public HttpResponseMessage GetLoansByRiskExposure(DateRange val)
+        {
+            try
+            {
+                var data = dashboard.ExpotureByRiskRating(val.startDate, val.endDate, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("collateral-exposure")]
+        public HttpResponseMessage GetCollateralExposure(DateRange val)
+        {
+            try
+            {
+                var data = dashboard.CollateralCoverage(val.startDate, val.endDate, token.GetCompanyId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -37,4 +98,5 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
     }
+    
 }
