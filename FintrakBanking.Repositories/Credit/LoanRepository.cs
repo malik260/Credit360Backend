@@ -175,14 +175,6 @@ namespace FintrakBanking.Repositories.Credit
                     });
         }
 
-        /// <summary>
-        /// Generates the loan reference number.
-        /// </summary>
-        /// <param name="customerId">The customer identifier.</param>
-        /// <param name="productId">The product identifier.</param>
-        /// <param name="productTypeId">The product type identifier.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">Loan Product Type not defined for Loan Booking</exception>
         public string GenerateLoanReferenceNumber(int branchId, int productId, int loanSystemTypeId)
         {
             var branch = this.context.TBL_BRANCH.Find(branchId);
@@ -231,12 +223,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
-        /// <summary>
-        /// Adds the loan booking.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">The Product type is Invalid</exception>
+
         public string AddLoanBooking(LoanViewModel entity)
         {
             //...................CHECK IF THE LOAN RECORD IS TERM(SCHEDULED) LOAN..................//
@@ -268,13 +255,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        /// <summary>
-        /// Adds the revolving loan.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        /// 
         private string addRevolvingLoan(LoanViewModel model)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
