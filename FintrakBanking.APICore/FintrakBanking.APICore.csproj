@@ -369,6 +369,7 @@
     <Compile Include="Controllers\CrmsRegulatoryController.cs" />
     <Compile Include="Controllers\CustomChartOfAccountController.cs" />
     <Compile Include="Controllers\CustomerCreditBureauController.cs" />
+    <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\EditorController.cs" />
     <Compile Include="Controllers\EmailAndAlertsController.cs" />
     <Compile Include="Controllers\EmployerController.cs" />
@@ -1132,7 +1133,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>39913</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:51336/</IISUrl>
+          <IISUrl>http://localhost:51339/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

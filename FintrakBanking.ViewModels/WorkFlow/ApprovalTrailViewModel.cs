@@ -26,6 +26,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string fromApprovalLevelName { get; set; }
         public string approvalStatus { get; set; }
         public string approvalState { get; set; }
+        public string fromStaffName { get; set; }
+        public string toStaffName { get; set; }
+        public string toApprovalLevelName { get; set; }
     }
     public class ApprovalTrailDetailsViewModel : ApprovalTrailViewModel
     {

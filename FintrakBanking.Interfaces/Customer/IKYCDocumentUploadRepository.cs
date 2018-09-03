@@ -21,5 +21,6 @@ namespace FintrakBanking.Interfaces.Customer
         ConditionsPrecedentUploadViewModel GetLoanConditionDocumentByConditionId(int conditionId);
         IEnumerable<ConditionsPrecedentUploadViewModel> GetLoanConditionDocumentByContionId(int conditionId);
         bool ConditionsPrecedentDocumentUpload(ConditionsPrecedentUploadViewModel model, byte[] file);
+        bool RemoveConditionPrecedentDocument(int conditionId, int loanApplicationId);
     }
 }

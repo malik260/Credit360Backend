@@ -58,5 +58,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model);
 
+        string GetCustomerAccountType(string accountNumber);
+
     }
 }

@@ -32,13 +32,13 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var record = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x=>x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber).FirstOrDefault();
-                if (record != null)
-                {
-                    return this.UpdateLoanDocument(model, record.DOCUMENTID, file);
-                }
-                else
-                {
+                //var record = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x=>x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber).FirstOrDefault();
+                //if (record != null)
+                //{
+                //    return this.UpdateLoanDocument(model, record.DOCUMENTID, file);
+                //}
+                //else
+                //{
                     var data = new Entities.DocumentModels.TBL_MEDIA_LOAN_DOCUMENTS
                     {
                         FILEDATA = file,
@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.Credit
                     // End of Audit Section ---------------------
 
                     return context.SaveChanges() != 0;
-                }
+          //      }
 
             }
             catch (Exception ex)
@@ -246,9 +246,9 @@ namespace FintrakBanking.Repositories.Credit
                             physicalFileNumber = x.PHYSICALFILENUMBER,
                             physicalLocation = x.PHYSICALLOCATION,
                             isPrimaryDocument = x.ISPRIMARYDOCUMENT,
-                        });
+                        }).ToList();
 
-            return data.ToList();
+            return data;
         }
         public void GetApplicationLoanDocument(LoanDocumentViewModel model, out LoanDocumentViewModel result)
         {

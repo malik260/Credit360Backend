@@ -202,7 +202,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("condition-precedent-upload-delete")]
+        public HttpResponseMessage RemoveConditionPrecedentDocument(int conditionId, int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.RemoveConditionPrecedentDocument(conditionId, loanApplicationId);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Record removed successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Record not removed" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-conditions-precedent")]
         public HttpResponseMessage GetLoanConditionDocumentByConditionId(int conditionId)
         {

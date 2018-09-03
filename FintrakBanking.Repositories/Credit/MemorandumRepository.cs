@@ -49,6 +49,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string approvalLevelHolder = "@{{ApprovalLevel}}";
         private readonly string environmentalSocialRiskHolder = "@{{EnvironmentalSocialRisk}}";
         private readonly string monitoringTriggersHolder = "@{{MonitoringTriggers}}";
+        private readonly string proposedConditionsHolder = "@{{ProposedConditions}}";
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -62,6 +63,7 @@ namespace FintrakBanking.Repositories.Credit
         private string approvalLevel;
         private string environmentalSocialRisk;
         private string monitoringTriggers;
+        private string proposedConditions;
 
         // init
         public bool Init(int operationId, int targetId) // feeder
@@ -114,8 +116,53 @@ namespace FintrakBanking.Repositories.Credit
 
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
             this.approvalLevel = GetApprovalLevel();
+            this.proposedConditions = GetProposedConditionsMarkup();
 
             return true;
+        }
+
+        public List<DropDownSelect> GetProposedConditions()
+        {
+            var result = new List<DropDownSelect>();
+            if (operationId == (int)OperationsEnum.CAM)
+            {
+                var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == targetId);
+                foreach (var d in details)
+                {
+                    result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "TRANSACTION DYNAMICS: " + d.TRANSACTIONDYNAMICS });
+                    result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "CONDITION PRECEDENT: " + d.CONDITIONPRECIDENT });
+                    result.Add(new DropDownSelect { id = d.LOANAPPLICATIONDETAILID, name = "CONDITION SUBSEQUENT: " + d.CONDITIONSUBSEQUENT });
+                }
+            }
+            return result;
+        }
+
+        private string GetProposedConditionsMarkup()
+        {
+            var conditions = GetProposedConditions(); // new
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Facility Type</th>
+                    </tr>
+                 ";
+            foreach (var e in conditions)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{e.name}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+
         }
 
         // execute 
@@ -130,6 +177,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(locationNameHolder, locationName);
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
+            content = content.Replace(proposedConditionsHolder, proposedConditions);
 
             return content;
         }
