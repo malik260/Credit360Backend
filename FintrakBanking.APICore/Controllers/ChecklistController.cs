@@ -1048,6 +1048,25 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("validate-precedence-checklist-completed")]
+        public HttpResponseMessage ValidatePrecedenceChecklistCompleted(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.ValidatePrecedenceChecklistCompleted(loanApplicationId);
+                if (data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });     
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("deferred-checklist-awaiting-approval")]
         public HttpResponseMessage GetChecklistAwaitingApproval()
         {
@@ -1275,7 +1294,7 @@ namespace FintrakBanking.APICore.Controllers
                     userIPAddress = CommonHelpers.GetUserIP()
                 };
 
-            var data =    repo.DeleteChecklistDetail(conditionId, user);
+            var data =    repo.DeleteLoanConditionPrecedenceStatus(conditionId, user);
                 if(data == true)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

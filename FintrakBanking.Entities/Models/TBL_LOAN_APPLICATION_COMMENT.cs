@@ -28,7 +28,7 @@
 
         public int? CREATEDBY { get; set; }
 
-        public bool? DELETED { get; set; }
+        public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
 

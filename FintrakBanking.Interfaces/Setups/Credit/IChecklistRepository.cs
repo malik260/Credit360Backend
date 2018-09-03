@@ -100,5 +100,6 @@ namespace FintrakBanking.Interfaces.Setups
 
         bool RegulatoryChecklistAutomapping(int customerId, ChecklistDetailViewModel model);
         bool DeleteLoanConditionPrecedenceStatus(int conditionId, UserInfo user);
+        bool ValidatePrecedenceChecklistCompleted(int loanApplicationId);
     }
 }

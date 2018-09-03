@@ -2249,6 +2249,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var success = context.SaveChanges() > 0;
+            workflow.Response.success = success;
             return workflow.Response;
         }
 
