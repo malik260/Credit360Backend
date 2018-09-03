@@ -9279,11 +9279,23 @@ namespace FintrakBanking.Repositories.Credit
                     irregularSchedules.Add(irregularPlan);
                 }
             }
+            
+            int _operationTypeId = 0;
+
+            if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+            {
+                _operationTypeId = 1;
+            }
+
+            else
+            {
+                _operationTypeId = model.productTypeId;
+            }
 
             var data = new TBL_LOAN_REVIEW_OPERATION
             {
                 LOANID = model.loanId,
-                LOANSYSTEMTYPEID = model.productTypeId,
+                LOANSYSTEMTYPEID = _operationTypeId,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
