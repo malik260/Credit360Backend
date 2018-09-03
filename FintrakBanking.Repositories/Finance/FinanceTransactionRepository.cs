@@ -44,7 +44,8 @@ namespace FintrakBanking.Repositories.Finance
             this.twoFactoeAuth = _twoFactoeAuth;
             //this.creditOperations = _creditOperations;
             var global = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            if (global != null) {
+            if (global != null)
+            {
                 USE_THIRD_PARTY_INTEGRATION = global.USE_THIRD_PARTY_INTEGRATION;
                 USE_TWO_FACTOR_AUTHENTICATION = global.USE_TWO_FACTOR_AUTHENTICATION;
             }
@@ -82,6 +83,16 @@ namespace FintrakBanking.Repositories.Finance
                 return new CasaBalanceViewModel { availableBalance = account.AVAILABLEBALANCE, ledgerBalance = account.LEDGERBALANCE, accountStatusId = (CASAAccountStatusEnum)account.ACCOUNTSTATUSID, currencyId = account.CURRENCYID, accountNo = account.PRODUCTACCOUNTNUMBER, accountName = account.PRODUCTACCOUNTNAME, hasBalance = true };
             }
 
+        }
+
+        public string GetCustomerAccountType(string accountNumber)
+        {
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                var type = integration.GetCustomerAccountBalance(accountNumber);
+                return type.productName;
+            }
+            return null;
         }
 
         public CasaBalanceViewModel GetCASABalanceFromTransactions(int casaAccountId)
@@ -229,7 +240,7 @@ namespace FintrakBanking.Repositories.Finance
         //public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-            
+
             var transactionCount = (inputTransactions.Count());
 
             if (transactionCount < 2) //transaction.transactionDetails.Count() < 2
@@ -1030,7 +1041,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description,int operationId)
+        public FinanceTransactionViewModel PostBuildLoanRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
         {
             // FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -1090,7 +1101,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildAuthorisedOverdraftRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description,int operationId)
+        public FinanceTransactionViewModel PostBuildAuthorisedOverdraftRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
         {
             var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId && x.COMPANYID == model.companyId);
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
