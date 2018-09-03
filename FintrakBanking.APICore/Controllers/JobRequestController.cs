@@ -47,9 +47,9 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
-        }
+        }       
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-request-detail/legal-details")]
         public HttpResponseMessage GetJobRequestLegalJobDetails()
         {

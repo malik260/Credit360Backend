@@ -61,8 +61,28 @@ namespace FintrakBanking.APICore.Controllers
              
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-account-type")]
+        public HttpResponseMessage GetCustomerAccountTypeFromFinnacle(string accountNumber)
+        {
+            try
+            {
+                var data = repo.GetCustomerAccountType(accountNumber);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Record found successfully" });
+                }
 
-         [HttpPost] [ClaimsAuthorization]
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+
+        [HttpPost] [ClaimsAuthorization]
         [Route("Posttransaction")]
         public HttpResponseMessage PostTransaction( [FromBody] List<FinanceTransactionViewModel> transaction)
         {

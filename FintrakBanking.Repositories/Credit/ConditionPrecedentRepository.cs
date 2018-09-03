@@ -666,6 +666,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONID=model.applicationId,
                 OPERATIONID=model.callerId,
                 DATETIMECREATED = general.GetApplicationDate(),
+                CREATEDBY = model.createdBy,
             };
 
             context.TBL_LOAN_APPLICATION_COMMENT.Add(data);

@@ -115,5 +115,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool updateSuggestionsLoanApplicationdetail(LoanApplicationDetailViewModel model);
 
         LoanApplicationDetailViewModel GetSingleLoanApplicationsDetails(int loanApplicationDetailId, int companyId);
+
+        IEnumerable<LookupViewModel> GetAllCRMSRepaymentSource();
+
+        IEnumerable<LookupViewModel> GetAllCRMSFundingSource();
     }
 }
