@@ -131,6 +131,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int tempApplicationCancellationId { get; set; }
         public IQueryable<string> staffName { get; set; }
         public string comment { get; set; }
+        public bool isOfferLetterAvailable { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -232,6 +233,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal proposedAmount { get; set; }
 
         public short approvedProductId { get; set; }
+
+        public string productName { get; set; }
 
         public int approvedTenor { get; set; }
         

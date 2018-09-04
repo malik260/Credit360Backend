@@ -175,6 +175,7 @@
                         accountOutput.freezeReason = accountAPI.freezeReason;
                         accountOutput.lastTransactionDate = accountAPI.lastTransactionDate;
                         accountOutput.hasBalance = true;
+                        accountOutput.isCasaAccountDetailAvailable = true;
                     }
 
                     //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();
@@ -184,7 +185,7 @@
                     if (response.IsSuccessStatusCode == false)
                     {
                         accountOutput.hasBalance = false;
-                        accountOutput.accountName = responseMessage;
+                        accountOutput.errorMessage = responseMessage;
                     }
 
                         handler.Dispose();

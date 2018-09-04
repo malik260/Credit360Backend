@@ -136,6 +136,7 @@ namespace FintrakBanking.Repositories.Credit
             var overdraft = from x in context.TBL_LOAN_REVOLVING
                              join c in context.TBL_LOAN_COLLATERAL_MAPPING on x.REVOLVINGLOANID equals c.LOANID
                              where x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                             && c.ISRELEASED==false
                                     && x.COMPANYID == companyId
                                     && c.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility
                                     && x.EFFECTIVEDATE >= startDate && x.EFFECTIVEDATE <= endDate
@@ -169,6 +170,33 @@ namespace FintrakBanking.Repositories.Credit
             return facilityCollateral.ToList();
 
         }
-
+        public List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId)
+        {
+            var termLaon = from x in context.TBL_LOAN_APPLICATION_DETAIL
+                         join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                         join a in context.TBL_LOAN on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                         where x.STATUSID == (int)ApprovalStatusEnum.Approved
+                                && l.COMPANYID == companyId
+                                && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
+                         group x by new { l.RISKRATINGID } into gg
+                         select new DashboardViewModel
+                         {
+                             loanCount = gg.Count(),
+                             riskRating = context.TBL_CUSTOMER_RISK_RATING.Where(y => y.RISKRATINGID == gg.Key.RISKRATINGID).Select(y => y.RISKRATING).FirstOrDefault(),
+                         };
+            var OD = from x in context.TBL_LOAN_APPLICATION_DETAIL
+                         join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                         join a in context.TBL_LOAN_REVOLVING on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                         where x.STATUSID == (int)ApprovalStatusEnum.Approved
+                                && l.COMPANYID == companyId
+                                && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
+                         group x by new { l.RISKRATINGID } into gg
+                         select new DashboardViewModel
+                         {
+                             loanCount = gg.Count(),
+                             riskRating = context.TBL_CUSTOMER_RISK_RATING.Where(y => y.RISKRATINGID == gg.Key.RISKRATINGID).Select(y => y.RISKRATING).FirstOrDefault(),
+                         };
+            return termLaon.ToList();
+        }
     }
 }

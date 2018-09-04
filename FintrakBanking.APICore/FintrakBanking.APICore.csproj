@@ -884,6 +884,7 @@
     <Content Include="Reports\Credit\Credit.xsc">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
+    <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Reports\Credit\Credit.xsd">
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>

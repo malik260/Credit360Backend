@@ -73,7 +73,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         {
 
             Console.WriteLine("");
-            Console.WriteLine("Send Excetion Email ");
+            Console.WriteLine("Send Excetion Email");
             Console.WriteLine("");
 
 
@@ -132,6 +132,9 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 {
                     client.Send(mail);
 
+                    Console.WriteLine("");
+                    Console.WriteLine("email sent successfully ~~~~~~~~~~~~~~~");
+                    Console.WriteLine("");
                 }
                 catch (Exception ex)
                 {

@@ -1741,48 +1741,42 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public IQueryable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery)
+        public IEnumerable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery)
         {
-            IQueryable<LoanApplicationDetailViewModel> allApplicationDetails = null;
+               searchQuery = searchQuery.Trim().ToLower();
 
-            if (!string.IsNullOrWhiteSpace(searchQuery))
-            {
-                searchQuery = searchQuery.Trim().ToLower();
-
-                allApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.TBL_LOAN_APPLICATION.COMPANYID == companyId && x.DELETED == false
-                && x.TBL_LOAN_APPLICATION.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved)// && x.c == companyId)
-                    .Where(x => x.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(searchQuery)
-                    || x.TBL_CUSTOMER.MIDDLENAME.ToLower().Contains(searchQuery)
-                    || x.TBL_CUSTOMER.LASTNAME.ToLower().Contains(searchQuery)
-                    || x.TBL_CUSTOMER.CUSTOMERCODE.ToLower().Contains(searchQuery)
-                    || x.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery))
-                    .Select(o => new LoanApplicationDetailViewModel
-                    {
-                        requireCollateral = o.TBL_LOAN_APPLICATION.REQUIRECOLLATERAL,
-                        loanApplicationId = o.LOANAPPLICATIONID,
-                        applicationRefNo = o.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                        customerId = o.CUSTOMERID,
-                        customerName = o.TBL_CUSTOMER.FIRSTNAME + " " + o.TBL_CUSTOMER.MIDDLENAME + " " + o.TBL_CUSTOMER.LASTNAME,
-                        firstName = o.TBL_CUSTOMER.FIRSTNAME,
-                        middleName = o.TBL_CUSTOMER.MIDDLENAME,
-                        lastName = o.TBL_CUSTOMER.LASTNAME,
-                        customerCode = o.TBL_CUSTOMER.CUSTOMERCODE,
-                        loanApplicationDetailId = o.LOANAPPLICATIONDETAILID,
-                        proposedProductId = o.PROPOSEDPRODUCTID,
-                        proposedProductName = o.TBL_PRODUCT.PRODUCTNAME,
-                        proposedTenor = o.PROPOSEDTENOR,
-                        proposedAmount = o.PROPOSEDAMOUNT,
-                        proposedInterestRate = o.PROPOSEDINTERESTRATE,
-                        productClassProcessId = o.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
-                        productClassId = (short?)o.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
-                        customerType = o.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                        //branchName = o.TBL_BRANCH.BRANCHNAME,
-                        //customerGroupName = o.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                        customerAccountNumber = o.TBL_CASA.PRODUCTACCOUNTNUMBER
-                    })
-                    .Take(12);
-            }
-
+            var allApplicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
+                                         join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
+                                         where c.FIRSTNAME.ToLower().Contains(searchQuery)
+                                                 || c.MIDDLENAME.ToLower().Contains(searchQuery)
+                                                 || c.LASTNAME.ToLower().Contains(searchQuery)
+                                                 || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                                                 || a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery)
+                                                 || a.TBL_CASA.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
+                                         select new LoanApplicationDetailViewModel
+                                         {
+                                             loanApplicationId = d.LOANAPPLICATIONID,
+                                             applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                                             customerId = c.CUSTOMERID,
+                                             firstName = c.FIRSTNAME,
+                                             middleName = c.MIDDLENAME,
+                                             lastName = c.LASTNAME,
+                                             customerCode = c.CUSTOMERCODE,
+                                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                             approvedProductId = d.APPROVEDPRODUCTID,
+                                             productName = d.TBL_PRODUCT.PRODUCTNAME,
+                                             approvedTenor = d.APPROVEDTENOR,
+                                             approvedAmount = d.APPROVEDAMOUNT,
+                                             approvedInterestRate = d.APPROVEDINTERESTRATE,
+                                             productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+                                             productClassId = (short?)a.PRODUCTCLASSID,
+                                             customerType = c.TBL_CUSTOMER_TYPE.NAME,
+                                             branchName = a.TBL_BRANCH.BRANCHNAME,
+                                             customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                                             customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
+                                         });
+                
             return allApplicationDetails;
         }
 
@@ -1843,7 +1837,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = x.q.o.g.a.LOANPRELIMINARYEVALUATIONID,
                             operationId = x.q.o.g.a.OPERATIONID,
                             accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
-                        })
+                            isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.q.o.g.a.APPLICATIONREFERENCENUMBER).Any()
+        })
                     .Where(x => x.applicationReferenceNumber == searchString
                         || x.firstName.ToLower().StartsWith(searchString)
                         || x.lastName.ToLower().StartsWith(searchString)
@@ -2721,11 +2716,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var exist = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPROVALSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
+            var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress ).Any();
+            if (isCancellatuionInProgress == true)
+                throw new ConditionNotMetException(" This Loan is currently under going cancellation process");
 
-            if (exist == true)
-                throw new ConditionNotMetException(" This Loan is currently going cancellation approvals");
-
+            var isCancellatuionCompleted = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId &&  x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted).Any();
+            if (isCancellatuionCompleted == true)
+                throw new ConditionNotMetException(" This Loan already been cancelled");
 
             var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             if (application != null)
@@ -2916,7 +2913,7 @@ namespace FintrakBanking.Repositories.Credit
         private void LaonApplcationCancelllationInPregress(LoanApplicationViewModel data)
         {
             var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
-            val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+            val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationInProgress;
         }
 
         private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients)
@@ -3057,6 +3054,15 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LookupViewModel> GetAllCRMSRepaymentSource()
         {
             return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.RepaymentSourceType).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.CRMSREGULATORYID,
+                lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
+
+        public IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType()
+        {
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.RepaymentAgreementType).Select(x => new LookupViewModel()
             {
                 lookupId = (short)x.CRMSREGULATORYID,
                 lookupName = x.CODE + "-" + x.DESCRIPTION
