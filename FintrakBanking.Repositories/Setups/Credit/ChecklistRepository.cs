@@ -1239,15 +1239,29 @@ namespace FintrakBanking.Repositories.Credit
                 return status;
             }
         }
+        public bool ValidatePrecedenceChecklistCompleted(int loanApplicationId)
+        {
+
+            var condition = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                             where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
+                             && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
+                             select c).ToList();
+            var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                          where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
+                          && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
+                          select c).ToList();
+            var output = condition.Count == status.Count;
+            return output;
+        }
         public bool DeleteLoanConditionPrecedenceStatus(int conditionId, UserInfo user)
         {
             var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionId);
             if (data == null) return false;
 
-         
+
             if (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)
             {
-                var deferral = context.TBL_LOAN_CONDITION_DEFERRAL.Where(x=> x.LOANCONDITIONID == data.LOANCONDITIONID).FirstOrDefault();
+                var deferral = context.TBL_LOAN_CONDITION_DEFERRAL.Where(x => x.LOANCONDITIONID == data.LOANCONDITIONID).FirstOrDefault();
                 if (deferral != null)
                 {
                     context.TBL_LOAN_CONDITION_DEFERRAL.Remove(deferral);
@@ -1269,9 +1283,9 @@ namespace FintrakBanking.Repositories.Credit
             };
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
-            return context.SaveChanges()>0;
+            return context.SaveChanges() > 0;
         }
-            public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
+        public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
         {
             var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
             if (data == null) return false;

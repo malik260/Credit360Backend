@@ -725,7 +725,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                                join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                                join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                               //   where (object?)b.INT_PRUDENT_GUIDELINE_STATUSID != (object?)(int?)1
+                                             //  where (object?)b.INT_PRUDENT_GUIDELINE_STATUSID != (object?)(int?)1
                                                select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,

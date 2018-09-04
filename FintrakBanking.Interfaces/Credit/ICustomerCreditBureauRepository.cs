@@ -28,6 +28,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId);
 
+        List<CreditBureauDocument> GetCreditBureauDocument(int customerCreditBureauId);
+
         #endregion
 
         #region Integration

@@ -183,7 +183,6 @@ namespace FintrakBanking.Repositories.Credit
             return allCorporate;
         }
 
-
         public int AddCustomerCreditBureauCharge(LoanCreditBureauViewModel entity)
         {
             var customerId = entity.customerId;
@@ -388,6 +387,21 @@ namespace FintrakBanking.Repositories.Credit
             return customerLoanCreditBureauData;
         }
 
+        public List<CreditBureauDocument> GetCreditBureauDocument(int customerCreditBureauId)
+        {
+            return (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+                   where d.CUSTOMERCREDITBUREAUID == customerCreditBureauId
+                   select new CreditBureauDocument
+                   {
+                       documentId = d.DOCUMENTID,
+                       customerCreditBureauId = d.CUSTOMERCREDITBUREAUID,
+                       documentTitle = d.DOCUMENT_TITLE,
+                       fileName = d.FILENAME,
+                       fileExtension = d.FILEEXTENSION,
+                       fileData = d.FILEDATA,
+                   }).ToList();
+        }
+
         public bool VerifyCustomerValidCreditBureau(int customerId)
         {
             var customers = GetCreditBureauCustomerDetailsByCustomerId(customerId, false);
@@ -410,7 +424,6 @@ namespace FintrakBanking.Repositories.Credit
             return true;
 
         }
-
         #endregion
 
         #region Integration 

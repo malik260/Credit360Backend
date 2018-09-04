@@ -43,6 +43,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double interest { get; set; }
         public DateTime dateApproved { get; set; }
         public string branchName { get; set; }
+        
     }
 
     public class LoanViewModel : GeneralEntity
@@ -80,6 +81,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public int? casaAccountId2 { get; set; }
+        public short crmsRepaymentAgreementTypeId { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
        

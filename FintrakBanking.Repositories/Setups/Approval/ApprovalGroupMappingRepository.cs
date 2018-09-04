@@ -374,7 +374,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingUpdated,
-                    STAFFID = (int)model.lastUpdatedBy,
+                    STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
                     IPADDRESS = model.userIPAddress,

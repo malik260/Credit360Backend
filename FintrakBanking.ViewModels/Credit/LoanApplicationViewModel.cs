@@ -233,6 +233,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short approvedProductId { get; set; }
 
+        public string productName { get; set; }
+
         public int approvedTenor { get; set; }
         
         public int tenorModeId { get; set; }
