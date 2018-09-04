@@ -4878,7 +4878,7 @@ namespace FintrakBanking.Repositories.Credit
             operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
             operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
             operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
-            operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
+            operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
 
             data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                     join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
@@ -4890,7 +4890,7 @@ namespace FintrakBanking.Repositories.Credit
                     where m.COMPANYID == companyId
                     && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                    && ((ids.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.TOSTAFFID == staffId))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && atrail.RESPONSESTAFFID == null
                     orderby s.LOAN_BOOKING_REQUESTID descending
