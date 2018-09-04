@@ -1857,6 +1857,7 @@ namespace FintrakBanking.Repositories.Credit
                     });
                     context.SaveChanges();
                     this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
+                    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                 }
 
                 if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
@@ -1873,7 +1874,8 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = entity.staffId,
                     });
                     context.SaveChanges();
-                   this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
+                    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
+                    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                 }
             };
         }

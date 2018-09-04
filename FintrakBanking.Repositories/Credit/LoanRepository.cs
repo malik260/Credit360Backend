@@ -1663,7 +1663,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = (short)OperationsEnum.CommercialLoanBooking;
                         if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                             operationId = (short)OperationsEnum.ContigentLoanBooking;
-                        if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan)
+                        if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
                             operationId = (short)OperationsEnum.TermLoanBooking;
                         if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
                             operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
@@ -1680,6 +1680,7 @@ namespace FintrakBanking.Repositories.Credit
                         };
 
                         if (operationId > 0) LogApproval(approvalModel, operationId, true, (short)ApprovalStatusEnum.Pending);
+                        application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                         context.SaveChanges();
                         trans.Commit();
                         return 0;
@@ -1687,6 +1688,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     else
                     {
+                        application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestInitiated;
+                        context.SaveChanges();
                         trans.Commit();
                         return 1;
                     }
