@@ -426,15 +426,15 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     model.DELETED = true;
 
                     var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == model.APPROVALLEVELID));
-                    var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == user.staffId));
+                    var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == user.createdBy));
                     var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.STAFFID).Select(x => x.STAFFCODE));
 
                     var audit = new TBL_AUDIT
                     {
                         AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                        STAFFID = user.staffId,
+                        STAFFID = user.createdBy,
                         BRANCHID = (short)user.BranchId,
-                        DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete by this super-admin {admin}",
+                        DETAIL = $"Added Approval Level Staff {audit_staff_level.LEVELNAME}' for staff with code '{audit_staff.STAFFCODE}' ",
                         IPADDRESS = user.userIPAddress,
                         URL = user.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),

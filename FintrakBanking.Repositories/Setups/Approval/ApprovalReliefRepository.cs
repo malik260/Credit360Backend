@@ -337,7 +337,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
             //var tempApprovalRelief = (from a in context.TBL_TEMP_STAFF_RELIEF where a.TEMPRELIEFID == targetId select a).FirstOrDefault();
             var tempApprovalRelief = context.TBL_TEMP_STAFF_RELIEF.Find(targetId);
             TBL_STAFF_RELIEF targetApprovalRelief;
-            if (tempApprovalRelief.RELIEFID > 0)
+            if (tempApprovalRelief.RELIEFID > 0) 
             {
                 targetApprovalRelief = context.TBL_STAFF_RELIEF.Find(tempApprovalRelief.RELIEFID);
                 if (targetApprovalRelief != null)

@@ -1113,6 +1113,10 @@ namespace FintrakBanking.APICore.Controllers
                 var response = repo.SaveCancelledApplcation(data);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true,  result = response });
             }
+            catch (ConditionNotMetException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, warning=true, message = $"Error: {e.Message}" });
+            }
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });

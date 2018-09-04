@@ -123,6 +123,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool CUSTOMERINFOVALIDATED { get; set; }
 
+        public int? RISKRATINGID { get; set; }
+
         //[Column(TypeName = "date")]
         public DateTime? APPROVEDDATE { get; set; }
 
@@ -190,3 +192,5 @@ namespace FintrakBanking.Entities.Models
         //public virtual ICollection<TBL_RISK_ASSESSMENT> TBL_RISK_ASSESSMENT { get; set; }
     }
 }
+
+

@@ -1826,6 +1826,7 @@ namespace FintrakBanking.Repositories.Credit
                             responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
 
                             applicationStatusId = x.q.o.g.a.APPLICATIONSTATUSID,
+                            applicationStatus = x.q.o.g.a.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME, // <----------------- new 
                             branchName = x.q.o.g.a.TBL_BRANCH.BRANCHNAME,
                             relationshipOfficerName = x.q.o.g.a.TBL_STAFF.FIRSTNAME + " " + x.q.o.g.a.TBL_STAFF.MIDDLENAME + " " + x.q.o.g.a.TBL_STAFF.LASTNAME,
                             relationshipManagerName = x.q.o.g.a.TBL_STAFF1.FIRSTNAME + " " + x.q.o.g.a.TBL_STAFF1.MIDDLENAME + " " + x.q.o.g.a.TBL_STAFF1.LASTNAME,
@@ -2714,11 +2715,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var exist = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPROVALSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
+            var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress ).Any();
+            if (isCancellatuionInProgress == true)
+                throw new ConditionNotMetException(" This Loan is currently under going cancellation process");
 
-            if (exist == true)
-                throw new ConditionNotMetException(" This Loan is currently going cancellation approvals");
-
+            var isCancellatuionCompleted = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId &&  x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted).Any();
+            if (isCancellatuionCompleted == true)
+                throw new ConditionNotMetException(" This Loan already been cancelled");
 
             var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             if (application != null)
@@ -2909,7 +2912,7 @@ namespace FintrakBanking.Repositories.Credit
         private void LaonApplcationCancelllationInPregress(LoanApplicationViewModel data)
         {
             var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
-            val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+            val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationInProgress;
         }
 
         private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients)
