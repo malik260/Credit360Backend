@@ -145,7 +145,9 @@ namespace FintrakBanking.ReportObjects.Credit
                             join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                             join e in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals e.PRODUCTID
                             where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                                 && b.STATUSID == (int)ApprovalStatusEnum.Approved && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                  //&& b.STATUSID == (int)ApprovalStatusEnum.Approved && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                  && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                             select new ProductFeeViewModel()
                             {
                                 feeName = c.CHARGEFEENAME,
@@ -157,6 +159,20 @@ namespace FintrakBanking.ReportObjects.Credit
                 {
                     return fees;
                 }
+
+                
+                //var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                //            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                //            join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
+                //            join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                //            where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                //            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                //            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                //            select new ProductFeeViewModel()
+                //            {
+                //                feeName = c.CHARGEFEENAME,
+                //                rateValue = a.RECOMMENDED_FEERATEVALUE
+                //            }).ToList();
 
             }
             catch (Exception ex)
