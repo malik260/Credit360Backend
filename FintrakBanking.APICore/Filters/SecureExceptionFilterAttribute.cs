@@ -81,9 +81,8 @@ namespace FintrakBanking.APICore.Filters
             {
                 FROMADDRESS = support,
                 TOADDRESS = recipients,
-                MESSAGESUBJECT = "CREDIT 360 UNHANDLED EXCEPTION",
-                MESSAGEBODY = "USERNAME: " + userName + " ENDPOINT: " + endPoint + " ERROR MESSAGE: " + errorMessage + " STACKTRACE: " + ex.StackTrace + " TIME: " + time, //
-                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                MESSAGESUBJECT = "UNHANDLED EXCEPTION",
+                MESSAGEBODY = "<p><b>USERNAME:</b> " + userName + "</p><br/> <p><b>ENDPOINT:</b> " + endPoint + "</p></br> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p><br/> <p>STACKTRACE:</b> " + ex.StackTrace + "</p><br/> <p>TIME:</b> " + time + "</p><br/>", //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                 MESSAGETYPEID = (short)MessageTypeEnum.Email,
                 DATETIMERECEIVED = time,
                 SENDONDATETIME = time,

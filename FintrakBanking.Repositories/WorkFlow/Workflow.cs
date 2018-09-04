@@ -364,7 +364,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 if (staff.Any() == false && defaultRole == null && relieverStaff == null)
                 {
-                    throw new SecureException("This User is not in the current workflow level of the process!");
+                    throw new SecureException("You are not in the current workflow level " + level.Level.LEVELNAME);
                 }
 
                 this.neededNumberOfApproval = level.NumberOfApprovals;
