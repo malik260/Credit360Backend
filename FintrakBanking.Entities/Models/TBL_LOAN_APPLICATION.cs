@@ -192,3 +192,5 @@ namespace FintrakBanking.Entities.Models
         //public virtual ICollection<TBL_RISK_ASSESSMENT> TBL_RISK_ASSESSMENT { get; set; }
     }
 }
+
+

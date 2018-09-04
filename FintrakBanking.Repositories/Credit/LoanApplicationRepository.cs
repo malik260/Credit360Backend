@@ -2721,11 +2721,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var exist = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPROVALSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
+            var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress ).Any();
+            if (isCancellatuionInProgress == true)
+                throw new ConditionNotMetException(" This Loan is currently under going cancellation process");
 
-            if (exist == true)
-                throw new ConditionNotMetException(" This Loan is currently going cancellation approvals");
-
+            var isCancellatuionCompleted = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId &&  x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted).Any();
+            if (isCancellatuionCompleted == true)
+                throw new ConditionNotMetException(" This Loan already been cancelled");
 
             var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             if (application != null)
@@ -2916,7 +2918,7 @@ namespace FintrakBanking.Repositories.Credit
         private void LaonApplcationCancelllationInPregress(LoanApplicationViewModel data)
         {
             var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
-            val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+            val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationInProgress;
         }
 
         private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients)
