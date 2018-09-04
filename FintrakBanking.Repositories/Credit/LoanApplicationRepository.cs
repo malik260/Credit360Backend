@@ -1843,7 +1843,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanPreliminaryEvaluationId = x.q.o.g.a.LOANPRELIMINARYEVALUATIONID,
                             operationId = x.q.o.g.a.OPERATIONID,
                             accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
-                        })
+                            isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.q.o.g.a.APPLICATIONREFERENCENUMBER).Any()
+        })
                     .Where(x => x.applicationReferenceNumber == searchString
                         || x.firstName.ToLower().StartsWith(searchString)
                         || x.lastName.ToLower().StartsWith(searchString)
