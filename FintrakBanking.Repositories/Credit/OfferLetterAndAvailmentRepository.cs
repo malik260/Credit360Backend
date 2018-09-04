@@ -1855,6 +1855,7 @@ namespace FintrakBanking.Repositories.Credit
                         ISUSED = false,
                         CREATEDBY = entity.staffId,
                     });
+                    context.SaveChanges();
                     this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
                 }
 
@@ -1871,6 +1872,7 @@ namespace FintrakBanking.Repositories.Credit
                         ISUSED = false,
                         CREATEDBY = entity.staffId,
                     });
+                    context.SaveChanges();
                    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
                 }
             };
