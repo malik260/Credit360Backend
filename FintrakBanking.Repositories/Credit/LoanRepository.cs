@@ -91,6 +91,8 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        
+
         public IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanTypes()
         {
             return (from data in context.TBL_LOAN_REVOLVING_TYPE
@@ -335,6 +337,7 @@ namespace FintrakBanking.Repositories.Credit
                 USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
+                CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentAgreementTypeId
             };
 
             //Audit Section ---------------------------
@@ -715,6 +718,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISBANKFORMAT = isBankFormat,
                 ISTENORED = isTenored,
                 BOOKINGDATE = DateTime.Now,
+                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
 
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.ContingentLiability,
                 CONTINGENTAMOUNT = contingentLoanInput.contingentAmount,
@@ -952,6 +956,7 @@ namespace FintrakBanking.Repositories.Credit
                 USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
+                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId
 
             };
 
@@ -1177,6 +1182,7 @@ namespace FintrakBanking.Repositories.Credit
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 PRINCIPALAMOUNT = Convert.ToDecimal(entity.loanPrincipal),
                 OUTSTANDINGPRINCIPAL = Convert.ToDecimal(entity.loanPrincipal),
+                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
 
                 EFFECTIVEDATE = (DateTime)applicationDetail.EFFECTIVEDATE,
                 MATURITYDATE = (DateTime)applicationDetail.EXPIRYDATE,
@@ -1393,6 +1399,7 @@ namespace FintrakBanking.Repositories.Credit
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 PRINCIPALAMOUNT = Convert.ToDecimal(entity.loanPrincipal),
                 OUTSTANDINGPRINCIPAL = Convert.ToDecimal(entity.loanPrincipal),
+                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
 
                 EFFECTIVEDATE = (DateTime)entity.effectiveDate,
                 MATURITYDATE = (DateTime)entity.maturityDate,

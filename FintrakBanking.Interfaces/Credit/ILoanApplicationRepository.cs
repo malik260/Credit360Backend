@@ -47,7 +47,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
 
-        IQueryable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
+        IEnumerable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
 
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
 
@@ -119,5 +119,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetAllCRMSRepaymentSource();
 
         IEnumerable<LookupViewModel> GetAllCRMSFundingSource();
+
+        IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
     }
 }

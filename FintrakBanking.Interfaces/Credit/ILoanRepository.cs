@@ -165,6 +165,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetApprovedCommercialLoanReview();
         IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
+       // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
 
     }
 }
