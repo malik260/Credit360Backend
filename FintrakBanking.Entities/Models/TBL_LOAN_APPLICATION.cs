@@ -122,7 +122,8 @@ namespace FintrakBanking.Entities.Models
         public bool SUBMITTEDFORAPPRAISAL { get; set; }
 
         public bool CUSTOMERINFOVALIDATED { get; set; }
-        public int RISKRATINGID { get; set; }
+
+        public int? RISKRATINGID { get; set; }
 
         //[Column(TypeName = "date")]
         public DateTime? APPROVEDDATE { get; set; }
