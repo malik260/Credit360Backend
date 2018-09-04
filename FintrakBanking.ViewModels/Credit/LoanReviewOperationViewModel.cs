@@ -302,6 +302,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvedTenor { get; set; }
         public double approvedRate { get; set; }
         public decimal approvedAmount { get; set; }
+
         public string proposedTenorString
         {
             get

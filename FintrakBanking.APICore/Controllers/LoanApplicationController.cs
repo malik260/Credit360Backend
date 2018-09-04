@@ -1138,14 +1138,13 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("loan-application-detail/search/")]
+        [HttpGet] [ClaimsAuthorization]
+        [Route("loan-application-details/searchtext/{searchString}")]
         public HttpResponseMessage SearchLoanApplicationDetails(string searchString)
         {
             try
             {
-                var response = repo.SearchLoanApplicationDetails(token.GetCompanyId,searchString);
+                var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, searchString);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
             }
             catch (SecureException e)
@@ -1375,6 +1374,23 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-repayment-agreement/type")]
+        public HttpResponseMessage GetAllCRMSRepaymentAgreementType()
+        {
+            try
+            {
+                var response = repo.GetAllCRMSRepaymentAgreementType();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
     }
