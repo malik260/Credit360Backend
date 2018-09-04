@@ -36,7 +36,7 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
-            ILoanRepository _loans
+            ILoanRepository _loans  
             )
         {
             context = _context;

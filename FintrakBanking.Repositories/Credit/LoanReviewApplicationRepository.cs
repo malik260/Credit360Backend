@@ -89,6 +89,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerId = x.customer.CUSTOMERID,
                 operationId = x.application.OPERATIONID,
                 customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
+
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
                 applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Select(d => new applicationDetails
@@ -109,6 +110,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedTenor = d.APPROVEDTENOR,
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
+                    // loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                 })
                 
             })
@@ -228,7 +230,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDTENOR = loan.tenor,
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
-                    OPERATIONPERFORMED = false,   
+                    OPERATIONPERFORMED = false,
+                    //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
             }
 
@@ -546,6 +549,7 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OUTSTANDINGPRINCIPAL,
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
 
                 })
                 .FirstOrDefault();
@@ -559,6 +563,7 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OVERDRAFTLIMIT,
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
                 })
                 .FirstOrDefault();
             }
@@ -571,6 +576,7 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = 0,
                     outstandingPrincipal = loan.CONTINGENTAMOUNT,
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
                 })
                 .FirstOrDefault();
             }
@@ -581,5 +587,46 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
+        public LoanApplicationDetailViewModel GetLoanApplicationDetail(int loanId, int loanTypeId)
+        {
+            int id = 0;
+            if (loanTypeId == 4)
+            {
+                id = loanId;
+            } else
+            {
+                id = GetLoanApplicationDetailId(loanId, loanTypeId);
+            }
+
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == id);
+            if (detail == null) throw new Exception("Could not find loan application detail with id of " + id);
+
+            return new LoanApplicationDetailViewModel
+            {
+                loanApplicationDetailId = detail.LOANAPPLICATIONDETAILID,
+                loanApplicationId = detail.LOANAPPLICATIONID,
+            };
+        }
+
+        private int GetLoanApplicationDetailId(int loanId, int loanTypeId)
+        {
+            int id=0;
+            if (loanTypeId == 1)
+            {
+                var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
+                id = loan.LOANAPPLICATIONDETAILID;
+            }
+            if (loanTypeId == 2)
+            {
+                var loan = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.REVOLVINGLOANID == loanId);
+                id = loan.LOANAPPLICATIONDETAILID;
+            }
+            if (loanTypeId == 3)
+            {
+                var loan = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == loanId);
+                id = loan.LOANAPPLICATIONDETAILID;
+            }
+            return id;
+        }
     }
 }

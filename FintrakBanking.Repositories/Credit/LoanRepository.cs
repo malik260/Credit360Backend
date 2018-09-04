@@ -3902,6 +3902,17 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public List<LoanViewModel> GetLoanApplicationExistingLoans(int applicationId)
+        {
+            var customerIds = context.TBL_LOAN_APPLICATION_DETAIL
+                                .Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false)
+                                .Select(x => x.CUSTOMERID)
+                                .ToList();
+
+            var data = GetAllLoans().Where(l => customerIds.Contains(l.customerId) && l.loanStatusId == (short)LoanStatusEnum.Active).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
+            return data.ToList();
+        }
+
         /// <summary>
         /// Gets the loan by customer group.
         /// </summary>
