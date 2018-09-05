@@ -160,7 +160,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOAN_BOOKING_REQUESTID { get; set; }
 
-        public short CRMSREPAYMENTAGREEMENTID { get; set; }
+        public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

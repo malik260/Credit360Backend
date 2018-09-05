@@ -4901,7 +4901,7 @@ namespace FintrakBanking.Repositories.Credit
                     where m.COMPANYID == companyId
                     && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    && ((ids.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.TOSTAFFID == staffId))
+                    && (ids.Contains((int)atrail.TOAPPROVALLEVELID))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && atrail.RESPONSESTAFFID == null
                     orderby s.LOAN_BOOKING_REQUESTID descending
