@@ -42,7 +42,13 @@ namespace FintrakBanking.APICore.Filters
 
             if (context.Exception is Exception)
             {
-                context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
+                
+                //context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
+                var innerException = "";
+                if (context.Exception.InnerException != null)
+                    innerException = context.Exception.InnerException.Message;
+
+                context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message + " inner exception " + innerException });
             }
 
             base.OnException(context);

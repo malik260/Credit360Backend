@@ -4901,7 +4901,7 @@ namespace FintrakBanking.Repositories.Credit
                     where m.COMPANYID == companyId
                     && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    && ((ids.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.TOSTAFFID == staffId))
+                    && (ids.Contains((int)atrail.TOAPPROVALLEVELID))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && atrail.RESPONSESTAFFID == null
                     orderby s.LOAN_BOOKING_REQUESTID descending
@@ -5684,6 +5684,84 @@ namespace FintrakBanking.Repositories.Credit
             return exposures;
         }
 
+        public List<CurrentCustomerExposure> GetApplicationFacilitySummary(int applicationId)
+        {
+            var customers = context.TBL_LOAN_APPLICATION_DETAIL
+                .Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false)
+                .Select(x => new { CUSTOMERID = x.CUSTOMERID })
+                .Distinct()
+                .ToList();
+
+            IQueryable<CurrentCustomerExposure> exposure = null;
+            List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+
+            foreach (var item in customers)
+            {
+                exposure = from a in context.TBL_LOAN
+                           where a.CUSTOMERID == item.CUSTOMERID && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               existingLimit = a.PRINCIPALAMOUNT,
+                               proposedLimit = a.OUTSTANDINGPRINCIPAL,
+                               recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                               loanStatus = "Running"
+                           };
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+                exposure = from a in context.TBL_LOAN_REVOLVING
+                           where a.CUSTOMERID == item.CUSTOMERID && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               existingLimit = a.OVERDRAFTLIMIT,
+                               proposedLimit = a.OVERDRAFTLIMIT,
+                               recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                               PastDueObligationsInterest = a.PASTDUEINTEREST,
+                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                               loanStatus = "Running"
+                           };
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+                exposure = from a in context.TBL_LOAN_APPLICATION_DETAIL
+                           where a.CUSTOMERID == item.CUSTOMERID  && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                               existingLimit = 0,
+                               proposedLimit = a.PROPOSEDAMOUNT,
+                               recommendedLimit = a.APPROVEDAMOUNT,
+                               PastDueObligationsInterest = 0,
+                               PastDueObligationsPrincipal = 0,
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = "Processing",
+                               loanStatus = "Processing"
+                           };
+
+                if (exposure.Count() > 0) exposures.AddRange(exposure);
+            }
+
+            exposures.Add(new CurrentCustomerExposure
+            {
+                facilityType = "TOTAL",
+                existingLimit = exposures.Sum(t => t.existingLimit),
+                proposedLimit = exposures.Sum(t => t.proposedLimit),
+                recommendedLimit = exposure.Sum(t => t.recommendedLimit),
+                PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
+                PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
+                reviewDate = DateTime.Now,
+            });
+
+            return exposures;
+        }
         /// <summary>
         /// Searches for loan.
         /// </summary>
