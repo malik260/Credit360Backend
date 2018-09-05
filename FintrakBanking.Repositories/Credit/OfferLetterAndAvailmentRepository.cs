@@ -53,12 +53,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             var exceptIds = context.TBL_LOAN_RATE_FEE_CONCESSION
                     .Where(x => x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                    .Select(x => (int)x.TBL_LOAN_APPLICATION_DETAIL.PROPOSEDPRODUCTID).ToList();
+                    .Select(x => (int)x.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID).ToList();
 
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
             IQueryable<CamProcessedLoanViewModel> data = null;
 
-            data = context.TBL_LOAN_APPLICATION.Where(x => !exceptIds.Contains(x.LOANAPPLICATIONID) && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
+            data = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval

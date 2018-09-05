@@ -589,14 +589,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationDetailViewModel GetLoanApplicationDetail(int loanId, int loanTypeId)
         {
-            int id = 0;
-            if (loanTypeId == 4)
-            {
-                id = loanId;
-            } else
-            {
-                id = GetLoanApplicationDetailId(loanId, loanTypeId);
-            }
+            int id = GetLoanApplicationDetailId(loanId, loanTypeId);
 
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == id);
             if (detail == null) throw new Exception("Could not find loan application detail with id of " + id);
@@ -625,6 +618,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loan = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == loanId);
                 id = loan.LOANAPPLICATIONDETAILID;
+            }
+            if (loanTypeId == 4)
+            {
+                id = loanId;
             }
             return id;
         }

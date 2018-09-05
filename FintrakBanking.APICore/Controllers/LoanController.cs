@@ -79,6 +79,16 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
+        [Route("facility-summary/application/{applicationId}")]
+        public HttpResponseMessage GetApplicationFacilitySummary(int applicationId)
+        {
+            List<CurrentCustomerExposure> data = repo.GetApplicationFacilitySummary(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
+
+        [HttpGet]
         [Route("running-loan/customer/{id}")]
         public HttpResponseMessage GetAllLoanTypes(int id)
         {
