@@ -4903,7 +4903,7 @@ namespace FintrakBanking.Repositories.Credit
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
                     && (ids.Contains((int)atrail.TOAPPROVALLEVELID))
                     && operationIds.Contains(atrail.OPERATIONID)
-                    && atrail.RESPONSESTAFFID == null
+                    && ((atrail.RESPONSESTAFFID == null) || (atrail.TOSTAFFID ==staffId))
                     orderby s.LOAN_BOOKING_REQUESTID descending
                     select new CamProcessedLoanViewModel()
                     {
