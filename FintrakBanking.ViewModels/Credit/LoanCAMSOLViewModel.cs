@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Media;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string comment { get; set; }
         public short approvalStatusId { get; set; }
         public short tempLoancamsolid { get; set; }
+        public string documentTitle { get; set; }
+        public byte[] fileData { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public string message { get; set; }
+        public short? BranchId { get; set; }
+
     }
 
     public class Blacklist
@@ -48,4 +56,22 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanSystemType { get; set; }
 
     }
+    public class CamsolDocumentViewModel : DocumentViewModel
+    {
+        public string customerCode { get; set; }
+        public string documentTitle { get; set; }
+        public short documentTypeId { get; set; }
+        public DateTime SystemDateTime { get; set; }
+        public short? branchId { get; set; }
+
+    }
+    public class camsolBulkFeedbackViewModel
+    {
+        public List<LoanCAMSOLViewModel> commitedRows { get; set; }
+        public List<LoanCAMSOLViewModel> discardedRows { get; set; }
+        public int successCount { get; set; }
+        public int failureCount { get; set; }
+        public string generalFeedBackMessage { get; set; }
+    }
+
 }

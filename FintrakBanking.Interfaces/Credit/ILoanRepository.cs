@@ -78,7 +78,6 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanChargeFeeViewModel> GetProductFees(int productId);
 
         IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId);
-
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
 
         IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
@@ -164,7 +163,13 @@ namespace FintrakBanking.Interfaces.Credit
         int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
         IEnumerable<LoanViewModel> GetApprovedCommercialLoanReview();
+
         IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
+       // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
+
+        List<LoanViewModel> GetLoanApplicationExistingLoans(int applicationId);
+
+        List<CurrentCustomerExposure> GetApplicationFacilitySummary(int applicationId);
 
     }
 }

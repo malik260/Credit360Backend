@@ -124,13 +124,14 @@ namespace FintrakBanking.ViewModels.Credit
                 if (applicationTenor < 15) return applicationTenor.ToString() + units;
                 var months = Math.Ceiling((Math.Floor(applicationTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
-                return months.ToString() + " months";
+                return months.ToString() + units;
             }
         }
 
         public int tempApplicationCancellationId { get; set; }
         public IQueryable<string> staffName { get; set; }
         public string comment { get; set; }
+        public bool isOfferLetterAvailable { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -232,6 +233,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal proposedAmount { get; set; }
 
         public short approvedProductId { get; set; }
+
+        public string productName { get; set; }
 
         public int approvedTenor { get; set; }
         

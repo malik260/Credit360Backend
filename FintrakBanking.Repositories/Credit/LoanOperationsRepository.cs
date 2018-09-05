@@ -6443,8 +6443,10 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalCharge.CHARGEFEEID, "Penal Charge", (int)OperationsEnum.Prepayment));///change to charge GL
 
-                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
-
+                    if(pastDue != 0)
+                    {
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
+                    }
                     //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, principalOutStandingBalance, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
@@ -6454,9 +6456,10 @@ namespace FintrakBanking.Repositories.Credit
                 else
                 {
                     // inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentFeePosting(loanInput, (decimal)penalAmount, penalCharge.CHARGEFEEID, "Penal Charge", (int)OperationsEnum.Prepayment));///change to charge GL
-
-                    inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth,pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
-
+                    if (pastDue != 0)
+                    {
+                        inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, pastDue, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past Due", (int)OperationsEnum.InterestPastDueLoanRepayment));
+                    }
                     //inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest", (int)OperationsEnum.InterestLoanRepayment));
 
                     inputTransactions.Add(financeTransaction.PostBuildLoanPrepaymentPosting(loanInput, twoFactorAuth, partPayment, product.PRINCIPALBALANCEGL.Value, "Principal Amount", (int)OperationsEnum.PrincipalLoanRepayment));
@@ -8939,7 +8942,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var runningLoan = (from l in context.TBL_LOAN
-                               where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo
+                               where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo && l.LOANSTATUSID == (short)LoanStatusEnum.Active
                                select new LoanViewModel()
                                {
                                    loanId = l.TERMLOANID,
@@ -8991,7 +8994,7 @@ namespace FintrakBanking.Repositories.Credit
             TimeSpan difference = maturityDate - applicationDate;
             int days = (int)difference.TotalDays;
             var runningLoan = (from l in context.TBL_LOAN
-                               where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo
+                               where l.COMPANYID == companyId && l.LOANREFERENCENUMBER == refNo && l.LOANSTATUSID == (short)LoanStatusEnum.Active
                                select new LoanViewModel()
                                {
                                    loanId = l.TERMLOANID,
@@ -9279,11 +9282,23 @@ namespace FintrakBanking.Repositories.Credit
                     irregularSchedules.Add(irregularPlan);
                 }
             }
+            
+            int _operationTypeId = 0;
+
+            if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+            {
+                _operationTypeId = 1;
+            }
+
+            else
+            {
+                _operationTypeId = model.productTypeId;
+            }
 
             var data = new TBL_LOAN_REVIEW_OPERATION
             {
                 LOANID = model.loanId,
-                LOANSYSTEMTYPEID = model.productTypeId,
+                LOANSYSTEMTYPEID = _operationTypeId,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
@@ -10180,20 +10195,20 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else if ((int)OperationsEnum.Prepayment == model.operationId)
                         {
-                            decimal accruedAmount = 0;
-                            var accrued = (from a in context.TBL_LOAN_SCHEDULE_DAILY
-                                           where a.TBL_LOAN.TERMLOANID == loanId && a.DATE >= applicationDate
-                                           select a).FirstOrDefault();
+                            //decimal accruedAmount = 0;
+                            //var accrued = (from a in context.TBL_LOAN_SCHEDULE_DAILY
+                            //               where a.TBL_LOAN.TERMLOANID == loanId && a.DATE >= applicationDate
+                            //               select a).FirstOrDefault();
 
-                            if (accrued != null)
-                            {
-                                accruedAmount = accrued.ACCRUEDINTEREST;
-                            }
-                            else
-                            {
-                                throw new SecureException("Application Date not found in Payment Schedule");
-                            }
-                            decimal accruedInterest = decimal.Round(accruedAmount, 2, MidpointRounding.AwayFromZero);
+                            //if (accrued != null)
+                            //{
+                            //    accruedAmount = accrued.ACCRUEDINTEREST;
+                            //}
+                            //else
+                            //{
+                            //    throw new SecureException("Application Date not found in Payment Schedule");
+                            //}
+                            //decimal accruedInterest = decimal.Round(accruedAmount, 2, MidpointRounding.AwayFromZero);
                             if (model.isManagementInterestRate == true)
                             {
 

@@ -16,60 +16,54 @@ namespace FintrakBanking.ReportObjects.Credit
         public static OfferLetterViewModel GenerateOfferLetter(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
-
-            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
-            //if (customerExist != null)
-            //{
-
-            //}
-            //else
-            //{
-
-            //}
+            var isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Any();
+            if (isOfferLetterAvailable == true)
+            {
+                var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
 
                 var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
-                                         join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                      join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
-                                      from b in cc.DefaultIfEmpty()
-                                      join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
-                                      from c in cg.DefaultIfEmpty()
-                                      join e in context.TBL_CUSTOMER_ADDRESS on d.CUSTOMERID equals e.CUSTOMERID into dg
-                                      from e in dg.DefaultIfEmpty()
-                                      join g in context.TBL_CUSTOMER_PHONECONTACT on d.CUSTOMERID equals g.CUSTOMERID into gg
-                                      from g in gg.DefaultIfEmpty()
-                                      join h in context.TBL_OFFERLETTER on a.APPLICATIONREFERENCENUMBER equals h.APPLICATIONREFERENCENUMBER into hh
-                                      from h in hh.DefaultIfEmpty()
-                                      //join i in context.TBL_CUSTOMER_GROUP_MAPPING on b.CUSTOMERID equals i.CUSTOMERID into ii
-                                      //from i in ii.DefaultIfEmpty()
-                                      //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
-                                      //from j in jj.DefaultIfEmpty()
+                                          join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                          join b in context.TBL_CUSTOMER on d.CUSTOMERID equals b.CUSTOMERID into cc
+                                          from b in cc.DefaultIfEmpty()
+                                          join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID into cg
+                                          from c in cg.DefaultIfEmpty()
+                                          join e in context.TBL_CUSTOMER_ADDRESS on d.CUSTOMERID equals e.CUSTOMERID into dg
+                                          from e in dg.DefaultIfEmpty()
+                                          join g in context.TBL_CUSTOMER_PHONECONTACT on d.CUSTOMERID equals g.CUSTOMERID into gg
+                                          from g in gg.DefaultIfEmpty()
+                                          join h in context.TBL_OFFERLETTER on a.APPLICATIONREFERENCENUMBER equals h.APPLICATIONREFERENCENUMBER into hh
+                                          from h in hh.DefaultIfEmpty()
+                                              //join i in context.TBL_CUSTOMER_GROUP_MAPPING on b.CUSTOMERID equals i.CUSTOMERID into ii
+                                              //from i in ii.DefaultIfEmpty()
+                                              //join j in context.TBL_CUSTOMER_GROUP_MAPPING on c.CUSTOMERGROUPID equals j.CUSTOMERGROUPID into jj
+                                              //from j in jj.DefaultIfEmpty()
                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber &&
                                       a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && d.STATUSID == (int)ApprovalStatusEnum.Approved
-                                      select new OfferLetterViewModel
-                                      {
-                                          companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
-                                          customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
-                                          customerAddress = e.ADDRESS ?? " ",
-                                          customerEmailAddress = b.EMAILADDRESS,
-                                          customerPhoneNumber = g.PHONENUMBER,
-                                          isFinal = h.ISFINAL,
-                                          producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
-                                          loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                          select new OfferLetterViewModel
+                                          {
+                                              companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
+                                              customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
+                                              customerAddress = e.ADDRESS ?? " ",
+                                              customerEmailAddress = b.EMAILADDRESS,
+                                              customerPhoneNumber = g.PHONENUMBER,
+                                              isFinal = h.ISFINAL,
+                                              producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+                                              loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
 
-                                      }).FirstOrDefault();
+                                          }).FirstOrDefault();
 
-            if (offerLetterDetails.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
-            {
-                offerLetterDetails.isFinal = true;
+                if (offerLetterDetails.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
+                {
+                    offerLetterDetails.isFinal = true;
+                }
+
+                if (offerLetterDetails != null)
+                {
+                    return offerLetterDetails;
+                }
+
             }
-            
-            if (offerLetterDetails != null)
-            {
-                return offerLetterDetails;
-            }
-
-            
 
             return new OfferLetterViewModel();
         }
@@ -151,7 +145,9 @@ namespace FintrakBanking.ReportObjects.Credit
                             join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                             join e in context.TBL_PRODUCT on b.PROPOSEDPRODUCTID equals e.PRODUCTID
                             where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                                 && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                                  //&& b.STATUSID == (int)ApprovalStatusEnum.Approved && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                  && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                             select new ProductFeeViewModel()
                             {
                                 feeName = c.CHARGEFEENAME,
@@ -163,6 +159,20 @@ namespace FintrakBanking.ReportObjects.Credit
                 {
                     return fees;
                 }
+
+                
+                //var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                //            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                //            join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
+                //            join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                //            where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                //            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                //            && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                //            select new ProductFeeViewModel()
+                //            {
+                //                feeName = c.CHARGEFEENAME,
+                //                rateValue = a.RECOMMENDED_FEERATEVALUE
+                //            }).ToList();
 
             }
             catch (Exception ex)

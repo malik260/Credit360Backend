@@ -556,7 +556,9 @@ namespace FintrakBanking.APICore.Controllers
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
-                };
+                    createdBy = token.GetStaffId,
+                    userIPAddress= Request.RequestUri.Host,
+            };
                 bool response = repo.RemoveAdditionalComment(id, user);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been removed successfully" });
             }

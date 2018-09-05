@@ -84,6 +84,5 @@
         public virtual ICollection<TBL_LMSR_TRANSACTION_DYNAMICS> TBL_LMSR_TRANSACTION_DYNAMICS { get; set; }
 
         public virtual ICollection<TBL_LMSR_CONDITION_PRECEDENT> TBL_LMSR_CONDITION_PRECEDENT { get; set; }
-
     }
 }
