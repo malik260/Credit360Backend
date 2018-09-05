@@ -12,6 +12,7 @@ using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System.Threading.Tasks;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -90,7 +91,8 @@ namespace FintrakBanking.Repositories.CASA
 
             if (account == null) {
                 model.isCasaAccountDetailAvailable=false;
-                return model;
+                throw new ConditionNotMetException("Invalid Account Number");
+                //return model;
             }
                 
             return transRepo.GetCASABalance(account.CASAACCOUNTID);
