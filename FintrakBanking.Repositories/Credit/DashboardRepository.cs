@@ -42,7 +42,7 @@ namespace FintrakBanking.Repositories.Credit
                          select new DashboardViewModel
                          {
                              loanCount = gg.Count(),
-                             sumOfProposedAmount=gg.Sum(g=>g.APPROVEDAMOUNT),
+                             sumOfProposedAmount=gg.Sum(g=> (double)g.APPROVEDAMOUNT * g.EXCHANGERATE),
                              sectorName = gg.Key.NAME
                          };
             return result.ToList();
@@ -81,7 +81,7 @@ namespace FintrakBanking.Repositories.Credit
                          select new DashboardViewModel
                          {
                              loanCount = gg.Count(),
-                             sumOfProposedAmount = gg.Sum(g => g.APPROVEDAMOUNT),
+                             sumOfProposedAmount = gg.Sum(g => (double)g.APPROVEDAMOUNT * g.EXCHANGERATE),
                          };
             return result.ToList();
         }
@@ -116,7 +116,7 @@ namespace FintrakBanking.Repositories.Credit
                          {
                              collateralCustomerId = gg.Key.COLLATERALCUSTOMERID,
                              loanCount = gg.Count(),
-                             facilityAmount = gg.Sum(x=>x.PRINCIPALAMOUNT),
+                             facilityAmount = gg.Sum(x=>x.PRINCIPALAMOUNT * (decimal)x.EXCHANGERATE),
                              name = "Term Loan"
                          };
             var contingent = from x in context.TBL_LOAN_CONTINGENT
@@ -130,7 +130,7 @@ namespace FintrakBanking.Repositories.Credit
                            {
                                collateralCustomerId = gg.Key.COLLATERALCUSTOMERID,
                                loanCount = gg.Count(),
-                               facilityAmount = gg.Sum(x => x.CONTINGENTAMOUNT),
+                               facilityAmount = gg.Sum(x => x.CONTINGENTAMOUNT * (decimal)x.EXCHANGERATE),
                                name = "Contingent"
                            };
             var overdraft = from x in context.TBL_LOAN_REVOLVING
@@ -145,7 +145,7 @@ namespace FintrakBanking.Repositories.Credit
                              {
                                  collateralCustomerId = gg.Key.COLLATERALCUSTOMERID,
                                  loanCount = gg.Count(),
-                                 facilityAmount = gg.Sum(x => x.OVERDRAFTLIMIT),
+                                 facilityAmount = gg.Sum(x => x.OVERDRAFTLIMIT * (decimal)x.EXCHANGERATE),
                                  name = "Overdraft"
                              };
 
@@ -172,30 +172,44 @@ namespace FintrakBanking.Repositories.Credit
         }
         public List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId)
         {
-            var termLaon = from x in context.TBL_LOAN_APPLICATION_DETAIL
-                         join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
-                         join a in context.TBL_LOAN on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
-                         where x.STATUSID == (int)ApprovalStatusEnum.Approved
-                                && l.COMPANYID == companyId
-                                && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
-                         group x by new { l.RISKRATINGID } into gg
+            var termLaon = from l in context.TBL_LOAN_APPLICATION_DETAIL 
+                         join a in context.TBL_LOAN_APPLICATION on l.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                           where l.STATUSID == (int)ApprovalStatusEnum.Approved
+                                && a.COMPANYID == companyId
+                                && a.DATETIMECREATED >= startDate && a.DATETIMECREATED <= endDate
+                         group l by new { a.COMPANYID } into gg
                          select new DashboardViewModel
                          {
                              loanCount = gg.Count(),
-                             riskRating = context.TBL_CUSTOMER_RISK_RATING.Where(y => y.RISKRATINGID == gg.Key.RISKRATINGID).Select(y => y.RISKRATING).FirstOrDefault(),
+                             sumOfProposedAmount =gg.Sum(x=> (double)x.APPROVEDAMOUNT * x.EXCHANGERATE)
                          };
-            var OD = from x in context.TBL_LOAN_APPLICATION_DETAIL
-                         join l in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
-                         join a in context.TBL_LOAN_REVOLVING on x.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
-                         where x.STATUSID == (int)ApprovalStatusEnum.Approved
-                                && l.COMPANYID == companyId
+            return termLaon.ToList();
+        }
+
+        public List<DashboardViewModel> TotalRiskExposure(DateTime startDate, DateTime endDate, int companyId)
+        {
+            var termLaon = from x in context.TBL_LOAN
+                           where x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                && x.COMPANYID == companyId
                                 && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
-                         group x by new { l.RISKRATINGID } into gg
-                         select new DashboardViewModel
-                         {
-                             loanCount = gg.Count(),
-                             riskRating = context.TBL_CUSTOMER_RISK_RATING.Where(y => y.RISKRATINGID == gg.Key.RISKRATINGID).Select(y => y.RISKRATING).FirstOrDefault(),
-                         };
+                           group x by new { x.COMPANYID } into gg
+                           select new DashboardViewModel
+                           {
+                               loanCount = gg.Count(),
+                               sumOfProposedAmount = gg.Sum(x => (double)x.OUTSTANDINGPRINCIPAL * x.EXCHANGERATE)
+                           };
+            var OD = from x in context.TBL_LOAN_REVOLVING
+                     where x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                            && x.COMPANYID == companyId
+                            && x.DATETIMECREATED >= startDate && x.DATETIMECREATED <= endDate
+                     group x by new { x.COMPANYID} into gg
+                     select new DashboardViewModel
+                     {
+                         loanCount = gg.Count(),
+                         sumOfProposedAmount = gg.Sum(x => (double)x.OVERDRAFTLIMIT * x.EXCHANGERATE)
+                     };
+            termLaon = termLaon.Union(OD);
+
             return termLaon.ToList();
         }
     }

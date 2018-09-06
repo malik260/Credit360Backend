@@ -3,6 +3,12 @@
 namespace FintrakBanking.Finance.ViewModels
 
 {
+    public class GLAccountSearchViewModel
+    {
+        public string GLAccountCode { get; set; }
+        public string GLAccount { get; set; }
+        public int GLAccountId { get; set; }
+    }
     public class TransactionViewModel
     {
         public int customerId;

@@ -2843,7 +2843,7 @@ namespace FintrakBanking.Repositories.Credit
             return new LoanApplicationViewModel();
         }
 
-        public string GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data)
+        public bool GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data)
         {
             int responce = 0;
             using (var transaction = context.Database.BeginTransaction())
@@ -2873,6 +2873,17 @@ namespace FintrakBanking.Repositories.Credit
                             string alertSubject = $"Loan Application Cancellation Approval Notification";
                             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
                         }
+                        else
+                        {
+                            UpdateLoanApplicationCancellationTempTable(data, (short)workflow.StatusId);
+                            LaonApplcationCancelllationDisapproved(data);
+
+                            //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
+                            var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
+                            string messageBoby = $"Dear Team, <br /><br />This is to bring your attention the loan with {data.applicationReferenceNumber} application refernence number which was going through approval for cancellation has been successfully approved by {staffName}. <br /><br />";
+                            string alertSubject = $"Loan Application Cancellation Approval Notification";
+                            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
+                        }
                     }
 
                     responce = context.SaveChanges();
@@ -2880,9 +2891,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (responce > 0)
                     {
-                        return "Approved Successfully!";
+                       return true;
                     }
-                    return "Approval had failed";
+                    return false;
                 }
                 catch (Exception ex)
                 {
@@ -2903,12 +2914,23 @@ namespace FintrakBanking.Repositories.Credit
             val.APPROVALSTATUSID = statusId;
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = genSetup.GetApplicationDate();
+            val.APPLICATIONSTATUSID = data.applicationStatusId;
         }
 
         private void LaonApplcationCancelllationCompelted(LoanApplicationViewModel data)
         {
             var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
+        }
+       
+        private void LaonApplcationCancelllationDisapproved(LoanApplicationViewModel data)
+        {
+            var value = context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Where(x => x.TEMPAPPLICATIONCANCELLATIONID == data.tempApplicationCancellationId).Select(x => x).FirstOrDefault();
+            if (value!=null)
+            {
+                var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
+                val.APPLICATIONSTATUSID = val.APPLICATIONSTATUSID;
+            }
         }
         private void LaonApplcationCancelllationInPregress(LoanApplicationViewModel data)
         {

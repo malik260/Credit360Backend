@@ -46,6 +46,8 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int position { get; set; }
         public bool isDisabled { get; set; }
         public bool canEdit { get; set; }
+        public string description { get; set; }
+
     }
     public class DocumentTemplateSectionRoleViewModel : GeneralEntity
     {

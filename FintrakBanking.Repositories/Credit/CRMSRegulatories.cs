@@ -271,6 +271,7 @@ namespace FintrakBanking.Repositories.Credit
                          EFFECTIVE_DATE = x.EFFECTIVEDATE,
                          CREDIT_LIMIT = x.PRINCIPALAMOUNT,
                          INTEREST_RATE = x.INTERESTRATE.ToString(),
+
                      }).ToList();
             revolving = (from x in context.TBL_LOAN_REVOLVING
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
