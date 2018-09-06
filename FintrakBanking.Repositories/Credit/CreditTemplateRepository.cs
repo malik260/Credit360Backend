@@ -328,6 +328,7 @@ namespace FintrakBanking.Repositories.Credit
                 templateName = x.TEMPLATENAME,
                 staffRoleId = x.STAFFROLEID,
                 operationId = x.OPERATIONID,
+                
                 //productClassId = x.ProductClassId,
             });
         }
@@ -342,6 +343,7 @@ namespace FintrakBanking.Repositories.Credit
                 position = x.POSITION,
                 isDisabled = x.ISDISABLED,
                 canEdit = x.CANEDIT,
+                description=x.DESCRIPTION,
             });
         }
         public IEnumerable<DocumentTemplateSectionRoleViewModel> GetAllDocumentTemplateSectionRoleSetup(int templateSectionId)
@@ -444,6 +446,7 @@ namespace FintrakBanking.Repositories.Credit
                 TEMPLATEDOCUMENT = model.templateDocument,
                 POSITION = model.position,
                 CANEDIT = model.canEdit,
+                DESCRIPTION=model.description,
                 //ProductClassId = model.productClassId,
                 CREATEDBY = (int)model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate()
@@ -481,7 +484,7 @@ namespace FintrakBanking.Repositories.Credit
             data.TEMPLATEDOCUMENT = model.templateDocument;
             data.POSITION = model.position;
             data.CANEDIT = model.canEdit;
-
+            data.DESCRIPTION = model.description;
             //data.ProductClassId = model.productClassId;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = general.GetApplicationDate();

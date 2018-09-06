@@ -24,6 +24,13 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool AddUpdateBranchRegion(BranchRegionViewModel entity);
 
+        IEnumerable<BranchRegionStaffViewModel> GetAllRegionStaff(int regionId);
+        bool AddUpdateBranchRegionStaff(BranchRegionStaffViewModel entity);
+        IEnumerable<LookupViewModel> GetAllRegionStaffType();
+        Task<bool> DeleteBranchRegionStaff(short id, UserInfo user);
+
+
+
         bool ValidateRegionName(string regionName);
 
         bool UpdateBranches(BranchViewModel model, short id);
