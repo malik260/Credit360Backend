@@ -104,7 +104,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel data);
 
-        string GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data);
+        bool GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data);
 
         List<TransactionDynamicsViewModel> GetTrnasactionDynamics(int loanApplicationId);
 

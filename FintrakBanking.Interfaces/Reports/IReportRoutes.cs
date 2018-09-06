@@ -56,6 +56,6 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCustomeFacilityRepayment(ReportSearchEntity searchEntity);
         string AccountWithLein(ReportSearchEntity searchEntity);
         IEnumerable<AuditViewModel> AuditType(string searchValue);
-        List<TransactionViewModel> GLAccount(string searchValue);
+        List<GLAccountSearchViewModel> GLAccount(string searchValue);
     }
 }
