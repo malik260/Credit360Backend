@@ -169,5 +169,7 @@ namespace FintrakBanking.Interfaces.Credit
        // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
 
         List<LoanViewModel> GetLoanApplicationExistingLoans(int applicationId);
+
+        IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview();
     }
 }
