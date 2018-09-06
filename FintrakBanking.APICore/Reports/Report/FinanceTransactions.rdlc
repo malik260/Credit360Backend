@@ -89,10 +89,14 @@
           <DataField>branch</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="GLAccountCode">
+          <DataField>GLAccountCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>D:\Projects\FintrakBankingAPI\FintrakBankingAPI462\FintrakBanking.APICore\Reports\Credit\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>FinanceTransaction</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -118,6 +122,9 @@
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.35292in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.875in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>3.25125in</Width>
@@ -297,6 +304,48 @@
                             </Paragraph>
                           </Paragraphs>
                           <rd:DefaultName>Textbox3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <BottomBorder>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </BottomBorder>
+                            <BackgroundColor>Goldenrod</BackgroundColor>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox4">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Account Code</Value>
+                                  <Style>
+                                    <FontFamily>verdana</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox4</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -803,20 +852,48 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="accountName">
+                        <Textbox Name="GLAccountCode">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value xml:space="preserve">   </Value>
+                                  <Value>=Fields!GLAccountCode.Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                   </Style>
                                 </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Left</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>GLAccountCode</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>White</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="accountName">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
                                 <TextRun>
                                   <Value>=Fields!accountName.Value</Value>
                                   <Style>
@@ -843,6 +920,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -1119,6 +1197,7 @@
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixColumnHierarchy>
             <TablixRowHierarchy>
@@ -1134,7 +1213,7 @@
             <DataSetName>FinanceTransactions</DataSetName>
             <Top>0.06944in</Top>
             <Height>0.63541in</Height>
-            <Width>18.94793in</Width>
+            <Width>20.82293in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1145,7 +1224,7 @@
         <Height>2in</Height>
         <Style />
       </Body>
-      <Width>18.94793in</Width>
+      <Width>20.82293in</Width>
       <Page>
         <PageHeader>
           <Height>1.17708in</Height>
@@ -1260,7 +1339,6 @@
               </Paragraphs>
               <rd:DefaultName>Textbox27</rd:DefaultName>
               <Top>0.76043in</Top>
-              <Left>0in</Left>
               <Height>0.32292in</Height>
               <Width>5.08333in</Width>
               <ZIndex>2</ZIndex>

@@ -3671,11 +3671,13 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (casaDetail.errorMessage != null)
                     {
-                        var error = JsonConvert.DeserializeObject<List<API_Error>>(casaDetail.accountName);
-                        foreach (var a in error)
-                            errorDesc = a.errorDescription;
-                        throw new APIErrorException(errorDesc);
-
+                        if (casaDetail.accountName!=null)
+                        {
+                            var error = JsonConvert.DeserializeObject<List<API_Error>>(casaDetail.accountName);
+                            foreach (var a in error)
+                                errorDesc = a.errorDescription;
+                            throw new APIErrorException(errorDesc);
+                        }
                     }
                 }
                 else

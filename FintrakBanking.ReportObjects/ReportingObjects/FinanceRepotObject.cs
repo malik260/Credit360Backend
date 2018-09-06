@@ -22,7 +22,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                          where a.COMPANYID == companyId
                                                          && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)
                                                          && (branchId == null || branchId==0 || a.TBL_BRANCH.BRANCHID==branchId)
-                                                        // && (a.GLACCOUNTID== glAccountId || glAccountId==0)
+                                                         && (a.GLACCOUNTID == glAccountId || glAccountId==0)
                                                          && (a.POSTEDBY == PostedByStaffId || PostedByStaffId ==0)
                                                          orderby a.POSTEDDATE, a.TRANSACTIONID descending
                                                          select new TransactionViewModel()
@@ -46,7 +46,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              postCurrency = a.TBL_CURRENCY.CURRENCYNAME,
                                                              currencyRate = a.CURRENCYRATE,
                                                              approvedDate = a.APPROVEDDATE,
-                                                             baseCurrency = a.TBL_COMPANY.TBL_CURRENCY.CURRENCYNAME
+                                                             baseCurrency = a.TBL_COMPANY.TBL_CURRENCY.CURRENCYNAME,
+                                                             
 
                                                          });
 
