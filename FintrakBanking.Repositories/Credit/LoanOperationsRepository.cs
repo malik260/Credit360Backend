@@ -1564,13 +1564,11 @@ namespace FintrakBanking.Repositories.Credit
                                  date = effectiveDate,
                                  dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365) * (DateDiff(effectiveDate, applicationDate) - 1),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
                                  mainAmount = a.PRINCIPALAMOUNT,
-                                 categoryId = (short)DailyAccrualCategory.CommercialLoan,/// change to commercial paper 
+                                 categoryId = f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan ? (short)DailyAccrualCategory.CommercialLoan : (short)DailyAccrualCategory.FXRevolvingLoan,/// change to commercial paper 
                                  availableBalance = a.PRINCIPALAMOUNT,
                                  transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                                  baseReferenceNumber = null,
                                  dayCountConventionId = 0,
-
-
                              }).ToList();
 
                 List<DailyInterestAccrualViewModel> data = data1.Union(data2).ToList();
