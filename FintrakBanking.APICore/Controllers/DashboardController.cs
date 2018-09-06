@@ -97,6 +97,36 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [Route("risk-exposure")]
+        public HttpResponseMessage GetTotalRiskExposure(DateRange val)
+        {
+            try
+            {
+                var data = dashboard.TotalRiskExposure(val.startDate, val.endDate, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("approved-loan")]
+        public HttpResponseMessage GetApprovedLoan(DateRange val)
+        {
+            try
+            {
+                var data = dashboard.ApprovedLoan(val.startDate, val.endDate, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
     
 }

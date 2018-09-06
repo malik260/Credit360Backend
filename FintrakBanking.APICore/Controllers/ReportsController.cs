@@ -1108,27 +1108,15 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+        
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("account-gl-search/{searchQuery}")]
-        public HttpResponseMessage GetGLAccount(string searchQuery)
+        [Route("accountcode-search")]
+        public HttpResponseMessage SearchForBranch(string searchQuery)
         {
-            try
-            {
                 var data = repo.GLAccount(searchQuery);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                      new { success = false, message = ex.Message });
-            }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
     }
 }

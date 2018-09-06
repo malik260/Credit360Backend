@@ -186,6 +186,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return branches.ToList();
         }
+
         public IEnumerable<BranchViewModel> GetAllBranchByCompanyId(int id)
         {
             var branches = context.TBL_BRANCH.Where(x => x.COMPANYID == id).Select(x => new BranchViewModel
