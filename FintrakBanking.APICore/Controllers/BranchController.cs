@@ -84,11 +84,106 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("region-staff")]
+        public HttpResponseMessage GetAllRegionStaff(int regionId)
+        {
+            try
+            {
+                var branchRegionStaffViewModels = _repo.GetAllRegionStaff(regionId);
+                var data = branchRegionStaffViewModels;
+                var regionStaffViewModels = data as BranchRegionStaffViewModel[] ?? data.ToArray();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = regionStaffViewModels, count = regionStaffViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("region-staff")]
+        public HttpResponseMessage AddUpdateBranchRegionStaff([FromBody]BranchRegionStaffViewModel entity)
+        {
+            try
+            {
+                entity.companyId = _token.GetCompanyId;
+                entity.userBranchId = (short)_token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = _token.GetStaffId;
+
+                var data = _repo.AddUpdateBranchRegionStaff(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data, message = $"Operation successfull" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error on this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("region-staff-type")]
+        public HttpResponseMessage GetAllRegionStaffType()
+        {
+            try
+            {
+                var branchRegionStaffTypeViewModels = _repo.GetAllRegionStaffType();
+                var data = branchRegionStaffTypeViewModels;
+                var regionStaffTypeViewModels = data as LookupViewModel[] ?? data.ToArray();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = regionStaffTypeViewModels, count = regionStaffTypeViewModels.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("region-staff/{id}")]
+        public async Task<HttpResponseMessage> DeleteBranchRegionStaffAsync(short id)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = _token.GetBranchId,
+                    companyId = _token.GetCompanyId,
+                    staffId = _token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                };
+                var region = await _repo.DeleteBranchRegionStaff(id, user);
+                if (region)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = region, message = $"Record Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error on this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+
         #endregion
 
         #region Branch Setup
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("branch")]
         public HttpResponseMessage GetBranch()
         {
@@ -272,4 +367,5 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion Branch Setup
     }
+
 }

@@ -13,6 +13,7 @@ namespace FintrakBanking.Common.Enum
         CreditCards = 5,
         PastDueInterest  = 6,
         CommercialLoan = 7,
-        Fee = 8,
+        FXRevolvingLoan = 8,
+        Fee = 9,
     }
 }
