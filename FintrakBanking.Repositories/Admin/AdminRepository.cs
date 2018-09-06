@@ -907,8 +907,17 @@ namespace FintrakBanking.Repositories.Admin
         #region TwoFactorAuthentication
         public bool TwoFactorAuthentication(string staffCode, string passCode)
         {
-            var output = auth.Authenticate(staffCode, passCode);
-            return output;
+            var enabled = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
+            if (enabled == true)
+            {
+                var output = auth.Authenticate(staffCode, passCode);
+                return output;
+            }
+            else
+            {
+                return true;
+            }
+           
         }
         public bool TwoFactorAuthenticationEnabled()
         {

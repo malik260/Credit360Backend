@@ -420,7 +420,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // DETAIL CHANGES
             List<TBL_LMSR_APPLICATION_DETAIL> items = null;
-            if (model.recommendedChanges.Count() > 0) // only approving authority
+            if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0) // only approving authority
             {
                 //updateApprovedAmount = true;
                 items = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID).ToList();
