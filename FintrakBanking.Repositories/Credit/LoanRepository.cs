@@ -53,7 +53,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IOverRideRepository overrider;
         private IChartOfAccountRepository chartOfAccount;
-        private ILoanOperationsRepository loanOperations;
+        //private ILoanOperationsRepository loanOperations;
         private IntegrationWithFinacle integration;
         //private ICasaRepository casaRep;
 
@@ -67,7 +67,7 @@ namespace FintrakBanking.Repositories.Credit
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
                                         IChartOfAccountRepository _chartOfAccount,
                                         IOverRideRepository _overrider, IntegrationWithFinacle _integration,
-                                        ILoanOperationsRepository _loanOperations,
+                                        //ILoanOperationsRepository _loanOperations,
             IIntegrationWithFinacle finacle)
         {
             this.context = _context;
@@ -84,7 +84,7 @@ namespace FintrakBanking.Repositories.Credit
             this.overrider = _overrider;
             this.chartOfAccount = _chartOfAccount;
             this.integration = _integration;
-            this.loanOperations = _loanOperations;
+           // this.loanOperations = _loanOperations;
             //this.casaRep = _casaRep;
             this.finacle = finacle;
 
@@ -2684,7 +2684,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if(loanRecord.EFFECTIVEDATE < systemDate)
                 {
-                    loanOperations.ProcessBackDatedTeamLoansInterestAccrual(loanRecord.EFFECTIVEDATE);
+                   // loanOperations.ProcessBackDatedTeamLoansInterestAccrual(loanRecord.EFFECTIVEDATE);
                 }
 
                 loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;

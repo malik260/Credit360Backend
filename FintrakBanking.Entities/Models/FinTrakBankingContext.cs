@@ -8738,6 +8738,11 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<TBL_BRANCH_REGION>()
+                .HasMany(e => e.TBL_BRANCH_REGION_STAFF)
+                .WithRequired(e => e.TBL_BRANCH_REGION)
+                .WillCascadeOnDelete(false);
+
             //modelBuilder.Entity<TBL_CUSTOMER>().Ignore(x => x.FULLNAME);
 
         }

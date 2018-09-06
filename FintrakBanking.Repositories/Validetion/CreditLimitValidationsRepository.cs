@@ -643,5 +643,173 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             customer.RISKRATINGID = (short?)entity.riskRatingId;
             return context.SaveChanges() > 0;
         }
+
+        public bool UpdateApplicationCustomerRating(ObligorLimitViewModel entity)
+        {
+            var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == entity.applicationId);
+
+            if (appl == null) return false;
+
+            if (appl.CUSTOMERID != null)
+            {
+                var singleCustomer = context.TBL_CUSTOMER.Find(appl.CUSTOMERID);
+                singleCustomer.RISKRATINGID = (short?)entity.riskRatingId;
+            }
+
+            if (appl.CUSTOMERGROUPID != null)
+            {
+                var groupCustomer = context.TBL_CUSTOMER_GROUP.Find(appl.CUSTOMERGROUPID);
+                groupCustomer.RISKRATINGID = (short?)entity.riskRatingId;
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
+        public CreditLimitValidationsModel ValidateApplicationCustomerRating(int applicationId)
+        {
+            int? customerId;
+            CreditLimitValidationsModel model = new CreditLimitValidationsModel();
+            var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId);
+            if (appl == null) return model;
+
+            if (appl.CUSTOMERID != null)
+            {
+                customerId = appl.CUSTOMERID;
+                var data = from a in context.TBL_CUSTOMER
+                           join b in context.TBL_CUSTOMER_RISK_RATING on a.RISKRATINGID equals b.RISKRATINGID
+                           join c in context.TBL_COMPANY on a.COMPANYID equals c.COMPANYID
+                           where a.CUSTOMERID == customerId && a.DELETED == false
+                           let maximumLimit = ((b.MAX_SHAREHOLDER_FUND_PERCENTAG / 100) * (double)c.SHAREHOLDERSFUND)
+                           select maximumLimit;
+
+                var loanOutstandingBalance = (from d in context.TBL_LOAN
+                                              join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                                              join g in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals g.LOANAPPLICATIONDETAILID
+                                              where d.LOANAPPLICATIONDETAILID == g.LOANAPPLICATIONDETAILID && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                              && g.STATUSID == (short)ApprovalStatusEnum.Approved
+                                              select new
+                                              {
+                                                  d.OUTSTANDINGPRINCIPAL,
+                                                  d.PRINCIPALAMOUNT,
+                                              }).ToList();
+                var sumLoanOutstandingBalance = loanOutstandingBalance.Select(c => c.OUTSTANDINGPRINCIPAL).Sum();
+                var sumLoanPrincipalAmount = loanOutstandingBalance.Select(c => c.PRINCIPALAMOUNT).Sum();
+
+                var loanApprovedAmount = (from d in context.TBL_LOAN_APPLICATION_DETAIL
+                                          join e in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                                          where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                                          && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
+                                          select new
+                                          {
+                                              d.APPROVEDAMOUNT
+                                          }).ToList();
+                var sumLoanApprovedAmount = loanApprovedAmount.Select(c => c.APPROVEDAMOUNT).Sum();
+
+                var loanTotal = sumLoanApprovedAmount + sumLoanOutstandingBalance - sumLoanPrincipalAmount;
+
+
+                var overDraftLimit = (from d in context.TBL_LOAN_REVOLVING
+                                      join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                                      join g in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals g.LOANAPPLICATIONDETAILID
+                                      where d.LOANAPPLICATIONDETAILID == g.LOANAPPLICATIONDETAILID && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                      && g.STATUSID == (short)ApprovalStatusEnum.Approved
+                                      select new
+                                      {
+                                          d.OVERDRAFTLIMIT,
+                                      }).ToList();
+                var sumOverDraftLimit = overDraftLimit.Select(c => c.OVERDRAFTLIMIT).Sum();
+
+                var oDApprovedAmount = (from d in context.TBL_LOAN_APPLICATION_DETAIL
+                                        join e in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                                        where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                                        && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
+                                        select new
+                                        {
+                                            d.APPROVEDAMOUNT
+                                        }).ToList();
+
+                var sumODApprovedAmount = oDApprovedAmount.Select(c => c.APPROVEDAMOUNT).Sum();
+                var oDTotal = sumODApprovedAmount - sumOverDraftLimit;
+                var customer = context.TBL_CUSTOMER.Find(customerId);
+
+                model.riskRatingId = customer == null ? 0 : (short?)customer.RISKRATINGID;
+                model.outstandingBalance = (double)(loanTotal + oDTotal);
+                model.limit = data.FirstOrDefault();
+            }
+
+            if (appl.CUSTOMERGROUPID != null)
+            {
+                customerId = appl.CUSTOMERGROUPID;
+                var data = from a in context.TBL_CUSTOMER_GROUP
+                           join b in context.TBL_CUSTOMER_RISK_RATING on a.RISKRATINGID equals b.RISKRATINGID
+                           //join c in context.TBL_COMPANY on a.COMPANYID equals c.COMPANYID
+                           where a.CUSTOMERGROUPID == customerId && a.DELETED == false
+                           let maximumLimit = ((b.MAX_SHAREHOLDER_FUND_PERCENTAG / 100) * (double)appl.TBL_COMPANY.SHAREHOLDERSFUND)
+                           select maximumLimit;
+
+                //var loanOutstandingBalance = (from d in context.TBL_LOAN
+                //                              join f in context.TBL_CUSTOMER_GROUP on d.CUSTOMERID equals f.CUSTOMERID
+                //                              join g in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals g.LOANAPPLICATIONDETAILID
+                //                              where d.LOANAPPLICATIONDETAILID == g.LOANAPPLICATIONDETAILID && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                //                              && g.STATUSID == (short)ApprovalStatusEnum.Approved
+                //                              select new
+                //                              {
+                //                                  d.OUTSTANDINGPRINCIPAL,
+                //                                  d.PRINCIPALAMOUNT,
+                //                              }).ToList();
+                //var sumLoanOutstandingBalance = loanOutstandingBalance.Select(c => c.OUTSTANDINGPRINCIPAL).Sum();
+                //var sumLoanPrincipalAmount = loanOutstandingBalance.Select(c => c.PRINCIPALAMOUNT).Sum();
+
+                //var loanApprovedAmount = (from d in context.TBL_LOAN_APPLICATION_DETAIL
+                //                          join e in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                //                          where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                //                          && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
+                //                          select new
+                //                          {
+                //                              d.APPROVEDAMOUNT
+                //                          }).ToList();
+                //var sumLoanApprovedAmount = loanApprovedAmount.Select(c => c.APPROVEDAMOUNT).Sum();
+
+                //var loanTotal = sumLoanApprovedAmount + sumLoanOutstandingBalance - sumLoanPrincipalAmount;
+
+
+                //var overDraftLimit = (from d in context.TBL_LOAN_REVOLVING
+                //                      join f in context.TBL_CUSTOMER on d.CUSTOMERID equals f.CUSTOMERID
+                //                      join g in context.TBL_LOAN_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals g.LOANAPPLICATIONDETAILID
+                //                      where d.LOANAPPLICATIONDETAILID == g.LOANAPPLICATIONDETAILID && d.LOANSTATUSID == (short)LoanStatusEnum.Active
+                //                      && g.STATUSID == (short)ApprovalStatusEnum.Approved
+                //                      select new
+                //                      {
+                //                          d.OVERDRAFTLIMIT,
+                //                      }).ToList();
+                //var sumOverDraftLimit = overDraftLimit.Select(c => c.OVERDRAFTLIMIT).Sum();
+
+                //var oDApprovedAmount = (from d in context.TBL_LOAN_APPLICATION_DETAIL
+                //                        join e in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
+                //                        where d.CUSTOMERID == customerId && d.STATUSID == (short)ApprovalStatusEnum.Approved
+                //                        && d.LOANAPPLICATIONDETAILID == e.LOANAPPLICATIONDETAILID
+                //                        select new
+                //                        {
+                //                            d.APPROVEDAMOUNT
+                //                        }).ToList();
+
+                //var sumODApprovedAmount = oDApprovedAmount.Select(c => c.APPROVEDAMOUNT).Sum();
+                //var oDTotal = sumODApprovedAmount - sumOverDraftLimit;
+                //var customer = context.TBL_CUSTOMER.Find(customerId);
+
+                //model.riskRatingId = customer == null ? 0 : (short?)customer.RISKRATINGID;
+                //model.outstandingBalance = (double)(loanTotal + oDTotal);
+                //model.limit = data.FirstOrDefault();
+
+
+            }
+
+            model.difference = model.limit - model.outstandingBalance;
+            model.validated = model.limit == 0 ? true : ((double)appl.APPROVEDAMOUNT + model.outstandingBalance) <= model.outstandingBalance;
+            model.obligorExposure = model.outstandingBalance;
+            model.maximumAllowedLimit = model.difference;
+
+            return model;
+        }
     }
 }
