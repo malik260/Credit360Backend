@@ -108,6 +108,8 @@ namespace FintrakBanking.Entities.Models
 
         public string OPERATION { get; set; }
 
+        public int? LEVELTYPEID { get; set; }
+
         //  public virtual TBL_APPROVAL_GROUP TBL_APPROVAL_GROUP { get; set; }
 
         //[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
