@@ -69,6 +69,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanClassificationViewModel> CalculateOverdraftClassification(DateTime applicationDate);
         IEnumerable<LoanViewModel> LoanHistory();
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
+        IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate);
 
         #region COMMERCIAL PAPER LOANS
         bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);

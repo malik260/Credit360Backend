@@ -171,5 +171,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<CurrentCustomerExposure> GetApplicationFacilitySummary(int applicationId);
 
+
+        IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview();
     }
 }

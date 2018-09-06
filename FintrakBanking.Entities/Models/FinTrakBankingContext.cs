@@ -35,6 +35,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_AUDIT_TYPE> TBL_AUDIT_TYPE { get; set; }
         public virtual DbSet<TBL_BRANCH> TBL_BRANCH { get; set; }
         public virtual DbSet<TBL_BRANCH_REGION> TBL_BRANCH_REGION { get; set; }
+        public virtual DbSet<TBL_BRANCH_REGION_STAFF> TBL_BRANCH_REGION_STAFF { get; set; }
+        public virtual DbSet<TBL_BRANCH_REGION_STAFF_TYPE> TBL_BRANCH_REGION_STAFF_TYPE { get; set; }
         public virtual DbSet<TBL_CALL_MEMO> TBL_CALL_MEMO { get; set; }
         public virtual DbSet<TBL_CALL_MEMO_LIMIT> TBL_CALL_MEMO_LIMIT { get; set; }
         public virtual DbSet<TBL_CALL_MEMO_TYPE> TBL_CALL_MEMO_TYPE { get; set; }

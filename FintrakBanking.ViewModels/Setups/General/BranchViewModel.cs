@@ -39,5 +39,14 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? houStaffId { get; set; }
         public string houStaffName { get; set; }
     }
+    public class BranchRegionStaffViewModel : GeneralEntity
+    {
+        public int staffRegionId { get; set; }
+        public int regionId { get; set; }
+        public int houStaffId { get; set; }
+        public int regionStaffTypeId { get; set; }
+        public string regionStaffTypeName { get; set; }
+        public string houStaffName { get; set; }
+    }
 
 }

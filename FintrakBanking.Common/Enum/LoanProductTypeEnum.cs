@@ -18,5 +18,6 @@
         TermDisbursedFacility = 1,
         OverdraftFacility = 2,
         ContingentLiability = 3,
+        LineFacility = 4,
     };
 }

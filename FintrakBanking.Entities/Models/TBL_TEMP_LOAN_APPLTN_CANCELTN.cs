@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int TEMPAPPLICATIONCANCELLATIONID { get; set; }
         public int LOANAPPLICATIONID { get; set; }
+        public short APPLICATIONSTATUSID { get; set; }
         public string CANCELLATIONREASON { get; set; }
         public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }

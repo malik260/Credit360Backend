@@ -294,6 +294,19 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime firstPrincipalPaymentDate1 { get; set; }
         public DateTime firstInterestPaymentDate1 { get; set; }
 
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = tenor == 1 ? " day" : " days";
+                if (tenor < 15) return tenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(tenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+
+
 
         //......End f Loan Relational Table View Mapping Models......//
     }
@@ -606,6 +619,9 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " " + units;
             }
         }
+
+        public string approvedAmountCurrency { get; set; }
+        
 
 
         //......End f Loan Relational Table View Mapping Models......//
