@@ -90,7 +90,7 @@ namespace FintrakBanking.Repositories.Finance
             if (USE_THIRD_PARTY_INTEGRATION)
             {
                 var type = integration.GetCustomerAccountBalance(accountNumber);
-                return type.productName;
+                return type.productType;
             }
             return null;
         }
