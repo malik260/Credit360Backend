@@ -2684,7 +2684,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if(loanRecord.EFFECTIVEDATE < systemDate)
                 {
-                    loanOperations.ProcessBackDatedTeamLoansInterestAccrual(loanRecord.EFFECTIVEDATE);
+                    loanOperations.ProcessBackDatedTeamLoansInterestAccrual(loanRecord.EFFECTIVEDATE, loanRecord.TERMLOANID);
                 }
 
                 loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
