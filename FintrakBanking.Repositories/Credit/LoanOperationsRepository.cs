@@ -1511,7 +1511,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var systemDate = generalSetup.GetApplicationDate();
+                var applicationDate = generalSetup.GetApplicationDate();
                 bool result = false;
                 var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
@@ -1535,7 +1535,7 @@ namespace FintrakBanking.Repositories.Credit
                                  exchangeRate = b.EXCHANGERATE,
                                  interestRate = a.INTERESTRATE,
                                  date = effectiveDate,
-                                 dailyAccuralAmount = (double)a.DAILYINTERESTAMOUNT * (DateDiff(effectiveDate,systemDate)- 1),
+                                 dailyAccuralAmount = (double)a.DAILYINTERESTAMOUNT * (DateDiff(effectiveDate, applicationDate) - 1),
                                  mainAmount = c.PERIODINTERESTAMOUNT,
                                  categoryId = (short)DailyAccrualCategory.TermLoan,
                                  transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
@@ -1562,7 +1562,7 @@ namespace FintrakBanking.Repositories.Credit
                                  exchangeRate = a.EXCHANGERATE,
                                  interestRate = a.INTERESTRATE,
                                  date = effectiveDate,
-                                 dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365) * (DateDiff(effectiveDate, systemDate) - 1),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
+                                 dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365) * (DateDiff(effectiveDate, applicationDate) - 1),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
                                  mainAmount = a.PRINCIPALAMOUNT,
                                  categoryId = (short)DailyAccrualCategory.CommercialLoan,/// change to commercial paper 
                                  availableBalance = a.PRINCIPALAMOUNT,
@@ -1572,7 +1572,8 @@ namespace FintrakBanking.Repositories.Credit
 
 
                              }).ToList();
-                var data = data1.Union(data2).ToList();
+
+                List<DailyInterestAccrualViewModel> data = data1.Union(data2).ToList();
 
                 List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
 
