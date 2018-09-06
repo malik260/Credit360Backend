@@ -1,4 +1,6 @@
-﻿namespace FintrakBanking.ViewModels.Credit
+﻿using FintrakBanking.ViewModels.CreditLimitValidations;
+
+namespace FintrakBanking.ViewModels.Credit
 {
     public class LimitViewModel : GeneralEntity
     {
@@ -69,14 +71,21 @@
         public decimal amount { get; set; }
     }
 
-    public class ObligorLimitViewModel: GeneralEntity
+    public class ObligorLimitViewModel : GeneralEntity
     {
+        public int applicationId { get; set; }
         public int customerId { get; set; }
         public int riskRatingId { get; set; }
         public string riskRating { get; set; }
-        public int companyId { get; set; }
         public string description { get; set; }
         public bool isInvestmentGrade { get; set; }
         public double maxShareholderPercentage { get; set; }
     }
+
+    //public class LimitValidationViewModel : CreditLimitValidationsModel
+    //{
+    //    public decimal maximumAllowedLimit { get; set; }
+    //    public decimal obligorExposure { get; set; }
+    //    public bool validated { get; set; }
+    //}
 }

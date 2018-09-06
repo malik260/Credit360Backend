@@ -32,6 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? DATETIMEDELETED { get; set; }
 
+        public virtual TBL_BRANCH_REGION TBL_BRANCH_REGION { get; set; }
 
     }
 }
