@@ -1575,7 +1575,6 @@ namespace FintrakBanking.Repositories.Credit
 
                 List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
 
-
                 foreach (var item in data)
                 {
                     TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
