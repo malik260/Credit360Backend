@@ -435,14 +435,14 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (votes.FirstOrDefault(x => x.REQUESTSTAFFID == (int)this.staffId) != null) throw new SecureException("You have already acted on this item.");
 
             // APPROVING ORDER VALIDATION
-            var approvers = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == fromLevelId).ToList();
+            var approvers = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == fromLevelId).ToList();
             var current = approvers.FirstOrDefault(x => x.STAFFID == this.staffId);
             if (current != null)
             {
                 var subs = approvers.Where(x => x.POSITION == (current.POSITION - 1)).ToList();
 
                 var first = context.TBL_APPROVAL_LEVEL_STAFF
-                    .Where(x => x.APPROVALLEVELID == fromLevelId && x.STAFFID != this.staffId && x.POSITION < current.POSITION)
+                    .Where(x => x.DELETED == false && x.APPROVALLEVELID == fromLevelId && x.STAFFID != this.staffId && x.POSITION < current.POSITION)
                     .Select(x => x.STAFFID);//.ToList();
                 //if (first.Count() > 0)
                 if (subs.Count() > 0)
@@ -489,7 +489,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     this.groupStatusId = (approvals > disapprovals) ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Disapproved;
 
                     var vetoers = context.TBL_APPROVAL_LEVEL_STAFF
-                                    .Where(x => x.APPROVALLEVELID == this.fromLevelId && x.VETOPOWER == true)
+                                    .Where(x => x.DELETED == false && x.APPROVALLEVELID == this.fromLevelId && x.VETOPOWER == true)
                                     .Select(x => x.STAFFID)
                                     .ToList();
 
@@ -749,7 +749,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                            .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                            .Join(context.TBL_APPROVAL_LEVEL, mg => mg.m.GROUPID, l => l.GROUPID, (mg, l) =>
                            new { Mapping = mg.m, Level = l })
-                           .Where(x => x.Level.ISACTIVE == true)
+                           .Where(x => x.Level.ISACTIVE == true && x.Level.DELETED == false)
                            .Select(x => new WorkflowSetup
                            {
                                GroupPosition = x.Mapping.POSITION,
@@ -825,7 +825,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         var staffRoleEmails = context.TBL_STAFF.Where(x => x.STAFFROLEID == nextLevel.STAFFROLEID)
                             .Select(x => x.EMAIL)
                             .Distinct();
-                        var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
+                        var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
                             .Select(x => x.TBL_STAFF.EMAIL)
                             .Distinct();
                         emails = staffRoleEmails.Union(levelStaffEmails).ToList();
