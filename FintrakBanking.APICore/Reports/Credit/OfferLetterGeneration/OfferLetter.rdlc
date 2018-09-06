@@ -4381,7 +4381,7 @@
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
-                                    <Format>0;(0)</Format>
+                                    <Format>0.00;(0.00)</Format>
                                   </Style>
                                 </TextRun>
                                 <TextRun>

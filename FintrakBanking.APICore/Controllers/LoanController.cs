@@ -17,13 +17,6 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Extensions;
-using System.Data;
-using System.Net.Http.Headers;
-
-using System.IO;
-
-using System.Drawing;
-using System.Net.Sockets;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -84,6 +77,16 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("facility-summary/application/{applicationId}")]
+        public HttpResponseMessage GetApplicationFacilitySummary(int applicationId)
+        {
+            List<CurrentCustomerExposure> data = repo.GetApplicationFacilitySummary(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+        }
+
 
         [HttpGet]
         [Route("running-loan/customer/{id}")]
@@ -1040,8 +1043,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
-
-
+        
         [HttpGet]
         [Route("customer/{customerId}")]
         public HttpResponseMessage GetCustomerLoans(int customerId)
@@ -1058,6 +1060,21 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             catch (BadLogicException be)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpGet]
+        [Route("existing-loans/{applicationId}")]
+        public HttpResponseMessage GetLoanApplicationExistingLoans(int applicationId)
+        {
+            try
+            {
+                List<LoanViewModel> data = repo.GetLoanApplicationExistingLoans(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
             }
             catch (Exception)
             {
