@@ -784,7 +784,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (emailNotification || smsNotification)
             {
+                var setup = context.TBL_SETUP_GLOBAL.Find(1);
                 var operation = context.TBL_OPERATIONS.Find(this.operationId);
+                var applicationUrl = setup.APPLICATION_URL.Length == 0 ? "#" : setup.APPLICATION_URL;
+                var links = "<p>Click <a href=\"" + applicationUrl + "\">here to continue...</a></p>";
 
                 TBL_STAFF owner;
                 if (trailLog.Count() == 0)
@@ -864,7 +867,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         TOADDRESS = owner.EMAIL,
                         MESSAGESUBJECT = ownerMessageSubject,
-                        MESSAGEBODY = ownerMessageBody,
+                        MESSAGEBODY = ownerMessageBody + links,
                         MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                         MESSAGETYPEID = (short)MessageTypeEnum.Email,
                         FROMADDRESS = this.support,
@@ -881,7 +884,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         {
                             TOADDRESS = this.toStaffId != null ? reciever.EMAIL : string.Join(";", emails.Distinct()),
                             MESSAGESUBJECT = messageSubject,
-                            MESSAGEBODY = messageBody,
+                            MESSAGEBODY = messageBody + links,
                             MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                             MESSAGETYPEID = (short)MessageTypeEnum.Email,
                             FROMADDRESS = this.support,
