@@ -1102,13 +1102,11 @@ namespace FintrakBanking.Repositories.Credit
             var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
                             .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
                             .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
-                            .Select(x => new
-                            {
+                            .Select(x => new {
                                 BRANCHID = x.b.BRANCHID
                             })
                             .Select(x => x.BRANCHID)
-                            .ToList()
-                            ;
+                            .ToList();
 
             var applications = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                     && branches.Contains(x.BRANCHID)
