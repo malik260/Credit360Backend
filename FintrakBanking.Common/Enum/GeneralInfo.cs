@@ -264,6 +264,8 @@ namespace FintrakBanking.Common.Enum
         CrmsRegulatorySetupDeleted = 235,
         ApprovalReliefApproved = 243,
         CamsolApproval = 244,
+       RegionDeleted = 245,
+
     };
    public enum RegulatoryTypeEnum
     {

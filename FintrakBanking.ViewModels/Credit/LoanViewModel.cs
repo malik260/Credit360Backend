@@ -561,6 +561,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string camDocumentation { get; set; }
         public decimal groupApprovedAmount { get; set; }
         public int approvedTenor { get; set; }
+        public int proposedTenor { get; set; }
         public decimal ? customerAvailableAmount { get; set; }
         public string customerOccupation { get; set; }
         public string customerType { get; set; }
@@ -583,6 +584,28 @@ namespace FintrakBanking.ViewModels.Credit
         public List<CamDocumentViewModel> camDocuments { get; set; }
         public short? productClassProcessId { get; set; }
         public bool undergoingConcession { get; set; }
+        public string proposedTenorString
+        {
+            get
+            {
+                var units = proposedTenor == 1 ? " day" : " days";
+                if (proposedTenor < 15) return proposedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = approvedTenor == 1 ? " day" : " days";
+                if (approvedTenor < 15) return approvedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
 
         public string approvedAmountCurrency { get; set; }
         

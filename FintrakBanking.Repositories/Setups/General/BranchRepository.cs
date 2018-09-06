@@ -108,6 +108,137 @@ namespace FintrakBanking.Repositories.Setups.General
             return false;
         }
 
+        public IEnumerable<BranchRegionStaffViewModel> GetAllRegionStaff(int regionId)
+        {
+            var regions = context.TBL_BRANCH_REGION_STAFF.Where(x => x.DELETED == false && x.REGIONID == regionId).Select(x => new BranchRegionStaffViewModel
+            {
+                staffRegionId= x.STAFFREGIONID,
+                regionId = x.REGIONID,
+                houStaffId = x.STAFFID,
+                regionStaffTypeId = x.REGIONSTAFFTYPEID,
+                regionStaffTypeName = context.TBL_BRANCH_REGION_STAFF_TYPE.Where(a => a.REGIONSTAFFTYPEID == x.REGIONSTAFFTYPEID).Select(b => b.REGIONSTAFFTYPENAME).FirstOrDefault(),
+                houStaffName = context.TBL_STAFF.Where(a=>a.STAFFID == x.STAFFID).Select(b=>b.FIRSTNAME + " " + b.LASTNAME + "-" +"("+ b.STAFFCODE+")").FirstOrDefault(),
+            }).ToList();
+
+            return regions;
+        }
+
+        public bool AddUpdateBranchRegionStaff(BranchRegionStaffViewModel entity)
+        {
+            if (entity != null)
+            {
+                try
+                {
+                    TBL_BRANCH_REGION_STAFF regionStaff;
+                    if (entity.staffRegionId != 0 || entity.staffRegionId < 0)
+                    {
+                        regionStaff = context.TBL_BRANCH_REGION_STAFF.Find(entity.staffRegionId);
+                        if (regionStaff != null)
+                        {
+                            regionStaff.STAFFID = entity.houStaffId;
+                            regionStaff.REGIONSTAFFTYPEID = entity.regionStaffTypeId;
+                            regionStaff.LASTUPDATEDBY = entity.createdBy;
+                            regionStaff.DATETIMEUPDATED = DateTime.Now;
+                        }
+                    }
+                    else
+                    {
+                        var exist = context.TBL_BRANCH_REGION_STAFF.Where(x=>x.STAFFID == entity.houStaffId && x.REGIONID == entity.regionId).FirstOrDefault();
+                        if (exist!=null)
+                        {
+                            regionStaff = exist;
+                            regionStaff.DELETED = false;
+                            regionStaff.LASTUPDATEDBY = entity.createdBy;
+                            regionStaff.DATETIMEUPDATED = DateTime.Now;
+
+                        }
+                        else
+                        {
+                            regionStaff = new TBL_BRANCH_REGION_STAFF();
+                            regionStaff.REGIONID = entity.regionId;
+                            regionStaff.STAFFID = entity.houStaffId;
+                            regionStaff.REGIONSTAFFTYPEID = entity.regionStaffTypeId;
+                            regionStaff.DELETED = false;
+                            regionStaff.CREATEDBY = entity.createdBy;
+                            regionStaff.DATETIMECREATED = DateTime.Now;
+
+                            context.TBL_BRANCH_REGION_STAFF.Add(regionStaff);
+                        }
+
+                    }
+
+                    // Audit Section ---------------------------
+                    var region = context.TBL_BRANCH_REGION.Find(entity.regionId);
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.BranchAdded,
+                        STAFFID = entity.createdBy,
+                        BRANCHID = (short)entity.userBranchId,
+                        DETAIL = "Added Branch Region Staff For with Region : " + region.REGION_NAME,
+                        IPADDRESS = entity.userIPAddress,
+                        URL = entity.applicationUrl,
+                        APPLICATIONDATE = DateTime.Now,
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.auditTrail.AddAuditTrail(audit);
+
+                    var response = context.SaveChanges() != 0;
+                    return response;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+
+            }
+            return false;
+        }
+        public IEnumerable<LookupViewModel> GetAllRegionStaffType()
+        {
+            var regions = context.TBL_BRANCH_REGION_STAFF_TYPE.Select(x => new LookupViewModel
+            {
+                lookupId = (short)x.REGIONSTAFFTYPEID,
+                lookupName = x.REGIONSTAFFTYPENAME,
+            }).ToList();
+
+            return regions;
+        }
+
+        public async Task<bool> DeleteBranchRegionStaff(short id, UserInfo user)
+        {
+            var response = 0;
+            var regionstaff = context.TBL_BRANCH_REGION_STAFF.Find(id);
+            var staff = context.TBL_STAFF.Find(regionstaff.STAFFID);
+            var region = context.TBL_BRANCH_REGION.Find(regionstaff.REGIONID);
+
+            if (regionstaff != null)
+            {
+                regionstaff.DELETED = true;
+                regionstaff.DELETEDBY = user.staffId;
+                regionstaff.DATETIMEDELETED = DateTime.Now;
+
+                response = await context.SaveChangesAsync();
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.RegionDeleted,
+                    STAFFID = (int)user.staffId,
+                    BRANCHID = (short)user.BranchId,
+                    DETAIL = $"Deleted region staff: '{staff.FIRSTNAME}' '{staff.LASTNAME}' in region: {region.REGION_NAME} ",
+                    IPADDRESS = user.userIPAddress,
+                    URL = user.applicationUrl,
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                //end of Audit section -------------------------------
+            }
+
+            return response != 0;
+        }
+
+
+
+
         public bool ValidateRegionName(string regionName)
         {
             return context.TBL_BRANCH_REGION.Where(x => x.REGION_NAME == regionName).Any();
