@@ -1620,7 +1620,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
-                    //result = bulkPosting.WriteBulkDailyTermLoanInterestAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+                    result = bulkPosting.WriteBulkDailyTermLoanInterestAccuralToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
 
                 }
                 else
