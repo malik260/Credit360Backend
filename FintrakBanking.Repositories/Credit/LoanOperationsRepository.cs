@@ -4612,7 +4612,7 @@ namespace FintrakBanking.Repositories.Credit
                          select new LoanViewModel()
                          {
                              loanId = a.TERMLOANID,
-                             productPriceIndexRate = a.PRODUCTPRICEINDEXRATE,
+                             productPriceIndexRate = (double) a.PRODUCTPRICEINDEXRATE,
                              customerRiskRatingId = a.CUSTOMERRISKRATINGID,
                              loanSystemTypeId = (short)a.LOANSYSTEMTYPEID,
                              customerId = a.CUSTOMERID,

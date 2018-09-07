@@ -133,11 +133,10 @@ namespace FintrakBanking.Entities.Models
 
         public string FIELD1 { get; set; }
 
+        public double? PRODUCTPRICEINDEXRATE { get; set; }
+
+        public short? PRODUCTPRICEINDEXID { get; set; }
         public bool ISSPECIALISED { get; set; }
-
-        public int? PRODUCTPRICEINDEXID { get; set; }
-
-        public string PRODUCTPRICEINDEXRATE { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

@@ -175,5 +175,6 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview();
 
         IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate, int loanId);
+
     }
 }
