@@ -285,6 +285,12 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string listOfCommodities { get; set; }
 
+        public bool isSpecialised { get; set; }
+
+        public int? productPriceIndexId { get; set; }
+
+        public string productPriceIndexRate { get; set; }
+
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
         public EducationLoanViewModel educationLoan { get; set; }

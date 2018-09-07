@@ -113,8 +113,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? CASAACCOUNTID { get; set; } //CASAACCOUNTID
 
-        
-       public bool SECUREDBYCOLLATERAL { get; set; }
+
+        public bool SECUREDBYCOLLATERAL { get; set; }
         public int? CRMSCOLLATERALTYPEID { get; set; }
 
         public int? CRMSFUNDINGSOURCEID { get; set; }
@@ -132,6 +132,12 @@ namespace FintrakBanking.Entities.Models
         public string CONDITIONSUBSEQUENT { get; set; }
 
         public string FIELD1 { get; set; }
+
+        public bool ISSPECIALISED { get; set; }
+
+        public int? PRODUCTPRICEINDEXID { get; set; }
+
+        public string PRODUCTPRICEINDEXRATE { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 

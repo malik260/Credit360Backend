@@ -414,6 +414,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CRMS_TYPE> TBL_CRMS_TYPE { get; set; }
         public virtual DbSet<TBL_TEMP_STAFF_RELIEF> TBL_TEMP_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_COMP_BENEFIC> TBL_TEMP_CUSTOMER_COMP_BENEFIC { get; set; }
+        public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_CURNCY> TBL_PRODUCT_PRICE_INDEX_CURNCY { get; set; }
         
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
