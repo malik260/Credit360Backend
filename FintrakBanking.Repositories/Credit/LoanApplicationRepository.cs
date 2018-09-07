@@ -1245,7 +1245,9 @@ namespace FintrakBanking.Repositories.Credit
                     CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
                     CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
                     CRMS_ECCI_NUMBER = a.crms_ECCI_Number,
-                    FIELD1 = a.listOfCommodities
+                    FIELD1 = a.listOfCommodities,
+                    PRODUCTPRICEINDEXID = a.productPriceIndexId,
+                    PRODUCTPRICEINDEXRATE = a.productPriceIndexRate
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
@@ -1743,7 +1745,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery)
         {
-               searchQuery = searchQuery.Trim().ToLower();
+            searchQuery = searchQuery.Trim().ToLower();
 
             var allApplicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
@@ -1776,7 +1778,7 @@ namespace FintrakBanking.Repositories.Credit
                                              customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                                              customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                                          });
-                
+
             return allApplicationDetails;
         }
 
@@ -1838,7 +1840,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = x.q.o.g.a.OPERATIONID,
                             accountNumber = x.q.s.PRODUCTACCOUNTNUMBER,
                             isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.q.o.g.a.APPLICATIONREFERENCENUMBER).Any()
-        })
+                        })
                     .Where(x => x.applicationReferenceNumber == searchString
                         || x.firstName.ToLower().StartsWith(searchString)
                         || x.lastName.ToLower().StartsWith(searchString)
@@ -2716,11 +2718,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
-            var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress ).Any();
+            var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
             if (isCancellatuionInProgress == true)
                 throw new ConditionNotMetException(" This Loan is currently under going cancellation process");
 
-            var isCancellatuionCompleted = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId &&  x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted).Any();
+            var isCancellatuionCompleted = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted).Any();
             if (isCancellatuionCompleted == true)
                 throw new ConditionNotMetException(" This Loan already been cancelled");
 
@@ -2891,7 +2893,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (responce > 0)
                     {
-                       return true;
+                        return true;
                     }
                     return false;
                 }
@@ -2922,11 +2924,11 @@ namespace FintrakBanking.Repositories.Credit
             var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             val.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CancellationCompleted;
         }
-       
+
         private void LaonApplcationCancelllationDisapproved(LoanApplicationViewModel data)
         {
             var value = context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Where(x => x.TEMPAPPLICATIONCANCELLATIONID == data.tempApplicationCancellationId).Select(x => x).FirstOrDefault();
-            if (value!=null)
+            if (value != null)
             {
                 var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
                 val.APPLICATIONSTATUSID = val.APPLICATIONSTATUSID;
@@ -3064,7 +3066,7 @@ namespace FintrakBanking.Repositories.Credit
             //end of Audit section -------------------------------
             return context.SaveChanges() > 0;
         }
-   
+
         public IEnumerable<LookupViewModel> GetAllCRMSFundingSource()
         {
             return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.FundingSource).Select(x => new LookupViewModel()
@@ -3089,6 +3091,20 @@ namespace FintrakBanking.Repositories.Credit
                 lookupId = (short)x.CRMSREGULATORYID,
                 lookupName = x.CODE + "-" + x.DESCRIPTION
             }).ToList();
+        }
+        public IEnumerable<LookupViewModel> GetAllProductPriceIndex(int currencyId)
+        {
+            var productIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX
+                         join b in context.TBL_PRODUCT_PRICE_INDEX_CURNCY
+                         on a.PRODUCTPRICEINDEXID equals b.PRODUCTPRICEINDEXID
+                         where b.CURRENCYID == currencyId
+                         select new LookupViewModel
+                         {
+                             lookupId = a.PRODUCTPRICEINDEXID,
+                             lookupName = a.PRICEINDEXNAME,
+                             lookupTypeName = a.PRICEINDEXRATE.ToString()
+                         }).ToList();
+            return productIndex;
         }
     }
 }

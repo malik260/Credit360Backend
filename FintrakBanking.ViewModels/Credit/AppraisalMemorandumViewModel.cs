@@ -79,6 +79,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string schedule { get; set; }
         public bool securedByCollateral { get; set; }
         public int? crmsCollateralTypeId { get; set; }
+        public bool isSpecialised { get; set; }
 
         public string proposedTenorString
         {
