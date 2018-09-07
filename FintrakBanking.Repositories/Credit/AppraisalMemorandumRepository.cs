@@ -1156,7 +1156,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
                         currentApprovalLevelTypeId = y.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                     })
-                .Where(x => x.currentApprovalLevelTypeId == 2 && (levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null)))
+                .Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;

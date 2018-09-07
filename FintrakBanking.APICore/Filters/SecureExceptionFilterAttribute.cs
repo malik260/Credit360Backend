@@ -42,9 +42,9 @@ namespace FintrakBanking.APICore.Filters
 
             Task.Run(() => LogUnhandledExceptionAsync(context));
 
-            context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
+            // context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
 
-            // if (context.Exception is Exception) context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message + " inner exception " + innerException });
+            context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message + " inner exception " + innerException });
 
             base.OnException(context);
         }
@@ -56,11 +56,6 @@ namespace FintrakBanking.APICore.Filters
             var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
             var errorMessage = "ERROR_MESSAGE: " + ex.Message + ", INNER_EXCETION: " + innerException + ", ENTITY_VALIDATION_ERROR: " + ex.Data["validation_error_message"] ;
             var time = DateTime.Now;
-
-            //if (ex.InnerException != null)
-            //{
-            //    errorMessage = errorMessage + " -- " + ex.InnerException.Message;
-            //}
 
             var log = new TBL_ERRORLOG()
             {

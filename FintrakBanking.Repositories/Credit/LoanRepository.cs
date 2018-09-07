@@ -7209,7 +7209,17 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     allFilteredLoan = SearchContigentLoan(searchQuery);
                 }
+                else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
+                {
+                    // allFilteredLoan = SearchLoanApplicationLine(searchQuery);
+                    throw new SecureException("Not Implemented!");
+                }
+                else
+                {
+                    throw new SecureException("Not Implemented!");
+                }
 
+                
             }
 
             if (performanceTypeId == 3) // writeoff
