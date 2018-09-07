@@ -177,6 +177,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     return result;
                 }
                 string a = response.ReasonPhrase;
+                
                 result.errorDesc =a;
                 result.isSuccess = false;
                 handler.Dispose();

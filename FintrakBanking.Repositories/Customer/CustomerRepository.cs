@@ -4558,7 +4558,7 @@ namespace FintrakBanking.Repositories.Customer
                         {
                             foreach (var item in tempBeneficial)
                             {
-                                var beneficial = new TBL_CUSTOMER_COMPANY_BENEFICIA()
+                                var beneficial = new TBL_CUSTOMER_COMPANY_BENEFICIA
                                 {
                                     SURNAME = item.SURNAME,
                                     FIRSTNAME = item.FIRSTNAME,

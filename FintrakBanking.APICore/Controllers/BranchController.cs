@@ -367,4 +367,5 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion Branch Setup
     }
+
 }

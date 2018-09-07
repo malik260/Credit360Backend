@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_BRANCH_REGION()
         {
             TBL_BRANCH = new HashSet<TBL_BRANCH>();
+            TBL_BRANCH_REGION_STAFF = new HashSet<TBL_BRANCH_REGION_STAFF>();
         }
 
         [Key]
@@ -42,6 +43,7 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_BRANCH> TBL_BRANCH { get; set; }
+        public virtual ICollection<TBL_BRANCH_REGION_STAFF> TBL_BRANCH_REGION_STAFF { get; set; }
 
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
 

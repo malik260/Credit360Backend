@@ -479,6 +479,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        // cam
+
+        [HttpPost]
+        [Route("update-application-customer-rating")]
+        public HttpResponseMessage UpdateApplicationCustomerRating([FromBody] ObligorLimitViewModel entity)
+        {
+            try
+            {
+                bool data = repo.UpdateApplicationCustomerRating(entity);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("validate-application-customer-rating/{applicationId}")]
+        public HttpResponseMessage ValidateApplicationCustomerRating(int applicationId)
+        {
+            CreditLimitValidationsModel data = repo.ValidateApplicationCustomerRating(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
         #endregion
     }
 } 

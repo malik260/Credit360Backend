@@ -3880,6 +3880,11 @@ namespace FintrakBanking.Repositories.Credit
         }
         public int GoForApproval(ApprovalViewModel model)
         {
+            TwoFactorAutheticationViewModel twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = model.userName,
+                passcode = model.passCode
+            };
             int responce = 0;
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -3897,7 +3902,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (model.approvalStatusId!=(int)ApprovalStatusEnum.Disapproved)
                         {
-                            UpdateCutomerCollateralApprovalStatus(model, (short)workflow.StatusId);
+                            UpdateCutomerCollateralApprovalStatus(model, (short)workflow.StatusId, twoFADetails);
                         }
                     }
 
@@ -3965,7 +3970,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        private void UpdateCutomerCollateralApprovalStatus(ApprovalViewModel ApprovalModel, short status)
+        private void UpdateCutomerCollateralApprovalStatus(ApprovalViewModel ApprovalModel, short status, TwoFactorAutheticationViewModel twoFADetails)
         {
             var mainCollateral = (from x in context.TBL_TEMP_COLLATERAL_CUSTOMER
                                   join t in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals t.COLLATERALTYPEID
@@ -3994,7 +3999,7 @@ namespace FintrakBanking.Repositories.Credit
                     };
 
                     //place lien
-                    lien.PlaceLien(model);
+                    lien.PlaceLien(model, twoFADetails);
 
                     int collaterId = UpdateCollateralMain(ApprovalModel.targetId);
 

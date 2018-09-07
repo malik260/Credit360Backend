@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string sectorName { get; set; }
         public int loanCount { get; set; }
-        public decimal sumOfProposedAmount { get; set; }
+        public double sumOfProposedAmount { get; set; }
         public string prodentialType { get; set; }
         public string loanSystemType { get; set; }
 

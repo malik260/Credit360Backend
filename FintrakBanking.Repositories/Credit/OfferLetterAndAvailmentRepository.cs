@@ -397,6 +397,8 @@ namespace FintrakBanking.Repositories.Credit
                                from c in cc.DefaultIfEmpty()
                                join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
                                from d in cg.DefaultIfEmpty()
+                               join e in context.TBL_CURRENCY on b.CURRENCYID equals e.CURRENCYID
+
                                where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower() 
                                && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
                                && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted 
@@ -408,7 +410,8 @@ namespace FintrakBanking.Repositories.Credit
                                    interestRate = b.APPROVEDINTERESTRATE,
                                    purpose = b.LOANPURPOSE,
                                    applicationDate = applDate,
-                                   approvedAmount = b.APPROVEDAMOUNT,
+                                   approvedAmountCurrency = e.CURRENCYNAME + " " +  b.APPROVEDAMOUNT,
+                                   //approvedAmount = b.APPROVEDAMOUNT
                                }).ToList();
 
             var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
@@ -720,7 +723,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmount.ToString("N", new CultureInfo("en-US"))}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
@@ -988,6 +991,7 @@ namespace FintrakBanking.Repositories.Credit
                                join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID
                                into cg
                                from d in cg.DefaultIfEmpty()
+                               join g in context.TBL_CURRENCY on e.CURRENCYID equals g.CURRENCYID
                                where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
                                && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                select new CamProcessedLoanViewModel()
@@ -997,7 +1001,8 @@ namespace FintrakBanking.Repositories.Credit
                                    interestRate = e.INTERESTRATE,
                                    purpose = b.REVIEWDETAILS,
                                    applicationDate = applDate,
-                                   approvedAmount = b.APPROVEDAMOUNT
+                                   approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
+                                   //approvedAmount = b.APPROVEDAMOUNT
 
                                }).ToList();
 
@@ -1297,7 +1302,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmount.ToString("N", new CultureInfo("en-US"))}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
