@@ -743,7 +743,8 @@ namespace FintrakBanking.Repositories.Credit
                         terms = x.d.REPAYMENTTERMS,
                         schedule = x.d.REPAYMENTSCHEDULE,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
-                        crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID
+                        crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
+                        isSpecialised = x.d.ISSPECIALISED
                     }).ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
@@ -1286,6 +1287,7 @@ namespace FintrakBanking.Repositories.Credit
             var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
             LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
             LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            LoanDetails.ISSPECIALISED = model.isSpecialised;
 
             var auditRec = new TBL_AUDIT
             {

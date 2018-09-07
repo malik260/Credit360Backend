@@ -115,6 +115,8 @@ namespace FintrakBanking.Entities.Models
 
         
        public bool SECUREDBYCOLLATERAL { get; set; }
+        public bool ISSPECIALISED { get; set; }
+
         public int? CRMSCOLLATERALTYPEID { get; set; }
 
         public int? CRMSFUNDINGSOURCEID { get; set; }

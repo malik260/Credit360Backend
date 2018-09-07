@@ -1809,7 +1809,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                //if (invalids > 0) throw new SecureException("Before availment validation failed!");
+                //if (invalids > 0)
+                //{
+                //    throw new SecureException("Before availment validation failed!");
+                //}
                 loanApplication.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentCompleted;
                 loanApplication.AVAILMENTDATE = DateTime.Now;
 
@@ -1829,8 +1832,9 @@ namespace FintrakBanking.Repositories.Credit
 
             // CRMS VALIDATION
             var Record = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId && x.CRMSCOLLATERALTYPEID == null).Count();
-            if (Record > 1)
+            if (Record > 0)
             {
+                result = 1;
                 throw new ConditionNotMetException("Kindly Ensure All Loan Details Have CRMS Collateral Type Attached");
             }
 
