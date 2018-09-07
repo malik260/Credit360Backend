@@ -1396,7 +1396,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("product_price_index")]
+        [Route("product-price-index")]
         public HttpResponseMessage GetAllProductPriceIndex(int currencyId)
         {
             try

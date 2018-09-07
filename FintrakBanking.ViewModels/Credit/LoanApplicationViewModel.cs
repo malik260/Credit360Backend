@@ -287,9 +287,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public bool isSpecialised { get; set; }
 
-        public int? productPriceIndexId { get; set; }
+        public short? productPriceIndexId { get; set; }
 
-        public string productPriceIndexRate { get; set; }
+        public double productPriceIndexRate { get; set; }
 
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
