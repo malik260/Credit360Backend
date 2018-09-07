@@ -512,12 +512,12 @@ namespace FintrakBanking.Repositories.Credit
             // check default role
             var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
 
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-                .Join(context.TBL_APPROVAL_GROUP,
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId),
+                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
                     gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
                     {
                         viewCamDocument = s.CANVIEWDOCUMENT,
@@ -535,10 +535,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
             {
-                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-                    .Join(context.TBL_APPROVAL_GROUP,
+                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                         m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
                         {
                             viewCamDocument = l.CANVIEWDOCUMENT,
@@ -585,12 +585,12 @@ namespace FintrakBanking.Repositories.Credit
 
             // check default role
             var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-             .Join(context.TBL_APPROVAL_GROUP,
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+             .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                  m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-             .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+             .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
                  mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-             .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId),
+             .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
                  gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
                  {
                      viewCamDocument = s.CANVIEWDOCUMENT,
@@ -743,7 +743,8 @@ namespace FintrakBanking.Repositories.Credit
                         terms = x.d.REPAYMENTTERMS,
                         schedule = x.d.REPAYMENTSCHEDULE,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
-                        crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID
+                        crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
+                        isSpecialised = x.d.ISSPECIALISED
                     }).ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
@@ -1288,6 +1289,7 @@ namespace FintrakBanking.Repositories.Credit
             var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
             LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
             LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            LoanDetails.ISSPECIALISED = model.isSpecialised;
 
             var auditRec = new TBL_AUDIT
             {

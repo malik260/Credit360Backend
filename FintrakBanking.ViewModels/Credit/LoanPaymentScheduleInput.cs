@@ -103,6 +103,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public DateTime paymentDate { get; set; }
         public Double paymentAmount { get; set; }
+        public short paymentTypeId  { get; set; }
     }
 
     public class LoanPaymentScheduleInput

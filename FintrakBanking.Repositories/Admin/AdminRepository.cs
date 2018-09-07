@@ -945,7 +945,7 @@ namespace FintrakBanking.Repositories.Admin
                                     join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
                                     join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
                                     join st in context.TBL_APPROVAL_LEVEL_STAFF on z.APPROVALLEVELID equals st.APPROVALLEVELID 
-                                    where x.OPERATIONID == operationId && z.STAFFROLEID == staff.STAFFROLEID || st.STAFFID == staff.STAFFID
+                                    where x.OPERATIONID == operationId && (z.STAFFROLEID == staff.STAFFROLEID || st.STAFFID == staff.STAFFID)
                                     select z.APPROVALLEVELID).FirstOrDefault();
 
                 var currentLevel = approvalLevelIds.IndexOf(staffLevelId) + 1;
@@ -959,6 +959,7 @@ namespace FintrakBanking.Repositories.Admin
             return output;
         }
         #endregion
+
     }
 
     public enum UserAccountLockStatusEnum
