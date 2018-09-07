@@ -18,17 +18,14 @@ namespace FintrakBanking.Repositories.Setups.General
         //private GeneralSetupRepository genSetup;
         public GeneralSetupRepository(FinTrakBankingContext _context)
         {
-
             this.context = _context;
              //this.genSetup = _genSetup;
-            
         }
 
         public DateTime GetApplicationDate()
         {
             return this.context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;            
         }
-
 
         public DateTime CalculateMaturityDate(DateTime effectiveDate, TenorModeEnum tenorModeId, int tenor)
         {
