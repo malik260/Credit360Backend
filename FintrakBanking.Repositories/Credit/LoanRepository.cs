@@ -849,6 +849,7 @@ namespace FintrakBanking.Repositories.Credit
         private string AddTermLoan(LoanViewModel entity)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new ConditionNotMetException("Loan terminal date should be more than effective date");
 
@@ -875,10 +876,11 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                   select sumPrincipalAmount;
 
-            var priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX).FirstOrDefault();
+            var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == applicationDetail.CURRENCYID).FirstOrDefault();
+            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
 
             var interestRate = Convert.ToDouble(entity.interestRate);
-            if(entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedLoan)
+            if(entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedLoan && priceIndex != null)
             {
                 interestRate = priceIndex.PRICEINDEXRATE + interestRate;
             }
@@ -1752,8 +1754,9 @@ namespace FintrakBanking.Repositories.Credit
                             join atrail in context.TBL_APPROVAL_TRAIL on req.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                             where ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
                                   && operationIds.Contains(atrail.OPERATIONID)
-                                  && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
-                                  && (m.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.AvailmentCompleted || m.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.LoanBookingInProgress)
+                                  && req.DELETED == false 
+                                  && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
+                                  //&& (m.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.AvailmentCompleted || m.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.LoanBookingInProgress)
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                   && atrail.RESPONSESTAFFID == null
                             orderby d.LOANAPPLICATIONDETAILID descending
@@ -7339,6 +7342,7 @@ namespace FintrakBanking.Repositories.Credit
         #endregion
         public IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview()
         {
+            var systemDate = generalSetup.GetApplicationDate();
             try
             {
                 var applicationDate = generalSetup.GetApplicationDate();
@@ -7378,7 +7382,8 @@ namespace FintrakBanking.Repositories.Credit
                                            sectorName = d.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                            applicationTenor = m.APPLICATIONTENOR,
                                            effectiveDate = (DateTime)d.EFFECTIVEDATE,
-                                           expiryDate = (DateTime)d.EXPIRYDATE,
+                                           expiryDate = d.EXPIRYDATE,
+                                           
                                            relationshipOfficerId = m.RELATIONSHIPOFFICERID,
                                            relationshipOfficerName = m.TBL_STAFF.FIRSTNAME + " " + m.TBL_STAFF.MIDDLENAME + " " + m.TBL_STAFF.LASTNAME,
                                            relationshipManagerId = m.RELATIONSHIPMANAGERID,
@@ -7407,6 +7412,7 @@ namespace FintrakBanking.Repositories.Credit
                                            createdBy = m.CREATEDBY,
                                            newApplicationDate = m.APPLICATIONDATE,
                                            dateTimeCreated = d.DATETIMECREATED,
+                                           systemCurrentDate = systemDate,
                                            loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0
                                        }).ToList();
 
@@ -7492,7 +7498,10 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
                     }
-
+                    if(item.effectiveDate != null)
+                    {
+                        item.tenorUsed = (systemDate - item.effectiveDate).Value.Days;
+                    }
                 }
 
                 return data;
