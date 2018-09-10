@@ -1098,7 +1098,8 @@ namespace FintrakBanking.Repositories.Credit
         public IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId)
         {
             var operationId = (int)OperationsEnum.CAM;
-            var levels = general.GetStaffApprovalLevelIds(staffId, operationId);
+
+            List<int> levels = general.GetRouteLevels(operationId, 2);
 
             var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
                             .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
@@ -1109,7 +1110,8 @@ namespace FintrakBanking.Repositories.Credit
                             .Select(x => x.BRANCHID)
                             .ToList();
 
-            var applications = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+            var applications = context.TBL_LOAN_APPLICATION
+                .Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                     && branches.Contains(x.BRANCHID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
@@ -1117,7 +1119,9 @@ namespace FintrakBanking.Repositories.Credit
                 )
                 .OrderByDescending(x => x.LOANAPPLICATIONID)
                 .GroupJoin(
-                    context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
+                    context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                        && x.TOAPPROVALLEVELID != null
+                        && levels.Contains((int)x.TOAPPROVALLEVELID)),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
                     a => a.LOANAPPLICATIONID,
                     b => b.TARGETID,
                     (x, y) => new { a = x, bs = y })
@@ -1157,7 +1161,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
                         currentApprovalLevelTypeId = y.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                     })
-                .Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
+                //.Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
