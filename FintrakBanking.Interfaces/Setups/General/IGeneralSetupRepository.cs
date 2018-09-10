@@ -51,6 +51,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool Updatesector(SectorViewModel model, short id);
 
         IEnumerable<int> GetStaffApprovalLevelIds(int staffId, int operationId);
-
+        List<int> GetRouteLevels(int operationId, int depth);
     }
 }

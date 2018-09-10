@@ -183,11 +183,17 @@ namespace FintrakBanking.Repositories.Credit
             //    throw new ConditionNotMetException("First principal first payment date cannot be less than effective date ");
             //if (loanInput.interestFirstpaymentDate < loanInput.effectiveDate)
             //    throw new ConditionNotMetException("First interest first payment date cannot be less than effective date ");
-            if (loanInput.maturityDate < loanInput.effectiveDate)
-                throw new ConditionNotMetException("Maturity date cannot be less than effective date");
+
+           
 
             List<LoanPaymentSchedulePeriodicViewModel> output = null; // new List<LoanPaymentSchedulePeriodicViewModel>();
             LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
+
+            if (scheduleMethod != LoanScheduleTypeEnum.IrregularSchedule)
+            {
+                if (loanInput.maturityDate < loanInput.effectiveDate)
+                    throw new ConditionNotMetException("Maturity date cannot be less than effective date");
+            }
 
             if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
                 output = GenerateIrregularPeriodicScheduleWithAmortisedCost(loanInput).ToList();
@@ -945,8 +951,15 @@ namespace FintrakBanking.Repositories.Credit
             if (loanInput.principalAmount != (loanInput.irregularPaymentSchedule.Sum(x => x.paymentAmount)))
                 throw new ConditionNotMetException("Payment Amount is not equal to the principal Amount");
 
-            if (loanInput.effectiveDate > (loanInput.irregularPaymentSchedule.Min(x => x.paymentDate)))
+            var minimumPaymentDate = loanInput.irregularPaymentSchedule.Min(x => x.paymentDate);
+
+            if (loanInput.effectiveDate > minimumPaymentDate)
                 throw new ConditionNotMetException("Effective Date should be less than the payment date(s)");
+
+            var maximumPaymentDate = loanInput.irregularPaymentSchedule.Max(x => x.paymentDate);
+
+            if (loanInput.effectiveDate > maximumPaymentDate)
+                throw new ConditionNotMetException("Effective Date should be less than the maturity date");
 
             List<LoanPaymentSchedulePeriodicViewModel> paymentSchedule = GenerateIrregularPeriodicSchedule(loanInput, false);
 

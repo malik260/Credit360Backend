@@ -21,6 +21,8 @@ namespace FintrakBanking.Entities.Models
 
         public double PRODUCTPRICEINDEXRATE { get; set; }
 
+        public short? PRODUCTPRICEINDEXID { get; set; }
+
         public int? CUSTOMERRISKRATINGID { get; set; }
 
         public short LOANSYSTEMTYPEID { get; set; }

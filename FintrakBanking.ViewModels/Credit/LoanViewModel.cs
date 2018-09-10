@@ -48,7 +48,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-
+        public short productPriceIndexId { get; set; }
         public int tenorLeft { get; set; }
 
         public string customerType { get; set; }
@@ -294,6 +294,19 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime firstPrincipalPaymentDate1 { get; set; }
         public DateTime firstInterestPaymentDate1 { get; set; }
 
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = tenor == 1 ? " day" : " days";
+                if (tenor < 15) return tenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(tenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+
+
 
         //......End f Loan Relational Table View Mapping Models......//
     }
@@ -516,6 +529,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public int tenorUsed { get; set; }
+
         public object isBooked { get; set; }
 
         public bool isUnderApproval { get; set; }
@@ -556,6 +571,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string subSectorName { get; set; }
         public string sectorSubSectorName { get {return (this.sectorName + "/" + this.subSectorName); } } 
         public short productTypeId { get; set; }
+        public short? productPriceIndexId { get; set; }
+        public double productPriceIndexRate { get; set; }
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }
         public string camDocumentation { get; set; }

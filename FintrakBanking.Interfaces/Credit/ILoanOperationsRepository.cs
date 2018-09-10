@@ -43,13 +43,13 @@ namespace FintrakBanking.Interfaces.Credit
         //bool OverdraftTopUp(int loanId, decimal amount);
         IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension();
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate);
-        IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue (DateTime applicationDate);
+        IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> InterestSuspension(int loanId, DateTime applicationDate, int staffId);
         LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode);
         IEnumerable<LoanViewModel> BulkArchiveLoan();
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode);
         IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode);
-        IEnumerable<LoanPaymentSchedulePeriodicViewModel> MergePeriodicSchedule (int loanId, DateTime applicationDate);
+        IEnumerable<LoanPaymentSchedulePeriodicViewModel> MergePeriodicSchedule(int loanId, DateTime applicationDate);
         bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, short loanReviewOperationsId, int loanId, int staffId);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForInterestReview(DateTime applicationDate, int loanId);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForBulkInterestReview(DateTime applicationDate);
@@ -58,17 +58,18 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId);
         bool addBulkRateLoanExcemptions(LoanViewModel model);
         bool addInterestRateChange(LoanBulkInterestReviewViewModel model);
-        IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId); 
-         IEnumerable<LoanClassificationViewModel> CalculateLoanClassification(DateTime applicationDate);
+        IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId);
+        IEnumerable<LoanClassificationViewModel> CalculateLoanClassification(DateTime applicationDate);
         LoanViewModel GetRunningLoans(int companyId, string refNo);
         LoanViewModel GetRunningFXLoans(int companyId, string refNo);
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD();
         IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType();
         IEnumerable<LoanFeeOperationViewModel> GetLoanChargeFeeByLoanId(int loanId);
-       
+
         IEnumerable<LoanClassificationViewModel> CalculateOverdraftClassification(DateTime applicationDate);
         IEnumerable<LoanViewModel> LoanHistory();
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
+        
 
         #region COMMERCIAL PAPER LOANS
         bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);

@@ -34,5 +34,11 @@ namespace FintrakBanking.Entities.Models
         public bool USE_TWO_FACTOR_AUTHENTICATION { get; set; }
 
         public int MAXIMUMUPLOADFILESIZE { get; set; }
+
+        [StringLength(500)]
+        public string APPLICATION_URL { get; set; }
+
+        [StringLength(200)]
+        public string SUPPORT_EMAIL { get; set; }
     }
 }

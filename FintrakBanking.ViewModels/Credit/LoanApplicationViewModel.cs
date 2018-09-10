@@ -132,6 +132,7 @@ namespace FintrakBanking.ViewModels.Credit
         public IQueryable<string> staffName { get; set; }
         public string comment { get; set; }
         public bool isOfferLetterAvailable { get; set; }
+        public int? currentApprovalLevelTypeId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -283,6 +284,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string transactionDynamics { get; set; }
 
         public string listOfCommodities { get; set; }
+
+        public bool isSpecialised { get; set; }
+
+        public short? productPriceIndexId { get; set; }
+
+        public double productPriceIndexRate { get; set; }
 
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
@@ -477,6 +484,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
         public string customerGroupName { get; set; }
         public int? currentApprovalLevelId { get; set; }
+        public int? currentApprovalLevelTypeId { get; set; }
     }
     public class InvoiceDetailViewModel
     {

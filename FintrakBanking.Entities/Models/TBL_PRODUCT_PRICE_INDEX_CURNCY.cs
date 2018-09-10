@@ -1,4 +1,4 @@
-namespace FintrakBanking.Entities.Models
+﻿namespace FintrakBanking.Entities.Models
 {
     using System;
     using System.Collections.Generic;
@@ -6,17 +6,15 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_BRANCH_REGION_STAFF")]
-    public partial class TBL_BRANCH_REGION_STAFF
+    [Table("TBL_PRODUCT_PRICE_INDEX_CURNCY")]
+    public partial class TBL_PRODUCT_PRICE_INDEX_CURNCY
     {
         [Key]
-        public int STAFFREGIONID { get; set; }
+        public int PRICEINDEXCURRENCYID { get; set; }
 
-        public int REGIONID { get; set; }
+        public int PRODUCTPRICEINDEXID { get; set; }
 
-        public int STAFFID { get; set; }
-
-        public int REGIONSTAFFTYPEID { get; set; }
+        public int CURRENCYID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -31,8 +29,5 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
-
-        public virtual TBL_BRANCH_REGION TBL_BRANCH_REGION { get; set; }
-
     }
 }

@@ -313,7 +313,30 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
             }
-        }
+        }  
+
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("approved-line-review")]
+        //public HttpResponseMessage GetApprovedLineReview()
+        //{
+        //    try
+        //    {
+        //        var data = loanRepo.GetApprovedLineReview();
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //               new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //               new { success = true, result = data });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //              new { success = false, message = ex.Message });
+        //    }
+        //}
 
         [HttpGet]
         [ClaimsAuthorization]

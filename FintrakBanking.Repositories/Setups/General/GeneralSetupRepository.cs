@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Helper;
@@ -18,17 +19,14 @@ namespace FintrakBanking.Repositories.Setups.General
         //private GeneralSetupRepository genSetup;
         public GeneralSetupRepository(FinTrakBankingContext _context)
         {
-
             this.context = _context;
              //this.genSetup = _genSetup;
-            
         }
 
         public DateTime GetApplicationDate()
         {
             return this.context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;            
         }
-
 
         public DateTime CalculateMaturityDate(DateTime effectiveDate, TenorModeEnum tenorModeId, int tenor)
         {
@@ -334,7 +332,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var roleids = staff.Select(x => x.STAFFROLEID).ToList();
 
             var roleLevelIds = context.TBL_APPROVAL_LEVEL
-                .Where(x => roleids.Contains((int)x.STAFFROLEID))
+                .Where(x => x.DELETED == false && roleids.Contains((int)x.STAFFROLEID))
                 .Select(x => x.APPROVALLEVELID)
                 .Distinct();
 
@@ -344,7 +342,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL
                 .Where(l => l.ISACTIVE == true));
 
-            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => staffIds.Contains(x.STAFFID));
+            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.DELETED == false && staffIds.Contains(x.STAFFID));
 
             var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
 
@@ -358,7 +356,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var staff = context.TBL_STAFF.Find(staffId);
 
             var roleLevelIds = context.TBL_APPROVAL_LEVEL
-                .Where(x => x.STAFFROLEID == staff.STAFFROLEID)
+                .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
                 .Select(x => x.APPROVALLEVELID)
                 .Distinct();
 
@@ -368,7 +366,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 .Where(x => x.OPERATIONID == operationId)
                 .Select(g => g.TBL_APPROVAL_GROUP)
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL
-                .Where(l => l.ISACTIVE == true));
+                .Where(l => l.DELETED == false && l.ISACTIVE == true));
 
             var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);
 
@@ -380,7 +378,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (scope == 2)
             {
-                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
                 return context.TBL_APPROVAL_LEVEL
                     .Where(x => groups.Contains(x.GROUPID))
                     .Select(x => x.APPROVALLEVELID)
@@ -392,5 +390,43 @@ namespace FintrakBanking.Repositories.Setups.General
             //return staffLevels.Union(roleLevelIds); // without relief code
             return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
+
+
+        public List<int> GetRouteLevels(int operationId, int depth)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+                    .Join(context.TBL_APPROVAL_GROUP,
+                        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupId = l.GROUPID,
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                            levelTypeId = l.LEVELTYPEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var routeLevel = levels.FirstOrDefault(x => x.levelTypeId == 2);//.Take(1).Select(x => x.levelId).FirstOrDefault();
+            if (routeLevel == null) throw new SecureException("Level type not set to region routing!");
+
+            var controlLevels = levels.Where(x =>
+                x.groupId == routeLevel.groupId
+                && x.levelPosition >= routeLevel.levelPosition
+                && x.levelPosition <= (routeLevel.levelPosition + depth)
+            );
+
+            return controlLevels.Select(x => x.levelId).ToList();
+        }
+
+
+
+
     }
 }

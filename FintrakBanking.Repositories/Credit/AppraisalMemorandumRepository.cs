@@ -512,12 +512,12 @@ namespace FintrakBanking.Repositories.Credit
             // check default role
             var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
 
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-                .Join(context.TBL_APPROVAL_GROUP,
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId),
+                .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
                     gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
                     {
                         viewCamDocument = s.CANVIEWDOCUMENT,
@@ -535,10 +535,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
             {
-                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-                    .Join(context.TBL_APPROVAL_GROUP,
+                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                    .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                         m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
                         {
                             viewCamDocument = l.CANVIEWDOCUMENT,
@@ -585,12 +585,12 @@ namespace FintrakBanking.Repositories.Credit
 
             // check default role
             var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-             .Join(context.TBL_APPROVAL_GROUP,
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+             .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
                  m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-             .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+             .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
                  mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-             .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId),
+             .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
                  gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
                  {
                      viewCamDocument = s.CANVIEWDOCUMENT,
@@ -743,7 +743,8 @@ namespace FintrakBanking.Repositories.Credit
                         terms = x.d.REPAYMENTTERMS,
                         schedule = x.d.REPAYMENTSCHEDULE,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
-                        crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID
+                        crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
+                        isSpecialised = x.d.ISSPECIALISED
                     }).ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
@@ -845,17 +846,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             // var declarations
             IQueryable<LoanApplicationViewModel> applications = null;
-            //int operationId = (int)OperationsEnum.CAM;
-            bool isHeadOffice = (branchId == 1) ? true : false;
-
-            // get approval levels 
             var levelIds = general.GetStaffApprovalLevelIds(staffId, operationId);
 
             // query
             var query = context.TBL_LOAN_APPLICATION.Where(x =>
                     x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                     && x.COMPANYID == companyId
-                    //&& (x.BRANCHID == branchId || isHeadOffice) // branch filter
                     && (classId == null) ? true : (x.PRODUCTCLASSID == (short?)classId)
                 )
             .OrderByDescending(x => x.LOANAPPLICATIONID)
@@ -893,6 +889,7 @@ namespace FintrakBanking.Repositories.Credit
                 currentApprovalStateId = x.b.APPROVALSTATEID,
                 currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
                 currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                currentApprovalLevelTypeId = x.b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                 approvalTrailId = x.b == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
                 toStaffId = x.b.TOSTAFFID,
                 timeIn = x.b.SYSTEMARRIVALDATETIME,
@@ -916,6 +913,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = x.a.OPERATIONID,
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
             })
+            .Where(x => x.currentApprovalLevelTypeId != 2) // hou
             .ToList()
             ;
 
@@ -929,7 +927,6 @@ namespace FintrakBanking.Repositories.Credit
         public List<PendingProductProgramViewModel> GetPendingProductProgram(UserInfo user)
         {
             int staffId = user.staffId;
-            bool isHeadOffice = (user.BranchId == 1) ? true : false;
             int operationId = (int)OperationsEnum.CAM;
             var levelIds = general.GetStaffApprovalLevelIds(user.staffId, operationId);// new int[] {3,1,5};
             int productBasedId = (int)ProductClassProcessEnum.ProductBased;
@@ -937,8 +934,6 @@ namespace FintrakBanking.Repositories.Credit
             var applications = context.TBL_LOAN_APPLICATION.Where(x =>
                 x.DELETED == false && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                 && x.COMPANYID == user.companyId
-                //&& (x.BRANCHID == user.BranchId || isHeadOffice) // branch filter
-                // && x.PRODUCT_CLASS_PROCESSID == productBasedId
                 && x.PRODUCTCLASSID != null
             )
             .Join(
@@ -956,14 +951,16 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     loanApplicationId = x.a.LOANAPPLICATIONID,
                     approvalTrailId = x == null ? 0 : x.b.APPROVALTRAILID, // for inner sequence ordering
+                    currentApprovalLevelTypeId = x.b.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                     productClassId = x.a.PRODUCTCLASSID,
                     currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
                     toStaffId = x.b.TOSTAFFID,
                 })
-                .GroupBy(d => d.loanApplicationId)
-                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                .ToList()
-                ;
+            .Where(x => x.currentApprovalLevelTypeId != 2) // hou
+            .GroupBy(d => d.loanApplicationId)
+            .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
+            .ToList()
+            ;
 
             var productClasses = context.TBL_PRODUCT_CLASS.Where(x => x.PRODUCT_CLASS_PROCESSID == productBasedId)
                 .Select(item => new PendingProductProgramViewModel
@@ -1101,26 +1098,30 @@ namespace FintrakBanking.Repositories.Credit
         public IQueryable<RegionLoanApplicationViewModel> GetRegionalLoanApplications(int staffId)
         {
             var operationId = (int)OperationsEnum.CAM;
-            var levels = general.GetStaffApprovalLevelIds(staffId, operationId);
-            var region = context.TBL_BRANCH_REGION.FirstOrDefault(x => x.CAM_HOU_STAFFID == staffId);
-            if (region == null) { throw new SecureException("This user does not have a region mapped to him."); }
-            var branches = context.TBL_BRANCH.Where(x => x.REGIONID == region.REGIONID).Select(x => x.BRANCHID);
 
-            var applications = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+            List<int> levels = general.GetRouteLevels(operationId, 1);
+
+            var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+                            .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
+                            .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
+                            .Select(x => new {
+                                BRANCHID = x.b.BRANCHID
+                            })
+                            .Select(x => x.BRANCHID)
+                            .ToList();
+
+            var applications = context.TBL_LOAN_APPLICATION
+                .Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                     && branches.Contains(x.BRANCHID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                     && x.SUBMITTEDFORAPPRAISAL == true
                 )
                 .OrderByDescending(x => x.LOANAPPLICATIONID)
-                .GroupJoin(
-                    context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
-                    a => a.LOANAPPLICATIONID,
-                    b => b.TARGETID,
-                    (x, y) => new { a = x, bs = y })
-                .SelectMany(
-                    xy => xy.bs.DefaultIfEmpty(),
-                    (x, y) => new RegionLoanApplicationViewModel
+                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                        && x.TOAPPROVALLEVELID != null && levels.Contains((int)x.TOAPPROVALLEVELID)),
+                    a => a.LOANAPPLICATIONID, b => b.TARGETID, (a, b) => new { a, b })
+                .Select(x => new RegionLoanApplicationViewModel
                     {
                         loanApplicationId = x.a.LOANAPPLICATIONID,
                         applicationDate = x.a.APPLICATIONDATE,
@@ -1136,25 +1137,23 @@ namespace FintrakBanking.Repositories.Credit
                         submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                         approvalStatusId = x.a.APPROVALSTATUSID,
                         operationId = x.a.OPERATIONID,
-                        timeIn = y.SYSTEMARRIVALDATETIME,
-                        timeOut = y.SYSTEMRESPONSEDATETIME,
-                        currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                        currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                         customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                         customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
-                        responsiblePerson = context.TBL_STAFF
-                                                .Where(s => s.STAFFID == y.TOSTAFFID)
-                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
-                                                .FirstOrDefault().name ?? "",
-                        requestStaffId = y.REQUESTSTAFFID,
-                        toApprovalLevelId = y.TOAPPROVALLEVELID,
-                        toStaffId = y.TOSTAFFID,
-                        //sla time, timein timeout, timespent, responsible person
-                      //  currentApprovalLevel = y.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                        approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
 
-                    })
-                .Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
+                        responsiblePerson = context.TBL_STAFF
+                                                    .Where(s => s.STAFFID == x.b.TOSTAFFID)
+                                                    .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
+                                                    .FirstOrDefault().name ?? "",
+                        timeIn = x.b.SYSTEMARRIVALDATETIME,
+                        timeOut = x.b.SYSTEMRESPONSEDATETIME,
+                        currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                        currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                        currentApprovalLevelTypeId = x.b.TBL_APPROVAL_LEVEL1.LEVELTYPEID,
+                        requestStaffId = x.b.REQUESTSTAFFID,
+                        toApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                        toStaffId = x.b.TOSTAFFID,
+                        approvalTrailId = x.b.APPROVALTRAILID,
+                })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
@@ -1286,6 +1285,7 @@ namespace FintrakBanking.Repositories.Credit
             var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
             LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
             LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            LoanDetails.ISSPECIALISED = model.isSpecialised;
 
             var auditRec = new TBL_AUDIT
             {
