@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Helper;
@@ -389,5 +390,43 @@ namespace FintrakBanking.Repositories.Setups.General
             //return staffLevels.Union(roleLevelIds); // without relief code
             return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
+
+
+        public List<int> GetRouteLevels(int operationId, int depth)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+                    .Join(context.TBL_APPROVAL_GROUP,
+                        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        {
+                            groupId = l.GROUPID,
+                            groupPosition = mg.m.POSITION,
+                            levelPosition = l.POSITION,
+                            levelId = l.APPROVALLEVELID,
+                            levelName = l.LEVELNAME,
+                            staffRoleId = l.STAFFROLEID,
+                            levelTypeId = l.LEVELTYPEID,
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            var routeLevel = levels.FirstOrDefault(x => x.levelTypeId == 2);//.Take(1).Select(x => x.levelId).FirstOrDefault();
+            if (routeLevel == null) throw new SecureException("Level type not set to region routing!");
+
+            var controlLevels = levels.Where(x =>
+                x.groupId == routeLevel.groupId
+                && x.levelPosition >= routeLevel.levelPosition
+                && x.levelPosition <= (routeLevel.levelPosition + depth)
+            );
+
+            return controlLevels.Select(x => x.levelId).ToList();
+        }
+
+
+
+
     }
 }
