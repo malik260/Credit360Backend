@@ -227,6 +227,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
                                        repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",
                                        purpose = b.LOANPURPOSE,
+                                      // productPriceIndex = b.PRODUCTPRICEINDEXID
                                    }).ToList();
 
                 if (loanDetails != null)

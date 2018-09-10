@@ -54,6 +54,7 @@ namespace FintrakBanking.Repositories.Credit
         private IOverRideRepository overrider;
         private IChartOfAccountRepository chartOfAccount;
         private IntegrationWithFinacle integration;
+        private FinTrakBankingStagingContext stgCon;
         //private ICasaRepository casaRep;
 
         private IIntegrationWithFinacle finacle;
@@ -66,7 +67,7 @@ namespace FintrakBanking.Repositories.Credit
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
                                         IChartOfAccountRepository _chartOfAccount,
                                         IOverRideRepository _overrider, IntegrationWithFinacle _integration,
-            IIntegrationWithFinacle finacle)
+            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon)
         {
             this.context = _context;
             this.generalSetup = _genSetup;
@@ -84,6 +85,7 @@ namespace FintrakBanking.Repositories.Credit
             this.integration = _integration;
             //this.casaRep = _casaRep;
             this.finacle = finacle;
+            this.stgCon = _stgCon;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -5614,9 +5616,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             IQueryable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
+            
 
             foreach (var item in customer)
             {
+                var customCode = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == item.customerId).Select(x => x.CUSTOMERCODE).FirstOrDefault();
+
                 exposure = from a in context.TBL_LOAN
                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                            select new CurrentCustomerExposure
@@ -5629,7 +5634,8 @@ namespace FintrakBanking.Repositories.Credit
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                               loanStatus = "Running"
+                               loanStatus = "Running",
+                               referenceNumber =a.LOANREFERENCENUMBER
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
@@ -5646,7 +5652,8 @@ namespace FintrakBanking.Repositories.Credit
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                               loanStatus = "Running"
+                               loanStatus = "Running",
+                               referenceNumber = a.LOANREFERENCENUMBER
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
@@ -5663,10 +5670,29 @@ namespace FintrakBanking.Repositories.Credit
                                PastDueObligationsPrincipal = 0,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = "Processing",
-                               loanStatus = "Processing"
+                               loanStatus = "Processing",
+                              // referenceNumber = a.
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
+
+
+                var staggingLoan = from a in stgCon.STG_LOAN_MART
+                           where a.CUST_ID == customCode
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.SCHM_TYPE,
+                               existingLimit = a.FAC_GRANT_AMT,
+                               proposedLimit = a.FINAL_BALANCE,
+                               recommendedLimit = 0,
+                               PastDueObligationsInterest = a.INT_DUE,
+                               PastDueObligationsPrincipal = 0,
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = a.USER_CLASSIFICATION == "1" ? "Performing" : "Non-Performing",
+                               loanStatus = "Running"
+                           };
+
+                exposures.Union(staggingLoan);
 
             }
 

@@ -35,36 +35,36 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string UNIQUE_IDENTIFICATION_TYPE { get; set; }
         public string UNIQUE_IDENTIFICATION_NO { get; set; }
-        public string CREDIT_TYPE { get; set; }
+        public int? CREDIT_TYPE { get; set; }
         public string CREDIT_PURPOSE_BY_BUSINESSLINES { get; set; }
         public string CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR { get; set; }
         public decimal? CREDIT_LIMIT { get; set; }
-        public string OUTSTANDING_AMOUNT { get; set; }
+        public decimal OUTSTANDING_AMOUNT { get; set; }
         public string FEES { get; set; }
-        public DateTime? EFFECTIVE_DATE { get; set; }
-        public string TENOR { get; set; }
-        public string EXPIRY_DATE { get; set; }
-        public string REPAYMENT_AGREEMENT_MODE { get; set; }
+        public DateTime EFFECTIVE_DATE { get; set; }
+        public double TENOR { get; set; }
+        public DateTime EXPIRY_DATE { get; set; }
+        public int? REPAYMENT_AGREEMENT_MODE { get; set; }
         public string INTEREST_RATE { get; set; }
         public string BENEFICIARY_ACCOUNT_NUMBER { get; set; }
         public string LOCATION_OF_BENEFICIARY { get; set; }
-        public string RELATIONSHIP_TYPE { get; set; }
-        public string COMPANY_SIZE { get; set; }
+        public short? RELATIONSHIP_TYPE { get; set; }
+        public int? COMPANY_SIZE { get; set; }
         public string FUNDING_SOURCE_CATEGORY { get; set; }
         public string ECCI_NUMBER { get; set; }
-        public string FUNDING_SOURCE { get; set; }
-        public string LEGAL_STATUS { get; set; }
+        public int? FUNDING_SOURCE { get; set; }
+        public int? LEGAL_STATUS { get; set; }
         public string CLASSIFICATION_BY_BUSINESS_LINES { get; set; }
         public string CLASSIFICATION_BY_BUSINESS_LINES_SUB_SECTOR { get; set; }
         public string SPECIALISED_LOAN { get; set; }
-        public string SPECIALISED_LOAN_MORATORIUM_PERIOD { get; set; }
+        public double SPECIALISED_LOAN_MORATORIUM_PERIOD { get; set; }
         public string DIRECTOR_UNIQUE_IDENTIFIER { get; set; }
         public string SYNDICATION { get; set; }
         public string SYNDICATION_STATUS { get; set; }
         public string SYNDICATION_REF_NUMBER { get; set; }
         public string COLLATERAL_PRESENT { get; set; }
         public string COLLATERAL_SECURE { get; set; }
-        public string SECURITY_TYPE { get; set; }
+        public int? SECURITY_TYPE { get; set; }
         public string ADDRESS_OF_SECURITY { get; set; }
         public string OWNER_OF_SECURITY { get; set; }
         public string UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER { get; set; }
@@ -74,5 +74,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string GUARANTOR_UNIQUE_IDENTIFICATION_TYPE { get; set; }
         public string GUARANTOR_UNIQUE_IDENTIFICATION { get; set; }
         public string AMOUNT_GUARANTEED { get; set; }
+        public DateTime? FIRSTPRINCIPALPAYMENTDATE { get; set; }
+        public int LOANID { get; set; }
     }
 }

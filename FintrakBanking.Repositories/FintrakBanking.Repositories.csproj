@@ -128,9 +128,10 @@
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="Credit\DashboardRepository.cs" />
     <Compile Include="Credit\MemorandumRepository.cs" />
-    <Compile Include="Credit\CRMSRegulatories.cs" />
+    <Compile Include="CRMS\CRMSRegulatories.cs" />
     <Compile Include="Credit\FacilityDetailSummary.cs" />
     <Compile Include="Credit\LaonCamSolRepository.cs" />
+    <Compile Include="CRMS\CRMSCodeBookRepository.cs" />
     <Compile Include="Helper\DataExport.cs" />
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />

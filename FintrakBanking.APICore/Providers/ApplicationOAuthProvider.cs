@@ -120,9 +120,10 @@ namespace FintrakBanking.APICore.Providers
                    
 
                     authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress).GetAwaiter().GetResult();
-                    user = await Task
-                        .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
-                        .Result;
+                    //user = await Task
+                    //    .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
+                    //    .Result;
+                    user = await authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password);
                     if (user == null)
                     {
                         context.SetError("invalid_grant", "Login Failure.");

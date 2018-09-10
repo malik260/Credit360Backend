@@ -11,6 +11,7 @@
         IDF = 17,
         CommercialLoan = 40,
         ForeignXRevolving = 41,
+        SyndicatedTermLoan =42
     };
 
     public enum LoanSystemTypeEnum
