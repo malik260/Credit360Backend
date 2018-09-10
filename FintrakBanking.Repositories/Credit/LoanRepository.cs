@@ -7082,6 +7082,45 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
+
+
+
+        private IQueryable<LoanViewModel> SearchLoanLine(string searchQuery)
+        {
+            var allFilteredLoan = (from a in context.TBL_LOAN_APPLICATION
+                                   join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                   join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                   where a.APPROVALSTATUSID == 2 && d.STATUSID == 2
+                                   && (
+                                       a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
+                                       b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
+                                       b.FIRSTNAME.ToLower().Contains(searchQuery) ||
+                                       b.LASTNAME.ToLower().Contains(searchQuery) ||
+                                       c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
+                                   )
+                                   select new LoanViewModel
+                                   {
+                                       loanId = d.LOANAPPLICATIONDETAILID,
+                                       customerId = d.CUSTOMERID,
+                                       productId = d.APPROVEDPRODUCTID,
+                                       customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+                                       loanReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                       applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                       loanApplicationId = d.LOANAPPLICATIONID,
+                                       interestRate = 1,
+                                       principalAmount = d.APPROVEDAMOUNT,
+                                       //effectiveDate = a.EFFECTIVEDATE,
+                                       //maturityDate = a.MATURITYDATE,
+                                       loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = d.TBL_PRODUCT1.PRODUCTTYPEID, // 1
+                                       productName = d.TBL_PRODUCT1.PRODUCTNAME, // 1
+                                       //writtenOff = a.LOANSTATUSID == 7
+                                   });
+            return allFilteredLoan;
+        }
+
+
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int loanSystemTypeId, string searchQuery)
         {
             //if (searchQuery == "test1") throw new Exception("Exception 1");
@@ -7114,8 +7153,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
                 {
-                    // allFilteredLoan = SearchLoanApplicationLine(searchQuery);
-                    throw new SecureException("Not Implemented!");
+                    allFilteredLoan = SearchLoanLine(searchQuery);
                 }
                 else
                 {
