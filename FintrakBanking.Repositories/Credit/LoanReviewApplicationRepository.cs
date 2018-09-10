@@ -209,6 +209,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var detail in model.applicationDetails)
             {
                 loan = GetLoanInformation(detail.loanSystemTypeId, detail.loanId, applicationDate);
+                int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan.tenor;
 
                 context.TBL_LMSR_APPLICATION_DETAIL.Add(new TBL_LMSR_APPLICATION_DETAIL
                 {
@@ -224,10 +225,10 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved, // REMOVE DUPLICATE [STATUSID]
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = applicationDate,
-                    PROPOSEDTENOR = loan.tenor,
+                    PROPOSEDTENOR = tenor,
                     PROPOSEDINTERESTRATE = loan.interestRate,
                     PROPOSEDAMOUNT = loan.outstandingPrincipal,
-                    APPROVEDTENOR = loan.tenor,
+                    APPROVEDTENOR = tenor,
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
@@ -430,8 +431,7 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OUTSTANDINGPRINCIPAL,
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
-
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
                 })
                 .FirstOrDefault();
             }
@@ -467,8 +467,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     customerId = loan.CUSTOMERID,
                     effectiveDate = startDate,
-                   // maturityDate = loan.MATURITYDATE,
-                    interestRate = 0,
+                    tenorUsed = loan.APPROVEDTENOR,
+                    interestRate = loan.APPROVEDINTERESTRATE,
                     outstandingPrincipal = loan.APPROVEDAMOUNT, // adapting!
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
                 })
