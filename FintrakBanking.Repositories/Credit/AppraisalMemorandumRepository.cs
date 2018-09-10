@@ -1099,7 +1099,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var operationId = (int)OperationsEnum.CAM;
 
-            List<int> levels = general.GetRouteLevels(operationId, 2);
+            List<int> levels = general.GetRouteLevels(operationId, 1);
 
             var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
                             .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
@@ -1118,16 +1118,10 @@ namespace FintrakBanking.Repositories.Credit
                     && x.SUBMITTEDFORAPPRAISAL == true
                 )
                 .OrderByDescending(x => x.LOANAPPLICATIONID)
-                .GroupJoin(
-                    context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
-                        && x.TOAPPROVALLEVELID != null
-                        && levels.Contains((int)x.TOAPPROVALLEVELID)),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
-                    a => a.LOANAPPLICATIONID,
-                    b => b.TARGETID,
-                    (x, y) => new { a = x, bs = y })
-                .SelectMany(
-                    xy => xy.bs.DefaultIfEmpty(),
-                    (x, y) => new RegionLoanApplicationViewModel
+                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                        && x.TOAPPROVALLEVELID != null && levels.Contains((int)x.TOAPPROVALLEVELID)),
+                    a => a.LOANAPPLICATIONID, b => b.TARGETID, (a, b) => new { a, b })
+                .Select(x => new RegionLoanApplicationViewModel
                     {
                         loanApplicationId = x.a.LOANAPPLICATIONID,
                         applicationDate = x.a.APPLICATIONDATE,
@@ -1143,25 +1137,23 @@ namespace FintrakBanking.Repositories.Credit
                         submittedForAppraisal = x.a.SUBMITTEDFORAPPRAISAL,
                         approvalStatusId = x.a.APPROVALSTATUSID,
                         operationId = x.a.OPERATIONID,
-                        timeIn = y.SYSTEMARRIVALDATETIME,
-                        timeOut = y.SYSTEMRESPONSEDATETIME,
-                        currentApprovalLevelId = y.TOAPPROVALLEVELID,
-                        currentApprovalLevel = y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
                         customerGroupName = x.a.CUSTOMERGROUPID.HasValue ? x.a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                         customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
+
                         responsiblePerson = context.TBL_STAFF
-                                                .Where(s => s.STAFFID == y.TOSTAFFID)
-                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
-                                                .FirstOrDefault().name ?? "",
-                        requestStaffId = y.REQUESTSTAFFID,
-                        toApprovalLevelId = y.TOAPPROVALLEVELID,
-                        toStaffId = y.TOSTAFFID,
-                        //sla time, timein timeout, timespent, responsible person
-                      //  currentApprovalLevel = y.APVL_LVL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                        approvalTrailId = y == null ? 0 : y.APPROVALTRAILID, // for inner sequence ordering
-                        currentApprovalLevelTypeId = y.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
-                    })
-                //.Where(x => levels.Contains((int)x.toApprovalLevelId) || (x.requestStaffId == staffId && x.toStaffId != null))
+                                                    .Where(s => s.STAFFID == x.b.TOSTAFFID)
+                                                    .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
+                                                    .FirstOrDefault().name ?? "",
+                        timeIn = x.b.SYSTEMARRIVALDATETIME,
+                        timeOut = x.b.SYSTEMRESPONSEDATETIME,
+                        currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                        currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                        currentApprovalLevelTypeId = x.b.TBL_APPROVAL_LEVEL1.LEVELTYPEID,
+                        requestStaffId = x.b.REQUESTSTAFFID,
+                        toApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                        toStaffId = x.b.TOSTAFFID,
+                        approvalTrailId = x.b.APPROVALTRAILID,
+                })
                 .GroupBy(d => d.loanApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;

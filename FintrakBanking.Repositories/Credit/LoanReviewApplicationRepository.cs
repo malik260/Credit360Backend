@@ -628,10 +628,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public IQueryable<LoanReviewApplicationViewModel> GetRegionalLoanApplications(int staffId)
         {
-            List<int> levels1 = general.GetRouteLevels(46, 2);
-            List<int> levels2 = general.GetRouteLevels(71, 2);
-            List<int> levels3 = general.GetRouteLevels(79, 2);
-            var levels = levels1.Union(levels2).Union(levels3).Distinct();
+            List<int> levels = general.GetRouteLevels(46, 1);
+            //List<int> levels2 = general.GetRouteLevels(71, 1);
+            //List<int> levels3 = general.GetRouteLevels(79, 1);
+
+            //var levels = levels1.Union(levels2).Union(levels3).Distinct();
 
             var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
                                 .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
@@ -642,76 +643,74 @@ namespace FintrakBanking.Repositories.Credit
                                 .Select(x => x.BRANCHID)
                                 .ToList();
 
-                var applications = context.TBL_LMSR_APPLICATION.Where(x => 
-                        branches.Contains(x.BRANCHID)
-                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
-                    )
-                    .OrderByDescending(x => x.LOANAPPLICATIONID)
-                    .GroupJoin(
-                        context.TBL_APPROVAL_TRAIL.Where(x => camOperationIds.Contains(x.OPERATIONID)
-                            && levels.Contains((int)x.TOAPPROVALLEVELID)),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
-                        a => a.LOANAPPLICATIONID,
-                        b => b.TARGETID,
-                        (x, y) => new { a = x, bs = y , branch = x.TBL_BRANCH, customer = x.TBL_CUSTOMER })
-                    .SelectMany(
-                        xy => xy.bs.DefaultIfEmpty(),
-                        (x, y) => new LoanReviewApplicationViewModel
-                        {
-                            approvalState = y == null ? "Pending" : y.TBL_APPROVAL_STATE.APPROVALSTATE,
-                            approvalTrailId = y == null ? 0 : y.APPROVALTRAILID,
-                            currentApprovalLevel = y == null ? "" : y.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                            currentApprovalLevelId = y == null ? 0 : y.TOAPPROVALLEVELID,
-                            lastComment = y == null ? "" : y.COMMENT,
-                            toStaffId = y == null ? 0 : y.TOSTAFFID,
+            var applications = context.TBL_LMSR_APPLICATION.Where(x =>
+                    branches.Contains(x.BRANCHID)
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
+                )
+                .OrderByDescending(x => x.LOANAPPLICATIONID)
+                .Join(
+                    context.TBL_APPROVAL_TRAIL.Where(x => camOperationIds.Contains(x.OPERATIONID)
+                        && levels.Contains((int)x.TOAPPROVALLEVELID)),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
+                    a => a.LOANAPPLICATIONID,
+                    b => b.TARGETID,
+                    (a, b) => new { a, b, branch = a.TBL_BRANCH, customer = a.TBL_CUSTOMER })
+                .Select(x => new LoanReviewApplicationViewModel
+                {
+                    approvalState = x.b.TBL_APPROVAL_STATE.APPROVALSTATE,
+                    approvalTrailId = x.b.APPROVALTRAILID,
+                    currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                        currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                    lastComment = x.b.COMMENT,
+                    toStaffId = x.b.TOSTAFFID,
 
-                            applicationDate = x.a.APPLICATIONDATE,
-                            approvalStatus = x.a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
-                            approvalStatusId = x.a.APPROVALSTATUSID,
-                            createdBy = x.a.CREATEDBY,
-                            loanReviewApplicationId = x.a.LOANAPPLICATIONID,
-                            referenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                    applicationDate = x.a.APPLICATIONDATE,
+                    approvalStatus = x.a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                    approvalStatusId = x.a.APPROVALSTATUSID,
+                    createdBy = x.a.CREATEDBY,
+                    loanReviewApplicationId = x.a.LOANAPPLICATIONID,
+                    referenceNumber = x.a.APPLICATIONREFERENCENUMBER,
 
-                            branchId = x.branch.BRANCHID,
-                            branchName = x.branch.BRANCHNAME,
-                            customerId = x.customer.CUSTOMERID,
-                            operationId = x.a.OPERATIONID,
-                            customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
+                    branchId = x.branch.BRANCHID,
+                    branchName = x.branch.BRANCHNAME,
+                    customerId = x.customer.CUSTOMERID,
+                    operationId = x.a.OPERATIONID,
+                    customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
 
-                            timeIn = y.SYSTEMARRIVALDATETIME,
-                            timeOut = y.SYSTEMRESPONSEDATETIME,
-                            responsiblePerson = context.TBL_STAFF
-                                                .Where(s => s.STAFFID == y.TOSTAFFID)
-                                                .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
-                                                .FirstOrDefault().name ?? "",
-                            requestStaffId = y == null ? 0 : y.REQUESTSTAFFID,
-                            toApprovalLevelId = y == null ? 0 : y.TOAPPROVALLEVELID,
+                    timeIn = x.b.SYSTEMARRIVALDATETIME,
+                    timeOut = x.b.SYSTEMRESPONSEDATETIME,
+                    responsiblePerson = context.TBL_STAFF
+                                            .Where(s => s.STAFFID == x.b.TOSTAFFID)
+                                            .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME })
+                                            .FirstOrDefault().name ?? "",
+                    requestStaffId = x.b.REQUESTSTAFFID,
+                    toApprovalLevelId = x.b.TOAPPROVALLEVELID,
 
-                            applicationDetails = x.a.TBL_LMSR_APPLICATION_DETAIL.Select(d => new applicationDetails
-                            {
-                                detailId = d.LOANREVIEWAPPLICATIONID,
-                                operationId = d.OPERATIONID,
-                                operationName = d.TBL_OPERATIONS.OPERATIONNAME,
-                                reviewDetails = d.REVIEWDETAILS,
-                                loanId = d.LOANID,
-                                loanSystemTypeId = d.LOANSYSTEMTYPEID,
-                                loanSystemTypeName = d.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
-                                productId = d.PRODUCTID,
-                                customerId = d.CUSTOMERID,
-                                obligorName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
-                                proposedTenor = d.PROPOSEDTENOR,
-                                proposedRate = d.PROPOSEDINTERESTRATE,
-                                proposedAmount = d.PROPOSEDAMOUNT,
-                                approvedTenor = d.APPROVEDTENOR,
-                                approvedRate = d.APPROVEDINTERESTRATE,
-                                approvedAmount = d.APPROVEDAMOUNT,
-                            })
-                        })
-                    .GroupBy(d => d.loanReviewApplicationId)
-                    .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
-                    ;
+                    applicationDetails = x.a.TBL_LMSR_APPLICATION_DETAIL.Select(d => new applicationDetails
+                    {
+                        detailId = d.LOANREVIEWAPPLICATIONID,
+                        operationId = d.OPERATIONID,
+                        operationName = d.TBL_OPERATIONS.OPERATIONNAME,
+                        reviewDetails = d.REVIEWDETAILS,
+                        loanId = d.LOANID,
+                        loanSystemTypeId = d.LOANSYSTEMTYPEID,
+                        loanSystemTypeName = d.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
+                        productId = d.PRODUCTID,
+                        customerId = d.CUSTOMERID,
+                        obligorName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+                        proposedTenor = d.PROPOSEDTENOR,
+                        proposedRate = d.PROPOSEDINTERESTRATE,
+                        proposedAmount = d.PROPOSEDAMOUNT,
+                        approvedTenor = d.APPROVEDTENOR,
+                        approvedRate = d.APPROVEDINTERESTRATE,
+                        approvedAmount = d.APPROVEDAMOUNT,
+                    })
+                })
+                .GroupBy(d => d.loanReviewApplicationId)
+                .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
+                ;
 
-                return applications;
+            return applications;
 
         }
     }
