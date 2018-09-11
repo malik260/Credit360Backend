@@ -154,7 +154,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var data = new TBL_APPROVAL_LEVEL_STAFF
                 {
                     MAXIMUMAMOUNT = model.maximumAmount,
-                    STAFFID = model.createdBy,
+                    STAFFID = model.staffId,
                     APPROVALLEVELID = model.approvalLevelId,
                     POSITION = model.position,
                     PROCESSVIEWSCOPEID = (short)model.processViewScope,
@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                 {
                     MAXIMUMAMOUNT = model.maximumAmount,
-                    STAFFID = model.createdBy,
+                    STAFFID = model.staffId,
                     APPROVALLEVELID = model.approvalLevelId,
                     POSITION = model.position,
                     PROCESSVIEWSCOPEID = (short)model.processViewScope,
@@ -305,7 +305,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 if (data == null) return false;
 
                 data.MAXIMUMAMOUNT = model.maximumAmount;
-                data.STAFFID = model.createdBy;
+                data.STAFFID = model.staffId;
                 data.APPROVALLEVELID = model.approvalLevelId;
                 data.POSITION = model.position;
                 data.PROCESSVIEWSCOPEID = (short)model.processViewScope;
@@ -347,7 +347,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     var data = new TBL_TEMP_APPROVAL_LEVEL_STAFF
                     {
                         MAXIMUMAMOUNT = model.maximumAmount,
-                        STAFFID = model.createdBy,
+                        STAFFID = model.staffId,
                         APPROVALLEVELID = model.approvalLevelId,
                         POSITION = model.position,
                         PROCESSVIEWSCOPEID = (short)model.processViewScope,
@@ -419,22 +419,22 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             if (model != null)
             {
-                if (admin.IsSuperAdmin(user.staffId) == true)
+                if (admin.IsSuperAdmin(user.createdBy) == true)
                 {
                     model.DATETIMEDELETED = _genSetup.GetApplicationDate();
                     model.DELETEDBY = (int)model.CREATEDBY;
                     model.DELETED = true;
 
                     var audit_staff_level = (context.TBL_APPROVAL_LEVEL.FirstOrDefault(x => x.APPROVALLEVELID == model.APPROVALLEVELID));
-                    var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == user.staffId));
+                    var audit_staff = (context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == user.createdBy));
                     var admin = (context.TBL_STAFF.Where(x => x.STAFFID == model.STAFFID).Select(x => x.STAFFCODE));
 
                     var audit = new TBL_AUDIT
                     {
                         AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                        STAFFID = user.staffId,
+                        STAFFID = user.createdBy,
                         BRANCHID = (short)user.BranchId,
-                        DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete by this super-admin {admin}",
+                        DETAIL = $"Added Approval Level Staff {audit_staff_level.LEVELNAME}' for staff with code '{audit_staff.STAFFCODE}' ",
                         IPADDRESS = user.userIPAddress,
                         URL = user.applicationUrl,
                         APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -492,7 +492,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     var audit = new TBL_AUDIT
                     {
                         AUDITTYPEID = (short)AuditTypeEnum.ApprovalLevelDeleted,
-                        STAFFID = user.staffId,
+                        STAFFID = user.createdBy,
                         BRANCHID = (short)user.BranchId,
                         DETAIL = $"Approval Level for staff with code '{audit_staff.STAFFCODE}' to level {model.STAFFLEVELID}' is delete and the action is going for approval ",
                         IPADDRESS = user.userIPAddress,

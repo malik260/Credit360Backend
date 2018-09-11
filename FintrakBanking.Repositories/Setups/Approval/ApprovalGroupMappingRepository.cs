@@ -57,17 +57,23 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     PRODUCTCLASSID = model.productClassId,
                     PRODUCTID = model.productId,
                     POSITION = model.position,
+
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = generalSetup.GetApplicationDate(),
-                    DELETED = false
+                    DELETED=false
                 };
+
                 this.context.TBL_APPROVAL_GROUP_MAPPING.Add(entity);
+
+                // Audit Section ---------------------------
+                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == model.operationId).OPERATIONNAME;
+                var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == model.groupId).GROUPNAME;
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingAdded,
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Approval Group Mapping for Operation: {model.operationName} in Group: {model.groupName} was added by a super-admin",
+                    DETAIL = $"Added Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
                     IPADDRESS = model.userIPAddress,
                     URL = model.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
@@ -368,7 +374,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingUpdated,
-                    STAFFID = (int)model.lastUpdatedBy,
+                    STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.userBranchId,
                     DETAIL = $"Updated Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
                     IPADDRESS = model.userIPAddress,

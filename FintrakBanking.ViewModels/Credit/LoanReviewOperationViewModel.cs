@@ -153,7 +153,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool? isScheduledPrepayment { get; set; }
         public decimal? scheduledPrepaymentAmount { get; set; }
         public DateTime? scheduledPrepaymentDate { get; set; }
-        public short scheduledPrepaymentFrequencyTypeId { get; set; }
+        public short? scheduledPrepaymentFrequencyTypeId { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
@@ -169,8 +169,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int internalPrudentialGuidelineStatusId { get; set; }
         public int externalPrudentialGuidelineStatusId { get; set; }
         public DateTime nplDate { get; set; }
-        public short scheduleDayCountConventionId { get; set; }
-        public short scheduleDayInterestTypeId { get; set; }
+        public short? scheduleDayCountConventionId { get; set; }
+        public short? scheduleDayInterestTypeId { get; set; }
         public int customerRiskRatingId { get; set; }
 
         // public double productPriceIndexRate { get; set; }
@@ -205,10 +205,10 @@ namespace FintrakBanking.ViewModels.Credit
         //Loan Review Operation
         public int loanReviewOperationsId { get; set; }
         public int operationTypeId { get; set; }
-        public string operationTypeName { get; set; }
+        public string operationTypeName { get; set; } 
         public DateTime newEffectiveDate { get; set; }
         public string reviewDetails { get; set; }
-        public decimal? newInterateRate { get; set; }
+        public double? newInterateRate { get; set; }
         public decimal? prepayment { get; set; }
         public int? newPrincipalFrequencyTypeId { get; set; }
         public int? newInterestFrequencyTypeId { get; set; }
@@ -216,12 +216,15 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? newInterestFirstPaymentDate { get; set; }
         public int? newTenor { get; set; }
         public int? cASA_AccountId { get; set; }
+        public string cASA_AccountName { get; set; }
+
         public decimal? overDraftTopup { get; set; }
         public decimal? fee_Charges { get; set; }
         public string terminationAndReBook { get; set; }
         public string completeWriteOff { get; set; }
         public string cancelUndisbursedLoan { get; set; }
         public string lmsLoanReferenceNumber { get; set; }
+        public DateTime? newMaturityDate { get; set; }
     }
 
 
@@ -275,6 +278,14 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanSystemTypeId { get; set; }
         public int performanceTypeId { get; set; }
         public int? operationId { get; set; }
+        public DateTime? timeIn { get; set; }
+        public DateTime? timeOut { get; set; }
+
+
+        public int? currentApprovalLevelTypeId { get; set; }
+        public string responsiblePerson { get; set; }
+        public int requestStaffId { get; set; }
+        public int? toApprovalLevelId { get; set; }
     }
 
     public class applicationDetails
@@ -291,6 +302,37 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanSystemTypeName { get; set; }
         public string operationName { get; set; }
         public short productId { get; set; }
+
+        public string obligorName { get; set; }
+        public int proposedTenor { get; set; }
+        public double proposedRate { get; set; }
+        public decimal proposedAmount { get; set; }
+        public int approvedTenor { get; set; }
+        public double approvedRate { get; set; }
+        public decimal approvedAmount { get; set; }
+
+        public string proposedTenorString
+        {
+            get
+            {
+                var units = proposedTenor == 1 ? " day" : " days";
+                if (proposedTenor < 15) return proposedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = approvedTenor == 1 ? " day" : " days";
+                if (approvedTenor < 15) return approvedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
     }
 
     public class SelectListViewModel

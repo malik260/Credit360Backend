@@ -639,6 +639,115 @@ namespace FintrakBanking.Repositories.Credit
             return x;
         }
 
+
         #endregion LMS approval process
+
+
+        #region Additional Comments
+
+        public List<AdditionalCommentViewModel> GetAdditionalComment(int applicationId, int callerId)
+        {
+            return context.TBL_LOAN_APPLICATION_COMMENT.Where(x => x.DELETED == false && x.LOANAPPLICATIONID == applicationId && x.OPERATIONID == callerId)
+            .Select(c => new AdditionalCommentViewModel
+            {
+                id = c.LOANCOMMENTID,
+                callerId = c.OPERATIONID,
+                additionalComment = c.COMMENTS,
+                applicationId = c.LOANAPPLICATIONID,
+            })
+            .ToList();
+        }
+
+        public bool AddAdditionalComment(AdditionalCommentViewModel model)
+        {
+            var data = new TBL_LOAN_APPLICATION_COMMENT
+            {
+                COMMENTS=model.additionalComment,
+                LOANAPPLICATIONID=model.applicationId,
+                OPERATIONID=model.callerId,
+                DATETIMECREATED = general.GetApplicationDate(),
+                CREATEDBY = model.createdBy,
+            };
+
+            context.TBL_LOAN_APPLICATION_COMMENT.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Additional Comment Condition  ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool EditAdditionalComment(int id, AdditionalCommentViewModel model)
+        {
+            var data = this.context.TBL_LOAN_APPLICATION_COMMENT.Find(id);
+            if (data == null) return false;
+
+            data.COMMENTS = model.additionalComment;
+            data.DATETIMEUPDATED = DateTime.Now;
+            data.LASTUPDATEDBY = model.lastUpdatedBy;
+
+            context.Entry(data).State = System.Data.Entity.EntityState.Modified;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated Additional Comment Condition' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool RemoveAdditionalComment(int id, UserInfo user)
+        {
+            var data = this.context.TBL_LOAN_APPLICATION_COMMENT.Find(id);
+            if (data == null) return false;
+
+            data.DELETED = true;
+            data.DATETIMEDELETED = DateTime.Now;
+            data.DELETEDBY = user.createdBy;
+
+            context.Entry(data).State = System.Data.Entity.EntityState.Modified;
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ConditionPrecedentUpdated,
+                STAFFID = user.createdBy,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Additional Comment Condition' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion Additional Comments
+
     }
 }

@@ -21,6 +21,8 @@ namespace FintrakBanking.Entities.Models
 
         public double PRODUCTPRICEINDEXRATE { get; set; }
 
+        public short? PRODUCTPRICEINDEXID { get; set; }
+
         public int? CUSTOMERRISKRATINGID { get; set; }
 
         public short LOANSYSTEMTYPEID { get; set; }
@@ -212,9 +214,15 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? CRMSDATE { get; set; }
 
+        public int? LOAN_BOOKING_REQUESTID { get; set; }
+
+        public short? CRMSREPAYMENTAGREEMENTID { get; set; }
+
 
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
+
+        public DateTime? PASTDUEDATE { get; set; }
 
         public int CREATEDBY { get; set; }
 

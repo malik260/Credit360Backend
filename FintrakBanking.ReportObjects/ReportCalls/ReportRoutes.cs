@@ -63,20 +63,23 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
 
         }
-        public List<TransactionViewModel> GLAccount(string searchValue)
+        public List<GLAccountSearchViewModel> GLAccount(string searchValue)
         {
+            var gl = new List<GLAccountSearchViewModel>();
+
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var gl = from x in context.TBL_CHART_OF_ACCOUNT
-                                where x.ACCOUNTNAME.ToUpper().Contains(searchValue.ToUpper()) //|| x.ACCOUNTCODE.ToUpper().Contains(searchValue.ToUpper())
-                         select new TransactionViewModel
+                 gl = (from x in context.TBL_CHART_OF_ACCOUNT
+                                where x.ACCOUNTNAME.ToLower().StartsWith(searchValue.ToLower()) || x.ACCOUNTCODE.ToLower().StartsWith(searchValue.ToLower())
+                         select new GLAccountSearchViewModel
                          {
                              GLAccountCode=x.ACCOUNTCODE,
                              GLAccount   = x.ACCOUNTNAME,
                              GLAccountId = x.GLACCOUNTID
-                         };
-                return gl.ToList();
+                         }).ToList();
             }
+            return gl;
+
         }
         public string GetWorkflowSLA(int loanApplicationId, int companyId, int staffId)
         {

@@ -676,6 +676,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                 context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(item);
                             }
                         }
+                //        context.SaveChanges();
                     }
                 }
             }

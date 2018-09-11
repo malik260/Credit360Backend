@@ -47,7 +47,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
 
-        IQueryable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
+        IEnumerable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
 
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
 
@@ -95,5 +95,33 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanApplicationViewModel> GetLoanApplication(string searchQuery);
 
         WorkflowResponse RerouteWorkflowTarget(ForwardViewModel model);
+
+        WorkflowResponse RouteWorkflowTarget(ForwardViewModel model);
+
+        List<LoanApplicationViewModel> GetAllRequestsForLoanCancellation(int staffId);
+
+        bool SaveCancelledApplcation(LoanApplicationViewModel data);
+
+        LoanApplicationViewModel ViewLaonApplicationCancellationDetails(LoanApplicationViewModel data);
+
+        bool GoForLoanApplicationCancellationApproval(LoanApplicationViewModel data);
+
+        List<TransactionDynamicsViewModel> GetTrnasactionDynamics(int loanApplicationId);
+
+        List<ConditionPrecedentViewModel> GetConditionPrecidents(int loanApplicationId);
+
+        LoanApplicationViewModel GetSingleLoanApplicationById(int loanApplicationId, int companyId);
+
+        bool updateSuggestionsLoanApplicationdetail(LoanApplicationDetailViewModel model);
+
+        LoanApplicationDetailViewModel GetSingleLoanApplicationsDetails(int loanApplicationDetailId, int companyId);
+
+        IEnumerable<LookupViewModel> GetAllCRMSRepaymentSource();
+
+        IEnumerable<LookupViewModel> GetAllCRMSFundingSource();
+
+        IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
+
+        IEnumerable<LookupViewModel> GetAllProductPriceIndex(int currencyId);
     }
 }

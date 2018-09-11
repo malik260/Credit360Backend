@@ -103,6 +103,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public DateTime paymentDate { get; set; }
         public Double paymentAmount { get; set; }
+        public short paymentTypeId  { get; set; }
     }
 
     public class LoanPaymentScheduleInput
@@ -166,6 +167,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int checklistId { get; set; }
         public short operationId { get; set; }
         public short maturityInstructionTypeId { get; set; }
+        public decimal pastDueInterestAmount { get; set; }
+        public decimal pastDuePrincipalAmount { get; set; }
+        public int? casaAccountId2 { get; set; }
 
 
     }

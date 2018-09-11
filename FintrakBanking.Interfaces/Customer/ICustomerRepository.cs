@@ -44,7 +44,9 @@ namespace FintrakBanking.Interfaces.Customer
 
         Task<bool> DeleteCustomer(int customerId, UserInfo user);
 
-        bool DeleteChild(int childId);
+        bool DeleteChild(int childId, UserInfo user);
+
+        bool DeleteUltimateBeneficial(int companyBeneficialId, UserInfo user);
 
         bool AddCustomerIdentification(CustomerIdentificationViewModels entity);
 
@@ -71,6 +73,13 @@ namespace FintrakBanking.Interfaces.Customer
         IQueryable<CustomerSearchItemViewModels> CustomerSearchRealTime(int companyId, string search);
         IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery);
         IEnumerable<KYCDocumentTypeViewModel> GetKYCDocumentType();
+        IEnumerable<LookupViewModel> GetAllCRMSLegalStatus();
+        IEnumerable<LookupViewModel> GetAllCRMSCompanySize();
+        IEnumerable<LookupViewModel> GetAllCRMSRelationshipType();
+
+        IEnumerable<LookupViewModel> GetAllCRMSLegalStatusByType(int type);
+        IEnumerable<LookupViewModel> GetAllCRMSCompanySizeByType(int type);
+        IEnumerable<LookupViewModel> GetAllCRMSRelationshipTypeByType(int type);
 
 
         #region Single Customer Information By CustomerID
@@ -113,7 +122,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool ValidateModifiedPhoneRecord(int customerId);
         #endregion
         IEnumerable<CustomerInformationApprovalViemModel> GetAllCustomerInformationAwaitingApproval(int staffId, int companyId);
-        bool GoForApproval(ApprovalViewModel entity);
+        int GoForApproval(ApprovalViewModel entity);
 
         #region Customer Temporary Information 
         CustomerViewModels GetSingleCustomerGeneralInfoByCustomerId(int customerId, int targetId);

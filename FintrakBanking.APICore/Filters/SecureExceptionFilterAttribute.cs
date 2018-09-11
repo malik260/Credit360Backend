@@ -15,10 +15,12 @@ namespace FintrakBanking.APICore.Filters
     {
         private FinTrakBankingContext context = new FinTrakBankingContext();
         private readonly string support = ConfigurationManager.AppSettings["SupportEmailAddr"];
+        private string innerException = String.Empty;
 
         public override void OnException(HttpActionExecutedContext context)
         {
             context.Exception.Data["validation_error_message"] = String.Empty;
+            if (context.Exception.InnerException != null) innerException = context.Exception.InnerException.Message;
 
             if (context.Exception is SecureException)
             {
@@ -40,10 +42,8 @@ namespace FintrakBanking.APICore.Filters
 
             Task.Run(() => LogUnhandledExceptionAsync(context));
 
-            if (context.Exception is Exception)
-            {
-                context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
-            }
+            context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
+            // context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message + " inner exception " + innerException });
 
             base.OnException(context);
         }
@@ -53,13 +53,9 @@ namespace FintrakBanking.APICore.Filters
             var ex = httpContext.Exception;
             var endPoint = httpContext.Request.RequestUri;
             var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
-            var errorMessage = ex.Message + " " + ex.Data["validation_error_message"];
+            var errorMessage = "ERROR_MESSAGE: " + ex.Message + ", INNER_EXCETION: " + innerException;
             var time = DateTime.Now;
-
-            if (ex.InnerException != null)
-            {
-                errorMessage = errorMessage + " -- " + ex.InnerException.Message;
-            }
+            if (String.IsNullOrEmpty(ex.Data["validation_error_message"].ToString())) errorMessage = errorMessage + ", ENTITY_VALIDATION_ERROR: " + ex.Data["validation_error_message"];
 
             var log = new TBL_ERRORLOG()
             {
@@ -81,14 +77,14 @@ namespace FintrakBanking.APICore.Filters
             {
                 FROMADDRESS = support,
                 TOADDRESS = recipients,
-                MESSAGESUBJECT = "CREDIT 360 UNHANDLED EXCEPTION",
-                MESSAGEBODY = "USERNAME: " + userName + " ENDPOINT: " + endPoint + " ERROR MESSAGE: " + errorMessage + " STACKTRACE: " + ex.StackTrace + " TIME: " + time, //
-                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                MESSAGESUBJECT = "UNHANDLED EXCEPTION",
+                MESSAGEBODY = "<p><b>USERNAME:</b> " + userName + "</p><br/> <p><b>ENDPOINT:</b> " + endPoint + "</p></br> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p><br/> <p>STACKTRACE:</b> " + ex.StackTrace + "</p><br/> <p>TIME:</b> " + time + "</p><br/>", //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                 MESSAGETYPEID = (short)MessageTypeEnum.Email,
                 DATETIMERECEIVED = time,
                 SENDONDATETIME = time,
                 TARGETID = null,
-                OPERATIONID = null
+                OPERATIONID = null,
+                MESSAGESTATUSID = 1
             };
             context.TBL_MESSAGE_LOG.Add(message);
 

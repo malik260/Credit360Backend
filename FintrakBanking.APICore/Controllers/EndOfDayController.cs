@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.ViewModels.Finance;
 using System;
@@ -14,14 +15,17 @@ namespace FintrakBanking.APICore.Controllers
     public class EndOfDayController : ApiControllerBase
     {
         private IEndOfDayRepository repoEOD;
-        
-        public EndOfDayController( IEndOfDayRepository _repoEOD)
+        private ILoanOperationsRepository repoLoanOP;
+
+        public EndOfDayController(IEndOfDayRepository _repoEOD, ILoanOperationsRepository _repoLoanOP)
         {
             this.repoEOD = _repoEOD;
+            this.repoLoanOP = _repoLoanOP;
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("end-of-day")]
         public HttpResponseMessage GetFinanceEndofday()
         {
@@ -54,15 +58,16 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("end-of-day")]
         public HttpResponseMessage RunEndOfDay([FromBody] EndOfDayViewModel model)
         {
             try
             {
-                model.companyId = token.GetCompanyId; 
+                model.companyId = token.GetCompanyId;
                 model.createdBy = token.GetStaffId;
-                model.userBranchId = (short) token.GetBranchId;
+                model.userBranchId = (short)token.GetBranchId;
                 var data = repoEOD.RunEndOfDay(model);
                 if (data)
                 {
@@ -81,13 +86,48 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
             }
-            catch (SecureException e )
+            catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
             }
         }
 
-        
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("process-repayment-from-staging")]
+        public HttpResponseMessage ProcessRepaymentFromStaging()
+        {
+
+            try
+            {
+                // model.companyId = token.GetCompanyId;
+                //model.createdBy = token.GetStaffId;
+                //model.userBranchId = (short)token.GetBranchId;
+                var data = repoLoanOP.GetRepaymentFromStaging();
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = true, message = "End of day transaction completed successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                               new { success = false, message = "End of day transaction failed" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
+            }
+        }
+
 
     }
 

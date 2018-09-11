@@ -54,7 +54,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public List<string> mergeList { get; set; }
         public string subscriberEnquiryEngineID { get; set; }
         public int enquiryID { get; set; }
-        public LoanCreditBereauViewModel customerCreditBureauUploadDetails { get; set; }
+        public LoanCreditBureauViewModel customerCreditBureauUploadDetails { get; set; }
         public int casaAccountId { get; set; }
     }
 

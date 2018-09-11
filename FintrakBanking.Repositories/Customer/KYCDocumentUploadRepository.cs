@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
                                     where ck.CHECKLISTDEFINITIONID == definitionId
-                                     && ck.CHECKLISTSTATUSID == statusId
+                                    // && ck.CHECKLISTSTATUSID == statusId
                                      && ck.LOANDETAILSID == detailId
                                     select new CheckListDocumentUploadViewModel()
                                     {
@@ -160,7 +160,7 @@ namespace FintrakBanking.Repositories.Customer
             {
                 var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
                                     where ck.CHECKLISTDEFINITIONID == definitionId
-                                     && ck.CHECKLISTSTATUSID == statusId
+                                    // && ck.CHECKLISTSTATUSID == statusId
                                      && ck.LOANAPPLICATIONID == detailId
                                     select new CheckListDocumentUploadViewModel()
                                     {
@@ -201,6 +201,20 @@ namespace FintrakBanking.Repositories.Customer
             }
             return false;
         }
+        public bool RemoveConditionPrecedentDocument(int conditionId, int loanApplicationId)
+        {
+                var checklistDoc = (from ck in context.TBL_LOAN_CONDITION_DOCUMENTS
+                                    where ck.CONDITIONID == conditionId
+                                     && ck.LOANAPPLICATIONID == loanApplicationId
+                                    select ck).FirstOrDefault();
+                if (checklistDoc != null)
+                {
+                    this.context.TBL_LOAN_CONDITION_DOCUMENTS.Remove(checklistDoc);
+                    return context.SaveChanges() != 0;
+                }         
+            return false;
+        }
+        
         #endregion
 
         #region Conditions Precedent Document Upload

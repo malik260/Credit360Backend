@@ -35,7 +35,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string creditBureauName { get; set; }
         public decimal retailChargeAmount { get; set; }
         public bool inUse { get; set; }
-        public LoanCreditBereauViewModel LoanCreditBereauReport { get; set; }
+        public byte[] fileData { get; set; }
+        public LoanCreditBureauViewModel LoanCreditBereauReport { get; set; }
 
     }
 
@@ -45,7 +46,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; }
     }
 
-    public class LoanCreditBereauViewModel : GeneralEntity
+    public class LoanCreditBureauViewModel : GeneralEntity
     {
         public int dayAgo { get; set; }
 
@@ -65,7 +66,24 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public decimal chargeAmount { get; set; }
         public bool isComplete { get; set; }
+        public bool debitBusiness { get; set; }
+        public string accountNumber { get; set; }
         public DateTime dateCompleted { get; set; }
+    }
+
+    public class CreditBureauDocument : GeneralEntity
+    {
+        public int documentId { get; set; }
+
+        public int customerCreditBureauId { get; set; }
+
+        public string documentTitle { get; set; }
+
+        public string fileName { get; set; }
+
+        public string fileExtension { get; set; }
+
+        public byte[] fileData { get; set; }
     }
      
 }

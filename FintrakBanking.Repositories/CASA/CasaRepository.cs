@@ -12,6 +12,7 @@ using System.Text;
 using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using System.Threading.Tasks;
 using FintrakBanking.Interfaces.Finance;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.CASA
 {
@@ -90,7 +91,8 @@ namespace FintrakBanking.Repositories.CASA
 
             if (account == null) {
                 model.isCasaAccountDetailAvailable=false;
-                return model;
+                throw new ConditionNotMetException("Invalid Account Number");
+                //return model;
             }
                 
             return transRepo.GetCASABalance(account.CASAACCOUNTID);
@@ -468,8 +470,6 @@ namespace FintrakBanking.Repositories.CASA
                                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
                                            customerTypeId = (short)b.TBL_CUSTOMER.CUSTOMERTYPEID,
                                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-
-
                                        };
 
             return customerGroupMapping;
@@ -641,13 +641,6 @@ namespace FintrakBanking.Repositories.CASA
                 ).GroupBy(c => c.customerId).Select(g => g.FirstOrDefault()).Take(10);
             }
 
-            //foreach (var item in allCustomers)
-            //{
-            //    item.isBlackList = creditLimitRepo.ValidateBlackList(item.customerId) > 0;
-            //    item.isOnWatchList = creditLimitRepo.ValidateWatchList(item.customerId) > 0;
-            //    item.isCamsol = creditLimitRepo.ValidateCamsol(item.customerId) > 0;
-            //}
-
             return allCustomers;
         }
 
@@ -662,11 +655,34 @@ namespace FintrakBanking.Repositories.CASA
 
             return new CasaCustomerSearchViewModel { };
         }
-
+        
         public IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
         {
             var data = (from a in context.TBL_CASA
                         where a.CUSTOMERID == customerId && a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
+                        select new CasaBalanceViewModel
+
+                        {
+                            casaAccountId = a.CASAACCOUNTID,
+                            productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
+                            accountNumber = a.PRODUCTACCOUNTNUMBER,
+                            productAccountName = a.PRODUCTACCOUNTNAME,
+                            availableBalance = a.AVAILABLEBALANCE, //transRepo.GetCASABalance(a.CASAACCOUNTID).availableBalance,
+                            currencyId = a.CURRENCYID,
+                            currencyCode = a.TBL_CURRENCY.CURRENCYCODE
+                        });
+            //foreach (var item in data)
+            //{
+            //    item.availableBalance = transRepo.GetCASABalance(item.casaAccountId).availableBalance;
+            //}
+
+            return data.ToList();
+        }
+
+        public IEnumerable<CasaBalanceViewModel> GetBusinessAccounts( int companyId)
+        {
+            var data = (from a in context.TBL_CASA
+                        where a.COMPANYID == companyId  //orderby account.AccountCode ascending, account.AccountName ascending
                         select new CasaBalanceViewModel
 
                         {

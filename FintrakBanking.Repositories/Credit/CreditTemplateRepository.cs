@@ -19,9 +19,9 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private ILoanRepository loan;
-        private IMemorandumRepository memo;
+        private MemorandumRepository memo;
 
-        public CreditTemplateRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, ILoanRepository loan, IMemorandumRepository memo)
+        public CreditTemplateRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, ILoanRepository loan, MemorandumRepository memo)
         {
             this.context = context;
             this.general = general;
@@ -194,6 +194,7 @@ namespace FintrakBanking.Repositories.Credit
                     position = x.POSITION,
                     sectionId = x.DOCUMENTDETAILID,
                     title = x.TITLE,
+                    description = x.DESCRIPTION,
                     canEdit = x.CANEDIT, // system
                     editable = sectionIds.Contains(x.TEMPLATESECTIONID),
                     templateSectionId = x.TEMPLATESECTIONID,
@@ -216,6 +217,7 @@ namespace FintrakBanking.Repositories.Credit
                     position = x.POSITION,
                     sectionId = x.DOCUMENTDETAILID,
                     title = x.TITLE,
+                    description = x.DESCRIPTION,
                     canEdit = x.CANEDIT, // system
                     // editable = sectionIds.Contains(x.TEMPLATESECTIONID),
                     templateDocument = x.TEMPLATEDOCUMENT, // placeholder find replace
@@ -247,6 +249,7 @@ namespace FintrakBanking.Repositories.Credit
                     TARGETID = entity.targetId,
                     TEMPLATESECTIONID = temp.TEMPLATESECTIONID,
                     TITLE = temp.TITLE,
+                    DESCRIPTION = temp.DESCRIPTION,
                     TEMPLATEDOCUMENT = temp.TEMPLATEDOCUMENT,
                     POSITION = temp.POSITION,
                     CANEDIT = temp.CANEDIT,
@@ -260,15 +263,14 @@ namespace FintrakBanking.Repositories.Credit
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity) // dont call if not editable
         {
             var section = context.TBL_DOC_TEMPLATE_DETAIL.Find(entity.sectionId);
+
+            if (section == null) return true;
             if (section.CANEDIT == false) return true;
-            if (section != null)
-            {
-                section.TEMPLATEDOCUMENT = entity.templateDocument;
-                section.LASTUPDATEDBY = entity.staffId;
-                section.DATETIMEUPDATED = DateTime.Now;
-                return context.SaveChanges() > 0;
-            }
-            return true;
+
+            section.TEMPLATEDOCUMENT = entity.templateDocument;
+            section.LASTUPDATEDBY = entity.staffId;
+            section.DATETIMEUPDATED = DateTime.Now;
+            return context.SaveChanges() > 0;
         }
 
         public LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId)
@@ -292,6 +294,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 sectionId = doc.DOCUMENTDETAILID,
                 title = doc.TITLE,
+                description = doc.DESCRIPTION,
                 templateDocument = memo.Replace(doc.TEMPLATEDOCUMENT),
                 canEdit = doc.CANEDIT,
                 editable = doc.CANEDIT && sectionIds.Contains(doc.TEMPLATESECTIONID),
@@ -325,6 +328,7 @@ namespace FintrakBanking.Repositories.Credit
                 templateName = x.TEMPLATENAME,
                 staffRoleId = x.STAFFROLEID,
                 operationId = x.OPERATIONID,
+                
                 //productClassId = x.ProductClassId,
             });
         }
@@ -339,6 +343,7 @@ namespace FintrakBanking.Repositories.Credit
                 position = x.POSITION,
                 isDisabled = x.ISDISABLED,
                 canEdit = x.CANEDIT,
+                description=x.DESCRIPTION,
             });
         }
         public IEnumerable<DocumentTemplateSectionRoleViewModel> GetAllDocumentTemplateSectionRoleSetup(int templateSectionId)
@@ -441,6 +446,7 @@ namespace FintrakBanking.Repositories.Credit
                 TEMPLATEDOCUMENT = model.templateDocument,
                 POSITION = model.position,
                 CANEDIT = model.canEdit,
+                DESCRIPTION=model.description,
                 //ProductClassId = model.productClassId,
                 CREATEDBY = (int)model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate()
@@ -478,7 +484,7 @@ namespace FintrakBanking.Repositories.Credit
             data.TEMPLATEDOCUMENT = model.templateDocument;
             data.POSITION = model.position;
             data.CANEDIT = model.canEdit;
-
+            data.DESCRIPTION = model.description;
             //data.ProductClassId = model.productClassId;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = general.GetApplicationDate();

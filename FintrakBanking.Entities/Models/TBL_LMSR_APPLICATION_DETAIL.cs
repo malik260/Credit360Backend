@@ -61,7 +61,7 @@
 
         // public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 
-        // public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
+        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 
@@ -84,6 +84,5 @@
         public virtual ICollection<TBL_LMSR_TRANSACTION_DYNAMICS> TBL_LMSR_TRANSACTION_DYNAMICS { get; set; }
 
         public virtual ICollection<TBL_LMSR_CONDITION_PRECEDENT> TBL_LMSR_CONDITION_PRECEDENT { get; set; }
-
     }
 }

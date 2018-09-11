@@ -124,11 +124,15 @@ namespace FintrakBanking.ViewModels.Credit
                 if (applicationTenor < 15) return applicationTenor.ToString() + units;
                 var months = Math.Ceiling((Math.Floor(applicationTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
-                return months.ToString() + " months";
+                return months.ToString() + units;
             }
         }
 
         public int tempApplicationCancellationId { get; set; }
+        public IQueryable<string> staffName { get; set; }
+        public string comment { get; set; }
+        public bool isOfferLetterAvailable { get; set; }
+        public int? currentApprovalLevelTypeId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -231,6 +235,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short approvedProductId { get; set; }
 
+        public string productName { get; set; }
+
         public int approvedTenor { get; set; }
         
         public int tenorModeId { get; set; }
@@ -261,6 +267,30 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string loanPurpose { get; set; }
 
+        public string repaymentTerm { get; set; }
+
+        public int?  crmsFundingSourceId { get; set; }
+
+        public int? crmsPaymentSourceId { get; set; }
+
+        public string crmsFundingSourceCategory { get; set; }
+
+        public string crms_ECCI_Number { get; set; }
+
+        public string conditionPrecedent { get; set; }
+
+        public string conditionSubsequent { get; set; }
+
+        public string transactionDynamics { get; set; }
+
+        public string listOfCommodities { get; set; }
+
+        public bool isSpecialised { get; set; }
+
+        public short? productPriceIndexId { get; set; }
+
+        public double productPriceIndexRate { get; set; }
+
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 
         public EducationLoanViewModel educationLoan { get; set; }
@@ -268,7 +298,7 @@ namespace FintrakBanking.ViewModels.Credit
         public TraderLoanViewModel traderLoan { get; set; }
         public List<ProductFeesViewModel> productFees { get; set; }
         public BondsAndGuranty bondDetails { get; set; }
-        public IEnumerable<LoanCreditBereauViewModel> LoanCreditBereauReport { get; set; }
+        public IEnumerable<LoanCreditBureauViewModel> LoanCreditBereauReport { get; set; }
         public string sectorName { get; set; }
         public string productClass { get; set; }
         public string proposedTenorString
@@ -279,7 +309,7 @@ namespace FintrakBanking.ViewModels.Credit
                 if (proposedTenor < 15) return proposedTenor.ToString() + units;
                 var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
-                return months.ToString() + " months";
+                return months.ToString() + " " + units;
             }
         }
         public string approvedTenorString
@@ -290,7 +320,7 @@ namespace FintrakBanking.ViewModels.Credit
                 if (approvedTenor < 15) return approvedTenor.ToString() + units;
                 var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
-                return months.ToString() + " months";
+                return months.ToString() + " " + units;
             }
         }
     }
@@ -454,6 +484,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
         public string customerGroupName { get; set; }
         public int? currentApprovalLevelId { get; set; }
+        public int? currentApprovalLevelTypeId { get; set; }
     }
     public class InvoiceDetailViewModel
     {
@@ -603,6 +634,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isBusiness { get; set; }
         public float? interestRateConcession { get; set; }
         public float? feeRateConcession { get; set; }
+        public List<RecommendedChangesViewModel> recommendedChanges { get; set; }
     }
 
     public class CreditApplicationViewModel
@@ -619,5 +651,5 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanApplicationDatailViewModel> details { get; set; }
         public string customerCode { get; set; }
     }
-
+    
 }

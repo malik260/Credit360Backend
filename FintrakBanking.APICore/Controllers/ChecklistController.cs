@@ -951,7 +951,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("validate-checklist-details")]
-        public HttpResponseMessage ValidateChecklistDetail([FromBody] ValidateChecklistDetailViewModel model)
+        public HttpResponseMessage ValidateChecklistDetail([FromBody] List<ValidateChecklistDetailViewModel> model)
         {
             try
             {
@@ -1040,6 +1040,25 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("validate-precedence-checklist-completed")]
+        public HttpResponseMessage ValidatePrecedenceChecklistCompleted(int loanApplicationId)
+        {
+            try
+            {
+                var data = repo.ValidatePrecedenceChecklistCompleted(loanApplicationId);
+                if (data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });     
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
             catch (SecureException e)
             {
@@ -1237,19 +1256,59 @@ namespace FintrakBanking.APICore.Controllers
                 entity.operationId = (int)OperationsEnum.ChecklistApproval;
                 var data = repo.GoForApproval(entity);
 
-                if (data)
+                if (data == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Record has been approved successfully" });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record has been disapproved successfully." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
             }
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error submitting this record {e.Message}" });
             }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("delete-loan-condition-checkstatus/{conditionId}")]
+        public HttpResponseMessage DeleteLoanConditionPrecedenceStatus(int conditionId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = CommonHelpers.GetUserIP()
+                };
+
+            var data =    repo.DeleteLoanConditionPrecedenceStatus(conditionId, user);
+                if(data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                              new { success = true, result = conditionId, message = "Record has been deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false,  message = "Error deleting record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+             new { success = false, message = ex.Message });
+            }
+
         }
         #endregion
 
@@ -1601,5 +1660,52 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("regulatory-checklist-automapping")]
+        public HttpResponseMessage RegulatoryChecklistAutomapping(int customerId, int targetId)
+        {
+            try
+            {
+                ChecklistDetailViewModel model = new ChecklistDetailViewModel();
+                model.targetId = targetId;
+                string createUpdate = "";
+                if (model.checklistId != 0 || model.checklistId > 0)
+                {
+                    createUpdate = "updated";
+                }
+                else
+                {
+                    createUpdate = "created";
+                    if (repo.ValidateChecklistDetailEntry(model.checkListDefinitionId, model.targetId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                new { success = false, message = "This checklist item is checked already" });
+                    }
+                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = CommonHelpers.GetUserIP();
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var data = repo.RegulatoryChecklistAutomapping(customerId, model);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                 new { success = true, result = data, message = $"The record has been {createUpdate} successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+            new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
     }
 }

@@ -119,6 +119,118 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-legal-status")]
+        public HttpResponseMessage GetAllCRMSLegalStatus()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSLegalStatus();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-company-size")]
+        public HttpResponseMessage GetAllCRMSCompanySize()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSCompanySize();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-relationship-type")]
+        public HttpResponseMessage GetAllCRMSRelationshipType()
+        {
+            try
+            {
+                var data = repo.GetAllCRMSRelationshipType();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-relationship-type-by-customer-type/")]
+        public HttpResponseMessage GetAllCRMSRelationshipTypeByType(int type)
+        {
+            try
+            {
+                var data = repo.GetAllCRMSRelationshipTypeByType(type);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("crms-type-legal-status-by-customer-type/")]
+        public HttpResponseMessage GetAllCRMSLegalStatusByType(int type)
+        {
+            try
+            {
+
+                var data = repo.GetAllCRMSLegalStatusByType(type);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
+
+
+
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -1110,8 +1222,16 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                  //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
 
-                var data = repo.DeleteChild(childId);
+                var data = repo.DeleteChild(childId, user);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1126,7 +1246,37 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"There was an error deleting this record {e.Message}" });
             }
         }
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("company-ultimate-beneficial/{companyBeneficialId}")]
+        public HttpResponseMessage DeleteUltimateBeneficial(int companyBeneficialId)
+        {
+            try
+            {
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    //  userIPAddress = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString()
+                };
 
+                var data = repo.DeleteUltimateBeneficial(companyBeneficialId, user);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Record Deleted successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error delete this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"There was an error deleting this record {e.Message}" });
+            }
+        }
 
         #region Single Customer Information By CustomerID
         [HttpGet]
@@ -1951,14 +2101,21 @@ namespace FintrakBanking.APICore.Controllers
 
                 var data = repo.GoForApproval(entity);
 
-                if (data)
+                if (data == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Customer record has been approved successfully" });
+                        new { success = true, message = "Customer record has been approved successfully." });
                 }
-
-                return Request.CreateResponse(HttpStatusCode.OK,
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer record has been disapproved successfully." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
             }
             catch (SecureException ex)
             {

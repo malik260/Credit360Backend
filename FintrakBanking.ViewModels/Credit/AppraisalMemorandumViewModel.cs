@@ -77,6 +77,32 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public string terms { get; set; }
         public string schedule { get; set; }
+        public bool securedByCollateral { get; set; }
+        public int? crmsCollateralTypeId { get; set; }
+        public bool isSpecialised { get; set; }
+
+        public string proposedTenorString
+        {
+            get
+            {
+                var units = proposedTenor == 1 ? " day" : " days";
+                if (proposedTenor < 15) return proposedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
+        public string approvedTenorString
+        {
+            get
+            {
+                var units = approvedTenor == 1 ? " day" : " days";
+                if (approvedTenor < 15) return approvedTenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
     }
 
     public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL
@@ -192,6 +218,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationId { get; set; }
 
         public string staffName { get; set; }
+        public short? decision { get; set; }
     }
 
     public class CAMApprovalLevelStaffViewModel

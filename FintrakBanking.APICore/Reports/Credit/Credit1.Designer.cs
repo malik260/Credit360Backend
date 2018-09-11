@@ -5636,6 +5636,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnbranch;
             
+            private global::System.Data.DataColumn columnGLAccountCode;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public FinanceTransactionDataTable() {
@@ -5815,6 +5817,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn GLAccountCodeColumn {
+                get {
+                    return this.columnGLAccountCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -5868,7 +5878,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string repostDate, 
                         string accountName, 
                         string batchNo, 
-                        string branch) {
+                        string branch, 
+                        string GLAccountCode) {
                 FinanceTransactionRow rowFinanceTransactionRow = ((FinanceTransactionRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         creditAmount,
@@ -5888,7 +5899,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         repostDate,
                         accountName,
                         batchNo,
-                        branch};
+                        branch,
+                        GLAccountCode};
                 rowFinanceTransactionRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFinanceTransactionRow);
                 return rowFinanceTransactionRow;
@@ -5929,6 +5941,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnaccountName = base.Columns["accountName"];
                 this.columnbatchNo = base.Columns["batchNo"];
                 this.columnbranch = base.Columns["branch"];
+                this.columnGLAccountCode = base.Columns["GLAccountCode"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5970,6 +5983,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnbatchNo);
                 this.columnbranch = new global::System.Data.DataColumn("branch", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnbranch);
+                this.columnGLAccountCode = new global::System.Data.DataColumn("GLAccountCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnGLAccountCode);
                 this.columnpostedDate.Caption = "accountName";
                 this.columnpostedTime.Caption = "accountName";
                 this.columnpostedBy.Caption = "accountName";
@@ -16699,6 +16714,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string GLAccountCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableFinanceTransaction.GLAccountCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'GLAccountCode\' in table \'FinanceTransaction\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFinanceTransaction.GLAccountCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscreditAmountNull() {
                 return this.IsNull(this.tableFinanceTransaction.creditAmountColumn);
             }
@@ -16911,6 +16942,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetbranchNull() {
                 this[this.tableFinanceTransaction.branchColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsGLAccountCodeNull() {
+                return this.IsNull(this.tableFinanceTransaction.GLAccountCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetGLAccountCodeNull() {
+                this[this.tableFinanceTransaction.GLAccountCodeColumn] = global::System.Convert.DBNull;
             }
         }
         

@@ -8,7 +8,8 @@
         APGBooking = 5,
         APSRequest = 6,
         WriteOff = 7,
-       CollateralCreation=8
+       CollateralCreation=8,
+        IDFBooking = 9
     };
 
 }

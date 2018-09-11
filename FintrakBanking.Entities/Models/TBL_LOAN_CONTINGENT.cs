@@ -97,6 +97,10 @@ namespace FintrakBanking.Entities.Models
 
         public bool DISCHARGELETTER { get; set; }
 
+        public int LASTUPDATEDBY { get; set; }
+
+        public DateTime DATETIMEUPDATED { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
@@ -122,8 +126,11 @@ namespace FintrakBanking.Entities.Models
         public string FIELD10 { get; set; }
 
         public string CRMSCODE { get; set; }
+        public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 
         public DateTime? CRMSDATE { get; set; }
+
+        public int? LOAN_BOOKING_REQUESTID { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 

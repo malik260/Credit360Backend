@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
         decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod);
 
@@ -37,7 +38,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial();
 
-        LoanViewModel GetDisbursedLoanByLoanId(int loanId);
+        LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
 
         LoanViewModel GetGroupLoanByLoanId(int loanId);
 
@@ -77,14 +78,13 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanChargeFeeViewModel> GetProductFees(int productId);
 
         IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId);
-
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
 
-        IEnumerable<LoanViewModel> GetTermLoanBookingAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
 
-        IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanBookingAwaitingApproval(int staffId, int companyId);
+        IEnumerable<RevolvingLoanViewModel> GetRevolvingFacilityBookingAwaitingApproval(int staffId, int companyId);
 
-        IEnumerable<ContingentLoanViewModel> GetContingentLoanBookingAwaitingApproval(int staffId, int companyId);
+        IEnumerable<ContingentLoanViewModel> GetContingentFacilityBookingAwaitingApproval(int staffId, int companyId);
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredTermLoanFeeAwaitingApproval(int staffId, int companyId);
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId);
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId);
@@ -123,7 +123,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
-        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int productTypeId, string searchQuery);
+        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int loanSystemTypeId, string searchQuery);
 
         string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);
 
@@ -133,7 +133,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param);
 
-        IQueryable<LoanViewModel> SearchRunningCommercialForLoans(string searchQuery);
+        IQueryable<LoanViewModel> SearchRunningCommercialAndFXLoans(string searchQuery);
 
         IEnumerable<RevolvingLoanViewModel> GetRevolvingLoanTypes();
 
@@ -163,7 +163,22 @@ namespace FintrakBanking.Interfaces.Credit
         int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
         IEnumerable<LoanViewModel> GetApprovedCommercialLoanReview();
+
         IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
+       // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
+
+        List<LoanViewModel> GetLoanApplicationExistingLoans(int applicationId);
+
+        List<CurrentCustomerExposure> GetApplicationFacilitySummary(int applicationId);
+
+
+        IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview();
+
+        IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate, int loanId);
+
+        IEnumerable<LoanViewModel> GetContingentApprovedApplication();
+
+        LoanViewModel GetContingentByLoanId(int revolvingLoanId);
 
     }
 }

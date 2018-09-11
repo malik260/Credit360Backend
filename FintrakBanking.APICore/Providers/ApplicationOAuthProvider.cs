@@ -120,9 +120,11 @@ namespace FintrakBanking.APICore.Providers
                    
 
                     authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress).GetAwaiter().GetResult();
-                    user = await Task
-                        .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
-                        .Result;
+                    //user = await Task
+                    //    .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
+                    //    .Result;
+                    user = await authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password);
+                     
                     if (user == null)
                     {
                         context.SetError("invalid_grant", "Login Failure.");
@@ -188,9 +190,9 @@ namespace FintrakBanking.APICore.Providers
                 }
                 else
                 {
-                    string innerException = string.Empty;
-                    if (ex.InnerException != null) innerException = ex.InnerException.Message;
-                    string str = ex.Message + " : " + innerException;
+                    //string innerException = string.Empty;
+                    //if (ex.InnerException != null) innerException = ex.InnerException.Message;
+                    string str = ""; //ex.Message + " : " + innerException;
                     context.SetError("invalid_grant", str);
                     return;
                 }

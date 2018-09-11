@@ -16,7 +16,7 @@ namespace FintrakBanking.Entities.Models
         //public virtual DbSet<ELMAH_ERROR> ELMAH_ERROR { get; set; }
         public virtual DbSet<TBL_ACCOUNT_CATEGORY> TBL_ACCOUNT_CATEGORY { get; set; }
         public virtual DbSet<TBL_ACCOUNT_TYPE> TBL_ACCOUNT_TYPE { get; set; }
-        public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; }
+        public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; } 
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_TYPE> TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
@@ -35,6 +35,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_AUDIT_TYPE> TBL_AUDIT_TYPE { get; set; }
         public virtual DbSet<TBL_BRANCH> TBL_BRANCH { get; set; }
         public virtual DbSet<TBL_BRANCH_REGION> TBL_BRANCH_REGION { get; set; }
+        public virtual DbSet<TBL_BRANCH_REGION_STAFF> TBL_BRANCH_REGION_STAFF { get; set; }
+        public virtual DbSet<TBL_BRANCH_REGION_STAFF_TYPE> TBL_BRANCH_REGION_STAFF_TYPE { get; set; }
         public virtual DbSet<TBL_CALL_MEMO> TBL_CALL_MEMO { get; set; }
         public virtual DbSet<TBL_CALL_MEMO_LIMIT> TBL_CALL_MEMO_LIMIT { get; set; }
         public virtual DbSet<TBL_CALL_MEMO_TYPE> TBL_CALL_MEMO_TYPE { get; set; }
@@ -211,6 +213,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_DETL_TRA> TBL_LOAN_APPLICATION_DETL_TRA { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_STATUS> TBL_LOAN_APPLICATION_STATUS { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_TYPE> TBL_LOAN_APPLICATION_TYPE { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_COMMENT> TBL_LOAN_APPLICATION_COMMENT { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATN_DETL_MTRIG> TBL_LOAN_APPLICATN_DETL_MTRIG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLTN_CREDIT_BUREAU> TBL_LOAN_APPLTN_CREDIT_BUREAU { get; set; }
         public virtual DbSet<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }
@@ -353,7 +356,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_TEMP_COLLATERAL_PREC_METAL> TBL_TEMP_COLLATERAL_PREC_METAL { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_STOCK> TBL_TEMP_COLLATERAL_STOCK { get; set; }
         public virtual DbSet<TBL_TEMP_COLLATERAL_VEHICLE> TBL_TEMP_COLLATERAL_VEHICLE { get; set; }
-        public virtual DbSet<TBL_TEMP_COMPANY_BENEFICIA> TBL_TEMP_COMPANY_BENEFICIA { get; set; }
+      //  public virtual DbSet<TBL_TEMP_COMPANY_BENEFICIA> TBL_TEMP_COMPANY_BENEFICIA { get; set; }
         public virtual DbSet<TBL_TEMP_CUST_CLIENT_SUPPLIER> TBL_TEMP_CUST_CLIENT_SUPPLIER { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER> TBL_TEMP_CUSTOMER { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_ADDRESS> TBL_TEMP_CUSTOMER_ADDRESS { get; set; }
@@ -406,7 +409,13 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PROFILE_PASSWORD_HISTORY> TBL_PROFILE_PASSWORD_HISTORY { get; set; }
         public virtual DbSet<TBL_CUSTOM_CREDITBUREAU_ERROR> TBL_CUSTOM_CREDITBUREAU_ERROR { get; set; }
         public virtual DbSet<TBL_TEMP_LOAN_APPLTN_CANCELTN> TBL_TEMP_LOAN_APPLTN_CANCELTN { get; set; }
-
+        
+        public virtual DbSet<TBL_CRMS_REGULATORY> TBL_CRMS_REGULATORY { get; set; }
+        public virtual DbSet<TBL_CRMS_TYPE> TBL_CRMS_TYPE { get; set; }
+        public virtual DbSet<TBL_TEMP_STAFF_RELIEF> TBL_TEMP_STAFF_RELIEF { get; set; }
+        public virtual DbSet<TBL_TEMP_CUSTOMER_COMP_BENEFIC> TBL_TEMP_CUSTOMER_COMP_BENEFIC { get; set; }
+        public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_CURNCY> TBL_PRODUCT_PRICE_INDEX_CURNCY { get; set; }
+        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var databaseUsername =
@@ -3187,6 +3196,11 @@ namespace FintrakBanking.Entities.Models
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<TBL_CUSTOMER>()
+                .HasMany(e => e.TBL_LMSR_APPLICATION_DETAIL)
+                .WithRequired(e => e.TBL_CUSTOMER)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_CUSTOMER>()
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETL_ARCH)
                 .WithRequired(e => e.TBL_CUSTOMER)
                 .WillCascadeOnDelete(false);
@@ -4528,6 +4542,10 @@ namespace FintrakBanking.Entities.Models
             //    .HasPrecision(38, 0);
 
             modelBuilder.Entity<TBL_LOAN_APPLICATION_DETAIL>()
+                .Property(e => e.PROPOSEDAMOUNT)
+                .HasPrecision(38, 2);
+
+            modelBuilder.Entity<TBL_LMSR_APPLICATION_DETAIL>()
                 .Property(e => e.PROPOSEDAMOUNT)
                 .HasPrecision(38, 2);
 
@@ -8720,6 +8738,13 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LMSR_APPLICATN_DETL_MTRIG)
                 .WithRequired(e => e.TBL_LMSR_APPLICATION_DETAIL)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<TBL_BRANCH_REGION>()
+                .HasMany(e => e.TBL_BRANCH_REGION_STAFF)
+                .WithRequired(e => e.TBL_BRANCH_REGION)
+                .WillCascadeOnDelete(false);
+
+            //modelBuilder.Entity<TBL_CUSTOMER>().Ignore(x => x.FULLNAME);
 
         }
     }

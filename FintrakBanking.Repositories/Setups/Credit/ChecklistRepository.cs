@@ -15,6 +15,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -927,21 +928,30 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() != 0;
         }
-        public bool ValidateChecklistDetail(ValidateChecklistDetailViewModel entity)
+        public bool ValidateChecklistDetail(List<ValidateChecklistDetailViewModel> entity)
         {
             if (entity == null) return false;
+            List<TBL_CHECKLIST_DETAIL> checklistDetails = new List<TBL_CHECKLIST_DETAIL>();
+            foreach (var item in entity)
+            {
+                var data = this.context.TBL_CHECKLIST_DETAIL.Find(item.checklistId);
+                if (data != null)
+                {
+                    if (item.isCAMchecklist == true)
+                    {
+                        data.CHECKLISTSTATUSID2 = item.checkListStatusId2;
+                    }
+                    if (item.isAvailmentChecklist == true)
+                    {
+                        data.CHECKLISTSTATUSID3 = item.checkListStatusId3;
+                    }
+                }
+                checklistDetails.Add(data);
+            }
 
-            var data = this.context.TBL_CHECKLIST_DETAIL.Find(entity.checklistId);
-            if (data == null) return false;
-            if (entity.isCAMchecklist == true)
-            {
-                data.CHECKLISTSTATUSID2 = entity.checkListStatusId2;
-            }
-            if (entity.isAvailmentChecklist == true)
-            {
-                data.CHECKLISTSTATUSID3 = entity.checkListStatusId3;
-            }
-            return context.SaveChanges() != 0;
+
+
+            return context.SaveChanges() > 0;
         }
 
         #endregion
@@ -1203,6 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
                                   conditionId = c.LOANCONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
                                   isExternal = c.ISEXTERNAL
 
@@ -1221,11 +1232,58 @@ namespace FintrakBanking.Repositories.Credit
                                   conditionId = c.LOANCONDITIONID,
                                   status = c.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                                  loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
                                   isExternal = c.ISEXTERNAL
                               }).ToList();
                 return status;
             }
+        }
+        public bool ValidatePrecedenceChecklistCompleted(int loanApplicationId)
+        {
+
+            var condition = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                             where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
+                             && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
+                             select c).ToList();
+            var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                          where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
+                          && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
+                          select c).ToList();
+            var output = condition.Count == status.Count;
+            return output;
+        }
+        public bool DeleteLoanConditionPrecedenceStatus(int conditionId, UserInfo user)
+        {
+            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionId);
+            if (data == null) return false;
+
+
+            if (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)
+            {
+                var deferral = context.TBL_LOAN_CONDITION_DEFERRAL.Where(x => x.LOANCONDITIONID == data.LOANCONDITIONID).FirstOrDefault();
+                if (deferral != null)
+                {
+                    context.TBL_LOAN_CONDITION_DEFERRAL.Remove(deferral);
+                }
+            }
+            data.CHECKLISTSTATUSID = null;
+            data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Loan Condition Precedent with Id: {conditionId}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+            return context.SaveChanges() > 0;
         }
         public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
         {
@@ -1347,7 +1405,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public bool GoForApproval(ApprovalViewModel entity)
+        public int GoForApproval(ApprovalViewModel entity)
         {
             entity.externalInitialization = false;
 
@@ -1365,7 +1423,27 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.LogActivity();
 
 
-                    //workFlow.LogForApproval(entity);
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
+                                               where s.LOANCONDITIONID == entity.targetId
+                                               select s).FirstOrDefault();
+                        var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                                              where s.LOANCONDITIONID == entity.targetId
+                                              select s).FirstOrDefault();
+                        if (checklistRecord != null || deferredRecord != null)
+                        {
+                            deferredRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                            checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                            context.SaveChanges();
+                            trans.Commit();
+                            return 2;
+                        }
+
+
+
+
+                    }
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
@@ -1375,12 +1453,12 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             trans.Commit();
                         }
-                        return true;
+                        return 1;
                     }
                     else
                     {
                         trans.Commit();
-                        return false;
+                        return 0;
                     }
 
                 }
@@ -1999,5 +2077,50 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
         #endregion
+
+        public bool RegulatoryChecklistAutomapping(int customerId, ChecklistDetailViewModel model)
+        {
+            bool output = false;
+            var credit = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
+                          where a.CUSTOMERID == customerId
+                          orderby a.DATECOMPLETED descending
+                          select a).GroupBy(c => c.CREDITBUREAUID).Select(y => y.FirstOrDefault()).ToList();
+
+            var checklistItem = (from f in context.TBL_CHECKLIST_ITEM
+                                 join g in context.TBL_CHECKLIST_DEFINITION on f.CHECKLISTITEMID equals g.CHECKLISTITEMID
+                                 where g.CHECKLIST_TYPEID == (int)CheckTypeEnum.RegulatoryChecklist
+                                 select new
+                                 {
+                                     itemName = f.CHECKLISTITEMNAME,
+                                     itemDefinitionId = g.CHECKLISTDEFINITIONID
+                                 }).ToList();
+
+            foreach (var item in credit)
+            {
+                model.checkListStatusId = item.ISREPORTOKAY == true ? model.checkListStatusId = (int)CheckListStatusEnum.Yes : model.checkListStatusId = (int)CheckListStatusEnum.No;
+                model.targetTypeId = (int)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist;
+                var creditBureauType = (from c in context.TBL_CREDIT_BUREAU
+                                        where c.CREDITBUREAUID == item.CREDITBUREAUID
+                                        select c).FirstOrDefault().CREDITBUREAUNAME;
+
+                foreach (var id in checklistItem)
+                {
+                    if (CommonHelpers.Left(id.itemName.ToUpper().Trim(), 3) == CommonHelpers.Left(creditBureauType.ToUpper().Trim(), 3))
+                    {
+                        model.checkListDefinitionId = id.itemDefinitionId;
+                    }
+                }
+                if (ValidateChecklistDetailEntry(model.checkListDefinitionId, model.targetId))
+                {
+                    output = false;
+                }
+                else
+                {
+                    output = AddChecklistDetail(model);
+                }
+            }
+            //      if ( == (short)CreditBureauEnum.CRMS) hascrms = true;
+            return output;
+        }
     }
 }

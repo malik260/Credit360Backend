@@ -32,6 +32,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime SYSTEMDATETIME { get; set; }
+        public short? DECISION { get; set; }
 
         public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
 

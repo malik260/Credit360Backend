@@ -9,8 +9,9 @@
         LPO = 15,
         CFF =16,
         IDF = 17,
-        CommercialPaper = 40,
+        CommercialLoan = 40,
         ForeignXRevolving = 41,
+        SyndicatedLoan = 42,
     };
 
     public enum LoanSystemTypeEnum
@@ -18,5 +19,6 @@
         TermDisbursedFacility = 1,
         OverdraftFacility = 2,
         ContingentLiability = 3,
+        LineFacility = 4,
     };
 }

@@ -94,7 +94,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-credit-bureau-document/{customerCreditBureauId}")]
+        public HttpResponseMessage GetCreditBureauDocument(int customerCreditBureauId)
+        {
+            try
+            {
+                var data = repo.GetCreditBureauDocument(customerCreditBureauId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("crc-products")]
         public HttpResponseMessage GetCRCBureauFacilities()
         {
@@ -142,7 +158,7 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("loan/customer/credit-bureau-charge")]
-        public HttpResponseMessage AddCustomerCreditBureauCharge(LoanCreditBereauViewModel model)
+        public HttpResponseMessage AddCustomerCreditBureauCharge(LoanCreditBureauViewModel model)
         {
             try
             {
@@ -174,7 +190,7 @@ namespace FintrakBanking.APICore.Controllers
 
        [HttpPut] [ClaimsAuthorization]
         [Route("credit-bureau-customer-report-status/{status}")]
-        public HttpResponseMessage UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel entity)
+        public HttpResponseMessage UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBureauViewModel entity)
         {
             try
             {
@@ -206,7 +222,7 @@ namespace FintrakBanking.APICore.Controllers
 
        [HttpPut] [ClaimsAuthorization]
         [Route("multiple-credit-bureau-customer-report-status/{status}")]
-        public HttpResponseMessage UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
+        public HttpResponseMessage UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBureauViewModel> model)
         {
             try
             {
@@ -265,7 +281,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
 
-                var loanCreditBureauModel = new LoanCreditBereauViewModel();
+                var loanCreditBureauModel = new LoanCreditBureauViewModel();
 
                 var companyDirectorId = 0;
                 if(provider.FormData["companyDirectorId"] != null && provider.FormData["companyDirectorId"] != "null") companyDirectorId = Convert.ToInt32(provider.FormData["companyDirectorId"]);

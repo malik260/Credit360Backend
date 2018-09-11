@@ -7,6 +7,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 //using FintrakBanking.ViewModels.Operations;
 
 namespace FintrakBanking.Interfaces.Credit
@@ -43,14 +44,14 @@ namespace FintrakBanking.Interfaces.Credit
         //bool OverdraftTopUp(int loanId, decimal amount);
         IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension();
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate);
-        IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue (DateTime applicationDate);
+        IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> InterestSuspension(int loanId, DateTime applicationDate, int staffId);
         LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode);
         IEnumerable<LoanViewModel> BulkArchiveLoan();
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode);
         IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode);
-        IEnumerable<LoanPaymentSchedulePeriodicViewModel> MergePeriodicSchedule (int loanId, DateTime applicationDate);
-        bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, short loanReviewOperationsId, int loanId, int staffId);
+        IEnumerable<LoanPaymentSchedulePeriodicViewModel> MergePeriodicSchedule(int loanId, DateTime applicationDate);
+        bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, short loanReviewOperationsId, int loanId, int staffId, [Optional] LoanSystemTypeEnum facilityType, [Optional] string approvalComment);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForInterestReview(DateTime applicationDate, int loanId);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForBulkInterestReview(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessAuthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate);
@@ -58,17 +59,21 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanRateCustomerExcemptions(int companyId);
         bool addBulkRateLoanExcemptions(LoanViewModel model);
         bool addInterestRateChange(LoanBulkInterestReviewViewModel model);
-        IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId); 
-         IEnumerable<LoanClassificationViewModel> CalculateLoanClassification(DateTime applicationDate);
+        IEnumerable<LoanBulkInterestReviewViewModel> GetNewInterestRateReviews(int companyId);
+        IEnumerable<LoanClassificationViewModel> CalculateLoanClassification(DateTime applicationDate);
         LoanViewModel GetRunningLoans(int companyId, string refNo);
         LoanViewModel GetRunningFXLoans(int companyId, string refNo);
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByOD();
         IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType();
         IEnumerable<LoanFeeOperationViewModel> GetLoanChargeFeeByLoanId(int loanId);
-       
+
         IEnumerable<LoanClassificationViewModel> CalculateOverdraftClassification(DateTime applicationDate);
         IEnumerable<LoanViewModel> LoanHistory();
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
+
+        bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
+
+
 
         #region COMMERCIAL PAPER LOANS
         bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);
@@ -79,7 +84,7 @@ namespace FintrakBanking.Interfaces.Credit
         //void CommercialPaperManualRollOver(DateTime applicationDate);
         bool addCommercialPaperTenorReview(TenorExtionViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
-        bool CommercialPaperRateReview(InterestReviewViewModel userModel);
+        bool ApplicationLineRateChange(InterestReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetCommercialLoansLines(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoans(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoansByApplicationDetailId(int companyId, int loanApplicationDetailID);
@@ -88,8 +93,14 @@ namespace FintrakBanking.Interfaces.Credit
         bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
         loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
-        bool addCommercialPaperLineTenorReview(int loanAplicationDetailId, int newTenor);
+        //bool addApplicationLineTenorChange(TenorExtionViewModel userModel);
+        bool addApplicationLineTenorChange(TenorExtionViewModel userModel);
+        //bool ApplicationLineRateChange(InterestReviewViewModel userModel);
+        bool nonTermLoanLoanRateChange(InterestReviewViewModel userModel, int loanId);
         bool GetRepaymentFromStaging();
+
+        IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByContingent();
+
         #endregion
 
         #region

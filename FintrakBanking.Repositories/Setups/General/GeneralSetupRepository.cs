@@ -18,17 +18,14 @@ namespace FintrakBanking.Repositories.Setups.General
         //private GeneralSetupRepository genSetup;
         public GeneralSetupRepository(FinTrakBankingContext _context)
         {
-
             this.context = _context;
              //this.genSetup = _genSetup;
-            
         }
 
         public DateTime GetApplicationDate()
         {
             return this.context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;            
         }
-
 
         public DateTime CalculateMaturityDate(DateTime effectiveDate, TenorModeEnum tenorModeId, int tenor)
         {
@@ -334,7 +331,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var roleids = staff.Select(x => x.STAFFROLEID).ToList();
 
             var roleLevelIds = context.TBL_APPROVAL_LEVEL
-                .Where(x => roleids.Contains((int)x.STAFFROLEID))
+                .Where(x => x.DELETED == false && roleids.Contains((int)x.STAFFROLEID))
                 .Select(x => x.APPROVALLEVELID)
                 .Distinct();
 
@@ -344,7 +341,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL
                 .Where(l => l.ISACTIVE == true));
 
-            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => staffIds.Contains(x.STAFFID));
+            var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.DELETED == false && staffIds.Contains(x.STAFFID));
 
             var staffLevels = staffWorkflow.Select(x => x.APPROVALLEVELID).Distinct();
 
@@ -358,7 +355,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var staff = context.TBL_STAFF.Find(staffId);
 
             var roleLevelIds = context.TBL_APPROVAL_LEVEL
-                .Where(x => x.STAFFROLEID == staff.STAFFROLEID)
+                .Where(x => x.DELETED == false && x.STAFFROLEID == staff.STAFFROLEID)
                 .Select(x => x.APPROVALLEVELID)
                 .Distinct();
 
@@ -368,7 +365,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 .Where(x => x.OPERATIONID == operationId)
                 .Select(g => g.TBL_APPROVAL_GROUP)
                 .SelectMany(x => x.TBL_APPROVAL_LEVEL
-                .Where(l => l.ISACTIVE == true));
+                .Where(l => l.DELETED == false && l.ISACTIVE == true));
 
             var staffWorkflow = allLevels.SelectMany(l => l.TBL_APPROVAL_LEVEL_STAFF).Where(x => x.STAFFID == staffId);
 
@@ -380,7 +377,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (scope == 2)
             {
-                var groups = context.TBL_APPROVAL_LEVEL.Where(x => staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
+                var groups = context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && staffLevels.Contains(x.APPROVALLEVELID)).Select(x => x.GROUPID).Distinct();
                 return context.TBL_APPROVAL_LEVEL
                     .Where(x => groups.Contains(x.GROUPID))
                     .Select(x => x.APPROVALLEVELID)

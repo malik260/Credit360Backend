@@ -153,7 +153,7 @@ namespace FintrakBanking.Repositories.Credit
                         middleName = director.MIDDLENAME,
                         creditBureauCount = directorCount,
                     };
-                    allCorporate.Add(shareholdersData);
+                    if(directorCount >0)allCorporate.Add(shareholdersData);
                 }
             }
             if (isExternal)
@@ -165,16 +165,16 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         try
                         {
-                            integration.AddCustomerAccounts(item.customerCode);
+                            var i = integration.AddCustomerAccounts(item.customerCode);
                         }
-                        catch(APIErrorException ex)
+                        catch (APIErrorException ex)
                         {
                             return allCorporate;
                             //throw new APIErrorException(ex.Message);
                         }
-                        catch(Exception ex)
+                        catch (Exception ex)
                         {
-                            throw ex; // new SecureException(ex.Message);
+                            return allCorporate;  //throw ex; // new SecureException(ex.Message);
                         }
                     }
                 }
@@ -183,8 +183,7 @@ namespace FintrakBanking.Repositories.Credit
             return allCorporate;
         }
 
-
-        public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
+        public int AddCustomerCreditBureauCharge(LoanCreditBureauViewModel entity)
         {
             var customerId = entity.customerId;
             var companyDirectorId = entity.companyDirectorId;
@@ -213,6 +212,8 @@ namespace FintrakBanking.Repositories.Credit
                 USEDINTEGRATION = entity.usedIntegration,
                 DATECOMPLETED = entity.dateCompleted,
                 DATETIMECREATED = DateTime.Now,
+                DEBITBUSINESS = entity.debitBusiness,
+                ACCOUNTNUMBER = entity.accountNumber,
                 CREATEDBY = entity.createdBy
             };
             context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
@@ -220,7 +221,7 @@ namespace FintrakBanking.Repositories.Credit
             else return 0;
         }
 
-        public int AddCustomerCreditBureauUpload(LoanCreditBereauViewModel entity, LoanDocumentViewModel docModel, byte[] file)
+        public int AddCustomerCreditBureauUpload(LoanCreditBureauViewModel entity, LoanDocumentViewModel docModel, byte[] file)
         {
             var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId, entity.companyDirectorId);
             bool hascrms = false;
@@ -302,7 +303,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBereauViewModel model)
+        public bool UpdateCreditBureauCustomerReportStatus(bool status, LoanCreditBureauViewModel model)
         {
             var directorId = model.companyDirectorId > 0 ? model.companyDirectorId : null;
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(c => c.CREDITBUREAUID == model.creditBureauId
@@ -315,7 +316,7 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBereauViewModel> model)
+        public bool UpdateMultipleCreditBureauCustomerReportStatus(bool status, List<LoanCreditBureauViewModel> model)
         {
             foreach (var item in model)
             {
@@ -359,14 +360,14 @@ namespace FintrakBanking.Repositories.Credit
             return creditBureauList;
         }
 
-        public List<LoanCreditBereauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
+        public List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId)
         {
             var directorId = companyDirectorId > 0 ? companyDirectorId : null;
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                 where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
                                                  && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)
                                                 //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
-                                                select new LoanCreditBereauViewModel
+                                                select new LoanCreditBureauViewModel
                                                 {
                                                     companyDirectorId = a.COMPANYDIRECTORID,
                                                     companyDirectorName = a.TBL_CUSTOMER_COMPANY_DIRECTOR.FIRSTNAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.MIDDLENAME + " " + a.TBL_CUSTOMER_COMPANY_DIRECTOR.SURNAME,
@@ -380,9 +381,25 @@ namespace FintrakBanking.Repositories.Credit
                                                     searchCount = 0,
                                                     uploadCount = 0,
                                                     createdBy = a.CREATEDBY,
+                                                    debitBusiness = a.DEBITBUSINESS,
                                                     dayAgo = DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value
                                                 }).ToList();
             return customerLoanCreditBureauData;
+        }
+
+        public List<CreditBureauDocument> GetCreditBureauDocument(int customerCreditBureauId)
+        {
+            return (from d in docContext.TBL_CUSTOMER_CREDIT_BUREAU
+                   where d.CUSTOMERCREDITBUREAUID == customerCreditBureauId
+                   select new CreditBureauDocument
+                   {
+                       documentId = d.DOCUMENTID,
+                       customerCreditBureauId = d.CUSTOMERCREDITBUREAUID,
+                       documentTitle = d.DOCUMENT_TITLE,
+                       fileName = d.FILENAME,
+                       fileExtension = d.FILEEXTENSION,
+                       fileData = d.FILEDATA,
+                   }).ToList();
         }
 
         public bool VerifyCustomerValidCreditBureau(int customerId)
@@ -407,7 +424,6 @@ namespace FintrakBanking.Repositories.Credit
             return true;
 
         }
-
         #endregion
 
         #region Integration 
@@ -483,15 +499,6 @@ namespace FintrakBanking.Repositories.Credit
                         resultData.errorOccured = true;
                         resultData.status = 3;
                     }
-  
-                    //if (searchResult.Count <= 1)
-                    //{
-                    //    foreach (var strLine in searchResult)
-                    //    {
-                    //        JObject json = JObject.Parse(strLine);
-                            
-                    //    }
-                    //}
                         
                     return resultData;
                 }
@@ -535,7 +542,7 @@ namespace FintrakBanking.Repositories.Credit
                 creditBureauId = searchInfo.creditBureauId,
                 userName = searchInfo.userName,
                 password = searchInfo.password,
-                customerCreditBureauUploadDetails = new LoanCreditBereauViewModel
+                customerCreditBureauUploadDetails = new LoanCreditBureauViewModel
                 {
                     creditBureauId = searchInfo.creditBureauId,
                     companyDirectorId = searchInfo.companyDirectorId,
@@ -555,6 +562,7 @@ namespace FintrakBanking.Repositories.Credit
             if (casa == null) throw new SecureException("Norminated Account Does not Exist");
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
 
             var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
@@ -668,7 +676,7 @@ namespace FintrakBanking.Repositories.Credit
                 casaAccountId = request.casaAccountId,
                 searchType = request.searchType,
 
-                customerCreditBureauUploadDetails = new LoanCreditBereauViewModel
+                customerCreditBureauUploadDetails = new LoanCreditBureauViewModel
                 {
                     creditBureauId = request.creditBureauId,
                     companyDirectorId = request.companyDirectorId,
@@ -682,8 +690,9 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
-
             if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+
+            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
 
@@ -817,6 +826,7 @@ namespace FintrakBanking.Repositories.Credit
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
 
+            searchInput.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
             searchInput.userName = creditBureau.USERNAME;
             searchInput.password = creditBureau.PASSWORD;
 
