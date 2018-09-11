@@ -1680,7 +1680,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationId = (short)OperationsEnum.CommercialLoanBooking;
                         if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
                             operationId = (short)OperationsEnum.ContigentLoanBooking;
-                        if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating)
+                        if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedLoan)
                             operationId = (short)OperationsEnum.TermLoanBooking;
                         if (request.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
                             operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
@@ -3978,6 +3978,74 @@ namespace FintrakBanking.Repositories.Credit
             return loans;
         }
 
+        public IEnumerable<LoanViewModel> GetCommercialLoanByApplicationDetailId(int loanApplicationDetailId)
+        {
+            var data =  GetLoanByApplicationDetailId(loanApplicationDetailId);
+            return data.Where(x => x.operationId == (short)OperationsEnum.CommercialLoanBooking);
+        }
+
+        private IEnumerable<LoanViewModel> GetLoanByApplicationDetailId(int loanApplicationDetailId)
+        {
+            return (from data in context.TBL_LOAN
+                    where data.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                    select new LoanViewModel()
+                    {
+                        loanId = data.TERMLOANID,
+                        customerId = data.CUSTOMERID,
+                        productId = data.PRODUCTID,
+                        companyId = data.COMPANYID,
+                        casaAccountId = data.CASAACCOUNTID,
+                        branchId = data.BRANCHID,
+                        loanReferenceNumber = data.LOANREFERENCENUMBER,
+                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
+                        principalFrequencyTypeId = (short)data.PRINCIPALFREQUENCYTYPEID,
+                        interestFrequencyTypeId = (short)data.INTERESTFREQUENCYTYPEID,
+
+                        principalNumberOfInstallment = data.PRINCIPALNUMBEROFINSTALLMENT,
+                        interestNumberOfInstallment = data.INTERESTNUMBEROFINSTALLMENT,
+                        relationshipOfficerId = data.RELATIONSHIPOFFICERID,
+                        relationshipManagerId = data.RELATIONSHIPMANAGERID,
+                        misCode = data.MISCODE,
+                        teamMiscode = data.TEAMMISCODE,
+                        interestRate = data.INTERESTRATE,
+                        effectiveDate = data.EFFECTIVEDATE,
+                        maturityDate = data.MATURITYDATE,
+                        bookingDate = (DateTime)data.BOOKINGDATE,
+                        principalAmount = data.PRINCIPALAMOUNT,
+                        principalInstallmentLeft = data.PRINCIPALINSTALLMENTLEFT,
+                        interestInstallmentLeft = data.INTERESTINSTALLMENTLEFT,
+                        approvalStatusId = data.APPROVALSTATUSID,
+                        approvedBy = data.APPROVEDBY,
+                        approverComment = data.APPROVERCOMMENT,
+                        dateApproved = data.DATEAPPROVED,
+                        loanStatusId = data.LOANSTATUSID,
+                        scheduleTypeId = data.SCHEDULETYPEID,
+                        isDisbursed = data.ISDISBURSED,
+                        disbursedBy = data.DISBURSEDBY,
+                        disburserComment = data.DISBURSERCOMMENT,
+                        disburseDate = data.DISBURSEDATE,
+
+                        approvedAmount = data.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+
+                        operationId = data.OPERATIONID,
+                        customerGroupId = data.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                        loanTypeId = data.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                        equityContribution = data.EQUITYCONTRIBUTION,
+                        firstPrincipalPaymentDate = data.FIRSTPRINCIPALPAYMENTDATE,
+                        firstInterestPaymentDate = data.FIRSTINTERESTPAYMENTDATE,
+                        outstandingPrincipal = data.OUTSTANDINGPRINCIPAL,
+                        principalAdditionCount = data.PRINCIPALADDITIONCOUNT,
+                        principalReductionCount = data.PRINCIPALREDUCTIONCOUNT,
+                        fixedPrincipal = data.FIXEDPRINCIPAL,
+                        profileLoan = data.PROFILELOAN,
+                        dischargeLetter = data.DISCHARGELETTER,
+                        suspendInterest = data.SUSPENDINTEREST,
+                        //customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED
+                    }).ToList();
+        }
+
         /// <summary>
         /// Gets the loan.
         /// </summary>
@@ -4903,6 +4971,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             IEnumerable<CamProcessedLoanViewModel> data = null;
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
+            var idContigent = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
 
             List<int> operationIds = new List<int>();
             operationIds.Add((int)OperationsEnum.TermLoanBooking);
@@ -4921,7 +4990,7 @@ namespace FintrakBanking.Repositories.Credit
                     where m.COMPANYID == companyId
                     && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    && (ids.Contains((int)atrail.TOAPPROVALLEVELID))
+                    && ((ids.Contains((int)atrail.TOAPPROVALLEVELID)) || (idContigent.Contains((int)atrail.TOAPPROVALLEVELID)))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && ((atrail.RESPONSESTAFFID == null) || (atrail.TOSTAFFID ==staffId))
                     orderby s.LOAN_BOOKING_REQUESTID descending
@@ -7383,6 +7452,8 @@ namespace FintrakBanking.Repositories.Credit
 
                                            isPoliticallyExposed = d.TBL_CUSTOMER.ISPOLITICALLYEXPOSED,
                                            isInvestmentGrade = m.ISINVESTMENTGRADE,
+                                           operationId = l.OPERATIONID,
+                                           operationName = m.TBL_OPERATIONS.OPERATIONNAME,
 
                                            companyId = m.COMPANYID,
                                            branchId = m.BRANCHID,
