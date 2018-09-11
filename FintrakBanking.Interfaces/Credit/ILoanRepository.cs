@@ -172,9 +172,10 @@ namespace FintrakBanking.Interfaces.Credit
         List<CurrentCustomerExposure> GetApplicationFacilitySummary(int applicationId);
 
 
-        //IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview();
+        IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview();
 
-        //IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate, int loanId);
+        IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate, int loanId);
+        IEnumerable<LoanViewModel> GetCommercialLoanByApplicationDetailId(int loanApplicationDetailId);
 
     }
 }

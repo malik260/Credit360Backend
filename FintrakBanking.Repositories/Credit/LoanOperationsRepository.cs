@@ -11365,7 +11365,6 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-
         public IEnumerable<LoanApplicationDetailViewModel> ArchiveLoanApplicationDetails(int aplicationId)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
@@ -11443,19 +11442,16 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool CommercialPaperRateReview(InterestReviewViewModel userModel)
+        public bool addApplicationLineRateChange(InterestReviewViewModel userModel)
         {
             var systemDate = generalSetup.GetApplicationDate();
             if (userModel.loanId != 0)
             {
-                changeLoanRate(userModel, userModel.loanId);
+                addNonTermLoanLoanRateChange(userModel, userModel.loanId);
             }
-            else if (userModel.aplicationDetailId != 0)
+            else if (userModel.loanApplicationDetailId != 0 )
             {
-                var result = (from p in context.TBL_LOAN_APPLICATION_DETAIL
-                              where p.LOANAPPLICATIONDETAILID == userModel.aplicationDetailId
-                              select p).SingleOrDefault();
-
+                var result = context.TBL_LOAN_APPLICATION_DETAIL.Find(userModel.loanApplicationDetailId);
 
                 ArchiveLoanApplicationDetails(result.LOANAPPLICATIONDETAILID);
                 result.APPROVEDINTERESTRATE = userModel.newRate;
@@ -11463,7 +11459,7 @@ namespace FintrakBanking.Repositories.Credit
                 var loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == result.LOANAPPLICATIONDETAILID);
                 foreach (var loan in loans)
                 {
-                    changeLoanRate(userModel, userModel.loanId);  //loan.INTERESTRATE = userModel.newRate;
+                    addNonTermLoanLoanRateChange(userModel, loan.TERMLOANID);  //loan.INTERESTRATE = userModel.newRate;
                 };
 
                 //Audit Section ---------------------------
@@ -11490,27 +11486,40 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        private bool changeLoanRate(InterestReviewViewModel userModel, int loanId)
+        public bool addNonTermLoanLoanRateChange(InterestReviewViewModel userModel, int loanId)
         {
             var systemDate = generalSetup.GetApplicationDate();
             if (userModel.loanId != 0)
             {
                 TBL_LOAN loanRecord = context.TBL_LOAN.Find(loanId);
+
+                if (loanRecord == null)
+                    throw new BadLogicException("Loan Information not found.");
+                if (userModel.valueDate < loanRecord.EFFECTIVEDATE)
+                    throw new ConditionNotMetException("Effective date cannot be lesser than the loan start date.");
+
                 if (userModel.valueDate < systemDate)
                 {
-                    if (userModel.valueDate < loanRecord.EFFECTIVEDATE)
-                        throw new ConditionNotMetException("Effective date cannot be lesser than the loan effective date.");
+                    throw new ConditionNotMetException("Back-dating not allowed."); //TODO: Work out interest reversal methods based on product type
+                    //if(loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                    //{
+                    //    //Include code for commercial loan specific back-dating
+                    //}
 
-                    if (userModel.valueDate >= loanRecord.EFFECTIVEDATE)
-                        throw new ConditionNotMetException("Back-dating not allowed.");
+                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                    //{
+                    //    //Include code for fx revolving loan specific back-dating
+                    //}
+
+                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedLoan)
+                    //{
+                    //    //Include code for syndicated loan specific back-dating
+                    //}
                 }
                 else
                 {
-                    if (userModel.valueDate > systemDate)
-                        throw new ConditionNotMetException("Forward date is not allowed.");
-
+                    if (userModel.valueDate > systemDate) { throw new ConditionNotMetException("post dated interest rate change not allowed."); }
                     loanRecord.INTERESTRATE = userModel.newRate;
-
                 }
 
                 //Audit Section ---------------------------
@@ -11519,13 +11528,12 @@ namespace FintrakBanking.Repositories.Credit
                     AUDITTYPEID = (short)AuditTypeEnum.LoanInterestRateChange,
                     STAFFID = userModel.createdBy,
                     BRANCHID = (short)userModel.userBranchId,
-                    DETAIL = $"Interest rate changed on loan with reference number: {loanRecord.LOANREFERENCENUMBER} to new rate {userModel.newRate}",
+                    DETAIL = $"Interest rate changed on loan with reference number '{loanRecord.LOANREFERENCENUMBER}' to new rate '{userModel.newRate}'",
                     IPADDRESS = userModel.userIPAddress,
                     URL = userModel.applicationUrl,
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
-
                 context.TBL_AUDIT.Add(audit);
                 //end of Audit section -------------------------------
             }
@@ -11533,9 +11541,8 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool addCommercialPaperTenorReview(TenorExtionViewModel userModel)
+        public bool addNonTermLoanTenorReview(TenorExtionViewModel userModel)
         {
-            var refNo = string.Empty;
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
 
             TBL_LOAN loan = new TBL_LOAN();
@@ -11544,15 +11551,15 @@ namespace FintrakBanking.Repositories.Credit
             if (userModel.newTenor == 0)
                 throw new BadLogicException("You cannot extend tenor with a zero value");
 
-            loan = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == userModel.loanRef).FirstOrDefault();
+            loan = context.TBL_LOAN.Find(userModel.loanId);
             loanApp = context.TBL_LOAN_APPLICATION_DETAIL.Find(loan.LOANAPPLICATIONDETAILID);
 
-            if (userModel.newTenor > loanApp.APPROVEDTENOR)
+            if (loan.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking && userModel.newTenor > loanApp.APPROVEDTENOR)
             {
                 throw new ConditionNotMetException("The new loan tenor exceeded the line tenor.");
             }
 
-            if (loanApp.EXPIRYDATE != null)
+            if (loan.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking && loanApp.EXPIRYDATE != null)
             {
                 if (loanApp.EXPIRYDATE < loan.MATURITYDATE.AddDays(userModel.newTenor))
                     throw new ConditionNotMetException("the resulting maturity date exceeded the line expiry date.");
@@ -11563,7 +11570,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("the resulting maturity date exceeded the line expiry date.");
             }
 
-            if (loan.MATURITYDATE < loan.MATURITYDATE.AddDays(userModel.newTenor))
+            if (loan.MATURITYDATE <= loan.MATURITYDATE.AddDays(userModel.newTenor))
             {
                 ArchiveLoan(loan.TERMLOANID, (int)loan.OPERATIONID, archiveBatchCode);
                 loan.MATURITYDATE = loan.MATURITYDATE.AddDays(userModel.newTenor);
@@ -11595,17 +11602,20 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public bool addCommercialPaperLineTenorReview(int loanAplicationDetailId, int newTenor)
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool addApplicationLineTenorChange(TenorExtionViewModel userModel)
         {
-            TBL_LOAN_APPLICATION_DETAIL result = (from p in context.TBL_LOAN_APPLICATION_DETAIL
-                                                  where p.LOANAPPLICATIONDETAILID == loanAplicationDetailId
-                                                  select p).SingleOrDefault();
+            var result = context.TBL_LOAN_APPLICATION_DETAIL.Find(userModel.loanAplicationDetailId);
 
-            result.APPROVEDTENOR = result.APPROVEDTENOR + newTenor;
+            result.APPROVEDTENOR = result.APPROVEDTENOR + userModel.newTenor;
             if (result.EXPIRYDATE != null)
             {
                 var expiryDate = (DateTime)result.EXPIRYDATE;
-                result.EXPIRYDATE = expiryDate.AddDays(newTenor);
+                result.EXPIRYDATE = expiryDate.AddDays(userModel.newTenor);
+            }
+            else if(result.EFFECTIVEDATE != null)
+            {
+                result.EXPIRYDATE = result.EFFECTIVEDATE.Value.AddDays(result.APPROVEDTENOR);
             }
             ArchiveLoanApplicationDetails(result.LOANAPPLICATIONID);
             return context.SaveChanges() > 0;
