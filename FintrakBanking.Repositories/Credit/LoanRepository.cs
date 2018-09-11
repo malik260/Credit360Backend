@@ -7120,7 +7120,6 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
-
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int loanSystemTypeId, string searchQuery)
         {
             //if (searchQuery == "test1") throw new Exception("Exception 1");
