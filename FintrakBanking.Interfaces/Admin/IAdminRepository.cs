@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.Interfaces.Admin
 {
@@ -71,7 +72,7 @@ namespace FintrakBanking.Interfaces.Admin
 
 
         #region Two Factor Authentication
-        bool TwoFactorAuthentication(string staffCode, string passCode);
+        TwoFactorAutheticationOutputViewModel TwoFactorAuthentication(string staffCode, string passCode);
         bool TwoFactorAuthenticationEnabled();
         bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId);
         bool IsSuperAdmin(int staffId);

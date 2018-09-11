@@ -178,6 +178,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+       
         public IEnumerable<LookupViewModel> GetProductCurrency(int productId)
         {
             var data = (from p in context.TBL_PRODUCT_CURRENCY
@@ -2335,6 +2336,40 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
+        public IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId)
+        {
+            var productIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX
+                                join b in context.TBL_PRODUCT_PRICE_INDEX_CURNCY
+                                on a.PRODUCTPRICEINDEXID equals b.PRODUCTPRICEINDEXID
+                                where b.CURRENCYID == currencyId && a.DELETED == false
+                                select new ProductPriceIndexViewModel
+                                {
+                                    productPriceIndexId = a.PRODUCTPRICEINDEXID,
+                                    priceIndexDescription = a.PRICEINDEXDESCRIPTION,
+                                    companyId = a.COMPANYID,
+                                    priceIndexName = a.PRICEINDEXNAME,
+                                    priceIndexRate = a.PRICEINDEXRATE,
+                                    dateTimeUpdated = a.DATETIMEUPDATED
+                                }).ToList();
+            return productIndex;
+        }
+
+        public ProductPriceIndexViewModel GetProductPriceIndexByProductId(int productId)
+        {
+            var data = (from b in context.TBL_PRODUCT
+                        join a in context.TBL_PRODUCT_PRICE_INDEX on b.PRODUCTPRICEINDEXID equals a.PRODUCTPRICEINDEXID
+                        where b.PRODUCTID == productId && a.DELETED == false
+                        select new ProductPriceIndexViewModel()
+                        {
+                            productPriceIndexId = a.PRODUCTPRICEINDEXID,
+                            priceIndexDescription = a.PRICEINDEXDESCRIPTION,
+                            companyId = a.COMPANYID,
+                            priceIndexName = a.PRICEINDEXNAME,
+                            priceIndexRate = a.PRICEINDEXRATE,
+                        }).FirstOrDefault(); ;
+
+            return data;
+        }
         public IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId)
         {
             return GetAllProductPriceIndex(companyId);

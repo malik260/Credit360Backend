@@ -133,6 +133,10 @@ namespace FintrakBanking.Entities.Models
 
         public string FIELD1 { get; set; }
 
+        public string FIELD2 { get; set; }
+
+        public string FIELD3 { get; set; }
+
         public double? PRODUCTPRICEINDEXRATE { get; set; }
 
         public short? PRODUCTPRICEINDEXID { get; set; }

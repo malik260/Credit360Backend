@@ -57,8 +57,8 @@ namespace FintrakBanking.Repositories.CASA
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                if (authenticated.authenticated == false)
+                    throw new TwoFactorAuthenticationException(authenticated.message);
             }
 
             if (USE_THIRD_PARTY_INTEGRATION)
@@ -160,8 +160,8 @@ namespace FintrakBanking.Repositories.CASA
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                if (authenticated.authenticated == false)
+                    throw new TwoFactorAuthenticationException(authenticated.message);
             }
 
             if (USE_THIRD_PARTY_INTEGRATION)

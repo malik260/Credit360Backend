@@ -94,6 +94,27 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-price-index-by-productId/{productId}")]
+        public HttpResponseMessage GetProductPriceIndexByProductId(int productId)
+        {
+            try
+            {
+                var data = repo.GetProductPriceIndexByProductId(productId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });  
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet] [ClaimsAuthorization]  
         [Route("currency-by-product/{id}")]
         public HttpResponseMessage GetProductCurrency(int id)
@@ -1070,7 +1091,27 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-price-index-by-currencyId")]
+        public HttpResponseMessage GetAllProductPriceIndex(int currencyId)
+        {
+            try
+            {
+                var response = repo.GetAllProductPriceIndexByCurrencyId(currencyId);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product-price-index/{productPriceIndexId}")]
         public HttpResponseMessage GetProductPriceIndexById(int productPriceIndexId)
         {
