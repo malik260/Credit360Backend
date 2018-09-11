@@ -45,7 +45,9 @@ namespace FintrakBanking.Entities.Models
 
         public int PROPOSEDTENOR { get; set; }
 
-        public double PROPOSEDINTERESTRATE { get; set; }
+        public int PROPOSEDINTERESTRATE { get; set; }
+
+        public double? PRODUCTPRICEINDEXRATE { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal PROPOSEDAMOUNT { get; set; }
@@ -113,7 +115,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CASAACCOUNTID { get; set; } //CASAACCOUNTID
 
-        public int PRODUCTPRICEINDEXID { get; set; } 
+        public short? PRODUCTPRICEINDEXID { get; set; } 
 
         public bool SECUREDBYCOLLATERAL { get; set; }
         public int? CRMSCOLLATERALTYPEID { get; set; }

@@ -7204,7 +7204,7 @@ namespace FintrakBanking.Repositories.Credit
                                        join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                                        where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
-                                       && l.OPERATIONPERFORMED == false
+                                       && l.OPERATIONPERFORMED == false && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                        select new CamProcessedLoanViewModel
                                        {
                                            approvalStatusId = (short)m.APPROVALSTATUSID,

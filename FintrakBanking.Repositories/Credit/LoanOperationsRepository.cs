@@ -7304,7 +7304,7 @@ namespace FintrakBanking.Repositories.Credit
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            if (Count < 1 && applicationDate >= systemDate)
+            if (Count < 1 && applicationDate == systemDate)
             {
             }
             else if (Count < 1 && applicationDate <= systemDate)
@@ -7324,7 +7324,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDueInterestDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Interest Reversal", loanInput.operationId));
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDuePrincipalDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Principal Reversal", loanInput.operationId));
+                if(pastDuePrincipalDiff > 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDuePrincipalDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Principal Reversal", loanInput.operationId));
+                }
+                
 
                 //result = financeTransaction.PostTransaction(inputTransactions);
             }
@@ -11365,102 +11369,68 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public IEnumerable<LoanApplicationDetailViewModel> ArchiveLoanApplicationDetails(int aplicationId)
+        public void ArchiveLoanApplicationDetails(int loanApplicationDetailId)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
-            var model = (from a in context.TBL_LOAN_APPLICATION_DETAIL
-                         where a.LOANAPPLICATIONID == aplicationId
-
-                         select new LoanApplicationDetailViewModel()
-                         {
-                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
-                             loanApplicationId = a.LOANAPPLICATIONID,
-                             customerId = a.CUSTOMERID,
-                             proposedProductId = a.PROPOSEDPRODUCTID,
-                             proposedTenor = a.PROPOSEDTENOR,
-                             proposedInterestRate = a.PROPOSEDINTERESTRATE,
-                             proposedAmount = a.PROPOSEDAMOUNT,
-                             approvedProductId = a.APPROVEDPRODUCTID,
-                             approvedTenor = a.APPROVEDTENOR,
-                             approvedInterestRate = a.APPROVEDINTERESTRATE,
-                             approvedAmount = a.APPROVEDAMOUNT,
-                             currencyId = a.CURRENCYID,
-                             exchangeRate = a.EXCHANGERATE,
-                             subSectorId = a.SUBSECTORID,
-                             statusId = a.STATUSID,
-                             loanPurpose = a.LOANPURPOSE,
-                             createdBy = a.CREATEDBY,
-                             dateTimeCreated = a.DATETIMECREATED,
-                             lastUpdatedBy = (int)a.LASTUPDATEDBY,
-                             dateTimeUpdated = a.DATETIMEUPDATED,
-                             deleted = a.DELETED,
-                             deletedBy = a.DELETEDBY,
-                             dateTimeDeleted = a.DATETIMEDELETED,
-
-                         }).ToList();
-
-            List<TBL_LOAN_APPLICATION_DETL_ARCH> LoanApplicationDetailsArchive = new List<TBL_LOAN_APPLICATION_DETL_ARCH>();
-
-            foreach (var item in model)
+            var detailRow = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
+            if(detailRow != null)
             {
+                List<TBL_LOAN_APPLICATION_DETL_ARCH> LoanApplicationDetailsArchive = new List<TBL_LOAN_APPLICATION_DETL_ARCH>();
                 TBL_LOAN_APPLICATION_DETL_ARCH addLoanApplDetailsArchive = new TBL_LOAN_APPLICATION_DETL_ARCH();
 
-
                 addLoanApplDetailsArchive.ARCHIVEDATE = DateTime.Today;
-                addLoanApplDetailsArchive.LOANAPPLICATIONDETAILID = item.loanApplicationDetailId;
-                addLoanApplDetailsArchive.LOANAPPLICATIONID = item.loanApplicationId;
-                addLoanApplDetailsArchive.CUSTOMERID = item.customerId;
-                addLoanApplDetailsArchive.PROPOSEDPRODUCTID = item.proposedProductId;
-                addLoanApplDetailsArchive.PROPOSEDTENOR = item.proposedTenor;
-                addLoanApplDetailsArchive.PROPOSEDINTERESTRATE = item.proposedInterestRate;
-                addLoanApplDetailsArchive.PROPOSEDAMOUNT = item.proposedAmount;
-                addLoanApplDetailsArchive.APPROVEDPRODUCTID = item.approvedProductId;
-                addLoanApplDetailsArchive.APPROVEDTENOR = item.approvedTenor;
-                addLoanApplDetailsArchive.APPROVEDINTERESTRATE = item.approvedInterestRate;
-                addLoanApplDetailsArchive.APPROVEDAMOUNT = item.approvedAmount;
-                addLoanApplDetailsArchive.CURRENCYID = item.currencyId;
-                addLoanApplDetailsArchive.EXCHANGERATE = item.exchangeRate;
-                addLoanApplDetailsArchive.SUBSECTORID = item.subSectorId;
-                addLoanApplDetailsArchive.STATUSID = item.statusId;
-                addLoanApplDetailsArchive.LOANPURPOSE = item.loanPurpose;
-                addLoanApplDetailsArchive.CREATEDBY = item.createdBy;
-                addLoanApplDetailsArchive.DATETIMECREATED = item.dateTimeCreated;
-                addLoanApplDetailsArchive.LASTUPDATEDBY = item.lastUpdatedBy;
-                addLoanApplDetailsArchive.DATETIMEUPDATED = item.dateTimeUpdated;
-                addLoanApplDetailsArchive.DELETED = item.deleted;
-                addLoanApplDetailsArchive.DELETEDBY = item.deletedBy;
-                addLoanApplDetailsArchive.DATETIMEDELETED = item.dateTimeDeleted;
+                addLoanApplDetailsArchive.LOANAPPLICATIONDETAILID = detailRow.LOANAPPLICATIONDETAILID;
+                addLoanApplDetailsArchive.LOANAPPLICATIONID = detailRow.LOANAPPLICATIONID;
+                addLoanApplDetailsArchive.CUSTOMERID = detailRow.CUSTOMERID;
+                addLoanApplDetailsArchive.PROPOSEDPRODUCTID = detailRow.PROPOSEDPRODUCTID;
+                addLoanApplDetailsArchive.PROPOSEDTENOR = detailRow.PROPOSEDTENOR;
+                addLoanApplDetailsArchive.PROPOSEDINTERESTRATE = detailRow.PROPOSEDINTERESTRATE;
+                addLoanApplDetailsArchive.PROPOSEDAMOUNT = detailRow.PROPOSEDAMOUNT;
+                addLoanApplDetailsArchive.APPROVEDPRODUCTID = detailRow.APPROVEDPRODUCTID;
+                addLoanApplDetailsArchive.APPROVEDTENOR = detailRow.APPROVEDTENOR;
+                addLoanApplDetailsArchive.APPROVEDINTERESTRATE = detailRow.APPROVEDINTERESTRATE;
+                addLoanApplDetailsArchive.APPROVEDAMOUNT = detailRow.APPROVEDAMOUNT;
+                addLoanApplDetailsArchive.CURRENCYID = detailRow.CURRENCYID;
+                addLoanApplDetailsArchive.EXCHANGERATE = detailRow.EXCHANGERATE;
+                addLoanApplDetailsArchive.SUBSECTORID = detailRow.SUBSECTORID;
+                addLoanApplDetailsArchive.STATUSID = detailRow.STATUSID;
+                addLoanApplDetailsArchive.LOANPURPOSE = detailRow.LOANPURPOSE;
+                addLoanApplDetailsArchive.CREATEDBY = detailRow.CREATEDBY;
+                addLoanApplDetailsArchive.DATETIMECREATED = detailRow.DATETIMECREATED;
+                addLoanApplDetailsArchive.LASTUPDATEDBY = detailRow.LASTUPDATEDBY;
+                addLoanApplDetailsArchive.DATETIMEUPDATED = detailRow.DATETIMEUPDATED;
+                addLoanApplDetailsArchive.DELETED = detailRow.DELETED;
+                addLoanApplDetailsArchive.DELETEDBY = detailRow.DELETEDBY;
+                addLoanApplDetailsArchive.DATETIMEDELETED = detailRow.DATETIMEDELETED;
 
-                LoanApplicationDetailsArchive.Add(addLoanApplDetailsArchive);
+                this.context.TBL_LOAN_APPLICATION_DETL_ARCH.Add(addLoanApplDetailsArchive);
 
+                context.SaveChanges();
             }
-
-            this.context.TBL_LOAN_APPLICATION_DETL_ARCH.AddRange(LoanApplicationDetailsArchive);
-
-            context.SaveChanges();
-            return model;
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool addApplicationLineRateChange(InterestReviewViewModel userModel)
         {
             var systemDate = generalSetup.GetApplicationDate();
-            if (userModel.loanId != 0)
+            if (userModel.loanApplicationDetailId != 0 )
             {
-                addNonTermLoanLoanRateChange(userModel, userModel.loanId);
-            }
-            else if (userModel.loanApplicationDetailId != 0 )
-            {
+                if (userModel.valueDate > systemDate)
+                    throw new ConditionNotMetException("post dated interest rate change not allowed.");
+
                 var result = context.TBL_LOAN_APPLICATION_DETAIL.Find(userModel.loanApplicationDetailId);
 
                 ArchiveLoanApplicationDetails(result.LOANAPPLICATIONDETAILID);
                 result.APPROVEDINTERESTRATE = userModel.newRate;
 
-                var loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == result.LOANAPPLICATIONDETAILID);
+                var loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == result.LOANAPPLICATIONDETAILID).ToList();
                 foreach (var loan in loans)
                 {
                     addNonTermLoanLoanRateChange(userModel, loan.TERMLOANID);  //loan.INTERESTRATE = userModel.newRate;
                 };
+
+                var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x=>x.LOANID == userModel.loanApplicationDetailId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).FirstOrDefault();
+                lmsApprovalRecord.OPERATIONPERFORMED = true;
 
                 //Audit Section ---------------------------
                 var audit = new TBL_AUDIT
@@ -11486,6 +11456,46 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
+        private LoanPaymentRestructureScheduleInputViewModel BuildLoanPaymentResturctureScheduleModel(int loanId)
+        {
+            var loan = context.TBL_LOAN.Find(loanId);
+            var appDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loan.LOANAPPLICATIONDETAILID);
+            var model = new LoanPaymentRestructureScheduleInputViewModel
+            {
+                proposedTenor = appDetail.PROPOSEDTENOR,
+                //loanChangeType = "",
+                loanId = loan.TERMLOANID,
+                //payAmount = 0,
+                //newAmount = "",
+                productId = loan.PRODUCTID,
+                newPrincipalFrequency = loan.PRINCIPALFREQUENCYTYPEID,
+                newInterestFrequency = loan.INTERESTFREQUENCYTYPEID,
+                newPrincipalFirstpaymentDate = loan.FIRSTPRINCIPALPAYMENTDATE,
+                newInterestFirstpaymentDate = loan.FIRSTINTERESTPAYMENTDATE,
+                payInterest = loan.INTERESTRATE,
+                //newInterest = "",
+                //newTenor = "",
+                newEffectiveDate = loan.EFFECTIVEDATE,
+                //prepayment = "",
+                operationId = loan.OPERATIONID ?? 0,
+                //isManagementInterestRate = "",
+                //newMaturityDate = "",
+                //newTenorPrepayment = "",
+                customerId = loan.CUSTOMERID,
+                //date = ,
+                //feeRate = "",
+                //feeAmount = "",
+                //earnedFeeAmount = "",
+                //chargeFeeId = "",
+                //chargeFeeTypeId = "",
+                //feeAmountDiff = "",
+                //oldCasaAccountId = "",
+                //newCasaAccountId = "",
+            };
+
+            return model;
+        }
+
         public bool addNonTermLoanLoanRateChange(InterestReviewViewModel userModel, int loanId)
         {
             var systemDate = generalSetup.GetApplicationDate();
@@ -11500,8 +11510,14 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (userModel.valueDate < systemDate)
                 {
+                    var inputModel = BuildLoanPaymentResturctureScheduleModel(loanId);
                     throw new ConditionNotMetException("Back-dating not allowed."); //TODO: Work out interest reversal methods based on product type
-                    //if(loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                    //{
+                    //    LoanBackDateFunction(loanId, userModel.valueDate, systemDate, 0, inputModel);
+                    //}
+
+                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
                     //{
                     //    //Include code for commercial loan specific back-dating
                     //}
@@ -11511,7 +11527,7 @@ namespace FintrakBanking.Repositories.Credit
                     //    //Include code for fx revolving loan specific back-dating
                     //}
 
-                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedLoan)
+                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     //{
                     //    //Include code for syndicated loan specific back-dating
                     //}
@@ -11605,8 +11621,8 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool addApplicationLineTenorChange(TenorExtionViewModel userModel)
         {
-            var result = context.TBL_LOAN_APPLICATION_DETAIL.Find(userModel.loanAplicationDetailId);
-
+            var result = context.TBL_LOAN_APPLICATION_DETAIL.Find(userModel.loanApplicationDetailId);
+           
             result.APPROVEDTENOR = result.APPROVEDTENOR + userModel.newTenor;
             if (result.EXPIRYDATE != null)
             {
@@ -11617,7 +11633,11 @@ namespace FintrakBanking.Repositories.Credit
             {
                 result.EXPIRYDATE = result.EFFECTIVEDATE.Value.AddDays(result.APPROVEDTENOR);
             }
-            ArchiveLoanApplicationDetails(result.LOANAPPLICATIONID);
+            ArchiveLoanApplicationDetails(result.LOANAPPLICATIONDETAILID);
+
+            var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).FirstOrDefault();
+            lmsApprovalRecord.OPERATIONPERFORMED = true;
+
             return context.SaveChanges() > 0;
         }
 

@@ -43,7 +43,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string appRef { get; set; }
         public int id { get; set; }
         public int loanId { get; set; }
-        public int loanAplicationDetailId { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public bool isParent { get; set; }
         public int newTenor { get; set; }
         public string loanRef { get; set; }
