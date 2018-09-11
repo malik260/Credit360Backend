@@ -48,6 +48,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string repaymentSchedule { get; set; }
         public string purpose { get; set; }
         public short currencyId { get; set; }
+        public string productPriceIndex { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity
