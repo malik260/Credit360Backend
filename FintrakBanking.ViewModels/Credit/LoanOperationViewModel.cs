@@ -42,6 +42,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string appRef { get; set; }
         public int id { get; set; }
+        public int loanId { get; set; }
+        public int loanAplicationDetailId { get; set; }
         public bool isParent { get; set; }
         public int newTenor { get; set; }
         public string loanRef { get; set; }
@@ -50,7 +52,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class InterestReviewViewModel : GeneralEntity
     {
         public double newRate { get; set; }
-        public int aplicationDetailId { get; set; }
+        public int loanApplicationDetailId { get; set; }
         public int loanId { get; set; }
         public string loanReferenceNumber { get; set; }
         public DateTime valueDate { get; set; }

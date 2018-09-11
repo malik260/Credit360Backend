@@ -66,6 +66,8 @@ namespace FintrakBanking.APICore.App_Start
     using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
     using FintrakBanking.Entities.StagingModels;
     using FintrakBanking.APICore.Filters;
+    using FintrakBanking.Interfaces.CRMS;
+    using FintrakBanking.Repositories.CRMS;
 
     public static class NinjectWebCommon
     {
@@ -225,6 +227,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IMemorandumRepository>().To<MemorandumRepository>();
             kernel.Bind<ICrmsRegulatoryRepository>().To<CrmsRegulatoryRepository>();
             kernel.Bind<IDashboardRepository>().To<DashboardRepository>();
+            kernel.Bind<ICRMSCodeBookRepository>().To<CRMSCodeBookRepository>();
         }
 
     }

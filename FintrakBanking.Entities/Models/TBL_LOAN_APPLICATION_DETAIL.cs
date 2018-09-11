@@ -112,8 +112,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEDELETED { get; set; }
 
         public int? CASAACCOUNTID { get; set; } //CASAACCOUNTID
-
-
+        
         public bool SECUREDBYCOLLATERAL { get; set; }
         public int? CRMSCOLLATERALTYPEID { get; set; }
 
@@ -140,6 +139,7 @@ namespace FintrakBanking.Entities.Models
         public double? PRODUCTPRICEINDEXRATE { get; set; }
 
         public short? PRODUCTPRICEINDEXID { get; set; }
+
         public bool ISSPECIALISED { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
@@ -157,6 +157,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_PRODUCT TBL_PRODUCT1 { get; set; }
 
         public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
+
+        public virtual TBL_PRODUCT_PRICE_INDEX TBL_PRODUCT_PRICE_INDEX { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_LOAN> TBL_LOAN { get; set; }
