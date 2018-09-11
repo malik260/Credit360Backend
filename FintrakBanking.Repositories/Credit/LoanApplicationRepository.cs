@@ -128,7 +128,7 @@ namespace FintrakBanking.Repositories.Credit
                                 applicationRefNo = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 loanApplicationId = b.LOANAPPLICATIONID,
                                 proposedAmount = b.PROPOSEDAMOUNT,
-                                proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                                proposedInterestRate = (double)b.PROPOSEDINTERESTRATE,
                                 proposedProductId = b.PROPOSEDPRODUCTID,
                                 proposedTenor = b.PROPOSEDTENOR, //Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
                                 statusId = b.STATUSID,
@@ -950,7 +950,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
                     var loanAmt = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
-
+                    loan.applicationAmount = loanAmt;
                     if (limit != 0)
                     {
                         if (loanAmt > (decimal)limit)
@@ -984,6 +984,8 @@ namespace FintrakBanking.Repositories.Credit
                     var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
                     var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
 
+                    // var totalAmount = tdata.Sum(o => (o.PROPOSEDAMOUNT * o.EXCHANGERATE));
+                    //loan.applicationAmount = totalAmount;
                     if (limit != 0)
                     {
                         if (total != 0)
@@ -997,7 +999,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     UpdateLoanApplication(loan);
                 }
-
+                
                 response = context.SaveChanges();
 
 
@@ -1217,7 +1219,7 @@ namespace FintrakBanking.Repositories.Credit
                 var data = new TBL_LOAN_APPLICATION_DETAIL
                 {
                     APPROVEDAMOUNT = a.proposedAmount,
-                    APPROVEDINTERESTRATE = a.proposedInterestRate,
+                    APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
                     APPROVEDPRODUCTID = a.proposedProductId,
                     APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
@@ -1231,7 +1233,7 @@ namespace FintrakBanking.Repositories.Credit
                     EQUITYAMOUNT = a.equityAmount,
 
                     PROPOSEDAMOUNT = a.proposedAmount,
-                    PROPOSEDINTERESTRATE = a.proposedInterestRate,
+                    PROPOSEDINTERESTRATE = (int)a.proposedInterestRate,
                     PROPOSEDPRODUCTID = a.proposedProductId,
                     PROPOSEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
@@ -1245,7 +1247,12 @@ namespace FintrakBanking.Repositories.Credit
                     CRMSREPAYMENTSOURCEID = a.crmsPaymentSourceId,
                     CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
                     CRMS_ECCI_NUMBER = a.crms_ECCI_Number,
-                    FIELD1 = a.listOfCommodities,
+                    FIELD1 = a.fieldOne,
+                    FIELD2 = a.fieldTwo,
+                    FIELD3 = a.fieldThree,
+                    PRODUCTPRICEINDEXID = a.productPriceIndexId,
+                    PRODUCTPRICEINDEXRATE = a.productPriceIndexRate
+                    //FIELD1 = a.listOfCommodities,
                   //  PRODUCTPRICEINDEXID = a.productPriceIndexId,
                   //  PRODUCTPRICEINDEXRATE = a.productPriceIndexRate
                 };
@@ -1268,6 +1275,10 @@ namespace FintrakBanking.Repositories.Credit
                 if (a.bondDetails != null && a.productClassId == (short)ProductClassEnum.BondAndGuarantees)
                 {
                     BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
+                }
+                if (a.syndicatedLoan != null && a.syndicatedLoan.Count > 0 )
+                {
+                    SyndicatedDetails(a.syndicatedLoan, a.loanApplicationDetailId, createdBy);
                 }
                 if (a.productFees != null)
                 {
@@ -1334,6 +1345,22 @@ namespace FintrakBanking.Repositories.Credit
             context.TBL_LOAN_APPLICATION_DETL_BG.Add(data);
         }
 
+        private void SyndicatedDetails(List<SyndicatedLoanDetailViewModel> entity, int loanApplicationId, int createdBy)
+        {
+            var data = entity.Select(a => new TBL_LOAN_APPLICATION_DETL_SYN()
+            {
+
+                BANKCODE = a.bankCode,
+                BANKNAME = a.bankName,
+                AMOUNTCONTRIBUTED = a.amountContributed,
+                TYPEID = a.typeId,
+                DELETED = false,
+                DATETIMECREATED = DateTime.Now,
+                LOANAPPLICATIONDETAILID = loanApplicationId,
+                CREATEDBY = createdBy
+            });
+            context.TBL_LOAN_APPLICATION_DETL_SYN.AddRange(data);
+        }
         //public int AddCustomerCreditBureauCharge(LoanCreditBereauViewModel entity)
         //{
         //    var previousSearch = this.GetCustomerCreditBureauReportLog(entity.customerId);
@@ -3092,19 +3119,6 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.CODE + "-" + x.DESCRIPTION
             }).ToList();
         }
-        public IEnumerable<LookupViewModel> GetAllProductPriceIndex(int currencyId)
-        {
-            var productIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX
-                         join b in context.TBL_PRODUCT_PRICE_INDEX_CURNCY
-                         on a.PRODUCTPRICEINDEXID equals b.PRODUCTPRICEINDEXID
-                         where b.CURRENCYID == currencyId
-                         select new LookupViewModel
-                         {
-                             lookupId = a.PRODUCTPRICEINDEXID,
-                             lookupName = a.PRICEINDEXNAME,
-                             lookupTypeName = a.PRICEINDEXRATE.ToString()
-                         }).ToList();
-            return productIndex;
-        }
+     
     }
 }

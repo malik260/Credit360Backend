@@ -609,38 +609,48 @@ namespace FintrakBanking.Repositories.Setups.General
                     item.ISCURRENT = false;
                     item.DATEAPPROVED = DateTime.Now;
                 }
-
+        
                 if (tempActivities.Count > 0)
                 {
                     foreach (var item in tempActivities)
                     {
-                        var userActivity = new TBL_PROFILE_ADDITIONALACTIVITY()
+                        var existingActivities = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.ACTIVITYID == item.ACTIVITYID).FirstOrDefault();
+
+                        if (existingActivities == null)
                         {
-                            ACTIVITYID = item.ACTIVITYID,
-                            CANADD = false,
-                            CANEDIT = false,
-                            CANAPPROVE = false,
-                            CANDELETE = false,
-                            CANVIEW = false,
-                            CREATEDBY = item.CREATEDBY,
-                            DATETIMECREATED = DateTime.Now,
-                        };
-                        userActivities.Add(userActivity);
+                            var userActivity = new TBL_PROFILE_ADDITIONALACTIVITY()
+                            {
+                                ACTIVITYID = item.ACTIVITYID,
+                                CANADD = false,
+                                CANEDIT = false,
+                                CANAPPROVE = false,
+                                CANDELETE = false,
+                                CANVIEW = false,
+                                CREATEDBY = item.CREATEDBY,
+                                DATETIMECREATED = DateTime.Now,
+                            };
+                            userActivities.Add(userActivity);
+                          
+                        }
                     }
                 }
-
+        
                 if (tempGroup.Count > 0)
                 {
                     foreach (var item in tempGroup)
                     {
-                        var grpItem = new TBL_PROFILE_USERGROUP()
+                        var existingGroup = context.TBL_PROFILE_USERGROUP.Where(x => x.GROUPID == item.GROUPID).FirstOrDefault();
+                        if(existingGroup == null)
                         {
-                            GROUPID = item.GROUPID,
-                            APPROVALSTATUS = false,
-                            DATETIMECREATED = DateTime.Now,
-                            CREATEDBY = item.CREATEDBY,
-                        };
-                        userGroups.Add(grpItem);
+                            var grpItem = new TBL_PROFILE_USERGROUP()
+                            {
+                                GROUPID = item.GROUPID,
+                                APPROVALSTATUS = false,
+                                DATETIMECREATED = DateTime.Now,
+                                CREATEDBY = item.CREATEDBY,
+                            };
+                            userGroups.Add(grpItem);
+                        }         
                     }
                 }
             }
@@ -664,19 +674,22 @@ namespace FintrakBanking.Repositories.Setups.General
                         var targetActivities = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == targetUser.USERID).ToList();
                         if (targetGroups.Any())
                         {
-                            foreach (var item in targetGroups)
+                            var comparedGroup = targetGroups.Where(t1 => !tempGroup.Any(t2 => t1.GROUPID == t2.GROUPID));
+                            foreach (var item in comparedGroup)
                             {
                                 context.TBL_PROFILE_USERGROUP.Remove(item);
                             }
                         }
                         if (targetActivities.Any())
                         {
-                            foreach (var item in targetActivities)
+                          var comparedactivities =  targetActivities.Where(t1 => !tempActivities.Any(t2 => t1.ACTIVITYID == t2.ACTIVITYID));
+
+                            foreach (var item in comparedactivities)
                             {
                                 context.TBL_PROFILE_ADDITIONALACTIVITY.Remove(item);
                             }
                         }
-                //        context.SaveChanges();
+                    context.SaveChanges();
                     }
                 }
             }

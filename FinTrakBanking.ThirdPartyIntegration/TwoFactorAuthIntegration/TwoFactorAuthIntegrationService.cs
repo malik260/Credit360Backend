@@ -1,4 +1,6 @@
-﻿using FintrakBanking.Entities.Models;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Entities.Models;
+using FintrakBanking.ViewModels.Finance;
 using FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthService;
 using System;
 using System.Collections.Generic;
@@ -12,25 +14,26 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
     public class TwoFactorAuthIntegrationService : ITwoFactorAuthIntegrationService
     {
 
-        public bool Authenticate(string staffCode, string passCode)
+        public TwoFactorAutheticationOutputViewModel Authenticate(string staffCode, string passCode)
         {
             try
             {
                 var requestDatetime = DateTime.Now;
                 AuthWrapperClient client = new AuthWrapperClient();
-                //if (passCode == "1234")
-                //    return true;
-                //else
-                //    return false;
 
-                bool output = false;
                 AuthResponse authResponse = client.AuthMethod(new AuthRequest
                 {
                     CustID = staffCode,
                     PassCode = passCode
                 });
-               var responseDateTime = DateTime.Now;
-                output = authResponse.Authenticated;
+                var responseDateTime = DateTime.Now;
+
+                var output = new TwoFactorAutheticationOutputViewModel()
+                {
+                    authenticated = authResponse.Authenticated,
+                    message = authResponse.Message
+                };
+
                 client.Close();
                 var logs = new TBL_CUSTOM_API_LOGS
                 {
@@ -49,15 +52,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                 logContext.SaveChanges();
                 return output;
             }
-            catch (Exception ex)
+            catch (TwoFactorAuthenticationException ex)
             {
-                return false;
+                throw new TwoFactorAuthenticationException(ex.Message);
             }
 
         }
         public interface ITwoFactorAuthIntegrationService
         {
-            bool Authenticate(string staffCode, string passCode);
+            TwoFactorAutheticationOutputViewModel Authenticate(string staffCode, string passCode);
         }
     }
 }

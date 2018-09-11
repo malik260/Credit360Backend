@@ -141,6 +141,10 @@
           <DataField>purpose</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="productPriceIndex">
+          <DataField>productPriceIndex</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
@@ -1302,7 +1306,6 @@
                     <Style>
                       <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
-                      <FontWeight>Bold</FontWeight>
                       <Format>d MMM yyyy</Format>
                     </Style>
                   </TextRun>
@@ -3374,14 +3377,14 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!interestRate.Value</Value>
+                                  <Value>=Fields!interestRate.Value.ToString + " " + First(Fields!productPriceIndex.Value, "OfferLetterLoanDetail")</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>% </Value>
+                                  <Value>%  </Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -4478,57 +4481,6 @@
               </Border>
             </Style>
           </Tablix>
-          <Textbox Name="Textbox9">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Ref:</Value>
-                    <Style>
-                      <FontFamily>Lucida Sans Unicode</FontFamily>
-                      <FontWeight>Bold</FontWeight>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value xml:space="preserve"> </Value>
-                    <Style>
-                      <FontFamily>Lucida Sans Unicode</FontFamily>
-                    </Style>
-                  </TextRun>
-                  <TextRun>
-                    <Value>=First(Fields!loanApplicationId.Value, "OfferLetterLoanDetail")</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Lucida Sans Unicode</FontFamily>
-                      <FontWeight>Bold</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style>
-                  <TextAlign>Right</TextAlign>
-                </Style>
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox9</rd:DefaultName>
-            <Top>0.04167in</Top>
-            <Left>4.84608in</Left>
-            <Height>0.25in</Height>
-            <Width>1.94626in</Width>
-            <ZIndex>30</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
           <Tablix Name="Tablix2">
             <TablixBody>
               <TablixColumns>
@@ -4629,7 +4581,7 @@
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.61487in</Width>
-            <ZIndex>31</ZIndex>
+            <ZIndex>30</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4661,7 +4613,7 @@
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
-            <ZIndex>32</ZIndex>
+            <ZIndex>31</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4676,10 +4628,10 @@
             <TablixBody>
               <TablixColumns>
                 <TablixColumn>
-                  <Width>2.55478in</Width>
+                  <Width>2.72696in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>4.02353in</Width>
+                  <Width>3.83603in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -4923,8 +4875,8 @@
             <Top>1.84836in</Top>
             <Left>0.22935in</Left>
             <Height>0.75in</Height>
-            <Width>6.57831in</Width>
-            <ZIndex>33</ZIndex>
+            <Width>6.56299in</Width>
+            <ZIndex>32</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -4950,30 +4902,46 @@
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
-            <Textbox Name="companyName">
+            <Textbox Name="Textbox9">
               <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
               <Paragraphs>
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>=First(Fields!companyName.Value, "OfferLetterDetails")</Value>
+                      <Value>Ref:</Value>
                       <Style>
-                        <FontFamily>garamond</FontFamily>
-                        <FontSize>16pt</FontSize>
+                        <FontFamily>Lucida Sans Unicode</FontFamily>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value xml:space="preserve"> </Value>
+                      <Style>
+                        <FontFamily>Lucida Sans Unicode</FontFamily>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value>=First(Fields!loanApplicationId.Value, "OfferLetterLoanDetail")</Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Lucida Sans Unicode</FontFamily>
+                        <FontWeight>Bold</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
                       </Style>
                     </TextRun>
                   </TextRuns>
                   <Style>
-                    <TextAlign>Center</TextAlign>
+                    <TextAlign>Right</TextAlign>
                   </Style>
                 </Paragraph>
               </Paragraphs>
-              <rd:DefaultName>companyName</rd:DefaultName>
-              <Top>0.37375in</Top>
-              <Left>2.03973in</Left>
-              <Height>0.40625in</Height>
-              <Width>2.30277in</Width>
+              <rd:DefaultName>Textbox9</rd:DefaultName>
+              <Top>0.82167in</Top>
+              <Left>4.94074in</Left>
+              <Height>0.25in</Height>
+              <Width>1.94626in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>

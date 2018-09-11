@@ -603,6 +603,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<CamDocumentViewModel> camDocuments { get; set; }
         public short? productClassProcessId { get; set; }
         public bool undergoingConcession { get; set; }
+        public string productPriceIndex { get; set; }
         public string proposedTenorString
         {
             get

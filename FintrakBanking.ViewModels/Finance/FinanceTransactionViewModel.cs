@@ -85,7 +85,11 @@ namespace FintrakBanking.ViewModels.Finance
         public string passcode { get; set; }
     }
 
-
+    public class TwoFactorAutheticationOutputViewModel
+    {
+        public bool authenticated { get; set; }
+        public string message { get; set; }
+    }
     public class CasaBalanceViewModel
     {
         public string accountNumber { get; set; }
