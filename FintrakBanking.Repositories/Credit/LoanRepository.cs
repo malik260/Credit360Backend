@@ -236,7 +236,7 @@ namespace FintrakBanking.Repositories.Credit
         public string AddLoanBooking(LoanViewModel entity)
         {
             //...................CHECK IF THE LOAN RECORD IS TERM(SCHEDULED) LOAN..................//
-            if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating)
+            if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan || entity.productTypeId == (int)LoanProductTypeEnum.SelfLiquidating || entity.productTypeId == (int)LoanProductTypeEnum.SyndicatedTermLoan)
             {
                 return this.AddTermLoan(entity);
             }
@@ -451,216 +451,8 @@ namespace FintrakBanking.Repositories.Credit
                     throw new SecureException(ex.Message);
                 }
             }
-
         }
-        //private string addRevolvingLoan(LoanViewModel model)
-        //{
-        //    var application = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
-        //    var revolvingLoanInput = model.revolvingLoanInput;
 
-        //    var overdraftLimit = from a in context.TBL_LOAN_REVOLVING
-        //                         where a.LOANAPPLICATIONDETAILID == revolvingLoanInput.loanApplicationDetailId
-        //                         let sumLimit = context.TBL_LOAN_REVOLVING.Where(x => x.LOANAPPLICATIONDETAILID == revolvingLoanInput.loanApplicationDetailId).Sum(x => x.OVERDRAFTLIMIT)
-        //                         select sumLimit;
-
-        //    var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)revolvingLoanInput.currencyId, model.companyId).sellingRate;
-
-        //    var totalPreviouslyBookedAmount = overdraftLimit.FirstOrDefault();
-
-        //    var totaloverdraftLimit = totalPreviouslyBookedAmount + revolvingLoanInput.overdraftLimit;
-
-        //    if (totaloverdraftLimit > model.customerAvailableAmount)
-        //        throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
-
-        //    if (model.effectiveDate > model.maturityDate)
-        //        throw new ConditionNotMetException("The effective cannot be greater than maturity date");
-
-        //    if (model.effectiveDate > generalSetup.GetApplicationDate())
-        //        throw new ConditionNotMetException("You effective date cannot be post-dated.");
-
-        //    //var productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == model.productId).FirstOrDefault();
-        //    //if (productBehaviour != null && productBehaviour.ISTEMPORARYOVERDRAFT == true && context.TBL_LOAN_REVOLVING.Where(x => x.CUSTOMERID == model.customerId && x.CASAACCOUNTID == model.casaAccountId).Any())
-        //    //    throw new ConditionNotMetException("The customer already has an existing overdraft on the selected account");
-
-        //    var request = context.TBL_LOAN_BOOKING_REQUEST.Find(model.loanBookingRequestId);
-        //    if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
-        //        throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
-
-        //    var product = context.TBL_PRODUCT.Find(model.productId);
-
-        //    var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, model.productId, (short)LoanSystemTypeEnum.OverdraftFacility);
-        //    //branchId, productId, serial
-
-        //    if (revolvingLoanInput.revolvingTypeId == 0)
-        //        revolvingLoanInput.revolvingTypeId = (short)LoanRevolvingTypeEnum.NormalOverdraft;
-
-        //    var data = new TBL_LOAN_REVOLVING
-        //    {
-        //        LOAN_BOOKING_REQUESTID = model.loanBookingRequestId,
-        //        CUSTOMERID = model.customerId,
-        //        PRODUCTID = model.productId,
-        //        CASAACCOUNTID = model.casaAccountId,
-        //        BRANCHID = application.BRANCHID,
-        //        CURRENCYID = (short)model.exchangeRate,
-        //        EXCHANGERATE = currentExchangeRate,
-        //        LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
-        //        LOANREFERENCENUMBER = loanReferenceNumber,
-        //        RELATED_LOAN_REFERENCE_NUMBER = loanReferenceNumber,
-        //        SUBSECTORID = model.subSectorId,
-        //        RELATIONSHIPOFFICERID = model.relationshipOfficerId,
-        //        RELATIONSHIPMANAGERID = model.relationshipManagerId,
-        //        MISCODE = model.misCode,
-        //        TEAMMISCODE = model.teamMiscode,
-        //        INTERESTRATE = model.interestRate,
-        //        EFFECTIVEDATE = revolvingLoanInput.effectiveDate,
-        //        MATURITYDATE = revolvingLoanInput.maturityDate,
-        //        BOOKINGDATE = DateTime.Now,
-        //        OVERDRAFTLIMIT = revolvingLoanInput.overdraftLimit,
-        //        DAYCOUNTCONVENTIONID = revolvingLoanInput.accrualBasis,
-        //        REVOLVINGTYPEID = revolvingLoanInput.revolvingTypeId,
-        //        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-        //        LOANSTATUSID = (int)LoanStatusEnum.Inactive,
-        //        ISDISBURSED = false,
-        //        OPERATIONID = model.operationId =  (int)OperationsEnum.RevolvingLoanBooking,
-        //        LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.OverdraftFacility,
-        //        DISCHARGELETTER = false,
-        //        SUSPENDINTEREST = false,
-
-        //        COMPANYID = model.companyId,
-        //        CREATEDBY = model.createdBy,
-        //        DATETIMECREATED = DateTime.Now,
-        //        // LASTRESTRUCTUREDATE = revolvingLoanInput.effectiveDate,
-        //        USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
-        //        EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
-        //        INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
-        //    };
-
-        //    //Audit Section ---------------------------
-        //    var audit = new TBL_AUDIT
-        //    {
-        //        AUDITTYPEID = (short)AuditTypeEnum.LoanBookingAdded,
-        //        STAFFID = model.createdBy,
-        //        BRANCHID = (short)model.userBranchId,
-        //        DETAIL = $"Applied for loan with reference number: {loanReferenceNumber}",
-        //        IPADDRESS = model.userIPAddress,
-        //        URL = model.applicationUrl,
-        //        APPLICATIONDATE = generalSetup.GetApplicationDate(),
-        //        SYSTEMDATETIME = DateTime.Now
-        //    };
-        //    //end of Audit section -------------------------------
-
-        //    using (var trans = context.Database.BeginTransaction())
-        //    {
-        //        try
-        //        {
-        //            // ............. Checking customer balance, and fee override ......
-        //            model.feeOverride = confirmCustomerAccountFunded(model.loanChargeFee, model.casaAccountId, model.companyId, model.customerId, loanReferenceNumber);
-
-        //            //if (AllfeeAmount > casaBalance)
-        //            //{
-        //            //    int custFeeOverridable = overrider.EffectOverride(customer.CUSTOMERCODE, (short)OverrideEnum.TakeFeeAtDisbursement, loanReferenceNumber);
-        //            //    if (custFeeOverridable > 0)
-        //            //    {
-        //            //        model.feeOverride = true;
-        //            //    }
-        //            //    else throw new ConditionNotMetException("The customer account is not funded and fee override is not enabled for this customer");
-        //            //}
-        //            // ...........End checking customer balance, and fee override ..........
-
-        //            //...................Adding Revolving Loan Record.........................
-        //            var loan = context.TBL_LOAN_REVOLVING.Add(data);
-
-        //            if (model.monitoringTriggers.Count > 0)
-        //                AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-
-        //            //...................Update the Loan Request table.......................
-        //            request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-
-        //            application.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.LoanBookingInProgress;
-
-        //            //...................Adding Audit...............................
-        //            context.TBL_AUDIT.Add(audit);
-
-        //            //........Save Changes...............
-        //            var dataCount = context.SaveChanges();
-
-        //            var approvalModel = new ForwardViewModel
-        //            {
-        //                createdBy = model.createdBy,
-        //                companyId = model.companyId,
-        //                applicationId = model.loanBookingRequestId,
-        //                comment = "Please approve this Loan",
-        //                amount = revolvingLoanInput.approvedAmount,
-        //                operationId = (int)OperationsEnum.RevolvingLoanBooking
-        //            };
-
-        //            //.....................LOG LOAN BOOKING TRANSACTION FOR APPROVAL......................................
-
-        //            if (LogApproval(approvalModel, (int)OperationsEnum.RevolvingLoanBooking, false, (int)ApprovalStatusEnum.Processing))
-        //            {
-        //                //............save Loan Covenant..........
-        //                AddLoanCovenant(model.loanCovenant, model.loanApplicationDetailId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-        //                //............save Loan Fees..........
-        //                AddLoanFees(model.loanChargeFee, model.createdBy, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility, model.companyId, model.feeOverride);
-
-        //                model.loanReferenceNumber = loanReferenceNumber;
-
-        //                //...................Saving Loan Collaterals Mapping.......................
-        //                AddLoanCollateralMapping(model.loanCollateral, model.loanApplicationId, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-
-        //                //...................Saving Loan Collaterals Mapping.......................
-        //                if (model.monitoringTriggers.Count > 0)
-        //                    AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
-
-        //                if (!model.feeOverride) PostLoanFees(model);
-        //                context.SaveChanges();
-
-        //                //.....Commit transaction ............
-        //                trans.Commit();
-        //            }
-
-        //            //.......................END OF APPROVAL LOG......................................................
-
-        //            if (dataCount > 0)
-        //                return loanReferenceNumber;
-        //            else
-        //                return "";
-        //        }
-        //        catch (BadLogicException be)
-        //        {
-        //            trans.Rollback();
-        //            throw new BadLogicException(be.Message);
-        //        }
-        //        catch (ConditionNotMetException ce)
-        //        {
-        //            trans.Rollback();
-        //            throw new ConditionNotMetException(ce.Message);
-        //        }
-        //        catch (TwoFactorAuthenticationException et)
-        //        {
-        //            trans.Rollback();
-        //            throw new TwoFactorAuthenticationException(et.Message);
-        //        }
-        //        catch (APIErrorException ae)
-        //        {
-        //            trans.Rollback();
-        //            throw new APIErrorException(ae.Message);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            trans.Rollback();
-        //            throw new SecureException(ex.Message);
-        //        }
-        //    }
-
-        //}
-
-        /// <summary>
-        /// Adds the contingent liability.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
         private string addContingentLiability(LoanViewModel entity)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
@@ -709,7 +501,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = entity.customerId,
                 PRODUCTID = entity.productId,
                 CASAACCOUNTID = entity.casaAccountId,
-                BRANCHID = application .BRANCHID, //entity.branchId,
+                BRANCHID = application.BRANCHID, //entity.branchId,
                 CURRENCYID = contingentLoanInput.currencyId,
                 EXCHANGERATE = currentExchangeRate,
                 LOANAPPLICATIONDETAILID = entity.loanApplicationDetailId,
@@ -834,21 +626,10 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
         }
-
-        /// <summary>
-        /// Adds the term loan.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">
-        /// Loan terminal date should be more than effective date
-        /// or
-        /// The loan amount cannot be greater than the availiable amount
-        /// or
-        /// </exception>
         private string AddTermLoan(LoanViewModel entity)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
+            var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             if (entity.loanScheduleInput.maturityDate <= entity.loanScheduleInput.effectiveDate)
                 throw new ConditionNotMetException("Loan terminal date should be more than effective date");
 
@@ -863,18 +644,26 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.effectiveDate > generalSetup.GetApplicationDate())
                 throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
-            if(application.TBL_PRODUCT_CLASS != null && application.TBL_PRODUCT_CLASS.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
+            if (application.TBL_PRODUCT_CLASS != null && application.TBL_PRODUCT_CLASS.PRODUCTCLASSID == (short)ProductClassEnum.InvoiceDiscountingFacility)
             {
                 if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                     throw new ConditionNotMetException("Specify the collection account.");
             }
+
 
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                   select sumPrincipalAmount;
 
-            double priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
+            var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == applicationDetail.CURRENCYID).FirstOrDefault();
+            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+
+            var interestRate = Convert.ToDouble(entity.interestRate);
+            if (entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan && priceIndex != null)
+            {
+                interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+            }
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
 
@@ -907,7 +696,8 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTNUMBEROFINSTALLMENT = 0,
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
-                PRODUCTPRICEINDEXRATE = priceIndex,
+                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
+                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
 
                 SUBSECTORID = entity.subSectorId,
                 CURRENCYID = (short)entity.currencyId,
@@ -930,7 +720,7 @@ namespace FintrakBanking.Repositories.Credit
                 RELATIONSHIPMANAGERID = entity.relationshipManagerId,
                 MISCODE = entity.misCode,
                 TEAMMISCODE = entity.teamMiscode,
-                INTERESTRATE = Convert.ToInt32(entity.interestRate),
+                INTERESTRATE = interestRate,
 
                 PRINCIPALINSTALLMENTLEFT = 0,
                 INTERESTINSTALLMENTLEFT = 0,
@@ -963,7 +753,7 @@ namespace FintrakBanking.Repositories.Credit
                 USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
-                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId
+                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
 
             };
 
@@ -1079,19 +869,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-
-        /// <summary>
-        /// Adds the Commercial loan.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">
-        /// Loan terminal date should be more than effective date
-        /// or
-        /// The loan amount cannot be greater than the availiable amount
-        /// or
-        /// </exception>
-
         private string AddCommercialLoan(LoanViewModel entity)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
@@ -1110,7 +887,7 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.effectiveDate > generalSetup.GetApplicationDate())
                 throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
-            if(applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
+            if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
                 throw new ConditionNotMetException($"Commercial Loan maturity date should not exceed the line expiry date [{applicationDetail.EXPIRYDATE}]. ");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
@@ -1198,7 +975,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
             };
 
-            
+
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -1292,24 +1069,14 @@ namespace FintrakBanking.Repositories.Credit
                     throw new TwoFactorAuthenticationException(fa.Message);
                 }
                 catch (Exception ex)
-                 {
+                {
                     trans.Rollback();
                     throw new SecureException(ex.Message);
                 }
             }
         }
 
-        /// <summary>
-        /// Adds the Commercial loan.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <returns></returns>
-        /// <exception cref="Exception">
-        /// Loan terminal date should be more than effective date
-        /// or
-        /// The loan amount cannot be greater than the availiable amount
-        /// or
-        /// </exception>
+        
         private string AddFXLoan(LoanViewModel entity)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
@@ -1352,7 +1119,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var nostroAccount = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Find(entity.casaAccountId2);
             var nostroAccountNumber = nostroAccount.ACCOUNTID;
-            var nostroCurrencyId = context.TBL_CURRENCY.FirstOrDefault(c=>c.CURRENCYCODE == nostroAccount.CURRENCYCODE).CURRENCYID;
+            var nostroCurrencyId = context.TBL_CURRENCY.FirstOrDefault(c => c.CURRENCYCODE == nostroAccount.CURRENCYCODE).CURRENCYID;
 
             var data = new TBL_LOAN
             {
@@ -2611,7 +2378,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var loanApplicationRecord = context.TBL_LOAN_APPLICATION.Find(loanRecord.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID);
                     loanApplicationRecord.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.LoanBookingCompleted;
-
                 }
 
                 var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanRecord.LOANAPPLICATIONDETAILID);
