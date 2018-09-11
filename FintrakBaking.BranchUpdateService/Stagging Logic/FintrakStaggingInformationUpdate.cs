@@ -1,4 +1,5 @@
 ﻿
+using FintrakBaking.DataMigration;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Entities.StagingModels;
 using System;
@@ -19,49 +20,34 @@ namespace FintrakBaking.BranchUpdateService
             var response = 0;
             string AddedBranch = string.Empty;
             var stagingBranches = stagingContext.STG_BRANCH;
-            foreach (var x in stagingBranches)
+
+            var branchCode = coreContext.TBL_BRANCH.Select(o => o.BRANCHCODE).ToList();
+            var newBranch = (from f in stagingContext.STG_BRANCH
+                             where !branchCode.Contains(f.BRANCHCODE)
+                             select f).ToList();
+
+           foreach(var f in newBranch)
             {
-                var frantrakBranck = coreContext.TBL_BRANCH.Where(o => x.BRANCHCODE == x.BRANCHCODE).FirstOrDefault();
-                if (frantrakBranck == null)
-                {
-                    var stateId = coreContext.TBL_STATE.Where(a => a.STATECODE == x.STATECODE).FirstOrDefault().STATEID;
-                    var cityId = coreContext.TBL_CITY.Where(a => a.TBL_LOCALGOVERNMENT.STATEID == stateId).FirstOrDefault().CITYID;
-
-                    var model = new TBL_BRANCH
-                    {
-                        BRANCHCODE = x.BRANCHCODE,
-                        BRANCHNAME = x.BRANCHNAME,
-                        ADDRESSLINE1 = x.ADDRESSLINE1,
-                        ADDRESSLINE2 = x.ADDRESSLINE2,
-                        STATEID = stateId,
-                        CITYID = cityId,
-                        DELETED = false,
-                        DATETIMECREATED = DateTime.Now,
-                        REGIONID = 1
-
-                    };
-
-                    coreContext.TBL_BRANCH.Add(model);
-
-                    try
-                    {
-                        response = coreContext.SaveChanges();
-                        if (response != 0)
-                        {
-                            AddedBranch = AddedBranch + ", " + x.BRANCHNAME;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-                }
+                TBL_BRANCH x = new TBL_BRANCH();
+                x.BRANCHCODE = f.BRANCHCODE;
+                x.BRANCHNAME = f.BRANCHNAME;
+                x.ADDRESSLINE1 = f.ADDRESSLINE1;
+                x.ADDRESSLINE2 = f.ADDRESSLINE2;
+                x.STATEID = coreContext.TBL_STATE.Where(a => a.STATECODE == f.STATECODE).Select(a => a.STATEID).FirstOrDefault();
+                x.CITYID = coreContext.TBL_CITY.Where(a => a.TBL_LOCALGOVERNMENT.STATEID == coreContext.TBL_STATE.Where(g => g.STATECODE == f.STATECODE).Select(g => g.STATEID).FirstOrDefault()).Select(a => a.CITYID).FirstOrDefault();
+                x.DELETED = false;
+                x.DATETIMECREATED = DateTime.Now;
+                x.REGIONID = 1;
+                AddedBranch = AddedBranch + f.BRANCHNAME + ";";
+                coreContext.TBL_BRANCH.Add(x);
             }
-            if (!String.IsNullOrEmpty(AddedBranch))
+
+            if (coreContext.SaveChanges()>0)
             {
-                return "The following new branch added on " + DateTime.Now.ToString() + " : " + AddedBranch;
+                return "The following new branch added on " + DateTime.Now.ToString() + " : " + AddedBranch.TrimEnd(';');
             }
             return "No branch added";
+            
         }
 
         public string UpdateStaffInformation()
