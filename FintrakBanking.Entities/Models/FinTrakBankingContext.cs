@@ -8744,10 +8744,10 @@ namespace FintrakBanking.Entities.Models
                 .WithRequired(e => e.TBL_BRANCH_REGION)
                 .WillCascadeOnDelete(false);
 
-            //modelBuilder.Entity<TBL_PRODUCT_PRICE_INDEX>()
-            //    .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
-            //    .WithOptional(e => e.TBL_PRODUCT_PRICE_INDEX)
-            //    .HasForeignKey(e => e.PRODUCTPRICEINDEXID);
+            modelBuilder.Entity<TBL_PRODUCT_PRICE_INDEX>()
+                .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
+                .WithOptional(e => e.TBL_PRODUCT_PRICE_INDEX)
+                .HasForeignKey(e => e.PRODUCTPRICEINDEXID);
 
             //modelBuilder.Entity<TBL_CUSTOMER>().Ignore(x => x.FULLNAME);
 
