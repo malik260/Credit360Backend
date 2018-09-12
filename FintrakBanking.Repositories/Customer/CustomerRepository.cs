@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Customer
             var data = (from c in context.TBL_CUSTOMER
                         where c.CUSTOMERID == custormerId
                         select new
-                        {
+                        {                           
                             isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
                             rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                         }).FirstOrDefault();
@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.Customer
             try
             {
                 var output = context.SaveChanges() > 0;
-                var result = entity.prospectCustomerCode;
+                var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
                 if (output == true)
                 {
                     return result;

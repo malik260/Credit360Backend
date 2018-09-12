@@ -4,6 +4,7 @@ using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -17,6 +18,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetAllCRMSType();
 
         ProductBehaviourViewModel GetProductBehaviour(int productId);
+
+        IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId);
+        ProductPriceIndexViewModel GetProductPriceIndexByProductId(int productId);
         IEnumerable<LookupViewModel> GetAllProductClassByCustomerTypeId(int customerTypeId);
         #region Product
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
@@ -51,6 +55,13 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool UpdateProductPriceIndex(int productPriceIndexId, ProductPriceIndexViewModel prodPriceIndex);
 
         bool DeleteProductPriceIndex(int productPriceIndexId, UserInfo user);
+        IEnumerable<ProductPriceIndexCurrencyViewModel> GetProductPriceIndexCurrencyById(int productPriceIndexId);
+        ProductPriceIndexCurrencyViewModel AddProductPriceIndexCurrency(ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency);
+
+        bool UpdateProductPriceIndexCurrency(int priceIndexCurrencyId, ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency);
+
+        bool DeleteProductPriceIndexCurrency(int priceIndexCurrencyId, UserInfo user);
+        List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId);
 
         #endregion Product Price Index
 

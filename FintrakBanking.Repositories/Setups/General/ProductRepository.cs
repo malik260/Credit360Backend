@@ -178,6 +178,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return data;
         }
 
+       
         public IEnumerable<LookupViewModel> GetProductCurrency(int productId)
         {
             var data = (from p in context.TBL_PRODUCT_CURRENCY
@@ -2316,6 +2317,22 @@ namespace FintrakBanking.Repositories.Setups.General
         #endregion tbl_Product Region
 
         #region product Price Index
+        public List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId)
+        {
+
+            var result = from x in context.TBL_PRODUCT_PRICE_INDEX_DAILY
+                         join b in context.TBL_PRODUCT_PRICE_INDEX
+                         on x.PRODUCTPRICEINDEXID equals b.PRODUCTPRICEINDEXID
+                         where x.DATE >= startDate && x.DATE <= endDate                         
+                         select new ProductPriceIndexDailyViewModel
+                         {
+                             priceIndexName=b.PRICEINDEXNAME,
+                             productPriceIndexId=x.PRODUCTPRICEINDEXID,
+                             priceIndexRate = x.PRICEINDEXRATE,
+                             date = x.DATE,
+                         };
+            return result.ToList();
+        }
 
         private IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndex(int companyId)
         {
@@ -2325,6 +2342,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     {
                         productPriceIndexId = data.PRODUCTPRICEINDEXID,
                         priceIndexDescription = data.PRICEINDEXDESCRIPTION,
+                        priceIndexDuration = data.DURATION,
+                        allowAutomaticRepricing = data.ALLOWAUTOMATICREPRICING,
                         companyId = data.COMPANYID,
                         priceIndexName = data.PRICEINDEXNAME,
                         priceIndexRate = data.PRICEINDEXRATE,
@@ -2335,6 +2354,40 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
+        public IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId)
+        {
+            var productIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX
+                                join b in context.TBL_PRODUCT_PRICE_INDEX_CURNCY
+                                on a.PRODUCTPRICEINDEXID equals b.PRODUCTPRICEINDEXID
+                                where b.CURRENCYID == currencyId && a.DELETED == false
+                                select new ProductPriceIndexViewModel
+                                {
+                                    productPriceIndexId = a.PRODUCTPRICEINDEXID,
+                                    priceIndexDescription = a.PRICEINDEXDESCRIPTION,
+                                    companyId = a.COMPANYID,
+                                    priceIndexName = a.PRICEINDEXNAME,
+                                    priceIndexRate = a.PRICEINDEXRATE,
+                                    dateTimeUpdated = a.DATETIMEUPDATED
+                                }).ToList();
+            return productIndex;
+        }
+
+        public ProductPriceIndexViewModel GetProductPriceIndexByProductId(int productId)
+        {
+            var data = (from b in context.TBL_PRODUCT
+                        join a in context.TBL_PRODUCT_PRICE_INDEX on b.PRODUCTPRICEINDEXID equals a.PRODUCTPRICEINDEXID
+                        where b.PRODUCTID == productId && a.DELETED == false
+                        select new ProductPriceIndexViewModel()
+                        {
+                            productPriceIndexId = a.PRODUCTPRICEINDEXID,
+                            priceIndexDescription = a.PRICEINDEXDESCRIPTION,
+                            companyId = a.COMPANYID,
+                            priceIndexName = a.PRICEINDEXNAME,
+                            priceIndexRate = a.PRICEINDEXRATE,
+                        }).FirstOrDefault(); ;
+
+            return data;
+        }
         public IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId)
         {
             return GetAllProductPriceIndex(companyId);
@@ -2453,6 +2506,136 @@ namespace FintrakBanking.Repositories.Setups.General
             //end of Audit section -------------------------------
             return this.SaveAll();
         }
+
+
+
+
+        public IEnumerable<ProductPriceIndexCurrencyViewModel> GetProductPriceIndexCurrencyById(int productPriceIndexId)
+        {
+            return GetAllProductPriceIndexCurrency(productPriceIndexId).ToList();
+        }
+        private IEnumerable<ProductPriceIndexCurrencyViewModel> GetAllProductPriceIndexCurrency(int productPriceIndexId)
+        {
+            return (from data in context.TBL_PRODUCT_PRICE_INDEX_CURNCY
+                    where data.DELETED == false &&  data.PRODUCTPRICEINDEXID== productPriceIndexId
+                    select new ProductPriceIndexCurrencyViewModel()
+                    {
+                        priceIndexCurrencyId = data.PRICEINDEXCURRENCYID,
+                        productPriceIndexId = (short)data.PRODUCTPRICEINDEXID,
+                        currencyId = (short)data.CURRENCYID,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED
+                    });
+        }
+        public ProductPriceIndexCurrencyViewModel AddProductPriceIndexCurrency(ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency)
+        {
+            var isProductPriceIndexCurrencyExist = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId && x.CURRENCYID == prodPriceIndexCurrency.currencyId).FirstOrDefault();
+
+            if (isProductPriceIndexCurrencyExist!=null)
+            {
+                throw new SecureException("Product price Currency already exists!");
+            }
+            var data = new TBL_PRODUCT_PRICE_INDEX_CURNCY()
+            {
+                PRODUCTPRICEINDEXID= prodPriceIndexCurrency.productPriceIndexId,
+                CURRENCYID = prodPriceIndexCurrency.currencyId,
+                CREATEDBY = prodPriceIndexCurrency.createdBy,
+                DATETIMECREATED = DateTime.Now,
+            };
+
+            this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Add(data);
+            var isProductPriceIndexExist = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId).FirstOrDefault();
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexAdded,
+                STAFFID = (int)prodPriceIndexCurrency.createdBy,
+                BRANCHID = (short)prodPriceIndexCurrency.userBranchId,
+                DETAIL = $"Added  Currency For tbl_Product Price Index: '{isProductPriceIndexExist.PRICEINDEXNAME}' ",
+                IPADDRESS = prodPriceIndexCurrency.userIPAddress,
+                URL = prodPriceIndexCurrency.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+
+            var status = this.SaveAll();
+
+            if (status)
+            {
+                return prodPriceIndexCurrency;
+            }
+            else
+                return null;
+        }
+
+        public bool UpdateProductPriceIndexCurrency(int priceIndexCurrencyId, ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency)
+        {
+            var data = this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.FirstOrDefault(x => x.PRICEINDEXCURRENCYID == priceIndexCurrencyId);
+
+            if (data == null)
+                return false;
+
+            data.CURRENCYID = (int)prodPriceIndexCurrency.currencyId;
+            data.LASTUPDATEDBY = prodPriceIndexCurrency.lastUpdatedBy;
+            data.DATETIMEUPDATED = DateTime.Now;
+            var isProductPriceIndexExist = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId).FirstOrDefault();
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexUpdated,
+                STAFFID = (int)prodPriceIndexCurrency.createdBy,
+                BRANCHID = (short)prodPriceIndexCurrency.userBranchId,
+                DETAIL = $"Updated  Currency For tbl_Product Price Index: '{isProductPriceIndexExist.PRICEINDEXNAME}' with CurrencyId: '{ prodPriceIndexCurrency.priceIndexCurrencyId}' ",
+                IPADDRESS = prodPriceIndexCurrency.userIPAddress,
+                URL = prodPriceIndexCurrency.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = priceIndexCurrencyId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+            //end of Audit section -------------------------------
+            return this.SaveAll();
+        }
+
+        public bool DeleteProductPriceIndexCurrency(int priceIndexCurrencyId, UserInfo user)
+        {
+            var data = this.context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Find(priceIndexCurrencyId);
+
+            if (data == null)
+                return false;
+
+            data.DELETED = true;
+            data.DATETIMEDELETED = genSetup.GetApplicationDate();
+
+            // Audit Section ---------------------------
+            var productPriceIndex = this.context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == data.PRODUCTPRICEINDEXID);
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexDeleted,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Deleted Currency For tbl_Product Price Index: '{productPriceIndex.PRICEINDEXNAME}' with rate '{productPriceIndex.PRICEINDEXRATE}' ",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = priceIndexCurrencyId
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            //end of Audit section -------------------------------
+            return this.SaveAll();
+        }
+
 
         #endregion product Price Index
 

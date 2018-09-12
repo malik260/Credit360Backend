@@ -73,17 +73,11 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application/credit-assessment-memorandum/due-for-availment")]
-        public async Task<HttpResponseMessage> GetCamProcessedLoanApplicationsDueForAvailment()
+        public HttpResponseMessage GetCamProcessedLoanApplicationsDueForAvailment()
         {
             try
             {
-                var response = await repo.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToListAsync();
-
-                if (!response.Any())
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found" });
-                }
-
+                var response = repo.GetApplicationsDueForAvailment(token.GetStaffId, token.GetCompanyId).ToList();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
             }
             catch (SecureException e)
@@ -408,32 +402,18 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application/availment/approval-decision")]
         public HttpResponseMessage ApproveLoanAvailmentDecision([FromBody] LoanAvailmentApprovalViewModel entity)
         {
-            try
-            {
-                entity.BranchId = token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.userIPAddress = Request.RequestUri.Host;
-                entity.createdBy = token.GetStaffId;
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
 
-                var data = repo.ApproveLoanAvailmentDecision(entity);
+            var data = repo.ApproveLoanAvailmentDecision(entity);
 
-                if (data == 0)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, message = "Availment completed, now proceeding to booking" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-            }
-            catch (SecureException ex)
-            {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message, message = ex.Message });
-            }
+            if (data == 0) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Availment completed, now proceeding to booking" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful, request has been routed to the next approving office" });
         }
-
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -451,38 +431,7 @@ namespace FintrakBanking.APICore.Controllers
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
         }
-
-        //[HttpPost]
-        //[ClaimsAuthorization]
-        //[Route("loan-application/availment/approval")]
-        //public HttpResponseMessage LogApplicationForApprovalDuringAvailment([FromBody] LoanAvailmentApprovalViewModel entity)
-        //{
-        //    try
-        //    {
-        //        entity.BranchId = token.GetBranchId;
-        //        entity.companyId = token.GetCompanyId;
-        //        entity.staffId = token.GetStaffId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-        //        entity.userIPAddress = Request.RequestUri.Host;
-        //        entity.createdBy = token.GetStaffId;
-
-        //        var data = repo.LogApplicationForApprovalDuringAvailment(entity);
-
-        //        if (data)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //                new { success = true, message = "Operation successful, request has been routed to the next approving office" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //            new { success = true, message = "Operation not successfull" });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
-        //    }
-        //}
-
+        
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-application/offer-letter/approval")]
