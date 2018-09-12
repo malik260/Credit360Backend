@@ -75,23 +75,24 @@ namespace FintrakBanking.Common.Enum
         ChecklistOperation = 65,
         PrincipalLoanRepayment = 66,
         InterestPastDueLoanRepayment = 67,
-        PrincipalPastDueLoanRepayment =68,
-        PenalFee=69, 
-        CamsolBackbookModification =70,
+        PrincipalPastDueLoanRepayment = 68,
+        PenalFee = 69,
+        CamsolBackbookModification = 70,
         NPLoanReviewApprovalAppraisal = 71,
         CommercialLoanRollOver = 72,
         ForeignExchangeLoanBooking = 73,
         CommercialLoanSubAllocation = 74,
-        OverdraftInterestRate =75,
+        OverdraftInterestRate = 75,
         ApprovalWorkflowGroupModification = 76,
-        ApprovalWorkflowLevelModification=77,
+        ApprovalWorkflowLevelModification = 77,
         ApprovalLevelStaffModification = 78,
         LoanWorkOut = 80,
-        LoanApplicationCancellation =81,
+        LoanApplicationCancellation = 81,
         ContingentRequestBooking = 83,
         LoanAndOverdraftRequestBooking = 82,
-
+        ContingentLiabilityTermination = 86,
+        ContingentLiabilityRenewal = 85,
         //Added by Yemi
-        StaffReliefCreation = 84,
+        StaffReliefCreation = 84
     }
 }

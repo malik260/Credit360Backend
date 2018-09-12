@@ -128,7 +128,7 @@ namespace FintrakBanking.Repositories.Credit
                                 applicationRefNo = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 loanApplicationId = b.LOANAPPLICATIONID,
                                 proposedAmount = b.PROPOSEDAMOUNT,
-                                proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                                proposedInterestRate = (double)b.PROPOSEDINTERESTRATE,
                                 proposedProductId = b.PROPOSEDPRODUCTID,
                                 proposedTenor = b.PROPOSEDTENOR, //Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
                                 statusId = b.STATUSID,
@@ -1226,7 +1226,7 @@ namespace FintrakBanking.Repositories.Credit
                 var data = new TBL_LOAN_APPLICATION_DETAIL
                 {
                     APPROVEDAMOUNT = a.proposedAmount,
-                    APPROVEDINTERESTRATE = a.proposedInterestRate,
+                    APPROVEDINTERESTRATE = (double)a.proposedInterestRate,
                     APPROVEDPRODUCTID = a.proposedProductId,
                     APPROVEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
@@ -1240,7 +1240,7 @@ namespace FintrakBanking.Repositories.Credit
                     EQUITYAMOUNT = a.equityAmount,
 
                     PROPOSEDAMOUNT = a.proposedAmount,
-                    PROPOSEDINTERESTRATE = a.proposedInterestRate,
+                    PROPOSEDINTERESTRATE = (int)a.proposedInterestRate,
                     PROPOSEDPRODUCTID = a.proposedProductId,
                     PROPOSEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
 
