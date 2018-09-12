@@ -7875,22 +7875,18 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region Commercial Loan Operations
-        public IEnumerable<LoanViewModel> GetApprovedCommercialLoanReview()
+        public IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview()
         {
             try
             {
                 var applicationDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
-                                       join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                       // d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
-                                       where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
-                                      && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
-                                      && b.OPERATIONPERFORMED == false
-                                      && a.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking
-                                      //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
-                                       //orderby b.DATECREATED descending
+                                       where a.ISDISBURSED == true && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                       && b.OPERATIONPERFORMED == false
+                                       && a.OPERATIONID != (short)OperationsEnum.TermLoanBooking
+                                       && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                        select new LoanViewModel
                                        {
                                            loanId = a.TERMLOANID,
