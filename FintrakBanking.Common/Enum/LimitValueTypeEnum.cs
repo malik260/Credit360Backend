@@ -6,8 +6,8 @@ namespace FintrakBanking.Common.Enum
 {
     public enum LimitValueTypeEnum
     {
-        Amount  = 1,
+        Amount = 1,
         Rate = 2,
-        Count=3
+        Count = 3
     }
 }
