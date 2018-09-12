@@ -1246,8 +1246,8 @@ namespace FintrakBanking.Repositories.Credit
                     CRMSFUNDINGSOURCECATEGORY = a.crmsFundingSourceCategory,
                     CRMS_ECCI_NUMBER = a.crms_ECCI_Number,
                     FIELD1 = a.listOfCommodities,
-                    PRODUCTPRICEINDEXID = a.productPriceIndexId,
-                    PRODUCTPRICEINDEXRATE = a.productPriceIndexRate
+                  //  PRODUCTPRICEINDEXID = a.productPriceIndexId,
+                  //  PRODUCTPRICEINDEXRATE = a.productPriceIndexRate
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);

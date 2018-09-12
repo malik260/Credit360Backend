@@ -119,61 +119,61 @@ namespace FintrakBanking.Entities.StagingModels
             //    .Property(e => e.ID)
             //    .HasPrecision(38, 0);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.PRODUCTCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.PRODUCTCODE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.CASAACCOUNT)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.CASAACCOUNT)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.CUSTOMERCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.CUSTOMERCODE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.BRANCHCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.BRANCHCODE)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.LOANREFERENCENUMBER)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.LOANREFERENCENUMBER)
+            //    .IsUnicode(false);
 
             //modelBuilder.Entity<STG_LOAN_MART>()
             //    .Property(e => e.INTERESTRATE)
             //   // .HasPrecision(15, 0);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.PRINCIPALAMOUNT)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.PRINCIPALAMOUNT)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.OUTSTANDINGPRINCIPAL)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.OUTSTANDINGPRINCIPAL)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.CLASSIFICATION)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.CLASSIFICATION)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.SUBCLASSIFICATION)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.SUBCLASSIFICATION)
+            //    .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.CASABALANCE)
-                .HasPrecision(19, 4);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.CASABALANCE)
+            //    .HasPrecision(19, 4);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.STAFFCODE)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.STAFFCODE)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_LOAN_MART>()
                 .Property(e => e.SECTOR)
                 .IsUnicode(false);
 
-            modelBuilder.Entity<STG_LOAN_MART>()
-                .Property(e => e.SUBSECTOR)
-                .IsUnicode(false);
+            //modelBuilder.Entity<STG_LOAN_MART>()
+            //    .Property(e => e.SUBSECTOR)
+            //    .IsUnicode(false);
 
             modelBuilder.Entity<STG_LOAN_MART>()
                 .Property(e => e.CURRENCY)

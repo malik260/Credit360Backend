@@ -82,9 +82,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
         bool ProcessCommercialPaperManualRollOver(MaturityIntructionViewModel model, string refNo);
         //void CommercialPaperManualRollOver(DateTime applicationDate);
-        bool addCommercialPaperTenorReview(TenorExtionViewModel userModel);
+        bool addNonTermLoanTenorReview(TenorExtionViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
-        bool ApplicationLineRateChange(InterestReviewViewModel userModel);
+        bool addApplicationLineRateChange(InterestReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetCommercialLoansLines(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoans(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoansByApplicationDetailId(int companyId, int loanApplicationDetailID);
@@ -96,7 +96,7 @@ namespace FintrakBanking.Interfaces.Credit
         //bool addApplicationLineTenorChange(TenorExtionViewModel userModel);
         bool addApplicationLineTenorChange(TenorExtionViewModel userModel);
         //bool ApplicationLineRateChange(InterestReviewViewModel userModel);
-        bool nonTermLoanLoanRateChange(InterestReviewViewModel userModel, int loanId);
+        bool addNonTermLoanLoanRateChange(InterestReviewViewModel userModel, int loanId);
         bool GetRepaymentFromStaging();
 
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByContingent();

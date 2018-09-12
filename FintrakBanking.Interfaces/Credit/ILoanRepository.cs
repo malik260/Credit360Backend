@@ -39,6 +39,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial();
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
+        LoanViewModel GetDisbursedLoanByLoanId(int loanId);
 
         LoanViewModel GetGroupLoanByLoanId(int loanId);
 
@@ -179,6 +180,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetContingentApprovedApplication();
 
         LoanViewModel GetContingentByLoanId(int revolvingLoanId);
+       // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
+        IEnumerable<LoanViewModel> GetCommercialLoanByApplicationDetailId(int loanApplicationDetailId);
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
-using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.CRMS;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
