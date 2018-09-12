@@ -974,7 +974,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (loan.LoanApplicationDetail.Count > 0)
                     {
-                        AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
+                       AddLoanApplicationDetail(loan.LoanApplicationDetail, loan.createdBy);
                     }
 
                 }
@@ -999,9 +999,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     UpdateLoanApplication(loan);
                 }
-                
-                response = context.SaveChanges();
+           
+                    response = context.SaveChanges();
 
+         
 
                 var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
@@ -1082,7 +1083,7 @@ namespace FintrakBanking.Repositories.Credit
                 CASAACCOUNTID = loan.casaAccountId,
                 APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.ApplicationInProgress,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                APPLICATIONAMOUNT = loan.proposedAmount,
+                APPLICATIONAMOUNT = loan.applicationAmount,
                 APPLICATIONTENOR = loan.proposedTenor,
                 ISINVESTMENTGRADE = loan.isInvestmentGrade,
                 LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
@@ -1129,6 +1130,12 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
 
+            decimal totalApplicationAmount = loan.applicationAmount;
+            foreach (var item in application)
+            {
+                var exchangeValue = ((decimal)item.PROPOSEDAMOUNT * (decimal)item.EXCHANGERATE);
+                totalApplicationAmount = totalApplicationAmount + exchangeValue;
+            }
 
             this.loanData.REQUIRECOLLATERAL = loan.requireCollateral;
             this.loanData.TOTALEXPOSUREAMOUNT = totalAmount;
@@ -1141,7 +1148,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.DATETIMECREATED = genSetup.GetApplicationDate();
             this.loanData.SYSTEMDATETIME = DateTime.Now;
             this.loanData.CASAACCOUNTID = loan.casaAccountId;
-            this.loanData.APPLICATIONAMOUNT = loan.proposedAmount;
+            this.loanData.APPLICATIONAMOUNT = totalApplicationAmount;
             this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             this.loanData.COLLATERALDETAIL = loan.collateralDetail;
         }
@@ -1252,9 +1259,6 @@ namespace FintrakBanking.Repositories.Credit
                     FIELD3 = a.fieldThree,
                     PRODUCTPRICEINDEXID = a.productPriceIndexId,
                     PRODUCTPRICEINDEXRATE = a.productPriceIndexRate
-                    //FIELD1 = a.listOfCommodities,
-                  //  PRODUCTPRICEINDEXID = a.productPriceIndexId,
-                  //  PRODUCTPRICEINDEXRATE = a.productPriceIndexRate
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
