@@ -165,7 +165,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int statusId { get; set; }
         public decimal amount { get; set; }
         public double exchangeRate { get; set; }
-        public double interestRate { get; set; }
+        public int interestRate { get; set; }
         public int tenor { get; set; }
         public string productName { get; set; }
         public int convertedAmount { get; set; }

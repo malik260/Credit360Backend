@@ -58,7 +58,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 
@@ -93,7 +93,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 
@@ -131,7 +131,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 
@@ -169,7 +169,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 
@@ -207,7 +207,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 
@@ -244,7 +244,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
             model.APIUrl = @"api/TemporaryOverDraft/Running";
@@ -287,7 +287,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 
@@ -396,7 +396,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(entity.username, entity.passCode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 
@@ -640,7 +640,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated == false)
+                if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
             }
 

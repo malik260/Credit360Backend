@@ -19,4 +19,12 @@ namespace FintrakBanking.Common.Enum
         FixedbyAmount = 4,
         RatebyAmount = 5
     }
+
+    public enum ChargeFeeDetailTypeEnum
+    {
+        Customer = 1,
+        Primary = 2,
+        Tax = 3,
+        Others = 4
+    }
 }

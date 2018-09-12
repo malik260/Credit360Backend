@@ -750,7 +750,7 @@ namespace FintrakBanking.Repositories.Credit
                         isSpecialised = x.d.ISSPECIALISED,
 
                         priceIndexId = x.d.PRODUCTPRICEINDEXID,
-                        priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                        //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
                     }).ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
@@ -817,7 +817,7 @@ namespace FintrakBanking.Repositories.Credit
                     isSpecialised = x.d.ISSPECIALISED,
 
                     priceIndexId = x.d.PRODUCTPRICEINDEXID,
-                    priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                    //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
 
                 }).ToList();
 
