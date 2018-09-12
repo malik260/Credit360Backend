@@ -11410,7 +11410,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool addApplicationLineRateChange(InterestReviewViewModel userModel)
+        public bool addApplicationLineRateChange(LoanReviewViewModel userModel)
         {
             var systemDate = generalSetup.GetApplicationDate();
             if (userModel.loanApplicationDetailId != 0 )
@@ -11426,7 +11426,8 @@ namespace FintrakBanking.Repositories.Credit
                 var loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == result.LOANAPPLICATIONDETAILID).ToList();
                 foreach (var loan in loans)
                 {
-                    addNonTermLoanLoanRateChange(userModel, loan.TERMLOANID);  //loan.INTERESTRATE = userModel.newRate;
+                    userModel.loanId = loan.TERMLOANID;
+                    addNonTermLoanLoanRateChange(userModel);
                 };
 
                 var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x=>x.LOANID == userModel.loanApplicationDetailId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).FirstOrDefault();
@@ -11496,12 +11497,12 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
-        public bool addNonTermLoanLoanRateChange(InterestReviewViewModel userModel, int loanId)
+        public bool addNonTermLoanLoanRateChange(LoanReviewViewModel userModel)
         {
             var systemDate = generalSetup.GetApplicationDate();
             if (userModel.loanId != 0)
             {
-                TBL_LOAN loanRecord = context.TBL_LOAN.Find(loanId);
+                TBL_LOAN loanRecord = context.TBL_LOAN.Find(userModel.loanId);
 
                 if (loanRecord == null)
                     throw new BadLogicException("Loan Information not found.");
@@ -11510,7 +11511,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (userModel.valueDate < systemDate)
                 {
-                    var inputModel = BuildLoanPaymentResturctureScheduleModel(loanId);
+                    var inputModel = BuildLoanPaymentResturctureScheduleModel(userModel.loanId);
                     throw new ConditionNotMetException("Back-dating not allowed."); //TODO: Work out interest reversal methods based on product type
                     //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
                     //{
@@ -11557,7 +11558,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool addNonTermLoanTenorReview(TenorExtionViewModel userModel)
+        public bool addNonTermLoanTenorReview(LoanReviewViewModel userModel)
         {
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
 
@@ -11572,7 +11573,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loan.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking && userModel.newTenor > loanApp.APPROVEDTENOR)
             {
-                throw new ConditionNotMetException("The new loan tenor exceeded the line tenor.");
+                throw new ConditionNotMetException("The new loan tenor exceeded the line tenor for this facility.");
             }
 
             if (loan.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking && loanApp.EXPIRYDATE != null)
@@ -11618,8 +11619,44 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public bool changeApplicationLineAmount(LoanReviewViewModel userModel)
+        {
+            var result = context.TBL_LOAN_APPLICATION_DETAIL.Find(userModel.loanApplicationDetailId);
+            var requests = context.TBL_LOAN_BOOKING_REQUEST.Where(r => r.LOANAPPLICATIONDETAILID == userModel.loanApplicationDetailId);
+            decimal allRequestAmount = 0;
+            if (requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Count() > 0)
+                allRequestAmount = (decimal)requests.Where(n => n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved || n.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending).Sum(s => s.AMOUNT_REQUESTED);
+
+            if (allRequestAmount > userModel.newAmount)
+                throw new ConditionNotMetException("Input amount cannot be less than the active total loan request amount running");
+
+            ArchiveLoanApplicationDetails(result.LOANAPPLICATIONDETAILID);
+            result.APPROVEDAMOUNT = userModel.newAmount;
+
+            var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).FirstOrDefault();
+            //lmsApprovalRecord.OPERATIONPERFORMED = true;
+
+            //Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanRolledOver,
+                STAFFID = userModel.createdBy,
+                BRANCHID = (short)userModel.userBranchId,
+                DETAIL = $"Line facility amount with product code {result.TBL_PRODUCT.PRODUCTCODE} for customer code {result.TBL_CUSTOMER.CUSTOMERCODE} was changed to '{userModel.newAmount}'",
+                IPADDRESS = userModel.userIPAddress,
+                URL = userModel.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            context.TBL_AUDIT.Add(audit);
+            //end of Audit section -------------------------------
+
+            return context.SaveChanges() > 0;
+        }
+
+
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool addApplicationLineTenorChange(TenorExtionViewModel userModel)
+        public bool addApplicationLineTenorChange(LoanReviewViewModel userModel)
         {
             var result = context.TBL_LOAN_APPLICATION_DETAIL.Find(userModel.loanApplicationDetailId);
            
@@ -11792,6 +11829,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 };
+                context.TBL_AUDIT.Add(audit);
                 //end of Audit section -------------------------------
 
                 return context.SaveChanges() > 0;
