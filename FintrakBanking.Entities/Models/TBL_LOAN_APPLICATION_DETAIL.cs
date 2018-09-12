@@ -136,7 +136,7 @@ namespace FintrakBanking.Entities.Models
 
         public string FIELD1 { get; set; }
         public string FIELD2 { get; set; }
-        public string FIELD3 { get; set; }
+        public decimal? FIELD3 { get; set; }
         public bool ISSPECIALISED { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }

@@ -1243,7 +1243,7 @@ namespace FintrakBanking.Repositories.Credit
                     PROPOSEDINTERESTRATE = (int)a.proposedInterestRate,
                     PROPOSEDPRODUCTID = a.proposedProductId,
                     PROPOSEDTENOR = tenor, //Convert.ToInt32(Math.Round(((decimal)(a.proposedTenor / 12) * (decimal)365))),
-
+                    DELETED = false,
                     SUBSECTORID = a.subSectorId,
                     CREATEDBY = createdBy,
                     DATETIMECREATED = DateTime.Now,
