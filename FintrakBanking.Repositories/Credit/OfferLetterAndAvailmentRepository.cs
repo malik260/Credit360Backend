@@ -1732,7 +1732,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool result = false;
             try
-
             {
                 var exisitingDocument = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
 

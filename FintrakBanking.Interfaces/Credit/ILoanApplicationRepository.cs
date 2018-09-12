@@ -123,5 +123,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
 
         IEnumerable<LookupViewModel> GetAllProductPriceIndex(int currencyId);
+
+        List<TransactionDynamicsViewModel> GetLMSTrnasactionDynamics(int loanApplicationId);
+
+        List<ConditionPrecedentViewModel> GetLMSConditionPrecidents(int loanApplicationId);
     }
 }

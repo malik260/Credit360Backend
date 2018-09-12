@@ -713,5 +713,137 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
 
         }
+
+
+
+        #region
+        public IEnumerable<LoanApplicationViewModel> Search(string searchString)
+        {
+            searchString = searchString.Trim().ToLower();
+
+            var applications = from a in context.TBL_LMSR_APPLICATION
+                               join d in context.TBL_LMSR_APPLICATION_DETAIL on a.APPLICATIONSTATUSID equals d.LOANAPPLICATIONID
+                               join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
+                               join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID
+                               join o in context.TBL_CASA on l.CASAACCOUNTID equals o.CASAACCOUNTID
+                               join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals  y.TARGETID
+                               where a.RELATEDREFERENCENUMBER == searchString
+                        || g.FIRSTNAME.ToLower().StartsWith(searchString)
+                        || g.LASTNAME.ToLower().StartsWith(searchString)
+                        || g.MIDDLENAME.ToLower().StartsWith(searchString)
+                        || g.CUSTOMERCODE.ToLower().StartsWith(searchString)
+                               select new LoanApplicationViewModel
+                               {
+                                   firstName = g.FIRSTNAME,
+                                   middleName = g.MIDDLENAME,
+                                   lastName = g.LASTNAME,
+                                   customerCode = g.CUSTOMERCODE,
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+
+                                   loanApplicationId = a.LOANAPPLICATIONID,
+                                   customerId = a.CUSTOMERID,
+                                   branchId = a.BRANCHID,
+                                   customerGroupId = a.CUSTOMERGROUPID,
+                                 //  loanTypeId = l.LOANAPPLICATIONTYPEID,
+                                   relationshipOfficerId = l.RELATIONSHIPOFFICERID,
+                                   relationshipManagerId = l.RELATIONSHIPOFFICERID,
+                                   applicationDate = a.APPLICATIONDATE,
+                                   applicationAmount = d.PROPOSEDAMOUNT,
+                                   approvedAmount = d.APPROVEDAMOUNT,
+                                   interestRate = d.PROPOSEDINTERESTRATE,
+                                   applicationTenor = d.PROPOSEDTENOR,
+
+                                   //submittedForAppraisal = x.q.o.g.d.SUBMITTEDFORAPPRAISAL,
+                                   // customerInfoValidated = x.q.o.g.a.CUSTOMERINFOVALIDATED,
+                                   // isRelatedParty = x.q.o.g.a.ISRELATEDPARTY,
+                                   // isPoliticallyExposed = x.q.o.g.a.ISPOLITICALLYEXPOSED,
+                                   approvalStatusId = (short)a.APPROVALSTATUSID,
+                                   approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+
+                                   currentApprovalLevel = y.FROMAPPROVALLEVELID !=null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+                                   approvalTrailId = y.APPROVALTRAILID,
+                                   responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
+
+                                   applicationStatusId = a.APPLICATIONSTATUSID,
+                                   applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(k => k.APPLICATIONSTATUSID == a.APPLICATIONSTATUSID).Select(k => k.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
+                                   branchName = a.TBL_BRANCH.BRANCHNAME,
+                                   relationshipOfficerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                   relationshipManagerName = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_LOAN.Where(k => k.TERMLOANID == d.LOANID).Select(k => k.RELATIONSHIPOFFICERID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                                   //   misCode = x.q.o.g.a.MISCODE,
+                                   //  customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                                   //  loanTypeName = x.q.o.g.a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                   createdBy = a.CREATEDBY,
+                                   //  loanPreliminaryEvaluationId = x.q.o.g.a.LOANPRELIMINARYEVALUATIONID,
+                                   operationId = a.OPERATIONID,
+                                   accountNumber = o.PRODUCTACCOUNTNUMBER,
+                                   isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
+                               };
+
+            return applications;
+        }
+
+        private IQueryable<LoanApplicationViewModel> GetLoanApplications(int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION
+                        where a.COMPANYID == companyId && a.DELETED == false
+                        select new LoanApplicationViewModel
+                        {
+                            requireCollateral = a.REQUIRECOLLATERAL,
+                            approvalStatusId = (short)a.APPROVALSTATUSID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerId = a.CUSTOMERID ?? 0,
+                            customerName = a.CUSTOMERID.HasValue ? a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME : "",
+                            loanInformation = a.LOANINFORMATION,
+                            companyId = a.COMPANYID,
+                            branchId = (short)a.BRANCHID,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                            relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                            relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                            relationshipManagerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                            misCode = a.MISCODE,
+                            teamMisCode = a.TEAMMISCODE,
+                            interestRate = a.INTERESTRATE,
+                            isRelatedParty = a.ISRELATEDPARTY,
+                            isPoliticallyExposed = a.ISPOLITICALLYEXPOSED,
+                            submittedForAppraisal = a.SUBMITTEDFORAPPRAISAL,
+                            customerGroupId = a.CUSTOMERGROUPID ?? 0,
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            loanTypeId = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPEID,
+                            loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                            createdBy = a.CREATEDBY,
+                            applicationDate = a.APPLICATIONDATE,
+                            applicationTenor = a.APPLICATIONTENOR,
+                            applicationAmount = a.APPLICATIONAMOUNT,
+                            dateTimeCreated = a.DATETIMECREATED,
+                            LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
+                             .Select(c => new LoanApplicationDetailViewModel()
+                             {
+                                 equityAmount = c.EQUITYAMOUNT,
+                                 equityCasaAccountId = c.EQUITYCASAACCOUNTID,
+                                 approvedAmount = c.APPROVEDAMOUNT,
+                                 approvedInterestRate = c.APPROVEDINTERESTRATE,
+                                 approvedProductId = c.APPROVEDPRODUCTID,
+                                 approvedTenor = c.APPROVEDTENOR,
+                                 currencyId = c.CURRENCYID,
+                                 currencyName = c.TBL_CURRENCY.CURRENCYNAME,
+                                 customerId = c.CUSTOMERID,
+                                 exchangeRate = c.EXCHANGERATE,
+                                 loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                                 subSectorId = c.SUBSECTORID,
+                                 loanApplicationId = c.LOANAPPLICATIONID,
+                                 proposedAmount = c.PROPOSEDAMOUNT,
+                                 proposedInterestRate = c.PROPOSEDINTERESTRATE,
+                                 proposedProductId = c.PROPOSEDPRODUCTID,
+                                 proposedProductName = c.TBL_PRODUCT.PRODUCTNAME,
+                                 //proposedTenor = Convert.ToInt32(Math.Round(Convert.ToDecimal(c.PROPOSEDTENOR) * Convert.ToDecimal(12 / 365))),
+                                 statusId = c.STATUSID
+                             }).ToList()
+                        });
+            return data;
+        }
+
+        #endregion
     }
 }

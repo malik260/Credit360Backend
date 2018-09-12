@@ -752,5 +752,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("appraisal-memorandum/lms-loan-detail/{loanApplicationId}")]
+        public HttpResponseMessage GetApprovedLMSLoanDetail(int loanApplicationId)
+        {
+            try
+            {
+                LoanApplicationDetailsViewModel data = repo.GetLMSLoanApplicationDetail(loanApplicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

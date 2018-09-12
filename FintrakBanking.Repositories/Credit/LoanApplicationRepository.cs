@@ -3036,6 +3036,17 @@ namespace FintrakBanking.Repositories.Credit
                         condition = x.CONDITION
                     }).ToList();
         }
+        public List<ConditionPrecedentViewModel> GetLMSConditionPrecidents(int loanApplicationId)
+        {
+            int detailId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x => x.LOANREVIEWAPPLICATIONID).FirstOrDefault();
+            return (from x in context.TBL_LMSR_CONDITION_PRECEDENT
+                    where x.LOANREVIEWAPPLICATIONID == detailId
+                    select new ConditionPrecedentViewModel
+                    {
+                        loanApplicationDetailId = x.LOANREVIEWAPPLICATIONID,
+                        condition = x.CONDITION
+                    }).ToList();
+        }
         public bool updateSuggestionsLoanApplicationdetail(LoanApplicationDetailViewModel model)
         {
             if (model == null) return false;
@@ -3105,6 +3116,19 @@ namespace FintrakBanking.Repositories.Credit
                              lookupTypeName = a.PRICEINDEXRATE.ToString()
                          }).ToList();
             return productIndex;
+        }
+
+        public List<TransactionDynamicsViewModel> GetLMSTrnasactionDynamics(int loanApplicationId)
+        {
+            int detailId = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x => x.LOANAPPLICATIONDETAILID).FirstOrDefault();
+            return (from x in context.TBL_LOAN_TRANSACTION_DYNAMICS
+                    where x.LOANAPPLICATIONDETAILID == detailId
+                    select new TransactionDynamicsViewModel
+                    {
+                        dynamicsId = x.DYNAMICSID,
+                        dynamics = x.DYNAMICS,
+                        loanApplicationDetailId = x.LOANAPPLICATIONDETAILID
+                    }).ToList();
         }
     }
 }

@@ -16,9 +16,7 @@ namespace FintrakBanking.ReportObjects.Credit
         public static OfferLetterViewModel GenerateOfferLetter(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
-            var isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Any();
-            if (isOfferLetterAvailable == true)
-            {
+           
                 var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
 
                 var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
@@ -53,17 +51,19 @@ namespace FintrakBanking.ReportObjects.Credit
 
                                           }).FirstOrDefault();
 
+            var isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Any();
+            if (isOfferLetterAvailable == true)
+            {
                 if (offerLetterDetails.producyClassProcessId == (int)ProductClassProcessEnum.ProductBased)
                 {
                     offerLetterDetails.isFinal = true;
                 }
-
+            }
                 if (offerLetterDetails != null)
                 {
                     return offerLetterDetails;
                 }
 
-            }
 
             return new OfferLetterViewModel();
         }

@@ -67,6 +67,29 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-facilty-details/{loanId}")]
+        public HttpResponseMessage GetLMSFacilityDetail(int loanId)
+        {
+            try
+            {
+                var data = repo.LMSFacilityDetail(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("related-facilty-details/{relatedloanReferenceNumber}")]
@@ -222,6 +245,28 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-overdraft-facilty-details-archive/{archiveId}")]
+        public HttpResponseMessage GetOverdraftLMSFacilityDetailArchiveArchive(int archiveId)
+        {
+            try
+            {
+                var data = repo.OverdraftFacilityDetailArchive(archiveId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         [HttpPost]
         [ClaimsAuthorization]
         [Route("archive-periodic-loan-schedule")]
@@ -252,6 +297,28 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.ContingentFacilityDetail(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("contingent-lsm-facilty-details/{loanId}")]
+        public HttpResponseMessage GetContingentLmsFacilityDetail(int loanId)
+        {
+            try
+            {
+                var data = repo.ContingentLMSFacilityDetail(loanId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -358,6 +425,28 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lms-loan-convenant/{loanId}")]
+        public HttpResponseMessage GetLMSLoanConvenantDetail(int loanId)
+        {
+            try
+            {
+                var data = repo.LMSLoanCovenantDetail(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("transaction-detail/{loanRefNo}")]
         public HttpResponseMessage GetTransactionDetail(string loanRefNo)
         {
@@ -409,6 +498,23 @@ namespace FintrakBanking.APICore.Controllers
             {
                 //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
                 var data = repo.LoanSearch(search.productTypeId, search.searchString);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("lms-loan-search")]
+        public HttpResponseMessage LMSLoanSearch([FromBody] SearchViewModel search)
+        {
+            try
+            {
+                //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+                var data = repo.LMSLoanSearch(search.productTypeId, search.searchString);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException e)
