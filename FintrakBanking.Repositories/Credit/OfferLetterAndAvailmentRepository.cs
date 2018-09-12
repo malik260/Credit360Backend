@@ -107,7 +107,9 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
-                    undergoingConcession = exceptIds.Contains(x.c.a.LOANAPPLICATIONID)
+                    undergoingConcession = exceptIds.Contains(x.c.a.LOANAPPLICATIONID),
+                    productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
+
                 });
 
             data = data.Where(x =>
@@ -181,6 +183,7 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
+                    productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                 });
 
             data = data.Where(x =>
@@ -254,6 +257,7 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
+                    productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                     loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
                                                  select new LoanApplicationCollateralViewModel
                                                  {
@@ -411,6 +415,8 @@ namespace FintrakBanking.Repositories.Credit
                                    purpose = b.LOANPURPOSE,
                                    applicationDate = applDate,
                                    approvedAmountCurrency = e.CURRENCYNAME + " " +  b.APPROVEDAMOUNT,
+                                   productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
+
                                    //approvedAmount = b.APPROVEDAMOUNT
                                }).ToList();
 

@@ -72,5 +72,6 @@ namespace FintrakBanking.Interfaces.Credit
         bool saveTranchDisbursmentApprovalLevel(TranchDisbursmentViewModel entity);
         List<RecommendedCollateralViewModel> GetRecommendedCollateralHistory(int applicationId);
         List<RecommendedCollateralViewModel> GetRecommendedCollateralHistoryLms(int applicationId);
+        LoanApplicationDetailsViewModel GetSingleLoanApplicationDetail(int detailId);
     }
 }

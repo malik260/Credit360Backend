@@ -16,6 +16,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Finance;
 
 namespace FintrakBanking.Repositories.Admin
 {
@@ -905,19 +906,18 @@ namespace FintrakBanking.Repositories.Admin
         #endregion
 
         #region TwoFactorAuthentication
-        public bool TwoFactorAuthentication(string staffCode, string passCode)
+        public TwoFactorAutheticationOutputViewModel TwoFactorAuthentication(string staffCode, string passCode)
         {
-            var enabled = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
-            if (enabled == true)
+            try
             {
                 var output = auth.Authenticate(staffCode, passCode);
                 return output;
             }
-            else
+            catch (TwoFactorAuthenticationException ex)
             {
-                return true;
+                throw new TwoFactorAuthenticationException(ex.Message);
             }
-           
+             
         }
         public bool TwoFactorAuthenticationEnabled()
         {

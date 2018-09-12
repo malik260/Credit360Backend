@@ -209,6 +209,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var detail in model.applicationDetails)
             {
                 loan = GetLoanInformation(detail.loanSystemTypeId, detail.loanId, applicationDate);
+                int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan.tenor;
 
                 context.TBL_LMSR_APPLICATION_DETAIL.Add(new TBL_LMSR_APPLICATION_DETAIL
                 {
@@ -224,10 +225,10 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved, // REMOVE DUPLICATE [STATUSID]
                     CREATEDBY = model.createdBy,
                     DATETIMECREATED = applicationDate,
-                    PROPOSEDTENOR = loan.tenor,
+                    PROPOSEDTENOR = tenor,
                     PROPOSEDINTERESTRATE = loan.interestRate,
                     PROPOSEDAMOUNT = loan.outstandingPrincipal,
-                    APPROVEDTENOR = loan.tenor,
+                    APPROVEDTENOR = tenor,
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
@@ -266,125 +267,6 @@ namespace FintrakBanking.Repositories.Credit
             output = (int.Parse(input) + 1).ToString().PadLeft(length, '0');
             return output;
         }
-
-        //public int SaveCam(CamViewModel model)
-        //{
-        //    string finalAction = "Updated";
-        //    var cam = new TBL_LOAN_REVIEW_APPLICATN_CAM();
-
-        //    // check of memo exist for level
-        //    var memo = context.TBL_LOAN_REVIEW_APPLICATN_CAM.Where(x =>
-        //        x.LOANREVIEWAPPLICATIONID == model.applicationId
-        //        && x.APPROVALLEVELID == model.approvalLevelId
-        //    );
-
-        //    // if force new 
-        //    // if null, create new for level
-        //    if (memo.Any() == false || model.createNew == true)
-        //    {
-        //        cam = new TBL_LOAN_REVIEW_APPLICATN_CAM
-        //        {
-        //            DOCUMENTATION = model.createNew ? "<p></p>" : model.documentation,
-        //            LOANREVIEWAPPLICATIONID = model.applicationId,
-        //            APPROVALLEVELID = model.approvalLevelId,
-        //            CAMREF = model.referenceNumber,
-        //            COMPANYID = model.companyId, // NN
-        //            ISCOMPLETED = false,
-        //            CREATEDBY = model.createdBy,
-        //            DATETIMECREATED = DateTime.Now,
-        //            RISKRATED = true,
-        //            DELETED = false
-                    
-
-        //        };
-
-        //        context.TBL_LOAN_REVIEW_APPLICATN_CAM.Add(cam);
-        //        finalAction = "Added";
-        //    }
-        //    else
-        //    {
-        //        // if exist update for level
-        //        cam = context.TBL_LOAN_REVIEW_APPLICATN_CAM.Find(model.documentationId);
-        //        if (cam == null) cam = memo.OrderByDescending((x => x.LOANREVIEWCAMID)).FirstOrDefault();
-        //        cam.DOCUMENTATION = model.documentation;
-        //        cam.LASTUPDATEDBY = model.lastUpdatedBy;
-        //        cam.DATETIMEUPDATED = general.GetApplicationDate();
-        //    }
-
-        //    // Audit Section ---------------------------
-        //    var audit = new TBL_AUDIT
-        //    {
-        //        AUDITTYPEID = finalAction == "Added" ? (short)AuditTypeEnum.AppraisalMemorandumAdded : (short)AuditTypeEnum.AppraisalMemorandumUpdated,
-        //        STAFFID = model.lastUpdatedBy,
-        //        BRANCHID = (short)model.userBranchId,
-        //        DETAIL = $"'{ finalAction }' Appraisal Memorandum Document'{ model.referenceNumber }' ",
-        //        IPADDRESS = model.userIPAddress,
-        //        URL = model.applicationUrl,
-        //        APPLICATIONDATE = general.GetApplicationDate(),
-        //        SYSTEMDATETIME = DateTime.Now
-        //    };
-        //    this.audit.AddAuditTrail(audit);
-        //    // End of Audit Section ---------------------
-
-        //    return context.SaveChanges() > 0 ? cam.LOANREVIEWCAMID : 0;
-        //}
-
-        //public List<CamViewModel> GetCamDocuments(int applicationId)
-        //{
-        //    return context.TBL_LOAN_REVIEW_APPLICATN_CAM
-        //        .Where(x => x.LOANREVIEWAPPLICATIONID == applicationId)
-        //        .Select(cam => new CamViewModel
-        //        {
-        //            documentationId = cam.LOANREVIEWCAMID,
-        //            documentation = cam.DOCUMENTATION,
-        //            approvalLevelId = cam.APPROVALLEVELID,
-        //            applicationId = cam.LOANREVIEWAPPLICATIONID,
-        //            referenceNumber = cam.CAMREF,
-        //        }).ToList();
-        //}
-
-        //public CamViewModel GetCamDocumentByApprovalLevel(int applicationId, int staffId)
-        //{
-        //    var ids = general.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CAM).ToList();
-
-        //    var cams = context.TBL_LOAN_REVIEW_APPLICATN_CAM.Where(x =>
-        //        x.LOANREVIEWAPPLICATIONID == applicationId
-        //    //&& x.APPROVALLEVELID == approvalLevelId
-        //    );
-
-        //    if (cams.Any() == false) return new CamViewModel();
-
-        //    TBL_LOAN_REVIEW_APPLICATN_CAM cam;
-
-        //    if (cams.Any(x => ids.Contains(x.APPROVALLEVELID)) == true)
-        //        cam = cams.Where(x => ids.Contains(x.APPROVALLEVELID)).OrderByDescending(x => x.LOANREVIEWCAMID).FirstOrDefault();
-        //    else
-        //        cam = cams.OrderByDescending(x => x.LOANREVIEWCAMID).FirstOrDefault();
-
-        //    return new CamViewModel
-        //    {
-        //        documentationId = cam.LOANREVIEWCAMID,
-        //        documentation = cam.DOCUMENTATION,
-        //        approvalLevelId = cam.APPROVALLEVELID,
-        //        applicationId = cam.LOANREVIEWAPPLICATIONID,
-        //        referenceNumber = cam.CAMREF,
-        //    };
-        //}
-
-        //public CamViewModel GetCamDocument(int documentationId)
-        //{
-        //    var cam = context.TBL_LOAN_REVIEW_APPLICATN_CAM.Find(documentationId);
-        //    if (cam == null) return new CamViewModel();
-
-        //    return new CamViewModel
-        //    {
-        //        documentationId = cam.LOANREVIEWCAMID,
-        //        documentation = cam.DOCUMENTATION,
-        //        approvalLevelId = cam.APPROVALLEVELID,
-        //        applicationId = cam.LOANREVIEWAPPLICATIONID,
-        //        referenceNumber = cam.CAMREF,
-        //    };
-        //}
 
         public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
         {
@@ -549,8 +431,7 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OUTSTANDINGPRINCIPAL,
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
-
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
                 })
                 .FirstOrDefault();
             }
@@ -576,6 +457,19 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = 0,
                     outstandingPrincipal = loan.CONTINGENTAMOUNT,
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                })
+                .FirstOrDefault();
+            }
+            else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
+            {
+                result = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == loanId).Select(loan => new LoanViewModel
+                {
+                    customerId = loan.CUSTOMERID,
+                    effectiveDate = startDate,
+                    tenorUsed = loan.APPROVEDTENOR,
+                    interestRate = loan.APPROVEDINTERESTRATE,
+                    outstandingPrincipal = loan.APPROVEDAMOUNT, // adapting!
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
                 })
                 .FirstOrDefault();

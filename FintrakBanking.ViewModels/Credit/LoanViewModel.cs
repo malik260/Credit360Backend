@@ -573,8 +573,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string subSectorName { get; set; }
         public string sectorSubSectorName { get {return (this.sectorName + "/" + this.subSectorName); } } 
         public short productTypeId { get; set; }
-        public short? productPriceIndexId { get; set; }
-        public double productPriceIndexRate { get; set; }
+        public short productPriceIndexId { get; set; }
+        public double? productPriceIndexRate { get; set; }
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }
         public string camDocumentation { get; set; }
@@ -603,6 +603,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<CamDocumentViewModel> camDocuments { get; set; }
         public short? productClassProcessId { get; set; }
         public bool undergoingConcession { get; set; }
+        public string productPriceIndex { get; set; }
         public string proposedTenorString
         {
             get

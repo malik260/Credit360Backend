@@ -194,9 +194,9 @@ namespace FintrakBanking.ViewModels.Credit
           
             invoiceDetails = new List<InvoiceDetailViewModel>();
             productFees = new List<ProductFeesViewModel>();
-
+            syndicatedLoan = new List<SyndicatedLoanDetailViewModel>();
         }
-
+       
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string lastName { get; set; }
@@ -229,7 +229,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int proposedTenor { get; set; }
 
-        public double proposedInterestRate { get; set; }
+        public double? proposedInterestRate { get; set; }
 
         public decimal proposedAmount { get; set; }
 
@@ -283,7 +283,11 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string transactionDynamics { get; set; }
 
-        public string listOfCommodities { get; set; }
+        public string fieldOne { get; set; }
+
+        public string fieldTwo { get; set; }
+
+        public string fieldThree { get; set; }
 
         public bool isSpecialised { get; set; }
 
@@ -298,6 +302,7 @@ namespace FintrakBanking.ViewModels.Credit
         public TraderLoanViewModel traderLoan { get; set; }
         public List<ProductFeesViewModel> productFees { get; set; }
         public BondsAndGuranty bondDetails { get; set; }
+        public List<SyndicatedLoanDetailViewModel> syndicatedLoan { get; set; }
         public IEnumerable<LoanCreditBureauViewModel> LoanCreditBereauReport { get; set; }
         public string sectorName { get; set; }
         public string productClass { get; set; }
@@ -598,6 +603,17 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatusName { get; set; }
 
         public int productClassId { get; set; }
+    }
+
+    public class SyndicatedLoanDetailViewModel
+    {
+        public int syndicationId { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public string bankCode { get; set; }
+        public string bankName { get; set; }
+        public decimal amountContributed { get; set; }
+        public short typeId { get; set; }
+      
     }
 
     public class CamViewModel : GeneralEntity

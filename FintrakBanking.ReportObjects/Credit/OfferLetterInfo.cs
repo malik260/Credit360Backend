@@ -216,7 +216,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        loanAmount = b.APPROVEDAMOUNT,
                                        exchangeRate = b.EXCHANGERATE,
                                        currencyId = b.CURRENCYID,
-                                       companyName = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == a.COMPANYID).NAME,
+                                       companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
                                        customerName = a.LOANAPPLICATIONTYPEID != 3 ? c.TITLE + " " + c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
                                        customerAddress = e.ADDRESS ?? " ", //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                                        applicationDate = a.APPLICATIONDATE,
@@ -227,7 +227,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
                                        repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",
                                        purpose = b.LOANPURPOSE,
-                                      // productPriceIndex = b.PRODUCTPRICEINDEXID
+                                       productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x=>x.PRODUCTPRICEINDEXID==b.PRODUCTPRICEINDEXID).Select(x=>x.PRICEINDEXNAME).FirstOrDefault() : "",
                                    }).ToList();
 
                 if (loanDetails != null)
@@ -358,6 +358,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                    loanAmount = b.APPROVEDAMOUNT,
                                    exchangeRate = b.EXCHANGERATE,
                                    loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                   productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
+
                                }).ToList();
 
             var facilityType = loanDetails.FirstOrDefault().loanTypeName;

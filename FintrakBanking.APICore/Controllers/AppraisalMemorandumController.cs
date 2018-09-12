@@ -176,6 +176,26 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+
+        [HttpGet]
+        [Route("appraisal-memorandum/single-detail/{detailId}")]
+        public HttpResponseMessage GetSingleApprovedLoanDetail(int detailId)
+        {
+            try
+            {
+                LoanApplicationDetailsViewModel data = repo.GetSingleLoanApplicationDetail(detailId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("crms-secured-collateral-type")]
