@@ -124,9 +124,9 @@ namespace FintrakBanking.Repositories.Finance
 
             //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 
-            loanOperation.ProcessDailyPastDueInterestAccrual(date);
+            loanOperation.ProcessDailyInterestOnPastDueInterestAccrual(date);
 
-            loanOperation.ProcessDailyPastDuePrincipalAccrual(date);
+            loanOperation.ProcessDailyInterestOnPastDuePrincipalAccrual(date);
 
             loanOperation.ProcessLoanRepaymentPostingForceDebit(date);
 

@@ -1714,19 +1714,12 @@ namespace FintrakBanking.Repositories.Finance
 
         public List<FinanceTransactionViewModel> BuildContingentPrincipalPostingReversal(LoanPaymentRestructureScheduleInputViewModel model, string sourceReferenceNumber, decimal postedAmount, string description, int operationId)
         {
-            //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
-
-            //var feeDetails = context.TBL_CHARGE_FEE_DETAIL.FirstOrDefault(x => x.CHARGEFEEID == chargeFeeId);            
-
             var loan = this.context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
 
             var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
-
-            //var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
-
+            
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
-            //var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            
             var applicationDate = generalSetup.GetApplicationDate();
 
 
