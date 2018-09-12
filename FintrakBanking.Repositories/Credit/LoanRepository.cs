@@ -6991,15 +6991,15 @@ namespace FintrakBanking.Repositories.Credit
 
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
-                if (productTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+                if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                 {
                     allFilteredLoan = SearchTermLoan(searchQuery).Where(x => x.isPerforming == performing || all);
                 }
-                else if (productTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
+                else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
                 {
                     allFilteredLoan = SearchRevolvingLoan(searchQuery).Where(x => x.isPerforming == performing || all);
                 }
-                else if (productTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
+                else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
                 {
                     allFilteredLoan = SearchContigentLoan(searchQuery);
                 }

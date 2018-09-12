@@ -115,7 +115,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? timeIn { get; set; }
         public DateTime? slaTime { get; set; }
         public string cancellationReason { get; set; }
-
+        
         public string tenorString
         {
             get
@@ -301,6 +301,13 @@ namespace FintrakBanking.ViewModels.Credit
         public IEnumerable<LoanCreditBureauViewModel> LoanCreditBereauReport { get; set; }
         public string sectorName { get; set; }
         public string productClass { get; set; }
+
+
+        public string priceIndexName { get; set; }
+        public int? priceIndexId { get; set; }
+        public double priceIndexRate { get; set; }
+        public string liborInfo { get { return priceIndexId == null ? "" : "(" + priceIndexName + ")"; } }
+
         public string proposedTenorString
         {
             get
@@ -312,6 +319,7 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " " + units;
             }
         }
+
         public string approvedTenorString
         {
             get
