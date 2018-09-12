@@ -75,7 +75,8 @@
     <Compile Include="CASA\ICasaLienRepository.cs" />
     <Compile Include="CASA\ICasaRepository.cs" />
     <Compile Include="CASA\IOverRideRepository.cs" />
-    <Compile Include="Credit\ICRMSRegulatories.cs" />
+    <Compile Include="CRMS\ICRMSCodeBookRepository.cs" />
+    <Compile Include="CRMS\ICRMSRegulatories.cs" />
     <Compile Include="Credit\IDashboardRepository.cs" />
     <Compile Include="Credit\IFacilityDetailSummary.cs" />
     <Compile Include="Credit\ILaonCamSolRepository.cs" />

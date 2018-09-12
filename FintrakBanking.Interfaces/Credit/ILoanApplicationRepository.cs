@@ -121,5 +121,6 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetAllCRMSFundingSource();
 
         IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
+
     }
 }

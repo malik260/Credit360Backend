@@ -38,6 +38,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial();
 
+        LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
 
         LoanViewModel GetGroupLoanByLoanId(int loanId);
@@ -163,7 +164,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
-        IEnumerable<LoanViewModel> GetApprovedCommercialLoanReview();
+        IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview();
 
         IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
        // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
@@ -176,5 +177,12 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview();
 
         IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate, int loanId);
+
+        IEnumerable<LoanViewModel> GetContingentApprovedApplication();
+
+        LoanViewModel GetContingentByLoanId(int revolvingLoanId);
+       // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
+        IEnumerable<LoanViewModel> GetCommercialLoanByApplicationDetailId(int loanApplicationDetailId);
+
     }
 }

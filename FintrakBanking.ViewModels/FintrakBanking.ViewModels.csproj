@@ -117,6 +117,7 @@
     <Compile Include="Credit\LoanViewModel.cs" />
     <Compile Include="Credit\OfferLetterViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
+    <Compile Include="CRMS\CRMSCodeBookViewModel.cs" />
     <Compile Include="CustomerKYCITemViewModel.cs" />
     <Compile Include="Customer\CustomerAddressViewModels.cs" />
     <Compile Include="Customer\CustomerBvnViewModels.cs" />

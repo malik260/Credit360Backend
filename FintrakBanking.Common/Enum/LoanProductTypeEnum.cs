@@ -11,6 +11,7 @@
         IDF = 17,
         CommercialLoan = 40,
         ForeignXRevolving = 41,
+        SyndicatedTermLoan =42
     };
 
     public enum LoanSystemTypeEnum
@@ -18,6 +19,6 @@
         TermDisbursedFacility = 1,
         OverdraftFacility = 2,
         ContingentLiability = 3,
-        LineFacility = 4,
+        LineFacility = 4
     };
 }

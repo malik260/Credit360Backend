@@ -86,6 +86,7 @@
     <Compile Include="Models\TBL_DOC_TEMPLATE_SECTION_ROLE.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_COLT2_LOG.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_COMMENT.cs" />
+    <Compile Include="Models\TBL_LOAN_APPLICATION_DETL_SYN.cs" />
     <Compile Include="Models\TBL_PRODUCT_PRICE_INDEX_CURNCY.cs" />
     <Compile Include="Models\TBL_PROFILE_PASSWORD_HISTORY.cs" />
     <Compile Include="Models\TBL_TEMP_APPROVAL_GROUP_MAPPING.cs" />

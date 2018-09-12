@@ -224,8 +224,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("commercial-loan-interest-rate-change")]
-        public HttpResponseMessage CommercialPaperRateReview([FromBody] InterestReviewViewModel entity)
+        [Route("non-term-loan-interest-rate-change")]
+        public HttpResponseMessage NonTermLoanInterestRateChange([FromBody] LoanReviewViewModel entity)
         {
             try
             {
@@ -236,10 +236,82 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.CommercialPaperRateReview(entity);
+                var data = repo.addNonTermLoanLoanRateChange(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was Successful " });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("application-line-interest-rate-change")]
+        public HttpResponseMessage ApplicationLineRateChange([FromBody] LoanReviewViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.addApplicationLineRateChange(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was Successful " });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("application-line-facility-amount-change")]
+        public HttpResponseMessage changeApplicationLineAmount([FromBody] LoanReviewViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.changeApplicationLineAmount(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Facility amount change was Successful " });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
@@ -334,8 +406,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("commercial-loan-tenor-extension")]
-        public HttpResponseMessage CommercialPaperTenorReview([FromBody] TenorExtionViewModel entity)
+        [Route("non-term-loan-tenor-extension")]
+        public HttpResponseMessage addNonTermLoanTenorReview([FromBody] LoanReviewViewModel entity)
         {
             try
             {
@@ -345,7 +417,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.addCommercialPaperTenorReview(entity);
+                var data = repo.addNonTermLoanTenorReview(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor successfully extended." });
@@ -361,6 +433,40 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
             }
             catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("application-line-tenor-extension")]
+        public HttpResponseMessage addApplicationLineTenorChange([FromBody] LoanReviewViewModel entity )
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.addApplicationLineTenorChange(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor successfully extended." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing tenor extension for this record" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            }
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }

@@ -108,7 +108,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial">
-      <HintPath>..\..\..\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -127,9 +127,10 @@
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="Credit\DashboardRepository.cs" />
     <Compile Include="Credit\MemorandumRepository.cs" />
-    <Compile Include="Credit\CRMSRegulatories.cs" />
+    <Compile Include="CRMS\CRMSRegulatories.cs" />
     <Compile Include="Credit\FacilityDetailSummary.cs" />
     <Compile Include="Credit\LaonCamSolRepository.cs" />
+    <Compile Include="CRMS\CRMSCodeBookRepository.cs" />
     <Compile Include="Helper\DataExport.cs" />
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />

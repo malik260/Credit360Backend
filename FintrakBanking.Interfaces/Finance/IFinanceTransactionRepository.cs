@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId);
 
+        FinanceTransactionViewModel BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
         CasaBalanceViewModel GetCASABalance(int casaAccountId);
 
         bool PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model);
@@ -31,6 +32,8 @@ namespace FintrakBanking.Interfaces.Finance
         FinanceTransactionViewModel PostDailyPastDuePrincipalAccrual(DailyInterestAccrualViewModel model);
 
         FinanceTransactionViewModel PostBuildLoanRepaymentPosting(LoanRepaymentViewModel model, decimal postedAmount, int creditGL, string description,int operationId);
+
+        List<FinanceTransactionViewModel> BuildContingentPrincipalPostingReversal(LoanPaymentRestructureScheduleInputViewModel model, string sourceReferenceNumber, decimal postedAmount, string description, int operationId);
 
         FinanceTransactionViewModel PostBuildLoanPrepaymentFeePosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int chargeFeeId, string description, int operationId);
 
@@ -47,6 +50,12 @@ namespace FintrakBanking.Interfaces.Finance
         FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth);
 
         //FinanceTransactionViewModel BuildChargeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model);
+
+        List<FinanceTransactionViewModel> BuildContingentUnEarnedFeePostingReversal(LoanPaymentRestructureScheduleInputViewModel model, string sourceReferenceNumber, decimal postedAmount, int chargeFeeId, string description, int operationId);
+
+        List<FinanceTransactionViewModel> BuildContingentChargeFeePosting(LoanPaymentRestructureScheduleInputViewModel model, string sourceReferenceNumber, decimal postedAmount, int chargeFeeId, string description, int operationId);
+
+        List<FinanceTransactionViewModel> BuildContingentPrincipalPosting(LoanPaymentRestructureScheduleInputViewModel model, string sourceReferenceNumber, decimal postedAmount, string description, int operationId);
 
         FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId);
 

@@ -146,7 +146,7 @@ namespace FintrakBanking.Repositories.Customer
             try
             {
                 var output = context.SaveChanges() > 0;
-                var result = entity.prospectCustomerCode;
+                var result = entity.isProspect == true ? entity.prospectCustomerCode : entity.customerCode;
                 if (output == true)
                 {
                     return result;

@@ -1,4 +1,4 @@
-namespace FintrakBanking.Entities.Models
+﻿namespace FintrakBanking.Entities.Models
 {
     using System;
     using System.Collections.Generic;
