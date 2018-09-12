@@ -306,12 +306,12 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("approved-commercial-loan-review")]
-        public HttpResponseMessage GetApprovedCommercialLoanReview()
+        [Route("approved-non-term-loan-review")]
+        public HttpResponseMessage GetApprovedNonTermLoansForReview()
         {
             try
             {
-                var data = loanRepo.GetApprovedCommercialLoanReview();
+                var data = loanRepo.GetApprovedNonTermLoansForReview();
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
