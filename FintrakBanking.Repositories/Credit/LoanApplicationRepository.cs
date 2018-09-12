@@ -1353,7 +1353,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = entity.Select(a => new TBL_LOAN_APPLICATION_DETL_SYN()
             {
-
+              
                 BANKCODE = a.bankCode,
                 BANKNAME = a.bankName,
                 AMOUNTCONTRIBUTED = a.amountContributed,
