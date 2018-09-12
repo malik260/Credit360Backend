@@ -287,7 +287,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string fieldTwo { get; set; }
 
-        public string fieldThree { get; set; }
+        public decimal? fieldThree { get; set; }
 
         public bool isSpecialised { get; set; }
 
