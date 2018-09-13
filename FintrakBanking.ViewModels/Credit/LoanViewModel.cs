@@ -630,7 +630,8 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string approvedAmountCurrency { get; set; }
-        
+        public bool atInitiator { get; set; }
+
 
 
         //......End f Loan Relational Table View Mapping Models......//

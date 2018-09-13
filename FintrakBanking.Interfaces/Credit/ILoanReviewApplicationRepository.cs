@@ -34,5 +34,6 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanReviewApplicationViewModel> GetRegionalLoanApplications(int getStaffId);
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
+        bool AppraisalReviewReferBack(ForwardViewModel entity);
     }
 }

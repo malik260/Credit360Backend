@@ -208,11 +208,14 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();
 
-            var data = context.TBL_LOAN_APPLICATION//.Where(x=>x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
+            var data = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanAvailment
                     && x.RESPONSESTAFFID == null
+                    && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
+                        x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised ||
+                        x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                     && ids.Contains((int)x.TOAPPROVALLEVELID)
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
                 ),
@@ -263,9 +266,9 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
                     currentApprovalLevel = x.d.TBL_APPROVAL_LEVEL1.LEVELNAME,
 
-
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
+                    atInitiator = x.c.a.CREATEDBY == staffId,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                     loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
                                                  select new LoanApplicationCollateralViewModel

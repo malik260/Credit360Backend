@@ -607,9 +607,7 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
 
         }
-
-
-
+        
         #region
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
@@ -738,6 +736,55 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+
         #endregion
+
+
+        public bool AppraisalReviewReferBack(ForwardViewModel model)
+        {
+            var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
+            var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
+
+            var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                x.OPERATIONID == model.operationId
+                && x.TARGETID == appl.LOANAPPLICATIONID
+                && x.REQUESTSTAFFID == o.REQUESTSTAFFID
+            );
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.applicationId;
+            workflow.CompanyId = appl.COMPANYID;
+            workflow.ProductClassId = model.productClassId;//.PRODUCTCLASSID;
+            workflow.ProductId = model.productId;
+            workflow.NextLevelId = trail.FROMAPPROVALLEVELID;//
+            workflow.ToStaffId = o.REQUESTSTAFFID;
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+            workflow.ExternalInitialization = true;
+            workflow.LogActivity();
+
+            // Take out of offer letter screen
+            var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
+                && x.RESPONSESTAFFID == null
+                && x.TARGETID == appl.LOANAPPLICATIONID
+            );
+            if (currentTrail != null)
+            {
+                currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                currentTrail.COMMENT = model.comment;
+                currentTrail.TOAPPROVALLEVELID = null;
+                currentTrail.TOSTAFFID = null;
+            }
+            appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+
+            return context.SaveChanges() > 0;
+        }
+
+
     }
 }

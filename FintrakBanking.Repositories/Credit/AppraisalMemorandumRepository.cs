@@ -463,19 +463,25 @@ namespace FintrakBanking.Repositories.Credit
             return changes;
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId)
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool getAll = false)
         {
-            int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
-                (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-            (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
-                (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-            ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
-
+           
+             int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
+                    (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
+                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
+                    (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
+                ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
+            
             var allstaff = this.GetAllStaffNames();
 
-            var data =  (from x in this.context.TBL_APPROVAL_TRAIL
-                where operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId
-                select new ApprovalTrailViewModel
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == applicationId);
+
+            if (getAll)
+            {
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId);
+            }
+
+            var data =  trail.Select(x => new ApprovalTrailViewModel
                 {
                     approvalTrailId = x.APPROVALTRAILID,
                     comment = x.COMMENT,
