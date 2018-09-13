@@ -78,6 +78,34 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("current-camsol/customer")]
+        public HttpResponseMessage GetCurrentCamsolByCustomer([FromBody] List<CustomerExposure> customer)
+        {
+            try
+            {
+                var data = repo.GetCurrentCamsolByCustomer(customer, token.GetCompanyId);
+                //if (!data.Any())
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                //}
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("facility-summary/application/{applicationId}")]

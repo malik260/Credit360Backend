@@ -1129,7 +1129,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>We refer to your application for a credit facilities </Value>
+                    <Value>We refer to your application for credit facility </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Garamond</FontFamily>
@@ -3047,7 +3047,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>This shall be penalties that will be borne by the borrower in the event of default in line with CBN guide to bank charges</Value>
+                                  <Value>These shall be penalties that will be borne by the borrower in the event of default in line with CBN guide to bank charges</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>

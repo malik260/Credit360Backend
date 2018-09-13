@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.Customer
             var data = (from c in context.TBL_CUSTOMER
                         where c.CUSTOMERID == custormerId
                         select new
-                        {
+                        {                           
                             isInvestment = c.TBL_CUSTOMER_RISK_RATING.ISINVESTMENTGRADE,
                             rating = c.TBL_CUSTOMER_RISK_RATING.RISKRATING,
                         }).FirstOrDefault();
@@ -5049,6 +5049,21 @@ namespace FintrakBanking.Repositories.Customer
 
             return relatedCust.Concat(ultimateBeneficial);
         }
+        public IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLMSLoanId(int loanApplicationId)
+        {
+            var loanCust = (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                            where a.LOANAPPLICATIONID == loanApplicationId
+                            select a.CUSTOMERID).ToList();
+            var customers = GetCustomers();
+            if (loanCust.Any())
+            {
+               return customers = customers.Where(x => loanCust.Contains(x.customerId));
+            }
+
+            return new List< CustomerViewModels>();
+        }
     }
+
+   
 }
 

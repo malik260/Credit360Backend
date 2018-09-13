@@ -32,5 +32,7 @@ namespace FintrakBanking.Interfaces.Credit
         LoanApplicationDetailViewModel GetLoanApplicationDetail(int loanId, int loanTypeId);
 
         IQueryable<LoanReviewApplicationViewModel> GetRegionalLoanApplications(int getStaffId);
+
+        IEnumerable<LoanApplicationViewModel> Search(string searchString);
     }
 }

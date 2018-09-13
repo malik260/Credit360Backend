@@ -1734,7 +1734,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             bool result = false;
             try
-
             {
                 var exisitingDocument = context.TBL_OFFERLETTER.Where(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber).FirstOrDefault();
 
@@ -1781,8 +1780,9 @@ namespace FintrakBanking.Repositories.Credit
                     // appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
                 }
 
-                context.SaveChanges();
-                //if (result == true) return true;
+                    context.SaveChanges();
+
+
 
             }
             catch (Exception ex)

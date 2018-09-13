@@ -73,5 +73,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<RecommendedCollateralViewModel> GetRecommendedCollateralHistory(int applicationId);
         List<RecommendedCollateralViewModel> GetRecommendedCollateralHistoryLms(int applicationId);
         LoanApplicationDetailsViewModel GetSingleLoanApplicationDetail(int detailId);
+        LoanApplicationDetailsViewModel GetLMSLoanApplicationDetail(int applicationId);
     }
 }
