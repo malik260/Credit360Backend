@@ -1357,7 +1357,7 @@ namespace FintrakBanking.Repositories.Credit
                 BANKCODE = a.bankCode,
                 BANKNAME = a.bankName,
                 AMOUNTCONTRIBUTED = a.amountContributed,
-                TYPEID = a.typeId,
+                PARTY_TYPEID = a.typeId,
                 DELETED = false,
                 DATETIMECREATED = DateTime.Now,
                 LOANAPPLICATIONDETAILID = loanApplicationId,
@@ -3134,6 +3134,14 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.CODE + "-" + x.DESCRIPTION
             }).ToList();
         }
-     
+        public IEnumerable<LookupViewModel> GetAllSyndicationType()
+        {
+            return context.TBL_LOAN_SYNDICATION_PARTY_TYP.Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.PARTY_TYPEID,
+                lookupName = x.PARTY_TYPENAME
+            }).ToList();
+        }
+        
     }
 }
