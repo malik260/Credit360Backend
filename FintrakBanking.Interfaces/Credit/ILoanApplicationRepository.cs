@@ -124,5 +124,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<ConditionPrecedentViewModel> GetLMSConditionPrecidents(int loanApplicationId);
 
+        IEnumerable<LookupViewModel> GetAllSyndicationType();
     }
 }

@@ -1426,5 +1426,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        
+             [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-syndication-type")]
+        public HttpResponseMessage GetAllSyndicationType()
+        {
+            try
+            {
+                var response = repo.GetAllSyndicationType();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }
