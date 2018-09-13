@@ -58,8 +58,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string obligorName { get; set; }
         public int approvedTenor { get; set; }
         public double approvedRate { get; set; }
-        public decimal approvedAmount { get; set; }
+
+        public string priceIndexName { get; set; }
+        public int? priceIndexId { get; set; }
+        public double priceIndexRate { get; set; }
+        public string liborInfo { get { return priceIndexId == null ? "" : "("+ priceIndexName + ")"; } }
         //public int productId { get; set; }
+
+        public decimal approvedAmount { get; set; }
         public string approvedProductName { get; set; }
         public short statusId { get; set; }
         public double exchangeRate { get; set; }
@@ -109,6 +115,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public List<DedupeApplicationViewModel> duplications { get; set; }
         public List<ApprovedLoanDetailViewModel> facilities { get; set; }
+        public LoanApplicationViewModel application { get; set; }
     }
 
     public class DedupeApplicationViewModel
@@ -158,7 +165,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int statusId { get; set; }
         public decimal amount { get; set; }
         public double exchangeRate { get; set; }
-        public double interestRate { get; set; }
+        public int interestRate { get; set; }
         public int tenor { get; set; }
         public string productName { get; set; }
         public int convertedAmount { get; set; }

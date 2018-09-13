@@ -1393,20 +1393,17 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
-
-        [HttpGet]
+        
+             [HttpGet]
         [ClaimsAuthorization]
-        [Route("product-price-index")]
-        public HttpResponseMessage GetAllProductPriceIndex(int currencyId)
+        [Route("loan-syndication-type")]
+        public HttpResponseMessage GetAllSyndicationType()
         {
             try
             {
-                var response = repo.GetAllProductPriceIndex(currencyId);
-                if(response != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message="No Record Found" });
+                var response = repo.GetAllSyndicationType();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException e)
             {

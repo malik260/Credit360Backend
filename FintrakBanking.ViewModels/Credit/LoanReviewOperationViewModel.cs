@@ -278,6 +278,14 @@ namespace FintrakBanking.ViewModels.Credit
         public short loanSystemTypeId { get; set; }
         public int performanceTypeId { get; set; }
         public int? operationId { get; set; }
+        public DateTime? timeIn { get; set; }
+        public DateTime? timeOut { get; set; }
+
+
+        public int? currentApprovalLevelTypeId { get; set; }
+        public string responsiblePerson { get; set; }
+        public int requestStaffId { get; set; }
+        public int? toApprovalLevelId { get; set; }
     }
 
     public class applicationDetails

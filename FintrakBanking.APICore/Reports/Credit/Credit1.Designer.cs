@@ -4277,6 +4277,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnpurpose;
             
+            private global::System.Data.DataColumn columnproductPriceIndex;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public OfferLetterDetailDataTable() {
@@ -4464,6 +4466,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn productPriceIndexColumn {
+                get {
+                    return this.columnproductPriceIndex;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -4518,7 +4528,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string repaymentTerms, 
                         string repaymentSchedule, 
                         string customerPhoneNumber, 
-                        string purpose) {
+                        string purpose, 
+                        string productPriceIndex) {
                 OfferLetterDetailRow rowOfferLetterDetailRow = ((OfferLetterDetailRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         loanApplicationId,
@@ -4539,7 +4550,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         repaymentTerms,
                         repaymentSchedule,
                         customerPhoneNumber,
-                        purpose};
+                        purpose,
+                        productPriceIndex};
                 rowOfferLetterDetailRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowOfferLetterDetailRow);
                 return rowOfferLetterDetailRow;
@@ -4581,6 +4593,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnrepaymentSchedule = base.Columns["repaymentSchedule"];
                 this.columncustomerPhoneNumber = base.Columns["customerPhoneNumber"];
                 this.columnpurpose = base.Columns["purpose"];
+                this.columnproductPriceIndex = base.Columns["productPriceIndex"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4624,6 +4637,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columncustomerPhoneNumber);
                 this.columnpurpose = new global::System.Data.DataColumn("purpose", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnpurpose);
+                this.columnproductPriceIndex = new global::System.Data.DataColumn("productPriceIndex", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnproductPriceIndex);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -15478,6 +15493,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string productPriceIndex {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.productPriceIndexColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'productPriceIndex\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.productPriceIndexColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsloanApplicationIdNull() {
                 return this.IsNull(this.tableOfferLetterDetail.loanApplicationIdColumn);
             }
@@ -15702,6 +15733,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetpurposeNull() {
                 this[this.tableOfferLetterDetail.purposeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsproductPriceIndexNull() {
+                return this.IsNull(this.tableOfferLetterDetail.productPriceIndexColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetproductPriceIndexNull() {
+                this[this.tableOfferLetterDetail.productPriceIndexColumn] = global::System.Convert.DBNull;
             }
         }
         

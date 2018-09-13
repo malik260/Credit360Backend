@@ -30,5 +30,7 @@ namespace FintrakBanking.Interfaces.Credit
         WorkflowResponse ForwardApplication(ForwardReviewViewModel model);
 
         LoanApplicationDetailViewModel GetLoanApplicationDetail(int loanId, int loanTypeId);
+
+        IQueryable<LoanReviewApplicationViewModel> GetRegionalLoanApplications(int getStaffId);
     }
 }

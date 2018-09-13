@@ -16,6 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string prudentialGuideline { get; set; }
         public string loanStatus { get; set; }
         public decimal recommendedLimit { get; set; }
+        public string referenceNumber { get; set; }
     }
 
     public class FacilitySummary

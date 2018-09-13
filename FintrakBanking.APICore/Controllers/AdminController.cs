@@ -640,20 +640,32 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.TwoFactorAuthentication(staffCode, passCode);
-                if (!data)
+                if (repo.TwoFactorAuthenticationEnabled() == false)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = false, result = data, message = "" });
+                    new { success = true, message = "Two Factor Authentication not enabled" });
+                }
+                var data = repo.TwoFactorAuthentication(staffCode, passCode);
+                if (data.authenticated == true)
+                {
+                       return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data, message = data.message });
+               
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                       new { success = true, result = data });
+                     new { success = false, result = data, message = data.message });
             }
-            catch (System.Exception ex)
+            catch (TwoFactorAuthenticationException et)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = et.Message });
+            }
+            catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
                       new { success = false, message = ex.Message });
             }
+           
         }
         [HttpGet]
         [ClaimsAuthorization]

@@ -141,6 +141,10 @@
           <DataField>purpose</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="productPriceIndex">
+          <DataField>productPriceIndex</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
@@ -3406,7 +3410,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!interestRate.Value</Value>
+                                  <Value>=Fields!interestRate.Value.ToString + " " + First(Fields!productPriceIndex.Value, "OfferLetterLoanDetail")</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
