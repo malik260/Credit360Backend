@@ -153,6 +153,22 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string priceIndexName { get; set; }
         public double priceIndexRate { get; set; }
         public string priceIndexDescription { get; set; }
+        public int priceIndexDuration { get; set; }
+        public bool allowAutomaticRepricing { get; set; }
+
+    }
+    public class ProductPriceIndexDailyViewModel : GeneralEntity
+    {
+        public string priceIndexName { get; set; }
+        public short productPriceIndexId { get; set; }
+        public double priceIndexRate { get; set; }
+        public DateTime date { get; set; }
+    }
+    public class ProductPriceIndexCurrencyViewModel : GeneralEntity
+    {
+        public short priceIndexCurrencyId { get; set; }
+        public short productPriceIndexId { get; set; }
+        public short currencyId { get; set; }
     }
     public class ProductBehaviourViewModel
     {

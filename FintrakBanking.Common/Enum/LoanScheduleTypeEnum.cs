@@ -5,6 +5,10 @@
       BallonPayment = 7
     };
 
+    public enum LoanIrregularSchedulePaymentTypeEnum
+    {
+        PrincipalAndInterest = 1, PrincipalOnly = 2, InterestOnly = 3
+    };
 }
 
 //ScheduleTypeId ScheduleTypeName    ScheduleCategoryId

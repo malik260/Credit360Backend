@@ -11,6 +11,8 @@ namespace FintrakBanking.Interfaces.Credit
    public interface IFacilityDetailSummary
    {
         LoanViewModel FacilityDetail(int loanId);
+        LoanViewModel LMSFacilityDetail(int loanId);
+        LoanViewModel ContingentLMSFacilityDetail(int loanId);
         LoanViewModel RelatedFacilityDetail(string relatedLaonRefNo);
         List<LoanCovenantDetailViewModel> LoanCovenantDetail(int loanId);
         List<LoanChargeFeeViewModel> LoanChargeFee(int loanId);
@@ -33,6 +35,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> TransactionDetail(string loanRefNo);
         List<LoanViewModel> ContingentUtilization(int contingentId);
         List<LoanViewModel> DailyInterestAccrual(DateTime startDate, DateTime endDate,  string loanReferenceNumber);
+        List<LoanViewModel> LMSLoanSearch(int loanSystemTypeId, string searchQuery);
+        List<LoanCovenantDetailViewModel> LMSLoanCovenantDetail(int loanId);
 
     }
 }

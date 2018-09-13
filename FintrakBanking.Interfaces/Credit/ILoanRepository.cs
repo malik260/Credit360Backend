@@ -116,6 +116,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
 
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
+        List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
 
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> GetLoanScheduleByLoanId(int loanId);
         IEnumerable<LoanViewModel> GetBookedLoanDetailsWithParameters(int companyId, string param);
