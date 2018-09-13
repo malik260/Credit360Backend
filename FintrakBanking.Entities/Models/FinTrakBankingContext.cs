@@ -302,6 +302,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_PRODUCT_CURRENCY> TBL_PRODUCT_CURRENCY { get; set; }
         public virtual DbSet<TBL_PRODUCT_GROUP> TBL_PRODUCT_GROUP { get; set; }
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX> TBL_PRODUCT_PRICE_INDEX { get; set; }
+        public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_CURNCY> TBL_PRODUCT_PRICE_INDEX_CURNCY { get; set; }
+
         public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_DAILY> TBL_PRODUCT_PRICE_INDEX_DAILY { get; set; }
         public virtual DbSet<TBL_PRODUCT_TYPE> TBL_PRODUCT_TYPE { get; set; }
         public virtual DbSet<TBL_PROFILE_ACTIVITY> TBL_PROFILE_ACTIVITY { get; set; }
@@ -414,7 +416,6 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CRMS_TYPE> TBL_CRMS_TYPE { get; set; }
         public virtual DbSet<TBL_TEMP_STAFF_RELIEF> TBL_TEMP_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_COMP_BENEFIC> TBL_TEMP_CUSTOMER_COMP_BENEFIC { get; set; }
-        public virtual DbSet<TBL_PRODUCT_PRICE_INDEX_CURNCY> TBL_PRODUCT_PRICE_INDEX_CURNCY { get; set; }
       public virtual DbSet<TBL_LOAN_APPLICATION_DETL_SYN> TBL_LOAN_APPLICATION_DETL_SYN { get; set; }
         public virtual DbSet<TBL_LOAN_SYNDICATION_PARTY_TYP> TBL_LOAN_SYNDICATION_PARTY_TYP { get; set; }
         
