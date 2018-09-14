@@ -1920,20 +1920,10 @@ namespace FintrakBanking.Repositories.Credit
 
             try
 
-                //from a in context.TBL_LOAN_SCHEDULE_DAILY
-                //join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                //join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
-                //join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
-                //join e in context.TBL_PRODUCT on b.PRODUCTID equals e.PRODUCTID
-                //join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
-                //where a.DATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
-                //&& a.PAYMENTDATE == c.PAYMENTDATE
-
             {
                 bool result = false;
                 var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                              join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                             //join c in context.TBL_LOAN_SCHEDULE_DAILY on b.TERMLOANID equals c.LOANID
                              where a.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                              && b.ALLOWFORCEDEBITREPAYMENT == false && b.ISDISBURSED == true
                              select new LoanRepaymentViewModel()
@@ -11516,86 +11506,81 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool ProcessContingentLiabilityTerminationAtMaturity(DateTime applicationDate)
         {
-            DateTime date = applicationDate;
-            //TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
+            //DateTime date = applicationDate;
+           // TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
 
-            //LoanPaymentRestructureScheduleInputViewModel _model = new LoanPaymentRestructureScheduleInputViewModel();
+            LoanPaymentRestructureScheduleInputViewModel _model = new LoanPaymentRestructureScheduleInputViewModel();
 
-            //var model = (context.TBL_LOAN_CONTINGENT.Where(x => x.APPROVALSTATUSID == (short)LoanStatusEnum.Active && x.MATURITYDATE == applicationDate)).ToList();
+            var model = (context.TBL_LOAN_CONTINGENT.Where(x => x.APPROVALSTATUSID == (short)LoanStatusEnum.Active && x.MATURITYDATE == applicationDate)).ToList();
 
-            //bool output = false;
-
-
-            //try
-            //{
-
-            //    List<FinanceTransactionViewModel> chargeDetails = new List<FinanceTransactionViewModel>();
+            bool output = false;
 
 
-            //    foreach (var item in model)
-            //    {
-            //        _model.loanId = item.CONTINGENTLOANID;
-            //        _model.principalAmount = (double)item.CONTINGENTAMOUNT;
-            //        _model.effectiveDate = item.EFFECTIVEDATE;
-            //        _model.maturityDate = item.MATURITYDATE;
-            //        _model.integralFeeAmount = 0;
-            //        _model.companyId = item.COMPANYID;
-            //        //_model.staffId = staffId;
-            //        _model.customerId = item.CUSTOMERID;
-            //        _model.productId = item.PRODUCTID;
-            //        _model.newCasaAccountId = item.CASAACCOUNTID;
+            try
+            {
 
-            //        if (item.CONTINGENTAMOUNT > 0)
-            //        {
-            //            chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPostingReversal(_model, item.LOANREFERENCENUMBER, item.CONTINGENTAMOUNT, "Contingent Amount ", (int)OperationsEnum.ContingentLiabilityTermination));
-            //        }
+                List<FinanceTransactionViewModel> transactions = new List<FinanceTransactionViewModel>();
 
 
-            //        item.LOANSTATUSID = (short)LoanStatusEnum.Terminated;
-            //        item.DATETIMEUPDATED = DateTime.Now.Date;
-            //        item.LASTUPDATEDBY = item.CREATEDBY;
+                foreach (var item in model)
+                {
+                    _model.loanId = item.CONTINGENTLOANID;
+                    _model.principalAmount = (double)item.CONTINGENTAMOUNT;
+                    _model.effectiveDate = item.EFFECTIVEDATE;
+                    _model.maturityDate = item.MATURITYDATE;
+                    _model.integralFeeAmount = 0;
+                    _model.companyId = item.COMPANYID;
+                    //_model.staffId = staffId;
+                    _model.customerId = item.CUSTOMERID;
+                    _model.productId = item.PRODUCTID;
+                    _model.newCasaAccountId = item.CASAACCOUNTID;
+
+                    if (item.CONTINGENTAMOUNT > 0)
+                    {
+                        transactions.AddRange(financeTransaction.BuildContingentPrincipalPostingReversal(_model, item.LOANREFERENCENUMBER, item.CONTINGENTAMOUNT, "Contingent Liability Amount at Maturity Reversal", (int)OperationsEnum.ContingentLiabilityTermination));
+                    }
+
+                }
+
+                if (transactions.Count > 0)
+                {
+                    //financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
+
+                    var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                    if (setup.USE_THIRD_PARTY_INTEGRATION)
+                    {
+                        BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
+
+                        output = bulkPosting.WriteBulkContingentLiabilityTerminationAtMaturityToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+
+                    }
+                    else
+                    {
+                        if (transactions.Count > 0)
+                            financeTransaction.PostTransaction(transactions);                       
+                    }
+                }
 
 
-            //        var result = context.SaveChanges() > 0;
+                foreach (var item in model)
+                {
+                    item.LOANSTATUSID = (short)LoanStatusEnum.Terminated;
+                    item.DATETIMEUPDATED = DateTime.Now.Date;
+                    item.LASTUPDATEDBY = item.CREATEDBY;                   
+                }
 
+                var result = context.SaveChanges() > 0;
 
-            //    }
+            }
+            catch (Exception ex)
+            {
+                output = false;
+                throw new SecureException(ex.Message);
 
-            //    if (chargeDetails.Count > 0)
-            //    {
-            //        //financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
+            }
 
-            //        var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            //        if (setup.USE_THIRD_PARTY_INTEGRATION)
-            //        {
-            //            BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
-
-            //            output = bulkPosting.WriteBulkContingentLiabilityTerminationAtMaturityToStaging(chargeDetails, context, stagingContext, finacle, financeTransaction, applicationDate);
-
-            //        }
-            //        else
-            //        {
-            //            foreach (var item in model)
-            //            {
-            //                item.date = applicationDate;
-
-            //                output = financeTransaction.PostDailyLoansInterestAccrual(item);
-            //            }
-            //        }
-
-            //    }
-
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    output = false;
-            //    throw new SecureException(ex.Message);
-
-            //}
-
-            //return output;
-            return false;
+            return true;
+            
         }
 
 
@@ -12935,22 +12920,28 @@ namespace FintrakBanking.Repositories.Credit
         public bool AutomaticInterestRepricing(DateTime applicationDate)
         {
             bool output = false;
-            //var systemDate = generalSetup.GetApplicationDate();
+            var systemDate = generalSetup.GetApplicationDate();
 
 
             //var dailyRepricing = (from d in context.TBL_PRODUCT_PRICE_INDEX_DAILY
-            //                      where d.PRICEDATE >= DbFunctions.TruncateTime(applicationDate.AddDays(-90)) && d.PRICEDATE <= DbFunctions.TruncateTime(applicationDate)
+            //                      join e in context.TBL_PRODUCT_PRICE_INDEX on d.PRICEINDEXRATE equals e.PRICEINDEXRATE
+            //                      join f in context.TBL_LOAN on e.PRODUCTPRICEINDEXID equals f.PRODUCTPRICEINDEXID
+            //                      where f.NEXT_INTEREST_REPRICINGDATE  == DbFunctions.TruncateTime(applicationDate)
+            //                      //where d.DATE >= DbFunctions.TruncateTime(applicationDate.AddDays(-(e.DURATION))) && d.DATE <= DbFunctions.TruncateTime(applicationDate)
             //                      select new
             //                      {
-            //                          d.PRICEINDEXRATE
+            //                          d.PRICEINDEXRATE,
+            //                          d.DATE,
+            //                          e.DURATION
             //                      }).ToList();
             //var sumdailyRepricing = dailyRepricing.Select(c => c.PRICEINDEXRATE).Sum();
+            //var sumdailyRepricing = dailyRepricing.Where(x => x.DATE >= DbFunctions.TruncateTime(applicationDate.AddDays(-(x.DURATION))) && x.DATE <= DbFunctions.TruncateTime(applicationDate));
 
 
-            ///// update the price index rate
-            ////context.SaveChanges();
+            /// update the price index rate
+            //context.SaveChanges();
 
-            //output = true;
+            output = true;
 
             return output;
 
