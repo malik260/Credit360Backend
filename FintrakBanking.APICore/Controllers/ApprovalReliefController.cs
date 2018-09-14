@@ -45,7 +45,7 @@ namespace FintrakBanking.APICore.Controllers
                 if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = true, result = data, message = "The record has been created successfully" });
+                   new { success = true, result = data, message = "The record has been created successfully, and Sent For Approval.." });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,

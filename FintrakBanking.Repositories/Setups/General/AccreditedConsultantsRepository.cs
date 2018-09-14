@@ -9,6 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -17,13 +20,18 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private IGeneralSetupRepository genSetup;
         private IAuditTrailRepository auditTrail;
+        private IWorkflow workFlow;
+
         private int AccreditedConsultantId;
         public AccreditedConsultantsRepository(FinTrakBankingContext _context,
-            IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail)
+            IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail, IWorkflow _workflow
+)
         {
             this.context = _context;
             this.genSetup = _genSetup;
             this.auditTrail = _auditTrail;
+            this.workFlow = _workflow;
+
         }
         #region Solicitors
         public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId,int accreditedConsultantId)
@@ -90,11 +98,103 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return data;
         }
+        public async Task<AccreditedConsultantsViewModel> AddAccreditedConsultants(AccreditedConsultantsViewModel entity)
+        {
+            bool output = false;
+            List<TBL_TEMP_ACCREDITEDCONSULTANT_STATE> accreditedConsultantStates = new List<TBL_TEMP_ACCREDITEDCONSULTANT_STATE>();
+            if (entity.accreditedConsultantStates.Count > 0)
+            {
+                foreach (var ent in entity.accreditedConsultantStates)
+                {
+                    if (ent.accreditedConsultantStateCoveredID == 0)
+                    {
+                        var state = new TBL_TEMP_ACCREDITEDCONSULTANT_STATE();
+                        //state.AccreditedConsultantId = AccreditedConsultantId;
+                        state.STATEID = ent.stateId;
+                        context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Add(state);
+                    }
+                }
+            }
+            var consultant = new TBL_TEMP_ACCREDITEDCONSULTANT
+            {
+                CITYID = entity.cityId,
+                NAME = entity.name,
+                FIRMNAME = entity.firmName,
+                REGISTRATIONNUMBER = entity.registrationNumber,
+                ACCREDITEDCONSULTANTTYPEID = entity.accreditedConsultantTypeId,
+                SOLICITORBVN = entity.solicitorBVN,
+                ACCOUNTNUMBER = entity.accountNumber,
+                COUNTRYID = entity.countryId,
+                EMAILADDRESS = entity.emailAddress,
+                PHONENUMBER = entity.phoneNumber,
+                ADDRESS = entity.address,
+                CORECOMPETENCE = entity.coreCompetence,
+                COMPANYID = entity.companyId,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+                ISCURRENT = true,
+                OPERATION = "insert",
+                APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                TBL_TEMP_ACCREDITEDCONSULTANT_STATE = accreditedConsultantStates
+            };
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralValuerAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added tbl_AccreditedConsultant with Id: {entity.accreditedConsultantId} ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+            };
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(consultant);
+                    auditTrail.AddAuditTrail(audit);
+                    output = await context.SaveChangesAsync() > 0;
 
-        public async Task<bool> AddAccreditedConsultants(AccreditedConsultantsViewModel entity)
+                    var appTrail = new ApprovalViewModel
+                    {
+                        staffId = entity.createdBy,
+                        companyId = entity.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        comment = "Please approve this Accredited Consultant",
+                        targetId = consultant.TEMPACCREDITEDCONSULTANTID,
+                        operationId = (int)OperationsEnum.AccreditedConsultantCreated,
+                        BranchId = entity.userBranchId,
+                        externalInitialization = true
+                    };
+
+                    var response = workFlow.LogForApproval(appTrail);
+
+                    if (response)
+                    {
+                        trans.Commit();
+
+                        if (output)
+                        {
+                            return new AccreditedConsultantsViewModel { accreditedConsultantId = consultant.ACCREDITEDCONSULTANTID };
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+
+            }
+            return new AccreditedConsultantsViewModel();
+        }
+        public async Task<bool> AddAccreditedConsultants2(AccreditedConsultantsViewModel entity)
         {
             if (entity == null)
-            {
+            { 
                 return false;
             }
             bool output = false;
@@ -171,6 +271,184 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public async Task<bool> UpdateAccreditedConsultants(AccreditedConsultantsViewModel entity, int id)
         {
+            bool output = false;
+            var targetAccreditedConId = 0;
+
+
+            var existingTempAccreditedConsultants = context.TBL_TEMP_ACCREDITEDCONSULTANT
+      .FirstOrDefault(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && x.ACCREDITEDCONSULTANTID == entity.accreditedConsultantId);
+            var unApprovedAccreditedConsultants = context.TBL_TEMP_ACCREDITEDCONSULTANT
+                .Where(x => x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                && x.ACCREDITEDCONSULTANTID == entity.accreditedConsultantId && x.ISCURRENT == true).ToList();
+            TBL_TEMP_ACCREDITEDCONSULTANT tempAccreditedConsultants = new TBL_TEMP_ACCREDITEDCONSULTANT();
+            TBL_TEMP_ACCREDITEDCONSULTANT_STATE tempAccreditedConsultantStates = new TBL_TEMP_ACCREDITEDCONSULTANT_STATE();
+
+            var existingAccreditedConsultantStatesList = new List<TBL_TEMP_ACCREDITEDCONSULTANT_STATE>();
+            List<TBL_TEMP_ACCREDITEDCONSULTANT_STATE> productCurrencies = new List<TBL_TEMP_ACCREDITEDCONSULTANT_STATE>();
+
+
+            if (unApprovedAccreditedConsultants.Any())
+            {
+                throw new SecureException("Accredited Approval is already undergoing approval");
+            }
+
+            if (existingTempAccreditedConsultants != null)
+            {
+                var existingAccreditedConsultantStates = context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE
+                    .Where(x => x.TEMPACCREDITEDCONSULTANTID ==
+                        existingTempAccreditedConsultants.TEMPACCREDITEDCONSULTANTID).ToList();
+                if (existingAccreditedConsultantStates.Count > 0)
+                {
+                    foreach (var curr in existingAccreditedConsultantStates)
+                    {
+                        context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Remove(curr);
+                    }
+                }
+
+                var tempAccreditedConsultantsToUpdate = existingTempAccreditedConsultants;
+
+                tempAccreditedConsultantsToUpdate.ACCREDITEDCONSULTANTID = (short)entity.accreditedConsultantId;
+                tempAccreditedConsultantsToUpdate.CITYID = entity.cityId;
+                tempAccreditedConsultantsToUpdate.NAME = entity.name;
+                tempAccreditedConsultantsToUpdate.FIRMNAME = entity.firmName;
+                tempAccreditedConsultantsToUpdate.REGISTRATIONNUMBER = entity.registrationNumber;
+                tempAccreditedConsultantsToUpdate.ACCREDITEDCONSULTANTTYPEID = entity.accreditedConsultantTypeId;
+                tempAccreditedConsultantsToUpdate.SOLICITORBVN = entity.solicitorBVN;
+                tempAccreditedConsultantsToUpdate.ACCOUNTNUMBER = entity.accountNumber;
+                tempAccreditedConsultantsToUpdate.COUNTRYID = entity.countryId;
+                tempAccreditedConsultantsToUpdate.EMAILADDRESS = entity.emailAddress;
+                tempAccreditedConsultantsToUpdate.PHONENUMBER = entity.phoneNumber;
+                tempAccreditedConsultantsToUpdate.ADDRESS = entity.address;
+                tempAccreditedConsultantsToUpdate.CORECOMPETENCE = entity.coreCompetence;
+                tempAccreditedConsultantsToUpdate.COMPANYID = entity.companyId;
+                tempAccreditedConsultantsToUpdate.ISCURRENT = true;
+                tempAccreditedConsultantsToUpdate.DATETIMEUPDATED = DateTime.Now;
+                tempAccreditedConsultantsToUpdate.DELETED = false;
+                //tempAccreditedConsultantsToUpdate.PRODUCT_BEHAVIOURID = productModel.productBehaviourId;
+                tempAccreditedConsultantsToUpdate.OPERATION = "update";
+                tempAccreditedConsultantsToUpdate.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+
+               
+               
+                context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(tempAccreditedConsultantsToUpdate);
+                context.SaveChanges();
+                //Product Behaviour Update
+                if (existingAccreditedConsultantStates != null)
+                {
+                    foreach (var item in entity.accreditedConsultantStates)
+                    {
+                        tempAccreditedConsultantStates = new TBL_TEMP_ACCREDITEDCONSULTANT_STATE
+                        {
+                            TEMPACCREDITEDCONSULTANTID= tempAccreditedConsultantsToUpdate.TEMPACCREDITEDCONSULTANTID,
+                            STATEID = item.stateId,
+                        };
+                        context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Add(tempAccreditedConsultantStates);
+                    }
+                }
+
+
+
+            }
+            else
+            {
+                var targetAccreditedConsultant = context.TBL_ACCREDITEDCONSULTANT.Find(id);
+                var targetAccreditedConsultantStates = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == targetAccreditedConsultant.ACCREDITEDCONSULTANTID).FirstOrDefault();
+
+
+                tempAccreditedConsultants = new TBL_TEMP_ACCREDITEDCONSULTANT()
+                {
+                    ACCREDITEDCONSULTANTID=entity.accreditedConsultantId,
+                    COMPANYID = entity.companyId,
+                    CITYID = entity.cityId,
+                    NAME = entity.name,
+                    FIRMNAME = entity.firmName,
+                    REGISTRATIONNUMBER = entity.registrationNumber,
+                    ACCREDITEDCONSULTANTTYPEID = entity.accreditedConsultantTypeId,
+                    SOLICITORBVN = entity.solicitorBVN,
+                    ACCOUNTNUMBER = entity.accountNumber,
+                    COUNTRYID = entity.countryId,
+                    EMAILADDRESS = entity.emailAddress,
+                    PHONENUMBER = entity.phoneNumber,
+                    ADDRESS = entity.address,
+                    CORECOMPETENCE = entity.coreCompetence,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                    DELETED = false,
+                    APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
+                    ISCURRENT = true,
+                    OPERATION = "update",
+                };              
+
+                context.TBL_TEMP_ACCREDITEDCONSULTANT.Add(tempAccreditedConsultants);
+                foreach (var item in entity.accreditedConsultantStates)
+                {
+                    tempAccreditedConsultantStates = new TBL_TEMP_ACCREDITEDCONSULTANT_STATE()
+                    {
+                        STATEID = item.stateId,
+                    };
+                    context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Add(tempAccreditedConsultantStates);
+                }
+            }
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralValuerAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated Accredited Consultant '{entity.accreditedConsultantName}'",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = id
+            };
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+
+                    output = await context.SaveChangesAsync() > 0;
+
+                    targetAccreditedConId = existingTempAccreditedConsultants?.TEMPACCREDITEDCONSULTANTID ?? tempAccreditedConsultants.TEMPACCREDITEDCONSULTANTID;
+
+                    var approval = new ApprovalViewModel
+                    {
+                        staffId = entity.createdBy,
+                        companyId = entity.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = targetAccreditedConId,
+                        operationId = (int)OperationsEnum.AccreditedConsultantCreated,
+                        BranchId = entity.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(approval);
+
+                    if (response)
+                    {
+                        trans.Commit();
+
+                        return output;
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+            }
+        }
+
+
+
+
+
+        public async Task<bool> UpdateAccreditedConsultants1(AccreditedConsultantsViewModel entity, int id)
+        {
             var consultants = context.TBL_ACCREDITEDCONSULTANT.Find(id);
             if (consultants != null)
             {
@@ -210,7 +488,234 @@ namespace FintrakBanking.Repositories.Setups.General
             var response = await context.SaveChangesAsync() != 0;
             return response;
         }
-        private  void AddUpdateAccreditedConsultantStates(List<AccreditedConsultantStateViewModel> entity)
+        public IEnumerable<AccreditedConsultantsViewModel> GetAccreditedSolicitorsAwaitingApprovals(int staffId, int companyId, int accreditedConsultantId)
+        {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.AccreditedConsultantCreated).ToList();
+            var charge = (from a in context.TBL_TEMP_ACCREDITEDCONSULTANT
+                          join t in context.TBL_APPROVAL_TRAIL on a.TEMPACCREDITEDCONSULTANTID equals t.TARGETID
+                          where (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                              && a.ISCURRENT == true
+                              && t.RESPONSESTAFFID == null
+                              && t.OPERATIONID == (int)OperationsEnum.AccreditedConsultantCreated
+                              && a.ACCREDITEDCONSULTANTTYPEID == accreditedConsultantId
+                          && ids.Contains((int)t.TOAPPROVALLEVELID)
+                          select new AccreditedConsultantsViewModel
+                          {
+                              accreditedConsultantId = a.TEMPACCREDITEDCONSULTANTID,
+                              registrationNumber = a.REGISTRATIONNUMBER,
+                              name = a.NAME,
+                              firmName = a.FIRMNAME,
+                              accreditedConsultantTypeId = a.ACCREDITEDCONSULTANTTYPEID,
+                              cityId = (short)a.CITYID,
+                              accountNumber = a.ACCOUNTNUMBER,
+                              solicitorBVN = a.SOLICITORBVN,
+                              countryId = a.COUNTRYID,
+                              emailAddress = a.EMAILADDRESS,
+                              phoneNumber = a.PHONENUMBER,
+                              address = a.ADDRESS,
+                              coreCompetence = a.CORECOMPETENCE,
+                              accreditedConsultantName = context.TBL_ACCREDITEDCONSULTANT_TYPE.Where(x => x.ACCREDITEDCONSULTANTID == a.ACCREDITEDCONSULTANTTYPEID).FirstOrDefault().NAME,
+                              accreditedConsultantStates = context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Where(x => x.TEMPACCREDITEDCONSULTANTID == a.TEMPACCREDITEDCONSULTANTID).Select(k =>
+                                 new AccreditedConsultantStateViewModel()
+                                 {
+                                     accreditedConsultantStateCoveredID = k.TEMP_CONSULT_STATE_COVREDID,
+                                     stateId = k.STATEID,
+                                     stateName = context.TBL_STATE.FirstOrDefault(x => x.STATEID == k.STATEID).STATENAME,
+                                     accreditedConsultantId = k.TEMPACCREDITEDCONSULTANTID
+                                 }).ToList()
+                          });
+            return charge.ToList();
+        }
+
+        public int GoForApproval(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)OperationsEnum.AccreditedConsultantCreated;
+
+            entity.externalInitialization = false;
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // workFlow.LogForApproval(entity);
+                    // var b = workFlow.NextLevelId ?? 0;
+
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = entity.operationId;
+                    workFlow.DeferredExecution = true;
+                    workFlow.ExternalInitialization = false;
+
+                    workFlow.LogActivity();
+
+                    //context.savechanges();
+                    //if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    //{
+                    //    trans.Rollback();
+                    //    throw new SecureException("Approval Failed");
+                    //}
+
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var tempAccreditedConsultant = context.TBL_TEMP_ACCREDITEDCONSULTANT.Find(entity.targetId);
+                        tempAccreditedConsultant.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 2;
+                    }
+
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = ApproveAccreditedSolicitors(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            try
+                            {
+                                context.SaveChanges();
+
+                                trans.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                var EXE = ex;
+                            }
+                        }
+                        else throw new ConditionNotMetException("One or more errors occured on commit.");
+                        return 1;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return 0;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+            }
+        }
+
+        private bool ApproveAccreditedSolicitors(int accreditedConsultantId, short approvalStatusId, UserInfo user)
+        {
+            var accreditedConsultantModel = context.TBL_TEMP_ACCREDITEDCONSULTANT.Find(accreditedConsultantId);
+            var accreditedConsultantStateModel = context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Where(x => x.TEMPACCREDITEDCONSULTANTID == accreditedConsultantModel.TEMPACCREDITEDCONSULTANTID).ToList();
+
+            var accreditedConsultantToUpdate = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == accreditedConsultantModel.ACCREDITEDCONSULTANTID).FirstOrDefault();
+            var accreditedConsultantStateToUpdate = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == accreditedConsultantModel.ACCREDITEDCONSULTANTID).ToList();
+            var accreditedConsultantStateListToUpdate = new List<TBL_ACCREDITEDCONSULTANT_STATE>();
+            TBL_ACCREDITEDCONSULTANT_STATE accreditedConsultantStates = new TBL_ACCREDITEDCONSULTANT_STATE();
+            List<TBL_ACCREDITEDCONSULTANT_STATE> accreditedConsultantStatesList = new List<TBL_ACCREDITEDCONSULTANT_STATE>();
+
+            try
+            {
+                if (accreditedConsultantToUpdate != null)
+                {
+                    accreditedConsultantStateListToUpdate = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == accreditedConsultantToUpdate.ACCREDITEDCONSULTANTID).ToList();
+                    if (accreditedConsultantStateListToUpdate.Count > 0)
+                    {
+                        foreach (var curr in accreditedConsultantStateListToUpdate)
+                        {
+                            context.TBL_ACCREDITEDCONSULTANT_STATE.Remove(curr);
+                        }
+                    }
+                  
+
+                    var existingaccreditedConsultant = accreditedConsultantToUpdate;
+                    if (accreditedConsultantModel != null)
+                    {
+                        existingaccreditedConsultant.CITYID = accreditedConsultantModel.CITYID;
+                        existingaccreditedConsultant.NAME = accreditedConsultantModel.NAME;
+                        existingaccreditedConsultant.FIRMNAME = accreditedConsultantModel.FIRMNAME;
+                        existingaccreditedConsultant.REGISTRATIONNUMBER = accreditedConsultantModel.REGISTRATIONNUMBER;
+                        existingaccreditedConsultant.ACCREDITEDCONSULTANTTYPEID = accreditedConsultantModel.ACCREDITEDCONSULTANTTYPEID;
+                        existingaccreditedConsultant.SOLICITORBVN = accreditedConsultantModel.SOLICITORBVN;
+                        existingaccreditedConsultant.ACCOUNTNUMBER = accreditedConsultantModel.ACCOUNTNUMBER;
+                        existingaccreditedConsultant.COUNTRYID = accreditedConsultantModel.COUNTRYID;
+                        existingaccreditedConsultant.EMAILADDRESS = accreditedConsultantModel.EMAILADDRESS;
+                        existingaccreditedConsultant.PHONENUMBER = accreditedConsultantModel.PHONENUMBER;
+                        existingaccreditedConsultant.ADDRESS = accreditedConsultantModel.ADDRESS;
+                        existingaccreditedConsultant.CORECOMPETENCE = accreditedConsultantModel.CORECOMPETENCE;
+                        existingaccreditedConsultant.COMPANYID = accreditedConsultantModel.COMPANYID;
+                        existingaccreditedConsultant.CREATEDBY = accreditedConsultantModel.CREATEDBY;
+                        existingaccreditedConsultant.DATETIMECREATED = DateTime.Now;
+                        existingaccreditedConsultant.DELETED = false;
+                    }
+                    accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
+
+                    //context.SaveChanges();
+                    if (accreditedConsultantStateModel != null)
+                    {
+                        foreach (var c in accreditedConsultantStateModel)
+                        {                            
+                            accreditedConsultantStatesList.Add(new TBL_ACCREDITEDCONSULTANT_STATE
+                            {
+                                ACCREDITEDCONSULTANTID = accreditedConsultantModel.ACCREDITEDCONSULTANTID,
+                                STATEID = c.STATEID,
+                            });
+                        }
+                    }
+                }
+                else
+                {
+                    if (accreditedConsultantModel != null)
+                    {
+                        var accreditedConsultant = new TBL_ACCREDITEDCONSULTANT()
+                        {
+                            CITYID = accreditedConsultantModel.CITYID,
+                            NAME = accreditedConsultantModel.NAME,
+                            FIRMNAME = accreditedConsultantModel.FIRMNAME,
+                            REGISTRATIONNUMBER = accreditedConsultantModel.REGISTRATIONNUMBER,
+                            ACCREDITEDCONSULTANTTYPEID = accreditedConsultantModel.ACCREDITEDCONSULTANTTYPEID,
+                            SOLICITORBVN = accreditedConsultantModel.SOLICITORBVN,
+                            ACCOUNTNUMBER = accreditedConsultantModel.ACCOUNTNUMBER,
+                            COUNTRYID = accreditedConsultantModel.COUNTRYID,
+                            EMAILADDRESS = accreditedConsultantModel.EMAILADDRESS,
+                            PHONENUMBER = accreditedConsultantModel.PHONENUMBER,
+                            ADDRESS = accreditedConsultantModel.ADDRESS,
+                            CORECOMPETENCE = accreditedConsultantModel.CORECOMPETENCE,
+                            COMPANYID = accreditedConsultantModel.COMPANYID,
+                            CREATEDBY = accreditedConsultantModel.CREATEDBY,
+                            DATETIMECREATED = genSetup.GetApplicationDate(),
+                            DELETED = false,
+                         
+                        };
+                        accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
+                        accreditedConsultantModel.ISCURRENT = false;
+                        context.TBL_ACCREDITEDCONSULTANT.Add(accreditedConsultant);
+                        context.SaveChanges();
+                        if (accreditedConsultantStateModel != null)
+                        {
+                            foreach (var item in accreditedConsultantStateModel)
+                            {
+                                accreditedConsultantStates = new TBL_ACCREDITEDCONSULTANT_STATE
+                                {
+                                    STATEID = item.STATEID,
+                                };
+                                accreditedConsultantStates.ACCREDITEDCONSULTANTID = accreditedConsultant.ACCREDITEDCONSULTANTID;
+                                context.TBL_ACCREDITEDCONSULTANT_STATE.Add(accreditedConsultantStates);
+                            }
+                        }
+
+                        accreditedConsultantModel.ACCREDITEDCONSULTANTID = accreditedConsultant.ACCREDITEDCONSULTANTID;
+                        accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
+                    }
+                }
+                return context.SaveChanges() > 0;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+        private void AddUpdateAccreditedConsultantStates(List<AccreditedConsultantStateViewModel> entity)
         {
             foreach (var ent in entity)
             {

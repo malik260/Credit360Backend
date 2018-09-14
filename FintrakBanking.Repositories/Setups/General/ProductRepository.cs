@@ -1324,7 +1324,7 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
-        private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user)
+        private bool ApproveProduct(int productId, short approvalStatusId, UserInfo user) 
         {
             var productModel = context.TBL_TEMP_PRODUCT.Find(productId);
             var productBehaviourModel = context.TBL_TEMP_PRODUCT_BEHAVIOUR.Where(x => x.TEMP_PRODUCTID == productModel.TEMP_PRODUCTID).FirstOrDefault();
@@ -1931,7 +1931,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 existingProductCurrencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
                 existingProductFees = context.TBL_TEMP_PRODUCT_CHARGE_FEE.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
                 existingProductCollateral = context.TBL_TEMP_PRODUCT_COLLATERALTYP.Where(x => x.TEMP_PRODUCTID == existingTempProduct.TEMP_PRODUCTID).ToList();
-
+                 
                 // Remove exisiting product fees, currency and collaterals
                 if (existingProductCurrencies.Count > 0)
                 {

@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,12 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId);
         IEnumerable<AccreditedConsultantTypeViewModel> GetAccreditedConsultantType();
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId, int accreditedConsultantId);
-        Task<bool> AddAccreditedConsultants(AccreditedConsultantsViewModel entity);
+        Task<AccreditedConsultantsViewModel> AddAccreditedConsultants(AccreditedConsultantsViewModel entity);
         Task<bool> UpdateAccreditedConsultants(AccreditedConsultantsViewModel entity, int id);
         Task<bool> DeleteAccreditedConsultantStates(int id);
+        IEnumerable<AccreditedConsultantsViewModel> GetAccreditedSolicitorsAwaitingApprovals(int staffId, int companyId, int accreditedConsultantId);
+        int GoForApproval(ApprovalViewModel entity);
+
         ////Principal
         //IEnumerable<AccreditedPrincipalsViewModel> GetAccreditedPrincipals(int companyId);
         //Task<bool> AddAccreditedPrincipals(AccreditedPrincipalsViewModel entity);
