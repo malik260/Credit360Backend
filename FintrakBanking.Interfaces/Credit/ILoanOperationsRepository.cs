@@ -22,7 +22,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
 
-        //bool ProcessContingentLiabilityTerminationAtMaturity(DateTime date);
+        bool ProcessContingentLiabilityTerminationAtMaturity(DateTime date);
         
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTeamLoansInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate);

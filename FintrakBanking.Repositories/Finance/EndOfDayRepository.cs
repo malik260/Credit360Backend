@@ -39,6 +39,7 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool RunEndOfDay(EndOfDayViewModel model)
         {
+
             var applicationDate = generalSetup.GetApplicationDate();
 
             var financeEod = (from e in context.TBL_FINANCE_ENDOFDAY
@@ -54,7 +55,7 @@ namespace FintrakBanking.Repositories.Finance
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);
 
             if (applicationDate.AddDays(1) == nextWorkDay) { 
-            ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
+                  ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
             }
             else
             {
@@ -132,8 +133,6 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
-
-
             //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
             //loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(date);
 
@@ -147,6 +146,8 @@ namespace FintrakBanking.Repositories.Finance
             loanOperation.ProcessIntervalFeeandCommissionPosting(date);
 
             //collateralItemPolicy.CheckForExpiredItemPolicies(date);
+
+            loanOperation.ProcessContingentLiabilityTerminationAtMaturity(date);
 
             loanOperation.CalculateLoanClassification(date);
 
