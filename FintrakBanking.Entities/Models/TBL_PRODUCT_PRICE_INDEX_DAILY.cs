@@ -14,8 +14,9 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTPRICEINDEXID { get; set; }
 
-        //[Column(TypeName = "date")]
-        [Column(name: "DATE_")]
+
+    //[Column(TypeName = "date")]
+    [Column(name: "DATE_")]
         public DateTime DATE { get; set; }
 
         public double PRICEINDEXRATE { get; set; }

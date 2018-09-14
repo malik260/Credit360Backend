@@ -28,7 +28,7 @@
         public decimal AMOUNTCONTRIBUTED { get; set; }
 
 
-        public int TYPEID { get; set; }
+        public int PARTY_TYPEID { get; set; }
 
         public int CREATEDBY { get; set; }
 
@@ -43,5 +43,7 @@
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
-      }
+
+        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
+    }
 }

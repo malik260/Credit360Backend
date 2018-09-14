@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
 using System;
 using System.Collections.Generic;
+using FintrakBanking.ViewModels.Reports;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -1131,7 +1132,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+
+        [HttpPost] [ClaimsAuthorization]
         [Route("product-price-index")]
         public HttpResponseMessage AddProductPriceIndex([FromBody] ProductPriceIndexViewModel model)
         {
@@ -1190,8 +1192,8 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpDelete] [ClaimsAuthorization]
-        [Route("product-price-index/{productPriceIndexId}")]
-        public HttpResponseMessage DeleteProductPriceIndex(int productPriceIndexId)
+        [Route("product-price-index/{id}")]
+        public HttpResponseMessage DeleteProductPriceIndex(int id)
         {
             try
             {
@@ -1205,10 +1207,139 @@ namespace FintrakBanking.APICore.Controllers
                     applicationUrl = HttpContext.Current.Request.Path,
                     userIPAddress = HttpContext.Current.Request.UserHostAddress
                 };
-                repo.DeleteProductPriceIndex(productPriceIndexId, user);
+                repo.DeleteProductPriceIndex(id, user);
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = productPriceIndexId, message = "product Price Index has been deleted successfully" });
+                    new { success = true, result = id, message = "product Price Index has been deleted successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("product-price-index-history")]
+        public HttpResponseMessage getProductPriceIndexHistory(DateRange val)
+        {
+            try
+            {
+                var data = repo.getProductPriceIndexHistory(val.startDate, val.endDate, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-price-index-currency/{productPriceIndexId}")]
+        public HttpResponseMessage GetProductPriceIndexCurrencyById(int productPriceIndexId)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetProductPriceIndexCurrencyById(productPriceIndexId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("product-price-index-currency")]
+        public HttpResponseMessage AddProductPriceIndexCurrency([FromBody] ProductPriceIndexCurrencyViewModel model)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                var record = repo.AddProductPriceIndexCurrency(model);
+                if (record != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = record, message = "product has been created successfully" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "product not created" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("product-price-index-currency")]
+        public HttpResponseMessage UpdateProductPriceIndexCurrency([FromBody] ProductPriceIndexCurrencyViewModel model)
+        {
+            if (model == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "product price index currency not found" });
+            }
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                repo.UpdateProductPriceIndexCurrency(model.priceIndexCurrencyId, model);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = model.priceIndexCurrencyId, message = "product Price Index currency has been updated successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("product-price-index-currency/{id}")]
+        public HttpResponseMessage DeleteProductPriceIndexCurrency(int id)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+                repo.DeleteProductPriceIndexCurrency(id, user);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = id, message = "product Price Index currency has been deleted successfully" });
             }
             catch (SecureException ex)
             {
@@ -1220,7 +1351,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Product Class Process
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("product-process")]
         public HttpResponseMessage GetAllProductClassProcess()
         {

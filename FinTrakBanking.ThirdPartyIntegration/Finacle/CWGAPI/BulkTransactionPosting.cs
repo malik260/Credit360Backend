@@ -43,6 +43,117 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             return values;
         }
 
+
+        //public bool WriteBulkContingentLiabilityTerminationAtMaturityToStaging(List<FinanceTransactionViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
+        //                                     IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
+        //{
+        //    var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+        //    int count = 0;
+        //    foreach (var item in model)
+        //    {
+        //        item.date = applicationDate;
+
+        //        var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+        //        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
+
+        //        count++;
+
+        //        addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
+        //        addStaging.FLOWTYPE = "FFF";
+        //        addStaging.FORCEDEBITACCOUNT = "Y";
+        //        addStaging.VALUEDATENUMBER = 1;
+        //        addStaging.BATCHID = batchCode;
+        //        addStaging.BATCHREFID = count;
+        //        addStaging.SID = count;
+        //        addStaging.COMPANYID = item.companyId;
+        //        addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);//context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE; // GetGLAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId)  product.INTERESTINCOMEEXPENSEGL.Value;
+        //        addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+        //        addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
+        //        addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+        //        addStaging.DESCRIPTION = "Loan Daily Interest Accrual Posting";
+        //        addStaging.DESTINATIONBRANCHID = item.branchId;
+        //        addStaging.ISPOSTED = false;
+        //        addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
+        //        addStaging.POSTEDBY = "SYSTEM";
+        //        addStaging.POSTEDDATE = item.date;
+        //        addStaging.SOURCEBRANCHID = item.branchId;
+        //        addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+        //        addStaging.VALUEDATE = item.date;
+        //        addStaging.TRANSACTIONTYPE = "BP";
+        //        addStaging.BANKID = "01";
+        //        addStaging.PRODUCTID = product.PRODUCTID;
+        //        addStaging.CURRENCYID = item.currencyId;
+        //        addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
+        //        addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+        //        addStaging.CREDITCASAACCOUNTID = null;
+        //        addStaging.DEBITCASAACCOUNTID = null;
+        //        addStaging.LOANID = null;
+        //        addStaging.SYSTEMDATETIME = item.date;
+        //        context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+        //        context.SaveChanges();
+
+        //    }
+        //    return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+
+        //}
+
+        public bool WriteBulkContingentLiabilityTerminationAtMaturityToStaging(List<TBL_LOAN_CONTINGENT> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
+                                               IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            int count = 0;
+            foreach (var item in model)
+            {
+                //item.date = applicationDate;
+
+                var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
+
+                var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.PRODUCTID);
+
+                count++;
+
+                addStaging.AMOUNT = (decimal)item.CONTINGENTAMOUNT;
+                addStaging.FLOWTYPE = "FFF";
+                addStaging.FORCEDEBITACCOUNT = "Y";
+                addStaging.VALUEDATENUMBER = 1;
+                addStaging.BATCHID = batchCode;
+                addStaging.BATCHREFID = count;
+                addStaging.SID = count;
+                addStaging.COMPANYID = item.COMPANYID;
+                addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.PRINCIPALBALANCEGL.Value, item.CURRENCYID, item.BRANCHID);//context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE; // GetGLAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId)  product.INTERESTINCOMEEXPENSEGL.Value;
+                addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.CURRENCYID).CURRENCYCODE;
+                addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(applicationDate, item.CURRENCYID, item.COMPANYID).sellingRate;
+                addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.PRINCIPALBALANCEGL2.Value, item.CURRENCYID, item.BRANCHID);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                addStaging.DESCRIPTION = "Contingent Liability Amount at Maturity Reversal";
+                addStaging.DESTINATIONBRANCHID = item.BRANCHID;
+                addStaging.ISPOSTED = false;
+                addStaging.OPERATIONID = (int)OperationsEnum.ContingentLiabilityTermination;
+                addStaging.POSTEDBY = "SYSTEM";
+                addStaging.POSTEDDATE = applicationDate;
+                addStaging.SOURCEBRANCHID = item.BRANCHID;
+                addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                addStaging.VALUEDATE = applicationDate;
+                addStaging.TRANSACTIONTYPE = "BP";
+                addStaging.BANKID = "01";
+                addStaging.PRODUCTID = product.PRODUCTID;
+                addStaging.CURRENCYID = item.CURRENCYID;
+                addStaging.CREDITGLACCOUNTID = product.PRINCIPALBALANCEGL.Value;
+                addStaging.DEBITGLACCOUNTID = product.PRINCIPALBALANCEGL2.Value;
+                addStaging.CREDITCASAACCOUNTID = null;
+                addStaging.DEBITCASAACCOUNTID = null;
+                addStaging.LOANID = item.CONTINGENTLOANID;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+                context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+                context.SaveChanges();
+
+            }
+
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+
+        }
+
+
         public bool WriteBulkDailyTermLoanInterestAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                               IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
@@ -97,6 +208,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
         }
 
+
+        
         public bool WriteBulkDailyFeeAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                             IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
@@ -438,7 +551,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                 var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
                 //var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);
+                var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == item.loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate));
+                var interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
 
+                item.periodInterestAmount = interestAmount;
 
                 TBL_CASA casa;
 
@@ -738,6 +854,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 //var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);
 
                 TBL_CASA casa;
+
+                var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == item.loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate));
+                var interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
+
+                item.periodInterestAmount = interestAmount;
 
 
                 if (product.PRODUCTCLASSID != (short)ProductClassEnum.InvoiceDiscountingFacility)

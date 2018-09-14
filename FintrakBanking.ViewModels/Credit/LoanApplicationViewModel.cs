@@ -296,7 +296,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short? productPriceIndexId { get; set; }
 
-        public double productPriceIndexRate { get; set; }
+        public double? productPriceIndexRate { get; set; }
 
         public List<InvoiceDetailViewModel> invoiceDetails { get; set; }
 

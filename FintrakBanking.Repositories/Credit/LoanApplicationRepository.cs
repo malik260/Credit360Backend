@@ -1353,11 +1353,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = entity.Select(a => new TBL_LOAN_APPLICATION_DETL_SYN()
             {
-
+              
                 BANKCODE = a.bankCode,
                 BANKNAME = a.bankName,
                 AMOUNTCONTRIBUTED = a.amountContributed,
-                TYPEID = a.typeId,
+                PARTY_TYPEID = a.typeId,
                 DELETED = false,
                 DATETIMECREATED = DateTime.Now,
                 LOANAPPLICATIONDETAILID = loanApplicationId,
@@ -3084,6 +3084,17 @@ namespace FintrakBanking.Repositories.Credit
                         condition = x.CONDITION
                     }).ToList();
         }
+        public List<ConditionPrecedentViewModel> GetLMSConditionPrecidents(int loanApplicationId)
+        {
+            int detailId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).Select(x => x.LOANREVIEWAPPLICATIONID).FirstOrDefault();
+            return (from x in context.TBL_LMSR_CONDITION_PRECEDENT
+                    where x.LOANREVIEWAPPLICATIONID == detailId
+                    select new ConditionPrecedentViewModel
+                    {
+                        loanApplicationDetailId = x.LOANREVIEWAPPLICATIONID,
+                        condition = x.CONDITION
+                    }).ToList();
+        }
         public bool updateSuggestionsLoanApplicationdetail(LoanApplicationDetailViewModel model)
         {
             if (model == null) return false;
@@ -3140,6 +3151,14 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.CODE + "-" + x.DESCRIPTION
             }).ToList();
         }
-     
+        public IEnumerable<LookupViewModel> GetAllSyndicationType()
+        {
+            return context.TBL_LOAN_SYNDICATION_PARTY_TYP.Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.PARTY_TYPEID,
+                lookupName = x.PARTY_TYPENAME
+            }).ToList();
+        }
+        
     }
 }
