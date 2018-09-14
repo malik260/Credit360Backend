@@ -14,6 +14,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Common.CustomException;
 using System.Data.Entity;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
@@ -973,5 +974,62 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
 
         #endregion preset note
+
+
+        public List<FintrakDropDownSelectList> GetRoutableOperations(List<int> operationIds)
+        {
+            return context.TBL_OPERATIONS
+                .Where(x => operationIds.Contains(x.OPERATIONID))
+                .Select(x => new FintrakDropDownSelectList
+                {
+                    id = x.OPERATIONID,
+                    name = x.OPERATIONNAME
+                })
+            .ToList();
+        }
+
+        public List<ApprovalLevelViewModel> GetRerouteApprovalLevels(int operationId)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new ApprovalLevelViewModel
+                        {
+                            levelPosition = l.POSITION,
+                            groupPosition = mg.m.POSITION,
+                            levelName = l.LEVELNAME,
+                            approvalLevelId = l.APPROVALLEVELID,
+                            roleId = l.STAFFROLEID,
+                            roleName = l.STAFFROLEID == null ? " " : l.TBL_STAFF_ROLE.STAFFROLENAME
+                        })
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            return levels;
+        }
+
+        public bool RerouteOperation(ForwardViewModel model) // TODO
+        {
+            var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                x.OPERATIONID == model.operationId
+                && x.RESPONSESTAFFID == null
+                && x.TARGETID == model.targetId
+            );
+
+            if (currentTrail != null)
+            {
+                currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                currentTrail.COMMENT = model.comment;
+                currentTrail.TOAPPROVALLEVELID = null;
+                currentTrail.TOSTAFFID = null;
+            }
+
+            workflow.NextProcess(model.companyId, model.createdBy, model.nextOperationId, model.nextTargetId, null, "NIL", true, true, true);
+            return context.SaveChanges() > 0;
+        }
+
     }
 }
