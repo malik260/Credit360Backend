@@ -530,79 +530,36 @@ namespace FintrakBanking.Repositories.Setups.General
         public int GoForApproval(ApprovalViewModel entity)
         {
             entity.operationId = (int)OperationsEnum.AccreditedConsultantCreated;
+            //entity.externalInitialization = false;
+            workFlow.StaffId = entity.staffId;
+            workFlow.CompanyId = entity.companyId;
+            workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+            workFlow.TargetId = entity.targetId;
+            workFlow.Comment = entity.comment;
+            workFlow.OperationId = entity.operationId;
+            workFlow.DeferredExecution = true;
+            workFlow.ExternalInitialization = false;
 
-            entity.externalInitialization = false;
+            workFlow.LogActivity();
 
-            using (var trans = context.Database.BeginTransaction())
+            int result = 0;
+            if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
             {
-                try
-                {
-                    // workFlow.LogForApproval(entity);
-                    // var b = workFlow.NextLevelId ?? 0;
-
-                    workFlow.StaffId = entity.staffId;
-                    workFlow.CompanyId = entity.companyId;
-                    workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
-                    workFlow.TargetId = entity.targetId;
-                    workFlow.Comment = entity.comment;
-                    workFlow.OperationId = entity.operationId;
-                    workFlow.DeferredExecution = true;
-                    workFlow.ExternalInitialization = false;
-
-                    workFlow.LogActivity();
-
-                    //context.savechanges();
-                    //if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
-                    //{
-                    //    trans.Rollback();
-                    //    throw new SecureException("Approval Failed");
-                    //}
-
-                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
-                    {
-                        var tempAccreditedConsultant = context.TBL_TEMP_ACCREDITEDCONSULTANT.Find(entity.targetId);
-                        tempAccreditedConsultant.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
-                        context.SaveChanges();
-                        trans.Commit();
-                        return 2;
-                    }
-
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
-                    {
-                        var response = ApproveAccreditedSolicitors(entity.targetId, (short)workFlow.StatusId, entity);
-
-                        if (response)
-                        {
-                            try
-                            {
-                                context.SaveChanges();
-
-                                trans.Commit();
-                            }
-                            catch (Exception ex)
-                            {
-                                var EXE = ex;
-                            }
-                        }
-                        else throw new ConditionNotMetException("One or more errors occured on commit.");
-                        return 1;
-                    }
-                    else
-                    {
-                        trans.Commit();
-                    }
-
-                    return 0;
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new SecureException(ex.Message);
-                }
+                var tempAccreditedConsultant = context.TBL_TEMP_ACCREDITEDCONSULTANT.Find(entity.targetId);
+                tempAccreditedConsultant.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                result = 2;
             }
+
+            if (workFlow.NewState == (int)ApprovalState.Ended)
+            {
+                ApproveAccreditedSolicitors(entity.targetId, (short)workFlow.StatusId, entity);
+                result = 1;
+            }
+            context.SaveChanges();
+            return result;
         }
 
-        private bool ApproveAccreditedSolicitors(int accreditedConsultantId, short approvalStatusId, UserInfo user)
+        private void ApproveAccreditedSolicitors(int accreditedConsultantId, short approvalStatusId, UserInfo user)
         {
             var accreditedConsultantModel = context.TBL_TEMP_ACCREDITEDCONSULTANT.Find(accreditedConsultantId);
             var accreditedConsultantStateModel = context.TBL_TEMP_ACCREDITEDCONSULTANT_STATE.Where(x => x.TEMPACCREDITEDCONSULTANTID == accreditedConsultantModel.TEMPACCREDITEDCONSULTANTID).ToList();
@@ -613,108 +570,105 @@ namespace FintrakBanking.Repositories.Setups.General
             TBL_ACCREDITEDCONSULTANT_STATE accreditedConsultantStates = new TBL_ACCREDITEDCONSULTANT_STATE();
             List<TBL_ACCREDITEDCONSULTANT_STATE> accreditedConsultantStatesList = new List<TBL_ACCREDITEDCONSULTANT_STATE>();
 
-            try
+            if (accreditedConsultantToUpdate != null)
             {
-                if (accreditedConsultantToUpdate != null)
+                accreditedConsultantStateListToUpdate = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == accreditedConsultantToUpdate.ACCREDITEDCONSULTANTID).ToList();
+                if (accreditedConsultantStateListToUpdate.Count() > 0)
                 {
-                    accreditedConsultantStateListToUpdate = context.TBL_ACCREDITEDCONSULTANT_STATE.Where(x => x.ACCREDITEDCONSULTANTID == accreditedConsultantToUpdate.ACCREDITEDCONSULTANTID).ToList();
-                    if (accreditedConsultantStateListToUpdate.Count > 0)
+                    foreach (var curr in accreditedConsultantStateListToUpdate)
                     {
-                        foreach (var curr in accreditedConsultantStateListToUpdate)
+                        context.TBL_ACCREDITEDCONSULTANT_STATE.Remove(curr);
+                    }
+                }
+
+                var existingaccreditedConsultant = accreditedConsultantToUpdate;
+                if (accreditedConsultantModel != null)
+                {
+                    existingaccreditedConsultant.CITYID = accreditedConsultantModel.CITYID;
+                    existingaccreditedConsultant.NAME = accreditedConsultantModel.NAME;
+                    existingaccreditedConsultant.FIRMNAME = accreditedConsultantModel.FIRMNAME;
+                    existingaccreditedConsultant.REGISTRATIONNUMBER = accreditedConsultantModel.REGISTRATIONNUMBER;
+                    existingaccreditedConsultant.ACCREDITEDCONSULTANTTYPEID = accreditedConsultantModel.ACCREDITEDCONSULTANTTYPEID;
+                    existingaccreditedConsultant.SOLICITORBVN = accreditedConsultantModel.SOLICITORBVN;
+                    existingaccreditedConsultant.ACCOUNTNUMBER = accreditedConsultantModel.ACCOUNTNUMBER;
+                    existingaccreditedConsultant.COUNTRYID = accreditedConsultantModel.COUNTRYID;
+                    existingaccreditedConsultant.EMAILADDRESS = accreditedConsultantModel.EMAILADDRESS;
+                    existingaccreditedConsultant.PHONENUMBER = accreditedConsultantModel.PHONENUMBER;
+                    existingaccreditedConsultant.ADDRESS = accreditedConsultantModel.ADDRESS;
+                    existingaccreditedConsultant.CORECOMPETENCE = accreditedConsultantModel.CORECOMPETENCE;
+                    existingaccreditedConsultant.COMPANYID = accreditedConsultantModel.COMPANYID;
+                    existingaccreditedConsultant.CREATEDBY = accreditedConsultantModel.CREATEDBY;
+                    existingaccreditedConsultant.DATETIMECREATED = DateTime.Now;
+                    existingaccreditedConsultant.DELETED = false;
+                }
+
+                accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
+
+                if (accreditedConsultantStateModel != null)
+                {
+                    foreach (var c in accreditedConsultantStateModel)
+                    {
+                        accreditedConsultantStatesList.Add(new TBL_ACCREDITEDCONSULTANT_STATE
                         {
-                            context.TBL_ACCREDITEDCONSULTANT_STATE.Remove(curr);
-                        }
+                            ACCREDITEDCONSULTANTID = accreditedConsultantModel.ACCREDITEDCONSULTANTID,
+                            STATEID = c.STATEID,
+                        });
                     }
-                  
+                }
 
-                    var existingaccreditedConsultant = accreditedConsultantToUpdate;
-                    if (accreditedConsultantModel != null)
+                context.TBL_ACCREDITEDCONSULTANT_STATE.AddRange(accreditedConsultantStatesList);
+                var test = accreditedConsultantStatesList.Count();
+                var test2 = accreditedConsultantStatesList.ToList();
+            }
+            else
+            {
+                if (accreditedConsultantModel != null)
+                {
+                    var accreditedConsultant = new TBL_ACCREDITEDCONSULTANT()
                     {
-                        existingaccreditedConsultant.CITYID = accreditedConsultantModel.CITYID;
-                        existingaccreditedConsultant.NAME = accreditedConsultantModel.NAME;
-                        existingaccreditedConsultant.FIRMNAME = accreditedConsultantModel.FIRMNAME;
-                        existingaccreditedConsultant.REGISTRATIONNUMBER = accreditedConsultantModel.REGISTRATIONNUMBER;
-                        existingaccreditedConsultant.ACCREDITEDCONSULTANTTYPEID = accreditedConsultantModel.ACCREDITEDCONSULTANTTYPEID;
-                        existingaccreditedConsultant.SOLICITORBVN = accreditedConsultantModel.SOLICITORBVN;
-                        existingaccreditedConsultant.ACCOUNTNUMBER = accreditedConsultantModel.ACCOUNTNUMBER;
-                        existingaccreditedConsultant.COUNTRYID = accreditedConsultantModel.COUNTRYID;
-                        existingaccreditedConsultant.EMAILADDRESS = accreditedConsultantModel.EMAILADDRESS;
-                        existingaccreditedConsultant.PHONENUMBER = accreditedConsultantModel.PHONENUMBER;
-                        existingaccreditedConsultant.ADDRESS = accreditedConsultantModel.ADDRESS;
-                        existingaccreditedConsultant.CORECOMPETENCE = accreditedConsultantModel.CORECOMPETENCE;
-                        existingaccreditedConsultant.COMPANYID = accreditedConsultantModel.COMPANYID;
-                        existingaccreditedConsultant.CREATEDBY = accreditedConsultantModel.CREATEDBY;
-                        existingaccreditedConsultant.DATETIMECREATED = DateTime.Now;
-                        existingaccreditedConsultant.DELETED = false;
-                    }
-                    accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
+                        CITYID = accreditedConsultantModel.CITYID,
+                        NAME = accreditedConsultantModel.NAME,
+                        FIRMNAME = accreditedConsultantModel.FIRMNAME,
+                        REGISTRATIONNUMBER = accreditedConsultantModel.REGISTRATIONNUMBER,
+                        ACCREDITEDCONSULTANTTYPEID = accreditedConsultantModel.ACCREDITEDCONSULTANTTYPEID,
+                        SOLICITORBVN = accreditedConsultantModel.SOLICITORBVN,
+                        ACCOUNTNUMBER = accreditedConsultantModel.ACCOUNTNUMBER,
+                        COUNTRYID = accreditedConsultantModel.COUNTRYID,
+                        EMAILADDRESS = accreditedConsultantModel.EMAILADDRESS,
+                        PHONENUMBER = accreditedConsultantModel.PHONENUMBER,
+                        ADDRESS = accreditedConsultantModel.ADDRESS,
+                        CORECOMPETENCE = accreditedConsultantModel.CORECOMPETENCE,
+                        COMPANYID = accreditedConsultantModel.COMPANYID,
+                        CREATEDBY = accreditedConsultantModel.CREATEDBY,
+                        DATETIMECREATED = genSetup.GetApplicationDate(),
+                        DELETED = false,
 
-                    //context.SaveChanges();
+                    };
+                    accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
+                    accreditedConsultantModel.ISCURRENT = false;
+                    context.TBL_ACCREDITEDCONSULTANT.Add(accreditedConsultant);
+                    context.SaveChanges();
                     if (accreditedConsultantStateModel != null)
                     {
-                        foreach (var c in accreditedConsultantStateModel)
-                        {                            
-                            accreditedConsultantStatesList.Add(new TBL_ACCREDITEDCONSULTANT_STATE
+                        foreach (var item in accreditedConsultantStateModel)
+                        {
+                            accreditedConsultantStates = new TBL_ACCREDITEDCONSULTANT_STATE
                             {
-                                ACCREDITEDCONSULTANTID = accreditedConsultantModel.ACCREDITEDCONSULTANTID,
-                                STATEID = c.STATEID,
-                            });
+                                STATEID = item.STATEID,
+                            };
+                            accreditedConsultantStates.ACCREDITEDCONSULTANTID = accreditedConsultant.ACCREDITEDCONSULTANTID;
+                            context.TBL_ACCREDITEDCONSULTANT_STATE.Add(accreditedConsultantStates);
                         }
                     }
-                }
-                else
-                {
-                    if (accreditedConsultantModel != null)
-                    {
-                        var accreditedConsultant = new TBL_ACCREDITEDCONSULTANT()
-                        {
-                            CITYID = accreditedConsultantModel.CITYID,
-                            NAME = accreditedConsultantModel.NAME,
-                            FIRMNAME = accreditedConsultantModel.FIRMNAME,
-                            REGISTRATIONNUMBER = accreditedConsultantModel.REGISTRATIONNUMBER,
-                            ACCREDITEDCONSULTANTTYPEID = accreditedConsultantModel.ACCREDITEDCONSULTANTTYPEID,
-                            SOLICITORBVN = accreditedConsultantModel.SOLICITORBVN,
-                            ACCOUNTNUMBER = accreditedConsultantModel.ACCOUNTNUMBER,
-                            COUNTRYID = accreditedConsultantModel.COUNTRYID,
-                            EMAILADDRESS = accreditedConsultantModel.EMAILADDRESS,
-                            PHONENUMBER = accreditedConsultantModel.PHONENUMBER,
-                            ADDRESS = accreditedConsultantModel.ADDRESS,
-                            CORECOMPETENCE = accreditedConsultantModel.CORECOMPETENCE,
-                            COMPANYID = accreditedConsultantModel.COMPANYID,
-                            CREATEDBY = accreditedConsultantModel.CREATEDBY,
-                            DATETIMECREATED = genSetup.GetApplicationDate(),
-                            DELETED = false,
-                         
-                        };
-                        accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
-                        accreditedConsultantModel.ISCURRENT = false;
-                        context.TBL_ACCREDITEDCONSULTANT.Add(accreditedConsultant);
-                        context.SaveChanges();
-                        if (accreditedConsultantStateModel != null)
-                        {
-                            foreach (var item in accreditedConsultantStateModel)
-                            {
-                                accreditedConsultantStates = new TBL_ACCREDITEDCONSULTANT_STATE
-                                {
-                                    STATEID = item.STATEID,
-                                };
-                                accreditedConsultantStates.ACCREDITEDCONSULTANTID = accreditedConsultant.ACCREDITEDCONSULTANTID;
-                                context.TBL_ACCREDITEDCONSULTANT_STATE.Add(accreditedConsultantStates);
-                            }
-                        }
 
-                        accreditedConsultantModel.ACCREDITEDCONSULTANTID = accreditedConsultant.ACCREDITEDCONSULTANTID;
-                        accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
-                    }
+                    accreditedConsultantModel.ACCREDITEDCONSULTANTID = accreditedConsultant.ACCREDITEDCONSULTANTID;
+                    accreditedConsultantModel.APPROVALSTATUSID = approvalStatusId;
                 }
-                return context.SaveChanges() > 0;
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
         }
+
+
+
         private void AddUpdateAccreditedConsultantStates(List<AccreditedConsultantStateViewModel> entity)
         {
             foreach (var ent in entity)
