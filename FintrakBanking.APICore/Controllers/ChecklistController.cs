@@ -1707,5 +1707,48 @@ namespace FintrakBanking.APICore.Controllers
             new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
+        #region LMS Condition Precedence Checklist
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-condition-prededence-checklist")]
+        public HttpResponseMessage GetLMSConditionPrecedenceChecklist(int loanReviewApplicationId)
+        {
+            try
+            {
+                var data = repo.GetLMSConditionPrecedenceChecklist(loanReviewApplicationId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-condition-prededence-checklist-status")]
+        public HttpResponseMessage GetLMSConditionPrecedenceChecklistStatus(int loanReviewApplicationId)
+        {
+            try
+            {
+                var data = repo.GetLMSConditionPrecedenceChecklistStatus(loanReviewApplicationId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        #endregion
     }
 }
