@@ -715,7 +715,7 @@ namespace FintrakBanking.Repositories.CRMS
                               LEGAL_STATUS = b.CRMSLEGALSTATUSID,
                               CLASSIFICATION_BY_BUSINESS_LINES = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                               CLASSIFICATION_BY_BUSINESS_LINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
-                              SPECIALISED_LOAN = a.ISSPECIALISED ? "YES" : "NO",
+                              SPECIALISED_LOAN = a.ISSPECIALISED? "YES" : "NO",
                               // SPECIALISED_LOAN_MORATORIUM_PERIOD = (x.FIRSTPRINCIPALPAYMENTDATE - x.EFFECTIVEDATE).Value.Days,    // pending
                               DIRECTOR_UNIQUE_IDENTIFIER = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CUSTOMERBVN).FirstOrDefault(),
                               SYNDICATION = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "YES" : "NO",

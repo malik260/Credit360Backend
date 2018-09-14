@@ -753,7 +753,7 @@ namespace FintrakBanking.Repositories.Credit
                         schedule = x.d.REPAYMENTSCHEDULE,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
-                        isSpecialised = x.d.ISSPECIALISED,
+                        isSpecialised = (bool)x.d.ISSPECIALISED,
 
                         priceIndexId = x.d.PRODUCTPRICEINDEXID,
                         //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
@@ -820,7 +820,7 @@ namespace FintrakBanking.Repositories.Credit
                     schedule = x.d.REPAYMENTSCHEDULE,
                     securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                     crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
-                    isSpecialised = x.d.ISSPECIALISED,
+                    isSpecialised = (bool)x.d.ISSPECIALISED,
 
                     priceIndexId = x.d.PRODUCTPRICEINDEXID,
                     //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,

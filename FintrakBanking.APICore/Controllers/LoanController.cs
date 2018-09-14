@@ -1003,7 +1003,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-booking/approval/{loanBookingRequestId}")]
-        public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
+        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
             try
             {
@@ -1062,7 +1062,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-request/approval/{loanBookingRequestId}")]
-        public HttpResponseMessage ApproveInitiatedLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
+        public HttpResponseMessage ApproveInitiatedLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
             try
             {
@@ -1117,7 +1117,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-booking/fee-override/approval")]
-        public HttpResponseMessage ApproveLoaFeeOverride(ApprovalViewModel model)
+        public HttpResponseMessage ApproveLoaFeeOverride([FromBody] ApprovalViewModel model)
         {
             try
             {

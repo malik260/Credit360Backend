@@ -231,6 +231,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime? NEXT_INTEREST_REPRICINGDATE { get; set; }
 
+        public short? REPRICINGMODEID { get; set; }
+        public int? REPRICINGDURATION { get; set; }
+
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }
 
         public virtual TBL_CASA TBL_CASA { get; set; }
