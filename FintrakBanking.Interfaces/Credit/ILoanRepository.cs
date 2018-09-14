@@ -183,6 +183,9 @@ namespace FintrakBanking.Interfaces.Credit
         LoanViewModel GetContingentByLoanId(int revolvingLoanId);
        // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
         IEnumerable<LoanViewModel> GetCommercialLoanByApplicationDetailId(int loanApplicationDetailId);
+        IEnumerable<LoanViewModel> GetLoanByApplicationDetailId(int loanApplicationDetailId);
+        IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
+        IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
 
     }
 }

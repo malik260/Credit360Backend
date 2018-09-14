@@ -381,7 +381,30 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-by-lms-loanapplication/")]
+        public HttpResponseMessage GetCustomerByLMSLoanapplicationId(int loanApplicationId)
+        {
 
+            try
+            {
+                var data = repo.GetCustomerGeneralInfoByLMSLoanId(loanApplicationId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("customerbyid/")]

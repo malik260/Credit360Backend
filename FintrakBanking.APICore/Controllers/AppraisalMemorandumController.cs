@@ -129,12 +129,12 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpGet]
-        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}")]
-        public HttpResponseMessage GetAppraisalMemorandumTrail(int applicationId, int operationId)
+        [Route("appraisal-memorandum/trail/{applicationId}/operation/{operationId}/all/{all}")]
+        public HttpResponseMessage GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all)
         {
             try
             {
-                var data = repo.GetAppraisalMemorandumTrail(applicationId, operationId);
+                var data = repo.GetAppraisalMemorandumTrail(applicationId, operationId,all);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)
@@ -772,5 +772,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("appraisal-memorandum/lms-loan-detail/{loanApplicationId}")]
+        public HttpResponseMessage GetApprovedLMSLoanDetail(int loanApplicationId)
+        {
+            try
+            {
+                LoanApplicationDetailsViewModel data = repo.GetLMSLoanApplicationDetail(loanApplicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }

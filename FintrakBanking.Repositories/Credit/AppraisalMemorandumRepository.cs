@@ -463,19 +463,25 @@ namespace FintrakBanking.Repositories.Credit
             return changes;
         }
 
-        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId)
+        public IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool getAll = false)
         {
-            int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
-                (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
-            (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
-                (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
-            ,(int)OperationsEnum.ContigentLoanBooking};
-
+           
+             int[] operations = { (int)OperationsEnum.TermLoanBooking, (int)OperationsEnum.CAM, (int)OperationsEnum.InterestPastDueLoanRepayment,
+                    (int)OperationsEnum.RevolvingLoanBooking, (int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.OfferLetterApproval,
+                (int)OperationsEnum.LoanAvailment,(int)OperationsEnum.LoanBookingRequest,(int)OperationsEnum.BondsAndGuarantees,
+                    (int)OperationsEnum.CommercialLoanBooking,(int)OperationsEnum.ForeignExchangeLoanBooking,(int)OperationsEnum.LoanAndOverdraftRequestBooking
+                ,(int)OperationsEnum.ContigentLoanBooking,(int)OperationsEnum.CustomerInformationApproval};
+            
             var allstaff = this.GetAllStaffNames();
 
-            var data =  (from x in this.context.TBL_APPROVAL_TRAIL
-                where operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId
-                select new ApprovalTrailViewModel
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == applicationId);
+
+            if (getAll)
+            {
+                trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && operations.Contains(x.OPERATIONID) && x.TARGETID == applicationId);
+            }
+
+            var data =  trail.Select(x => new ApprovalTrailViewModel
                 {
                     approvalTrailId = x.APPROVALTRAILID,
                     comment = x.COMMENT,
@@ -1661,6 +1667,72 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion LMS APPROVAL
+
+
+        public LoanApplicationDetailsViewModel GetLMSLoanApplicationDetail(int applicationId)
+        {
+            var details = new LoanApplicationDetailsViewModel();
+            var facilities = context.TBL_LMSR_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Join(context.TBL_LMSR_APPLICATION_DETAIL,
+                a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
+                .Select(x => new ApprovedLoanDetailViewModel
+                {
+                    loanApplicationDetailId = x.d.LOANREVIEWAPPLICATIONID,
+                    applicationId = x.d.LOANAPPLICATIONID,
+                    customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
+                    obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
+                  //  currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
+
+                    proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
+                    proposedTenor = x.d.PROPOSEDTENOR,
+                    proposedRate = x.d.PROPOSEDINTERESTRATE,
+                    proposedAmount = x.d.PROPOSEDAMOUNT,
+                    proposedProductId = x.d.PRODUCTID,
+
+                    approvedProductName = context.TBL_PRODUCT.Where(s=>s.PRODUCTID==x.d.PRODUCTID).Select(s=>s.PRODUCTNAME).FirstOrDefault(), // <----------take note of 1
+                        approvedTenor = x.d.APPROVEDTENOR,
+                    approvedRate = x.d.APPROVEDINTERESTRATE,
+                    approvedAmount = x.d.APPROVEDAMOUNT,
+                    approvedProductId = x.d.PRODUCTID,
+
+                  //  statusId = x.d.STATUSID,
+                   // exchangeRate = x.d.EXCHANGERATE,
+                    terms = x.d.REPAYMENTTERMS,
+                    schedule = x.d.REPAYMENTSCHEDULE,
+                   // securedByCollateral = x.d.SECUREDBYCOLLATERAL,
+                  //  crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
+                 //   isSpecialised = x.d.ISSPECIALISED
+                }).ToList();
+
+            var customerIds = facilities.Select(x => x.customerId).ToList();
+
+            var duplications = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => customerIds.Contains(x.CUSTOMERID)
+               // && x.DELETED == false
+                && x.LOANAPPLICATIONID != applicationId
+                && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+            )
+            .Join(
+                context.TBL_LMSR_APPLICATION.Where(x =>
+                    x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                    && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
+                    , d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
+            .Select(x => new DedupeApplicationViewModel
+            {
+                applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
+                applicationDate = x.a.APPLICATIONDATE,
+                applicationAmount = x.d.APPROVEDAMOUNT,
+                interestRate = x.d.PROPOSEDINTERESTRATE,
+                applicationTenor = x.d.PROPOSEDTENOR,
+                branchName = x.a.TBL_BRANCH.BRANCHNAME,
+                productName = x.d.TBL_PRODUCT.PRODUCTNAME,
+            })
+            .ToList();
+
+            details.duplications = duplications;
+            details.facilities = facilities;
+
+            return details;
+        }
 
     }
 }

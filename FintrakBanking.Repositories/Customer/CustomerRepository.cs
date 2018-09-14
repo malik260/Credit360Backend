@@ -5049,6 +5049,21 @@ namespace FintrakBanking.Repositories.Customer
 
             return relatedCust.Concat(ultimateBeneficial);
         }
+        public IEnumerable<CustomerViewModels> GetCustomerGeneralInfoByLMSLoanId(int loanApplicationId)
+        {
+            var loanCust = (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                            where a.LOANAPPLICATIONID == loanApplicationId
+                            select a.CUSTOMERID).ToList();
+            var customers = GetCustomers();
+            if (loanCust.Any())
+            {
+               return customers = customers.Where(x => loanCust.Contains(x.customerId));
+            }
+
+            return new List< CustomerViewModels>();
+        }
     }
+
+   
 }
 

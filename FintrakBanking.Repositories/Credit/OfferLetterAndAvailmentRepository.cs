@@ -208,11 +208,14 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();
 
-            var data = context.TBL_LOAN_APPLICATION//.Where(x=>x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
+            var data = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
-                .Join(context.TBL_APPROVAL_TRAIL.Where(x => 
-                    x.OPERATIONID == (int)OperationsEnum.LoanAvailment 
+                .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanAvailment
+                    && x.RESPONSESTAFFID == null
+                    && (x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing ||
+                        x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Authorised ||
+                        x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                     && ids.Contains((int)x.TOAPPROVALLEVELID)
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
                 ),
@@ -263,9 +266,9 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
                     currentApprovalLevel = x.d.TBL_APPROVAL_LEVEL1.LEVELNAME,
 
-
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
+                    atInitiator = x.c.a.CREATEDBY == staffId,
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                     loanApplicationCollateral = (from r in context.TBL_LOAN_APPLICATION_COLLATERL.Where(s => s.LOANAPPLICATIONID == x.c.a.LOANAPPLICATIONID)
                                                  select new LoanApplicationCollateralViewModel
@@ -286,7 +289,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return data;
         }
-
 
         public IEnumerable<CamProcessedLoanViewModel> GetApplicationsDueForAvailmentCheckList(int companyId)
         {
@@ -1852,6 +1854,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void LogLoanBookingRequest(LoanAvailmentApprovalViewModel entity, short? productClassId, short? processId, IQueryable<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails)
         {
+            FinTrakBankingContext ctx = new FinTrakBankingContext();
             foreach (var record in loanApplicationDetails.ToList())
             {
                 record.EFFECTIVEDATE = DateTime.Now;
@@ -1859,7 +1862,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                 {
-                    var request = context.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
+                    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
                     {
                         AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
                         APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
@@ -1868,7 +1871,8 @@ namespace FintrakBanking.Repositories.Credit
                         ISUSED = false,
                         CREATEDBY = entity.staffId,
                     });
-                    context.SaveChanges();
+
+                    ctx.SaveChanges();
                     this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
                     record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                 }
@@ -1877,7 +1881,7 @@ namespace FintrakBanking.Repositories.Credit
                 && (productClassId != 0 && productClassId != null)
                    && (processId == (short)ProductClassProcessEnum.ProductBased))
                 {
-                    var request = context.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
+                    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
                     {
                         AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
                         APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
@@ -1886,7 +1890,7 @@ namespace FintrakBanking.Repositories.Credit
                         ISUSED = false,
                         CREATEDBY = entity.staffId,
                     });
-                    context.SaveChanges();
+                    ctx.SaveChanges();
                     this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
                     record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                 }

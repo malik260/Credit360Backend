@@ -29,6 +29,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                customer.companyId=  token.GetCompanyId;
                 var data = repo.AddCRMSCode(customer);
                 if (data ==null)
                 {
@@ -39,15 +40,15 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data ="no-record", success = false, message = $"Error: {ce.Message}" });
             }
             catch (BadLogicException be)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -58,6 +59,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+                model.companyId = token.GetCompanyId;
                 var data = repo.GetAllLoansWithCRMSCode(model);
                 if (data == null)
                 {
@@ -68,15 +70,15 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {ce.Message}" });
             }
             catch (BadLogicException be)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
             }
             catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
             }
         }
 
@@ -87,23 +89,24 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var fileBytes = repo.GenerateCRMS300Template(model);
+                model.companyId = token.GetCompanyId;
+                var fileBytes = repo.GenerateCBNReport(model);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = fileBytes });
             }
             catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data = "no-record",  success = false, message = $"Error: {ce.Message}" });
             }
             catch (BadLogicException be)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: {be.Message}" });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false, message = $"Error: an error occured" });
             }
 
-        }
+            }
     }
 }
