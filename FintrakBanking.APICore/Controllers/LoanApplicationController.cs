@@ -1294,6 +1294,23 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("transaction/lms-dynamics/{loanApplicationId}")]
+        public HttpResponseMessage GetLMSTransactionDynamics(int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.GetTrnasactionDynamics(loanApplicationId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan/condition-precident/{loanApplicationId}")]
@@ -1302,6 +1319,22 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetConditionPrecidents(loanApplicationId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan/condition-precident/{loanApplicationId}")]
+        public HttpResponseMessage GetLMSConditionPrecidents(int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.GetLMSConditionPrecidents(loanApplicationId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
@@ -1385,6 +1418,23 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.GetAllCRMSRepaymentAgreementType();
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        
+             [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-syndication-type")]
+        public HttpResponseMessage GetAllSyndicationType()
+        {
+            try
+            {
+                var response = repo.GetAllSyndicationType();
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }

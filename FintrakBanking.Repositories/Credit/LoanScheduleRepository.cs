@@ -1029,41 +1029,65 @@ namespace FintrakBanking.Repositories.Credit
 
             
             double previousPrincipalAmount = loanInput.principalAmount;
-            DateTime previousPaymentDate = loanInput.effectiveDate;
+            double previousPrincipalAmountForInterest = loanInput.principalAmount;
+            DateTime previousInterestPaymentDate = loanInput.effectiveDate;
             int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
 
             int paymentNumber = 1;
             foreach (var item in data)
             {
                 LoanPaymentSchedulePeriodicViewModel loanPeriod = new LoanPaymentSchedulePeriodicViewModel();
+
+                LoanIrregularSchedulePaymentTypeEnum paymentType = (LoanIrregularSchedulePaymentTypeEnum) item.paymentTypeId;
+
                 loanPeriod.paymentNumber = paymentNumber;
                 loanPeriod.paymentDate = item.paymentDate;
-                loanPeriod.startPrincipalAmount = previousPrincipalAmount;
+
+                //if(paymentType != LoanIrregularSchedulePaymentTypeEnum.InterestOnly)
+                  loanPeriod.startPrincipalAmount = previousPrincipalAmount;
 
                 if (isArmotisedSchedule == false)
-                { loanPeriod.periodPrincipalAmount = item.paymentAmount; }
+                {
+                    //if (paymentType != LoanIrregularSchedulePaymentTypeEnum.InterestOnly)
+                        loanPeriod.periodPrincipalAmount = item.paymentAmount;
+                }
                 else
                 {
                     if (loanInput.integralFeeAmount > 0)
                     {
-                        var feeDifferential = loanInput.principalAmount / (loanInput.principalAmount + loanInput.integralFeeAmount);
-                        loanPeriod.periodPrincipalAmount = item.paymentAmount * feeDifferential;
+                        //if (paymentType != LoanIrregularSchedulePaymentTypeEnum.InterestOnly)
+                        //{
+                            var feeDifferential = loanInput.principalAmount / (loanInput.principalAmount + loanInput.integralFeeAmount);
+                            loanPeriod.periodPrincipalAmount = item.paymentAmount * feeDifferential;
+                        //}
                     }
                     else
                         loanPeriod.periodPrincipalAmount = item.paymentAmount; 
 
                 }
 
-                    var dateDifferenceCount = (item.paymentDate - previousPaymentDate).TotalDays;
+                    var dateDifferenceCount = (item.paymentDate - previousInterestPaymentDate).TotalDays;
 
-                loanPeriod.periodInterestAmount = (previousPrincipalAmount * (loanInput.interestRate / 100.0)) * (dateDifferenceCount / daysInAYear);
+                if (paymentType != LoanIrregularSchedulePaymentTypeEnum.PrincipalOnly)
+                {
+                        loanPeriod.periodInterestAmount = (previousPrincipalAmountForInterest * (loanInput.interestRate / 100.0)) * (dateDifferenceCount / daysInAYear);
+                }
+
                 loanPeriod.periodPaymentAmount = loanPeriod.periodPrincipalAmount + loanPeriod.periodInterestAmount;
+               
                 loanPeriod.endPrincipalAmount = loanPeriod.startPrincipalAmount - loanPeriod.periodPrincipalAmount;
-
+               
                 output.Add(loanPeriod);
 
                 previousPrincipalAmount = loanPeriod.endPrincipalAmount;
-                previousPaymentDate = loanPeriod.paymentDate;
+
+
+                if (paymentType != LoanIrregularSchedulePaymentTypeEnum.PrincipalOnly)
+                {
+                    previousInterestPaymentDate = loanPeriod.paymentDate;
+                    previousPrincipalAmountForInterest = loanPeriod.endPrincipalAmount;
+                }
+
                 paymentNumber += 1;
 
             }

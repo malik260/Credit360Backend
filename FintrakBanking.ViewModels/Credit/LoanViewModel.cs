@@ -293,7 +293,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool writtenOff { get; set; }
         public DateTime firstPrincipalPaymentDate1 { get; set; }
         public DateTime firstInterestPaymentDate1 { get; set; }
-
+        public string productPriceIndex { get; set; }
         public string approvedTenorString
         {
             get
@@ -305,6 +305,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " " + units;
             }
         }
+
+       
 
 
 
@@ -628,7 +630,8 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string approvedAmountCurrency { get; set; }
-        
+        public bool atInitiator { get; set; }
+
 
 
         //......End f Loan Relational Table View Mapping Models......//

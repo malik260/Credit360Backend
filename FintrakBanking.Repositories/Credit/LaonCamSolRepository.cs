@@ -45,7 +45,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanCAMSOLViewModel
                         {
                             accountname = camsol.ACCOUNTNAME,
-                            accountnumber = camsol.ACCOUNTNAME,
+                            accountnumber = camsol.ACCOUNTNUMBER,
                             balance = camsol.BALANCE,
                             camsoltypeid = camsol.CAMSOLTYPEID,
                             cantakeloan = camsol.CANTAKELOAN,

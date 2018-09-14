@@ -1758,7 +1758,7 @@ namespace FintrakBanking.Repositories.Credit
                                                       currencyCode = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYCODE,
                                                       currency = cm.TBL_COLLATERAL_CUSTOMER.TBL_CURRENCY.CURRENCYNAME
                                                   })).ToList(),
-                                monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.TERMLOANID && x.LOANSYSTEMTYPEID == ln.TBL_PRODUCT.PRODUCTTYPEID)
+                                monitoringTriggers = (from i in context.TBL_LOAN_MONITORING_TRIGGER.Where(x => x.LOANID == ln.TERMLOANID && x.LOANSYSTEMTYPEID == ln.LOANSYSTEMTYPEID)
                                                       select (
                                                                new LoanMonitoringTriggerViewModel
                                                                {
@@ -5456,7 +5456,37 @@ namespace FintrakBanking.Repositories.Credit
             }
             return loans;
         }
+        public List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId)
+        {
+            List<LoanCAMSOLViewModel> camsol = new List<LoanCAMSOLViewModel>();
 
+            foreach (var item in customer)
+            {
+                var customercode = context.TBL_CUSTOMER.Find(item.customerId).CUSTOMERCODE;
+                camsol = (from cam in context.TBL_LOAN_CAMSOL
+                          join c in context.TBL_LOAN_CAMSOL_TYPE on cam.CAMSOLTYPEID equals c.CAMSOLTYPEID
+                          where cam.CUSTOMERCODE == customercode
+                          select new LoanCAMSOLViewModel
+                          {
+                              accountname = cam.ACCOUNTNAME,
+                              accountnumber = cam.ACCOUNTNUMBER,
+                              balance = cam.BALANCE,
+                              camsoltypeid = cam.CAMSOLTYPEID,
+                              cantakeloan = cam.CANTAKELOAN,
+                              customercode = cam.CUSTOMERCODE,
+                              customername = cam.CUSTOMERNAME,
+                              date = cam.DATE,
+                              camsolType = c.CAMSOLTYPENAME,
+                              loansystemtype = context.TBL_LOAN_SYSTEM_TYPE.Where(x => x.LOANSYSTEMTYPEID == cam.LOANSYSTEMTYPEID).Select(x => x.LOANSYSTEMTYPENAME).FirstOrDefault(),
+                              interestinsuspense = cam.INTERESTINSUSPENSE,
+                              loancamsolid = cam.LOAN_CAMSOLID,
+                              loanid = cam.LOANID,
+                              principal = cam.PRINCIPAL,
+                              remark = cam.REMARK,
+                          }).ToList();
+            }                
+            return camsol;
+        }
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
         {
             IQueryable<CurrentCustomerExposure> exposure = null;

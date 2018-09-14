@@ -6,6 +6,7 @@ using FintrakBanking.Interfaces.Helper;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -391,14 +392,13 @@ namespace FintrakBanking.Repositories.Setups.General
             return staffLevels.Union(roleLevelIds).Union(relievedLevelids);
         }
 
-
         public List<int> GetRouteLevels(int operationId, int depth)
         {
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
                     .Join(context.TBL_APPROVAL_GROUP,
                         m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false),
-                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new ApprovalLevelInfo
                         {
                             groupId = l.GROUPID,
                             groupPosition = mg.m.POSITION,
@@ -410,23 +410,23 @@ namespace FintrakBanking.Repositories.Setups.General
                         })
                         .OrderBy(x => x.groupPosition)
                         .ThenBy(x => x.levelPosition)
-                        .ToList()
-                        ;
+                        .ToList();
 
-            var routeLevel = levels.FirstOrDefault(x => x.levelTypeId == 2);//.Take(1).Select(x => x.levelId).FirstOrDefault();
-            if (routeLevel == null) throw new SecureException("Level type not set to region routing!");
+            var routeLevels = levels.Where(x => x.levelTypeId == 2);
 
-            var controlLevels = levels.Where(x =>
-                x.groupId == routeLevel.groupId
-                && x.levelPosition >= routeLevel.levelPosition
-                && x.levelPosition <= (routeLevel.levelPosition + depth)
-            );
+            IEnumerable <ApprovalLevelInfo> cls = null;
+            List<ApprovalLevelInfo> controlLevels = new List<ApprovalLevelInfo>();
+            foreach (var routeLevel in routeLevels)
+            {
+                cls = levels.Where(x => x.groupId == routeLevel.groupId 
+                        && x.levelPosition >= routeLevel.levelPosition && x.levelPosition <= (routeLevel.levelPosition + depth)
+                      );
+                controlLevels.AddRange(cls.ToList());
+            }
 
             return controlLevels.Select(x => x.levelId).ToList();
         }
 
-
-
-
     }
+
 }

@@ -1544,7 +1544,7 @@ namespace FintrakBanking.Repositories.Credit
                                  visitationRemark = x.REMARK,
                                  lastVisitaionDate = x.VISITATIONDATE,
                                  CollateralVisitationID = x.COLLATERALVISITATIONID,
-                                 collateralCustomerId = x.COLLATERALCUSTOMERID
+                                 collateralCustomerId = x.COLLATERALCUSTOMERID,
 
                              }).ToList();
             foreach (var file in specifics)
@@ -1563,6 +1563,7 @@ namespace FintrakBanking.Repositories.Credit
                     list.fileData = data.FILEDATA;
                     list.fileExtension = data.FILEEXTENSION;
                     list.fileName = data.FILENAME;
+                    list.documentId = data.DOCUMENTID;
 
                     response.Add(list);
                 }
