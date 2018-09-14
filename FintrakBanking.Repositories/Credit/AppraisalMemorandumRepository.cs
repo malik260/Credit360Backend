@@ -537,6 +537,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvalLevelId = s.APPROVALLEVELID,
                         groupRoleId = gl.mg.g.ROLEID,
                         canEscalate = gl.l.CANESCALATE,
+                        levelTypeId = gl.l.LEVELTYPEID,
                     });
 
             if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
@@ -558,6 +559,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalLevelId = l.APPROVALLEVELID,
                             groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
                             canEscalate = l.CANESCALATE,
+                            levelTypeId = l.LEVELTYPEID,
                         });
             }
 
@@ -610,6 +612,7 @@ namespace FintrakBanking.Repositories.Credit
                      approvalLevelId = s.APPROVALLEVELID,
                      groupRoleId = gl.mg.g.ROLEID,
                      canEscalate = gl.l.CANESCALATE,
+                     levelTypeId = gl.l.LEVELTYPEID,
                  });
 
             if (grants.Any() == false) // check specific
@@ -631,6 +634,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalLevelId = l.APPROVALLEVELID,
                             groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
                             canEscalate = l.CANESCALATE,
+                            levelTypeId = l.LEVELTYPEID,
                         });
             }
 
@@ -753,7 +757,7 @@ namespace FintrakBanking.Repositories.Credit
                         schedule = x.d.REPAYMENTSCHEDULE,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
-                        isSpecialised = x.d.ISSPECIALISED,
+                        isSpecialised = (bool)x.d.ISSPECIALISED,
 
                         priceIndexId = x.d.PRODUCTPRICEINDEXID,
                         //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
@@ -820,7 +824,7 @@ namespace FintrakBanking.Repositories.Credit
                     schedule = x.d.REPAYMENTSCHEDULE,
                     securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                     crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
-                    isSpecialised = x.d.ISSPECIALISED,
+                    isSpecialised = (bool)x.d.ISSPECIALISED,
 
                     priceIndexId = x.d.PRODUCTPRICEINDEXID,
                     //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,

@@ -22,6 +22,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private List<int> camOperationIds = new List<int> { 46, 71, 79 };
 
+        private readonly int classifiedAssetManagementRoleId = 46;
+
         public LoanReviewApplicationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
         {
             this.context = context;
@@ -180,9 +182,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
+            int staffId = model.createdBy;
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
-
             int camOperationId = GetCamOperation(model.performanceTypeId);
 
             var application = context.TBL_LMSR_APPLICATION.Add(new TBL_LMSR_APPLICATION
@@ -192,12 +194,11 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = model.customerId,
                 BRANCHID = model.branchId,
                 OPERATIONID = camOperationId,
-                
                 // CUSTOMERGROUPID = null,
                 DISPUTED = false,
                 REQUIRECOLLATERAL = false,
                 APPLICATIONDATE = applicationDate,
-                CREATEDBY = model.createdBy,
+                CREATEDBY = staffId,
                 DATETIMECREATED = applicationDate,
                 SYSTEMDATETIME = DateTime.Now,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -223,7 +224,7 @@ namespace FintrakBanking.Repositories.Credit
                     REPAYMENTSCHEDULE = String.Empty,
                     CUSTOMERID = loan.customerId,
                     APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved, // REMOVE DUPLICATE [STATUSID]
-                    CREATEDBY = model.createdBy,
+                    CREATEDBY = staffId,
                     DATETIMECREATED = applicationDate,
                     PROPOSEDTENOR = tenor,
                     PROPOSEDINTERESTRATE = loan.interestRate,
@@ -240,8 +241,16 @@ namespace FintrakBanking.Repositories.Credit
 
             if (context.SaveChanges() == 0) throw new SecureException("An error occured while saving the data!"); // this save is necessary to grab targetid
 
-            workflow.ToStaffId = model.createdBy;
-            workflow.NextProcess(model.companyId, model.createdBy, camOperationId, application.LOANAPPLICATIONID, null, "NIL", true, true);
+            workflow.ToStaffId = staffId;
+
+            bool assetManagement = false;
+            var user = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == staffId);
+            if (user.STAFFROLEID == classifiedAssetManagementRoleId) assetManagement = true;
+
+            if (assetManagement)
+                workflow.NextProcess(model.companyId, staffId, 79, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+            else
+                workflow.NextProcess(model.companyId, staffId, camOperationId, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
 
             if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
             throw new SecureException("An error occured while saving the data!");
