@@ -61,8 +61,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     }
 
-
-    public class LienProcessViewModel //: GeneralEntity
+public class LienProcessViewModel //: GeneralEntity
     {
         public string account { get; set; }
         public string lienProcessType { get; set; }
@@ -88,10 +87,10 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string lienAmount { get; set; }
         public string lienAccountCurrency { get; set; }
         public string lienUniqueReferenceNumber { get; set; }
-        public string webRequestStatus { get; set; }
-        public DateTime webRequestDate { get; set; }
-        public string responseCode { get; set; }
-        public string referenceNumber { get; set; }
+        //public string webRequestStatus { get; set; }
+        //public DateTime webRequestDate { get; set; }
+        //public string responseCode { get; set; }
+        //public string referenceNumber { get; set; }
 
 
     }

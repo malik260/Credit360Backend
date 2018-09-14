@@ -3108,7 +3108,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             debit.operationId = (int)model.operationId; 
-            debit.description = $"{product.PRODUCTNAME.Trim()} - {product.PRODUCTCODE.Trim()} disbursement.";
+            debit.description = $"Loan disbursement";
             debit.valueDate = generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
 
@@ -3154,7 +3154,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
                 credit.operationId = (int)model.operationId;
-                credit.description = $"{product.PRODUCTNAME.Trim()} - {product.PRODUCTCODE.Trim()} disbursement.";
+                credit.description = "Loan disbursement";
                 credit.valueDate = debit.valueDate;
                 credit.transactionDate = debit.valueDate;
                 credit.currencyId = casa.CURRENCYID;
