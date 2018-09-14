@@ -74,7 +74,7 @@
                             throw new APIErrorException("Core Banking API error - "+exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
                         }
 
-                        var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
+                        var currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).Select(x=>x.CURRENCYID).FirstOrDefault();
                         exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
                         exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
                         exchangeRateOutput.currencyId = (short)currencyId;
@@ -479,9 +479,9 @@
                         lienReason = model.description,
                         lienAmount = String.Format("{0:0.00}", model.lienAmount), //model.lienAmount,  //
                         lienUniqueReferenceNumber = model.lienReferenceNumber,
-                        lienAccountCurrency = context.TBL_CASA.FirstOrDefault(x =>
+                        lienAccountCurrency = context.TBL_CASA.Where(x =>
                                 x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId)
-                            .TBL_CURRENCY.CURRENCYCODE
+                            .Select(x=>x.TBL_CURRENCY.CURRENCYCODE).FirstOrDefault()
                     };
 
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
