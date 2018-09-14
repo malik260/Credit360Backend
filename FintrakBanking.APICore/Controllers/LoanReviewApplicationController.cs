@@ -204,5 +204,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("appraisal-review-referback")]
+        public HttpResponseMessage AppraisalReviewReferBack([FromBody] ForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            bool response = repo.AppraisalReviewReferBack(entity);
+            if (response == true)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+        }
     }
 }

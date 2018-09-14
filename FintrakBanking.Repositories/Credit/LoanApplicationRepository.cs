@@ -125,7 +125,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                                 subSectorId = b.SUBSECTORID,
                                 sectorName = b.TBL_SUB_SECTOR.TBL_SECTOR.NAME + "/" + b.TBL_SUB_SECTOR.NAME,
-                                applicationRefNo = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                applicationReferenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 loanApplicationId = b.LOANAPPLICATIONID,
                                 proposedAmount = b.PROPOSEDAMOUNT,
                                 proposedInterestRate = (double)b.PROPOSEDINTERESTRATE,
@@ -1353,7 +1353,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = entity.Select(a => new TBL_LOAN_APPLICATION_DETL_SYN()
             {
-
+              
                 BANKCODE = a.bankCode,
                 BANKNAME = a.bankName,
                 AMOUNTCONTRIBUTED = a.amountContributed,
@@ -1642,7 +1642,7 @@ namespace FintrakBanking.Repositories.Credit
                         select new LoanApplicationDetailViewModel()
                         {
                             loanApplicationId = b.LOANAPPLICATIONID,
-                            applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
@@ -1666,7 +1666,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             requireCollateral = a.REQUIRECOLLATERAL,
                             loanApplicationId = b.LOANAPPLICATIONID,
-                            applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
@@ -1699,7 +1699,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             requireCollateral = a.REQUIRECOLLATERAL,
                             loanApplicationId = b.LOANAPPLICATIONID,
-                            applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
@@ -1750,7 +1750,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             requireCollateral = a.REQUIRECOLLATERAL,
                             loanApplicationId = b.LOANAPPLICATIONID,
-                            applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
                             firstName = b.TBL_CUSTOMER.FIRSTNAME,
@@ -1781,16 +1781,17 @@ namespace FintrakBanking.Repositories.Credit
             var allApplicationDetails = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                          join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
-                                         where c.FIRSTNAME.ToLower().Contains(searchQuery)
-                                                 || c.MIDDLENAME.ToLower().Contains(searchQuery)
-                                                 || c.LASTNAME.ToLower().Contains(searchQuery)
-                                                 || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
-                                                 || a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery)
-                                                 || a.TBL_CASA.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
+                                         where a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery)
+                                           //|| c.FIRSTNAME.ToLower().Contains(searchQuery)
+                                           //|| c.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                                         //|| c.MIDDLENAME.ToLower().Contains(searchQuery)
+                                         //|| c.LASTNAME.ToLower().Contains(searchQuery)
+                                         //|| c.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                                         //|| a.TBL_CASA.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
                                          select new LoanApplicationDetailViewModel
                                          {
                                              loanApplicationId = d.LOANAPPLICATIONID,
-                                             applicationRefNo = a.APPLICATIONREFERENCENUMBER,
+                                             applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                              customerId = c.CUSTOMERID,
                                              firstName = c.FIRSTNAME,
                                              middleName = c.MIDDLENAME,
@@ -1804,13 +1805,29 @@ namespace FintrakBanking.Repositories.Credit
                                              approvedInterestRate = d.APPROVEDINTERESTRATE,
                                              productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                              productClassId = (short?)a.PRODUCTCLASSID,
+                                             applicationStatusId = a.APPLICATIONSTATUSID,
+                                             applicationStatusPosition = a.TBL_LOAN_APPLICATION_STATUS.POSITION,
+                                             approvalStatusId = a.APPROVALSTATUSID,
+                                             applicationDate = a.APPLICATIONDATE,
                                              customerType = c.TBL_CUSTOMER_TYPE.NAME,
                                              branchName = a.TBL_BRANCH.BRANCHNAME,
                                              customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                                             customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
-                                         });
+                                             customerAccountNumber = a.TBL_CASA != null ? a.TBL_CASA.PRODUCTACCOUNTNUMBER : null,
 
-            return allApplicationDetails;
+                                             equityAmount = d.EQUITYAMOUNT,
+                                             equityCasaAccountId = d.EQUITYCASAACCOUNTID,
+                                             currencyId = d.CURRENCYID,
+                                             currencyName = d.TBL_CURRENCY.CURRENCYNAME,
+                                             currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
+                                             exchangeRate = d.EXCHANGERATE,
+                                             subSectorId = d.SUBSECTORID,
+                                             proposedAmount = d.PROPOSEDAMOUNT,
+                                             proposedInterestRate = d.PROPOSEDINTERESTRATE,
+                                             proposedProductId = d.PROPOSEDPRODUCTID,
+                                             proposedProductName = d.TBL_PRODUCT.PRODUCTNAME,
+                                         });
+            return allApplicationDetails.ToList();
+
         }
 
         #endregion "Loan Applications Awaiting Checklist"

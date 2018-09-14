@@ -224,6 +224,7 @@
     <Compile Include="ThridPartyIntegration\CreditBureauSearchViewModel.cs" />
     <Compile Include="ThridPartyIntegration\CasaIntegrationViewModel.cs" />
     <Compile Include="UserInfo.cs" />
+    <Compile Include="WorkFlow\ApprovalLevelInfo.cs" />
     <Compile Include="WorkFlow\ApprovalTrailViewModel.cs" />
     <Compile Include="WorkFlow\WorkflowResponseViewModel.cs" />
     <Compile Include="WorkFlow\ApprovalViewModel.cs" />

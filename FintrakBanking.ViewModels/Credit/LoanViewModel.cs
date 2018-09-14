@@ -508,6 +508,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanBookingRequestViewModel : GeneralEntity
     {
+        public bool? isUsed;
+        public string currencyCode;
+
         public int loanBookingRequestId { get; set; }
 
         public int loanApplicationId { get; set; }
@@ -630,7 +633,8 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string approvedAmountCurrency { get; set; }
-        
+        public bool atInitiator { get; set; }
+
 
 
         //......End f Loan Relational Table View Mapping Models......//

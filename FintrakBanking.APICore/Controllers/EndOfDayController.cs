@@ -108,11 +108,11 @@ namespace FintrakBanking.APICore.Controllers
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = true, message = "End of day transaction completed successfully" });
+                               new { success = true, message = "Refresh Finacle Bulk Posting Transaction Completed Successfully" });
                 }
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "End of day transaction failed" });
+                               new { success = false, message = "Refresh Finacle Bulk Posting Transaction Failed" });
             }
             catch (ConditionNotMetException ce)
             {

@@ -20,7 +20,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool UpdateAppraisalMemorandum(AppraisalMemorandumViewModel model, int appraisalMemorandumId);
 
-        IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId);
+        IEnumerable<ApprovalTrailViewModel> GetAppraisalMemorandumTrail(int applicationId, int operationId, bool all);
 
         // IEnumerable<ApprovedLoanDetailViewModel> GetApprovedLoanDetail(int applicationId);
         LoanApplicationDetailsViewModel GetLoanApplicationDetail(int applicationId);
