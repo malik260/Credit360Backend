@@ -2001,7 +2001,72 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
+        public FinanceTransactionViewModel PostBuildLoanNegativeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
+        {
+            //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+
+            var casa = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId && x.COMPANYID == model.companyId);
+            debit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
+            debit.description = description; // "Loan Disbursment Amount";
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
+            debit.transactionDate = debit.valueDate;
+            debit.currencyId = casa.CURRENCYID;
+            debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = model.createdBy;
+            debit.approvedBy = model.createdBy;
+            debit.approvedDate = debit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            debit.companyId = model.companyId;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.sourceReferenceNumber = casa.LOANREFERENCENUMBER;
+            debit.casaAccountId = casa.CASAACCOUNTID;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = casa.BRANCHID;
+            debit.destinationBranchId = casa.BRANCHID;
+
+
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+            credit.operationId = operationId;//(int)OperationsEnum.LoanRepayment;
+            credit.description = description; // "Loan Disbursment Amount";
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
+            credit.transactionDate = credit.valueDate;
+            credit.currencyId = casa.CURRENCYID;
+            credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = model.createdBy;
+            credit.approvedBy = model.createdBy;
+            credit.approvedDate = credit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            credit.companyId = model.companyId;
+            credit.glAccountId = creditGL;
+            credit.sourceReferenceNumber = casa.LOANREFERENCENUMBER;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
+            credit.sourceBranchId = casa.BRANCHID;
+            credit.destinationBranchId = casa.BRANCHID;
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(debit);
+            inputTransactions.Add(credit);
+            PostTransaction(inputTransactions);
+
+            //financeTransaction.PostTransaction(loanTransaction);
+
+            // Audit Section ---------------------------            
+
+
+            return null;
+
+        }
+
+        public FinanceTransactionViewModel PostBuildLoanPositiveReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
         {
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -2091,11 +2156,11 @@ namespace FintrakBanking.Repositories.Finance
             debit.companyId = model.companyId;
 
 
-            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.glAccountId = creditGL;
             debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
             debit.casaAccountId = casa.CASAACCOUNTID;
-            debit.debitAmount = postedAmount;
-            debit.creditAmount = 0;
+            debit.debitAmount = 0;
+            debit.creditAmount = postedAmount;
             debit.sourceBranchId = casa.BRANCHID;
             debit.destinationBranchId = casa.BRANCHID;
 
@@ -2115,12 +2180,12 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = creditGL;
+            credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value; ;
 
             credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-            credit.casaAccountId = null;
-            credit.debitAmount = 0;
-            credit.creditAmount = postedAmount;
+            credit.casaAccountId = casa.CASAACCOUNTID;
+            credit.debitAmount = postedAmount;
+            credit.creditAmount = 0;
             credit.sourceBranchId = casa.BRANCHID;
             credit.destinationBranchId = casa.BRANCHID;
 

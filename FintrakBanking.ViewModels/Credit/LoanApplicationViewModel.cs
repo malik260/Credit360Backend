@@ -187,7 +187,7 @@ namespace FintrakBanking.ViewModels.Credit
     }
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
-        
+        public int applicationStatusPosition { get; set; }
 
         public LoanApplicationDetailViewModel()
         {
@@ -196,7 +196,10 @@ namespace FintrakBanking.ViewModels.Credit
             productFees = new List<ProductFeesViewModel>();
             syndicatedLoan = new List<SyndicatedLoanDetailViewModel>();
         }
-       
+        public string currencyCode { get; set; }
+        public DateTime applicationDate { get; set; }
+        public short applicationStatusId { get; set; }
+        public int approvalStatusId { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
         public string lastName { get; set; }
@@ -213,7 +216,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int loanApplicationId { get; set; }
 
-        public string applicationRefNo { get; set; }
+        public string applicationReferenceNumber { get; set; }
 
         public int customerId { get; set; }
 

@@ -390,6 +390,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
@@ -1084,6 +1085,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost][ClaimsAuthorization]
+        [Route("loan-application-details/search")]
+        public HttpResponseMessage SearchLoanApplicationDetails([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application/cancellation")]
@@ -1138,20 +1155,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet] [ClaimsAuthorization]
-        [Route("loan-application-details/searchtext/{searchString}")]
-        public HttpResponseMessage SearchLoanApplicationDetails(string searchString)
-        {
-            try
-            {
-                var response = repo.SearchLoanApplicationDetails(token.GetCompanyId, searchString);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
 
         [HttpGet]
         [ClaimsAuthorization]
