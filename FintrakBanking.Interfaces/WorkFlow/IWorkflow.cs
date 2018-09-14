@@ -37,7 +37,17 @@ namespace FintrakBanking.Interfaces.WorkFlow
         WorkflowResponse Response { get; set; }
 
         bool LogActivity();
-        void NextProcess(int companyId, int staffId, int operationId, int targetId, int? productClassId, string comment, bool external, bool deferred);
+        void NextProcess(
+                int companyId, 
+                int staffId, 
+                int operationId, 
+                int targetId, 
+                int? productClassId, 
+                string comment, 
+                bool external,
+                bool deferred,
+                bool sameDesk = false
+            );
 
         bool LogForApproval(ApprovalViewModel model); // <- this property is deprecated!!!
     }
