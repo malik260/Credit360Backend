@@ -119,6 +119,7 @@
     <Compile Include="Enum\LoanAvailmentApprovalFlowEnum.cs" />
     <Compile Include="Enum\LoanDetailsStatusEnum.cs" />
     <Compile Include="Enum\LoanPrudentialStatusEnum.cs" />
+    <Compile Include="Enum\LoanRepricingModeEnum.cs" />
     <Compile Include="Enum\LoanScheduleTypeEnum.cs" />
     <Compile Include="Enum\LoanStatusEnum.cs" />
     <Compile Include="Enum\LoanTransactionTypeEnum.cs" />
