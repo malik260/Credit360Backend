@@ -121,7 +121,7 @@ namespace FintrakBanking.Repositories
                 enablePasswordRetrieval = p.ENABLEPASSWORDRETRIEVAL,
                 expirePasswordAfter = p.EXPIREPASSWORDAFTER,
                 maxInvalidPasswordAttempts = p.MAXINVALIDPASSWORDATTEMPTS,
-                maxPeriodOfUserInactivity = p.MAXPERIODOFUSERINACTIVITY,
+                maxPeriodOfUserInactivity = p.MAXPERIODOFUSERINACTIVITY,  
                 minrequiredNonAlphanumericChar = p.MINREQUIREDNONALPHANUMERICCHAR,
                 minRequiredPasswordLength = p.MINREQUIREDPASSWORDLENGTH,
                 requiresQuestionAndAnswer = p.REQUIRESQUESTIONANDANSWER,
