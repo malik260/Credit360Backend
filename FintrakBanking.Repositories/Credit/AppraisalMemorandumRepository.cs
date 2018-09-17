@@ -620,7 +620,7 @@ namespace FintrakBanking.Repositories.Credit
                 grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
                     .Join(context.TBL_APPROVAL_GROUP,
                         m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
                         {
                             viewCamDocument = l.CANVIEWDOCUMENT,
@@ -1041,6 +1041,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                 operationId = x.a.OPERATIONID,
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
+                tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID
             })
             .Where(x => x.currentApprovalLevelTypeId != 2) // hou
             .ToList()
@@ -1649,6 +1650,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             appl.TRANCHEAPPROVAL_LEVELID = entity.approvalLevelId;
+            context.Entry(appl).State = System.Data.Entity.EntityState.Modified;
             return context.SaveChanges() > 0;
         }
 

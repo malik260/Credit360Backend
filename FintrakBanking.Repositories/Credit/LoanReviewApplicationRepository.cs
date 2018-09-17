@@ -776,7 +776,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // Take out of offer letter screen
             var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
-                x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
+                x.OPERATIONID == (int)OperationsEnum.LoanReviewApprovalOfferLetter
                 && x.RESPONSESTAFFID == null
                 && x.TARGETID == appl.LOANAPPLICATIONID
             );
