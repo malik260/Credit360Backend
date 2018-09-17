@@ -12,6 +12,7 @@ using System.Net;
 using FintrakBanking.APICore.core;
 using System.Web;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -310,6 +311,41 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #endregion preset route
+
+
+        #region route operation
+
+        [HttpPost]
+        [Route("routable-operations")]
+        public HttpResponseMessage GetRoutableOperations([FromBody] List<int> operationIds)
+        {
+            List<FintrakDropDownSelectList> data = repo.GetRoutableOperations(operationIds);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        }
+
+        [HttpGet]
+        [Route("reroute-approval-levels/operation/{operationId}")]
+        public HttpResponseMessage GetRerouteApprovalLevels(int operationId)
+        {
+            List<ApprovalLevelViewModel> data = repo.GetRerouteApprovalLevels(operationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpPost]
+        [Route("reroute-operation")]
+        public HttpResponseMessage RerouteOperation([FromBody] ForwardViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            bool data = repo.RerouteOperation(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        #endregion route operation
+
 
         #region trail
         [HttpGet] [ClaimsAuthorization]  

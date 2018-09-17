@@ -471,6 +471,7 @@
                 try
                 {
                     //var leinAmountString = String.Format("{0:0.00}", model.lienAmount)
+                    //{ "account": "2022072744", "lienProcessType": "LIFTLIEN", "lienReasonCode": "VIA", "lienReason": "TESTING1", "lienAmount": 2000.00, "lienAccountCurrency": "NGN", "lienUniqueReferenceNumber": 992345678 }
                     LienAPIProcessViewModel apiModel = new LienAPIProcessViewModel
                     {
                         account = model.productAccountNumber,
@@ -478,10 +479,10 @@
                         lienReasonCode = "VIA",
                         lienReason = model.description,
                         lienAmount = String.Format("{0:0.00}", model.lienAmount), //model.lienAmount,  //
-                        lienUniqueReferenceNumber = model.lienReferenceNumber,
                         lienAccountCurrency = context.TBL_CASA.Where(x =>
                                 x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId)
-                            .Select(x=>x.TBL_CURRENCY.CURRENCYCODE).FirstOrDefault()
+                            .Select(x=>x.TBL_CURRENCY.CURRENCYCODE).FirstOrDefault(),
+                        lienUniqueReferenceNumber = model.lienReferenceNumber,
                     };
 
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -498,12 +499,14 @@
                     // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Authorization = token;
 
-                   
+                    var serialiseModel = new JavaScriptSerializer().Serialize(apiModel);
+
+
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("api/Lien/ProcessLien", new StringContent(
-                        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                    response = client.PostAsync("api/Lien/ProcessLien", new StringContent(serialiseModel
+                        , Encoding.UTF8, "application/json")).Result;
                     responseDateTime = DateTime.Now;
                     //if (response.IsSuccessStatusCode)
                     //{

@@ -92,6 +92,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = (short)a.APPROVALSTATUSID,
                             applicationTenor = a.APPLICATIONTENOR,
                             approvalStatusId = (short)a.APPROVALSTATUSID,
+                            applicationReferenceNumber= a.APPLICATIONREFERENCENUMBER,
                             branchId = a.BRANCHID,
                             companyId = a.COMPANYID,
                             relatedReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -199,6 +200,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }).ToList()
                         });
+            var test = data.FirstOrDefault();
             return data.FirstOrDefault();
         }
         public IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId)
@@ -1126,7 +1128,7 @@ namespace FintrakBanking.Repositories.Credit
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
 
-            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
+            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
 
@@ -2785,6 +2787,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = data.createdBy,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
                     ISCURRENT = true,
+                    APPLICATIONSTATUSID = data.applicationStatusId
                 };
 
                 context.TBL_TEMP_LOAN_APPLTN_CANCELTN.Add(cancelledApplication);
@@ -2915,7 +2918,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (data.approvalStatusId != (int)ApprovalStatusEnum.Disapproved)
                         {
                             UpdateLoanApplicationCancellationTempTable(data, (short)workflow.StatusId);
-                            LaonApplcationCancelllationCompelted(data);
+                            LaonApplcationCancelllationDisapproved(data);
 
                             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
                             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
@@ -2926,7 +2929,7 @@ namespace FintrakBanking.Repositories.Credit
                         else
                         {
                             UpdateLoanApplicationCancellationTempTable(data, (short)workflow.StatusId);
-                            LaonApplcationCancelllationDisapproved(data);
+                            LaonApplcationCancelllationCompelted(data);
 
                             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
                             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
@@ -2964,7 +2967,7 @@ namespace FintrakBanking.Repositories.Credit
             val.APPROVALSTATUSID = statusId;
             val.LASTUPDATEDBY = data.createdBy;
             val.DATETIMEUPDATED = genSetup.GetApplicationDate();
-            val.APPLICATIONSTATUSID = data.applicationStatusId;
+           // val.APPLICATIONSTATUSID = data.applicationStatusId;
         }
 
         private void LaonApplcationCancelllationCompelted(LoanApplicationViewModel data)
@@ -2979,7 +2982,7 @@ namespace FintrakBanking.Repositories.Credit
             if (value != null)
             {
                 var val = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
-                val.APPLICATIONSTATUSID = val.APPLICATIONSTATUSID;
+                val.APPLICATIONSTATUSID = value.APPLICATIONSTATUSID;
             }
         }
         private void LaonApplcationCancelllationInPregress(LoanApplicationViewModel data)

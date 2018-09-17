@@ -49,6 +49,10 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isBusiness { get; set; }
         public float? interestRateConcession { get; set; }
         public float? feeRateConcession { get; set; }
+        public int targetId { get; set; }
+        public int nextOperationId { get; set; }
+        public int nextApprovalLevelId { get; set; }
+
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
@@ -148,6 +152,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int groupRoleId { get; set; }
         public bool canEscalate { get; set; }
         public bool owner { get; set; }
+        public int? levelTypeId { get; set; }
     }
 
     public class DocumentationViewModel : GeneralEntity

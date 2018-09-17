@@ -65,6 +65,20 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         public string isPoliticallyExposedValue { get; set; }
         public string operation { get; set; }
         public int? levelTypeId { get; set; }
+        public string roleName { get; set; }
+        public int levelPosition { get; set; }
+        public int groupPosition { get; set; }
+
+        public string approvalLevelAndRoleName
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(roleName))
+                    return levelName;
+                else
+                    return levelName + "(" + roleName + ")";
+            }
+        }
     }
 
     public class PresetRouteViewModel : GeneralEntity
