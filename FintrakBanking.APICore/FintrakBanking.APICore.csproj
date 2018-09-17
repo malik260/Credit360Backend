@@ -357,6 +357,7 @@
     <Compile Include="Controllers\ApprovalGroupController.cs" />
     <Compile Include="Controllers\ApprovalLevelController.cs" />
     <Compile Include="Controllers\ApprovalLevelStaffController.cs" />
+    <Compile Include="Controllers\ProfileSettingsController.cs" />
     <Compile Include="Controllers\ApprovalReliefController.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\AuthorizationController.cs" />

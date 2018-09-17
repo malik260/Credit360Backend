@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Finance;
+using FintrakBanking.Interfaces;
 
 namespace FintrakBanking.Repositories.Admin
 {
@@ -26,6 +27,7 @@ namespace FintrakBanking.Repositories.Admin
         private IWorkflow workFlow;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
+        private IProfileSetupRepository proSetting;
         //private IApprovalLevelStaffRepository level;
         private ITwoFactorAuthIntegrationService auth;
         bool USE_THIRD_PARTY_INTEGRATION = false;
@@ -34,14 +36,17 @@ namespace FintrakBanking.Repositories.Admin
             IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
             IWorkflow _workFlow,
-           // IApprovalLevelStaffRepository _level,
-            ITwoFactorAuthIntegrationService _auth)
+            IProfileSetupRepository _proSetting,
+
+        // IApprovalLevelStaffRepository _level,
+        ITwoFactorAuthIntegrationService _auth)
         {
             this.context = _context;
             this.auditTrail = _auditTrail;
             this.genSetup = _genSetup;
             this.auth = _auth;
             workFlow = _workFlow;
+            this.proSetting = _proSetting;
            // level = _level;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -162,7 +167,7 @@ namespace FintrakBanking.Repositories.Admin
 
             List<TBL_PROFILE_USERGROUP> userGroups = new List<TBL_PROFILE_USERGROUP>();
             List<TBL_PROFILE_ADDITIONALACTIVITY> userActivities = new List<TBL_PROFILE_ADDITIONALACTIVITY>();
-
+            var profileSettings = proSetting.GetProfileSettings();
             if (user.activities.Any())
             {
                 foreach (var item in user.activities)
@@ -211,7 +216,8 @@ namespace FintrakBanking.Repositories.Admin
                 FAILEDLOGONATTEMPT = 0,
                 SECURITYQUESTION = user.securityQuestion,
                 SECURITYANSWER = user.securityAnswer,
-                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profileSettings.expirePasswordAfter),
                 CREATEDBY = user.createdBy,
                 LASTUPDATEDBY = user.createdBy,
                 DATETIMECREATED = DateTime.Now,
