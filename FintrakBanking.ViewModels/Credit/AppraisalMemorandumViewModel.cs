@@ -323,7 +323,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class TranchDisbursmentViewModel
     {
-        public int approvalLevelId { get; set; }
+        public short? approvalLevelId { get; set; }
         public int loanApplicationId { get; set; }
     }
 }
