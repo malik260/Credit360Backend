@@ -100,7 +100,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string SYNDICATION_NAME { get; set; }
         public decimal? SYNDICATION_TOTAL_AMOUNT { get; set; }
         public string PARTICIPATING_BANK_CODE { get; set; }
-
-
+        public string ACCOUNT { get; set; }
+        public int? FEE_TYPE { get; set; }
+        public decimal FEE_AMOUNT { get; set; }
     }
 }
