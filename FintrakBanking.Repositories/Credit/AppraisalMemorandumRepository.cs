@@ -1283,7 +1283,7 @@ namespace FintrakBanking.Repositories.Credit
                         toStaffId = x.b.TOSTAFFID,
                         approvalTrailId = x.b.APPROVALTRAILID,
                 })
-                .GroupBy(d => d.loanApplicationId)
+                .GroupBy(d => d.timeIn)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 
