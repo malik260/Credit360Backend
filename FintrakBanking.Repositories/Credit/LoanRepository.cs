@@ -660,7 +660,7 @@ namespace FintrakBanking.Repositories.Credit
             var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
 
             var interestRate = Convert.ToDouble(entity.interestRate);
-            if (entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan && priceIndex != null)
+            if (priceIndex != null)
             {
                 interestRate = priceIndex.PRICEINDEXRATE + interestRate;
             }
@@ -1512,7 +1512,8 @@ namespace FintrakBanking.Repositories.Credit
                             where ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
                                   && operationIds.Contains(atrail.OPERATIONID)
                                   && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
-                                  && (m.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.AvailmentCompleted || m.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.LoanBookingInProgress)
+                                  && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress 
+                                  && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                                   && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                   && atrail.RESPONSESTAFFID == null
                             orderby d.LOANAPPLICATIONDETAILID descending
@@ -1618,12 +1619,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        /// <summary>
-        /// Gets the term loan booking awaiting approval.
-        /// </summary>
-        /// <param name="staffId">The staff identifier.</param>
-        /// <param name="companyId">The company identifier.</param>
-        /// <returns></returns>
+       
         public IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId)
         {
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
@@ -2407,15 +2403,15 @@ namespace FintrakBanking.Repositories.Credit
                         casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
                     }
 
-                    var firstPrincipalPaymentDaysInterval = (loanRecord.FIRSTPRINCIPALPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
-                    var firstInterestPayementDaysInterval = (loanRecord.FIRSTINTERESTPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
+                    //var firstPrincipalPaymentDaysInterval = (loanRecord.FIRSTPRINCIPALPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
+                    //var firstInterestPayementDaysInterval = (loanRecord.FIRSTINTERESTPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
 
-                    if (loanRecord.EFFECTIVEDATE != systemDate)
-                    {
-                        loanRecord.EFFECTIVEDATE = systemDate;
-                        loanRecord.FIRSTPRINCIPALPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstPrincipalPaymentDaysInterval);
-                        loanRecord.FIRSTINTERESTPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstInterestPayementDaysInterval);
-                    }
+                    //if (loanRecord.EFFECTIVEDATE != systemDate)
+                    //{
+                    //    loanRecord.EFFECTIVEDATE = systemDate;
+                    //    loanRecord.FIRSTPRINCIPALPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstPrincipalPaymentDaysInterval);
+                    //    loanRecord.FIRSTINTERESTPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstInterestPayementDaysInterval);
+                    //}
                 }
 
                 if (user.operationId == (int)OperationsEnum.CommercialLoanBooking)
@@ -3113,7 +3109,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
             debit.operationId = (int)model.operationId; 
-            debit.description = $"{product.PRODUCTNAME} '{product.PRODUCTCODE}' disbursement.";
+            debit.description = $"Loan disbursement";
             debit.valueDate = generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
 
@@ -3159,7 +3155,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
                 credit.operationId = (int)model.operationId;
-                credit.description = $"{product.PRODUCTNAME} '{product.PRODUCTCODE}' disbursement.";
+                credit.description = "Loan disbursement";
                 credit.valueDate = debit.valueDate;
                 credit.transactionDate = debit.valueDate;
                 credit.currencyId = casa.CURRENCYID;
@@ -3740,7 +3736,89 @@ namespace FintrakBanking.Repositories.Credit
             return data.Where(x => x.operationId == (short)OperationsEnum.CommercialLoanBooking);
         }
 
-        private IEnumerable<LoanViewModel> GetLoanByApplicationDetailId(int loanApplicationDetailId)
+        public IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber)
+        {
+            return (from data in context.TBL_LOAN
+                    where (data.LOANREFERENCENUMBER == loanReferenceNumber) || (data.RELATED_LOAN_REFERENCE_NUMBER == loanReferenceNumber)
+                    select new LoanViewModel()
+                    {
+                        loanId = data.TERMLOANID,
+                        customerId = data.CUSTOMERID,
+                        productId = data.PRODUCTID,
+                        companyId = data.COMPANYID,
+                        casaAccountId = data.CASAACCOUNTID,
+                        branchId = data.BRANCHID,
+                        loanReferenceNumber = data.LOANREFERENCENUMBER,
+                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
+                        principalFrequencyTypeId = (short)data.PRINCIPALFREQUENCYTYPEID,
+                        interestFrequencyTypeId = (short)data.INTERESTFREQUENCYTYPEID,
+
+                        principalNumberOfInstallment = data.PRINCIPALNUMBEROFINSTALLMENT,
+                        interestNumberOfInstallment = data.INTERESTNUMBEROFINSTALLMENT,
+                        relationshipOfficerId = data.RELATIONSHIPOFFICERID,
+                        relationshipManagerId = data.RELATIONSHIPMANAGERID,
+                        misCode = data.MISCODE,
+                        teamMiscode = data.TEAMMISCODE,
+                        interestRate = data.INTERESTRATE,
+                        effectiveDate = data.EFFECTIVEDATE,
+                        maturityDate = data.MATURITYDATE,
+                        bookingDate = (DateTime)data.BOOKINGDATE,
+                        principalAmount = data.PRINCIPALAMOUNT,
+                        principalInstallmentLeft = data.PRINCIPALINSTALLMENTLEFT,
+                        interestInstallmentLeft = data.INTERESTINSTALLMENTLEFT,
+                        approvalStatusId = data.APPROVALSTATUSID,
+                        approvedBy = data.APPROVEDBY,
+                        approverComment = data.APPROVERCOMMENT,
+                        dateApproved = data.DATEAPPROVED,
+                        loanStatusId = data.LOANSTATUSID,
+                        loanStatusName = data.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                        scheduleTypeId = data.SCHEDULETYPEID,
+                        isDisbursed = data.ISDISBURSED,
+                        disbursedBy = data.DISBURSEDBY,
+                        disburserComment = data.DISBURSERCOMMENT,
+                        disburseDate = data.DISBURSEDATE,
+                        currencyCode = data.TBL_CURRENCY.CURRENCYCODE,
+                        approvedAmount = data.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+
+                        operationId = data.OPERATIONID,
+                        customerGroupId = data.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                        loanTypeId = data.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                        equityContribution = data.EQUITYCONTRIBUTION,
+                        firstPrincipalPaymentDate = data.FIRSTPRINCIPALPAYMENTDATE,
+                        firstInterestPaymentDate = data.FIRSTINTERESTPAYMENTDATE,
+                        outstandingPrincipal = data.OUTSTANDINGPRINCIPAL,
+                        outstandingInterest = data.OUTSTANDINGINTEREST,
+                        principalAdditionCount = data.PRINCIPALADDITIONCOUNT,
+                        principalReductionCount = data.PRINCIPALREDUCTIONCOUNT,
+                        fixedPrincipal = data.FIXEDPRINCIPAL,
+                        profileLoan = data.PROFILELOAN,
+                        dischargeLetter = data.DISCHARGELETTER,
+                        suspendInterest = data.SUSPENDINTEREST,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED
+                    }).ToList();
+        }
+
+        public IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId)
+        {
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
+            return (from data in context.TBL_LOAN_BOOKING_REQUEST
+                    where data.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                    select new LoanBookingRequestViewModel()
+                    {
+                        loanApplicationDetailId = data.LOANAPPLICATIONDETAILID,
+                        loanBookingRequestId = data.LOAN_BOOKING_REQUESTID,
+                        amount_Requested = data.AMOUNT_REQUESTED,
+                        currencyCode = detail != null ? detail.TBL_CURRENCY.CURRENCYCODE : null,
+                        approvalStatusId = data.APPROVALSTATUSID,
+                        isUsed = data.ISUSED,
+                        createdBy = data.CREATEDBY,
+                        dateTimeCreated = data.DATETIMECREATED
+                    }).ToList();
+        }
+
+
+        public IEnumerable<LoanViewModel> GetLoanByApplicationDetailId(int loanApplicationDetailId)
         {
             return (from data in context.TBL_LOAN
                     where data.LOANAPPLICATIONDETAILID == loanApplicationDetailId
@@ -3775,12 +3853,13 @@ namespace FintrakBanking.Repositories.Credit
                         approverComment = data.APPROVERCOMMENT,
                         dateApproved = data.DATEAPPROVED,
                         loanStatusId = data.LOANSTATUSID,
+                        loanStatusName = data.TBL_LOAN_STATUS.ACCOUNTSTATUS,
                         scheduleTypeId = data.SCHEDULETYPEID,
                         isDisbursed = data.ISDISBURSED,
                         disbursedBy = data.DISBURSEDBY,
                         disburserComment = data.DISBURSERCOMMENT,
                         disburseDate = data.DISBURSEDATE,
-
+                        currencyCode = data.TBL_CURRENCY.CURRENCYCODE,
                         approvedAmount = data.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
 
                         operationId = data.OPERATIONID,
@@ -3790,13 +3869,13 @@ namespace FintrakBanking.Repositories.Credit
                         firstPrincipalPaymentDate = data.FIRSTPRINCIPALPAYMENTDATE,
                         firstInterestPaymentDate = data.FIRSTINTERESTPAYMENTDATE,
                         outstandingPrincipal = data.OUTSTANDINGPRINCIPAL,
+                        outstandingInterest = data.OUTSTANDINGINTEREST,
                         principalAdditionCount = data.PRINCIPALADDITIONCOUNT,
                         principalReductionCount = data.PRINCIPALREDUCTIONCOUNT,
                         fixedPrincipal = data.FIXEDPRINCIPAL,
                         profileLoan = data.PROFILELOAN,
                         dischargeLetter = data.DISCHARGELETTER,
                         suspendInterest = data.SUSPENDINTEREST,
-                        //customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
                         createdBy = data.CREATEDBY,
                         dateTimeCreated = data.DATETIMECREATED
                     }).ToList();

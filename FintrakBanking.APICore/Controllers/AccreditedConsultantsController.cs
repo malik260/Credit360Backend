@@ -3,6 +3,7 @@ using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,12 +94,14 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.countryId = (short)token.GetCountryId;
                 var response = await repo.AddAccreditedConsultants(entity);
-                if (response)
+                if (response != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = response, message = "The record has been created successfully, and Sent For Approval.." });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
             }
             catch (SecureException ex)
             {
@@ -116,6 +119,8 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.companyId = token.GetCompanyId;
                 entity.countryId = (short)token.GetCountryId;
+                entity.accreditedConsultantId = id;
+
                 var response = await repo.UpdateAccreditedConsultants(entity, id);
                 if (response)
                 {
@@ -148,6 +153,76 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("accredited-solicitors-awaiting-approval/{accreditedConsultantId}")]
+        public HttpResponseMessage GetAccreditedSolicitorsAwaitingApproval(int accreditedConsultantId)
+        {
+            try
+            {
+                var data = repo.GetAccreditedSolicitorsAwaitingApprovals(token.GetStaffId, token.GetCompanyId, accreditedConsultantId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("accredited-solicitors-approval")]
+        public HttpResponseMessage GoForApprovalAsync([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForApproval(entity);
+
+                if (data == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Accredited Consultant has been approved successfully." });
+                }
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Accredited Consultant details has been disapproved." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office." });
+                }
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $" {ex.Message}" });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
+            }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: An unhandled error occured." });
+            }
+        }
+
         #endregion
         #region Principals
         //[HttpGet, Route("accredited-principals")]

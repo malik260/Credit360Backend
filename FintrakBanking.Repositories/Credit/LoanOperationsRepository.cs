@@ -161,7 +161,7 @@ namespace FintrakBanking.Repositories.Credit
                                  exchangeRate = a.EXCHANGERATE,
                                  interestRate = a.INTERESTRATE,
                                  date = applicationDate,
-                                 dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
+                                 dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(a.EFFECTIVEDATE,a.MATURITYDATE)),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
                                  mainAmount = a.PRINCIPALAMOUNT,
                                  categoryId = (short)DailyAccrualCategory.CommercialLoan,/// change to commercial paper 
                                  availableBalance = a.PRINCIPALAMOUNT,
@@ -1183,7 +1183,6 @@ namespace FintrakBanking.Repositories.Credit
             decimal dailyAmount = (Amount / ((int)(endDate - startDate).TotalDays));
             return dailyAmount;
         }
-
 
         public int DateDiff(DateTime startDate, DateTime endDate)
         {
@@ -7530,30 +7529,30 @@ namespace FintrakBanking.Repositories.Credit
             decimal pastDuePrincipalDiff = loan.INTERESTONPASTDUEPRINCIPAL - currentPastDuePrincipal;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
+            //All the posting here are not correct please, we need to build each if we are to debit or credit the customer
             if (Count < 1 && applicationDate == systemDate)
             {
             }
             else if (Count < 1 && applicationDate <= systemDate)
             {
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId)); //change later));
+                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId)); //change later));
 
                 //result = financeTransaction.PostTransaction(inputTransactions);
             }
             else
             {
-                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
+                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal", loanInput.operationId));
+                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal", loanInput.operationId));
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal", loanInput.operationId));
+                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal", loanInput.operationId));
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDueInterestDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Interest Reversal", loanInput.operationId));
+                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, pastDueInterestDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Interest Reversal", loanInput.operationId));
 
                 if (pastDuePrincipalDiff > 0)
                 {
-                    inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(loanInput, pastDuePrincipalDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Principal Reversal", loanInput.operationId));
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, pastDuePrincipalDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Principal Reversal", loanInput.operationId));
                 }
 
 
@@ -13230,34 +13229,34 @@ namespace FintrakBanking.Repositories.Credit
             var model = new LoanPaymentRestructureScheduleInputViewModel
             {
                 proposedTenor = appDetail.PROPOSEDTENOR,
-                //loanChangeType = "",
+                loanChangeType = 0,
                 loanId = loan.TERMLOANID,
-                //payAmount = 0,
-                //newAmount = "",
+                payAmount = 0,
+                newAmount = 0,
                 productId = loan.PRODUCTID,
                 newPrincipalFrequency = loan.PRINCIPALFREQUENCYTYPEID,
                 newInterestFrequency = loan.INTERESTFREQUENCYTYPEID,
                 newPrincipalFirstpaymentDate = loan.FIRSTPRINCIPALPAYMENTDATE,
                 newInterestFirstpaymentDate = loan.FIRSTINTERESTPAYMENTDATE,
                 payInterest = loan.INTERESTRATE,
-                //newInterest = "",
-                //newTenor = "",
+                newInterest = 0,
+                //newTenor = 0,
                 newEffectiveDate = loan.EFFECTIVEDATE,
-                //prepayment = "",
+                prepayment = 0,
                 operationId = loan.OPERATIONID ?? 0,
-                //isManagementInterestRate = "",
-                //newMaturityDate = "",
+                isManagementInterestRate = false,
+                newMaturityDate = DateTime.Now,
                 //newTenorPrepayment = "",
                 customerId = loan.CUSTOMERID,
-                //date = ,
-                //feeRate = "",
-                //feeAmount = "",
-                //earnedFeeAmount = "",
-                //chargeFeeId = "",
-                //chargeFeeTypeId = "",
-                //feeAmountDiff = "",
-                //oldCasaAccountId = "",
-                //newCasaAccountId = "",
+                date = DateTime.Now,
+                feeRate = 0,
+                feeAmount = 0,
+                earnedFeeAmount = 0,
+                chargeFeeId = 0,
+                chargeFeeTypeId = 0,
+                feeAmountDiff = 0,
+                oldCasaAccountId = 0,
+                newCasaAccountId = 0,
             };
 
             return model;
@@ -13269,6 +13268,7 @@ namespace FintrakBanking.Repositories.Credit
             if (userModel.loanId != 0)
             {
                 TBL_LOAN loanRecord = context.TBL_LOAN.Find(userModel.loanId);
+                //TBL_LMSR_APPLICATION_DETAIL reviewRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == userModel.loanId);
 
                 if (loanRecord == null)
                     throw new BadLogicException("Loan Information not found.");
@@ -13277,27 +13277,64 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (userModel.valueDate < systemDate)
                 {
-                    var inputModel = BuildLoanPaymentResturctureScheduleModel(userModel.loanId);
-                    throw new ConditionNotMetException("Back-dating not allowed."); //TODO: Work out interest reversal methods based on product type
-                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
-                    //{
-                    //    LoanBackDateFunction(loanId, userModel.valueDate, systemDate, 0, inputModel);
-                    //}
+                    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                    LoanPaymentRestructureScheduleInputViewModel loanInput = new LoanPaymentRestructureScheduleInputViewModel()
+                    {
+                        loanId = loanRecord.TERMLOANID,
+                        scheduleMethodId = loanRecord.SCHEDULETYPEID,
+                        principalAmount = (double)loanRecord.OUTSTANDINGPRINCIPAL,
+                        principalFrequency = loanRecord.PRINCIPALFREQUENCYTYPEID,
+                        interestFrequency = loanRecord.INTERESTFREQUENCYTYPEID,
+                        principalFirstpaymentDate = (DateTime)loanRecord.FIRSTPRINCIPALPAYMENTDATE,
+                        interestFirstpaymentDate = (DateTime)loanRecord.FIRSTINTERESTPAYMENTDATE,
+                        interestRate = loanRecord.INTERESTRATE,
+                        effectiveDate = loanRecord.EFFECTIVEDATE,
+                        maturityDate = loanRecord.MATURITYDATE,
+                        accrualBasis = loanRecord.SCHEDULEDAYCOUNTCONVENTIONID,
+                        firstDayType = loanRecord.SCHEDULEDAYINTERESTTYPEID,
+                        integralFeeAmount = 0,
+                        companyId = loanRecord.COMPANYID,
+                        staffId = userModel.createdBy,
+                        createdBy = userModel.createdBy,
+                        customerId = loanRecord.CUSTOMERID,
+                    };
 
-                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
-                    //{
-                    //    //Include code for commercial loan specific back-dating
-                    //}
 
-                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
-                    //{
-                    //    //Include code for fx revolving loan specific back-dating
-                    //}
+                    if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                    {
+                        int daysDiff = loanGenerate.getDaysInLoanPeriod(userModel.valueDate, systemDate);
 
-                    //if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-                    //{
-                    //    //Include code for syndicated loan specific back-dating
-                    //}
+                        double previousAmount = (((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE)) * daysDiff);
+                        double currentAmount = (((userModel.newRate/ 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE)) * daysDiff);
+                        double diff = previousAmount - currentAmount;
+
+                        if (diff > 0)
+                        {
+                            inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, (decimal)Math.Abs(diff), loanRecord.TBL_PRODUCT.PRINCIPALBALANCEGL.Value, "Interest Reversal", (short)OperationsEnum.ContractualInterestRateChange));
+                        }
+                        else
+                        {
+                            inputTransactions.Add(financeTransaction.PostBuildLoanNegativeReversalPosting(loanInput, (decimal)Math.Abs(diff), loanRecord.TBL_PRODUCT.PRINCIPALBALANCEGL.Value, "Interest Reversal", (short)OperationsEnum.ContractualInterestRateChange));
+                        }
+                    }
+
+                    if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                    {
+                        int daysDiff = loanGenerate.getDaysInLoanPeriod(userModel.valueDate, systemDate);
+
+                        double previousAmount = (((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE)) * daysDiff);
+                        double currentAmount = (((userModel.newRate / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE)) * daysDiff);
+                        double diff = previousAmount - currentAmount;
+                        if (diff > 0)
+                        {
+                            inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, (decimal)Math.Abs(diff), loanRecord.TBL_PRODUCT.PRINCIPALBALANCEGL.Value, "Interest Reversal", (short)OperationsEnum.ContractualInterestRateChange));
+                        }
+                        else
+                        {
+                            inputTransactions.Add(financeTransaction.PostBuildLoanNegativeReversalPosting(loanInput, (decimal)Math.Abs(diff), loanRecord.TBL_PRODUCT.PRINCIPALBALANCEGL.Value, "Interest Reversal", (short)OperationsEnum.ContractualInterestRateChange));
+                        }
+                    }
+
                 }
                 else
                 {
@@ -13646,7 +13683,7 @@ namespace FintrakBanking.Repositories.Credit
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                 LoanPaymentRestructureScheduleInputViewModel payStructureModel = new LoanPaymentRestructureScheduleInputViewModel();
-                inputTransactions.Add(financeTransaction.PostBuildLoanReversalPosting(payStructureModel, accruedInterestDiff, loanRecord.TBL_PRODUCT.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", (short)OperationsEnum.Prepayment)); //change later));
+                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(payStructureModel, accruedInterestDiff, loanRecord.TBL_PRODUCT.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", (short)OperationsEnum.Prepayment)); //change later));
                 //**************************************************************************
 
                 //var result = financeTransaction.PostTransaction(inputTransactions);

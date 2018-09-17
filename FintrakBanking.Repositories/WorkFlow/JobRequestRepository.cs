@@ -520,7 +520,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 
             //}
 
-            var c = data.ToList();
+            //var c = data.ToList();
             return data;
         }
 
@@ -1257,7 +1257,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobRequestCode = data.JOBREQUESTCODE,
                 documentTitle = data.DOCUMENTTITLE,
                 documentTypeId = data.DOCUMENTTYPEID,
-                fileData = data.FILEDATA,
+                //fileData = data.FILEDATA,
                 fileName = data.FILENAME,
                 fileExtension = data.FILEEXTENSION,
                 systemDateTime = data.SYSTEMDATETIME,
@@ -1288,9 +1288,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             return c;
         }
 
+       
+
         public IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId)
         {
-            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.DOCUMENTID == documentId).Select(x => new RequestDocumentViewModel
+            var data =  this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.DOCUMENTID == documentId).Select(x => new RequestDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 jobRequestCode = x.JOBREQUESTCODE,
@@ -1303,6 +1305,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
             });
+            return data.ToList();
         }
 
         #endregion Job-Request Document

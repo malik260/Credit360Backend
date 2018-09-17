@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-    public class CRMSRegulatoryViewModel
+    public class CRMSRegulatoryViewModel : GeneralEntity
     {
         public string crmsCode { get; set; }
         public DateTime? crmsDate { get; set; }
@@ -21,7 +21,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanSystemTypeId { get; set; }
     }
 
-    public class CRMSViewModel
+    public class CRMSViewModel : GeneralEntity
     {
         public string crmsCode { get; set; }
         public DateTime crmsDate { get; set; }
@@ -29,9 +29,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanSystemTypeId { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        public int templateTypeId { get; set; }
     }
 
-    public  class CRMS300TemplateViewModel
+    public class CRMSRecord
+    {
+        public byte[] reportData { get; set; }
+        public string templateTypeName  { get; set; }
+    }
+
+    public  class CRMSTemplateViewModel 
     {
         public string UNIQUE_IDENTIFICATION_TYPE { get; set; }
         public string UNIQUE_IDENTIFICATION_NO { get; set; }
@@ -76,5 +83,25 @@ namespace FintrakBanking.ViewModels.Credit
         public string AMOUNT_GUARANTEED { get; set; }
         public DateTime? FIRSTPRINCIPALPAYMENTDATE { get; set; }
         public int LOANID { get; set; }
+        public int? CRMSLEGALSTATUSID { get; set; }
+
+        //100
+        public string GOVERNMENT_CODE   { get; set; }
+        public string SPECIALISED_LOAN_PERIOD { get; set; }
+        public string REPAYMENT_SOURCE { get; set; }
+
+
+        //200
+        public string GOVERNMENT_MDA_TIN { get; set; }
+        public string PERFORMANCE_REPAYMENT_STATUS { get; set; }
+
+
+        //600
+        public string SYNDICATION_NAME { get; set; }
+        public decimal? SYNDICATION_TOTAL_AMOUNT { get; set; }
+        public string PARTICIPATING_BANK_CODE { get; set; }
+        public string ACCOUNT { get; set; }
+        public int? FEE_TYPE { get; set; }
+        public decimal FEE_AMOUNT { get; set; }
     }
 }

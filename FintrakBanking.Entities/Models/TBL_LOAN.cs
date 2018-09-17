@@ -218,7 +218,6 @@ namespace FintrakBanking.Entities.Models
 
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 
-
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 

@@ -94,6 +94,8 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityRenewal = 85,
         InterestRepricing = 89,
         //Added by Yemi
-        StaffReliefCreation = 84
+        StaffReliefCreation = 84,
+         AccreditedConsultantCreated = 88
+
     }
 }

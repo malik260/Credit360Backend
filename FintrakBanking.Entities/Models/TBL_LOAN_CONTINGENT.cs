@@ -97,9 +97,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool DISCHARGELETTER { get; set; }
 
-        public int LASTUPDATEDBY { get; set; }
+        public int? LASTUPDATEDBY { get; set; }
 
-        public DateTime DATETIMEUPDATED { get; set; }
+        public DateTime? DATETIMEUPDATED { get; set; }
 
         public int CREATEDBY { get; set; }
 

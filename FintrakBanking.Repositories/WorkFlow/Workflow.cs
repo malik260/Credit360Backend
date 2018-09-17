@@ -38,6 +38,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private int? finalLevel = null; // preset force to end
         private bool emailNotification = false;
         private bool smsNotification = false;
+        private bool sameDesk = false;
 
         private int? fromLevelId = null;
         private int? requestLevelId = null;
@@ -127,10 +128,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (request == null)
             {
-                if (ActionIsApprovalDecision())
-                {
-                    throw new SecureException("Unable to resolve initiating level or the process is closed!");
-                }
+                if (ActionIsApprovalDecision()) throw new SecureException("Unable to resolve initiating level or the process is closed!");
                 this.currentStateId = (int)ApprovalState.Initiation;
             }
             else
@@ -238,10 +236,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             int staffId, 
             int operationId, 
             int targetId, 
-            int? productClassId = null, 
-            string comment = "NIL", 
-            bool external = true, 
-            bool deferred = true
+            int? productClassId, 
+            string comment, 
+            bool external, 
+            bool deferred,
+            bool sameDesk
             )
         {
             InitializeOperation();
@@ -254,6 +253,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.statusId = (int)ApprovalStatusEnum.Pending;
             this.externalInitialization = external;
             this.deferredExecution = deferred;
+            this.sameDesk = sameDesk;
             LogActivity();
         }
 
@@ -318,6 +318,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             var approvalLevels = GetWorkflowSetup(this.operationId, this.productClassId, this.productId);
             approvalGrid = approvalLevels;
             next = approvalLevels.FirstOrDefault();
+
+            if (sameDesk) // new*
+            {
+                var user = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId);
+                next = approvalLevels.FirstOrDefault(x => x.DefaultRoleId == user.STAFFROLEID);
+            }
+
             if (this.nextLevelId != null) next = approvalLevels.FirstOrDefault(x => x.ApprovalLevelId == (int)this.nextLevelId);
 
             if (this.externalInitialization == true && this.currentStateId == (int)ApprovalState.Initiation)
