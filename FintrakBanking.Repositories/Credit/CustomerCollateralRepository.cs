@@ -3879,6 +3879,10 @@ namespace FintrakBanking.Repositories.Credit
 
             return 0;
         }
+
+
+
+
         public int GoForApproval(ApprovalViewModel model)
         {
             TwoFactorAutheticationViewModel twoFADetails = new TwoFactorAutheticationViewModel
@@ -3970,6 +3974,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
         }
+
+
 
         private void UpdateCutomerCollateralApprovalStatus(ApprovalViewModel ApprovalModel, short status, TwoFactorAutheticationViewModel twoFADetails)
         {
@@ -4083,6 +4089,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+
         private int UpdateCollateralMain(int collateralId)
         {
             var data = new TBL_COLLATERAL_CUSTOMER();

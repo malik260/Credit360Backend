@@ -3113,6 +3113,45 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+
+
+        public bool ProcessReleaseLien(DateTime applicationDate) {
+
+
+            List<TBL_LOAN> _TBL_LOAN = new List<TBL_LOAN>();
+
+            bool status = false;
+
+            var loan = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.PRODUCTID == (short)ProductClassEnum.InvoiceDiscountingFacility && x.MATURITYDATE == applicationDate);
+
+            if (loan.Count() > 0) {
+
+                foreach (var item in loan) {
+
+                    CasaLienViewModel model = new CasaLienViewModel
+                    {
+                        lienReferenceNumber = item.LOANREFERENCENUMBER
+                    };
+
+                    status = casaLien.ReleaseLien(model,null,false);
+
+                    if (status == true) {
+                        item.LOANSTATUSID = (short)LoanStatusEnum.Completed;
+                    }
+
+                    context.SaveChanges();
+
+                }
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+
         public IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension()
         {
             var model = (from a in context.TBL_LOAN
