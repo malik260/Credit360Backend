@@ -218,7 +218,6 @@ namespace FintrakBanking.Entities.Models
 
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 
-
         //[Column(TypeName = "date")]
         public DateTime? NPLDATE { get; set; }
 
@@ -227,11 +226,11 @@ namespace FintrakBanking.Entities.Models
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
-
-
+        
         public DateTime? NEXT_INTEREST_REPRICINGDATE { get; set; }
+        
+        public int? REPRICINGMODEID { get; set; }
 
-        public short? REPRICINGMODEID { get; set; }
         public int? REPRICINGDURATION { get; set; }
 
         public virtual TBL_BRANCH TBL_BRANCH { get; set; }

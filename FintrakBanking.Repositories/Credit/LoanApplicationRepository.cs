@@ -92,6 +92,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = (short)a.APPROVALSTATUSID,
                             applicationTenor = a.APPLICATIONTENOR,
                             approvalStatusId = (short)a.APPROVALSTATUSID,
+                            applicationReferenceNumber= a.APPLICATIONREFERENCENUMBER,
                             branchId = a.BRANCHID,
                             companyId = a.COMPANYID,
                             relatedReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -199,6 +200,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             }).ToList()
                         });
+            var test = data.FirstOrDefault();
             return data.FirstOrDefault();
         }
         public IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId)
@@ -1126,7 +1128,7 @@ namespace FintrakBanking.Repositories.Credit
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
 
-            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
+            var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
 

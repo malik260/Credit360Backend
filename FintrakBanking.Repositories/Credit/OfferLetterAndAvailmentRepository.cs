@@ -183,6 +183,7 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
+                    isFinal = context.TBL_OFFERLETTER.Where(o=>o.APPLICATIONREFERENCENUMBER== x.c.a.APPLICATIONREFERENCENUMBER).Select(o=>o.ISFINAL).FirstOrDefault(),
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                 });
 
@@ -478,9 +479,6 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                       comments = x.COMMENTS,
                                    }).ToList();
-
-
-
 
 
             var conditions = string.Empty;

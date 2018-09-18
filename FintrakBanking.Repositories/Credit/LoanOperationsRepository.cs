@@ -3113,6 +3113,45 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+
+
+        public bool ProcessReleaseLien(DateTime applicationDate) {
+
+
+            List<TBL_LOAN> _TBL_LOAN = new List<TBL_LOAN>();
+
+            bool status = false;
+
+            var loan = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.PRODUCTID == (short)ProductClassEnum.InvoiceDiscountingFacility && x.MATURITYDATE == applicationDate);
+
+            if (loan.Count() > 0) {
+
+                foreach (var item in loan) {
+
+                    CasaLienViewModel model = new CasaLienViewModel
+                    {
+                        lienReferenceNumber = item.LOANREFERENCENUMBER
+                    };
+
+                    status = casaLien.ReleaseLien(model,null,false);
+
+                    if (status == true) {
+                        item.LOANSTATUSID = (short)LoanStatusEnum.Completed;
+                    }
+
+                    context.SaveChanges();
+
+                }
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+
         public IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension()
         {
             var model = (from a in context.TBL_LOAN
@@ -5736,6 +5775,40 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
             return model;
+        }
+
+
+        public void ProcessAutomaticInterestRepricing(DateTime applicationDate, int staffId)
+        {
+            var loans = from a in context.TBL_LOAN
+                        where a.NEXT_INTEREST_REPRICINGDATE == applicationDate && a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.REPRICINGMODEID == (short)LoanRepricingModeEnum.FixedToMaturityWithRepricing
+                        select a;
+
+            LoanPaymentRestructureScheduleInputViewModel loanInput = new LoanPaymentRestructureScheduleInputViewModel();
+
+            foreach (var item in loans)
+            {
+                var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == item.PRODUCTPRICEINDEXID);
+                if (priceIndex != null)
+                {
+                    var customerRate = item.INTERESTRATE - item.PRODUCTPRICEINDEXRATE;
+                    var newInterestRate = priceIndex.PRICEINDEXRATE + customerRate;
+
+                    loanInput.operationId = (int)OperationsEnum.InterestRepricing; // item.OPERATIONID;
+                    loanInput.loanId = item.TERMLOANID;
+                    loanInput.interestRate = newInterestRate;
+                    //loanInput.
+
+                    InterestRateReview(loanInput.loanId, loanInput, applicationDate, staffId);
+
+                    item.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE;
+                    item.NEXT_INTEREST_REPRICINGDATE = item.NEXT_INTEREST_REPRICINGDATE.Value.AddDays(item.REPRICINGDURATION.Value);
+
+                }
+            }
+
+            if (loans.Count() > 0)
+                context.SaveChanges();
         }
 
         public bool InterestRateReview(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)

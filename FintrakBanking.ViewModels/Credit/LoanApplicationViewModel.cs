@@ -133,6 +133,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string comment { get; set; }
         public bool isOfferLetterAvailable { get; set; }
         public int? currentApprovalLevelTypeId { get; set; }
+        public short? tranchLevelId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
