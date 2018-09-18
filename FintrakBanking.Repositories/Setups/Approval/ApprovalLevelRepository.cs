@@ -1011,8 +1011,19 @@ namespace FintrakBanking.Repositories.Setups.Approval
             return levels;
         }
 
-        public bool RerouteOperation(ForwardViewModel model) // TODO
+        public bool RerouteOperation(ForwardViewModel model) 
         {
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId; 
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Authorised;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
             var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                 x.OPERATIONID == model.operationId
                 && x.RESPONSESTAFFID == null
