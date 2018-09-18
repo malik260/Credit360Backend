@@ -22,6 +22,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
 
+        bool ProcessReleaseLien(DateTime applicationDate);
+            
         bool ProcessContingentLiabilityTerminationAtMaturity(DateTime date);
 
 

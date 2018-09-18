@@ -684,6 +684,7 @@ namespace FintrakBanking.Repositories.Credit
                 entity.loanScheduleInput.interestFrequency = null;
             }
 
+            entity.casaAccountId2 = entity.casaAccountId2 != 0 ? entity.casaAccountId2 : null;
             var data = new TBL_LOAN
             {
                 LOAN_BOOKING_REQUESTID = entity.loanBookingRequestId,
@@ -710,6 +711,7 @@ namespace FintrakBanking.Repositories.Credit
                 PRODUCTID = (short)entity.productId,
                 COMPANYID = entity.companyId,
                 CASAACCOUNTID = entity.casaAccountId,
+                CASAACCOUNTID2 = entity.casaAccountId2,
                 BRANCHID = application.BRANCHID, //entity.branchId,
                 SHOULD_DISBURSE = entity.loanScheduleInput.shouldDisburse,
 
