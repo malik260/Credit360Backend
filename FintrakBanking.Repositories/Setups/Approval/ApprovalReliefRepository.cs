@@ -15,6 +15,7 @@ using System.ComponentModel.Composition;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
@@ -127,6 +128,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public IEnumerable<ApprovalReliefViewModel> GetAllApprovalRelief(int companyId)
         {
+
             return context.TBL_STAFF_RELIEF
                 .Where(x => x.DELETED == false)
                 .OrderByDescending(x => x.RELIEFID)

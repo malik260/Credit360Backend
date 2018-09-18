@@ -73,7 +73,7 @@ namespace FintrakBanking.ViewModels.Setups.Approval
         {
             get
             {
-                if (roleName.Length == 0)
+                if (String.IsNullOrEmpty(roleName))
                     return levelName;
                 else
                     return levelName + "(" + roleName + ")";
