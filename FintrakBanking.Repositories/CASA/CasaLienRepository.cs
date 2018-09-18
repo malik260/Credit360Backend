@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.CASA
                     }
                     else
                     {
-                        throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                        throw new ConditionNotMetException("Core Banking API Error - " + result.APIResponse.webRequestStatus);
                     }
                 }
                 else

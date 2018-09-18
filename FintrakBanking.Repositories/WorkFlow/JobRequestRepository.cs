@@ -532,7 +532,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             return GetAllGlobalJobRequest(staffId, branchId).OrderByDescending(x => x.jobRequestId);
         }
 
-        private List<JobRequestDetailViewModel> GetJobRequestDetails()
+        public List<JobRequestDetailViewModel> GetJobRequestDetailsById(int jobRequestId)
+        {
+            return GetJobRequestDetails(jobRequestId).OrderByDescending(x => x.jobRequestId).ToList();
+        }
+        private List<JobRequestDetailViewModel> GetJobRequestDetails(int jobRequestId)
         {
             var details = (from x in this.context.TBL_JOB_REQUEST_DETAIL
                            join b in context.TBL_JOB_REQUEST on x.JOBREQUESTID equals b.JOBREQUESTID
@@ -837,27 +841,54 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         #region
+        public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
+        {
+            var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId
+            && ((x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch)
+            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification)
+            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting)
+            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs))
+
+            ).ToList();
+
+            var casa = context.TBL_CASA.Find(model.casaAccountId);
+            if (casa == null)
+                throw new SecureException("Customer account number is not supplied");
+            decimal chargeAmount = 0;
+            foreach (var item in jobRequestDetail)
+            {
+                chargeAmount = item.AMOUNT.Value;
+            }
+
+            if (chargeAmount > 0)
+            {
+               // DebitCustomer();
+                return true;
+            }
+            else return false;
+                
+        }
         public bool EffectLegaCollateralJobs(JobRequestCollateralSearchViewModel model)
         {
             var jobRequest = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
             var baseApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(jobRequest.TARGETID);
             var state = context.TBL_STATE.Find(model.collateralStateId);
 
-            var casa = context.TBL_CASA.Find(model.casaAccountId);
+            //var casa = context.TBL_CASA.Find(model.casaAccountId);
 
-            if (casa == null)
-                throw new SecureException("Customer account number is not supplied");
+            //if (casa == null)
+            //    throw new SecureException("Customer account number is not supplied");
 
-            Decimal chargeAmount = 0;
+           // Decimal chargeAmount = 0;
 
             var collateralStateDetails = context.TBL_STATE.Find(model.collateralStateId);
             if (model.requireCharting)
             {
-                chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
+                //chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
                     jobSubTypeId = (short)JobSubTypeEnum.LegalCharting,
-                    amount = collateralStateDetails.CHARTINGAMOUNT,
+                    amount = model.chartChargeAmount, //collateralStateDetails.CHARTINGAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
@@ -868,11 +899,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (model.requireSearch)
             {
-                chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
+                //chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
                 var detail = new JobRequestDetailViewModel
                 {
                     jobSubTypeId = (short)JobSubTypeEnum.LegalSearch,
-                    amount = collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT,
+                    amount = model.searchChargeAmount, //collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
@@ -883,11 +914,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (model.requireVerification)
             {
-                chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
+                //chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
                     jobSubTypeId = (short)JobSubTypeEnum.LegalVerification,
-                    amount = collateralStateDetails.VERIFICATIONAMOUNT,
+                    amount = model.verificationChargeAmount, //collateralStateDetails.VERIFICATIONAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
@@ -898,7 +929,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (model.additionalCharge > 0)
             {
-                chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
+                //chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
                     jobSubTypeId = (short)JobSubTypeEnum.OtherLegalJobs,
@@ -912,15 +943,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                 saveJobRequestDetail(detail);
             }
 
-            if (baseApplication != null)
-            {
-                BasicTrasactionSourceInputModel input = new BasicTrasactionSourceInputModel();
-                input.createdBy = model.createdBy;
-                input.description = "Collateral Search";
-                input.sourceApplicationId = (short)baseApplication.LOANAPPLICATIONDETAILID;
-                input.companyId = model.companyId;
-                input.userBranchId = model.userBranchId;
-            }
+            //if (baseApplication != null)
+            //{
+            //    BasicTrasactionSourceInputModel input = new BasicTrasactionSourceInputModel();
+            //    input.createdBy = model.createdBy;
+            //    input.description = "Collateral Search";
+            //    input.sourceApplicationId = (short)baseApplication.LOANAPPLICATIONDETAILID;
+            //    input.companyId = model.companyId;
+            //    input.userBranchId = model.userBranchId;
+            //}
 
             return context.SaveChanges() > 0;
         }

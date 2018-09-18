@@ -110,6 +110,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public bool requireVerification { get; set; }
         public bool requireSearch { get; set; }
         public int jobRequestId { get; set; }
+        public decimal searchChargeAmount { get; set; }
+        public decimal chartChargeAmount { get; set; }
+        public decimal verificationChargeAmount { get; set; }
         public decimal? additionalCharge { get; set; }
         public string additionalChargeJustification { get; set; }
         public string accountNumber { get; set; }
