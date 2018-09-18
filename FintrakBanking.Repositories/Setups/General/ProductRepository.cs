@@ -2404,19 +2404,30 @@ namespace FintrakBanking.Repositories.Setups.General
 
             if (isProductPriceIndexExist)
             {
-                throw new SecureException("Product price already exists!");
+                var indexExists = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRICEINDEXNAME.ToLower() == prodPriceIndex.priceIndexName.ToLower() && x.DELETED == true).FirstOrDefault();
+                indexExists.ALLOWAUTOMATICREPRICING = prodPriceIndex.allowAutomaticRepricing;
+                indexExists.PRICEINDEXRATE = prodPriceIndex.priceIndexRate;
+                indexExists.PRICEINDEXDESCRIPTION = prodPriceIndex.priceIndexDescription;
+                indexExists.PRICEINDEXNAME = prodPriceIndex.priceIndexName;
+                indexExists.DELETED = false;
             }
-            var data = new TBL_PRODUCT_PRICE_INDEX()
+            else
             {
-                COMPANYID = prodPriceIndex.companyId,
-                PRICEINDEXDESCRIPTION = prodPriceIndex.priceIndexDescription,
-                PRICEINDEXNAME = prodPriceIndex.priceIndexName,
-                PRICEINDEXRATE = prodPriceIndex.priceIndexRate,
-                CREATEDBY = prodPriceIndex.createdBy,
-                DATETIMECREATED = DateTime.Now,
-            };
+                var data = new TBL_PRODUCT_PRICE_INDEX()
+                {
+                    COMPANYID = prodPriceIndex.companyId,
+                    PRICEINDEXDESCRIPTION = prodPriceIndex.priceIndexDescription,
+                    PRICEINDEXNAME = prodPriceIndex.priceIndexName,
+                    PRICEINDEXRATE = prodPriceIndex.priceIndexRate,
+                    ALLOWAUTOMATICREPRICING = prodPriceIndex.allowAutomaticRepricing,
+                    DURATION = prodPriceIndex.priceIndexDuration,
+                    CREATEDBY = prodPriceIndex.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                };
 
-            this.context.TBL_PRODUCT_PRICE_INDEX.Add(data);
+                this.context.TBL_PRODUCT_PRICE_INDEX.Add(data);
+            }
+
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -2454,7 +2465,8 @@ namespace FintrakBanking.Repositories.Setups.General
             data.PRICEINDEXNAME = prodPriceIndex.priceIndexName;
             data.PRICEINDEXDESCRIPTION = prodPriceIndex.priceIndexDescription;
             data.PRICEINDEXRATE = prodPriceIndex.priceIndexRate;
-
+            data.ALLOWAUTOMATICREPRICING = prodPriceIndex.allowAutomaticRepricing;
+            data.DURATION = prodPriceIndex.priceIndexDuration;
             data.LASTUPDATEDBY = prodPriceIndex.lastUpdatedBy;
             data.DATETIMEUPDATED = DateTime.Now;
 
