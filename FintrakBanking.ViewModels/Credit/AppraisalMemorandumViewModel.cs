@@ -51,7 +51,8 @@ namespace FintrakBanking.ViewModels.Credit
         public float? feeRateConcession { get; set; }
         public int targetId { get; set; }
         public int nextOperationId { get; set; }
-        public int nextTargetId { get; set; }
+        public int nextApprovalLevelId { get; set; }
+
     }
 
     public class ApprovedLoanDetailViewModel : GeneralEntity
@@ -322,7 +323,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class TranchDisbursmentViewModel
     {
-        public int approvalLevelId { get; set; }
+        public short? approvalLevelId { get; set; }
         public int loanApplicationId { get; set; }
     }
 }

@@ -36,6 +36,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingDocumentsContext documentsContext;
         private FinTrakBankingStagingContext stagingContext;
         private IStaffMIS staffMIS;
+        TBL_PROFILE_SETTING profile_Setting;
 
         public object FileUploadControl { get; private set; }
 
@@ -56,6 +57,7 @@ namespace FintrakBanking.Repositories.Setups.General
             documentsContext = _documentsContext;
             stagingContext = _stagingContext;
             staffMIS = _staffMIS;
+            profile_Setting = _context.TBL_PROFILE_SETTING.FirstOrDefault();
         }
 
         public StaffRepository(FinTrakBankingContext context)
@@ -289,7 +291,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     existingTempUser.FAILEDLOGONATTEMPT = 0;
                     existingTempUser.SECURITYQUESTION = staffModel.user.securityQuestion;
                     existingTempUser.SECURITYANSWER = staffModel.user.securityAnswer;
-                    existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays);
+                    existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER);
+                    //existingTempUser.NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays);
                     existingTempUser.LASTUPDATEDBY = staffModel.createdBy;
                     existingTempUser.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                     existingTempUser.APPROVALSTATUS = false;
@@ -311,7 +314,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     FAILEDLOGONATTEMPT = 0,
                     SECURITYQUESTION = staffModel.user.securityQuestion,
                     SECURITYANSWER = staffModel.user.securityAnswer,
-                    NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                    NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
+                //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
                     CREATEDBY = staffModel.createdBy,
                     LASTUPDATEDBY = staffModel.createdBy,
                     DATETIMECREATED = DateTime.Now,
@@ -721,7 +725,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         FAILEDLOGONATTEMPT = 0,
                         SECURITYQUESTION = tempUser.SECURITYQUESTION,
                         SECURITYANSWER = tempUser.SECURITYANSWER,
-                        NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                        NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
+                    //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
                         CREATEDBY = tempUser.CREATEDBY,
                         LASTUPDATEDBY = tempUser.CREATEDBY,
                         DATETIMECREATED = tempUser.DATETIMECREATED,
@@ -1034,7 +1039,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         FAILEDLOGONATTEMPT = 0,
                         SECURITYQUESTION = tempUser.SECURITYQUESTION,
                         SECURITYANSWER = tempUser.SECURITYANSWER,
-                        NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                        NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
+                        //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
                         CREATEDBY = tempUser.CREATEDBY,
                         LASTUPDATEDBY = tempUser.CREATEDBY,
                         DATETIMECREATED = tempUser.DATETIMECREATED,
@@ -1237,7 +1243,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     FAILEDLOGONATTEMPT = 0,
                     SECURITYQUESTION = staffModel.user.securityQuestion,
                     SECURITYANSWER = staffModel.user.securityAnswer,
-                    NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                    NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
+                   // NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
                     CREATEDBY = staffModel.createdBy,
                     LASTUPDATEDBY = staffModel.createdBy,
                     DATETIMECREATED = DateTime.Now,
@@ -1887,7 +1894,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 FAILEDLOGONATTEMPT = 0,
                 SECURITYQUESTION = "What is my firstname",
                 SECURITYANSWER = staffModel.FirstName,
-                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
+                //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
                 CREATEDBY = staffModel.createdBy,
                 LASTUPDATEDBY = staffModel.createdBy,
                 DATETIMECREATED = DateTime.Now,

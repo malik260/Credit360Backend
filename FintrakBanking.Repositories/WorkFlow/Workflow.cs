@@ -102,6 +102,8 @@ namespace FintrakBanking.Repositories.WorkFlow
         public AlertPlaceholders Placeholders { set { placeholders = value; } }
         public WorkflowResponse Response { get { return response; } set { response = value; } }
 
+        public bool isCrossOperationProcess { get; private set; }
+
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
         private WorkflowSetup next;
@@ -137,6 +139,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.requestStaffId = request.REQUESTSTAFFID;
                 this.fromLevelId = request.TOAPPROVALLEVELID;
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
+                this.isCrossOperationProcess = request.OPERATIONID != this.operationId;
                 if (this.statusId == (int)ApprovalStatusEnum.Reroute && request.REQUESTSTAFFID == this.staffId) { this.fromLevelId = request.FROMAPPROVALLEVELID; }
                 if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(request.REQUESTSTAFFID, request.FROMAPPROVALLEVELID, request.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
@@ -283,10 +286,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool ProcessIsClosed()
         {
-            if (this.currentStateId == (int)ApprovalState.Ended)
-            {
-                return true;
-            }
+            if (this.isCrossOperationProcess) return false;
+            if (this.currentStateId == (int)ApprovalState.Ended) return true;
             return false;
         }
 

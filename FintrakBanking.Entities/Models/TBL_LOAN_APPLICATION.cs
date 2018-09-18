@@ -111,7 +111,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? FINALAPPROVAL_LEVELID { get; set; }
 
-        public int? TRANCHEAPPROVAL_LEVELID { get; set; }
+        public short? TRANCHEAPPROVAL_LEVELID { get; set; }
 
         public short? NEXTAPPLICATIONSTATUSID { get; set; }
 

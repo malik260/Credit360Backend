@@ -7,6 +7,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Data.Entity;
+using FintrakBanking.Entities.Models;
 
 namespace FintrakBanking.Common
 {
@@ -17,6 +19,10 @@ namespace FintrakBanking.Common
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
+        /// 
+        private static FinTrakBankingContext context;
+
+      
         public static string FormatDate(DateTime date)
         {
             return date.ToString("yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture);
@@ -345,23 +351,27 @@ namespace FintrakBanking.Common
         {
             get
             {
-                return  int.Parse( (ConfigurationManager.AppSettings["maxInvalidPasswordAttempts"]).ToString());
+
+                    return int.Parse((ConfigurationManager.AppSettings["maxInvalidPasswordAttempts"]).ToString());
+              
             }
         }
 
         public static string minRequiredPasswordLength
-        {
+        {            
             get
             {
-                return (ConfigurationManager.AppSettings["minRequiredPasswordLength"]).ToString();
+             
+                    return (ConfigurationManager.AppSettings["minRequiredPasswordLength"]).ToString();
+               
             }
         }
 
         public static string minRequiredNonalphanumericCharacters
         {
             get
-            {
-                return (ConfigurationManager.AppSettings["minRequiredNonalphanumericCharacters"]).ToString();
+            {               
+                    return (ConfigurationManager.AppSettings["minRequiredNonalphanumericCharacters"]).ToString();              
             }
         }
 
