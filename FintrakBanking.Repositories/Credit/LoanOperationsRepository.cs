@@ -8293,6 +8293,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRecapitilization(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
@@ -8323,22 +8324,22 @@ namespace FintrakBanking.Repositories.Credit
                 if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
-                    inputTransactions.Add(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest"));
                 }
 
-                if (pastdueinterest != 0)
+                if (pastdueinterest > 0)
                 {
-                    inputTransactions.Add(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, pastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past-Due Interest"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, pastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past-Due Interest"));
                 }
 
-                if (interestOnpastdueinterest != 0)
+                if (interestOnpastdueinterest > 0)
                 {
-                    inputTransactions.Add(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Interest"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Interest"));
                 }
 
-                if (interestOnpastdueprincipal != 0)
+                if (interestOnpastdueprincipal >  0)
                 {
-                    inputTransactions.Add(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Principal"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Principal"));
                 }
 
 
@@ -8364,7 +8365,10 @@ namespace FintrakBanking.Repositories.Credit
                 //inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYAB
                 //inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYAB
                 //inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest"));
-                ///posting will happen here
+                
+                //posting will happen here
+
+
 
                 if (LoanExist(loanId) > 0)
                 {
@@ -8506,25 +8510,25 @@ namespace FintrakBanking.Repositories.Credit
                     loan.OUTSTANDINGINTEREST = (decimal)periodicScheduleTemp.Sum(x => x.periodInterestAmount);
                     //-------------------------------------------------
 
-
-
                     //-------------------------------------------------------
                 }
 
                 financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuth);
 
-                var result = context.SaveChanges() > 0;
-                if (result)
-                {
-                    output = true;
-                }
+                context.SaveChanges();
+
+                return true;
+                //var result = context.SaveChanges() > 0;
+                //if (result)
+                //{
+                //    output = true;
+                //}
             }
             catch (Exception ex)
             {
-                output = true;
+                //output = false;
                 throw new SecureException(ex.Message);
-            }
-            return output;
+            }           
 
         }
 
