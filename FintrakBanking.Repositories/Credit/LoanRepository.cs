@@ -4815,13 +4815,13 @@ namespace FintrakBanking.Repositories.Credit
             IEnumerable<CamProcessedLoanViewModel> data = null;
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
             var idContigent = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
-            bool isBGDesk = context.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.ACTIVITYID == 9 && x.USERID == staffId).Any();
+
             List<int> operationIds = new List<int>();
-            if(isBGDesk)
+            if(ids.Contains(74) || ids.Contains(76))
             {
                 operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
             }
-            if(!isBGDesk )
+            else
             {
                 operationIds.Add((int)OperationsEnum.TermLoanBooking);
                 operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
