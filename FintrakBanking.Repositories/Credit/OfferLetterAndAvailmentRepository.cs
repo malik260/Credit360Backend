@@ -138,7 +138,7 @@ namespace FintrakBanking.Repositories.Credit
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
             IQueryable<CamProcessedLoanViewModel> data = null;
 
-            data = context.TBL_LOAN_APPLICATION.Where(x => x.BRANCHID == branchId && !exceptIds.Contains(x.LOANAPPLICATIONID) && x.APPLICATIONSTATUSID!= (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
+            data = context.TBL_LOAN_APPLICATION.Where(x => x.BRANCHID == branchId && !exceptIds.Contains(x.LOANAPPLICATIONID) && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.OfferLetterApproval
@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.Credit
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     productClassProcessId = x.c.a.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
                     isFirstApprover = false,
-                    isFinal = context.TBL_OFFERLETTER.Where(o=>o.APPLICATIONREFERENCENUMBER== x.c.a.APPLICATIONREFERENCENUMBER).Select(o=>o.ISFINAL).FirstOrDefault(),
+                    isFinal = context.TBL_OFFERLETTER.Where(o => o.APPLICATIONREFERENCENUMBER == x.c.a.APPLICATIONREFERENCENUMBER).Select(o => o.ISFINAL).FirstOrDefault(),
                     productPriceIndex = x.c.b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == x.c.b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                 });
 
@@ -193,7 +193,7 @@ namespace FintrakBanking.Repositories.Credit
                 || x.applicationStatusId == (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress
                 || x.applicationStatusId == (int)LoanApplicationStatusEnum.ApplicationUnderReview
                 || x.applicationStatusId == (int)LoanApplicationStatusEnum.CAMCompleted
-                
+
                 )
                 .GroupBy(c => c.loanApplicationId)
                 .Select(y => y.FirstOrDefault())
@@ -209,7 +209,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();
 
-            var data = context.TBL_LOAN_APPLICATION.Where(x=>x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
+            var data = context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted)
                 .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.STATUSID == (int)ApprovalStatusEnum.Approved),
                     a => a.LOANAPPLICATIONID, b => b.LOANAPPLICATIONID, (a, b) => new { a, b })
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == (int)OperationsEnum.LoanAvailment
@@ -261,7 +261,7 @@ namespace FintrakBanking.Repositories.Credit
                     subSectorId = x.c.b.TBL_SUB_SECTOR.SUBSECTORID,
                     //approvalLevelId = staffApprovalLevelId,
                     operationId = (short)OperationsEnum.LoanAvailment,
-                    
+
                     currentApprovalStateId = x.d.APPROVALSTATEID,
                     approvalTrailId = x.d.APPROVALTRAILID,
                     currentApprovalLevelId = x.d.TOAPPROVALLEVELID,
@@ -346,9 +346,9 @@ namespace FintrakBanking.Repositories.Credit
             var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                                       && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
-                                       && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted 
+                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                       && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                       && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                        && b.ISSUBSEQUENT == false
                                        select new OfferLetterConditionPrecidentViewModel()
                                        {
@@ -361,9 +361,9 @@ namespace FintrakBanking.Repositories.Credit
             var conditionSubsequents = (from a in context.TBL_LOAN_APPLICATION
                                         join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                         join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                        where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
-                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted 
+                                        where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                         && b.ISSUBSEQUENT == true
                                         select new OfferLetterConditionPrecidentViewModel()
                                         {
@@ -375,8 +375,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var products = (from a in context.TBL_LOAN_APPLICATION
                             join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                            && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
+                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                            && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                             && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                             select new ProductViewModel()
                             {
@@ -391,8 +391,8 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                         join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
                         join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                        where d.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                        && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
+                        where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                        && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                         select new ProductFeeViewModel()
                         {
@@ -408,9 +408,9 @@ namespace FintrakBanking.Repositories.Credit
                                from d in cg.DefaultIfEmpty()
                                join e in context.TBL_CURRENCY on b.CURRENCYID equals e.CURRENCYID
 
-                               where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower() 
-                               && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
-                               && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted 
+                               where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
+                               && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                               && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                && b.STATUSID == (int)ApprovalStatusEnum.Approved
                                select new CamProcessedLoanViewModel()
                                {
@@ -419,7 +419,7 @@ namespace FintrakBanking.Repositories.Credit
                                    interestRate = b.APPROVEDINTERESTRATE,
                                    purpose = b.LOANPURPOSE,
                                    applicationDate = applDate,
-                                   approvedAmountCurrency = e.CURRENCYNAME + " " +  b.APPROVEDAMOUNT,
+                                   approvedAmountCurrency = e.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
                                    productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
 
                                    //approvedAmount = b.APPROVEDAMOUNT
@@ -432,8 +432,8 @@ namespace FintrakBanking.Repositories.Credit
                                               //from c in cc.DefaultIfEmpty()
                                               //join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
                                               //from d in cg.DefaultIfEmpty()
-                                              where c.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                                              && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
+                                              where c.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                              && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                               && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                               select new TransactionDynamicsViewModel()
                                               {
@@ -446,8 +446,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanCollaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
                                    join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
-                                   where y.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                                   && y.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
+                                   where y.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                   && y.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                    && y.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                    select new LoanApplicationCollateralViewModel()
                                    {
@@ -461,8 +461,8 @@ namespace FintrakBanking.Repositories.Credit
             var loanMonitoringTriggers = (from x in context.TBL_LOAN_APPLICATN_DETL_MTRIG
                                           join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals y.LOANAPPLICATIONDETAILID
                                           join z in context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONID equals z.LOANAPPLICATIONID
-                                          where z.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                                          && z.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
+                                          where z.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                          && z.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                           && z.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                           select new MonitoringTriggersViewModel()
                                           {
@@ -472,13 +472,13 @@ namespace FintrakBanking.Repositories.Credit
             //var loanMonitoringTriggers = monitoringTriggers.Select(x => x.monitoringTrigger).Distinct();
 
 
-            var loanComments = (from x in context.TBL_LOAN_APPLICATION_COMMENT 
+            var loanComments = (from x in context.TBL_LOAN_APPLICATION_COMMENT
                                 join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
-                                   where y.APPLICATIONREFERENCENUMBER == applicationRefNumber && x.OPERATIONID == (int)CommentsTypeEnum.LOS
+                                where y.APPLICATIONREFERENCENUMBER == applicationRefNumber && x.OPERATIONID == (int)CommentsTypeEnum.LOS
                                 select new LoanApplicationCommentViewModel()
-                                   {
-                                      comments = x.COMMENTS,
-                                   }).ToList();
+                                {
+                                    comments = x.COMMENTS,
+                                }).ToList();
 
 
             var conditions = string.Empty;
@@ -529,7 +529,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int noOfCollaterals = 0;
 
-            int noOfComments = 0; 
+            int noOfComments = 0;
 
             int noOfMonitoringTriggers = 0;
 
@@ -542,7 +542,7 @@ namespace FintrakBanking.Repositories.Credit
                 conditions = $"<p><strong> Conditions Precedent(to be satisfied before drawdown) {prod.productName}</strong></p>";
 
                 conditions = conditions +
-                        $"<table border='1' cellspacing='0' class='conditionsTable_OL' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                        $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                         $"<tr>" +
                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                         $"<p> &nbsp;</p><p><strong> S/No </strong></p></td>" +
@@ -610,7 +610,7 @@ namespace FintrakBanking.Repositories.Credit
                 conditions = $"<p><strong>Conditions Subsequent (to be satisfied after drawdown) {prod.productName}</strong></p>";
 
                 conditions = conditions +
-                        $"<table border='1' cellspacing='0' class='conditionsTable_OL' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                        $"<table border='1' cellpadding='5' cellspacing='2'><tbody>" +
                         $"<tr>" +
                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
                         $"<strong> S/No </strong></td>" +
@@ -671,7 +671,7 @@ namespace FintrakBanking.Repositories.Credit
             fee = $"<p><strong> Fee Deatils: </strong></p>";
 
             fee = fee +
-                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                         $"<strong> S/No </strong></td>" +
@@ -689,7 +689,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.feeName}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.rateValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.rateValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
                     $"</tr>";
             }
 
@@ -706,18 +706,18 @@ namespace FintrakBanking.Repositories.Credit
             loanDetail = $" ";//<p><strong> Facility Deatils: </strong></p>
 
             loanDetail = loanDetail +
-                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:1.25in'><p> &nbsp;</p>" +
                     $"<strong> Facility Type </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
                     $"<strong> Purpose </strong></td>" +
+                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
+                    $"<strong> Limits N </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:49.5pt'><p> &nbsp;</p>" +
                     $"<strong> Tenor </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
-                    $"<strong> Interest </strong></p></td>" +
-                    $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
-                    $"<strong> Limits N </strong></p></td>" +
+                    $"<strong> Interest/Margin </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
                     $"<strong> Review Date </strong></td></tr>";
 
@@ -729,9 +729,9 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
@@ -748,7 +748,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCollateral = $" ";//<p><strong> Collateral: </strong></p>
 
             loanCollateral = loanCollateral +
-                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                     $"<strong> S/No </strong></td>" +
@@ -788,7 +788,7 @@ namespace FintrakBanking.Repositories.Credit
             loanComment = $" ";//<p><strong> Collateral: </strong></p>
 
             loanComment = loanComment +
-                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                     $"<strong> S/No </strong></td>" +
@@ -819,7 +819,7 @@ namespace FintrakBanking.Repositories.Credit
             loanMonitoringTrigger = $"<p><strong> Monitoring Triggers: </strong></p>";
 
             loanMonitoringTrigger = loanMonitoringTrigger +
-                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                         $"<strong> S/No </strong></td>" +
@@ -850,7 +850,7 @@ namespace FintrakBanking.Repositories.Credit
             loanTransactionDynamics = $"<p><strong> Transaction Dynamics: </strong></p>";
 
             loanTransactionDynamics = loanTransactionDynamics +
-                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                     $"<strong> S/No </strong></td>" +
@@ -967,7 +967,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var products = (from a in context.TBL_LMSR_APPLICATION
                             join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                            where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER 
+                            where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
                             select new ProductViewModel()
                             {
                                 productId = c.TBL_PRODUCT.PRODUCTID,
@@ -982,7 +982,7 @@ namespace FintrakBanking.Repositories.Credit
                         join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
                         join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                         where d.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
-                        && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
+                        && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                         select new ProductFeeViewModel()
                         {
@@ -1124,7 +1124,7 @@ namespace FintrakBanking.Repositories.Credit
                 conditions = $"<p><strong> Conditions Precedent(to be satisfied before drawdown) {prod.productName}</strong></p>";
 
                 conditions = conditions +
-                        $"<table border='1' cellspacing='0' class='conditionsTable_OL' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                        $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                         $"<tr>" +
                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                         $"<p> &nbsp;</p><p><strong> S/No </strong></p></td>" +
@@ -1192,7 +1192,7 @@ namespace FintrakBanking.Repositories.Credit
                 conditions = $"<p><strong>Conditions Subsequent (to be satisfied after drawdown) {prod.productName}</strong></p>";
 
                 conditions = conditions +
-                        $"<table border='1' cellspacing='0' class='conditionsTable_OL' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                        $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                         $"<tr>" +
                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
                         $"<strong> S/No </strong></td>" +
@@ -1253,7 +1253,7 @@ namespace FintrakBanking.Repositories.Credit
             fee = $"<p><strong> Fee Deatils: </strong></p>";
 
             fee = fee +
-                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                         $"<strong> S/No </strong></td>" +
@@ -1288,7 +1288,7 @@ namespace FintrakBanking.Repositories.Credit
             loanDetail = $" ";//<p><strong> Facility Deatils: </strong></p>
 
             loanDetail = loanDetail +
-                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:1.25in'><p> &nbsp;</p>" +
                     $"<strong> Facility Type </strong></p></td>" +
@@ -1327,7 +1327,7 @@ namespace FintrakBanking.Repositories.Credit
             loanCollateral = $" ";//<p><strong> Collateral: </strong></p>
 
             loanCollateral = loanCollateral +
-                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                     $"<strong> S/No </strong></td>" +
@@ -1367,7 +1367,7 @@ namespace FintrakBanking.Repositories.Credit
             loanComment = $" ";//<p><strong> Collateral: </strong></p>
 
             loanComment = loanComment +
-                    $"<table border='1' cellspacing='0' style='width: 100%; overflow-x:auto; margin-bottom:5px'><tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                     $"<strong> S/No </strong></td>" +
@@ -1397,7 +1397,7 @@ namespace FintrakBanking.Repositories.Credit
             loanMonitoringTrigger = $"<p><strong> Monitoring Triggers: </strong></p>";
 
             loanMonitoringTrigger = loanMonitoringTrigger +
-                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                         $"<strong> S/No </strong></td>" +
@@ -1428,7 +1428,7 @@ namespace FintrakBanking.Repositories.Credit
             loanTransactionDynamics = $"<p><strong> Transaction Dynamics: </strong></p>";
 
             loanTransactionDynamics = loanTransactionDynamics +
-                    $"<table border='1' cellspacing='0'<tbody>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
                     $"<tr>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                     $"<strong> S/No </strong></td>" +
@@ -1780,7 +1780,7 @@ namespace FintrakBanking.Repositories.Credit
                     // appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterRejected;
                 }
 
-                    context.SaveChanges();
+                context.SaveChanges();
 
 
 
@@ -1930,7 +1930,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException("There are unapproved middle office request.");
             }
         }
-        
+
 
         private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)
         {
@@ -1951,8 +1951,8 @@ namespace FintrakBanking.Repositories.Credit
         public WorkflowResponse ApproveOfferLetterGeneration(LoanAvailmentApprovalViewModel model)
         {
             var operationId = (int)OperationsEnum.OfferLetterApproval;
-            var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber 
-            && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
+            var appl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == model.applicationReferenceNumber
+            && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
             && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted);
             if (appl == null) throw new SecureException("Loan application with the given reference number not found!");
 
@@ -2144,9 +2144,9 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_APPLICATION on a.TARGETID equals b.LOANAPPLICATIONID
                         join c in context.TBL_STAFF on a.REQUESTSTAFFID equals c.STAFFID
                         join d in context.TBL_APPROVAL_STATE on a.APPROVALSTATEID equals d.APPROVALSTATEID
-                        where b.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                        && b.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress 
-                        && b.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted 
+                        where b.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                        && b.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                        && b.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                         && a.OPERATIONID == (int)OperationsEnum.LoanAvailment
                         select new CommentOnLoanAvailmentViewModel
                         {
@@ -2244,7 +2244,7 @@ namespace FintrakBanking.Repositories.Credit
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
-            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId ).ToList();
+            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId).ToList();
 
             if (dat != null)
             {
@@ -2263,14 +2263,14 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             targetId = applicationId;
                         }
-                       
-                      
+
+
                         var detail = (from a in context.TBL_CHECKLIST_DEFINITION
-                                     join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
-                                     equals b.CHECKLISTDEFINITIONID
-                                     where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-                                     && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && operations.Contains(a.OPERATIONID)
-                                     select b).ToList();
+                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
+                                      equals b.CHECKLISTDEFINITIONID
+                                      where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                      && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && operations.Contains(a.OPERATIONID)
+                                      select b).ToList();
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
 
                         //if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.AvailmentCheckList)
