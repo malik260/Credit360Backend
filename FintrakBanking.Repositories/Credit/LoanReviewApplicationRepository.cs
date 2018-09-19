@@ -91,6 +91,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerId = x.customer.CUSTOMERID,
                 operationId = x.application.OPERATIONID,
                 customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
+                atInitiator = x.application.CREATEDBY == staffId,
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
@@ -634,11 +635,11 @@ namespace FintrakBanking.Repositories.Credit
                                join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID
                                join o in context.TBL_CASA on l.CASAACCOUNTID equals o.CASAACCOUNTID
                                join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals  y.TARGETID
-                               where a.RELATEDREFERENCENUMBER == searchString
-                        || g.FIRSTNAME.ToLower().StartsWith(searchString)
-                        || g.LASTNAME.ToLower().StartsWith(searchString)
-                        || g.MIDDLENAME.ToLower().StartsWith(searchString)
-                        || g.CUSTOMERCODE.ToLower().StartsWith(searchString)
+                               where a.APPLICATIONREFERENCENUMBER == searchString
+                       // || g.FIRSTNAME.ToLower().StartsWith(searchString)
+                       // || g.LASTNAME.ToLower().StartsWith(searchString)
+                        //|| g.MIDDLENAME.ToLower().StartsWith(searchString)
+                        //|| g.CUSTOMERCODE.ToLower().StartsWith(searchString)
                                select new LoanApplicationViewModel
                                {
                                    firstName = g.FIRSTNAME,
@@ -798,7 +799,5 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
         }
-
-
     }
 }
