@@ -43,7 +43,6 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository lien;
         private ICasaRepository casa;
         private IIntegrationWithFinacle finacle;
-
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
             FinTrakBankingContext _delContext,
@@ -4037,9 +4036,11 @@ namespace FintrakBanking.Repositories.Credit
                         createdBy = ApprovalModel.createdBy,
                         companyId = ApprovalModel.companyId,
                         isTermDeposit = true,
+                        
                     };
 
-                   //finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
+                 var  finacleBalance = finacle.ValidateTDAccountNumber(model.productAccountNumber);
+                        model.currencyCode = finacleBalance.currencyType;
 
                     lien.PlaceLien(model);
 
