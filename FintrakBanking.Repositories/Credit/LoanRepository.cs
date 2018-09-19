@@ -4552,7 +4552,12 @@ namespace FintrakBanking.Repositories.Credit
                             join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                             join cust in context.TBL_CUSTOMER on d.CUSTOMERID equals cust.CUSTOMERID
                             join br in context.TBL_BRANCH on m.BRANCHID equals br.BRANCHID
-                            where m.COMPANYID == companyId && d.DELETED == false && m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted
+                            where m.COMPANYID == companyId && d.DELETED == false
+                            && ((m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.AvailmentCompleted)
+                            || (m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestInitiated)
+                            || (m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.BookingRequestCompleted)
+                            || (m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingInProgress)
+                            || (m.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.LoanBookingCompleted))
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationInProgress
                             && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
                             && m.BRANCHID == branchId
@@ -4678,8 +4683,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.applicationStatusId == (int)LoanApplicationStatusEnum.AvailmentCompleted
-                           && x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
+                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
                            && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
                            && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
 
@@ -4813,12 +4817,18 @@ namespace FintrakBanking.Repositories.Credit
             var idContigent = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
 
             List<int> operationIds = new List<int>();
-            operationIds.Add((int)OperationsEnum.TermLoanBooking);
-            operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
-            operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
-            operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
-            operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
-
+            if(ids.Contains(74) || ids.Contains(76))
+            {
+                operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
+            }
+            else
+            {
+                operationIds.Add((int)OperationsEnum.TermLoanBooking);
+                operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
+                operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
+                operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
+            }
+            
             data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                     join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                     join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID

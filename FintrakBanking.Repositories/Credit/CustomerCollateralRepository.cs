@@ -43,7 +43,6 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository lien;
         private ICasaRepository casa;
         private IIntegrationWithFinacle finacle;
-
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
             FinTrakBankingContext _delContext,
@@ -3724,7 +3723,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (finacleBalance.isSuccess == false)
                 {
-                    throw new ConditionNotMetException(finacleBalance.errorDesc);
+                    var error = finacleBalance.errorDesc + " Or Closed Account Number";
+                    throw new ConditionNotMetException(error);
                 }
                 else
                 {
@@ -4035,7 +4035,12 @@ namespace FintrakBanking.Repositories.Credit
                         dateTimeCreated = DateTime.Now,
                         createdBy = ApprovalModel.createdBy,
                         companyId = ApprovalModel.companyId,
+                        isTermDeposit = true,
+                        
                     };
+
+                 var  finacleBalance = finacle.ValidateTDAccountNumber(model.productAccountNumber);
+                        model.currencyCode = finacleBalance.currencyType;
 
                     lien.PlaceLien(model);
 
