@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.CASA
                     }
                     else
                     {
-                        throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                        throw new ConditionNotMetException("Core Banking API Error - " + result.APIResponse.webRequestStatus);
                     }
                 }
                 else
@@ -134,7 +134,7 @@ namespace FintrakBanking.Repositories.CASA
 
         }
 
-        public bool ReleaseLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
+        public bool ReleaseLien(CasaLienViewModel model, TwoFactorAutheticationViewModel twoFADetails = null, bool require2FA = true)
         {
             var existingLien = context.TBL_CASA_LIEN.Where(x => x.LIENREFERENCENUMBER == model.lienReferenceNumber).FirstOrDefault();
 
@@ -153,7 +153,7 @@ namespace FintrakBanking.Repositories.CASA
             //model.description = data.DESCRIPTION;
 
             //call
-            if (USE_TWO_FACTOR_AUTHENTICATION)
+            if (USE_TWO_FACTOR_AUTHENTICATION  && require2FA == true)
             {
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");

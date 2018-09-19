@@ -443,6 +443,13 @@ namespace FintrakBanking.Repositories.Setups.General
                     context.TBL_PROFILE_STAFF_ROLE_ADT_ACT.Remove(item);
                 }
             }
+
+            foreach (var item in tempActivities)
+            {
+                item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                item.ISCURRENT = false;
+            }
+
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {

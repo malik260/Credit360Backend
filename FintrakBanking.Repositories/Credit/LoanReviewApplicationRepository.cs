@@ -248,9 +248,15 @@ namespace FintrakBanking.Repositories.Credit
             if (user.STAFFROLEID == classifiedAssetManagementRoleId) assetManagement = true;
 
             if (assetManagement)
+            {
                 workflow.NextProcess(model.companyId, staffId, 79, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+                application.OPERATIONID = 79;
+                context.Entry(application).State = System.Data.Entity.EntityState.Modified;
+            }
             else
+            {
                 workflow.NextProcess(model.companyId, staffId, camOperationId, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
+            }
 
             if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
             throw new SecureException("An error occured while saving the data!");
@@ -531,11 +537,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public IQueryable<LoanReviewApplicationViewModel> GetRegionalLoanApplications(int staffId)
         {
-            List<int> levels = general.GetRouteLevels(46, 1);
-            //List<int> levels2 = general.GetRouteLevels(71, 1);
-            //List<int> levels3 = general.GetRouteLevels(79, 1);
+            List<int> levels1 = general.GetRouteLevels(46, 1);
+            List<int> levels2 = general.GetRouteLevels(71, 1);
+            List<int> levels3 = general.GetRouteLevels(79, 1);
 
-            //var levels = levels1.Union(levels2).Union(levels3).Distinct();
+            var levels = levels1.Union(levels2).Union(levels3).Distinct();
 
             var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
                                 .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
@@ -748,7 +754,6 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion
 
-
         public bool AppraisalReviewReferBack(ForwardViewModel model)
         {
             var o = context.TBL_APPROVAL_TRAIL.Find(model.trailId); // here we try to get the staffid on the trail row
@@ -789,7 +794,7 @@ namespace FintrakBanking.Repositories.Credit
                 currentTrail.TOSTAFFID = null;
             }
             appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
-            appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMInProgress;
+            appl.OPERATIONID = model.operationId;
 
             return context.SaveChanges() > 0;
         }
