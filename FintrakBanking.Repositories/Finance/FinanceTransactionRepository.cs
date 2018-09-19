@@ -1717,9 +1717,9 @@ namespace FintrakBanking.Repositories.Finance
             var loan = this.context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
 
             var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
-            
+
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-            
+
             var applicationDate = generalSetup.GetApplicationDate();
 
 
@@ -2193,8 +2193,8 @@ namespace FintrakBanking.Repositories.Finance
         }
 
 
-        [OperationBehavior(TransactionScopeRequired = true)]
-        public FinanceTransactionViewModel BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
+       
+        public List<FinanceTransactionViewModel> BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
 
@@ -2225,6 +2225,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.creditAmount = 0;
             debit.sourceBranchId = loanData.BRANCHID;
             debit.destinationBranchId = loanData.BRANCHID;
+            debit.valueDate = generalSetup.GetApplicationDate();
 
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
@@ -2250,17 +2251,19 @@ namespace FintrakBanking.Repositories.Finance
             credit.creditAmount = postedAmount;
             credit.sourceBranchId = loanData.BRANCHID;
             credit.destinationBranchId = loanData.BRANCHID;
+            credit.valueDate = generalSetup.GetApplicationDate();
 
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
-            PostTransaction(inputTransactions);
 
-            return null;
+            //PostTransaction(inputTransactions);
+
+            return inputTransactions;
 
         }
-        
+
 
         public FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId)
 

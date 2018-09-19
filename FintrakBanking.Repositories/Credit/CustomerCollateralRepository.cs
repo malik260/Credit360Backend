@@ -3724,7 +3724,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (finacleBalance.isSuccess == false)
                 {
-                    throw new ConditionNotMetException(finacleBalance.errorDesc);
+                    var error = finacleBalance.errorDesc + " Or Closed Account Number";
+                    throw new ConditionNotMetException(error);
                 }
                 else
                 {

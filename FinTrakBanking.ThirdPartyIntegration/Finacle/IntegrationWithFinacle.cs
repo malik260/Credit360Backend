@@ -820,7 +820,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 transPosting.narration = item.description;
                 if(item.batchCode == null)
                 {
-                    transPosting.referenceNumber = "1222333444";// to be change  transPosting.referenceNumber = item.sourceReferenceNumber
+                    transPosting.referenceNumber = "1222333444";  // to be change  transPosting.referenceNumber = item.sourceReferenceNumber
+                    //transPosting.referenceNumber = item.sourceReferenceNumber;
                 }
                 else
                 {
