@@ -4036,7 +4036,10 @@ namespace FintrakBanking.Repositories.Credit
                         dateTimeCreated = DateTime.Now,
                         createdBy = ApprovalModel.createdBy,
                         companyId = ApprovalModel.companyId,
+                        isTermDeposit = true,
                     };
+
+                 //  finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
 
                     lien.PlaceLien(model);
 
