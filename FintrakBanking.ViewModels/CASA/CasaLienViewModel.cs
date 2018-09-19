@@ -17,6 +17,10 @@ namespace FintrakBanking.ViewModels.CASA
         public string branchName { get; set; }
         public string lienTypeName { get; set; }
         public string customerName { get; set; }
+
+        public string currencyCode { get; set; }
+
+        public bool isTermDeposit { get; set; }
         //public string lienReferenceNumber { get; set; }
         //public string productAccountNumber { get; set; }
         //public string sourceReferenceNumber { get; set; }

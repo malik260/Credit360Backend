@@ -3724,7 +3724,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (finacleBalance.isSuccess == false)
                 {
-                    throw new ConditionNotMetException(finacleBalance.errorDesc);
+                    var error = finacleBalance.errorDesc + " Or Closed Account Number";
+                    throw new ConditionNotMetException(error);
                 }
                 else
                 {
@@ -3879,6 +3880,10 @@ namespace FintrakBanking.Repositories.Credit
 
             return 0;
         }
+
+
+
+
         public int GoForApproval(ApprovalViewModel model)
         {
             TwoFactorAutheticationViewModel twoFADetails = new TwoFactorAutheticationViewModel
@@ -3971,6 +3976,8 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+
+
         private void UpdateCutomerCollateralApprovalStatus(ApprovalViewModel ApprovalModel, short status, TwoFactorAutheticationViewModel twoFADetails)
         {
             var mainCollateral = (from x in context.TBL_TEMP_COLLATERAL_CUSTOMER
@@ -4029,7 +4036,10 @@ namespace FintrakBanking.Repositories.Credit
                         dateTimeCreated = DateTime.Now,
                         createdBy = ApprovalModel.createdBy,
                         companyId = ApprovalModel.companyId,
+                        isTermDeposit = true,
                     };
+
+                   //finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
 
                     lien.PlaceLien(model);
 
@@ -4083,6 +4093,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+
         private int UpdateCollateralMain(int collateralId)
         {
             var data = new TBL_COLLATERAL_CUSTOMER();

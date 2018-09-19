@@ -51,11 +51,11 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request-detail/legal-details")]
-        public HttpResponseMessage GetJobRequestLegalJobDetails()
+        public HttpResponseMessage GetLegalJobRequestDetails()
         {
             try
             {
-                var data = repo.GetJobRequestLegalJobDetail();
+                var data = repo.GetLegalJobRequestDetails();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (ConditionNotMetException ex)
@@ -72,7 +72,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("legal-job-request-detail/{jobRequestId}")]
+        public HttpResponseMessage GetJobRequestDetailsById(int jobRequestId)
+        {
+            try
+            {
+                var data = repo.GetJobRequestDetailsById(jobRequestId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/loan-application-details/{applicationId}")]
         public HttpResponseMessage GetLoanApplicationJobsById(int applicationId)
         {
@@ -273,9 +297,43 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
-        [Route("job-request/legal-collateral-job")]
-        public HttpResponseMessage EffectLegaCollateralJobs([FromBody] JobRequestCollateralSearchViewModel entity)
+        //[HttpPost] [ClaimsAuthorization]
+        //[Route("job-request/legal-collateral-job")]
+        //public HttpResponseMessage EffectLegaCollateralJobs([FromBody] JobRequestCollateralSearchViewModel entity)
+        //{
+        //    try
+        //    {
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.companyId = token.GetCompanyId;
+        //        entity.createdBy = token.GetStaffId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+
+        //        var data = repo.EffectLegaCollateralJobs(entity);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search charge instruction sent Successfully" });
+        //        }
+
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search charge Instructions failed to save " });
+        //    }
+        //    catch (ConditionNotMetException ce)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+        //    }
+        //    catch (BadLogicException be)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
+        //    }
+        //}
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("job-request/place-legal-job-charges")]
+        public HttpResponseMessage PlaceChargeOnCustomerForCollateralSearch([FromBody] JobRequestCollateralSearchViewModel entity)
         {
             try
             {
@@ -284,13 +342,13 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.EffectLegaCollateralJobs(entity);
+                var data = repo.PlaceChargeOnCustomerForCollateralSearch(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search Instructions Saved Successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Account has been debitted Successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search Instructions failed to save " });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to debit account " });
             }
             catch (ConditionNotMetException ce)
             {
@@ -299,6 +357,10 @@ namespace FintrakBanking.APICore.Controllers
             catch (BadLogicException be)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (TwoFactorAuthenticationException fa)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
             }
             catch (Exception)
             {
@@ -306,38 +368,38 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
-        [Route("job-request/collateral-customer/job/{actionName}/charge/{actionType}/{loanApplicationDetailId}")]
-        public HttpResponseMessage ChargeCustomerJob([FromBody] CollateralViewModel entity, string actionName, string actionType, int loanApplicationDetailId)
-        { 
-            try
-            {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
+        //[HttpPost] [ClaimsAuthorization]
+        //[Route("job-request/collateral-customer/job/{actionName}/charge/{actionType}/{loanApplicationDetailId}")]
+        //public HttpResponseMessage ChargeCustomerJob([FromBody] CollateralViewModel entity, string actionName, string actionType, int loanApplicationDetailId)
+        //{ 
+        //    try
+        //    {
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.companyId = token.GetCompanyId;
+        //        entity.createdBy = token.GetStaffId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = repo.ChargeCustomerJob(entity, actionName, actionType,loanApplicationDetailId);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
+        //        var data = repo.ChargeCustomerJob(entity, actionName, actionType,loanApplicationDetailId);
+        //        if (data)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured."});
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        //    }
+        //    catch (ConditionNotMetException ce)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+        //    }
+        //    catch (BadLogicException be)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured."});
+        //    }
+        //}
 
 
          [HttpPost] [ClaimsAuthorization]

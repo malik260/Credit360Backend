@@ -121,6 +121,8 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessAutomaticInterestRepricing(date, staffId);
 
+            loanOperation.ProcessReleaseLien(date);
+
             loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
 
             //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);

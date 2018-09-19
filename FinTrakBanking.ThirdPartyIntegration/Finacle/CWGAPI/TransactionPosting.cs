@@ -2,6 +2,7 @@
 {
     using FintrakBanking.Common.CustomException;
     using FintrakBanking.Entities.Models;
+    using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.ViewModels.CASA;
     using FintrakBanking.ViewModels.Credit;
     using FintrakBanking.ViewModels.Finance;
@@ -23,13 +24,15 @@
 
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
+            private IIntegrationWithFinacle finacle;
 
-            public TransactionPosting(FinTrakBankingContext _context)
+            public TransactionPosting(FinTrakBankingContext _context, IIntegrationWithFinacle _finacle)
             {
                 this.context = _context;
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
+                finacle = _finacle;
             }
 
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
@@ -472,6 +475,21 @@
                 {
                     //var leinAmountString = String.Format("{0:0.00}", model.lienAmount)
                     //{ "account": "2022072744", "lienProcessType": "LIFTLIEN", "lienReasonCode": "VIA", "lienReason": "TESTING1", "lienAmount": 2000.00, "lienAccountCurrency": "NGN", "lienUniqueReferenceNumber": 992345678 }
+
+                    var currencyCode = "";
+
+                    if (model.isTermDeposit)
+                    {
+                        var finacleBalance = finacle.ValidateTDAccountNumber(model.productAccountNumber);
+                        currencyCode = finacleBalance.currencyType;
+                    }
+                    else
+                    {
+                        currencyCode = context.TBL_CASA.Where(x =>
+                                x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId)
+                            .Select(x => x.TBL_CURRENCY.CURRENCYCODE).FirstOrDefault();
+                    }
+
                     LienAPIProcessViewModel apiModel = new LienAPIProcessViewModel
                     {
                         account = model.productAccountNumber,
@@ -479,9 +497,7 @@
                         lienReasonCode = "VIA",
                         lienReason = model.description,
                         lienAmount = String.Format("{0:0.00}", model.lienAmount), //model.lienAmount,  //
-                        lienAccountCurrency = context.TBL_CASA.Where(x =>
-                                x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId)
-                            .Select(x=>x.TBL_CURRENCY.CURRENCYCODE).FirstOrDefault(),
+                        lienAccountCurrency = currencyCode,
                         lienUniqueReferenceNumber = model.lienReferenceNumber,
                     };
 
