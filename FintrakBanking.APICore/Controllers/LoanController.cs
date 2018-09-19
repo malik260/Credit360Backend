@@ -413,7 +413,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                     if(entity.productTypeId ==(short)LoanProductTypeEnum.CommercialLoan 
                         || entity.productTypeId == (short)LoanProductTypeEnum.TermLoan 
                         || entity.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating 
-                        || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+                        || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving
+                        || entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
                     }

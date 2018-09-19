@@ -53,7 +53,8 @@ namespace FintrakBanking.APICore.Filters
             var ex = httpContext.Exception;
             var endPoint = httpContext.Request.RequestUri;
             var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
-            var errorMessage = "ERROR_MESSAGE: " + ex.Message + ", INNER_EXCETION: " + innerException;
+            var errorMessage = ex.Message;
+            if (innerException != null) errorMessage = errorMessage + ", INNER_EXCETION: " + innerException;
             var time = DateTime.Now;
             if (String.IsNullOrEmpty(ex.Data["validation_error_message"].ToString())) errorMessage = errorMessage + ", ENTITY_VALIDATION_ERROR: " + ex.Data["validation_error_message"];
 
@@ -78,7 +79,7 @@ namespace FintrakBanking.APICore.Filters
                 FROMADDRESS = support,
                 TOADDRESS = recipients,
                 MESSAGESUBJECT = "UNHANDLED EXCEPTION",
-                MESSAGEBODY = "<p><b>USERNAME:</b> " + userName + "</p><br/> <p><b>ENDPOINT:</b> " + endPoint + "</p></br> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p><br/> <p>STACKTRACE:</b> " + ex.StackTrace + "</p><br/> <p>TIME:</b> " + time + "</p><br/>", //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                MESSAGEBODY = "<p><b>USERNAME:</b> " + userName + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p>STACKTRACE:</b> " + ex.StackTrace + "</p> <p>TIME:</b> " + time + "</p>", //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                 MESSAGETYPEID = (short)MessageTypeEnum.Email,
                 DATETIMERECEIVED = time,
                 SENDONDATETIME = time,
