@@ -13,6 +13,7 @@ namespace FintrakBanking.Entities.Models
         public TBL_CUSTOMER_RISK_RATING()
         {
             TBL_CUSTOMER = new HashSet<TBL_CUSTOMER>();
+            TBL_PRODUCT = new HashSet<TBL_PRODUCT>();
         }
 
         [Key]
@@ -38,7 +39,9 @@ namespace FintrakBanking.Entities.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
 
+        public virtual ICollection<TBL_PRODUCT> TBL_PRODUCT { get; set; }
+
         //public virtual ICollection<TBL_CUSTOMER> TBL_CUSTOMER { get; set; }
-       // TBL_CUSTOMER_RISK_RATING
+        // TBL_CUSTOMER_RISK_RATING
     }
 }

@@ -113,6 +113,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " " + units;
             }
         }
+
+        public string productRiskRating { get; set; }
     }
 
     public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL

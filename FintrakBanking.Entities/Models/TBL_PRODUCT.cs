@@ -133,6 +133,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? LASTUPDATEDBY { get; set; }
 
+        public short? RISKRATINGID { get; set; }
+
         public DateTime? DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
@@ -185,6 +187,8 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_PRODUCT_TYPE TBL_PRODUCT_TYPE { get; set; }
 
         public virtual TBL_PRODUCT_CATEGORY TBL_PRODUCT_CATEGORY { get; set; }
+
+        public virtual TBL_CUSTOMER_RISK_RATING TBL_CUSTOMER_RISK_RATING { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN { get; set; }

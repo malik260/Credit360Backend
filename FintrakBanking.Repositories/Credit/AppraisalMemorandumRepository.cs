@@ -620,7 +620,7 @@ namespace FintrakBanking.Repositories.Credit
                 grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
                     .Join(context.TBL_APPROVAL_GROUP,
                         m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
                         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
                         {
                             viewCamDocument = l.CANVIEWDOCUMENT,
@@ -760,7 +760,9 @@ namespace FintrakBanking.Repositories.Credit
                         isSpecialised = (bool)x.d.ISSPECIALISED,
 
                         priceIndexId = x.d.PRODUCTPRICEINDEXID,
-                        //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                        priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                        productRiskRating = x.d.TBL_PRODUCT.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+
                     }).ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
@@ -827,7 +829,8 @@ namespace FintrakBanking.Repositories.Credit
                     isSpecialised = (bool)x.d.ISSPECIALISED,
 
                     priceIndexId = x.d.PRODUCTPRICEINDEXID,
-                    //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                    priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                    productRiskRating = x.d.TBL_PRODUCT.TBL_CUSTOMER_RISK_RATING.RISKRATING,
 
                 }).ToList();
 

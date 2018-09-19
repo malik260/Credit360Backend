@@ -8754,6 +8754,11 @@ namespace FintrakBanking.Entities.Models
                 .WithOptional(e => e.TBL_PRODUCT_PRICE_INDEX)
                 .HasForeignKey(e => e.PRODUCTPRICEINDEXID);
 
+            modelBuilder.Entity<TBL_CUSTOMER_RISK_RATING>()
+                .HasMany(e => e.TBL_PRODUCT)
+                .WithOptional(e => e.TBL_CUSTOMER_RISK_RATING)
+                .HasForeignKey(e => e.RISKRATINGID);
+
             //modelBuilder.Entity<TBL_CUSTOMER>().Ignore(x => x.FULLNAME);
 
         }
