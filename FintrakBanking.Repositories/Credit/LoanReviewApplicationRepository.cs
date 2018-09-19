@@ -628,11 +628,11 @@ namespace FintrakBanking.Repositories.Credit
                                join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID
                                join o in context.TBL_CASA on l.CASAACCOUNTID equals o.CASAACCOUNTID
                                join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals  y.TARGETID
-                               where a.RELATEDREFERENCENUMBER == searchString
-                        || g.FIRSTNAME.ToLower().StartsWith(searchString)
-                        || g.LASTNAME.ToLower().StartsWith(searchString)
-                        || g.MIDDLENAME.ToLower().StartsWith(searchString)
-                        || g.CUSTOMERCODE.ToLower().StartsWith(searchString)
+                               where a.APPLICATIONREFERENCENUMBER == searchString
+                       // || g.FIRSTNAME.ToLower().StartsWith(searchString)
+                       // || g.LASTNAME.ToLower().StartsWith(searchString)
+                        //|| g.MIDDLENAME.ToLower().StartsWith(searchString)
+                        //|| g.CUSTOMERCODE.ToLower().StartsWith(searchString)
                                select new LoanApplicationViewModel
                                {
                                    firstName = g.FIRSTNAME,
@@ -793,7 +793,5 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
         }
-
-
     }
 }

@@ -1892,10 +1892,10 @@ namespace FintrakBanking.Repositories.Credit
                             isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == x.q.o.g.a.APPLICATIONREFERENCENUMBER).Any()
                         })
                     .Where(x => x.applicationReferenceNumber == searchString
-                        || x.firstName.ToLower().StartsWith(searchString)
-                        || x.lastName.ToLower().StartsWith(searchString)
-                        || x.middleName.ToLower().StartsWith(searchString)
-                        || x.customerCode.ToLower().StartsWith(searchString)
+                        || x.firstName.ToLower().Contains(searchString)
+                        || x.lastName.ToLower().Contains(searchString)
+                        || x.middleName.ToLower().Contains(searchString)
+                        || x.customerCode.ToLower().Contains(searchString)
                         )
                     ;
 

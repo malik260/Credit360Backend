@@ -392,6 +392,11 @@ namespace FintrakBanking.Repositories.Credit
             return exposures;
         }
 
+        public void ClassifiedAssetManagementtReviewTemplate()
+        {
+            
+        }
+
     }
 }
 
