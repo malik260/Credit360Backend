@@ -7939,6 +7939,7 @@ namespace FintrakBanking.Repositories.Credit
                                            disbursedBy = a.DISBURSEDBY,
                                            disburserComment = a.DISBURSERCOMMENT,
                                            disburseDate = a.DISBURSEDATE,
+                                           loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                            //approvedAmount = a.ApprovedAmount,
                                            operationId = a.OPERATIONID,
                                            operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
