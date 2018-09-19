@@ -255,7 +255,7 @@ namespace FintrakBanking.Repositories.Finance
 
             foreach (var item in inputTransactions)
             {
-                //item.batchCode = batchCode;
+                item.batchCode = batchCode;
 
                 if (item.debitAmount != 0 && item.creditAmount != 0)
                     throw new ConditionNotMetException("Debit or Credit Amount should be 0");
