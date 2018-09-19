@@ -8,7 +8,7 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CreditBereauViewModel : GeneralEntity
     {
-        public bool debitRequest;
+        public bool debitRequest { get; set; }
 
         public bool appliedsearchForLoan { get; set; }
         public bool appliedSearchForLoan { get; set; }
