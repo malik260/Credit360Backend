@@ -2,6 +2,7 @@
 {
     using FintrakBanking.Common.CustomException;
     using FintrakBanking.Entities.Models;
+    using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.ViewModels.CASA;
     using FintrakBanking.ViewModels.Credit;
     using FintrakBanking.ViewModels.Finance;
@@ -23,13 +24,15 @@
 
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
+            private IIntegrationWithFinacle finacle;
 
-            public TransactionPosting(FinTrakBankingContext _context)
+            public TransactionPosting(FinTrakBankingContext _context, IIntegrationWithFinacle _finacle)
             {
                 this.context = _context;
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
+                finacle = _finacle;
             }
 
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
@@ -476,8 +479,10 @@
                     var currencyCode = "";
 
                     if (model.isTermDeposit)
-                    currencyCode = model.currencyCode;
-
+                    {
+                        var finacleBalance = finacle.ValidateTDAccountNumber(model.productAccountNumber);
+                        currencyCode = finacleBalance.currencyType;
+                    }
                     else
                     {
                         currencyCode = context.TBL_CASA.Where(x =>

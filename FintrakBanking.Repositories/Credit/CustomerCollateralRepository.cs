@@ -4039,7 +4039,7 @@ namespace FintrakBanking.Repositories.Credit
                         isTermDeposit = true,
                     };
 
-                 //  finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
+                   //finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
 
                     lien.PlaceLien(model);
 
