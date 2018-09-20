@@ -4047,7 +4047,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         model.currencyCode = finacleBalance.currencyType;
                     }
-                    lien.PlaceLien(model);
+                    lien.PlaceLien(model,twoFADetails);
 
                     int collaterId = UpdateCollateralMain(ApprovalModel.targetId);
 

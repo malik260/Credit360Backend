@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.RESPONSESTAFFID = this.staffId;
             }
 
-            SendNotifications();
+            // SendNotifications();
 
             SetResponseInformation();
 
