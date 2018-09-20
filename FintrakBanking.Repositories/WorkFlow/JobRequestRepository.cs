@@ -1809,6 +1809,102 @@ namespace FintrakBanking.Repositories.WorkFlow
             return inputTransactions;
         }
 
+        public List<FinanceTransactionViewModel> BuildSolicitorFeePaymentPosting(JobRequestCollateralSearchViewModel model)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
+            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
+            if (searchCharges.Any() && model.totalChargeAmount != 0)
+            {
+                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
+                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
+                foreach (var post in postingGroups)
+                {
+                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
+
+                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                    {
+                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                        decimal debitAmount = 0;
+                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
+                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            debitAmount = (decimal)model.totalChargeAmount;
+
+                        debit.operationId = (int)model.operationId;
+                        debit.description = model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
+                        debit.valueDate = general.GetApplicationDate();
+                        debit.transactionDate = debit.valueDate;
+                        debit.currencyId = casa.CURRENCYID;
+                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                        debit.isApproved = true;
+                        debit.postedBy = model.createdBy;
+                        debit.approvedBy = model.createdBy;
+                        debit.approvedDate = debit.transactionDate;
+                        debit.approvedDateTime = DateTime.Now;
+                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        debit.companyId = model.companyId;
+
+
+                        debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                        debit.sourceReferenceNumber = model.requestCode;
+                        debit.batchCode = batchCode;
+                        debit.casaAccountId = casa.CASAACCOUNTID;
+                        debit.debitAmount = debitAmount;
+                        debit.creditAmount = 0;
+                        debit.sourceBranchId = model.userBranchId;
+                        debit.destinationBranchId = casa.BRANCHID;
+                        debit.rateCode = "TTB";
+                        debit.rateUnit = string.Empty;
+                        debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(debit);
+                    }
+
+                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                    {
+                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                        decimal creditAmount = 0;
+                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
+                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            creditAmount = (decimal)model.totalChargeAmount;
+
+
+                        credit.operationId = (int)model.operationId;
+                        credit.description = model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
+                        credit.valueDate = general.GetApplicationDate();
+                        credit.transactionDate = credit.valueDate;
+                        credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                        credit.isApproved = true;
+                        credit.postedBy = model.createdBy;
+                        credit.approvedBy = model.createdBy;
+                        credit.approvedDate = credit.transactionDate;
+                        credit.approvedDateTime = DateTime.Now;
+                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        credit.companyId = model.companyId;
+                        credit.glAccountId = (int)credits.GLACCOUNTID1;
+                        credit.sourceReferenceNumber = model.requestCode;
+                        credit.batchCode = batchCode;
+                        credit.casaAccountId = null;
+                        credit.debitAmount = 0;
+                        credit.creditAmount = creditAmount;
+                        credit.sourceBranchId = model.userBranchId;
+                        credit.destinationBranchId = model.userBranchId;
+                        credit.rateCode = "TTB";
+                        credit.rateUnit = string.Empty;
+                        credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(credit);
+                    }
+                }
+            }
+
+            return inputTransactions;
+        }
 
         #region Job Request Feedback
         public IEnumerable<LookupViewModel> GetJobRequestStatus()

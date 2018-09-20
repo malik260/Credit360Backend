@@ -256,8 +256,8 @@ namespace FintrakBanking.Repositories.Credit
         public string GetApprovalLevel()
         {
             string levelName = "N/A";
-            var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x => x.OPERATIONID == operationId 
-                && x.TARGETID == targetId 
+            var trail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x => x.OPERATIONID == operationId
+                && x.TARGETID == targetId
                 && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
             );
             if (trail != null) levelName = trail.TBL_APPROVAL_LEVEL.LEVELNAME;
@@ -267,7 +267,7 @@ namespace FintrakBanking.Repositories.Credit
         // monitoring triggers
         public IEnumerable<MonitoringTriggersViewModel> GetMonitoringTriggers()
         {
-            if (operationId== (int)OperationsEnum.CAM) return memo.GetApplicationMonitoringTriggers(targetId);
+            if (operationId == (int)OperationsEnum.CAM) return memo.GetApplicationMonitoringTriggers(targetId);
             return memo.GetApplicationMonitoringTriggersLms(targetId);
         }
 
@@ -392,10 +392,54 @@ namespace FintrakBanking.Repositories.Credit
             return exposures;
         }
 
-        public void ClassifiedAssetManagementtReviewTemplate()
-        {
-            
-        }
+        //public ClassifiedAccessManagementViewModel ClassifiedAssetManagementtReviewTemplate(string applicationReferenceNumber)
+        //{
+        //    var cam = (from a in context.TBL_LOAN_APPLICATION
+        //               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+        //               join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+        //               join d in context.TBL_LOAN on b.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
+        //               let securty = context.TBL_LOAN_COLLATERAL_MAPPING.
+        //               Join(context.TBL_COLLATERAL_CUSTOMER, m => m.COLLATERALCUSTOMERID, s => s.COLLATERALCUSTOMERID, (m, s) => new { m, s}).
+        //               Join(context.TBL_COLLATERAL_IMMOVE_PROPERTY.)
+        //               where a.APPLICATIONREFERENCENUMBER == applicationReferenceNumber
+        //               select new ClassifiedAccessManagementViewModel
+        //               {
+        //                   accountNumber = context.TBL_CASA.Where(o => o.CASAACCOUNTID == d.CASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+        //                   amountDisbursed = d.PRINCIPALAMOUNT,
+        //                   amountPaidSoFar = 0,
+        //                   amountProposed = b.PROPOSEDAMOUNT,
+        //                   branchAddress = "",
+        //                   branchManager = "",
+        //                   branchName = "",
+        //                   customerName = c.FIRSTNAME + " " + c.MAIDENNAME + " " + c.LASTNAME,
+        //                   dateClassified = DateTime.Now,
+        //                   dateWasGranted = DateTime.Now,
+        //                   directors = "",
+        //                   facilityType = context.TBL_PRODUCT.Where(o => o.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+        //                   incumbentAccountOfficer = "",
+        //                   interestOverdue = 0,
+        //                   nameOfInitialAccountOfficer = "",
+        //                   pricipalOutstanding = d.OUTSTANDINGPRINCIPAL,
+        //                   proposedRepaymentTenor = (d.MATURITYDATE - d.EFFECTIVEDATE).Days,
+        //                   proposedWriteOffAmount = 0,
+        //                   provisionToDate = DateTime.Now,
+        //                   securityClass = "",
+        //                   securityDescription = "",
+        //                   securityFSV = "",
+        //                   securityLocation = "",
+        //                   securityOMV = "",
+        //                   securityOwnerOccupied = false,
+        //                   securityPerfectionStatus = "",
+        //                   securityType = "",
+        //                   securityValuationDate = DateTime.Now,
+        //                   shareHolders = "",
+        //                   signitories = "," ,
+        //                   totalPaidAndProposed =0
+
+
+        //               }).FirstOrDefault();
+        //    return cam;
+        //}
 
     }
 }

@@ -16,5 +16,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<DashboardViewModel> CollateralCoverage(DateTime startDate, DateTime endDate, int companyId);
         List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId);
         List<DashboardViewModel> TotalRiskExposure(DateTime startDate, DateTime endDate, int companyId);
+        List<LoanDisburseByType> LoanDisbursedByType(DateTime startDate, DateTime endDate, int companyId);
     }
 }
