@@ -66,7 +66,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
             }
@@ -297,38 +297,39 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpPost] [ClaimsAuthorization]
-        //[Route("job-request/legal-collateral-job")]
-        //public HttpResponseMessage EffectLegaCollateralJobs([FromBody] JobRequestCollateralSearchViewModel entity)
-        //{
-        //    try
-        //    {
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.companyId = token.GetCompanyId;
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("job-request/legal-collateral-job")]
+        public HttpResponseMessage EffectLegaCollateralJobs([FromBody] JobRequestCollateralSearchViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
 
-        //        var data = repo.EffectLegaCollateralJobs(entity);
-        //        if (data)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search charge instruction sent Successfully" });
-        //        }
+                var data = repo.EffectLegaCollateralJobs(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Collateral Search charge instruction sent Successfully" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search charge Instructions failed to save " });
-        //    }
-        //    catch (ConditionNotMetException ce)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-        //    }
-        //    catch (BadLogicException be)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! Collateral Search charge Instructions failed to save " });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
+            }
+        }
 
         [HttpPost]
         [ClaimsAuthorization]
