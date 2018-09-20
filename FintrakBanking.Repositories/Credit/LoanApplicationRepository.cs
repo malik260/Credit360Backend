@@ -969,7 +969,12 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (loanData == null)
                     {
-                        loan.applicationReferenceNumber = GetRefrenceNumber();// CommonHelpers.GetLoanReferanceNumber().ToString();
+                        if (string.IsNullOrEmpty(loan.applicationReferenceNumber))
+                        {
+                            loan.applicationReferenceNumber = GetRefrenceNumber();
+                        }
+                        //loan.applicationReferenceNumber = GetRefrenceNumber();
+                        // CommonHelpers.GetLoanReferanceNumber().ToString();
 
                         AddloanApplicationSub(loan);
                     }
