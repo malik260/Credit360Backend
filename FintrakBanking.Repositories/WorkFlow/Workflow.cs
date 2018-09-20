@@ -140,7 +140,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.fromLevelId = request.TOAPPROVALLEVELID;
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
                 this.isCrossOperationProcess = request.OPERATIONID != this.operationId;
-                if (this.statusId == (int)ApprovalStatusEnum.Reroute && request.REQUESTSTAFFID == this.staffId) { this.fromLevelId = request.FROMAPPROVALLEVELID; }
+                if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(request.TOSTAFFID); }// request.FROMAPPROVALLEVELID; }
                 if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(request.REQUESTSTAFFID, request.FROMAPPROVALLEVELID, request.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
             }
@@ -206,6 +206,26 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.saved) return true;
 
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
+        }
+
+        private int? ResolveReroute(int? toStaffId)
+        {
+            if (toStaffId == this.toStaffId) throw new SecureException("Already with staff!");
+            var user = context.TBL_STAFF.FirstOrDefault(x => x.STAFFID == this.staffId);
+            var level = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
+                .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false && x.LEVELTYPEID == 2 && x.STAFFROLEID == user.STAFFROLEID), mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new ApprovalLevelInfo
+                {
+                    groupId = l.GROUPID,
+                    groupPosition = mg.m.POSITION,
+                    levelPosition = l.POSITION,
+                    levelId = l.APPROVALLEVELID,
+                    levelName = l.LEVELNAME,
+                    staffRoleId = l.STAFFROLEID,
+                    levelTypeId = l.LEVELTYPEID,
+                }).FirstOrDefault();
+            if (level == null) throw new SecureException("User is not setup to reroute process!");
+            return level.levelId;
         }
 
         private void SetResponseInformation()
@@ -391,10 +411,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.statusId == (int)ApprovalStatusEnum.Referred && this.nextLevelId == null) { this.nextLevelId = this.requestLevelId; } // default return back to sender
 
-            if (this.nextLevelId == null) // && fromLevelId != null
+            if (this.nextLevelId == null && fromLevelId != null)
             {
-                var currentLevel = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).First();
-
+                var currentLevel = approvalLevels.Where(x => x.ApprovalLevelId == this.fromLevelId).FirstOrDefault();
+                if (currentLevel == null) throw new SecureException("This Approval Level is not in the workflow setup!");
                 next = approvalLevels.FirstOrDefault(x =>
                     (x.GroupPosition > currentLevel.GroupPosition) // next group
                     || (x.LevelPosition > currentLevel.LevelPosition && x.GroupPosition == currentLevel.GroupPosition) // same group
