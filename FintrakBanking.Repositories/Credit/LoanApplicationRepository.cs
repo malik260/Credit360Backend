@@ -772,6 +772,9 @@ namespace FintrakBanking.Repositories.Credit
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
             var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+
+
+
             bool MiddleOfficeCertified = true;
 
 
@@ -779,6 +782,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var d in dat)
                 {
+
+                   
                     //Replace hard-coding with a variable once defined
                     //if(d.APPROVEDPRODUCTID == 36)
                     //{
@@ -853,6 +858,19 @@ namespace FintrakBanking.Repositories.Credit
                         //    }
                         //}
                     }
+
+                    var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                                       where a.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID && (d.CONDITIONPRECIDENT == null
+                                       || d.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
+                                       select a);
+                    
+                    if (rmSuggestion.Any())
+                    {
+                        isCheckListDone = false;
+                        str = str + " Kindly Complete The RM Suggestions Record" + Environment.NewLine;
+                        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                    }
+
                 }
             }
             //&& MiddleOfficeCertified 
