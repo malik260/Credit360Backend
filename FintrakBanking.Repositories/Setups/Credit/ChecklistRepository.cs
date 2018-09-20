@@ -1285,27 +1285,123 @@ namespace FintrakBanking.Repositories.Credit
             //end of Audit section -------------------------------
             return context.SaveChanges() > 0;
         }
+        //public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
+        //{
+        //    var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
+        //    if (data == null) return false;
+
+        //    data.CHECKLISTSTATUSID = model.checkListStatusId;
+        //    data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+        //    if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+        //    {
+        //        data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+        //        data.DEFEREDDATE = model.deferedDate;
+        //    }
+
+        //    data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+        //    data.LASTUPDATEDBY = (int)model.createdBy;
+        //    if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+        //    {
+        //        var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
+        //        deferral.LOANCONDITIONID = data.LOANCONDITIONID;
+        //        deferral.DEFERRALREASON = model.reason;
+        //        deferral.DEFERREDDATE = model.deferedDate == null ? DateTime.Now : (DateTime)model.deferedDate;
+        //        deferral.DATETIMECREATED = DateTime.Now;
+        //        deferral.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+        //        deferral.CREATEDBY = model.createdBy;
+        //        context.TBL_LOAN_CONDITION_DEFERRAL.Add(deferral);
+        //    }
+
+        //    // Audit Section ---------------------------
+        //    var audit = new TBL_AUDIT
+        //    {
+        //        AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
+        //        STAFFID = model.createdBy,
+        //        BRANCHID = (short)model.userBranchId,
+        //        DETAIL = $"Added Loan Condition Precedence Checklist with Condition ID: {model.condition}",
+        //        IPADDRESS = model.userIPAddress,
+        //        URL = model.applicationUrl,
+        //        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+        //        SYSTEMDATETIME = DateTime.Now
+        //    };
+
+        //    this.auditTrail.AddAuditTrail(audit);
+
+        //    //end of Audit section -------------------------------
+        //    using (var trans = context.Database.BeginTransaction())
+        //    {
+        //        try
+        //        {
+
+        //            var output = context.SaveChanges() != 0;
+
+        //            if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+        //            {
+
+        //                workFlow.StaffId = model.createdBy;
+        //                workFlow.CompanyId = model.companyId;
+        //                workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+        //                workFlow.TargetId = data.LOANCONDITIONID;
+        //                workFlow.Comment = "Checklist Approval";
+        //                workFlow.OperationId = (int)OperationsEnum.ChecklistApproval;
+        //                workFlow.ExternalInitialization = true;
+        //                workFlow.LogActivity();
+        //            }
+        //            trans.Commit();
+        //            return output;
+        //        }
+
+        //        catch (Exception ex)
+        //        {
+        //            trans.Rollback();
+        //            return false;
+        //            throw new SecureException(ex.Message);
+        //        }
+        //    }
+        //}
+
         public bool UpdateLoanConditionPrecedenceStatus(ConditionPrecedentViewModel model)
         {
-            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
-            if (data == null) return false;
-
-            data.CHECKLISTSTATUSID = model.checkListStatusId;
-            data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
-            if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+            int loanConditionId = 0;
+            if (model.isLMSChecklist == true)
             {
-                data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
-                data.DEFEREDDATE = model.deferedDate;
-            }
+                var data = this.context.TBL_LMSR_CONDITION_PRECEDENT.Find(model.conditionId);
+                if (data == null) return false;
+                loanConditionId = data.LOANCONDITIONID;
+                data.CHECKLISTSTATUSID = model.checkListStatusId;
+                data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+                {
+                    data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                    data.DEFEREDDATE = model.deferedDate;
+                }
 
-            data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
-            data.LASTUPDATEDBY = (int)model.createdBy;
+                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.LASTUPDATEDBY = (int)model.createdBy;
+            } else
+            {
+                var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
+                if (data == null) return false;
+                loanConditionId = data.LOANCONDITIONID;
+                data.CHECKLISTSTATUSID = model.checkListStatusId;
+                data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
+                {
+                    data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                    data.DEFEREDDATE = model.deferedDate;
+                }
+
+                data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
+                data.LASTUPDATEDBY = (int)model.createdBy;
+            }
+             
             if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
             {
                 var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
-                deferral.LOANCONDITIONID = data.LOANCONDITIONID;
+                deferral.LOANCONDITIONID = loanConditionId;
                 deferral.DEFERRALREASON = model.reason;
                 deferral.DEFERREDDATE = model.deferedDate == null ? DateTime.Now : (DateTime)model.deferedDate;
+                deferral.ISLMS = model.isLMSChecklist;
                 deferral.DATETIMECREATED = DateTime.Now;
                 deferral.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
                 deferral.CREATEDBY = model.createdBy;
@@ -1318,7 +1414,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added Loan Condition Precedence Checklist with Condition ID: {model.condition}",
+                DETAIL = $"Added Loan Review Condition Precedence Checklist with Condition ID: {model.condition}",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),
@@ -1341,8 +1437,8 @@ namespace FintrakBanking.Repositories.Credit
                         workFlow.StaffId = model.createdBy;
                         workFlow.CompanyId = model.companyId;
                         workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
-                        workFlow.TargetId = data.LOANCONDITIONID;
-                        workFlow.Comment = "Checklist Approval";
+                        workFlow.TargetId = loanConditionId;
+                        workFlow.Comment = "LMS Checklist Approval";
                         workFlow.OperationId = (int)OperationsEnum.ChecklistApproval;
                         workFlow.ExternalInitialization = true;
                         workFlow.LogActivity();
@@ -1359,6 +1455,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
         }
+
         public IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int companyId)
         {
             var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
@@ -1369,7 +1466,7 @@ namespace FintrakBanking.Repositories.Credit
                         join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                         join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        where c.ISLMS == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
                         && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
@@ -1401,6 +1498,53 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = a.TBL_LOAN_APPLICATION.APPROVALSTATUSID,
                             submittedForAppraisal = a.TBL_LOAN_APPLICATION.SUBMITTEDFORAPPRAISAL,
                             loanInformation = a.LOANPURPOSE
+                        }).ToList();
+            return data;
+        }
+
+        public IEnumerable<ChecklistApprovalViewModel> GetLMSChecklistAwaitingApproval(int staffId, int companyId)
+        {
+            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
+            int staffApprovalLevelId = 0;
+            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+
+            var data = (from a in context.TBL_LMSR_APPLICATION_DETAIL 
+                        join ln in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals ln.LOANAPPLICATIONID
+                        join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
+                        join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
+                        join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
+                        where c.ISLMS == true && atrail.APPROVALSTATUSID ==  (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
+                        && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                        && atrail.RESPONSESTAFFID == null
+                        orderby a.DATETIMECREATED descending
+                        select new ChecklistApprovalViewModel()
+                        {
+                            customerName = ln.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? ln.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                            proposedAmount = a.APPROVEDAMOUNT,
+                          //  approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            deferredDate = b.DEFEREDDATE,
+                            deferralDuration = 1,
+                            cummulativeDays = 1,
+                            condition = b.CONDITION,
+                            conditionId = b.LOANCONDITIONID,
+                            loanApplicationId = a.LOANAPPLICATIONID,
+                            applicationReferenceNumber = ln.APPLICATIONREFERENCENUMBER,
+                           // checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                            dateCreated = b.DATETIMECREATED,
+                            //Loan Information
+                            relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.FIRSTNAME,
+                            relationshipManagerName = ln.TBL_STAFF1.FIRSTNAME + " " + ln.TBL_STAFF1.FIRSTNAME,
+                            applicationAmount = ln.APPLICATIONAMOUNT,
+                            applicationTenor = a.PROPOSEDTENOR,
+                            applicationDate = ln.APPLICATIONDATE,
+                            isInvestmentGrade = ln.ISINVESTMENTGRADE,
+                            isPoliticallyExposed = ln.ISPOLITICALLYEXPOSED,
+                            isRelatedParty = ln.ISRELATEDPARTY,
+                            approvalStatusId = ln.APPLICATIONSTATUSID,
+                            applicationStatusId = ln.APPROVALSTATUSID,
+                            submittedForAppraisal = ln.SUBMITTEDFORAPPRAISAL,
+                           // loanInformation = ln.LOANPURPOSE
                         }).ToList();
             return data;
         }
