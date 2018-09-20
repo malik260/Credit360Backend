@@ -50,6 +50,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery);
 
         LoanApplicationViewModel AddLoanApplication( LoanApplicationViewModel loan);
+        string GetRefrenceNumber();
 
         bool AddLoanApplicationCollateral(List<LoanApplicationCollateralViewModel> entity);
 

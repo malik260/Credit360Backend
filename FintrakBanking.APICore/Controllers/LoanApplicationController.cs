@@ -530,6 +530,27 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-reference-number")]
+        public HttpResponseMessage GetRefrenceNumber()
+        {
+            try
+            {
+                var response = repo.GetRefrenceNumber();
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+            }
+        }
+
         //[HttpGet]
         //[Route("loan-application/job")]
         //public HttpResponseMessage GetLoanApplicationJobs(int page, int itemsPerPage, int level, int scope)
@@ -556,7 +577,7 @@ namespace FintrakBanking.APICore.Controllers
 
         #region Loan Preliminary Evaluation
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan/preliminary-evaluation")]
         public async Task<HttpResponseMessage> AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model)
         {

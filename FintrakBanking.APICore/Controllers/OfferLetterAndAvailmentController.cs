@@ -20,15 +20,12 @@ namespace FintrakBanking.APICore.Controllers
     public class OfferLetterAndAvailmentController : ApiControllerBase
     {
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
-        private IErrorLogRepository errorLogger;
         private IOfferLetterAndAvailmentRepository repo;
 
         public OfferLetterAndAvailmentController(
-            IErrorLogRepository _errorLogger,
             IOfferLetterAndAvailmentRepository _repo
             )
         {
-            errorLogger = _errorLogger;
             repo = _repo;
         }
 
@@ -437,23 +434,15 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application/offer-letter/approval")]
         public HttpResponseMessage LogApplicationForApprovalDuringOfferLetterGeneration([FromBody] LoanAvailmentApprovalViewModel entity)
         {
-            try
-            {
-                entity.BranchId = token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.staffId = token.GetStaffId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.userIPAddress = Request.RequestUri.Host;
-                entity.createdBy = token.GetStaffId;
+            entity.BranchId = token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
 
-                var response = repo.ApproveOfferLetterGeneration(entity);
-                return Request.CreateResponse(HttpStatusCode.OK, new { result = response, success = response.success, message = "Application sent to " + response.nextLevelName });
-                }
-            catch (SecureException ex)
-            {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.Message });
-            }
+            var response = repo.ApproveOfferLetterGeneration(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { result = response, success = response.success, message = "Application sent to " + response.nextLevelName });
         }
 
         #endregion Offer Letter & Availment

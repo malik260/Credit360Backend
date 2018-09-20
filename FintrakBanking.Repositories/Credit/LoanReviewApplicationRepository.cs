@@ -91,6 +91,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerId = x.customer.CUSTOMERID,
                 operationId = x.application.OPERATIONID,
                 customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
+                atInitiator = x.application.CREATEDBY == staffId,
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 

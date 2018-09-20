@@ -43,7 +43,6 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository lien;
         private ICasaRepository casa;
         private IIntegrationWithFinacle finacle;
-
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
             FinTrakBankingContext _delContext,
@@ -3983,7 +3982,7 @@ namespace FintrakBanking.Repositories.Credit
             var mainCollateral = (from x in context.TBL_TEMP_COLLATERAL_CUSTOMER
                                   join t in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals t.COLLATERALTYPEID
                                   where x.TEMPCOLLATERALCUSTOMERID == ApprovalModel.targetId
-                                  select new { x.COLLATERALTYPEID, x.TEMPCOLLATERALCUSTOMERID, t.REQUIREINSURANCEPOLICY, t.REQUIREVISITATION, x.COLLATERALCODE, x.COLLATERALVALUE }).FirstOrDefault();
+                                  select new { x.COLLATERALTYPEID, x.TEMPCOLLATERALCUSTOMERID, t.REQUIREINSURANCEPOLICY, t.REQUIREVISITATION, x.COLLATERALCODE, x.COLLATERALVALUE,x.CUSTOMERID }).FirstOrDefault();
 
 
 
@@ -3992,18 +3991,18 @@ namespace FintrakBanking.Repositories.Credit
                 if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
                 {
                     var tempCasa = context.TBL_TEMP_COLLATERAL_CASA.Where(x => x.TEMPCOLLATERALCUSTOMERID == mainCollateral.TEMPCOLLATERALCUSTOMERID).FirstOrDefault();
-
+                    var branch = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == mainCollateral.CUSTOMERID).Select(x => x.BRANCHID).FirstOrDefault();
                     CasaLienViewModel model = new CasaLienViewModel
                     {
                         productAccountNumber = mainCollateral.COLLATERALCODE,
                         lienAmount = tempCasa.SECURITYVALUE,
-                        description = "CASA callateral creation",
+                        description = "CASA collateral creation",
                         lienTypeId = (int)LienTypeEnum.CollateralCreation,
                         sourceReferenceNumber = mainCollateral.COLLATERALCODE,
                         dateTimeCreated = DateTime.Now,
                         createdBy = ApprovalModel.createdBy,
                         companyId = ApprovalModel.companyId,
-                        branchId = (short)ApprovalModel.BranchId
+                        branchId = branch,
                     };
 
                     //place lien
@@ -4026,21 +4025,28 @@ namespace FintrakBanking.Repositories.Credit
                 else if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit)
                 {
                     var tempDeposit = context.TBL_TEMP_COLLATERAL_DEPOSIT.Where(x => x.TEMPCOLLATERALCUSTOMERID == mainCollateral.TEMPCOLLATERALCUSTOMERID).FirstOrDefault();
+                    var branch = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == mainCollateral.CUSTOMERID).Select(x => x.BRANCHID).FirstOrDefault();
+
                     CasaLienViewModel model = new CasaLienViewModel
                     {
                         productAccountNumber = mainCollateral.COLLATERALCODE,
                         lienAmount = tempDeposit.SECURITYVALUE,
-                        description = "Term deposit callateral creation",
+                        description = "Term deposit collateral creation",
                         lienTypeId = (int)LienTypeEnum.CollateralCreation,
                         sourceReferenceNumber = mainCollateral.COLLATERALCODE,
                         dateTimeCreated = DateTime.Now,
                         createdBy = ApprovalModel.createdBy,
                         companyId = ApprovalModel.companyId,
+                        branchId = branch,
                         isTermDeposit = true,
+                        
                     };
 
-                   //finacleBalance = finacle.ValidateTDAccountNumber(entity.collateralCode);
-
+                 var  finacleBalance = finacle.ValidateTDAccountNumber(model.productAccountNumber);
+                    if (finacleBalance!=null)
+                    {
+                        model.currencyCode = finacleBalance.currencyType;
+                    }
                     lien.PlaceLien(model);
 
                     int collaterId = UpdateCollateralMain(ApprovalModel.targetId);

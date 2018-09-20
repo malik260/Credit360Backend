@@ -27,24 +27,24 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IWorkflow workflow;
-        private IApprovalLevelStaffRepository approvalLevel;
-        private ILoanRepository loans;
+        //private IApprovalLevelStaffRepository approvalLevel;
+        //private ILoanRepository loans;
 
         public OfferLetterAndAvailmentRepository(
             IAuditTrailRepository _auditTrail,
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
-            IApprovalLevelStaffRepository _approvallevel,
-            IWorkflow _workflow,
-            ILoanRepository _loans
+            //IApprovalLevelStaffRepository _approvallevel,
+            IWorkflow _workflow
+            //ILoanRepository _loans  
             )
         {
             context = _context;
             auditTrail = _auditTrail;
             genSetup = _genSetup;
-            approvalLevel = _approvallevel;
+            //approvalLevel = _approvallevel;
             workflow = _workflow;
-            loans = _loans;
+            //loans = _loans;
         }
 
         #region OfferLetter & Availment Process
@@ -2177,11 +2177,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel model)
         {
-            var operationId = (int)OperationsEnum.LoanAvailment;
-            var appl = context.TBL_LOAN_APPLICATION.Find(model.targetId);
-            var staff = context.TBL_STAFF.Where(x => x.STAFFID == appl.CREATEDBY).FirstOrDefault();
+            int? productClassId = 0;
+            int staffId = 0;
+            if (model.operationId == (int)OperationsEnum.LoanAvailment)
+            {
+                var appla = context.TBL_LOAN_APPLICATION.Find(model.targetId);
+                productClassId = appla.PRODUCTCLASSID;
+                staffId = appla.CREATEDBY;
+            }
+            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalAvailment)
+            {
+                var applb = context.TBL_LMSR_APPLICATION.Find(model.targetId);
+                productClassId = null;
+                staffId = applb.CREATEDBY;
+            }
 
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == appl.PRODUCTCLASSID)
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.PRODUCTCLASSID == productClassId)
                  .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                  .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
                      mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
@@ -2203,13 +2216,13 @@ namespace FintrakBanking.Repositories.Credit
 
             // init
             workflow.StaffId = model.createdBy;
-            workflow.OperationId = operationId;
+            workflow.OperationId = model.operationId;
             workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = null;
             workflow.ProductId = null;
             workflow.NextLevelId = staffRoleLevelId;
-            workflow.ToStaffId = appl.CREATEDBY;
+            workflow.ToStaffId = staffId;
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;
