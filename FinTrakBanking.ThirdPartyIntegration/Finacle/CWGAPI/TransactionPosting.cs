@@ -463,17 +463,18 @@
                 LienProcessViewModel responseModel = new LienProcessViewModel();
                 bool output = false;
                 HttpClient client = new HttpClient(handler);
-                var objData = new JavaScriptSerializer().Serialize(model);
+                //var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 //TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
                 string responseJson = "";
+                string serialiseModel = "";
 
                 try
                 {
-                    var currencyCode = "";
+                    var currencyCode = model.currencyCode;
 
                     if (model.isTermDeposit==false)
                     {
@@ -507,8 +508,7 @@
                     // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Authorization = token;
 
-                    var serialiseModel = new JavaScriptSerializer().Serialize(apiModel);
-
+                    serialiseModel = new JavaScriptSerializer().Serialize(apiModel);
 
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
@@ -593,7 +593,7 @@
                         LOGTYPEID = 2,
                         REFERENCENUMBER = model.sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = objData,
+                        REQUESTMESSAGE = serialiseModel, //objData,
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseJson,
                     };
@@ -613,11 +613,12 @@
                 InterestRateInquiryViewModel responseModel = new InterestRateInquiryViewModel();
                 bool output = false;
                 HttpClient client = new HttpClient(handler);
-                var objData = new JavaScriptSerializer().Serialize(model);
+                //var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+                string serialiseModel = "";
 
                 try
                 {
@@ -644,12 +645,13 @@
 
                     client.DefaultRequestHeaders.Authorization = token;
 
+                    serialiseModel = new JavaScriptSerializer().Serialize(apiModel);
 
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("api/InterestRateInquiry/PostInterestRate", new StringContent(
-                        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                    response = client.PostAsync("api/InterestRateInquiry/PostInterestRate", new StringContent(serialiseModel,
+                                                 Encoding.UTF8, "application/json")).Result;
                     responseDateTime = DateTime.Now;
 
                     if (response.IsSuccessStatusCode)
@@ -702,7 +704,7 @@
                         LOGTYPEID = 19,
                         REFERENCENUMBER = model.accountNumber,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = objData,
+                        REQUESTMESSAGE = serialiseModel, //objData,
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseModel.webRequestStatus,
                     };
