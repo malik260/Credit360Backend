@@ -111,7 +111,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? FINALAPPROVAL_LEVELID { get; set; }
 
-        public int? TRANCHEAPPROVAL_LEVELID { get; set; }
+        public short? TRANCHEAPPROVAL_LEVELID { get; set; }
 
         public short? NEXTAPPLICATIONSTATUSID { get; set; }
 
@@ -136,6 +136,8 @@ namespace FintrakBanking.Entities.Models
         public bool REQUIRECOLLATERAL { get; set; }
 
         public string COLLATERALDETAIL { get; set; }
+
+        public int? CAPREGIONID { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
 

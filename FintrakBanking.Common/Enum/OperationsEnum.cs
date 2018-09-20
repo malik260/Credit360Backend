@@ -19,7 +19,7 @@ namespace FintrakBanking.Common.Enum
         LoanApplication = 2,
         CAM = 6,
         LoanPreliminaryEvaluation = 9,
-        CollateralSearch = 12,
+        CollateralSearchInitiation = 12,
         RevolvingLoanBooking = 13,
         ContigentLoanBooking = 14,
         DailyInterestAccural = 15,
@@ -92,7 +92,11 @@ namespace FintrakBanking.Common.Enum
         LoanAndOverdraftRequestBooking = 82,
         ContingentLiabilityTermination = 86,
         ContingentLiabilityRenewal = 85,
+        InterestRepricing = 89,
         //Added by Yemi
-        StaffReliefCreation = 84
+        StaffReliefCreation = 84,
+        AccreditedConsultantCreated = 88,
+        CollateralSearchCompletion = 90
+
     }
 }

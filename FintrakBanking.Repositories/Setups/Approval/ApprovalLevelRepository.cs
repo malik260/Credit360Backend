@@ -14,6 +14,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Common.CustomException;
 using System.Data.Entity;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Repositories.Setups.Approval
 {
@@ -973,5 +974,75 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
 
         #endregion preset note
+
+
+        public List<FintrakDropDownSelectList> GetRoutableOperations(List<int> operationIds)
+        {
+            return context.TBL_OPERATIONS
+                .Where(x => operationIds.Contains(x.OPERATIONID))
+                .Select(x => new FintrakDropDownSelectList
+                {
+                    id = x.OPERATIONID,
+                    name = x.OPERATIONNAME
+                })
+            .ToList();
+        }
+
+        public List<ApprovalLevelViewModel> GetRerouteApprovalLevels(int operationId)
+        {
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.DELETED == false)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false),
+                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new ApprovalLevelViewModel
+                        {
+                            levelPosition = l.POSITION,
+                            groupPosition = mg.m.POSITION,
+                            levelName = l.LEVELNAME,
+                            approvalLevelId = l.APPROVALLEVELID,
+                            roleId = l.STAFFROLEID,
+                            roleName = l.STAFFROLEID == null ? " " : l.TBL_STAFF_ROLE.STAFFROLENAME
+                        })
+                        .Distinct()
+                        .OrderBy(x => x.groupPosition)
+                        .ThenBy(x => x.levelPosition)
+                        .ToList()
+                        ;
+
+            return levels;
+        }
+
+        public bool RerouteOperation(ForwardViewModel model) 
+        {
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId; 
+            workflow.TargetId = model.targetId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = model.productClassId;
+            workflow.ProductId = model.productId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Authorised;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
+                x.OPERATIONID == model.operationId
+                && x.RESPONSESTAFFID == null
+                && x.TARGETID == model.targetId
+            );
+
+            if (currentTrail != null)
+            {
+                currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
+                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                currentTrail.COMMENT = model.comment;
+                currentTrail.TOAPPROVALLEVELID = null;
+                currentTrail.TOSTAFFID = null;
+            }
+
+            workflow.NextLevelId = model.nextApprovalLevelId;
+            workflow.NextProcess(model.companyId, model.createdBy, model.nextOperationId, model.targetId, null, "NIL", true, true, true);
+            return context.SaveChanges() > 0;
+        }
+
     }
 }

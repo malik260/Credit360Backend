@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using static FintrakBanking.Repositories.Credit.LoanApplicationRepository;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels;
+using FintrakBanking.Interfaces;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -32,6 +33,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             //if (user.createdBy != null)
             //{
+
             var _user = new TBL_PROFILE_USER()
             {
                 STAFFID = user.staffId,
@@ -43,7 +45,9 @@ namespace FintrakBanking.Repositories.Setups.General
                 FAILEDLOGONATTEMPT = 0,
                 SECURITYQUESTION = user.securityQuestion,
                 SECURITYANSWER = user.securityAnswer,
-                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),/// int.Parse(config["AppConstants:PasswordExpiredDays"])),
+                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
+                //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                /// int.Parse(config["AppConstants:PasswordExpiredDays"])),
                 CREATEDBY = user.createdBy ?? 0,
                 LASTUPDATEDBY = user.createdBy ?? 0,
                 DATETIMECREATED = DateTime.Now
@@ -141,7 +145,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     user.LOGINCODE = null;
                     user.FAILEDLOGONATTEMPT += 1;
                     int count = user.FAILEDLOGONATTEMPT ?? 0;
-                    if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                    //if (count ==  CommonHelpers.MaxInvalidPasswordAttempts)
+                    if (count == profile_Setting.MAXINVALIDPASSWORDATTEMPTS)
                     {
                         user.ISLOCKED = true;
                         user.LASTLOCKOUTDATE = DateTime.Now;
@@ -452,7 +457,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         faileddata.LOGINCODE = null;
                         faileddata.FAILEDLOGONATTEMPT += 1;
                         int count = faileddata.FAILEDLOGONATTEMPT ?? 0;
-                        if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                        //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                        if (count == profile_Setting.MAXINVALIDPASSWORDATTEMPTS)
                         {
                             faileddata.ISLOCKED = true;
                             faileddata.LASTLOCKOUTDATE = DateTime.Now;

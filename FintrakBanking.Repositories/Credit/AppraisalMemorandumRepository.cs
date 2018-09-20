@@ -537,6 +537,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvalLevelId = s.APPROVALLEVELID,
                         groupRoleId = gl.mg.g.ROLEID,
                         canEscalate = gl.l.CANESCALATE,
+                        levelTypeId = gl.l.LEVELTYPEID,
                     });
 
             if (grants.Any(x => x.approvalLevelId == entity.levelId) == false) // if no specifics
@@ -558,6 +559,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalLevelId = l.APPROVALLEVELID,
                             groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
                             canEscalate = l.CANESCALATE,
+                            levelTypeId = l.LEVELTYPEID,
                         });
             }
 
@@ -591,48 +593,53 @@ namespace FintrakBanking.Repositories.Credit
 
             // check default role
             var rank = context.TBL_STAFF_ROLE.Find(staff.STAFFROLEID);
-            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-             .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
-                 m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-             .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
-                 mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
-             .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
-                 gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
-                 {
-                     viewCamDocument = s.CANVIEWDOCUMENT,
-                     canMakeChanges = s.CANEDIT,
-                     canAppendTemplate = s.CANEDIT,
-                     viewUploadedFiles = s.CANVIEWUPLOAD,
-                     canUploadFile = s.CANUPLOAD,
-                     viewApproval = s.CANVIEWAPPROVAL,
-                     canApprove = s.CANAPPROVE,
-                     approvalLimit = s.MAXIMUMAMOUNT,
-                     approvalLevelId = s.APPROVALLEVELID,
-                     groupRoleId = gl.mg.g.ROLEID,
-                     canEscalate = gl.l.CANESCALATE,
-                 });
+
+            grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                .Join(context.TBL_APPROVAL_GROUP,
+                    m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
+                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
+                    {
+                        viewCamDocument = l.CANVIEWDOCUMENT,
+                        canMakeChanges = l.CANEDIT,
+                        canAppendTemplate = l.CANEDIT,
+                        viewUploadedFiles = l.CANVIEWUPLOAD,
+                        canUploadFile = l.CANUPLOAD,
+                        viewApproval = l.CANVIEWAPPROVAL,
+                        canApprove = l.CANAPPROVE,
+                        approvalLimit = l.MAXIMUMAMOUNT,
+                        approvalLevelId = l.APPROVALLEVELID,
+                        groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
+                        canEscalate = l.CANESCALATE,
+                        levelTypeId = l.LEVELTYPEID,
+                    });
 
             if (grants.Any() == false) // check specific
             {
-                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
-                    .Join(context.TBL_APPROVAL_GROUP,
-                        m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.STAFFROLEID == staff.STAFFROLEID),
-                        mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new PrivilegeViewModel
-                        {
-                            viewCamDocument = l.CANVIEWDOCUMENT,
-                            canMakeChanges = l.CANEDIT,
-                            canAppendTemplate = l.CANEDIT,
-                            viewUploadedFiles = l.CANVIEWUPLOAD,
-                            canUploadFile = l.CANUPLOAD,
-                            viewApproval = l.CANVIEWAPPROVAL,
-                            canApprove = l.CANAPPROVE,
-                            approvalLimit = l.MAXIMUMAMOUNT,
-                            approvalLevelId = l.APPROVALLEVELID,
-                            groupRoleId = l.TBL_APPROVAL_GROUP.ROLEID,
-                            canEscalate = l.CANESCALATE,
-                        });
+                grants = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.PRODUCTCLASSID == entity.productClassId)
+                 .Join(context.TBL_APPROVAL_GROUP.Where(x => x.DELETED == false),
+                     m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.DELETED == false && x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
+                 .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.STAFFID == staffId),
+                     gl => gl.l.APPROVALLEVELID, s => s.APPROVALLEVELID, (gl, s) => new PrivilegeViewModel
+                     {
+                         viewCamDocument = s.CANVIEWDOCUMENT,
+                         canMakeChanges = s.CANEDIT,
+                         canAppendTemplate = s.CANEDIT,
+                         viewUploadedFiles = s.CANVIEWUPLOAD,
+                         canUploadFile = s.CANUPLOAD,
+                         viewApproval = s.CANVIEWAPPROVAL,
+                         canApprove = s.CANAPPROVE,
+                         approvalLimit = s.MAXIMUMAMOUNT,
+                         approvalLevelId = s.APPROVALLEVELID,
+                         groupRoleId = gl.mg.g.ROLEID,
+                         canEscalate = gl.l.CANESCALATE,
+                         levelTypeId = gl.l.LEVELTYPEID,
+                     });
             }
+
+            var test = grants.ToList();
 
             grant = grants.FirstOrDefault(x => x.approvalLevelId == entity.levelId);
             if (grant == null) { grant = new PrivilegeViewModel(); } // changed
@@ -753,10 +760,12 @@ namespace FintrakBanking.Repositories.Credit
                         schedule = x.d.REPAYMENTSCHEDULE,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
-                        isSpecialised = x.d.ISSPECIALISED,
+                        isSpecialised = (bool)x.d.ISSPECIALISED,
 
                         priceIndexId = x.d.PRODUCTPRICEINDEXID,
-                        //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                        priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                        productRiskRating = x.d.TBL_PRODUCT.TBL_CUSTOMER_RISK_RATING.RISKRATING,
+
                     }).ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
@@ -820,10 +829,11 @@ namespace FintrakBanking.Repositories.Credit
                     schedule = x.d.REPAYMENTSCHEDULE,
                     securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                     crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
-                    isSpecialised = x.d.ISSPECIALISED,
+                    isSpecialised = (bool)x.d.ISSPECIALISED,
 
                     priceIndexId = x.d.PRODUCTPRICEINDEXID,
-                    //priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                    priceIndexName = x.d.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXNAME,
+                    productRiskRating = x.d.TBL_PRODUCT.TBL_CUSTOMER_RISK_RATING.RISKRATING,
 
                 }).ToList();
 
@@ -1037,6 +1047,7 @@ namespace FintrakBanking.Repositories.Credit
                 customerName = x.a.CUSTOMERID.HasValue ? x.a.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_CUSTOMER.LASTNAME : "",
                 operationId = x.a.OPERATIONID,
                 productClassProcessId = x.a.PRODUCT_CLASS_PROCESSID,
+                tranchLevelId = x.a.TRANCHEAPPROVAL_LEVELID
             })
             .Where(x => x.currentApprovalLevelTypeId != 2) // hou
             .ToList()
@@ -1279,7 +1290,7 @@ namespace FintrakBanking.Repositories.Credit
                         toStaffId = x.b.TOSTAFFID,
                         approvalTrailId = x.b.APPROVALTRAILID,
                 })
-                .GroupBy(d => d.loanApplicationId)
+                .GroupBy(d => d.timeIn)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 
@@ -1645,6 +1656,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var appl = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
             appl.TRANCHEAPPROVAL_LEVELID = entity.approvalLevelId;
+            context.Entry(appl).State = System.Data.Entity.EntityState.Modified;
             return context.SaveChanges() > 0;
         }
 

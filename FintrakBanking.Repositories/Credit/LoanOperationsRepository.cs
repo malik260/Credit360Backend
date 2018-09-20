@@ -3113,6 +3113,45 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+
+
+        public bool ProcessReleaseLien(DateTime applicationDate) {
+
+
+            List<TBL_LOAN> _TBL_LOAN = new List<TBL_LOAN>();
+
+            bool status = false;
+
+            var loan = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.PRODUCTID == (short)ProductClassEnum.InvoiceDiscountingFacility && x.MATURITYDATE == applicationDate);
+
+            if (loan.Count() > 0) {
+
+                foreach (var item in loan) {
+
+                    CasaLienViewModel model = new CasaLienViewModel
+                    {
+                        lienReferenceNumber = item.LOANREFERENCENUMBER
+                    };
+
+                    status = casaLien.ReleaseLien(model,null,false);
+
+                    if (status == true) {
+                        item.LOANSTATUSID = (short)LoanStatusEnum.Completed;
+                    }
+
+                    context.SaveChanges();
+
+                }
+
+                return true;
+
+            }
+
+            return false;
+
+        }
+
+
         public IEnumerable<LimitSuspensionViewModel> ProcessNPLByBranchSuspension()
         {
             var model = (from a in context.TBL_LOAN
@@ -5738,6 +5777,40 @@ namespace FintrakBanking.Repositories.Credit
             return model;
         }
 
+
+        public void ProcessAutomaticInterestRepricing(DateTime applicationDate, int staffId)
+        {
+            var loans = from a in context.TBL_LOAN
+                        where a.NEXT_INTEREST_REPRICINGDATE == applicationDate && a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.REPRICINGMODEID == (short)LoanRepricingModeEnum.FixedToMaturityWithRepricing
+                        select a;
+
+            LoanPaymentRestructureScheduleInputViewModel loanInput = new LoanPaymentRestructureScheduleInputViewModel();
+
+            foreach (var item in loans)
+            {
+                var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == item.PRODUCTPRICEINDEXID);
+                if (priceIndex != null)
+                {
+                    var customerRate = item.INTERESTRATE - item.PRODUCTPRICEINDEXRATE;
+                    var newInterestRate = priceIndex.PRICEINDEXRATE + customerRate;
+
+                    loanInput.operationId = (int)OperationsEnum.InterestRepricing; // item.OPERATIONID;
+                    loanInput.loanId = item.TERMLOANID;
+                    loanInput.interestRate = newInterestRate;
+                    //loanInput.
+
+                    InterestRateReview(loanInput.loanId, loanInput, applicationDate, staffId);
+
+                    item.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE;
+                    item.NEXT_INTEREST_REPRICINGDATE = item.NEXT_INTEREST_REPRICINGDATE.Value.AddDays(item.REPRICINGDURATION.Value);
+
+                }
+            }
+
+            if (loans.Count() > 0)
+                context.SaveChanges();
+        }
+
         public bool InterestRateReview(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
@@ -8220,6 +8293,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRecapitilization(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
@@ -8250,22 +8324,22 @@ namespace FintrakBanking.Repositories.Credit
                 if (accrued != null)
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
-                    inputTransactions.Add(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest"));
                 }
 
-                if (pastdueinterest != 0)
+                if (pastdueinterest > 0)
                 {
-                    inputTransactions.Add(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, pastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past-Due Interest"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, pastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Past-Due Interest"));
                 }
 
-                if (interestOnpastdueinterest != 0)
+                if (interestOnpastdueinterest > 0)
                 {
-                    inputTransactions.Add(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Interest"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Interest"));
                 }
 
-                if (interestOnpastdueprincipal != 0)
+                if (interestOnpastdueprincipal >  0)
                 {
-                    inputTransactions.Add(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Principal"));
+                    inputTransactions.AddRange(financeTransaction.BuildRecapitalisationAccuredInterestReceivablePosting(loanId, loanInput, interestOnpastdueinterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Interest On Past-Due Principal"));
                 }
 
 
@@ -8291,7 +8365,10 @@ namespace FintrakBanking.Repositories.Credit
                 //inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYAB
                 //inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYAB
                 //inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, accruedInterest, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest"));
-                ///posting will happen here
+                
+                //posting will happen here
+
+
 
                 if (LoanExist(loanId) > 0)
                 {
@@ -8433,25 +8510,25 @@ namespace FintrakBanking.Repositories.Credit
                     loan.OUTSTANDINGINTEREST = (decimal)periodicScheduleTemp.Sum(x => x.periodInterestAmount);
                     //-------------------------------------------------
 
-
-
                     //-------------------------------------------------------
                 }
 
                 financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuth);
 
-                var result = context.SaveChanges() > 0;
-                if (result)
-                {
-                    output = true;
-                }
+                context.SaveChanges();
+
+                return true;
+                //var result = context.SaveChanges() > 0;
+                //if (result)
+                //{
+                //    output = true;
+                //}
             }
             catch (Exception ex)
             {
-                output = true;
+                //output = false;
                 throw new SecureException(ex.Message);
-            }
-            return output;
+            }           
 
         }
 

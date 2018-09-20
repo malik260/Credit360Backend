@@ -19,6 +19,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_ACCOUNTING_STANDARD> TBL_ACCOUNTING_STANDARD { get; set; } 
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT> TBL_ACCREDITEDCONSULTANT { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
+        public virtual DbSet<TBL_TEMP_ACCREDITEDCONSULTANT> TBL_TEMP_ACCREDITEDCONSULTANT { get; set; }
+        public virtual DbSet<TBL_TEMP_ACCREDITEDCONSULTANT_STATE> TBL_TEMP_ACCREDITEDCONSULTANT_STATE { get; set; }
         public virtual DbSet<TBL_ACCREDITEDCONSULTANT_TYPE> TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP> TBL_APPROVAL_GROUP { get; set; }
         public virtual DbSet<TBL_APPROVAL_GROUP_MAPPING> TBL_APPROVAL_GROUP_MAPPING { get; set; }
@@ -8751,6 +8753,11 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_LOAN_APPLICATION_DETAIL)
                 .WithOptional(e => e.TBL_PRODUCT_PRICE_INDEX)
                 .HasForeignKey(e => e.PRODUCTPRICEINDEXID);
+
+            modelBuilder.Entity<TBL_CUSTOMER_RISK_RATING>()
+                .HasMany(e => e.TBL_PRODUCT)
+                .WithOptional(e => e.TBL_CUSTOMER_RISK_RATING)
+                .HasForeignKey(e => e.RISKRATINGID);
 
             //modelBuilder.Entity<TBL_CUSTOMER>().Ignore(x => x.FULLNAME);
 

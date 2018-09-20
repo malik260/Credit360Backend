@@ -19,6 +19,7 @@ using FintrakBanking.Repositories.Credit;
 using FintrakBanking.Common;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.Setups.Finance;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -30,9 +31,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         private IGeneralSetupRepository general;
         private DepartmentRepository department;
         private IAuditTrailRepository audit;
+        private IChartOfAccountRepository chartOfAccount;
 
         public JobRequestRepository(FinTrakBankingDocumentsContext docContext, FinTrakBankingContext _context, IGeneralSetupRepository _general,
-            IAuditTrailRepository _audit, DepartmentRepository _department, IFinanceTransactionRepository _financeTransaction)
+            IAuditTrailRepository _audit, DepartmentRepository _department, IFinanceTransactionRepository _financeTransaction,
+            IChartOfAccountRepository _chartOfAccount)
         {
             this.context = _context;
             this.docContext = docContext;
@@ -40,80 +43,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.audit = _audit;
             this.department = _department;
             this.financeTransaction = _financeTransaction;
-        }
-
-        public bool ChargeCustomerJob(CollateralViewModel model, string actionName, string actionType, int loanApplicationDetailId)
-        {
-            TBL_LOAN_APPLICATION loanApplication;
-            TBL_LOAN_APPLICATION_DETAIL loanApplicationDetail;
-            TBL_STATE collateralLocationState;
-
-            loanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(loanApplicationDetailId);
-            loanApplication = context.TBL_LOAN_APPLICATION.Find(loanApplicationDetail.LOANAPPLICATIONID);
-
-            if (loanApplication != null)
-            {
-                var collateralData = context.TBL_COLLATERAL_CUSTOMER.Find(model.collateralId);
-                var propertyDetails = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(x => x.COLLATERALCUSTOMERID == collateralData.COLLATERALCUSTOMERID).FirstOrDefault();
-                if (propertyDetails != null)
-                {
-                    List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
-                    var city = context.TBL_CITY.Find(propertyDetails.CITYID);
-                    if (city != null)
-                    {
-                        var genit = new GeneralEntity
-                        {
-                            createdBy = 1,
-                            companyId = 1,
-                            dateTimeCreated = DateTime.Now,
-                            staffId = 1,
-                            userBranchId = 1
-
-                        };
-                        TBL_CASA casaAccount = context.TBL_CASA.Find(loanApplication.CASAACCOUNTID);
-                        collateralLocationState = context.TBL_STATE.Find(city.TBL_LOCALGOVERNMENT.STATEID);
-                        var crdGL = context.TBL_SETUP_COMPANY.FirstOrDefault().LEGAL_CHARGE_GLACCOUNTID;
-
-                        switch (actionName)
-                        {
-                            case "Search":
-                                //if(actionType.ToLower() == "debit")inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge"));
-                                //else if(actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal",loanApplication.LOANAPPLICATIONID, genit, collateralLocationState.COLLATERALSEARCHCHARGEAMOUNT, crdGL, "Collateral Search Charge Reversal"));
-
-                                break;
-                            case "Chart":
-                                //if (actionType.ToLower() == "debit") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Post", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge"));
-                                //else if (actionType.ToLower() == "reverse") inputTransactions.Add(financeTransaction.BuildCustomerApplicationChargeOrChargeReversalPosting("Reversal", loanApplication.LOANAPPLICATIONID, genit, (decimal)collateralLocationState.CHARTINGAMOUNT, crdGL, "Collateral Charting Charge Reversal"));
-
-                                break;
-                            default:
-                                throw new SecureException("Debit charge type is not specified.");
-
-                        }
-                        financeTransaction.PostTransaction(inputTransactions);
-                    }
-                }
-                else throw new SecureException("The collateral details information is incomplete");
-            }
-            else throw new SecureException(" Collateral cannot be traced to an active application in the system");
-            //Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = actionName.ToLower() == "chart" ? (short)AuditTypeEnum.CollateralChartJob : (short)AuditTypeEnum.CollateralSearchJob,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"{actionType} Collateral {actionName} Charge for loan application with ref. '{ loanApplication.APPLICATIONREFERENCENUMBER }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            return context.SaveChanges() != 0;
+            this.chartOfAccount = _chartOfAccount;
         }
 
         public string AddGlobalJobRequest(JobRequestViewModel model)
@@ -491,12 +421,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                          && context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l=>l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
                          ? context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
 
-                         from = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
+                         //from = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
+                         from = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME +" " + x.TBL_STAFF.LASTNAME,
                          fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
                          //from = allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID) == null ? "n/al" : allstaff.FirstOrDefault(s => s.id == x.SENDERSTAFFID).name,
                          // fromBranchName = context.TBL_BRANCH.Where(c=>c.STATEID == x.SENDERSTAFFID).FirstOrDefault().BRANCHNAME,
-                         to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
-                         assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
+                         //to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.MIDDLENAME + " " + x.TBL_STAFF2.LASTNAME,
+                         to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+                         //assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
+                         assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME +  " " + x.TBL_STAFF1.LASTNAME,
                          // assignee = allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.REASSIGNEDTO).name,
                          //  toBranchName = context.TBL_BRANCH.Where(c => c.STATEID == x.RECEIVERSTAFFID).FirstOrDefault().BRANCHNAME,
                          //from = allstaff.GetStaffName(s => s.id == x.SenderStaffId),
@@ -520,7 +453,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 
             //}
 
-            var c = data.ToList();
+            //var c = data.ToList();
             return data;
         }
 
@@ -529,6 +462,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             return GetAllGlobalJobRequest(staffId, branchId).OrderByDescending(x => x.jobRequestId);
         }
 
+        public List<JobRequestDetailViewModel> GetJobRequestDetailsById(int jobRequestId)
+        {
+            return GetJobRequestDetails().Where(x => x.jobRequestId == jobRequestId).ToList();
+        }
         private List<JobRequestDetailViewModel> GetJobRequestDetails()
         {
             var details = (from x in this.context.TBL_JOB_REQUEST_DETAIL
@@ -563,7 +500,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     var t = a.FirstOrDefault();
                     item.customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == t.CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault();
-                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER; 
+                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
                     item.customerId = t.CUSTOMERID;
                 }
             };
@@ -571,11 +508,44 @@ namespace FintrakBanking.Repositories.WorkFlow
             return details.ToList();
         }
 
-        //public List<JobRequestDetailViewModel> GetJobRequestLegalJobDetails()
-        //{
+        public List<JobRequestDetailViewModel> GetLegalJobRequestDetails()
+        {
+            var jobDetail = (from d in this.context.TBL_JOB_REQUEST_DETAIL
+                             join r in context.TBL_JOB_REQUEST on d.JOBREQUESTID equals r.JOBREQUESTID
+                             where d.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || d.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || d.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || d.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
+                             select new JobRequestDetailViewModel
+                             {
+                                 jobRequestId = d.JOBREQUESTID,
+                                 jobRequestDetailId = d.JOBREQUEST_DETAILID,
+                                 accreditedConsultantId = (int)d.ACCREDITEDCONSULTANTID,
+                                 accreditedConsultantName = d.TBL_ACCREDITEDCONSULTANT.FIRMNAME,
+                                 jobSubTypeId = d.JOB_SUB_TYPEID,
+                                 jobRequestCode = r.JOBREQUESTCODE,
+                                 jobSubTypeName = d.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME,
+                                 jobTypeId = d.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPEID,
+                                 jobTypeName = d.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPENAME,
+                                 description = d.DESCRIPTION,
+                                 operationsId = r.OPERATIONSID,
+                                 operationsName = r.TBL_OPERATIONS.OPERATIONNAME,
+                                 targetId = r.TARGETID,
+                                 amount = d.AMOUNT,
+                                 accountNumber = d.ACCOUNTNUMBER,
+                                 dateTimeCreated = d.DATETIMECREATED
+                             }).ToList();
+            foreach (var item in jobDetail)
+            {
+                var a = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == item.targetId);
 
-        //    return GetJobRequestDetails().Where(x => x.jobTypeId == (short)JobTypeEnum.legal).ToList();
-        //}
+                if (a.Any())
+                {
+                    var t = a.FirstOrDefault();
+                    item.customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == t.CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault();
+                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
+                    item.customerId = t.CUSTOMERID;
+                }
+            };
+            return jobDetail;
+        }
 
         public List<JobRequestViewModel> GetJobRequestLegalJobDetail()
         {
@@ -834,92 +804,87 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         #region
-        public bool EffectLegaCollateralJobs(JobRequestCollateralSearchViewModel model)
+        public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
-            var jobRequest = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
-            var baseApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(jobRequest.TARGETID);
-            var state = context.TBL_STATE.Find(model.collateralStateId);
+            var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId
+            && ((x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch)
+            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification)
+            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting)
+            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs))
+            ).ToList();
 
-            var casa = context.TBL_CASA.Find(model.casaAccountId);
-
-            if (casa == null)
-                throw new SecureException("Customer account number is not supplied");
-
-            Decimal chargeAmount = 0;
-
-            var collateralStateDetails = context.TBL_STATE.Find(model.collateralStateId);
-            if (model.requireCharting)
+            var auditDetail = "";
+            if (model.isInitiation)
             {
-                chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
-                var detail = new JobRequestDetailViewModel
+                var casa = context.TBL_CASA.Find(model.casaAccountId);
+                if (casa == null)
+                    throw new ConditionNotMetException("Customer account number is not supplied");
+
+                model.casaAccountId = casa.CASAACCOUNTID;
+                model.operationId = (short)OperationsEnum.CollateralSearchInitiation;
+                auditDetail = $"Customer account number '{casa.PRODUCTACCOUNTNUMBER}' debited with collateral search fees";
+            }
+            else
+            {
+                var consultantRecord = context.TBL_ACCREDITEDCONSULTANT.Where(x=>x.ACCREDITEDCONSULTANTID == jobRequestDetail.FirstOrDefault().ACCREDITEDCONSULTANTID);
+                var accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
+                var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
+                
+                model.casaAccountId = casa.FirstOrDefault().CASAACCOUNTID;
+                model.operationId = (short)OperationsEnum.CollateralSearchCompletion;
+                var witholdingAmount = (double)model.totalChargeAmount / 0.1;
+                model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
+                model.feeNarration = $"credit solicitor acc# for searching";
+                auditDetail = $"Solicitor account number '{casa.FirstOrDefault().PRODUCTACCOUNTNUMBER}' credited for collateral search job";
+            }
+
+            var jobRequestData = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
+            model.requestCode = jobRequestData.JOBREQUESTCODE;
+
+            foreach (var item in jobRequestDetail)
+            {
+                model.totalChargeAmount = item.AMOUNT.Value;
+                item.ACCREDITEDCONSULTANTPAID = !model.isInitiation ? true : false;
+            }
+
+            if (model.totalChargeAmount > 0)
+            {
+                var twoFADetails = new TwoFactorAutheticationViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalCharting,
-                    amount = collateralStateDetails.CHARTINGAMOUNT,
-                    jobRequestId = model.jobRequestId,
-                    createdBy = model.createdBy,
-                    accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber
+                    username = model.username,
+                    passcode = model.passCode
                 };
-                saveJobRequestDetail(detail);
-            }
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            if (model.requireSearch)
-            {
-                chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
-                var detail = new JobRequestDetailViewModel
+                inputTransactions.AddRange(BuildCollateralSearchChargeFeesPosting(model));
+
+                if (inputTransactions.Count > 0)
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalSearch,
-                    amount = collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT,
-                    jobRequestId = model.jobRequestId,
-                    createdBy = model.createdBy,
-                    accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber
-                };
-                saveJobRequestDetail(detail);
-            }
+                    financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
 
-            if (model.requireVerification)
-            {
-                chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
-                var detail = new JobRequestDetailViewModel
-                {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalVerification,
-                    amount = collateralStateDetails.VERIFICATIONAMOUNT,
-                    jobRequestId = model.jobRequestId,
-                    createdBy = model.createdBy,
-                    accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber
-                };
-                saveJobRequestDetail(detail);
-            }
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CollateralSearchJob,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = auditDetail,
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
 
-            if (model.additionalCharge > 0)
-            {
-                chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
-                var detail = new JobRequestDetailViewModel
-                {
-                    jobSubTypeId = (short)JobSubTypeEnum.OtherLegalJobs,
-                    amount = model.additionalCharge,
-                    description = model.additionalChargeJustification,
-                    jobRequestId = model.jobRequestId,
-                    createdBy = model.createdBy,
-                    accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber
-                };
-                saveJobRequestDetail(detail);
-            }
+                    context.SaveChanges();
+                    return true;
+                }
 
-            if (baseApplication != null)
-            {
-                BasicTrasactionSourceInputModel input = new BasicTrasactionSourceInputModel();
-                input.createdBy = model.createdBy;
-                input.description = "Collateral Search";
-                input.sourceApplicationId = (short)baseApplication.LOANAPPLICATIONDETAILID;
-                input.companyId = model.companyId;
-                input.userBranchId = model.userBranchId;
+                else return true;
             }
-
-            return context.SaveChanges() > 0;
+            else return false;
+                
         }
 
         private void saveJobRequestDetail(JobRequestDetailViewModel model)
@@ -1257,7 +1222,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobRequestCode = data.JOBREQUESTCODE,
                 documentTitle = data.DOCUMENTTITLE,
                 documentTypeId = data.DOCUMENTTYPEID,
-                fileData = data.FILEDATA,
+                //fileData = data.FILEDATA,
                 fileName = data.FILENAME,
                 fileExtension = data.FILEEXTENSION,
                 systemDateTime = data.SYSTEMDATETIME,
@@ -1288,9 +1253,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             return c;
         }
 
+       
+
         public IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId)
         {
-            return this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.DOCUMENTID == documentId).Select(x => new RequestDocumentViewModel
+            var data =  this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.DOCUMENTID == documentId).Select(x => new RequestDocumentViewModel
             {
                 documentId = x.DOCUMENTID,
                 jobRequestCode = x.JOBREQUESTCODE,
@@ -1303,6 +1270,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 physicalFileNumber = x.PHYSICALFILENUMBER,
                 physicalLocation = x.PHYSICALLOCATION,
             });
+            return data.ToList();
         }
 
         #endregion Job-Request Document
@@ -1313,7 +1281,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.CollateralSearch;
+            debit.operationId = (int)OperationsEnum.CollateralSearchInitiation;
             debit.description = inputs.description;
             debit.valueDate = general.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
@@ -1336,7 +1304,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             debit.destinationBranchId = casa.BRANCHID;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.CollateralSearch;
+            credit.operationId = (int)OperationsEnum.CollateralSearchInitiation;
             credit.description = inputs.description;
             credit.valueDate = general.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
@@ -1370,7 +1338,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.CollateralSearch;
+            debit.operationId = (int)OperationsEnum.CollateralSearchInitiation;
             debit.description = inputs.description;
             debit.valueDate = general.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
@@ -1393,7 +1361,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             debit.destinationBranchId = casa.BRANCHID;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.CollateralSearch;
+            credit.operationId = (int)OperationsEnum.CollateralSearchInitiation;
             credit.description = inputs.description;
             credit.valueDate = general.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
@@ -1422,7 +1390,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
         #endregion
 
-        
+
 
         //public bool AddJobRequest(JobRequestViewModel model)
         //{
@@ -1498,6 +1466,104 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         //    return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
         //}
+
+
+        public List<FinanceTransactionViewModel> BuildCollateralSearchChargeFeesPosting(JobRequestCollateralSearchViewModel model)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
+            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
+            if (searchCharges.Any() && model.totalChargeAmount != 0)
+            {
+                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
+                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
+                foreach (var post in postingGroups)
+                {
+                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
+
+                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                    {
+                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                        decimal debitAmount = 0;
+                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
+                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            debitAmount = (decimal)model.totalChargeAmount;
+
+                        debit.operationId = (int)model.operationId;
+                        debit.description = model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
+                        debit.valueDate = general.GetApplicationDate();
+                        debit.transactionDate = debit.valueDate;
+                        debit.currencyId = casa.CURRENCYID;
+                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                        debit.isApproved = true;
+                        debit.postedBy = model.createdBy;
+                        debit.approvedBy = model.createdBy;
+                        debit.approvedDate = debit.transactionDate;
+                        debit.approvedDateTime = DateTime.Now;
+                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        debit.companyId = model.companyId;
+
+
+                        debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                        debit.sourceReferenceNumber = model.requestCode;
+                        debit.batchCode = batchCode;
+                        debit.casaAccountId = casa.CASAACCOUNTID;
+                        debit.debitAmount = debitAmount;
+                        debit.creditAmount = 0;
+                        debit.sourceBranchId = model.userBranchId;
+                        debit.destinationBranchId = casa.BRANCHID;
+                        debit.rateCode = "TTB";
+                        debit.rateUnit = string.Empty;
+                        debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(debit);
+                    }
+
+                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                    {
+                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                        decimal creditAmount = 0;
+                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
+                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            creditAmount = (decimal)model.totalChargeAmount;
+
+
+                        credit.operationId = (int)model.operationId;
+                        credit.description = model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
+                        credit.valueDate = general.GetApplicationDate();
+                        credit.transactionDate = credit.valueDate;
+                        credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                        credit.isApproved = true;
+                        credit.postedBy = model.createdBy;
+                        credit.approvedBy = model.createdBy;
+                        credit.approvedDate = credit.transactionDate;
+                        credit.approvedDateTime = DateTime.Now;
+                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        credit.companyId = model.companyId;
+                        credit.glAccountId = (int)credits.GLACCOUNTID1;
+                        credit.sourceReferenceNumber = model.requestCode;
+                        credit.batchCode = batchCode;
+                        credit.casaAccountId = null;
+                        credit.debitAmount = 0;
+                        credit.creditAmount = creditAmount;
+                        credit.sourceBranchId = model.userBranchId;
+                        credit.destinationBranchId = model.userBranchId;
+                        credit.rateCode = "TTB";
+                        credit.rateUnit = string.Empty;
+                        credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(credit);
+                    }
+                }
+            }
+
+            return inputTransactions;
+        }
 
 
         #region Job Request Feedback

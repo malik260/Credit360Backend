@@ -555,6 +555,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string repaymentTerms { get; set; }
         public string repaymentSchedule { get; set; }
 
+        public bool isFinal { get; set; }
         public bool isFirstApprover { get; set; }
         public bool isBidbond { get; set; }
         public bool isOverdraft { get; set; }

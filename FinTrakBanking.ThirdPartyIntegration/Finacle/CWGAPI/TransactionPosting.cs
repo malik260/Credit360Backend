@@ -2,6 +2,7 @@
 {
     using FintrakBanking.Common.CustomException;
     using FintrakBanking.Entities.Models;
+    using FintrakBanking.Interfaces.Credit;
     using FintrakBanking.ViewModels.CASA;
     using FintrakBanking.ViewModels.Credit;
     using FintrakBanking.ViewModels.Finance;
@@ -23,6 +24,7 @@
 
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
+          //  private IIntegrationWithFinacle finacle;
 
             public TransactionPosting(FinTrakBankingContext _context)
             {
@@ -30,6 +32,7 @@
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
+               // finacle = _finacle;
             }
 
             public async Task<CurrencyExchangeRateViewModel> GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode)
@@ -74,7 +77,7 @@
                             throw new APIErrorException("Core Banking API error - "+exchangeRateAPI.webRequestStatus + " " + exchangeRateAPI.webRequestDate);
                         }
 
-                        var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).CURRENCYID;
+                        var currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == exchangeRateAPI.currencyCode).Select(x=>x.CURRENCYID).FirstOrDefault();
                         exchangeRateOutput.sellingRate = exchangeRateAPI.exchangeRate;
                         exchangeRateOutput.buyingRate = exchangeRateAPI.exchangeRate;
                         exchangeRateOutput.currencyId = (short)currencyId;
@@ -460,17 +463,26 @@
                 LienProcessViewModel responseModel = new LienProcessViewModel();
                 bool output = false;
                 HttpClient client = new HttpClient(handler);
-                var objData = new JavaScriptSerializer().Serialize(model);
+                //var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 //TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
                 string responseJson = "";
+                string serialiseModel = "";
 
                 try
                 {
-                    //var leinAmountString = String.Format("{0:0.00}", model.lienAmount)
+                    var currencyCode = model.currencyCode;
+
+                    if (model.isTermDeposit==false)
+                    {
+                        currencyCode = context.TBL_CASA.Where(x =>
+                                x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId)
+                            .Select(x => x.TBL_CURRENCY.CURRENCYCODE).FirstOrDefault();
+                    }
+
                     LienAPIProcessViewModel apiModel = new LienAPIProcessViewModel
                     {
                         account = model.productAccountNumber,
@@ -478,10 +490,8 @@
                         lienReasonCode = "VIA",
                         lienReason = model.description,
                         lienAmount = String.Format("{0:0.00}", model.lienAmount), //model.lienAmount,  //
+                        lienAccountCurrency = currencyCode,
                         lienUniqueReferenceNumber = model.lienReferenceNumber,
-                        lienAccountCurrency = context.TBL_CASA.FirstOrDefault(x =>
-                                x.PRODUCTACCOUNTNUMBER == model.productAccountNumber && x.COMPANYID == model.companyId)
-                            .TBL_CURRENCY.CURRENCYCODE
                     };
 
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -498,12 +508,13 @@
                     // client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Authorization = token;
 
-                   
+                    serialiseModel = new JavaScriptSerializer().Serialize(apiModel);
+
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("api/Lien/ProcessLien", new StringContent(
-                        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                    response = client.PostAsync("api/Lien/ProcessLien", new StringContent(serialiseModel
+                        , Encoding.UTF8, "application/json")).Result;
                     responseDateTime = DateTime.Now;
                     //if (response.IsSuccessStatusCode)
                     //{
@@ -582,7 +593,7 @@
                         LOGTYPEID = 2,
                         REFERENCENUMBER = model.sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = objData,
+                        REQUESTMESSAGE = serialiseModel, //objData,
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseJson,
                     };
@@ -602,11 +613,12 @@
                 InterestRateInquiryViewModel responseModel = new InterestRateInquiryViewModel();
                 bool output = false;
                 HttpClient client = new HttpClient(handler);
-                var objData = new JavaScriptSerializer().Serialize(model);
+                //var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
+                string serialiseModel = "";
 
                 try
                 {
@@ -633,12 +645,13 @@
 
                     client.DefaultRequestHeaders.Authorization = token;
 
+                    serialiseModel = new JavaScriptSerializer().Serialize(apiModel);
 
                     ServicePointManager.ServerCertificateValidationCallback +=
                         (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
-                    response = client.PostAsync("api/InterestRateInquiry/PostInterestRate", new StringContent(
-                        new JavaScriptSerializer().Serialize(apiModel), Encoding.UTF8, "application/json")).Result;
+                    response = client.PostAsync("api/InterestRateInquiry/PostInterestRate", new StringContent(serialiseModel,
+                                                 Encoding.UTF8, "application/json")).Result;
                     responseDateTime = DateTime.Now;
 
                     if (response.IsSuccessStatusCode)
@@ -691,7 +704,7 @@
                         LOGTYPEID = 19,
                         REFERENCENUMBER = model.accountNumber,
                         REQUESTDATETIME = requestDatetime,
-                        REQUESTMESSAGE = objData,
+                        REQUESTMESSAGE = serialiseModel, //objData,
                         RESPONSEDATETIME = responseDateTime,
                         RESPONSEMESSAGE = responseModel.webRequestStatus,
                     };

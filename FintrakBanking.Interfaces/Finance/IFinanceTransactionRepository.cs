@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         CurrencyExchangeRateViewModel GetExchangeRate(DateTime date, short currencyId, int companyId);
 
-        FinanceTransactionViewModel BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
+        List<FinanceTransactionViewModel> BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
         CasaBalanceViewModel GetCASABalance(int casaAccountId);
 
         bool PostDailyLoansInterestAccrual(DailyInterestAccrualViewModel model);

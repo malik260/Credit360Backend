@@ -286,6 +286,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string responsiblePerson { get; set; }
         public int requestStaffId { get; set; }
         public int? toApprovalLevelId { get; set; }
+        public bool atInitiator { get; set; }
     }
 
     public class applicationDetails

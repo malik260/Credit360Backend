@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.Interfaces.Setups.Approval
 {
@@ -35,5 +36,10 @@ namespace FintrakBanking.Interfaces.Setups.Approval
         List<FintrakDropDownSelectList> GetApprovalLevelsByOperationIdAndProductClassId(int operationId, int? classId);
         int GoForApproval(ApprovalLevelViewModel model);
         List<ApprovalLevelViewModel> GetTempApprovalApprovalLevel(int staffId);
+
+
+        List<FintrakDropDownSelectList> GetRoutableOperations(List<int> operationIds);
+        List<ApprovalLevelViewModel> GetRerouteApprovalLevels(int operationId);
+        bool RerouteOperation(ForwardViewModel entity);
     }    
 }

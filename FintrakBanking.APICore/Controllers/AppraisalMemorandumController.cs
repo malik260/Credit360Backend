@@ -418,7 +418,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 var data = items
-                    .OrderByDescending(x => x.applicationDate) // OrderBy() must be called for Skip() to work!
+                    .OrderByDescending(x => x.timeIn) // OrderBy() must be called for Skip() to work!
                     .ThenByDescending(x => x.loanApplicationId)
                     .Skip(page)
                     .Take(itemsPerPage)
@@ -786,5 +786,9 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+    
+
+
     }
 }

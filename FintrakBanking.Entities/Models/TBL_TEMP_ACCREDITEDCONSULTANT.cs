@@ -6,17 +6,17 @@ namespace FintrakBanking.Entities.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    [Table("TBL_ACCREDITEDCONSULTANT")]
-    public partial class TBL_ACCREDITEDCONSULTANT
+    [Table("TBL_TEMP_ACCREDITEDCONSULTANT")]
+    public partial class TBL_TEMP_ACCREDITEDCONSULTANT
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_ACCREDITEDCONSULTANT()
-        { 
-            TBL_ACCREDITEDCONSULTANT_STATE = new HashSet<TBL_ACCREDITEDCONSULTANT_STATE>();
-            TBL_JOB_REQUEST_DETAIL = new HashSet<TBL_JOB_REQUEST_DETAIL>();
+        public TBL_TEMP_ACCREDITEDCONSULTANT()
+        {
+            TBL_TEMP_ACCREDITEDCONSULTANT_STATE = new HashSet<TBL_TEMP_ACCREDITEDCONSULTANT_STATE>();
         }
-
         [Key]
+        public int TEMPACCREDITEDCONSULTANTID { get; set; }
+
         public int ACCREDITEDCONSULTANTID { get; set; }
 
         [StringLength(50)]
@@ -59,21 +59,20 @@ namespace FintrakBanking.Entities.Models
         public int? LASTUPDATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }
-
+         
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
-
+        public int? APPROVALSTATUSID { get; set; }
         public DateTime? DATETIMEDELETED { get; set; }
+        public string OPERATION { get; set; }
+        public bool? ISCURRENT { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_ACCREDITEDCONSULTANT_STATE> TBL_ACCREDITEDCONSULTANT_STATE { get; set; }
-
+        public virtual ICollection<TBL_TEMP_ACCREDITEDCONSULTANT_STATE> TBL_TEMP_ACCREDITEDCONSULTANT_STATE { get; set; }
         public virtual TBL_ACCREDITEDCONSULTANT_TYPE TBL_ACCREDITEDCONSULTANT_TYPE { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_JOB_REQUEST_DETAIL> TBL_JOB_REQUEST_DETAIL { get; set; }
     }
 }

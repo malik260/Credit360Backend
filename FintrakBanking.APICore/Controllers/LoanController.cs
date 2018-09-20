@@ -413,7 +413,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                     if(entity.productTypeId ==(short)LoanProductTypeEnum.CommercialLoan 
                         || entity.productTypeId == (short)LoanProductTypeEnum.TermLoan 
                         || entity.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating 
-                        || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+                        || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving
+                        || entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
                     }
@@ -1003,7 +1004,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-booking/approval/{loanBookingRequestId}")]
-        public HttpResponseMessage ApproveLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
+        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
             try
             {
@@ -1062,7 +1063,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-request/approval/{loanBookingRequestId}")]
-        public HttpResponseMessage ApproveInitiatedLoanBooking(ApprovalViewModel model, int loanBookingRequestId)
+        public HttpResponseMessage ApproveInitiatedLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
             try
             {
@@ -1117,7 +1118,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("loan-booking/fee-override/approval")]
-        public HttpResponseMessage ApproveLoaFeeOverride(ApprovalViewModel model)
+        public HttpResponseMessage ApproveLoaFeeOverride([FromBody] ApprovalViewModel model)
         {
             try
             {
