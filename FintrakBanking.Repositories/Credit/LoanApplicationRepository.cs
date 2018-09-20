@@ -772,6 +772,9 @@ namespace FintrakBanking.Repositories.Credit
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
             var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+
+
+
             bool MiddleOfficeCertified = true;
 
 
@@ -779,6 +782,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 foreach (var d in dat)
                 {
+
+                   
                     //Replace hard-coding with a variable once defined
                     //if(d.APPROVEDPRODUCTID == 36)
                     //{
@@ -853,6 +858,19 @@ namespace FintrakBanking.Repositories.Credit
                         //    }
                         //}
                     }
+
+                    var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                                       where a.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID && (d.CONDITIONPRECIDENT == null
+                                       || d.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
+                                       select a);
+                    
+                    if (rmSuggestion.Any())
+                    {
+                        isCheckListDone = false;
+                        str = str + " Kindly Complete The RM Suggestions Record" + Environment.NewLine;
+                        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                    }
+
                 }
             }
             //&& MiddleOfficeCertified 
@@ -1946,15 +1964,21 @@ namespace FintrakBanking.Repositories.Credit
 
             if (applicationTypeId == 2)
             {
+                List<int> operationIds = new List<int>();
+                operationIds.Add(46);
+                operationIds.Add(71);
+                operationIds.Add(79);
                 applicationType = "Loan Management";
                 ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanReviewApprovalAppraisal).ToList();
                 applications = context.TBL_LMSR_APPLICATION
                     .Join(context.TBL_LMSR_APPLICATION_DETAIL, a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Join(context.TBL_CUSTOMER, g => g.d.CUSTOMERID, c => c.CUSTOMERID, (g, c) => new { g, c })
-                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == (int)OperationsEnum.LoanReviewApprovalAppraisal
-                            && t.RESPONSESTAFFID == null && t.APPROVALSTATEID != (int)ApprovalState.Ended
-                            && ids.Contains((int)t.TOAPPROVALLEVELID)
-                        ),
+                    .Join(context.TBL_APPROVAL_TRAIL.Where(t => operationIds.Contains(t.OPERATIONID)
+                        && t.APPROVALSTATEID != (int)ApprovalState.Ended
+                        && t.RESPONSESTAFFID == null
+                        && ids.Contains((int)t.TOAPPROVALLEVELID)
+                        && (t.TOSTAFFID == null || t.TOSTAFFID == staffId)
+                    ),
                         q => q.g.a.LOANAPPLICATIONID,
                         t => t.TARGETID, (q, t) => new { q, t })
                     .Select(x => new CreditApplicationViewModel
