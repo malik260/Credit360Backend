@@ -500,7 +500,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     var t = a.FirstOrDefault();
                     item.customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == t.CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault();
-                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER; 
+                    item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
                     item.customerId = t.CUSTOMERID;
                 }
             };
@@ -829,15 +829,18 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var consultantRecord = context.TBL_ACCREDITEDCONSULTANT.Where(x=>x.ACCREDITEDCONSULTANTID == jobRequestDetail.FirstOrDefault().ACCREDITEDCONSULTANTID);
                 var accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
                 var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
-
+                
                 model.casaAccountId = casa.FirstOrDefault().CASAACCOUNTID;
                 model.operationId = (short)OperationsEnum.CollateralSearchCompletion;
                 var witholdingAmount = (double)model.totalChargeAmount / 0.1;
                 model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
-                model.feeNarration = $"credit solicitor acc# for collateral searching";
+                model.feeNarration = $"credit solicitor acc# for searching";
                 auditDetail = $"Solicitor account number '{casa.FirstOrDefault().PRODUCTACCOUNTNUMBER}' credited for collateral search job";
             }
-           
+
+            var jobRequestData = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
+            model.requestCode = jobRequestData.JOBREQUESTCODE;
+
             foreach (var item in jobRequestDetail)
             {
                 model.totalChargeAmount = item.AMOUNT.Value;
@@ -1487,10 +1490,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
                             debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
                         else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
-                            debitAmount = (decimal)debits.VALUE;
+                            debitAmount = (decimal)model.totalChargeAmount;
 
                         debit.operationId = (int)model.operationId;
-                        debit.description = $"Fee charge on {debits.DESCRIPTION}";
+                        debit.description = model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
                         debit.valueDate = general.GetApplicationDate();
                         debit.transactionDate = debit.valueDate;
                         debit.currencyId = casa.CURRENCYID;
@@ -1526,11 +1529,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
                             creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
                         else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
-                            creditAmount = (decimal)credits.VALUE;
+                            creditAmount = (decimal)model.totalChargeAmount;
 
 
                         credit.operationId = (int)model.operationId;
-                        credit.description = $"Fee charge on {credits.DESCRIPTION}";
+                        credit.description = model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
                         credit.valueDate = general.GetApplicationDate();
                         credit.transactionDate = credit.valueDate;
                         credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
