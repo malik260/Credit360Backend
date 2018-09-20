@@ -2920,14 +2920,14 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        if (data.approvalStatusId != (int)ApprovalStatusEnum.Disapproved)
+                        if (data.approvalStatusId == (int)ApprovalStatusEnum.Disapproved)
                         {
                             UpdateLoanApplicationCancellationTempTable(data, (short)workflow.StatusId);
                             LaonApplcationCancelllationDisapproved(data);
 
                             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
                             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == data.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
-                            string messageBoby = $"Dear Team, <br /><br />This is to bring your attention the loan with {data.applicationReferenceNumber} application refernence number which was going through approval for cancellation has been successfully approved by {staffName}. <br /><br />";
+                            string messageBoby = $"Dear Team, <br /><br />This is to bring your attention the loan with {data.applicationReferenceNumber} application refernence number which was going through approval for cancellation has been successfully disapproved by {staffName}. <br /><br />";
                             string alertSubject = $"Loan Application Cancellation Approval Notification";
                             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetLoanApplicationEmailRecipients(data.loanApplicationId));
                         }
@@ -3047,7 +3047,7 @@ namespace FintrakBanking.Repositories.Credit
         private string GetLoanApplicationEmailRecipients(int targetId)
         {
             string recipientEmailAddresses = string.Empty;
-            int? staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).Select(x => x.TOSTAFFID).FirstOrDefault();
+            int? staffId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).Select(x => x.REQUESTSTAFFID).FirstOrDefault();
             if (staffId != null)
             {
                 return context.TBL_STAFF.Where(x => x.STAFFID == staffId).Select(x => x.EMAIL).FirstOrDefault();
@@ -3055,7 +3055,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                int? approvalLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).OrderByDescending(x => x.SYSTEMARRIVALDATETIME).Select(x => x.TOAPPROVALLEVELID).FirstOrDefault();
+                int? approvalLevelId = context.TBL_APPROVAL_TRAIL.Where(x => x.TARGETID == targetId).OrderByDescending(x => x.SYSTEMARRIVALDATETIME).Select(x => x.FROMAPPROVALLEVELID).FirstOrDefault();
                 var staffIds = context.TBL_APPROVAL_LEVEL.Where(x => x.APPROVALLEVELID == approvalLevelId).Select(x =>
                 new StaffInfoViewModel
                 {
