@@ -1480,19 +1480,14 @@ namespace FintrakBanking.Repositories.Credit
         {
               var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
 
-            //var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
-            //int staffApprovalLevelId = 0;
-            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
-
             var data = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                         join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                         join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                         where c.ISLMS == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
-                      //  && ids.Contains((int)atrail.TOAPPROVALLEVELID)
-                        //       && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
-                        && atrail.RESPONSESTAFFID == null
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            && atrail.RESPONSESTAFFID == null
                         orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
