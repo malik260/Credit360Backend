@@ -1644,10 +1644,12 @@ namespace FintrakBanking.Repositories.Credit
                                    where s.LOANCONDITIONID == targetId
                                   && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                    select s).FirstOrDefault();
+
             var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
                                   where s.LOANCONDITIONID == targetId
                                  && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                   select s).FirstOrDefault();
+
             if (workFlow.NewState != (int)ApprovalState.Ended)
             {
                 if (checklistRecord.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing)
@@ -1660,7 +1662,12 @@ namespace FintrakBanking.Repositories.Credit
             {
                 checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                 deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                var deferredCondition = context.TBL_LOAN_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
+                deferredCondition.ISSUBSEQUENT = true;
+                context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
             }
+
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -1675,6 +1682,7 @@ namespace FintrakBanking.Repositories.Credit
             };
 
             this.auditTrail.AddAuditTrail(audit);
+
             output = context.SaveChanges() > 0;
 
             return output;

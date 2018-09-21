@@ -127,6 +127,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("disbursed-loan")]
+        public HttpResponseMessage GetLoanDisbursedByType(DateRange val)
+        {
+            try
+            {
+                var data = dashboard.LoanDisbursedByType(val.startDate, val.endDate, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
     
 }
