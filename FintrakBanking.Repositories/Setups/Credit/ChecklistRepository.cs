@@ -1495,6 +1495,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                 deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                var deferredCondition = context.TBL_LOAN_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
+                deferredCondition.ISSUBSEQUENT = true;
             }
 
             // Audit Section ---------------------------
