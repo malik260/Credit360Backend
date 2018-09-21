@@ -5695,6 +5695,8 @@ namespace FintrakBanking.Repositories.Credit
                            where a.CUSTOMERID == item.CUSTOMERID && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                            select new CurrentCustomerExposure
                            {
+                               loanId = a.TERMLOANID,
+                               productTypeId = 1,
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                existingLimit = a.PRINCIPALAMOUNT,
                                proposedLimit = a.OUTSTANDINGPRINCIPAL,
@@ -5712,6 +5714,8 @@ namespace FintrakBanking.Repositories.Credit
                            where a.CUSTOMERID == item.CUSTOMERID && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                            select new CurrentCustomerExposure
                            {
+                               loanId = a.REVOLVINGLOANID,
+                               productTypeId = 2,
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                existingLimit = a.OVERDRAFTLIMIT,
                                proposedLimit = a.OVERDRAFTLIMIT,
@@ -5729,6 +5733,8 @@ namespace FintrakBanking.Repositories.Credit
                            where a.CUSTOMERID == item.CUSTOMERID  && (a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || a.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
                            select new CurrentCustomerExposure
                            {
+                               loanId = 0,
+                               productTypeId = 0,
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                existingLimit = 0,
                                proposedLimit = a.PROPOSEDAMOUNT,

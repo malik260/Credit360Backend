@@ -1490,7 +1490,7 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                         where c.ISLMS == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
-                        && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                      //  && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                         //       && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
                         orderby a.DATETIMECREATED descending
