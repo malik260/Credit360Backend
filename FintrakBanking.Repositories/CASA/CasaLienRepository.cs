@@ -31,12 +31,13 @@ namespace FintrakBanking.Repositories.CASA
         private TransactionPosting tran;
         public CasaLienRepository(IGeneralSetupRepository _genSetup, IAuditTrailRepository _auditTrail,
                                             //ILoanOperationsRepository _creditOperations, 
-                                            FinTrakBankingContext _context, TransactionPosting tran)
+                                            FinTrakBankingContext _context, TransactionPosting tran, ITwoFactorAuthIntegrationService _twoFactorAuth)
         {
             this.context = _context;
             this.tran = tran;
             this.generalSetup = _genSetup;
             auditTrail = _auditTrail;
+            this.twoFactorAuth = _twoFactorAuth;
             //this.creditOperations = _creditOperations;
             var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = setup.USE_THIRD_PARTY_INTEGRATION;

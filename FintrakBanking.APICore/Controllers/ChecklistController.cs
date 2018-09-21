@@ -1280,8 +1280,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("delete-loan-condition-checkstatus/{conditionId}")]
-        public HttpResponseMessage DeleteLoanConditionPrecedenceStatus(int conditionId)
+        [Route("delete-loan-condition-checkstatus/{conditionId}/{isLMSChecklist}")]
+        public HttpResponseMessage DeleteLoanConditionPrecedenceStatus(int conditionId, bool isLMSChecklist)
         {
             try
             {
@@ -1294,7 +1294,7 @@ namespace FintrakBanking.APICore.Controllers
                     userIPAddress = CommonHelpers.GetUserIP()
                 };
 
-            var data =    repo.DeleteLoanConditionPrecedenceStatus(conditionId, user);
+            var data =    repo.DeleteLoanConditionPrecedenceStatus(conditionId, isLMSChecklist, user);
                 if(data == true)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1707,5 +1707,48 @@ namespace FintrakBanking.APICore.Controllers
             new { success = false, message = $"There was an error creating this record {e.Message}" });
             }
         }
+
+        #region LMS Condition Precedence Checklist
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-condition-prededence-checklist")]
+        public HttpResponseMessage GetLMSConditionPrecedenceChecklist(int loanReviewApplicationId)
+        {
+            try
+            {
+                var data = repo.GetLMSConditionPrecedenceChecklist(loanReviewApplicationId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-condition-prededence-checklist-status")]
+        public HttpResponseMessage GetLMSConditionPrecedenceChecklistStatus(int loanReviewApplicationId)
+        {
+            try
+            {
+                var data = repo.GetLMSConditionPrecedenceChecklistStatus(loanReviewApplicationId);
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        #endregion
     }
 }

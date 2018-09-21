@@ -60,7 +60,7 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<CheckListTargetTypeViewModel> GetAllChecklistTargetType();
         #endregion
         #region Checklist Validation
-        
+
         bool ValidateChecklistDetailEntry(int checklistDefinitionId, int targetId);
         bool ValidateConditionPrecedentDetail(ConditionPrecedentViewModel entity);
         bool ValidateChecklistForDefferalOrWaival(int conditionId);
@@ -99,7 +99,12 @@ namespace FintrakBanking.Interfaces.Setups
         #endregion
 
         bool RegulatoryChecklistAutomapping(int customerId, ChecklistDetailViewModel model);
-        bool DeleteLoanConditionPrecedenceStatus(int conditionId, UserInfo user);
+        bool DeleteLoanConditionPrecedenceStatus(int conditionId, bool isLMSChecklist, UserInfo user);
         bool ValidatePrecedenceChecklistCompleted(int loanApplicationId);
+
+        #region Condition Precedence Checklist
+        IEnumerable<ConditionPrecedentViewModel> GetLMSConditionPrecedenceChecklist(int loanReviewApplicationId);
+        IEnumerable<ConditionPrecedentViewModel> GetLMSConditionPrecedenceChecklistStatus(int loanReviewApplicationId);
+        #endregion
     }
 }
