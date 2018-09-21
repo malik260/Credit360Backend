@@ -1498,6 +1498,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var deferredCondition = context.TBL_LOAN_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
                 deferredCondition.ISSUBSEQUENT = true;
+                context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
             }
 
             // Audit Section ---------------------------
