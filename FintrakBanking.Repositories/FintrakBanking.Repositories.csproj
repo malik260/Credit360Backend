@@ -158,7 +158,6 @@
     <Compile Include="Credit\LoanRepository.cs" />
     <Compile Include="Credit\LoanReviewApplicationRepository.cs" />
     <Compile Include="Credit\LoanScheduleRepository.cs" />
-    <Compile Include="Credit\CustomException.cs" />
     <Compile Include="Credit\OfferLetterAndAvailmentRepository.cs" />
     <Compile Include="Credit\TransactionDynamicsRepository.cs" />
     <Compile Include="Customer\CustomerFSCaptionDetailRepository.cs" />

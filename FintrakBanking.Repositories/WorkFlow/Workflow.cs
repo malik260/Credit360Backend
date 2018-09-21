@@ -140,7 +140,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 this.fromLevelId = request.TOAPPROVALLEVELID;
                 this.requestLevelId = request.FROMAPPROVALLEVELID;
                 this.isCrossOperationProcess = request.OPERATIONID != this.operationId;
-                if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(request.TOSTAFFID); }// request.FROMAPPROVALLEVELID; }
+                if (this.statusId == (int)ApprovalStatusEnum.Reroute) { this.fromLevelId = ResolveReroute(request.TOSTAFFID); }
                 if (request.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred) { ResolveReferred(request.REQUESTSTAFFID, request.FROMAPPROVALLEVELID, request.TOAPPROVALLEVELID); }
                 if (ProcessIsClosed()) { throw new SecureException("Process is closed!"); }
             }
@@ -175,7 +175,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 request.RESPONSESTAFFID = this.staffId;
             }
 
-            //SendNotifications();
+            SendNotifications();
 
             SetResponseInformation();
 
@@ -853,13 +853,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if (this.nextLevelId != null)
                     {
                         var nextLevel = context.TBL_APPROVAL_LEVEL.Find(this.nextLevelId);
-                        var staffRoleEmails = context.TBL_STAFF.Where(x => x.STAFFROLEID == nextLevel.STAFFROLEID)
-                            .Select(x => x.EMAIL)
-                            .Distinct();
+
+                        var actorIds = context.TBL_APPROVAL_TRAIL.Where(t => t.OPERATIONID == operationId && t.TARGETID == targetId)
+                            .Join(context.TBL_STAFF, t => t.REQUESTSTAFFID, s => s.STAFFID, (t, s) => new { t, s })
+                            .Select(x => x.s.EMAIL).ToList();
+
                         var levelStaffEmails = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.DELETED == false && x.APPROVALLEVELID == nextLevel.APPROVALLEVELID)
                             .Select(x => x.TBL_STAFF.EMAIL)
                             .Distinct();
-                        emails = staffRoleEmails.Union(levelStaffEmails).ToList();
+                        emails = actorIds.Union(levelStaffEmails).ToList();
                     }
                 }
 
