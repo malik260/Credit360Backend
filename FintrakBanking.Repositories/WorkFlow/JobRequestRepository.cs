@@ -941,6 +941,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
 
+
+
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
                     {
@@ -1897,15 +1899,22 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (credits.DETAILTYPEID != (short)ChargeFeeDetailTypeEnum.Customer)
                         {
                             credit.glAccountId = (int)credits.GLACCOUNTID1;
-
+                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
+                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
                         }
                         else
                         {
                             credit.accountNumber = model.accountNumber;
-                            credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == (short)DefaultProductEnum.CASA).PRINCIPALBALANCEGL.Value;
+                            //var defaultProduct = context.TBL_PRODUCT.Find((short)DefaultProductEnum.CASA);
+                            //credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == (short)DefaultProductEnum.CASA).PRINCIPALBALANCEGL.Value;
+                            //credit.glAccountId = defaultProduct.PRINCIPALBALANCEGL.Value;
+                            //credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credit.glAccountId, model.companyId);
+                            //credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, casa.CURRENCYID, model.companyId).sellingRate;
                         }
 
-                        credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                        //casa.CURRENCYID;
+                        credit.glAccountId = (int)credits.GLACCOUNTID1;
+                        credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
                         credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
                         credit.isApproved = true;
                         credit.postedBy = model.createdBy;

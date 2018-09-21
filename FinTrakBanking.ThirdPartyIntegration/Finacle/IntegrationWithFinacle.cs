@@ -414,7 +414,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         public bool PostTransactions(List<FinanceTransactionViewModel> model)
         {
             ResponseMessage result = null;
-
+            
             List<TransactionPostingViewModel> transactionList = TransactionData(model);
 
             var curencyTypeCount = model.Select(x => x.currencyId).Distinct().Count();

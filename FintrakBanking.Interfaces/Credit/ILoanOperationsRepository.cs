@@ -58,7 +58,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode);
         IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode);
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> MergePeriodicSchedule(int loanId, DateTime applicationDate);
-        bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, short loanReviewOperationsId, int loanId, int staffId, [Optional] LoanSystemTypeEnum facilityType, [Optional] string approvalComment);
+        bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, short loanReviewOperationsId, int loanId, int staffId, LoanSystemTypeEnum facilityType, [Optional] string approvalComment);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForInterestReview(DateTime applicationDate, int loanId);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForBulkInterestReview(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessAuthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate);
