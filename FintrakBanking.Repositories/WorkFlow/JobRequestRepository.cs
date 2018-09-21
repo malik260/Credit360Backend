@@ -903,9 +903,9 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 //var witholdingAmount = (double)model.totalChargeAmount / 0.1;
                 //model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
-                model.currencyId = jobRequestDetail.FirstOrDefault().CURRENCYID;
+                model.currencyId = (short) jobRequestDetail.FirstOrDefault().CURRENCYID.Value;
                 model.operationId = (short)OperationsEnum.CollateralSearchCompletion;
-                model.feeNarration = $"credit solicitor acc# for searching";
+                model.feeNarration = $"Payment to solicitor";
                 auditDetail = $"Solicitor account number '{accountNumber}' credited for collateral search job";
             }
 
@@ -1832,7 +1832,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
+
+
+            //var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
+            var currency = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
+
             var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
             if (searchCharges.Any() && model.totalChargeAmount != 0)
             {
@@ -1855,7 +1859,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         debit.description = model.feeNarration;
                         debit.valueDate = general.GetApplicationDate();
                         debit.transactionDate = debit.valueDate;
-                        debit.currencyId = casa.CURRENCYID;
+                        debit.currencyId = (short) model.currencyId.Value;
                         debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
                         debit.isApproved = true;
                         debit.postedBy = model.createdBy;
@@ -1876,7 +1880,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         debit.destinationBranchId = model.userBranchId;
                         debit.rateCode = "TTB";
                         debit.rateUnit = string.Empty;
-                        debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                        debit.currencyCrossCode = currency.CURRENCYCODE;
 
                         inputTransactions.Add(debit);
                     }
@@ -1899,22 +1903,26 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (credits.DETAILTYPEID != (short)ChargeFeeDetailTypeEnum.Customer)
                         {
                             credit.glAccountId = (int)credits.GLACCOUNTID1;
-                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
-                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                            credit.casaAccountId = null;
+                            //credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
+                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, model.currencyId.Value, model.companyId).sellingRate;
                         }
                         else
                         {
                             credit.accountNumber = model.accountNumber;
-                            //var defaultProduct = context.TBL_PRODUCT.Find((short)DefaultProductEnum.CASA);
+                            credit.useDirectAccount = true;
+                            var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == 1); // .TBL_PRODUCT.Find((short)DefaultProductEnum.CASA);
                             //credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == (short)DefaultProductEnum.CASA).PRINCIPALBALANCEGL.Value;
-                            //credit.glAccountId = defaultProduct.PRINCIPALBALANCEGL.Value;
+                            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID);
+                            credit.glAccountId = product.PRINCIPALBALANCEGL.Value;
+                            credit.casaAccountId = casa.CASAACCOUNTID;
                             //credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credit.glAccountId, model.companyId);
-                            //credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, casa.CURRENCYID, model.companyId).sellingRate;
+                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, model.currencyId.Value, model.companyId).sellingRate;
                         }
 
                         //casa.CURRENCYID;
-                        credit.glAccountId = (int)credits.GLACCOUNTID1;
-                        credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
+                        //credit.glAccountId = (int)credits.GLACCOUNTID1;
+                        credit.currencyId = model.currencyId.Value; //  (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
                         credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
                         credit.isApproved = true;
                         credit.postedBy = model.createdBy;
@@ -1926,14 +1934,14 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                         credit.sourceReferenceNumber = model.requestCode;
                         credit.batchCode = batchCode;
-                        credit.casaAccountId = null;
+                        
                         credit.debitAmount = 0;
                         credit.creditAmount = creditAmount;
                         credit.sourceBranchId = model.userBranchId;
                         credit.destinationBranchId = model.userBranchId;
                         credit.rateCode = "TTB";
                         credit.rateUnit = string.Empty;
-                        credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                        credit.currencyCrossCode = currency.CURRENCYCODE;
 
                         inputTransactions.Add(credit);
                     }

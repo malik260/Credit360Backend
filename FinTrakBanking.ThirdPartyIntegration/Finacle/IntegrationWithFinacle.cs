@@ -797,7 +797,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
 
 
-        private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model, bool useDirectAccount = false )
+        private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model )
         {
             List<TransactionPostingViewModel> transactionLst = new List<TransactionPostingViewModel>();
             foreach (var item in model)
@@ -815,7 +815,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 //? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?
                 //.PRODUCTACCOUNTNUMBER : GetGlAccountCode(item.glAccountId, item.currencyId, item.sourceBranchId);
 
-                if (useDirectAccount == false)
+                if (item.useDirectAccount == false)
                 {
                     if (item.casaAccountId != null)
                         transPosting.accounts = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?.PRODUCTACCOUNTNUMBER;

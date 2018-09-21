@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.ThridPartyIntegration
 {
-    public class TransactionPostingViewModel: GeneralEntity
+    public class TransactionPostingViewModel //: GeneralEntity
     {
         public string accounts { get; set; }
         public string amounts { get; set; }
