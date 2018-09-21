@@ -1140,9 +1140,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         $"<strong> *Credit Verification Officer&rsquo; s initial for compliance only</strong></td>" +
 
-                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>" +
-
-                        $"<strong> Location of document </strong><strong><em> (Corporate workflow)</em ></strong></td></tr>";
+                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>";
 
                 foreach (var item in productExternalConditions)
                 {
@@ -1152,7 +1150,6 @@ namespace FintrakBanking.Repositories.Credit
                         $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
                         $"</tr>";
                 }
 
