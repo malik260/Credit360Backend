@@ -1253,23 +1253,42 @@ namespace FintrakBanking.Repositories.Credit
             var output = condition.Count == status.Count;
             return output;
         }
-        public bool DeleteLoanConditionPrecedenceStatus(int conditionId, UserInfo user)
+        public bool DeleteLoanConditionPrecedenceStatus(int conditionId, bool isLMSChecklist, UserInfo user)
         {
-            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionId);
-            if (data == null) return false;
-
-
-            if (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)
+            if (isLMSChecklist == true)
             {
-                var deferral = context.TBL_LOAN_CONDITION_DEFERRAL.Where(x => x.LOANCONDITIONID == data.LOANCONDITIONID).FirstOrDefault();
-                if (deferral != null)
-                {
-                    context.TBL_LOAN_CONDITION_DEFERRAL.Remove(deferral);
-                }
-            }
-            data.CHECKLISTSTATUSID = null;
-            data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                var data = this.context.TBL_LMSR_CONDITION_PRECEDENT.Find(conditionId);
+                if (data == null) return false;
 
+
+                if (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)
+                {
+                    var deferral = context.TBL_LOAN_CONDITION_DEFERRAL.Where(x => x.LOANCONDITIONID == data.LOANCONDITIONID && x.ISLMS == true).FirstOrDefault();
+                    if (deferral != null)
+                    {
+                        context.TBL_LOAN_CONDITION_DEFERRAL.Remove(deferral);
+                    }
+                }
+                data.CHECKLISTSTATUSID = null;
+                data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+            }
+            else
+            {
+                var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionId);
+                if (data == null) return false;
+
+
+                if (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived)
+                {
+                    var deferral = context.TBL_LOAN_CONDITION_DEFERRAL.Where(x => x.LOANCONDITIONID == data.LOANCONDITIONID && x.ISLMS == false).FirstOrDefault();
+                    if (deferral != null)
+                    {
+                        context.TBL_LOAN_CONDITION_DEFERRAL.Remove(deferral);
+                    }
+                }
+                data.CHECKLISTSTATUSID = null;
+                data.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+            }
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistDeleted,
@@ -1378,7 +1397,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
                 data.LASTUPDATEDBY = (int)model.createdBy;
-            } else
+            }
+            else
             {
                 var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(model.conditionId);
                 if (data == null) return false;
@@ -1394,7 +1414,7 @@ namespace FintrakBanking.Repositories.Credit
                 data.DATETIMEUPDATED = _genSetup.GetApplicationDate();
                 data.LASTUPDATEDBY = (int)model.createdBy;
             }
-             
+
             if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
             {
                 var deferral = new TBL_LOAN_CONDITION_DEFERRAL();
@@ -1458,9 +1478,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ChecklistApprovalViewModel> GetChecklistAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
-            int staffApprovalLevelId = 0;
-            if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
+              var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
+
+            //var levelResult = level.GetAllApprovalLevelStaffByStaffId(staffId, companyId);
+            //int staffApprovalLevelId = 0;
+            //if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
             var data = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                         join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
@@ -1468,14 +1490,15 @@ namespace FintrakBanking.Repositories.Credit
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
                         where c.ISLMS == false && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
-                        && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                        && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                        //       && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
                         orderby a.DATETIMECREATED descending
                         select new ChecklistApprovalViewModel()
                         {
-                            customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                               customerName = a.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? a.TBL_LOAN_APPLICATION.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             proposedAmount = a.APPROVEDAMOUNT,
-                            approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                           approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                             deferredDate = b.DEFEREDDATE,
                             deferralDuration = 1,
                             cummulativeDays = 1,
@@ -1508,12 +1531,12 @@ namespace FintrakBanking.Repositories.Credit
             int staffApprovalLevelId = 0;
             if (levelResult != null) staffApprovalLevelId = levelResult.approvalLevelId;
 
-            var data = (from a in context.TBL_LMSR_APPLICATION_DETAIL 
+            var data = (from a in context.TBL_LMSR_APPLICATION_DETAIL
                         join ln in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals ln.LOANAPPLICATIONID
                         join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
                         join c in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals c.LOANCONDITIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on c.LOANCONDITIONID equals atrail.TARGETID
-                        where c.ISLMS == true && atrail.APPROVALSTATUSID ==  (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        where c.ISLMS == true && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                         && atrail.OPERATIONID == (int)OperationsEnum.ChecklistApproval
                         && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null
@@ -1522,7 +1545,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             customerName = ln.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup ? ln.TBL_CUSTOMER_GROUP.GROUPNAME : a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME,
                             proposedAmount = a.APPROVEDAMOUNT,
-                          //  approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
+                            //  approvalStatus = b.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                             deferredDate = b.DEFEREDDATE,
                             deferralDuration = 1,
                             cummulativeDays = 1,
@@ -1530,7 +1553,7 @@ namespace FintrakBanking.Repositories.Credit
                             conditionId = b.LOANCONDITIONID,
                             loanApplicationId = a.LOANAPPLICATIONID,
                             applicationReferenceNumber = ln.APPLICATIONREFERENCENUMBER,
-                           // checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                            // checklistStatus = b.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                             dateCreated = b.DATETIMECREATED,
                             //Loan Information
                             relationshipOfficerName = ln.TBL_STAFF.FIRSTNAME + " " + ln.TBL_STAFF.FIRSTNAME,
@@ -1544,7 +1567,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusId = ln.APPLICATIONSTATUSID,
                             applicationStatusId = ln.APPROVALSTATUSID,
                             submittedForAppraisal = ln.SUBMITTEDFORAPPRAISAL,
-                           // loanInformation = ln.LOANPURPOSE
+                            // loanInformation = ln.LOANPURPOSE
                         }).ToList();
             return data;
         }
@@ -1733,9 +1756,19 @@ namespace FintrakBanking.Repositories.Credit
         public bool ValidateConditionPrecedentDetail(ConditionPrecedentViewModel entity)
         {
             if (entity == null) return false;
-            var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(entity.conditionId);
-            if (data == null) return false;
-            data.CHECKLISTVALIDATED = entity.validationStatus;
+            if (entity.isLMSChecklist == true)
+            {
+                var data = this.context.TBL_LMSR_CONDITION_PRECEDENT.Find(entity.conditionId);
+                if (data == null) return false;
+                data.CHECKLISTVALIDATED = entity.validationStatus;
+            }
+            else
+            {
+                var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(entity.conditionId);
+                if (data == null) return false;
+                data.CHECKLISTVALIDATED = entity.validationStatus;
+            }
+
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -1809,45 +1842,45 @@ namespace FintrakBanking.Repositories.Credit
         #region LMS Condition Precedence Checklist
         public IEnumerable<ConditionPrecedentViewModel> GetLMSConditionPrecedenceChecklist(int loanReviewApplicationId)
         {
-                var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
-                                 join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
-                                 where d.LOANREVIEWAPPLICATIONID == loanReviewApplicationId && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false &&
-                                  c.CHECKLISTSTATUSID == null
-                                 select new ConditionPrecedentViewModel()
-                                 {
-                                     condition = c.CONDITION,
-                                     conditionId = c.LOANCONDITIONID,
-                                     loanApplicationId = d.LOANREVIEWAPPLICATIONID,
-                                     loanApplicationDetailId = c.LOANREVIEWAPPLICATIONID,
-                                     isExternal = c.ISEXTERNAL,
-                                     responseTypeId = c.RESPONSE_TYPEID,
-                                     checkListStatusId = c.CHECKLISTSTATUSID,
-                                     checkListValidated = c.CHECKLISTVALIDATED,
-                                     approvalStatusId = c.APPROVALSTATUSID,
+            var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                             join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
+                             where d.LOANREVIEWAPPLICATIONID == loanReviewApplicationId && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false &&
+                              c.CHECKLISTSTATUSID == null
+                             select new ConditionPrecedentViewModel()
+                             {
+                                 condition = c.CONDITION,
+                                 conditionId = c.LOANCONDITIONID,
+                                 loanApplicationId = d.LOANREVIEWAPPLICATIONID,
+                                 loanApplicationDetailId = c.LOANREVIEWAPPLICATIONID,
+                                 isExternal = c.ISEXTERNAL,
+                                 responseTypeId = c.RESPONSE_TYPEID,
+                                 checkListStatusId = c.CHECKLISTSTATUSID,
+                                 checkListValidated = c.CHECKLISTVALIDATED,
+                                 approvalStatusId = c.APPROVALSTATUSID,
 
-                                 }).ToList();
-                return condition;
+                             }).ToList();
+            return condition;
         }
         public IEnumerable<ConditionPrecedentViewModel> GetLMSConditionPrecedenceChecklistStatus(int loanReviewApplicationId)
         {
-                var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
-                              join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
-                              join e in context.TBL_CHECKLIST_STATUS on c.CHECKLISTSTATUSID equals e.CHECKLISTSTATUSID
-                              join f in context.TBL_APPROVAL_STATUS on c.APPROVALSTATUSID equals f.APPROVALSTATUSID
-                              where d.LOANREVIEWAPPLICATIONID == loanReviewApplicationId &&
-                               c.CHECKLISTSTATUSID != null
-                              orderby c.ISEXTERNAL descending
-                              select new ConditionPrecedentViewModel()
-                              {
-                                  condition = c.CONDITION,
-                                  conditionId = c.LOANCONDITIONID,
-                                  status = e.CHECKLISTSTATUSNAME,
-                                  approvalStatus = f.APPROVALSTATUSNAME,
-                                  loanApplicationId = d.LOANREVIEWAPPLICATIONID,
-                                  validationStatus = c.CHECKLISTVALIDATED,
-                                  isExternal = c.ISEXTERNAL
-                              }).ToList();
-                return status;
+            var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                          join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
+                          join e in context.TBL_CHECKLIST_STATUS on c.CHECKLISTSTATUSID equals e.CHECKLISTSTATUSID
+                          join f in context.TBL_APPROVAL_STATUS on c.APPROVALSTATUSID equals f.APPROVALSTATUSID
+                          where d.LOANREVIEWAPPLICATIONID == loanReviewApplicationId &&
+                           c.CHECKLISTSTATUSID != null
+                          orderby c.ISEXTERNAL descending
+                          select new ConditionPrecedentViewModel()
+                          {
+                              condition = c.CONDITION,
+                              conditionId = c.LOANCONDITIONID,
+                              status = e.CHECKLISTSTATUSNAME,
+                              approvalStatus = f.APPROVALSTATUSNAME,
+                              loanApplicationId = d.LOANREVIEWAPPLICATIONID,
+                              validationStatus = c.CHECKLISTVALIDATED,
+                              isExternal = c.ISEXTERNAL
+                          }).ToList();
+            return status;
         }
         #endregion
 

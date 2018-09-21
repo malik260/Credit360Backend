@@ -1280,8 +1280,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpDelete]
         [ClaimsAuthorization]
-        [Route("delete-loan-condition-checkstatus/{conditionId}")]
-        public HttpResponseMessage DeleteLoanConditionPrecedenceStatus(int conditionId)
+        [Route("delete-loan-condition-checkstatus/{conditionId}/{isLMSChecklist}")]
+        public HttpResponseMessage DeleteLoanConditionPrecedenceStatus(int conditionId, bool isLMSChecklist)
         {
             try
             {
@@ -1294,7 +1294,7 @@ namespace FintrakBanking.APICore.Controllers
                     userIPAddress = CommonHelpers.GetUserIP()
                 };
 
-            var data =    repo.DeleteLoanConditionPrecedenceStatus(conditionId, user);
+            var data =    repo.DeleteLoanConditionPrecedenceStatus(conditionId, isLMSChecklist, user);
                 if(data == true)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
