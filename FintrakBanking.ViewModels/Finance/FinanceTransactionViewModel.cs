@@ -76,6 +76,7 @@ namespace FintrakBanking.ViewModels.Finance
         public string rateUnit { get; set; }
         public string rateCode { get; set; }
 
+        public string accountNumber { get; set; }
     }
 
 

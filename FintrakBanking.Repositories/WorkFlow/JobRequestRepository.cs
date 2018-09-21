@@ -516,7 +516,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             List<JobRequestDetailViewModel> jobDetailList = new List<JobRequestDetailViewModel>();
             foreach(var i in jobRequest)
             {
-                var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == i.JOBREQUESTID && ((x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting) || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch) || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification) || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs))).ToList();
+                var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == i.JOBREQUESTID && ((x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting) 
+                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch) 
+                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification) 
+                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs)) && x.ACCREDITEDCONSULTANTPAID == false).ToList();
                 decimal chargeAmount = 0;
                 var jobSubTypeName = string.Empty; 
                 var jobTypeName = string.Empty;
@@ -893,15 +896,17 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var consultantId = jobRequestDetail.FirstOrDefault().ACCREDITEDCONSULTANTID;
                 var consultantRecord = context.TBL_ACCREDITEDCONSULTANT.Where(x=>x.ACCREDITEDCONSULTANTID == consultantId);
                 accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
-                var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
+                //var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
 
-                var casaUnique = casa.FirstOrDefault();
-                model.casaAccountId = casaUnique.CASAACCOUNTID;
-                model.operationId = (short)OperationsEnum.CollateralSearchCompletion;
+                //var casaUnique = casa.FirstOrDefault();
+                //model.casaAccountId = casaUnique.CASAACCOUNTID;
+
                 //var witholdingAmount = (double)model.totalChargeAmount / 0.1;
                 //model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
+                model.currencyId = jobRequestDetail.FirstOrDefault().CURRENCYID;
+                model.operationId = (short)OperationsEnum.CollateralSearchCompletion;
                 model.feeNarration = $"credit solicitor acc# for searching";
-                auditDetail = $"Solicitor account number '{casa.FirstOrDefault().PRODUCTACCOUNTNUMBER}' credited for collateral search job";
+                auditDetail = $"Solicitor account number '{accountNumber}' credited for collateral search job";
             }
 
             var jobRequestData = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
@@ -923,8 +928,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                 };
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                inputTransactions.AddRange(BuildCollateralSearchChargeFeesPosting(model));
-
+                if(model.isInitiation)
+                    inputTransactions.AddRange(BuildCollateralSearchChargeFeesPosting(model));
+                if (!model.isInitiation)
+                {
+                    model.accountNumber = accountNumber;
+                    inputTransactions.AddRange(BuildSolicitorFeePaymentPosting(model));
+                }
+                    
+                
                 if (inputTransactions.Count > 0)
                 {
                     financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
@@ -948,7 +960,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     return true;
                 }
 
-                else return true;
+                else return false;
             }
             else return false;
                 
@@ -959,7 +971,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var jobRequest = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
             var baseApplication = context.TBL_LOAN_APPLICATION_DETAIL.Find(jobRequest.TARGETID);
             var state = context.TBL_STATE.Find(model.collateralStateId);
-
+            var company = context.TBL_COMPANY.Find(model.companyId);
             //var casa = context.TBL_CASA.Find(model.casaAccountId);
 
             //if (casa == null)
@@ -978,7 +990,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber
+                    accountNumber = model.accountNumber,
+                    currencyId = company.CURRENCYID
                 };
                 saveJobRequestDetail(detail);
             }
@@ -993,7 +1006,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber
+                    accountNumber = model.accountNumber,
+                    currencyId = company.CURRENCYID
                 };
                 saveJobRequestDetail(detail);
             }
@@ -1008,7 +1022,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber
+                    accountNumber = model.accountNumber,
+                    currencyId = company.CURRENCYID
                 };
                 saveJobRequestDetail(detail);
             }
@@ -1024,7 +1039,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
-                    accountNumber = model.accountNumber
+                    accountNumber = model.accountNumber,
+                    currencyId = company.CURRENCYID
                 };
                 saveJobRequestDetail(detail);
             }
@@ -1814,7 +1830,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
             var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
             if (searchCharges.Any() && model.totalChargeAmount != 0)
             {
@@ -1834,7 +1850,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             debitAmount = (decimal)model.totalChargeAmount;
 
                         debit.operationId = (int)model.operationId;
-                        debit.description = model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
+                        debit.description = model.feeNarration;
                         debit.valueDate = general.GetApplicationDate();
                         debit.transactionDate = debit.valueDate;
                         debit.currencyId = casa.CURRENCYID;
@@ -1848,14 +1864,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                         debit.companyId = model.companyId;
 
 
-                        debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                        debit.glAccountId = debits.GLACCOUNTID1.Value;
                         debit.sourceReferenceNumber = model.requestCode;
                         debit.batchCode = batchCode;
-                        debit.casaAccountId = casa.CASAACCOUNTID;
+                        debit.casaAccountId = null;
                         debit.debitAmount = debitAmount;
                         debit.creditAmount = 0;
                         debit.sourceBranchId = model.userBranchId;
-                        debit.destinationBranchId = casa.BRANCHID;
+                        debit.destinationBranchId = model.userBranchId;
                         debit.rateCode = "TTB";
                         debit.rateUnit = string.Empty;
                         debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
@@ -1877,6 +1893,18 @@ namespace FintrakBanking.Repositories.WorkFlow
                         credit.description = model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
                         credit.valueDate = general.GetApplicationDate();
                         credit.transactionDate = credit.valueDate;
+
+                        if (credits.DETAILTYPEID != (short)ChargeFeeDetailTypeEnum.Customer)
+                        {
+                            credit.glAccountId = (int)credits.GLACCOUNTID1;
+
+                        }
+                        else
+                        {
+                            credit.accountNumber = model.accountNumber;
+                            credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == (short)DefaultProductEnum.CASA).PRINCIPALBALANCEGL.Value;
+                        }
+
                         credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
                         credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
                         credit.isApproved = true;
@@ -1886,7 +1914,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         credit.approvedDateTime = DateTime.Now;
                         credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                         credit.companyId = model.companyId;
-                        credit.glAccountId = (int)credits.GLACCOUNTID1;
+
                         credit.sourceReferenceNumber = model.requestCode;
                         credit.batchCode = batchCode;
                         credit.casaAccountId = null;
