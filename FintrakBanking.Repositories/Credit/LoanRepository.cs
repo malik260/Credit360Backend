@@ -4830,7 +4830,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
                 operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
             }
-            
+
             data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                     join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
                     join d in context.TBL_LOAN_APPLICATION_DETAIL on s.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -4839,9 +4839,11 @@ namespace FintrakBanking.Repositories.Credit
                     join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                     join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                     where m.COMPANYID == companyId
-                    && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending))
+                    && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
+                    || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                    || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    && ((ids.Contains((int)atrail.TOAPPROVALLEVELID)) || (idContigent.Contains((int)atrail.TOAPPROVALLEVELID)))
+                    && ((ids.Contains((int)atrail.TOAPPROVALLEVELID)) || (idContigent.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && atrail.RESPONSESTAFFID == null
                     orderby s.LOAN_BOOKING_REQUESTID descending
@@ -4854,7 +4856,8 @@ namespace FintrakBanking.Repositories.Credit
                         requestedBy = "",
                         requestedAmount = s.AMOUNT_REQUESTED,
                         requestOperationId = (short)OperationsEnum.LoanBookingRequest,
-                        approvalStatusId = (short)m.APPROVALSTATUSID,
+                        approvalStatusId = atrail.APPROVALSTATUSID,
+                        approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                         loanApplicationId = m.LOANAPPLICATIONID,
                         loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                         applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
@@ -4887,6 +4890,8 @@ namespace FintrakBanking.Repositories.Credit
                         groupApprovedAmount = m.APPROVEDAMOUNT,
                         availmentDate = m.AVAILMENTDATE,
                         approvedTenor = d.APPROVEDTENOR,
+                        toStaffId = atrail.TOSTAFFID,
+                        requestStaffId = atrail.REQUESTSTAFFID,
                     }).ToList();
          
             foreach (var item in data)
@@ -7716,6 +7721,64 @@ namespace FintrakBanking.Repositories.Credit
         {
             var frequencyTypes = generalSetup.GetAllFrequencyTypes();
             return frequencyTypes;
+        }
+
+        public bool SendBackToBookingModifier(LoanViewModel model)
+        {
+            int staffId = 0;
+
+
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId.Value)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList();
+
+            var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+            var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            workflow.StaffId = model.createdBy;
+            workflow.OperationId = model.operationId.Value;
+            workflow.TargetId = model.loanId;
+            workflow.CompanyId = model.companyId;
+            workflow.ProductClassId = null;
+            workflow.ProductId = null;
+            workflow.NextLevelId = staffRoleLevelId;
+            workflow.ToStaffId = staffId;
+            workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+            workflow.Comment = model.comment;
+            workflow.DeferredExecution = true;
+
+            workflow.LogActivity();
+
+            //Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"facility booking with booking account number {model.loanReferenceNumber} refered back to modifier.",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            context.TBL_AUDIT.Add(audit);
+            //end of Audit section -------------------------------
+
+            return context.SaveChanges() > 0;
         }
         #endregion
 

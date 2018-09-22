@@ -20,7 +20,7 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public short TEMP_PRODUCTID { get; set; }
-        public int? PRODUCTID { get; set; }
+        public short? PRODUCTID { get; set; }
 
         public int COMPANYID { get; set; }
 
@@ -116,11 +116,13 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
-
+        public int? DELETEDBY { get; set; }
         public bool DELETED { get; set; }
 
-        public int? DELETEDBY { get; set; }
         public string OPERATION { get; set; }
+        public short? RISKRATINGID { get; set; }
+
+        public int? PENALCHARGEGL { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
 
