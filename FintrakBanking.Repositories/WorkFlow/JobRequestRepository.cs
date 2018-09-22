@@ -901,12 +901,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //var casaUnique = casa.FirstOrDefault();
                 //model.casaAccountId = casaUnique.CASAACCOUNTID;
 
-                //var witholdingAmount = (double)model.totalChargeAmount / 0.1;
+                var witholdingAmount = (double)model.totalChargeAmount / 0.9;
                 //model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
                 model.currencyId = (short) jobRequestDetail.FirstOrDefault().CURRENCYID.Value;
+                var currency = context.TBL_CURRENCY.Find(model.currencyId);
                 model.operationId = (short)OperationsEnum.CollateralSearchCompletion;
                 model.feeNarration = $"Payment to solicitor";
-                auditDetail = $"Solicitor account number '{accountNumber}' credited for collateral search job";
+                auditDetail = $"Solicitor account number '{accountNumber}' credited for collateral search job with '{currency.CURRENCYCODE}{witholdingAmount}'";
             }
 
             var jobRequestData = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
@@ -940,8 +941,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (inputTransactions.Count > 0)
                 {
                     financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
-
-
 
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
