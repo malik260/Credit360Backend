@@ -29,4 +29,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string name { get; set; }
         public int hoursSpent { get; set; }
     }
+
+    public class LoanDisburseByType
+    {
+        public int count { get; set; }
+        public int typeId { get; set; }
+        public string type { get; set; }
+    }
 }

@@ -64,6 +64,42 @@ namespace FintrakBanking.Repositories.Credit
 
             return loanDetails.ToList();
         }
+        public List<LoanDisburseByType> LoanDisbursedByType(DateTime startDate, DateTime endDate, int companyId)
+        {
+            int count = 0;
+            var loanDetails = (from a in context.TBL_LOAN
+                                              where //a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved //&& a.ISDISBURSED==true && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                               a.EFFECTIVEDATE >= startDate && a.EFFECTIVEDATE <= endDate && a.COMPANYID == companyId
+                                              group a by new { a.LOANSYSTEMTYPEID} into gg
+                                              select new LoanDisburseByType
+                                              {
+                                                  count = gg.Count(),
+                                                  typeId = gg.Key.LOANSYSTEMTYPEID,
+                                                  type = context.TBL_LOAN_SYSTEM_TYPE.Where(x=>x.LOANSYSTEMTYPEID== gg.Key.LOANSYSTEMTYPEID).Select(x=>x.LOANSYSTEMTYPENAME).FirstOrDefault()
+                                              }).ToList();
+            var od = (from a in context.TBL_LOAN_REVOLVING
+                               where //a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved //&& a.ISDISBURSED == true && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                a.EFFECTIVEDATE >= startDate && a.EFFECTIVEDATE <= endDate && a.COMPANYID == companyId
+                               group a by new { a.LOANSYSTEMTYPEID } into gg
+                               select new LoanDisburseByType
+                               {
+                                   count = gg.Count(),
+                                   typeId = gg.Key.LOANSYSTEMTYPEID,
+                                   type = context.TBL_LOAN_SYSTEM_TYPE.Where(x => x.LOANSYSTEMTYPEID == gg.Key.LOANSYSTEMTYPEID).Select(x => x.LOANSYSTEMTYPENAME).FirstOrDefault()
+                               }).ToList();
+            var contingent = (from a in context.TBL_LOAN_CONTINGENT
+                               where //a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved //&& a.ISDISBURSED == true && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                a.EFFECTIVEDATE >= startDate && a.EFFECTIVEDATE <= endDate && a.COMPANYID == companyId
+                               group a by new { a.LOANSYSTEMTYPEID } into gg
+                               select new LoanDisburseByType
+                               {
+                                   count = gg.Count(),
+                                   typeId = gg.Key.LOANSYSTEMTYPEID,
+                                   type = context.TBL_LOAN_SYSTEM_TYPE.Where(x => x.LOANSYSTEMTYPEID == gg.Key.LOANSYSTEMTYPEID).Select(x => x.LOANSYSTEMTYPENAME).FirstOrDefault()
+                               }).ToList();
+
+            return loanDetails.Union(od).Union(contingent).ToList();
+        }
 
         public List<DashboardViewModel> LoanOnThePipeline(DateTime startDate, DateTime endDate, int companyId)
         {

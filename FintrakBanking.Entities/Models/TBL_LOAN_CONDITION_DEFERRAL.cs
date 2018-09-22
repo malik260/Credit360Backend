@@ -19,6 +19,8 @@ namespace FintrakBanking.Entities.Models
 
         public short APPROVALSTATUSID { get; set; }
 
+        public bool ISLMS { get; set; }
+
         [Required]
         [StringLength(700)]
         public string DEFERRALREASON { get; set; }

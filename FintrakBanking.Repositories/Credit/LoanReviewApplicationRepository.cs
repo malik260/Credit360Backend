@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedTenor = d.APPROVEDTENOR,
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
-                    // loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+
                 })
                 
             })
@@ -561,7 +561,10 @@ namespace FintrakBanking.Repositories.Credit
                 .OrderByDescending(x => x.LOANAPPLICATIONID)
                 .Join(
                     context.TBL_APPROVAL_TRAIL.Where(x => camOperationIds.Contains(x.OPERATIONID)
-                        && levels.Contains((int)x.TOAPPROVALLEVELID)),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
+                        && levels.Contains((int)x.TOAPPROVALLEVELID)
+                        && x.RESPONSESTAFFID == null
+                        ),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
+                        
                     a => a.LOANAPPLICATIONID,
                     b => b.TARGETID,
                     (a, b) => new { a, b, branch = a.TBL_BRANCH, customer = a.TBL_CUSTOMER })

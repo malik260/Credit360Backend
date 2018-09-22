@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.ViewModels.Credit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace FintrakBanking.Interfaces.Credit
     {
         bool Init(int operationId, int targetId);
         string Replace(string content);
+        ClassifiedAssetManagementViewModel ClassifiedAssetManagementtReviewTemplate(string applicationReferenceNumber);
     }
 }

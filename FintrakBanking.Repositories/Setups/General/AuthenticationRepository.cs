@@ -229,17 +229,17 @@ namespace FintrakBanking.Repositories.Setups.General
                             errorMessage = "",
                         };
                     }
-                    else if (this.LogCode.Split('@')[1] != null)
-                    {
-                        this.LogCode = loginCodeStr + "@" + ipAddressStr;
-                        result = new SessionStatusInfo
-                        {
-                            loginCode = Guid.Parse(loginCodeStr),
-                            state = 0,
-                            ipaddress = ipAddressStr,
-                            errorMessage = "",
-                        };
-                    }
+                    //else if (this.LogCode.Split('@')[1] != null)
+                    //{
+                    //    this.LogCode = loginCodeStr + "@" + ipAddressStr;
+                    //    result = new SessionStatusInfo
+                    //    {
+                    //        loginCode = Guid.Parse(loginCodeStr),
+                    //        state = 0,
+                    //        ipaddress = ipAddressStr,
+                    //        errorMessage = "",
+                    //    };
+                    //}
                     else
                     {
                         this.LogCode = loginCodeStr + "@" + ipAddressStr;

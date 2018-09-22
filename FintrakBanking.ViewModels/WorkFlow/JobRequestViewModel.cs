@@ -100,6 +100,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string description { get; set; }
         public decimal? amount { get; set; }
         public string accountNumber { get; set; }
+        public int? currencyId { get; set; }
     }
 
     public class JobRequestCollateralSearchViewModel : GeneralEntity
@@ -122,6 +123,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public short collateralStateId { get; set; }
         public string requestCode  { get; set; }
         public int operationId { get; set; }
+        public short? currencyId { get; set; }
         public bool isInitiation { get; set; }
     }
 

@@ -29,6 +29,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool ACCREDITEDCONSULTANTPAID { get; set; }
 
+        public int? CURRENCYID { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }

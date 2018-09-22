@@ -75,7 +75,8 @@ namespace FintrakBanking.ViewModels.Finance
         public string currencyCrossCode { get; set; }
         public string rateUnit { get; set; }
         public string rateCode { get; set; }
-
+        public bool useDirectAccount { get; set; }
+        public string accountNumber { get; set; }
     }
 
 

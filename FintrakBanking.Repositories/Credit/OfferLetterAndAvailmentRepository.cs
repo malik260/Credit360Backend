@@ -342,7 +342,6 @@ namespace FintrakBanking.Repositories.Credit
 
             var templateLink = GetProductSpecificTemplate(productClassProcess.PRODUCT_CLASS_PROCESSID, (short?)targetAppl.PRODUCTCLASSID ?? 1);
 
-
             var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
@@ -1141,9 +1140,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         $"<strong> *Credit Verification Officer&rsquo; s initial for compliance only</strong></td>" +
 
-                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>" +
-
-                        $"<strong> Location of document </strong><strong><em> (Corporate workflow)</em ></strong></td></tr>";
+                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>";
 
                 foreach (var item in productExternalConditions)
                 {
@@ -1153,7 +1150,6 @@ namespace FintrakBanking.Repositories.Credit
                         $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
-                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
                         $"</tr>";
                 }
 
@@ -1982,6 +1978,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
+                bool cleared = OfferLetterChecklistValidation(appl.LOANAPPLICATIONID,1);
+
+                if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
+
                 appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.AvailmentInProgress;
 
                 if (appl.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees) // Bonds and Guarantees adapter
@@ -2019,6 +2019,24 @@ namespace FintrakBanking.Repositories.Credit
             var success = context.SaveChanges() > 0;
             workflow.Response.success = success;
             return workflow.Response;
+        }
+
+        private bool OfferLetterChecklistValidation(int id, int type)
+        {
+            int count = 0;
+            if (type == 1)
+            {
+                var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == id)
+                    .Select(x => x.LOANAPPLICATIONDETAILID)
+                    .ToList();
+                count = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => detailids.Contains(x.LOANAPPLICATIONDETAILID)
+                        && x.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred
+                        && x.ISSUBSEQUENT == false
+                    )
+                    .Count();
+            }
+
+            return count == 0;
         }
 
         private int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
