@@ -142,6 +142,7 @@ namespace FintrakBanking.Entities.Models
         public bool DELETED { get; set; }
 
         public int? DELETEDBY { get; set; }
+        public int? PENALCHARGEGL { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
 
