@@ -1,15 +1,10 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -38,7 +33,7 @@ namespace FintrakBanking.Repositories.Credit
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
 
         // place holders
-        public readonly string customerNameHolder = "@{{CustomerName}}";
+        private readonly string customerNameHolder = "@{{CustomerName}}";
         private readonly string branchNameHolder = "@{{Branch}}";
         private readonly string locationNameHolder = "@{{Location}}";
         private readonly string customerExposureHolder = "@{{CustomerExposure}}";
