@@ -3142,7 +3142,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.companyId = model.companyId;
 
             if (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == product.PRODUCTID).PRINCIPALBALANCEGL == null)
-                throw new BadLogicException($"No GL has been mapped with this product code '{product.PRODUCTCODE}'.");
+                throw new BadLogicException("No GL is currently mapped to this product code '{product.PRODUCTCODE}'.");
 
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == product.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
