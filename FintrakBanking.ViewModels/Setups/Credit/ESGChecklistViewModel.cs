@@ -44,6 +44,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string comment { get; set; }
 
         public int ratingId { get; set; }
+        public string productCustomerName { get; set; }
     }
     public class ESGSubCategoryViewModel
     {
