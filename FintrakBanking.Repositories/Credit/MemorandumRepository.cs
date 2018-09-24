@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -112,8 +113,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.isRelatedParty = loanAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 this.recommendedInterestRate = loanAppllication.INTERESTRATE.ToString();
                 this.dateCreated = loanAppllication.DATETIMECREATED.ToShortDateString();
-
-
+                this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
             }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
@@ -358,10 +358,59 @@ namespace FintrakBanking.Repositories.Credit
 
         // Environmental & Social Risk Assessment
 
-        public void GetEnvironmentalSocialRisk()
+        public IEnumerable<ESGChecklistSummaryViewModel> GetEnvironmentalSocialRisk()
         {
-
+            return context.TBL_ESG_CHECKLIST_SUMMARY
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId) 
+                , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (s, d) => new { s, d })
+                .Select(x => new ESGChecklistSummaryViewModel
+                {
+                    comment = x.s.COMMENT_,
+                    ratingId = x.s.RATINGID,
+                    productCustomerName = x.d.TBL_PRODUCT.PRODUCTNAME + " -- " + x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME
+                });
         }
+
+        private string GetEnvironmentalSocialRiskMarkup() // TODO RATINGIS
+        {
+            var result = String.Empty;
+            var summary = GetEnvironmentalSocialRisk();
+
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Facility</th>
+                        <th>Summary</th>
+                        <th>Rating</th>
+                    </tr>
+                 ";
+            foreach (var s in summary)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{s.productCustomerName}</td>
+                        <td>{s.comment}</td>
+                        <td>{GetESGRating(s.ratingId)}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+        }
+
+        private string GetESGRating(int ratingId)
+        {
+            if (ratingId == 7) return "Low";
+            if (ratingId == 8) return "Medium";
+            if (ratingId == 9) return "High";
+            return "N/A";
+        }
+
+        // Customer exposure
 
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure()
         {
