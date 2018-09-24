@@ -3142,7 +3142,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.companyId = model.companyId;
 
             if (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == product.PRODUCTID).PRINCIPALBALANCEGL == null)
-                throw new BadLogicException($"No GL has been mapped with this product code '{product.PRODUCTCODE}'.");
+                throw new BadLogicException("No GL is currently mapped to this product code '{product.PRODUCTCODE}'.");
 
             debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == product.PRODUCTID).PRINCIPALBALANCEGL.Value;
             debit.sourceReferenceNumber = model.loanReferenceNumber;
@@ -4814,22 +4814,82 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId)
         {
-            IEnumerable<CamProcessedLoanViewModel> data = null;
-            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
-            var idContigent = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
+            var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+            var cpldStaffLevels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.TermLoanBooking
+            || x.OPERATIONID == (int)OperationsEnum.CommercialLoanBooking
+            || x.OPERATIONID == (int)OperationsEnum.ForeignExchangeLoanBooking
+            || x.OPERATIONID == (int)OperationsEnum.RevolvingLoanBooking)
+                 .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                 .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                     mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                     {
+                         groupPosition = mg.m.POSITION,
+                         levelPosition = l.POSITION,
+                         levelId = l.APPROVALLEVELID,
+                         levelName = l.LEVELNAME,
+                         staffRoleId = l.STAFFROLEID,
+                     })
+                     .OrderBy(x => x.groupPosition)
+                     .ThenBy(x => x.levelPosition)
+                     .ToList();
+
+            var cpldStaffRoleLevels = cpldStaffLevels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var cpldStaffRoleLevelIds = cpldStaffRoleLevels.Select(x => x.levelId);
+            //var staffRoleLevelId = cpldStaffRoleLevelIds.FirstOrDefault();
 
             List<int> operationIds = new List<int>();
-            if(ids.Contains(74) || ids.Contains(76))
-            {
-                operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
-            }
-            else
+            if (cpldStaffRoleLevelIds.Any())
             {
                 operationIds.Add((int)OperationsEnum.TermLoanBooking);
                 operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
                 operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
                 operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
             }
+
+            var bAndGStaffLevels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == (int)OperationsEnum.ContigentLoanBooking)
+                .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                    mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                    {
+                        groupPosition = mg.m.POSITION,
+                        levelPosition = l.POSITION,
+                        levelId = l.APPROVALLEVELID,
+                        levelName = l.LEVELNAME,
+                        staffRoleId = l.STAFFROLEID,
+                    })
+                    .OrderBy(x => x.groupPosition)
+                    .ThenBy(x => x.levelPosition)
+                    .ToList();
+
+            var bAndGStaffRoleLevels = bAndGStaffLevels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+            var bAndGStaffRoleLevelIds = bAndGStaffRoleLevels.Select(x => x.levelId);
+            //var staffRoleLevelId = cpldStaffRoleLevelIds.FirstOrDefault();
+
+            if (!cpldStaffRoleLevelIds.Any() && bAndGStaffRoleLevelIds.Any())
+            {
+                operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
+            }
+
+            
+
+            IEnumerable<CamProcessedLoanViewModel> data = null;
+            //var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.TermLoanBooking).ToList();
+            //var idContigent = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContigentLoanBooking).ToList();
+
+            //List<int> operationIds = new List<int>();
+            //if(ids.Contains(74) || ids.Contains(76))
+            //{
+            //    operationIds.Add((int)OperationsEnum.ContigentLoanBooking);
+            //}
+            //else
+            //{
+            //    operationIds.Add((int)OperationsEnum.TermLoanBooking);
+            //    operationIds.Add((int)OperationsEnum.RevolvingLoanBooking);
+            //    operationIds.Add((int)OperationsEnum.ForeignExchangeLoanBooking);
+            //    operationIds.Add((int)OperationsEnum.CommercialLoanBooking);
+            //}
+
 
             data = (from s in context.TBL_LOAN_BOOKING_REQUEST
                     join atrail in context.TBL_APPROVAL_TRAIL on s.LOAN_BOOKING_REQUESTID equals atrail.TARGETID
@@ -4843,7 +4903,7 @@ namespace FintrakBanking.Repositories.Credit
                     || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                     || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    && ((ids.Contains((int)atrail.TOAPPROVALLEVELID)) || (idContigent.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
+                    && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && atrail.RESPONSESTAFFID == null
                     orderby s.LOAN_BOOKING_REQUESTID descending

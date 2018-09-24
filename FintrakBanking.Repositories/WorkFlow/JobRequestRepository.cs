@@ -1768,6 +1768,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                         debit.companyId = model.companyId;
 
 
+
+                        if (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL == null)
+                            throw new BadLogicException($"No GL is currently mapped to this product code '{casa.TBL_PRODUCT.PRODUCTCODE}'.");
+
                         debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                         debit.sourceReferenceNumber = model.requestCode;
                         debit.batchCode = batchCode;
