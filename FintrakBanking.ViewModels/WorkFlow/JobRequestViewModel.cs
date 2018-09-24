@@ -125,6 +125,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int operationId { get; set; }
         public short? currencyId { get; set; }
         public bool isInitiation { get; set; }
+
     }
 
     public class ApplicationJobRequest : LoanApplicationViewModel

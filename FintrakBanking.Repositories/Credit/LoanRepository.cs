@@ -4834,6 +4834,13 @@ namespace FintrakBanking.Repositories.Credit
                      .ThenBy(x => x.levelPosition)
                      .ToList();
 
+            var staffLevelId = (from x in context.TBL_APPROVAL_GROUP_MAPPING
+                                join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
+                                join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
+                                join st in context.TBL_APPROVAL_LEVEL_STAFF on z.APPROVALLEVELID equals st.APPROVALLEVELID
+                                where x.OPERATIONID == (int)OperationsEnum.TermLoanBooking && (z.STAFFROLEID == staff.STAFFROLEID || st.STAFFID == staff.STAFFID)
+                                select z.APPROVALLEVELID).FirstOrDefault();
+
             var cpldStaffRoleLevels = cpldStaffLevels.Where(x => x.staffRoleId == staff.STAFFROLEID);
             var cpldStaffRoleLevelIds = cpldStaffRoleLevels.Select(x => x.levelId);
             //var staffRoleLevelId = cpldStaffRoleLevelIds.FirstOrDefault();
