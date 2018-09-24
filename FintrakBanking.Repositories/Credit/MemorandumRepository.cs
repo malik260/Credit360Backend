@@ -1,15 +1,10 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -38,7 +33,7 @@ namespace FintrakBanking.Repositories.Credit
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
 
         // place holders
-        public readonly string customerNameHolder = "@{{CustomerName}}";
+        private readonly string customerNameHolder = "@{{CustomerName}}";
         private readonly string branchNameHolder = "@{{Branch}}";
         private readonly string locationNameHolder = "@{{Location}}";
         private readonly string customerExposureHolder = "@{{CustomerExposure}}";
@@ -50,6 +45,20 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string environmentalSocialRiskHolder = "@{{EnvironmentalSocialRisk}}";
         private readonly string monitoringTriggersHolder = "@{{MonitoringTriggers}}";
         private readonly string proposedConditionsHolder = "@{{ProposedConditions}}";
+        private readonly string isSecurityHolder = "@{{IsSecurity}}";
+        private readonly string isOwnerOccupiedHolder = "@{{IsOwnerOccupied}}";
+        // lms only
+        private readonly string securityTypeHolder = "@{{SecurityType}}";
+        private readonly string securityDescriptionHolder = "@{{SecurityDescription}}";
+        private readonly string securityFirstSellValueHolder = "@{{SecurityFirstSellValue}}";
+        private readonly string securityLocationHolder = "@{{SecurityLocation}}";
+        private readonly string securityOpenMarketValueHolder = "@{{SecurityOpenMarketValue}}";
+        private readonly string securityPerfectionStatusHolder = "@{{SecurityPerfectionStatus}}";
+        private readonly string securityValuationDateHolder = "@{{SecurityValuationDate}}";
+        private readonly string shareHoldersHolder = "@{{ShareHolders}}";
+        private readonly string signitoriesHolder = "@{{Signitories}}";
+        private readonly string directorsHolder = "@{{Directors}}";
+
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -64,9 +73,20 @@ namespace FintrakBanking.Repositories.Credit
         private string environmentalSocialRisk;
         private string monitoringTriggers;
         private string proposedConditions;
-        private string listOfshareHolders;
-        private string listOfSignitories;
-        private string listOfDirectors;
+        // lms
+        private string securityType;
+        private string securityDescription;
+        private string securityFirstSellValue;
+        private string securityLocation;
+        private string securityOpenMarketValue;
+        private string securityPerfectionStatus;
+        private string securityValuationDate;
+        private string shareHolders;
+        private string signitories;
+        private string directors;
+        private string isSecurity;
+        private string isOwnerOccupied;
+
 
         // init
         public bool Init(int operationId, int targetId) // feeder
@@ -114,6 +134,22 @@ namespace FintrakBanking.Repositories.Credit
                 //this.isRelatedParty = lmsrAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 //this.recommendedInterestRate = lmsrAppllication.INTERESTRATE.ToString();
                 this.dateCreated = lmsrAppllication.DATETIMECREATED.ToShortDateString();
+
+                // cam
+                var cam = ClassifiedAssetManagementReview(lmsrAppllication.APPLICATIONREFERENCENUMBER);
+
+                this.securityType = cam.securityType;
+                this.securityDescription = cam.securityDescription;
+                this.securityFirstSellValue = cam.securityFirstSellValue.ToString();
+                this.securityLocation = cam.securityLocation;
+                this.securityOpenMarketValue = cam.securityOpenMarketValue.ToString();
+                this.securityPerfectionStatus = cam.securityPerfectionStatus.ToString();
+                this.securityValuationDate = cam.securityValuationDate.ToString();
+                this.shareHolders = cam.shareHolders;
+                this.signitories = cam.signitories;
+                this.directors = cam.directors;
+                this.isSecurity = cam.isSecurity == true ? "Yes" : "No";
+                this.isOwnerOccupied = cam.isOwnerOccupied == true ? "Yes" : "No";
 
             }
 
@@ -181,6 +217,19 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
             content = content.Replace(proposedConditionsHolder, proposedConditions);
+            // lms cam only
+            content = content.Replace(securityTypeHolder, securityType);
+            content = content.Replace(securityDescriptionHolder, securityDescription);
+            content = content.Replace(securityFirstSellValueHolder, securityFirstSellValue);
+            content = content.Replace(securityLocationHolder, securityLocation);
+            content = content.Replace(securityOpenMarketValueHolder, securityOpenMarketValue);
+            content = content.Replace(securityPerfectionStatusHolder, securityPerfectionStatus);
+            content = content.Replace(securityValuationDateHolder, securityValuationDate);
+            content = content.Replace(shareHoldersHolder, shareHolders);
+            content = content.Replace(signitoriesHolder, signitories);
+            content = content.Replace(directorsHolder, directors);
+            content = content.Replace(isSecurityHolder, isSecurity);
+            content = content.Replace(isOwnerOccupiedHolder, isOwnerOccupied);
 
             return content;
         }
@@ -396,8 +445,12 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         //Classified Assets Management
-        public ClassifiedAssetManagementViewModel ClassifiedAssetManagementtReviewTemplate(string applicationReferenceNumber)
+        public ClassifiedAssetManagementViewModel ClassifiedAssetManagementReview(string applicationReferenceNumber)
         {
+            string listOfshareHolders = String.Empty;
+            string listOfSignitories = String.Empty;
+            string listOfDirectors = String.Empty;
+
             var cam = (from a in context.TBL_LMSR_APPLICATION
                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
@@ -429,8 +482,6 @@ namespace FintrakBanking.Repositories.Credit
 
                        }).FirstOrDefault();
 
-            
-
             var securty = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
                           join b in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
                           join c in context.TBL_COLLATERAL_IMMOVE_PROPERTY on b.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
@@ -443,8 +494,6 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var x in shareHolders)
                 listOfshareHolders = listOfshareHolders + x + ", ";
-
-
             var signatories = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
                              where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.AccountSignatory
                              select d.CUSTOMERBVN).ToList();
@@ -461,17 +510,18 @@ namespace FintrakBanking.Repositories.Credit
                 listOfDirectors = listOfDirectors + x + ", ";
 
             cam.securityType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == securty.b.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault();
-            cam.security = false;
+            cam.isSecurity = false;
             cam.securityDescription = securty.c.PROPERTYNAME;
-            cam.securityFSV = securty.c.FORCEDSALEVALUE;
+            cam.securityFirstSellValue = securty.c.FORCEDSALEVALUE;
             cam.securityLocation = securty.c.PROPERTYADDRESS;
-            cam.securityOMV = securty.c.OPENMARKETVALUE;
-            cam.securityOwnerOccupied = false;
+            cam.securityOpenMarketValue = securty.c.OPENMARKETVALUE;
+            cam.isOwnerOccupied = false;
             cam.securityPerfectionStatus = securty.c.PERFECTIONSTATUSID;
             cam.securityValuationDate = securty.c.LASTVALUATIONDATE;
             cam.shareHolders = listOfshareHolders.TrimEnd(',');
             cam.signitories = listOfSignitories.TrimEnd(',');
             cam.directors = listOfDirectors;
+
             return cam;
         }
 

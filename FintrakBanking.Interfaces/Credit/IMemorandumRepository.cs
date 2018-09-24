@@ -11,6 +11,5 @@ namespace FintrakBanking.Interfaces.Credit
     {
         bool Init(int operationId, int targetId);
         string Replace(string content);
-        ClassifiedAssetManagementViewModel ClassifiedAssetManagementtReviewTemplate(string applicationReferenceNumber);
     }
 }
