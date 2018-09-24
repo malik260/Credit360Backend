@@ -1052,7 +1052,27 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetAllCRMSType();
+                var data = repo.GetAllCRMSType(token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("risk-rating-type")]
+        public HttpResponseMessage GetAllRiskRatingType()
+        {
+            try
+            {
+                var data = repo.GetAllRiskRatingType(token.GetCompanyId);
 
                 if (data == null)
                 {

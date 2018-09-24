@@ -31,6 +31,10 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public async Task<bool> CreateUser(UserViewModel user)
         {
+            FinTrakBankingContext db = new FinTrakBankingContext();
+            TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
+            prosett = db.TBL_PROFILE_SETTING.FirstOrDefault();
+
             //if (user.createdBy != null)
             //{
 
@@ -45,7 +49,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 FAILEDLOGONATTEMPT = 0,
                 SECURITYQUESTION = user.securityQuestion,
                 SECURITYANSWER = user.securityAnswer,
-                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
+                NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(prosett.EXPIREPASSWORDAFTER),
                 //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
                 /// int.Parse(config["AppConstants:PasswordExpiredDays"])),
                 CREATEDBY = user.createdBy ?? 0,
@@ -53,7 +57,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 DATETIMECREATED = DateTime.Now
             };
 
-            context.TBL_PROFILE_USER.Add(_user);
+            db.TBL_PROFILE_USER.Add(_user);
             if (user.groupId.Count > 0)
             {
                 foreach (var grp in user.groupId)
@@ -66,12 +70,12 @@ namespace FintrakBanking.Repositories.Setups.General
                         CREATEDBY = _user.CREATEDBY ?? 0
                     };
 
-                    context.TBL_PROFILE_USERGROUP.Add(grpItem);
+                    db.TBL_PROFILE_USERGROUP.Add(grpItem);
                 }
             }
             //}
 
-            var response = await context.SaveChangesAsync();
+            var response = await db.SaveChangesAsync();
 
             return response != 0;
         }
@@ -108,6 +112,8 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         public async Task<UserViewModel> FindUserByUserNameAsync(string username)
         {
+            FinTrakBankingContext db = new FinTrakBankingContext();
+
             var result = _sessionInfo;
 
             if (result.state > 0)
@@ -118,14 +124,14 @@ namespace FintrakBanking.Repositories.Setups.General
                     errorMessage = "",
                 };
 
-            var user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username);
+            var user = db.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username);
 
             if (user != null)
             {
-                var data = (from p in context.TBL_PROFILE_USER
-                            join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
-                            join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
-                            join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                var data = (from p in db.TBL_PROFILE_USER
+                            join st in db.TBL_STAFF on p.STAFFID equals st.STAFFID
+                            join br in db.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
+                            join coy in db.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
                             where p.USERNAME.ToLower() == username.ToLower()
                             select new UserViewModel
                             {
@@ -145,8 +151,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     user.LOGINCODE = null;
                     user.FAILEDLOGONATTEMPT += 1;
                     int count = user.FAILEDLOGONATTEMPT ?? 0;
-                    //if (count ==  CommonHelpers.MaxInvalidPasswordAttempts)
-                    if (count == profile_Setting.MAXINVALIDPASSWORDATTEMPTS)
+                    TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
+                    prosett = db.TBL_PROFILE_SETTING.FirstOrDefault();
+                    //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                    if (count > prosett.MAXINVALIDPASSWORDATTEMPTS)
                     {
                         user.ISLOCKED = true;
                         user.LASTLOCKOUTDATE = DateTime.Now;
@@ -160,7 +168,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     user.LOGINCODE = result.loginCode.ToString() + "@" + result.ipaddress;
                 }
 
-                context.SaveChanges();
+                db.SaveChanges();
 
                 return data;
 
@@ -221,17 +229,17 @@ namespace FintrakBanking.Repositories.Setups.General
                             errorMessage = "",
                         };
                     }
-                    else if (this.LogCode.Split('@')[1] != null)
-                    {
-                        this.LogCode = loginCodeStr + "@" + ipAddressStr;
-                        result = new SessionStatusInfo
-                        {
-                            loginCode = Guid.Parse(loginCodeStr),
-                            state = 0,
-                            ipaddress = ipAddressStr,
-                            errorMessage = "",
-                        };
-                    }
+                    //else if (this.LogCode.Split('@')[1] != null)
+                    //{
+                    //    this.LogCode = loginCodeStr + "@" + ipAddressStr;
+                    //    result = new SessionStatusInfo
+                    //    {
+                    //        loginCode = Guid.Parse(loginCodeStr),
+                    //        state = 0,
+                    //        ipaddress = ipAddressStr,
+                    //        errorMessage = "",
+                    //    };
+                    //}
                     else
                     {
                         this.LogCode = loginCodeStr + "@" + ipAddressStr;
@@ -298,12 +306,16 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool IsPasswordExpired(string userName)
         {
-            if ((bool)profile_Setting.ENABLEPASSWORDRESET)
+            FinTrakBankingContext db = new FinTrakBankingContext();
+            TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
+            prosett = db.TBL_PROFILE_SETTING.FirstOrDefault();
+
+            if ((bool)prosett.ENABLEPASSWORDRESET)
             {
                 DateTime changeDate = (DateTime)context.TBL_PROFILE_USER.FirstOrDefault(p => p.USERNAME.ToUpper() == userName.ToUpper()).NEXTPASSWORDCHANGEDATE;
                 var duration = (changeDate.Date - DateTime.Now).Days;
 
-                if (duration >= profile_Setting.EXPIREPASSWORDAFTER)
+                if (duration >= prosett.EXPIREPASSWORDAFTER)
                     return true;
             }
             return false;
@@ -451,21 +463,24 @@ namespace FintrakBanking.Repositories.Setups.General
                 var record = data.FirstOrDefault();
                 if (record == null)
                 {
-                    var faileddata = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
+                    FinTrakBankingContext db = new FinTrakBankingContext();
+                    var faileddata = db.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);
                     if (faileddata != null)
                     {
                         faileddata.LOGINCODE = null;
                         faileddata.FAILEDLOGONATTEMPT += 1;
                         int count = faileddata.FAILEDLOGONATTEMPT ?? 0;
+                        TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
+                        prosett = db.TBL_PROFILE_SETTING.FirstOrDefault();
                         //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
-                        if (count == profile_Setting.MAXINVALIDPASSWORDATTEMPTS)
+                        if (count == prosett.MAXINVALIDPASSWORDATTEMPTS)
                         {
                             faileddata.ISLOCKED = true;
                             faileddata.LASTLOCKOUTDATE = DateTime.Now;
                         }
 
-
-                        context.SaveChanges();
+                        //db.Entry(faileddata).State = EntityState.Modified;
+                        db.SaveChanges();
 
                         throw new SecureException("1001 Login Failure.");
                     }

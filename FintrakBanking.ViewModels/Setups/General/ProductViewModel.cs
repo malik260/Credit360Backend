@@ -56,10 +56,15 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int? interestIncomeExpenseGl { get; set; }
         public string interestIncomeExpenseGlCode { get; set; }
         public int? interestReceivablePayableGl { get; set; }
+        public int? penalChargeGl { get; set; }
+        public string penalChargeGlCode { get; set; }
+
         public string interestReceivablePayableGlCode { get; set; }
         public short? productPriceIndexId { get; set; }
         public string productPriceIndexName { get; set; }
         public double? productPriceIndexSpread { get; set; }
+        public short? riskRatingId { get; set; }
+        public string riskRatingName { get; set; }
 
         public int? dormantGl { get; set; }
         public string dormantGlCode { get; set; }

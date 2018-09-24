@@ -309,8 +309,8 @@ namespace FintrakBanking.Repositories.Finance
 
                 var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                //if (authenticated.authenticated == false)
-                //    throw new TwoFactorAuthenticationException(authenticated.message);
+                if (authenticated.authenticated == false)
+                    throw new TwoFactorAuthenticationException(authenticated.message);
             }
 
             if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
