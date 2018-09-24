@@ -33,11 +33,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string securityType { get; set; }
         public string securityDescription { get; set; }
         public string securityLocation { get; set; }
-        public decimal? securityOMV { get; set; }
-        public decimal? securityFSV { get; set; }
+        public decimal? securityOpenMarketValue { get; set; }
+        public decimal? securityForcedSaleValue { get; set; }
         public DateTime? securityValuationDate { get; set; }
         public byte securityPerfectionStatus { get; set; }
-        public bool security { get; set; }
+        public bool? securityIsResidential { get; set; }
         public bool? securityOwnerOccupied { get; set; }
         public string nameOfInitialAccountOfficer { get; set; }
         public string incumbentAccountOfficer { get; set; }

@@ -461,12 +461,12 @@ namespace FintrakBanking.Repositories.Credit
                 listOfDirectors = listOfDirectors + x + ", ";
 
             cam.securityType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == securty.b.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault();
-            cam.security = false;
+            cam.securityIsResidential = securty.c.ISRESIDENTIAL;
             cam.securityDescription = securty.c.PROPERTYNAME;
-            cam.securityFSV = securty.c.FORCEDSALEVALUE;
+            cam.securityForcedSaleValue = securty.c.FORCEDSALEVALUE;
             cam.securityLocation = securty.c.PROPERTYADDRESS;
-            cam.securityOMV = securty.c.OPENMARKETVALUE;
-            cam.securityOwnerOccupied = false;
+            cam.securityOpenMarketValue = securty.c.OPENMARKETVALUE;
+            cam.securityOwnerOccupied = securty.c.ISOWNEROCCUPIED;
             cam.securityPerfectionStatus = securty.c.PERFECTIONSTATUSID;
             cam.securityValuationDate = securty.c.LASTVALUATIONDATE;
             cam.shareHolders = listOfshareHolders.TrimEnd(',');
