@@ -123,8 +123,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public short collateralStateId { get; set; }
         public string requestCode  { get; set; }
         public int operationId { get; set; }
-        public int? currencyId { get; set; }
+        public short? currencyId { get; set; }
         public bool isInitiation { get; set; }
+
     }
 
     public class ApplicationJobRequest : LoanApplicationViewModel

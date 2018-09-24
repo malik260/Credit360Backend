@@ -1559,6 +1559,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("booking/modification/back-to-business")]
+        public HttpResponseMessage SendBackToBusinessAvailment([FromBody] LoanViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            bool data = repo.SendBackToBookingModifier(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
+        }
+
         #endregion Loan
 
         #region Frequency Type

@@ -34,15 +34,17 @@ namespace FintrakBanking.ViewModels.Credit
         public string securityDescription { get; set; }
         public string securityLocation { get; set; }
         public decimal? securityOpenMarketValue { get; set; }
-        public decimal? securityForcedSaleValue { get; set; }
+        public decimal? securityFirstSellValue { get; set; }
         public DateTime? securityValuationDate { get; set; }
         public byte securityPerfectionStatus { get; set; }
-        public bool? securityIsResidential { get; set; }
+        public bool security { get; set; }
         public bool? securityOwnerOccupied { get; set; }
         public string nameOfInitialAccountOfficer { get; set; }
         public string incumbentAccountOfficer { get; set; }
 
         public int loanId { get; set; }
         public int customerId { get; set; }
+        public bool? isResidential { get; set; }
+        public bool? isOwnerOccupied { get; set; }
     }
 }

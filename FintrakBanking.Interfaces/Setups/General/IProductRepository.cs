@@ -15,7 +15,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LookupViewModel> GetProductClassByProcessId(int processId);
         IEnumerable<LookupViewModel> GetAllProductClass();
         IEnumerable<LookupViewModel> GetAllProductClass(int customerTypeId, int processId);
-        IEnumerable<LookupViewModel> GetAllCRMSType();
+        IEnumerable<LookupViewModel> GetAllCRMSType(int companyId);
+        IEnumerable<LookupViewModel> GetAllRiskRatingType(int companyId);
 
         ProductBehaviourViewModel GetProductBehaviour(int productId);
 
