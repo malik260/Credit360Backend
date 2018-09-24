@@ -148,7 +148,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.shareHolders = cam.shareHolders;
                 this.signitories = cam.signitories;
                 this.directors = cam.directors;
-                this.isSecurity = cam.isSecurity == true ? "Yes" : "No";
+                this.isSecurity = cam.isResidential == true ? "Yes" : "No";
                 this.isOwnerOccupied = cam.isOwnerOccupied == true ? "Yes" : "No";
 
             }
@@ -564,12 +564,12 @@ namespace FintrakBanking.Repositories.Credit
                 listOfDirectors = listOfDirectors + x + ", ";
 
             cam.securityType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == securty.b.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault();
-            cam.isSecurity = false;
+            cam.isResidential = securty.c.ISRESIDENTIAL;
             cam.securityDescription = securty.c.PROPERTYNAME;
             cam.securityFirstSellValue = securty.c.FORCEDSALEVALUE;
             cam.securityLocation = securty.c.PROPERTYADDRESS;
             cam.securityOpenMarketValue = securty.c.OPENMARKETVALUE;
-            cam.isOwnerOccupied = false;
+            cam.isOwnerOccupied = securty.c.ISOWNEROCCUPIED;
             cam.securityPerfectionStatus = securty.c.PERFECTIONSTATUSID;
             cam.securityValuationDate = securty.c.LASTVALUATIONDATE;
             cam.shareHolders = listOfshareHolders.TrimEnd(',');
