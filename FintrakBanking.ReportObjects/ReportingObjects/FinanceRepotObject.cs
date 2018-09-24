@@ -6,6 +6,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,21 +57,22 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }
 
         }
-        public List<TransactionViewModel> LoanRepayment(DateTime endDate, DateTime startDate, int operationId, int companyId)
+        public List<TransactionViewModel> LoanRepayment( DateTime startDate, DateTime endDate, int operationId, int companyId)
         {
-            int[] operations = { (int)OperationsEnum.InterestLoanRepayment, (int)OperationsEnum.PrincipalPastDueLoanRepayment, (int)OperationsEnum.InterestPastDueLoanRepayment, (int)OperationsEnum.PrincipalLoanRepayment, (int)OperationsEnum.TermLoanBooking };
+           int[] operations = { (int)OperationsEnum.InterestLoanRepayment, (int)OperationsEnum.PrincipalPastDueLoanRepayment, (int)OperationsEnum.InterestPastDueLoanRepayment, (int)OperationsEnum.PrincipalLoanRepayment, (int)OperationsEnum.TermLoanBooking };
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 List<TransactionViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
                                                    join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
                                                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
                                                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                                                   where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
-                                                   && a.COMPANYID == companyId
-                                                   && a.CREDITAMOUNT == 0
-                                                   && a.DEBITAMOUNT > 0
-                                                  && operations.Contains(a.OPERATIONID)
-                                                   && (a.OPERATIONID == operationId || operationId ==0 || operationId==null)
+                                                   where DbFunctions.TruncateTime(a.POSTEDDATE) >= DbFunctions.TruncateTime(startDate)
+                                                    && DbFunctions.TruncateTime(a.POSTEDDATE) <= DbFunctions.TruncateTime(endDate)
+                                                                           && a.COMPANYID == companyId
+                                                                            && a.CREDITAMOUNT == 0
+                                                                            && a.DEBITAMOUNT > 0
+                                                                          && operations.Contains(a.OPERATIONID)
+                                                                          && (a.OPERATIONID == operationId || operationId == 0 || operationId == null)
                                                    orderby a.POSTEDDATE, a.TRANSACTIONID descending
 
                                                    select new TransactionViewModel()
@@ -140,7 +142,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
             return data;
         }
-        public List<BulkTransactionViewModel> CustomeFacilityRepayment(DateTime endDate, DateTime startDate, int companyId,string valueCode)
+        public List<BulkTransactionViewModel> CustomeFacilityRepayment(DateTime startDate, DateTime endDate,  int companyId,string valueCode)
         {
             List<BulkTransactionViewModel> data;
             using (FinTrakBankingContext context = new FinTrakBankingContext())

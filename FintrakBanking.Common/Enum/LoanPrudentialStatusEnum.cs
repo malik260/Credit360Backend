@@ -9,7 +9,11 @@
         Lost = 5
     }
 
-
+    public enum PrudentialGuidelineTypeEnum
+    {
+        Performing = 1,
+        NonPerforming = 2,
+    }
 
 
 
