@@ -156,6 +156,7 @@ namespace FintrakBanking.Repositories.Credit
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
+            this.monitoringTriggers = MonitoringTriggersMarkup();
 
             return true;
         }
@@ -217,6 +218,9 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
             content = content.Replace(proposedConditionsHolder, proposedConditions);
+            content = content.Replace(monitoringTriggersHolder, monitoringTriggers);
+            content = content.Replace(environmentalSocialRiskHolder, environmentalSocialRisk);
+
             // lms cam only
             content = content.Replace(securityTypeHolder, securityType);
             content = content.Replace(securityDescriptionHolder, securityDescription);
@@ -353,6 +357,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         // Environmental & Social Risk Assessment
+
         public void GetEnvironmentalSocialRisk()
         {
 
