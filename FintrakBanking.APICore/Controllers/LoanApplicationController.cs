@@ -693,7 +693,9 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("customer-pen-code")]
+        //[Route("customer-pen-code")]
+        [Route("customer-pen-code/{customerId}/{loanTypeId}/{customerGroupId}")]
+
         public HttpResponseMessage GetCustomerLoanPreliminaryEvaluations(int customerId, int loanTypeId, int customerGroupId = 0)
         {
             try
