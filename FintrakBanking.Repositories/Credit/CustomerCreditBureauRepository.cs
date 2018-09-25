@@ -22,6 +22,7 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using FintrakBanking.Interfaces.Setups.Finance;
 using System.Text.RegularExpressions;
+using FintrakBanking.Interfaces.CASA;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -35,6 +36,7 @@ namespace FintrakBanking.Repositories.Credit
         private IntegrationWithFinacle integration;
         private CreditBureauProcess _creditBureau;
         private IChartOfAccountRepository chartOfAccount;
+
 
         public CustomerCreditBureauRepository(
             IAuditTrailRepository _auditTrail,
@@ -530,6 +532,7 @@ namespace FintrakBanking.Repositories.Credit
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
             searchInfo.userName = creditBureau.USERNAME;
             searchInfo.password = creditBureau.PASSWORD;
+
 
             var creditBureauInputs = new SearchInput()
             {

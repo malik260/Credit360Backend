@@ -6798,7 +6798,8 @@ namespace FintrakBanking.Repositories.Credit
                                    // isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
                                    exchangeRate = a.EXCHANGERATE,
                                    currencyId = a.CURRENCYID,
-                                   currency = cur.CURRENCYNAME
+                                   currency = cur.CURRENCYNAME,
+                                   currencyCode = cur.CURRENCYCODE
                                }).FirstOrDefault();
 
             return loanDetails;
@@ -6951,6 +6952,7 @@ namespace FintrakBanking.Repositories.Credit
                                    exchangeRate = a.EXCHANGERATE,
                                    currencyId = a.CURRENCYID,
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                   currencyCode = a.TBL_CURRENCY.CURRENCYCODE
                                }).FirstOrDefault();
             return loanDetails;
         }
@@ -7089,6 +7091,7 @@ namespace FintrakBanking.Repositories.Credit
                                        exchangeRate = a.EXCHANGERATE,
                                        currencyId = a.CURRENCYID,
                                        currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                       currencyCode = a.TBL_CURRENCY.CURRENCYCODE
                                    }).FirstOrDefault();
             //if (availableBalance > 0)
             //{
