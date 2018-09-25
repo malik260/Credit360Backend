@@ -940,7 +940,7 @@ namespace FintrakBanking.Repositories.Admin
                 var approvalLevelIds = (from x in context.TBL_APPROVAL_GROUP_MAPPING
                                         join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
                                         join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
-                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null && x.DELETED == false
+                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null && x.DELETED == false 
                                         orderby x.POSITION, z.POSITION ascending
                                         select z.APPROVALLEVELID
                              ).ToList();
