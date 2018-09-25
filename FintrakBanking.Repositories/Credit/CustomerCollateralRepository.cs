@@ -3782,7 +3782,7 @@ namespace FintrakBanking.Repositories.Credit
                                join atrail in context.TBL_APPROVAL_TRAIL on x.TEMPCOLLATERALCUSTOMERID equals atrail.TARGETID
                                join a in context.TBL_CUSTOMER on x.CUSTOMERID equals a.CUSTOMERID
                                let ColSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(c => c.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).Select(c => c.COLLATERALSUBTYPENAME).FirstOrDefault()
-                               where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && x.ISCURRENT != false//|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
+                               where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing && x.ISCURRENT == true//|| atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved
                                                                                                                          //  && x.ISCURRENT == true
                                      && atrail.RESPONSESTAFFID == null
                                      && atrail.OPERATIONID == (int)OperationsEnum.CollateralApproval
@@ -3913,10 +3913,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        if (model.approvalStatusId != (int)ApprovalStatusEnum.Disapproved)
-                        {
                             UpdateCutomerCollateralApprovalStatus(model, (short)workflow.StatusId, twoFADetails);
-                        }
                     }
 
                     responce = context.SaveChanges();
@@ -5237,7 +5234,7 @@ namespace FintrakBanking.Repositories.Credit
                     lienReferenceNumber = x.LIENREFERENCENUMBER,
                     productAccountNumber = x.PRODUCTACCOUNTNUMBER,
                     lienAmount = x.LIENAMOUNT,
-                    dateTimeCreated = x.DATETIMECREATED
+                    dateTimeCreated = x.DATETIMECREATED,
 
                 })).FirstOrDefault();
         }

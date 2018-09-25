@@ -61,7 +61,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
                                                                                             && x.COMPANYDIRECTORID == null
-                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
+                                                                                            //&& (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                                                            );
 
             int creditBureauCount = data.Count();
 
@@ -132,7 +133,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var directorData = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
                                                                                     && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
-                                                                                     && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30));
+                                                                                    //&& (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                                                     );
+                    var b = directorData.ToList();
                     int directorCount = directorData.Count();
                     var typeCustomer = director.TBL_CUSTOMER_TYPE.TBL_CUSTOMER.FirstOrDefault();
                     CustomerViewModels shareholdersData = new CustomerViewModels
@@ -155,7 +158,8 @@ namespace FintrakBanking.Repositories.Credit
                         middleName = director.MIDDLENAME,
                         creditBureauCount = directorCount,
                     };
-                    if(directorCount >0)allCorporate.Add(shareholdersData);
+                    //if(directorCount >0)
+                        allCorporate.Add(shareholdersData);
                 }
             }
             if (isExternal)
@@ -529,6 +533,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo)
         {
+            var chargeModel = new CreditBereauViewModel();
+            chargeModel.createdBy = searchInfo.createdBy;
+            chargeModel.userBranchId = searchInfo.userBranchId;
+            chargeModel.companyId = searchInfo.companyId;
+            chargeModel.casaAccountId = searchInfo.casaAccountId;
+            chargeModel.username = searchInfo.username;
+            chargeModel.passCode = searchInfo.passCode;
+
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
             searchInfo.userName = creditBureau.USERNAME;
             searchInfo.password = creditBureau.PASSWORD;
@@ -577,13 +589,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
-            var chargeModel = new CreditBereauViewModel();
             chargeModel.feeAmount = chargeAmount;
-            chargeModel.createdBy = searchInfo.createdBy;
-            chargeModel.userBranchId = searchInfo.userBranchId;
-            chargeModel.companyId = searchInfo.companyId;
             chargeModel.referenceNumber = referenceNumber;
-            chargeModel.casaAccountId = searchInfo.casaAccountId;
+
 
             CRCSearchResult searchResponse = null;
 
