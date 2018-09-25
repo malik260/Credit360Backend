@@ -143,6 +143,8 @@ namespace FintrakBanking.ViewModels.Credit
         public double? latitude { get; set; }
         public byte? perfectionStatusId { get; set; }
         public string perfectionStatusReason { get; set; }
+        public bool? isOwnerOccupied { get; set; }
+        public bool? isResidential { get; set; }
 
         // marketableSecurities
         public int collateralMarketableSecurityId { get; set; }

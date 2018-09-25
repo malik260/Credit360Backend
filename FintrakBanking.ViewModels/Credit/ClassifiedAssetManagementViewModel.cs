@@ -44,7 +44,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int loanId { get; set; }
         public int customerId { get; set; }
-        public bool isSecurity { get; set; }
-        public bool isOwnerOccupied { get; set; }
+        public bool? isResidential { get; set; }
+        public bool? isOwnerOccupied { get; set; }
     }
 }

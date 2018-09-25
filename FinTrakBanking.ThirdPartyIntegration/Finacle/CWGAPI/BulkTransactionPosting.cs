@@ -202,14 +202,14 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.SYSTEMDATETIME = item.date;
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
-               
+
             }
             return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
 
-        
+
         public bool WriteBulkDailyFeeAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                             IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
@@ -552,12 +552,22 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
                 //var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);
                 var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == item.loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate));
-                var interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
+
+                decimal interestAmount = 0;
+
+                if (interest.Count() > 0)
+                {
+                    interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
+                }
+                else
+                {
+                    interestAmount = 0;
+                }
+
 
                 item.periodInterestAmount = interestAmount;
 
                 TBL_CASA casa;
-
 
                 if (product.PRODUCTCLASSID != (short)ProductClassEnum.InvoiceDiscountingFacility)
                 {
@@ -566,6 +576,79 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 else
                 {
                     casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId2.Value && x.COMPANYID == item.companyId);
+                }
+
+                count++;
+                if ((decimal)item.pastDueInterestAmount != 0)
+                {
+                    addStagingPastDueInterest.AMOUNT = (decimal)item.pastDueInterestAmount;
+                    addStagingPastDueInterest.FLOWTYPE = "BIF";
+                    addStagingPastDueInterest.FORCEDEBITACCOUNT = "Y";
+                    addStagingPastDueInterest.VALUEDATENUMBER = 1;
+                    addStagingPastDueInterest.BATCHID = batchCode;
+                    addStagingPastDueInterest.BATCHREFID = count;
+                    addStagingPastDueInterest.SID = count;
+                    addStagingPastDueInterest.COMPANYID = item.companyId;
+                    addStagingPastDueInterest.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                    addStagingPastDueInterest.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                    addStagingPastDueInterest.CURRENCYRATE = financeTransaction.GetExchangeRate(applicationDate, item.currencyId, item.companyId).sellingRate;
+                    addStagingPastDueInterest.DEBITACCOUNT = casa.PRODUCTACCOUNTNUMBER;//context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).ACCOUNTCODE;
+                    addStagingPastDueInterest.DESCRIPTION = "Past Due Interest Repayment";
+                    addStagingPastDueInterest.DESTINATIONBRANCHID = item.branchId;
+                    addStagingPastDueInterest.ISPOSTED = false;
+                    addStagingPastDueInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;
+                    addStagingPastDueInterest.POSTEDBY = "SYSTEM";
+                    addStagingPastDueInterest.POSTEDDATE = applicationDate;
+                    addStagingPastDueInterest.SOURCEBRANCHID = item.branchId;
+                    addStagingPastDueInterest.SOURCEREFERENCENUMBER = item.loanRefNo;
+                    addStagingPastDueInterest.VALUEDATE = applicationDate;
+                    addStagingPastDueInterest.TRANSACTIONTYPE = "BL";
+                    addStagingPastDueInterest.BANKID = "01";
+                    addStagingPastDueInterest.PRODUCTID = product.PRODUCTID;
+                    addStagingPastDueInterest.CURRENCYID = item.currencyId;
+                    addStagingPastDueInterest.CREDITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                    addStagingPastDueInterest.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                    addStagingPastDueInterest.CREDITCASAACCOUNTID = null;
+                    addStagingPastDueInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
+                    addStagingPastDueInterest.LOANID = item.loanId;
+                    context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPastDueInterest);
+                }
+
+
+                count++;
+                if ((decimal)item.pastDuePrincipalAmount != 0)
+                {
+                    addStagingPastDuePrincipal.AMOUNT = (decimal)item.pastDuePrincipalAmount;
+                    addStagingPastDuePrincipal.FLOWTYPE = "BPP";
+                    addStagingPastDuePrincipal.FORCEDEBITACCOUNT = "Y";
+                    addStagingPastDuePrincipal.VALUEDATENUMBER = 1;
+                    addStagingPastDuePrincipal.BATCHID = batchCode;
+                    addStagingPastDuePrincipal.BATCHREFID = count;
+                    addStagingPastDuePrincipal.SID = count;
+                    addStagingPastDuePrincipal.COMPANYID = item.companyId;
+                    addStagingPastDuePrincipal.CREDITACCOUNT = finacle.GetGlAccountCode(product.PRINCIPALBALANCEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                    addStagingPastDuePrincipal.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
+                    addStagingPastDuePrincipal.CURRENCYRATE = financeTransaction.GetExchangeRate(applicationDate, item.currencyId, item.companyId).sellingRate;
+                    addStagingPastDuePrincipal.DEBITACCOUNT = casa.PRODUCTACCOUNTNUMBER;//context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).ACCOUNTCODE;
+                    addStagingPastDuePrincipal.DESCRIPTION = "Past Due Principal Repayment";
+                    addStagingPastDuePrincipal.DESTINATIONBRANCHID = item.branchId;
+                    addStagingPastDuePrincipal.ISPOSTED = false;
+                    addStagingPastDuePrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
+                    addStagingPastDuePrincipal.POSTEDBY = "SYSTEM";
+                    addStagingPastDuePrincipal.POSTEDDATE = applicationDate;
+                    addStagingPastDuePrincipal.SOURCEBRANCHID = item.branchId;
+                    addStagingPastDuePrincipal.SOURCEREFERENCENUMBER = item.loanRefNo;
+                    addStagingPastDuePrincipal.VALUEDATE = applicationDate;
+                    addStagingPastDuePrincipal.TRANSACTIONTYPE = "BL";
+                    addStagingPastDuePrincipal.BANKID = "01";
+                    addStagingPastDuePrincipal.PRODUCTID = product.PRODUCTID;
+                    addStagingPastDuePrincipal.CURRENCYID = item.currencyId;
+                    addStagingPastDuePrincipal.CREDITGLACCOUNTID = product.PRINCIPALBALANCEGL.Value;
+                    addStagingPastDuePrincipal.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;// product.INTERESTRECEIVABLEPAYABLEGL.Value;
+                    addStagingPastDuePrincipal.CREDITCASAACCOUNTID = null;
+                    addStagingPastDuePrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
+                    addStagingPastDuePrincipal.LOANID = item.loanId;
+                    context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPastDuePrincipal);
                 }
 
                 count++;
@@ -603,11 +686,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingInterest.LOANID = item.loanId;
                     context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
                 }
-               
-                
+
 
                 count++;
-                if((decimal)item.periodPrincipalAmount!= 0)
+                if ((decimal)item.periodPrincipalAmount != 0)
                 {
                     addStagingPrincipal.AMOUNT = (decimal)item.periodPrincipalAmount;
                     addStagingPrincipal.FLOWTYPE = "BPP";
@@ -641,84 +723,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPrincipal.LOANID = item.loanId;
                     context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPrincipal);
                 }
-             
 
 
-               
-                count++;
-                if ((decimal)item.pastDueInterestAmount != 0)
-                {
-                    addStagingPastDueInterest.AMOUNT = (decimal)item.pastDueInterestAmount;
-                    addStagingPastDueInterest.FLOWTYPE = "BIF";
-                    addStagingPastDueInterest.FORCEDEBITACCOUNT = "Y";
-                    addStagingPastDueInterest.VALUEDATENUMBER = 1;
-                    addStagingPastDueInterest.BATCHID = batchCode;
-                    addStagingPastDueInterest.BATCHREFID = count;
-                    addStagingPastDueInterest.SID = count;
-                    addStagingPastDueInterest.COMPANYID = item.companyId;
-                    addStagingPastDueInterest.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                    addStagingPastDueInterest.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                    addStagingPastDueInterest.CURRENCYRATE = financeTransaction.GetExchangeRate(applicationDate, item.currencyId, item.companyId).sellingRate;
-                    addStagingPastDueInterest.DEBITACCOUNT = casa.PRODUCTACCOUNTNUMBER;//context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).ACCOUNTCODE;
-                    addStagingPastDueInterest.DESCRIPTION = "Past Due Interest Repayment";
-                    addStagingPastDueInterest.DESTINATIONBRANCHID = item.branchId;
-                    addStagingPastDueInterest.ISPOSTED = false;
-                    addStagingPastDueInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;
-                    addStagingPastDueInterest.POSTEDBY = "SYSTEM";
-                    addStagingPastDueInterest.POSTEDDATE = applicationDate;
-                    addStagingPastDueInterest.SOURCEBRANCHID = item.branchId;
-                    addStagingPastDueInterest.SOURCEREFERENCENUMBER = item.loanRefNo;
-                    addStagingPastDueInterest.VALUEDATE = applicationDate;
-                    addStagingPastDueInterest.TRANSACTIONTYPE = "BL";
-                    addStagingPastDueInterest.BANKID = "01";
-                    addStagingPastDueInterest.PRODUCTID = product.PRODUCTID;
-                    addStagingPastDueInterest.CURRENCYID = item.currencyId;
-                    addStagingPastDueInterest.CREDITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
-                    addStagingPastDueInterest.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
-                    addStagingPastDueInterest.CREDITCASAACCOUNTID = null;
-                    addStagingPastDueInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
-                    addStagingPastDueInterest.LOANID = item.loanId;
-                    context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPastDueInterest);
-                }
-               
 
 
-                count++;
-                if((decimal)item.pastDuePrincipalAmount != 0)
-                {
-                    addStagingPastDuePrincipal.AMOUNT = (decimal)item.pastDuePrincipalAmount;
-                    addStagingPastDuePrincipal.FLOWTYPE = "BPP";
-                    addStagingPastDuePrincipal.FORCEDEBITACCOUNT = "Y";
-                    addStagingPastDuePrincipal.VALUEDATENUMBER = 1;
-                    addStagingPastDuePrincipal.BATCHID = batchCode;
-                    addStagingPastDuePrincipal.BATCHREFID = count;
-                    addStagingPastDuePrincipal.SID = count;
-                    addStagingPastDuePrincipal.COMPANYID = item.companyId;
-                    addStagingPastDuePrincipal.CREDITACCOUNT = finacle.GetGlAccountCode(product.PRINCIPALBALANCEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                    addStagingPastDuePrincipal.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
-                    addStagingPastDuePrincipal.CURRENCYRATE = financeTransaction.GetExchangeRate(applicationDate, item.currencyId, item.companyId).sellingRate;
-                    addStagingPastDuePrincipal.DEBITACCOUNT = casa.PRODUCTACCOUNTNUMBER;//context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).ACCOUNTCODE;
-                    addStagingPastDuePrincipal.DESCRIPTION = "Past Due Principal Repayment";
-                    addStagingPastDuePrincipal.DESTINATIONBRANCHID = item.branchId;
-                    addStagingPastDuePrincipal.ISPOSTED = false;
-                    addStagingPastDuePrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
-                    addStagingPastDuePrincipal.POSTEDBY = "SYSTEM";
-                    addStagingPastDuePrincipal.POSTEDDATE = applicationDate;
-                    addStagingPastDuePrincipal.SOURCEBRANCHID = item.branchId;
-                    addStagingPastDuePrincipal.SOURCEREFERENCENUMBER = item.loanRefNo;
-                    addStagingPastDuePrincipal.VALUEDATE = applicationDate;
-                    addStagingPastDuePrincipal.TRANSACTIONTYPE = "BL";
-                    addStagingPastDuePrincipal.BANKID = "01";
-                    addStagingPastDuePrincipal.PRODUCTID = product.PRODUCTID;
-                    addStagingPastDuePrincipal.CURRENCYID = item.currencyId;
-                    addStagingPastDuePrincipal.CREDITGLACCOUNTID = product.PRINCIPALBALANCEGL.Value;
-                    addStagingPastDuePrincipal.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;// product.INTERESTRECEIVABLEPAYABLEGL.Value;
-                    addStagingPastDuePrincipal.CREDITCASAACCOUNTID = null;
-                    addStagingPastDuePrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
-                    addStagingPastDuePrincipal.LOANID = item.loanId;
-                    context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPastDuePrincipal);
-                }
-           
                 context.SaveChanges();
 
             }
@@ -777,6 +785,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.PSTD_DATE = applicationDate;
                 addStaging.DEL_FLG = "N";
                 addStaging.FAIL_FLG = "N";
+                addStaging.FINTRAK_FLG = "N";
+
                 staging.Add(addStaging);
 
             }
@@ -836,7 +846,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             if (result)
             {
                 output = true;
-            } 
+            }
             return output;
         }
 
@@ -993,7 +1003,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.BANKID = "01";
                 addStaging.PRODUCTID = product.PRODUCTID;
                 addStaging.CURRENCYID = item.currencyId;
-                addStaging.CREDITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value; 
+                addStaging.CREDITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                 addStaging.DEBITGLACCOUNTID = product.PRINCIPALBALANCEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = casa.CASAACCOUNTID;
                 addStaging.DEBITCASAACCOUNTID = null;
