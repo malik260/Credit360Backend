@@ -529,6 +529,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo)
         {
+            var chargeModel = new CreditBereauViewModel();
+            chargeModel.createdBy = searchInfo.createdBy;
+            chargeModel.userBranchId = searchInfo.userBranchId;
+            chargeModel.companyId = searchInfo.companyId;
+            chargeModel.casaAccountId = searchInfo.casaAccountId;
+            chargeModel.username = searchInfo.username;
+            chargeModel.passCode = searchInfo.passCode;
+
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
             searchInfo.userName = creditBureau.USERNAME;
             searchInfo.password = creditBureau.PASSWORD;
@@ -577,13 +585,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
-            var chargeModel = new CreditBereauViewModel();
             chargeModel.feeAmount = chargeAmount;
-            chargeModel.createdBy = searchInfo.createdBy;
-            chargeModel.userBranchId = searchInfo.userBranchId;
-            chargeModel.companyId = searchInfo.companyId;
             chargeModel.referenceNumber = referenceNumber;
-            chargeModel.casaAccountId = searchInfo.casaAccountId;
+
 
             CRCSearchResult searchResponse = null;
 
