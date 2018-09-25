@@ -109,7 +109,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loanAppllication.CUSTOMERID != null) this.customerName = loanAppllication.TBL_CUSTOMER.FIRSTNAME + " " + loanAppllication.TBL_CUSTOMER.MIDDLENAME + " " + loanAppllication.TBL_CUSTOMER.LASTNAME;
 
                 this.branchName = loanAppllication.TBL_BRANCH.BRANCHNAME;
-                this.locationName = loanAppllication.TBL_BRANCH.BRANCHNAME;
+                this.locationName = loanAppllication.TBL_BRANCH.ADDRESSLINE1 + " " + loanAppllication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 this.recommendedInterestRate = loanAppllication.INTERESTRATE.ToString();
                 this.dateCreated = loanAppllication.DATETIMECREATED.ToShortDateString();
@@ -130,7 +130,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (lmsrAppllication.CUSTOMERID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrAppllication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrAppllication.TBL_CUSTOMER.LASTNAME;
 
                 this.branchName = lmsrAppllication.TBL_BRANCH.BRANCHNAME;
-                this.locationName = lmsrAppllication.TBL_BRANCH.BRANCHNAME;
+                this.locationName = lmsrAppllication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrAppllication.TBL_BRANCH.ADDRESSLINE2;
                 //this.isRelatedParty = lmsrAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 //this.recommendedInterestRate = lmsrAppllication.INTERESTRATE.ToString();
                 this.dateCreated = lmsrAppllication.DATETIMECREATED.ToShortDateString();
