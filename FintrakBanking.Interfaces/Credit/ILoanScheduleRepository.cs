@@ -13,6 +13,8 @@ namespace FintrakBanking.Interfaces.Credit
     {
         int CalculateNumberOfInstallments(TenorModeEnum tenorModeId, short frequencyTypeId, int tenor);
 
+        int GetDaysInAYear(DayCountConventionEnum dayCountId);
+
         DateTime CalculateFirstPayDate(DateTime effectiveDate, short frequencyTypeId);
 
         IEnumerable<LookupViewModel> GetAllLoanScheduleCategory();
