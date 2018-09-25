@@ -942,6 +942,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
                 appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
             }
+            if (entity.moduleId == 2)
+            {
+                var appl = context.TBL_LMSR_APPLICATION.Find(entity.applicationId);
+                appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
+                appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
+            }
 
             return context.SaveChanges() > 0;
         }
@@ -951,10 +957,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var preset = new PresetRouteViewModel();
 
             var process = context.TBL_LOAN_APPLICATION_STATUS.Select(x => new FintrakDropDownSelectList
-            {
-                id = x.APPLICATIONSTATUSID,
-                name = x.APPLICATIONSTATUSNAME,
-            })
+                {
+                    id = x.APPLICATIONSTATUSID,
+                    name = x.APPLICATIONSTATUSNAME,
+                })
                 .ToList();
 
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == classId)
