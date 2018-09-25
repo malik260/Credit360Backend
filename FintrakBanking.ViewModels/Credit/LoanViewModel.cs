@@ -534,6 +534,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public int requestStaffId { get; set; }
+
+        public string approvalStatusName { get; set; }
+
         public string operationName { get; set; }
 
         public int tenorUsed { get; set; }
@@ -586,6 +590,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string camDocumentation { get; set; }
         public decimal groupApprovedAmount { get; set; }
         public int approvedTenor { get; set; }
+        public short approvalStatusId { get; set; }
+        public short applicationStatusId { get; set; }
         public int proposedTenor { get; set; }
         public decimal ? customerAvailableAmount { get; set; }
         public string customerOccupation { get; set; }

@@ -1,15 +1,11 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Setups.Credit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -38,7 +34,7 @@ namespace FintrakBanking.Repositories.Credit
         private List<int> lmsCamOperationIds = new List<int> { 46, 71, 79 };
 
         // place holders
-        public readonly string customerNameHolder = "@{{CustomerName}}";
+        private readonly string customerNameHolder = "@{{CustomerName}}";
         private readonly string branchNameHolder = "@{{Branch}}";
         private readonly string locationNameHolder = "@{{Location}}";
         private readonly string customerExposureHolder = "@{{CustomerExposure}}";
@@ -50,6 +46,20 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string environmentalSocialRiskHolder = "@{{EnvironmentalSocialRisk}}";
         private readonly string monitoringTriggersHolder = "@{{MonitoringTriggers}}";
         private readonly string proposedConditionsHolder = "@{{ProposedConditions}}";
+        private readonly string isSecurityHolder = "@{{IsSecurity}}";
+        private readonly string isOwnerOccupiedHolder = "@{{IsOwnerOccupied}}";
+        // lms only
+        private readonly string securityTypeHolder = "@{{SecurityType}}";
+        private readonly string securityDescriptionHolder = "@{{SecurityDescription}}";
+        private readonly string securityFirstSellValueHolder = "@{{SecurityFirstSellValue}}";
+        private readonly string securityLocationHolder = "@{{SecurityLocation}}";
+        private readonly string securityOpenMarketValueHolder = "@{{SecurityOpenMarketValue}}";
+        private readonly string securityPerfectionStatusHolder = "@{{SecurityPerfectionStatus}}";
+        private readonly string securityValuationDateHolder = "@{{SecurityValuationDate}}";
+        private readonly string shareHoldersHolder = "@{{ShareHolders}}";
+        private readonly string signitoriesHolder = "@{{Signitories}}";
+        private readonly string directorsHolder = "@{{Directors}}";
+
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -64,6 +74,20 @@ namespace FintrakBanking.Repositories.Credit
         private string environmentalSocialRisk;
         private string monitoringTriggers;
         private string proposedConditions;
+        // lms
+        private string securityType;
+        private string securityDescription;
+        private string securityFirstSellValue;
+        private string securityLocation;
+        private string securityOpenMarketValue;
+        private string securityPerfectionStatus;
+        private string securityValuationDate;
+        private string shareHolders;
+        private string signitories;
+        private string directors;
+        private string isSecurity;
+        private string isOwnerOccupied;
+
 
         // init
         public bool Init(int operationId, int targetId) // feeder
@@ -85,12 +109,11 @@ namespace FintrakBanking.Repositories.Credit
                 if (loanAppllication.CUSTOMERID != null) this.customerName = loanAppllication.TBL_CUSTOMER.FIRSTNAME + " " + loanAppllication.TBL_CUSTOMER.MIDDLENAME + " " + loanAppllication.TBL_CUSTOMER.LASTNAME;
 
                 this.branchName = loanAppllication.TBL_BRANCH.BRANCHNAME;
-                this.locationName = loanAppllication.TBL_BRANCH.BRANCHNAME;
+                this.locationName = loanAppllication.TBL_BRANCH.ADDRESSLINE1 + " " + loanAppllication.TBL_BRANCH.ADDRESSLINE2;
                 this.isRelatedParty = loanAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 this.recommendedInterestRate = loanAppllication.INTERESTRATE.ToString();
                 this.dateCreated = loanAppllication.DATETIMECREATED.ToShortDateString();
-
-
+                this.environmentalSocialRisk = GetEnvironmentalSocialRiskMarkup();
             }
 
             if (lmsCamOperationIds.Contains(operationId)) // LMS
@@ -112,11 +135,28 @@ namespace FintrakBanking.Repositories.Credit
                 //this.recommendedInterestRate = lmsrAppllication.INTERESTRATE.ToString();
                 this.dateCreated = lmsrAppllication.DATETIMECREATED.ToShortDateString();
 
+                // cam
+                var cam = ClassifiedAssetManagementReview(lmsrAppllication.APPLICATIONREFERENCENUMBER);
+
+                this.securityType = cam.securityType;
+                this.securityDescription = cam.securityDescription;
+                this.securityFirstSellValue = cam.securityFirstSellValue.ToString();
+                this.securityLocation = cam.securityLocation;
+                this.securityOpenMarketValue = cam.securityOpenMarketValue.ToString();
+                this.securityPerfectionStatus = cam.securityPerfectionStatus.ToString();
+                this.securityValuationDate = cam.securityValuationDate.ToString();
+                this.shareHolders = cam.shareHolders;
+                this.signitories = cam.signitories;
+                this.directors = cam.directors;
+                this.isSecurity = cam.isResidential == true ? "Yes" : "No";
+                this.isOwnerOccupied = cam.isOwnerOccupied == true ? "Yes" : "No";
+
             }
 
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
+            this.monitoringTriggers = MonitoringTriggersMarkup();
 
             return true;
         }
@@ -178,6 +218,22 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(approvalLevelHolder, approvalLevel);
             content = content.Replace(accountNumbersHolder, accountNumbers);
             content = content.Replace(proposedConditionsHolder, proposedConditions);
+            content = content.Replace(monitoringTriggersHolder, monitoringTriggers);
+            content = content.Replace(environmentalSocialRiskHolder, environmentalSocialRisk);
+
+            // lms cam only
+            content = content.Replace(securityTypeHolder, securityType);
+            content = content.Replace(securityDescriptionHolder, securityDescription);
+            content = content.Replace(securityFirstSellValueHolder, securityFirstSellValue);
+            content = content.Replace(securityLocationHolder, securityLocation);
+            content = content.Replace(securityOpenMarketValueHolder, securityOpenMarketValue);
+            content = content.Replace(securityPerfectionStatusHolder, securityPerfectionStatus);
+            content = content.Replace(securityValuationDateHolder, securityValuationDate);
+            content = content.Replace(shareHoldersHolder, shareHolders);
+            content = content.Replace(signitoriesHolder, signitories);
+            content = content.Replace(directorsHolder, directors);
+            content = content.Replace(isSecurityHolder, isSecurity);
+            content = content.Replace(isOwnerOccupiedHolder, isOwnerOccupied);
 
             return content;
         }
@@ -301,10 +357,60 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         // Environmental & Social Risk Assessment
-        public void GetEnvironmentalSocialRisk()
-        {
 
+        public IEnumerable<ESGChecklistSummaryViewModel> GetEnvironmentalSocialRisk()
+        {
+            return context.TBL_ESG_CHECKLIST_SUMMARY
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId) 
+                , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (s, d) => new { s, d })
+                .Select(x => new ESGChecklistSummaryViewModel
+                {
+                    comment = x.s.COMMENT_,
+                    ratingId = x.s.RATINGID,
+                    productCustomerName = x.d.TBL_PRODUCT.PRODUCTNAME + " -- " + x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME
+                });
         }
+
+        private string GetEnvironmentalSocialRiskMarkup() // TODO RATINGIS
+        {
+            var result = String.Empty;
+            var summary = GetEnvironmentalSocialRisk();
+
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Facility</th>
+                        <th>Summary</th>
+                        <th>Rating</th>
+                    </tr>
+                 ";
+            foreach (var s in summary)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{s.productCustomerName}</td>
+                        <td>{s.comment}</td>
+                        <td>{GetESGRating(s.ratingId)}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+        }
+
+        private string GetESGRating(int ratingId)
+        {
+            if (ratingId == 7) return "Low";
+            if (ratingId == 8) return "Medium";
+            if (ratingId == 9) return "High";
+            return "N/A";
+        }
+
+        // Customer exposure
 
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure()
         {
@@ -392,54 +498,86 @@ namespace FintrakBanking.Repositories.Credit
             return exposures;
         }
 
-        //public ClassifiedAccessManagementViewModel ClassifiedAssetManagementtReviewTemplate(string applicationReferenceNumber)
-        //{
-        //    var cam = (from a in context.TBL_LOAN_APPLICATION
-        //               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-        //               join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-        //               join d in context.TBL_LOAN on b.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
-        //               let securty = context.TBL_LOAN_COLLATERAL_MAPPING.
-        //               Join(context.TBL_COLLATERAL_CUSTOMER, m => m.COLLATERALCUSTOMERID, s => s.COLLATERALCUSTOMERID, (m, s) => new { m, s}).
-        //               Join(context.TBL_COLLATERAL_IMMOVE_PROPERTY.)
-        //               where a.APPLICATIONREFERENCENUMBER == applicationReferenceNumber
-        //               select new ClassifiedAccessManagementViewModel
-        //               {
-        //                   accountNumber = context.TBL_CASA.Where(o => o.CASAACCOUNTID == d.CASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-        //                   amountDisbursed = d.PRINCIPALAMOUNT,
-        //                   amountPaidSoFar = 0,
-        //                   amountProposed = b.PROPOSEDAMOUNT,
-        //                   branchAddress = "",
-        //                   branchManager = "",
-        //                   branchName = "",
-        //                   customerName = c.FIRSTNAME + " " + c.MAIDENNAME + " " + c.LASTNAME,
-        //                   dateClassified = DateTime.Now,
-        //                   dateWasGranted = DateTime.Now,
-        //                   directors = "",
-        //                   facilityType = context.TBL_PRODUCT.Where(o => o.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
-        //                   incumbentAccountOfficer = "",
-        //                   interestOverdue = 0,
-        //                   nameOfInitialAccountOfficer = "",
-        //                   pricipalOutstanding = d.OUTSTANDINGPRINCIPAL,
-        //                   proposedRepaymentTenor = (d.MATURITYDATE - d.EFFECTIVEDATE).Days,
-        //                   proposedWriteOffAmount = 0,
-        //                   provisionToDate = DateTime.Now,
-        //                   securityClass = "",
-        //                   securityDescription = "",
-        //                   securityFSV = "",
-        //                   securityLocation = "",
-        //                   securityOMV = "",
-        //                   securityOwnerOccupied = false,
-        //                   securityPerfectionStatus = "",
-        //                   securityType = "",
-        //                   securityValuationDate = DateTime.Now,
-        //                   shareHolders = "",
-        //                   signitories = "," ,
-        //                   totalPaidAndProposed =0
+        //Classified Assets Management
+        public ClassifiedAssetManagementViewModel ClassifiedAssetManagementReview(string applicationReferenceNumber)
+        {
+            string listOfshareHolders = String.Empty;
+            string listOfSignitories = String.Empty;
+            string listOfDirectors = String.Empty;
+
+            var cam = (from a in context.TBL_LMSR_APPLICATION
+                       join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                       join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                       join d in context.TBL_LOAN on b.LOANID equals d.TERMLOANID
+                       where a.APPLICATIONREFERENCENUMBER == applicationReferenceNumber && b.LOANSYSTEMTYPEID==(int)LoanSystemTypeEnum.TermDisbursedFacility
+                       select new ClassifiedAssetManagementViewModel
+                       {
+                           customerId = c.CUSTOMERID,
+                           loanId = d.TERMLOANID,
+                           accountNumber = context.TBL_CASA.Where(o => o.CASAACCOUNTID == d.CASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                           amountDisbursed = d.PRINCIPALAMOUNT,
+                           amountPaidSoFar = d.PRINCIPALAMOUNT-d.OUTSTANDINGPRINCIPAL, 
+                           amountProposed = b.PROPOSEDAMOUNT,
+                           branchAddress = context.TBL_BRANCH.Where(o=>o.BRANCHID==d.BRANCHID).Select(o=>o.ADDRESSLINE1 + " " + o.ADDRESSLINE2).FirstOrDefault(),
+                           branchManager = "", //
+                           branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == d.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                           customerName = c.FIRSTNAME + " " + c.MAIDENNAME + " " + c.LASTNAME,
+                           dateClassified = context.TBL_LOAN_CAMSOL.Where(o => o.LOANID == d.TERMLOANID).Select(o=>o.DATE).FirstOrDefault() , 
+                           dateFacilityWasGranted = d.EFFECTIVEDATE, 
+                           facilityType = context.TBL_PRODUCT.Where(o => o.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                           facilityAmountGranted = b.APPROVEDAMOUNT,
+                           incumbentAccountOfficer = context.TBL_STAFF.Where(o=>o.STAFFID==d.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                           interestOverdue = d.PASTDUEINTEREST + d.INTERESTONPASTDUEINTEREST + d.INTERESTONPASTDUEPRINCIPAL, 
+                           nameOfInitialAccountOfficer = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_STAFF_ACCOUNT_HISTORY.Where(y => y.TARGETID == d.TERMLOANID).OrderByDescending(y => y.DATETIMECREATED).Select(y => o.STAFFID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                           pricipalOutstanding = d.OUTSTANDINGPRINCIPAL + d.PASTDUEPRINCIPAL,
+                           proposedRepaymentTenor = (d.MATURITYDATE - d.EFFECTIVEDATE).Days,
+                           totalPaidAndProposed = (d.PRINCIPALAMOUNT - d.OUTSTANDINGPRINCIPAL) - b.PROPOSEDAMOUNT, 
+                           totalOutstanding = 0 //
+
+                       }).FirstOrDefault();
+
+            var securty = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
+                          join b in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                          join c in context.TBL_COLLATERAL_IMMOVE_PROPERTY on b.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                          where x.LOANID == cam.loanId
+                          select new { x, b, c }).FirstOrDefault();
+
+            var shareHolders = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                             where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.Shareholder
+                             select d.FIRSTNAME + " " + d.MIDDLENAME + " " + d.SURNAME).ToList();
+
+            foreach (var x in shareHolders)
+                listOfshareHolders = listOfshareHolders + x + ", ";
+            var signatories = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                             where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.AccountSignatory
+                             select d.CUSTOMERBVN).ToList();
+
+            foreach (var x in signatories)
+                listOfSignitories = listOfSignitories + x + ", ";
 
 
-        //               }).FirstOrDefault();
-        //    return cam;
-        //}
+            var director = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.BoardMember && d.COMPANYDIRECTORTYPEID==(int)CustomerCompanyDirectorTypeEnum.BoardMemberShareholder
+                               select d.FIRSTNAME + " " + d.MIDDLENAME + " " + d.SURNAME).ToList();
+
+            foreach (var x in director)
+                listOfDirectors = listOfDirectors + x + ", ";
+
+            cam.securityType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == securty.b.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault();
+            cam.isResidential = securty.c.ISRESIDENTIAL;
+            cam.securityDescription = securty.c.PROPERTYNAME;
+            cam.securityFirstSellValue = securty.c.FORCEDSALEVALUE;
+            cam.securityLocation = securty.c.PROPERTYADDRESS;
+            cam.securityOpenMarketValue = securty.c.OPENMARKETVALUE;
+            cam.isOwnerOccupied = securty.c.ISOWNEROCCUPIED;
+            cam.securityPerfectionStatus = securty.c.PERFECTIONSTATUSID;
+            cam.securityValuationDate = securty.c.LASTVALUATIONDATE;
+            cam.shareHolders = listOfshareHolders.TrimEnd(',');
+            cam.signitories = listOfSignitories.TrimEnd(',');
+            cam.directors = listOfDirectors;
+
+            return cam;
+        }
 
     }
 }

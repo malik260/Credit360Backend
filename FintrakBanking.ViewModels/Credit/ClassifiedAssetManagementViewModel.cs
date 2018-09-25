@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Credit
 {
-   public class ClassifiedAccessManagementViewModel
+   public class ClassifiedAssetManagementViewModel
     {
         public string customerName { get; set; }
         public string accountNumber { get; set; }
@@ -22,22 +22,29 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? dateClassified { get; set; }
         public decimal? amountPaidSoFar { get; set; }
         public decimal? amountProposed { get; set; }
+        public decimal? totalOutstanding { get; set; }
         public decimal? totalPaidAndProposed { get; set; }
         public decimal? proposedRepaymentTenor { get; set; }
         public decimal? proposedWriteOffAmount { get; set; }
         public string facilityType { get; set; }
-        public DateTime? dateWasGranted { get; set; }
+        public decimal? facilityAmountGranted { get; set; }
+        public DateTime? dateFacilityWasGranted { get; set; }
         public decimal? amountDisbursed { get; set; }
         public string securityType { get; set; }
         public string securityDescription { get; set; }
         public string securityLocation { get; set; }
-        public string securityOMV { get; set; }
-        public string securityFSV { get; set; }
+        public decimal? securityOpenMarketValue { get; set; }
+        public decimal? securityFirstSellValue { get; set; }
         public DateTime? securityValuationDate { get; set; }
-        public string securityPerfectionStatus { get; set; }
-        public string securityClass { get; set; }
+        public byte securityPerfectionStatus { get; set; }
+        public bool security { get; set; }
         public bool? securityOwnerOccupied { get; set; }
         public string nameOfInitialAccountOfficer { get; set; }
         public string incumbentAccountOfficer { get; set; }
+
+        public int loanId { get; set; }
+        public int customerId { get; set; }
+        public bool? isResidential { get; set; }
+        public bool? isOwnerOccupied { get; set; }
     }
 }

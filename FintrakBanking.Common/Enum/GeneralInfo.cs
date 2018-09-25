@@ -266,7 +266,8 @@ namespace FintrakBanking.Common.Enum
         CamsolApproval = 244,
        RegionDeleted = 245,
         ContingentLiabilityRenewal = 245,
-        ContingentLiabilityTermination = 246
+        ContingentLiabilityTermination = 246,
+        facilityBookingReferedBack = 247
 
     };
    public enum RegulatoryTypeEnum

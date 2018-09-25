@@ -113,7 +113,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedTenor = d.APPROVEDTENOR,
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
-                    // loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+
                 })
                 
             })
