@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 10)
+                    if (dateDifference.Seconds > 30)
                     {
                         this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                         this.ReportViewer.LocalReport.Refresh();

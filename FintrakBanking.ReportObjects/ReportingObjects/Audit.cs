@@ -3,6 +3,7 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Admin;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 join st in context.TBL_STAFF on _audit.STAFFID equals st.STAFFID
                 join u in context.TBL_PROFILE_USER on st.STAFFID equals u.STAFFID
                 join b in context.TBL_BRANCH on _audit.BRANCHID equals b.BRANCHID
-                where (_audit.SYSTEMDATETIME >= startDate && _audit.SYSTEMDATETIME <= endDate)
+                where (DbFunctions.TruncateTime(_audit.SYSTEMDATETIME) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(_audit.SYSTEMDATETIME) <= DbFunctions.TruncateTime(endDate))
                 && (st.FIRSTNAME.StartsWith(username.Trim()) || st.MIDDLENAME.StartsWith(username.Trim())
                 || st.LASTNAME.StartsWith(username.Trim()) || u.USERNAME.StartsWith(username.Trim())
                 || _audit.URL.StartsWith(username.Trim())
@@ -29,6 +30,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 || _audit.DETAIL.ToLower().Contains(username.ToLower().Trim())
                 || username == null)
                 &&(_audit.AUDITTYPEID== auditTypeId || auditTypeId==0)
+                orderby _audit.SYSTEMDATETIME descending
                 select new AuditViewModel
                 {
                     auditId = _audit.AUDITID,

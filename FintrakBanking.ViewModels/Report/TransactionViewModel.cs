@@ -46,6 +46,7 @@ namespace FintrakBanking.Finance.ViewModels
         public string GLAccountCode { get; set; }
         public int GLAccountId { get; set; }
         public int glAccountId { get; set; }
+        public string operationName { get; set; }
     }
     public class BulkTransactionViewModel
     {
