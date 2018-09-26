@@ -576,16 +576,16 @@ namespace FintrakBanking.Repositories.Credit
 
             if (casa == null) throw new SecureException("Norminated Account Does not Exist");
 
-            //var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
 
             var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
 
-            //if (chargeAmount > accountBalance)
-            //{
-            //    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
-            //}
+            if (chargeAmount > accountBalance)
+            {
+                throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+            }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
@@ -644,7 +644,7 @@ namespace FintrakBanking.Repositories.Credit
                                 throw new ConditionNotMetException("Search could not save the result file");
                             }
 
-                           // DebitCustomer(chargeModel);
+                            DebitCustomer(chargeModel);
 
                             context.SaveChanges();
                             trans.Commit();
@@ -850,9 +850,9 @@ namespace FintrakBanking.Repositories.Credit
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
             var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
-            //if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
 
-            //var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
 
             var chargeModel = new CreditBereauViewModel();
@@ -865,7 +865,7 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.passCode = searchInput.passCode;
 
 
-            //searchInput.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
+            searchInput.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
             searchInput.userName = creditBureau.USERNAME;
             searchInput.password = creditBureau.PASSWORD;
 
@@ -873,8 +873,8 @@ namespace FintrakBanking.Repositories.Credit
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
 
 
-            //if (chargeAmount > accountBalance)
-               // throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
+            if (chargeAmount > accountBalance)
+                throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             chargeModel.referenceNumber = referenceNumber;
