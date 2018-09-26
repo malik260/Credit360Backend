@@ -370,6 +370,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerName { get; set; }
     }
 
+    public class NewCollateralViewModel
+    {
+        public int? applicationId { get; set; }
+        public int customerId { get; set; }
+    }
    
     public class AllCollateralViewModel : CollateralViewModel
     {
