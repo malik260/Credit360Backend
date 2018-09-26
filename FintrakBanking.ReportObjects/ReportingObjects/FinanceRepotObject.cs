@@ -115,9 +115,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                         join l in context.TBL_LOAN on a.REFERENCENUMBER equals l.LOANREFERENCENUMBER
                         join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                        where a.DATE >= startDate && a.DATE <= endDate
+                        where DbFunctions.TruncateTime(a.DATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DATE) <= DbFunctions.TruncateTime(endDate)
                         && a.COMPANYID == companyId
-                        && (a.REFERENCENUMBER.ToLower().StartsWith(searchParamemter) || searchParamemter =="")//(searchParamemter.ToLower().Trim().Contains(a.REFERENCENUMBER.ToLower()) || searchParamemter =="")
+                        && (a.REFERENCENUMBER.ToLower() ==searchParamemter.ToLower() 
+                        || a.REFERENCENUMBER.ToLower().Contains( searchParamemter.ToLower()) 
+                        || a.REFERENCENUMBER.ToLower().StartsWith(searchParamemter.ToLower()) 
+                        || searchParamemter == "")//(searchParamemter.ToLower().Trim().Contains(a.REFERENCENUMBER.ToLower()) || searchParamemter =="")
                         orderby a.DAILYACCURALID descending
                         select new DailyAccrualViewModel()
                         {

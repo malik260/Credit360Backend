@@ -7613,6 +7613,7 @@ namespace FintrakBanking.Repositories.Credit
                             subSectorName = l.TBL_SUB_SECTOR.NAME,
                             sectorName = l.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                             outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
+                            maturityDate = l.MATURITYDATE
                         });
             return data;
         }
