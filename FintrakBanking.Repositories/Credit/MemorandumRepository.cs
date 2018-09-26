@@ -130,7 +130,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (lmsrAppllication.CUSTOMERID != null) this.customerName = lmsrAppllication.TBL_CUSTOMER.FIRSTNAME + " " + lmsrAppllication.TBL_CUSTOMER.MIDDLENAME + " " + lmsrAppllication.TBL_CUSTOMER.LASTNAME;
 
                 this.branchName = lmsrAppllication.TBL_BRANCH.BRANCHNAME;
-                this.locationName = lmsrAppllication.TBL_BRANCH.BRANCHNAME;
+                this.locationName = lmsrAppllication.TBL_BRANCH.ADDRESSLINE1 + " " + lmsrAppllication.TBL_BRANCH.ADDRESSLINE2;
                 //this.isRelatedParty = lmsrAppllication.ISRELATEDPARTY == true ? "Yes" : "No";
                 //this.recommendedInterestRate = lmsrAppllication.INTERESTRATE.ToString();
                 this.dateCreated = lmsrAppllication.DATETIMECREATED.ToShortDateString();
