@@ -311,6 +311,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.NextLevelId = model.receiverLevelId;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;
+            workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+
             workflow.LogActivity();
 
             context.SaveChanges(); // redundant !
@@ -360,7 +362,9 @@ namespace FintrakBanking.Repositories.Credit
                     if (operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter) workflow.NextLevelId = GetFirstReceiverLevel(model.lastUpdatedBy, (int)OperationsEnum.LoanReviewApprovalAvailment, null, true);
                     workflow.NextProcess(appl.COMPANYID, model.lastUpdatedBy, nextProcessId, appl.LOANAPPLICATIONID, null, "New application", true, true); // model.operationId must be used here!
                 }
+
                 if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
+
                 context.SaveChanges();
             }
 

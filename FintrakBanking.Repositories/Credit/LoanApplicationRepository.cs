@@ -2006,6 +2006,7 @@ namespace FintrakBanking.Repositories.Credit
                            where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                            select b.PRODUCTCLASSID).FirstOrDefault();
 
+
             if (details == (short)ProductClassEnum.InvoiceDiscountingFacility)
             {
                 var inv = (from a in context.TBL_LOAN_APPLICATION_DETL_INV
@@ -2084,6 +2085,35 @@ namespace FintrakBanking.Repositories.Credit
                               productClassId = (int)ProductClassEnum.BondAndGuarantees
                           }).ToList();
                 return bg;
+            }
+            else if (details == (short)ProductClassEnum.Corporate)
+            {
+                var typeId = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                              join b in context.TBL_LOAN_APPLICATION
+                              on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                              where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                              select a.TBL_PRODUCT.PRODUCTTYPEID).FirstOrDefault();
+
+                if (typeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                {
+                    var syndication = (from j in context.TBL_LOAN_APPLICATION_DETL_SYN
+                              where j.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                              select new SyndicatedLoanDetailViewModel()
+                              {
+                                  syndicationId = j.SYNDICATIONID,
+                                  bankCode = j.BANKCODE,
+                                  bankName = j.BANKNAME,
+                                  amountContributed = j.AMOUNTCONTRIBUTED,
+                                  loanApplicationDetailId = j.LOANAPPLICATIONDETAILID,
+                                  typeId = (short)j.PARTY_TYPEID,
+                                  typeName = context.TBL_LOAN_SYNDICATION_PARTY_TYP.Where(f => f.PARTY_TYPEID == j.PARTY_TYPEID).Select(i => i.PARTY_TYPENAME).FirstOrDefault(),
+                                  productClassId = (int)ProductClassEnum.Corporate
+
+                              }).ToList();
+                    return syndication;
+                }
+                return null;
+
             }
             return null;
         }
