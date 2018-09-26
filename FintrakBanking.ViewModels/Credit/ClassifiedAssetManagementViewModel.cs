@@ -22,7 +22,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? dateClassified { get; set; }
         public decimal? amountPaidSoFar { get; set; }
         public decimal? amountProposed { get; set; }
-        public decimal? totalOutstanding { get; set; }
+        public decimal totalOutstanding { get; set; }
         public decimal totalPaidAndProposed { get; set; }
         public double proposedRepaymentTenor { get; set; }
         public decimal? proposedWriteOffAmount { get; set; }
