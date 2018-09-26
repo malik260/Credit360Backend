@@ -525,8 +525,12 @@ namespace FintrakBanking.Repositories.Credit
                                 transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                                 baseReferenceNumber = null,
                                 dayCountConventionId = c.DAYCOUNTCONVENTIONID,
-                                daysInAYear = c.DAYSINAYEAR,
+                                //daysInAYear = c.DAYSINAYEAR,
 
+                            }).ToList().Select(x =>
+                            {
+                                x.daysInAYear = loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId);
+                                return x;
                             });
 
                 List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
@@ -636,10 +640,13 @@ namespace FintrakBanking.Repositories.Credit
                                 transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                                 baseReferenceNumber = null,
                                 dayCountConventionId = c.DAYCOUNTCONVENTIONID,
-                                daysInAYear = c.DAYSINAYEAR,
+                                //daysInAYear = c.DAYSINAYEAR,
 
-
-                            }).ToList();
+                            }).ToList().Select(x =>
+                            {
+                                x.daysInAYear = loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId);
+                                return x;
+                            });
 
                 List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
 
@@ -746,10 +753,12 @@ namespace FintrakBanking.Repositories.Credit
                                 transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                                 baseReferenceNumber = null,
                                 dayCountConventionId = c.DAYCOUNTCONVENTIONID,
-                                daysInAYear = c.DAYSINAYEAR,
-
-
-                            }).ToList();
+                                //daysInAYear = c.DAYSINAYEAR,
+                            }).ToList().Select(x =>
+                            {
+                                x.daysInAYear = loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId);
+                                return x;
+                            });
 
 
 
@@ -798,7 +807,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
-                    result = bulkPosting.WriteBulkDailyPastDueInterestAccrualToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+                    result = bulkPosting.WriteBulkDailyPastDueInterestAccrualToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate,
+                                                                                        "Past Due Interest Accrual Posting - Interest");
 
                 }
                 else
@@ -857,10 +867,13 @@ namespace FintrakBanking.Repositories.Credit
                                 transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                                 baseReferenceNumber = null,
                                 dayCountConventionId = c.DAYCOUNTCONVENTIONID,
-                                daysInAYear = c.DAYSINAYEAR,
+                                //daysInAYear = c.DAYSINAYEAR,
+                            }).ToList().Select(x =>
+                            {
+                                x.daysInAYear = loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId);
+                                return x;
+                            });
 
-
-                            }).ToList();
 
                 List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
 
@@ -908,7 +921,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     BulkTransactionPosting bulkPosting = new BulkTransactionPosting();
 
-                    result = bulkPosting.WriteBulkDailyPastDueInterestAccrualToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate);
+                    result = bulkPosting.WriteBulkDailyPastDueInterestAccrualToStaging(model, context, stagingContext, finacle, financeTransaction, applicationDate,
+                                                                                        "Past Due Interest Accrual Posting - Principal");
 
                 }
                 else
@@ -1947,8 +1961,26 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
+        private decimal GetPeriodInterestAmount(int loanId, DateTime paymentDate)
+        {
+            var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(paymentDate));
 
+            decimal interestAmount = 0;
+
+            if (interest.Count() > 0)
+            {
+                interestAmount = interest.Sum(x => x.DAILYINTERESTAMOUNT);
+            }
+            else
+            {
+                interestAmount = 0;
+            }
+
+
+            return interestAmount;
+        }
+
+        public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
         {
 
             try
@@ -1966,7 +1998,7 @@ namespace FintrakBanking.Repositories.Credit
                                  companyId = b.COMPANYID,
                                  currencyId = b.CURRENCYID,
                                  exchangeRate = b.EXCHANGERATE,
-                                 periodInterestAmount = a.PERIODINTERESTAMOUNT,
+                                 //periodInterestAmount = a.PERIODINTERESTAMOUNT,
                                  periodPrincipalAmount = a.PERIODPRINCIPALAMOUNT,
                                  interestRate = a.INTERESTRATE,
                                  paymentDate = applicationDate,
@@ -1977,7 +2009,12 @@ namespace FintrakBanking.Repositories.Credit
                                  loanRefNo = b.LOANREFERENCENUMBER,
                                  pastDueInterestAmount = b.PASTDUEINTEREST,
                                  pastDuePrincipalAmount = b.PASTDUEPRINCIPAL,
+                             }).ToList().Select(x =>
+                             {
+                                 x.periodInterestAmount = GetPeriodInterestAmount(x.loanId, x.paymentDate);
+                                 return x;
                              }).ToList();
+
 
                 List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
 
