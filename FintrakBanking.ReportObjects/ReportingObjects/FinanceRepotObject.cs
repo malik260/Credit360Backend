@@ -21,7 +21,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
                 IQueryable<TransactionViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
                                                          where a.COMPANYID == companyId
-                                                         && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)
+                                                         && (DbFunctions.TruncateTime(a.POSTEDDATE) <= DbFunctions.TruncateTime(endDate) && DbFunctions.TruncateTime(a.POSTEDDATE) >= DbFunctions.TruncateTime(startDate))
                                                          && (branchId == null || branchId==0 || a.TBL_BRANCH.BRANCHID==branchId)
                                                          && (a.GLACCOUNTID == glAccountId || glAccountId==0)
                                                          && (a.POSTEDBY == PostedByStaffId || PostedByStaffId ==0)
@@ -72,7 +72,6 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                             && a.CREDITAMOUNT == 0
                                                                             && a.DEBITAMOUNT > 0
                                                                           && operations.Contains(a.OPERATIONID)
-                                                                          && (a.OPERATIONID == operationId || operationId == 0 || operationId == null)
                                                    orderby a.POSTEDDATE, a.TRANSACTIONID descending
 
                                                    select new TransactionViewModel()
@@ -100,7 +99,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                        customerCode = c.CUSTOMERCODE,
                                                        customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                                                        branchCode = context.TBL_BRANCH.Where(x => x.BRANCHID == l.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault(),
-                                                       sourceReferenceNumber = a.SOURCEREFERENCENUMBER
+                                                       sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
+                                                       operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault()
                                                    }).ToList();
                 return data;
             }
@@ -151,9 +151,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
                         join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
                         join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                        where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
+                        where DbFunctions.TruncateTime( a.POSTEDDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.POSTEDDATE) <= DbFunctions.TruncateTime(endDate)
                         && a.COMPANYID == companyId
-                        && (a.FLOWTYPE == valueCode || valueCode==null || valueCode=="") 
+                        && (a.FLOWTYPE.Trim() == valueCode.Trim() || valueCode==null || valueCode=="") 
                         orderby a.BULKTRANSACTIONID descending
                         select new BulkTransactionViewModel()
                         {

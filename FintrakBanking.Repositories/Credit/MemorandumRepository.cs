@@ -59,10 +59,6 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string shareHoldersHolder = "@{{ShareHolders}}";
         private readonly string signitoriesHolder = "@{{Signitories}}";
         private readonly string directorsHolder = "@{{Directors}}";
-        private readonly string amountDisbursedHolder = "@{{AmountDisbursed}}";
-        private readonly string amountPaidSoFarHolder = "@{{AmountPaidSoFar}}";
-        private readonly string amountProposedHolder = "@{{AmountProposed}}";
-
 
 
         // properties to have getter methods for interfacing
@@ -91,9 +87,6 @@ namespace FintrakBanking.Repositories.Credit
         private string directors;
         private string isSecurity;
         private string isOwnerOccupied;
-        private string amountDisbursed;
-        private string amountPaidSoFar;
-        private string amountProposed;
 
 
         // init
@@ -157,9 +150,7 @@ namespace FintrakBanking.Repositories.Credit
                 this.directors = cam.directors;
                 this.isSecurity = cam.isResidential == true ? "Yes" : "No";
                 this.isOwnerOccupied = cam.isOwnerOccupied == true ? "Yes" : "No";
-                this.amountDisbursed = cam.amountDisbursed.ToString();
-                this.amountPaidSoFar = cam.amountPaidSoFar.ToString();
-                this.amountProposed = cam.amountProposed.ToString();
+
             }
 
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
@@ -243,10 +234,6 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(directorsHolder, directors);
             content = content.Replace(isSecurityHolder, isSecurity);
             content = content.Replace(isOwnerOccupiedHolder, isOwnerOccupied);
-            content = content.Replace(amountDisbursedHolder, amountDisbursed);
-            content = content.Replace(amountPaidSoFarHolder, amountPaidSoFar);
-            content = content.Replace(amountProposedHolder, amountProposed);
-
 
             return content;
         }
@@ -374,7 +361,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<ESGChecklistSummaryViewModel> GetEnvironmentalSocialRisk()
         {
             return context.TBL_ESG_CHECKLIST_SUMMARY
-                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId) 
+                .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == this.targetId)
                 , s => s.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (s, d) => new { s, d })
                 .Select(x => new ESGChecklistSummaryViewModel
                 {
@@ -517,83 +504,90 @@ namespace FintrakBanking.Repositories.Credit
             string listOfshareHolders = String.Empty;
             string listOfSignitories = String.Empty;
             string listOfDirectors = String.Empty;
-
-            var cam = (from a in context.TBL_LMSR_APPLICATION
-                       join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                       join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                       join d in context.TBL_LOAN on b.LOANID equals d.TERMLOANID
-                       where a.APPLICATIONREFERENCENUMBER == applicationReferenceNumber && b.LOANSYSTEMTYPEID==(int)LoanSystemTypeEnum.TermDisbursedFacility
-                       select new ClassifiedAssetManagementViewModel
-                       {
-                           customerId = c.CUSTOMERID,
-                           loanId = d.TERMLOANID,
-                           accountNumber = context.TBL_CASA.Where(o => o.CASAACCOUNTID == d.CASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                           amountDisbursed = d.PRINCIPALAMOUNT,
-                           amountPaidSoFar = d.PRINCIPALAMOUNT-d.OUTSTANDINGPRINCIPAL, 
-                           amountProposed = b.PROPOSEDAMOUNT,
-                           branchAddress = context.TBL_BRANCH.Where(o=>o.BRANCHID==d.BRANCHID).Select(o=>o.ADDRESSLINE1 + " " + o.ADDRESSLINE2).FirstOrDefault(),
-                           branchManager = "", //
-                           branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == d.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
-                           customerName = c.FIRSTNAME + " " + c.MAIDENNAME + " " + c.LASTNAME,
-                           dateClassified = context.TBL_LOAN_CAMSOL.Where(o => o.LOANID == d.TERMLOANID).Select(o=>o.DATE).FirstOrDefault() , 
-                           dateFacilityWasGranted = d.EFFECTIVEDATE, 
-                           facilityType = context.TBL_PRODUCT.Where(o => o.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
-                           facilityAmountGranted = b.APPROVEDAMOUNT,
-                           incumbentAccountOfficer = context.TBL_STAFF.Where(o=>o.STAFFID==d.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                           nameOfInitialAccountOfficer = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_STAFF_ACCOUNT_HISTORY.Where(y => y.TARGETID == d.TERMLOANID).OrderByDescending(y => y.DATETIMECREATED).Select(y => o.STAFFID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-
-                           interestOverdue = d.PASTDUEINTEREST + d.INTERESTONPASTDUEINTEREST + d.INTERESTONPASTDUEPRINCIPAL, 
-                           pricipalOutstanding = d.OUTSTANDINGPRINCIPAL + d.PASTDUEPRINCIPAL,
-                           //proposedRepaymentTenor = (d.MATURITYDATE - d.EFFECTIVEDATE).TotalDays,
-                           totalPaidAndProposed = (d.PRINCIPALAMOUNT - d.OUTSTANDINGPRINCIPAL) - b.PROPOSEDAMOUNT, 
-                           totalOutstanding = 0 //
-
-                       }).FirstOrDefault();
-
-            var securty = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
-                          join b in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
-                          join c in context.TBL_COLLATERAL_IMMOVE_PROPERTY on b.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
-                          where x.LOANID == cam.loanId
-                          select new { x, b, c }).FirstOrDefault();
-
-            var shareHolders = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
-                             where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.Shareholder
-                             select d.FIRSTNAME + " " + d.MIDDLENAME + " " + d.SURNAME).ToList();
-
-            foreach (var x in shareHolders)
-                listOfshareHolders = listOfshareHolders + x + ", ";
-            var signatories = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
-                             where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.AccountSignatory
-                             select d.CUSTOMERBVN).ToList();
-
-            foreach (var x in signatories)
-                listOfSignitories = listOfSignitories + x + ", ";
-
-
-            var director = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
-                                where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.BoardMember && d.COMPANYDIRECTORTYPEID==(int)CustomerCompanyDirectorTypeEnum.BoardMemberShareholder
-                               select d.FIRSTNAME + " " + d.MIDDLENAME + " " + d.SURNAME).ToList();
-
-            foreach (var x in director)
-                listOfDirectors = listOfDirectors + x + ", ";
-
-            if (securty != null)
+            try
             {
-                cam.securityType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == securty.b.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault();
-                cam.isResidential = securty.c.ISRESIDENTIAL;
-                cam.securityDescription = securty.c.PROPERTYNAME;
-                cam.securityFirstSellValue = securty.c.FORCEDSALEVALUE;
-                cam.securityLocation = securty.c.PROPERTYADDRESS;
-                cam.securityOpenMarketValue = securty.c.OPENMARKETVALUE;
-                cam.isOwnerOccupied = securty.c.ISOWNEROCCUPIED;
-                cam.securityPerfectionStatus = securty.c.PERFECTIONSTATUSID;
-                cam.securityValuationDate = securty.c.LASTVALUATIONDATE;
-            }
-            cam.shareHolders = listOfshareHolders.TrimEnd(',');
-            cam.signitories = listOfSignitories.TrimEnd(',');
-            cam.directors = listOfDirectors;
+                var cam = (from a in context.TBL_LMSR_APPLICATION
+                           join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                           join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                           join d in context.TBL_LOAN on b.LOANID equals d.TERMLOANID
+                           where a.APPLICATIONREFERENCENUMBER == applicationReferenceNumber && b.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
+                           select new ClassifiedAssetManagementViewModel
+                           {
+                               customerId = c.CUSTOMERID,
+                               loanId = d.TERMLOANID,
+                               accountNumber = context.TBL_CASA.Where(o => o.CASAACCOUNTID == d.CASAACCOUNTID).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                               amountDisbursed = d.PRINCIPALAMOUNT,
+                               amountPaidSoFar = d.PRINCIPALAMOUNT - d.OUTSTANDINGPRINCIPAL,
+                               amountProposed = b.PROPOSEDAMOUNT,
+                               branchAddress = context.TBL_BRANCH.Where(o => o.BRANCHID == d.BRANCHID).Select(o => o.ADDRESSLINE1 + " " + o.ADDRESSLINE2).FirstOrDefault(),
+                               branchManager = "", //
+                               branchName = context.TBL_BRANCH.Where(o => o.BRANCHID == d.BRANCHID).Select(o => o.BRANCHNAME).FirstOrDefault(),
+                               customerName = c.FIRSTNAME + " " + c.MAIDENNAME + " " + c.LASTNAME,
+                               dateClassified = context.TBL_LOAN_CAMSOL.Where(o => o.LOANID == d.TERMLOANID).Select(o => o.DATE).FirstOrDefault(),
+                               dateFacilityWasGranted = d.EFFECTIVEDATE,
+                               facilityType = context.TBL_PRODUCT.Where(o => o.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
+                               facilityAmountGranted = b.APPROVEDAMOUNT,
+                               incumbentAccountOfficer = context.TBL_STAFF.Where(o => o.STAFFID == d.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+                               nameOfInitialAccountOfficer = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_STAFF_ACCOUNT_HISTORY.Where(y => y.TARGETID == d.TERMLOANID).OrderByDescending(y => y.DATETIMECREATED).Select(y => o.STAFFID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
 
-            return cam;
+                               interestOverdue = d.PASTDUEINTEREST + d.INTERESTONPASTDUEINTEREST + d.INTERESTONPASTDUEPRINCIPAL,
+                               pricipalOutstanding = d.OUTSTANDINGPRINCIPAL + d.PASTDUEPRINCIPAL,
+                               //proposedRepaymentTenor = (d.MATURITYDATE - d.EFFECTIVEDATE).TotalDays,
+                               totalPaidAndProposed = (d.PRINCIPALAMOUNT - d.OUTSTANDINGPRINCIPAL) - b.PROPOSEDAMOUNT,
+                               totalOutstanding = 0, //
+                               maturityDate = d.MATURITYDATE,
+                               effectiveDate = d.EFFECTIVEDATE
+                           }).FirstOrDefault();
+
+                var securty = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
+                               join b in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                               join c in context.TBL_COLLATERAL_IMMOVE_PROPERTY on b.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                               where x.LOANID == cam.loanId
+                               select new { x, b, c }).FirstOrDefault();
+
+                var shareHolders = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                    where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.Shareholder
+                                    select d.FIRSTNAME + " " + d.MIDDLENAME + " " + d.SURNAME).ToList();
+
+                foreach (var x in shareHolders)
+                    listOfshareHolders = listOfshareHolders + x + ", ";
+                var signatories = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                   where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.AccountSignatory
+                                   select d.CUSTOMERBVN).ToList();
+
+                foreach (var x in signatories)
+                    listOfSignitories = listOfSignitories + x + ", ";
+
+
+                var director = (from d in context.TBL_CUSTOMER_COMPANY_DIRECTOR
+                                where d.CUSTOMERID == cam.customerId && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.BoardMember && d.COMPANYDIRECTORTYPEID == (int)CustomerCompanyDirectorTypeEnum.BoardMemberShareholder
+                                select d.FIRSTNAME + " " + d.MIDDLENAME + " " + d.SURNAME).ToList();
+
+                foreach (var x in director)
+                    listOfDirectors = listOfDirectors + x + ", ";
+
+                if (securty != null)
+                {
+                    cam.securityType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == securty.b.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault();
+                    cam.securityDescription = securty.c.PROPERTYNAME;
+                    cam.securityFirstSellValue = securty.c.FORCEDSALEVALUE;
+                    cam.securityLocation = securty.c.PROPERTYADDRESS;
+                    cam.securityOpenMarketValue = securty.c.OPENMARKETVALUE;
+                    cam.isOwnerOccupied = securty.c.ISOWNEROCCUPIED;
+                    cam.securityPerfectionStatus = securty.c.PERFECTIONSTATUSID;
+                    cam.securityValuationDate = securty.c.LASTVALUATIONDATE;
+                    cam.isResidential = securty.c.ISRESIDENTIAL;
+                }
+                cam.shareHolders = listOfshareHolders.TrimEnd(',');
+                cam.signitories = listOfSignitories.TrimEnd(',');
+                cam.directors = listOfDirectors;
+                cam.proposedRepaymentTenor = (cam.maturityDate - cam.effectiveDate).TotalDays;
+                return cam;
+
+            }
+            catch (Exception ex) { var x = ex; }
+
+            return new ClassifiedAssetManagementViewModel();
         }
 
     }
