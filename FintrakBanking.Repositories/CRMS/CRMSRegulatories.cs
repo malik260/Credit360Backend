@@ -10,6 +10,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -95,7 +96,7 @@ namespace FintrakBanking.Repositories.CRMS
                        join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                        join f in context.TBL_LOAN_FEE on x.TERMLOANID equals f.LOANID
                        join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                       where x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                       where DbFunctions.TruncateTime( x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                        select new CRMSTemplateViewModel
                        {
                            ACCOUNT = c.PRODUCTACCOUNTNUMBER,
@@ -106,7 +107,7 @@ namespace FintrakBanking.Repositories.CRMS
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                      join f in context.TBL_LOAN_FEE on x.REVOLVINGLOANID equals f.LOANID
                      join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                     where x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                     where DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                      select new CRMSTemplateViewModel
                      {
                          ACCOUNT = c.PRODUCTACCOUNTNUMBER,
@@ -117,7 +118,7 @@ namespace FintrakBanking.Repositories.CRMS
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join f in context.TBL_LOAN_FEE on x.CONTINGENTLOANID equals f.LOANID
                              join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                             where x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                             where DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                              select new CRMSTemplateViewModel
                              {
                                  ACCOUNT = c.PRODUCTACCOUNTNUMBER,
@@ -133,7 +134,8 @@ namespace FintrakBanking.Repositories.CRMS
             var tLoan = (from x in context.TBL_LOAN
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                         where x.COMPANYID == param.companyId && x.CRMSCODE != null && x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                         where x.COMPANYID == param.companyId && x.CRMSCODE != null 
+                         && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                          select new CRMSRegulatoryViewModel
                          {
                              accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -151,7 +153,8 @@ namespace FintrakBanking.Repositories.CRMS
             var revolving = (from x in context.TBL_LOAN_REVOLVING
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                             where x.COMPANYID == param.companyId && x.CRMSCODE != null && x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                             where x.COMPANYID == param.companyId && x.CRMSCODE != null 
+                             && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                              select new CRMSRegulatoryViewModel
                              {
                                  accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -169,7 +172,8 @@ namespace FintrakBanking.Repositories.CRMS
             var contingent = (from x in context.TBL_LOAN_CONTINGENT
                               join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                               join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                              where x.COMPANYID == param.companyId && x.CRMSCODE != null && x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                              where x.COMPANYID == param.companyId && x.CRMSCODE != null 
+                              && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                               select new CRMSRegulatoryViewModel
                               {
                                   accountNumber = c.PRODUCTACCOUNTNUMBER,

@@ -59,6 +59,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     reportDataSource.Value = data;
                     reportDataSource.Name = "WorkFlowSLA";
 
+                    string exportOption = "PDF";
+                    RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
+                    if (extension != null)
+                    {
+                        System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                        fieldInfo.SetValue(extension, false);
+                    }
+
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ApprovalTrailWithSLA.rdlc");
                     this.ReportViewer.LocalReport.Refresh();

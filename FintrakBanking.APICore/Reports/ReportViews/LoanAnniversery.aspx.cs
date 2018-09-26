@@ -42,7 +42,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 10)
+                    if (dateDifference.Seconds > 30)
                     {
                         this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                         this.ReportViewer.LocalReport.Refresh();
@@ -58,6 +58,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+
+                    string exportOption = "PDF";
+                    RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
+                    if (extension != null)
+                    {
+                        System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                        fieldInfo.SetValue(extension, false);
+                    }
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanAnniversery.rdlc");

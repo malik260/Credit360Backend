@@ -32,6 +32,7 @@
               <xs:element name="isFinal" msprop:Generator_ColumnVarNameInTable="columnisFinal" msprop:Generator_ColumnPropNameInRow="isFinal" msprop:Generator_ColumnPropNameInTable="isFinalColumn" msprop:Generator_UserColumnName="isFinal" type="xs:string" minOccurs="0" />
               <xs:element name="final" msprop:Generator_ColumnVarNameInTable="columnfinal" msprop:Generator_ColumnPropNameInRow="final" msprop:Generator_ColumnPropNameInTable="finalColumn" msprop:Generator_UserColumnName="final" type="xs:string" minOccurs="0" />
               <xs:element name="customerGroupName" msprop:Generator_ColumnVarNameInTable="columncustomerGroupName" msprop:Generator_ColumnPropNameInRow="customerGroupName" msprop:Generator_ColumnPropNameInTable="customerGroupNameColumn" msprop:Generator_UserColumnName="customerGroupName" type="xs:string" minOccurs="0" />
+              <xs:element name="operationName" msprop:Generator_ColumnVarNameInTable="columnoperationName" msprop:Generator_ColumnPropNameInRow="operationName" msprop:Generator_ColumnPropNameInTable="operationNameColumn" msprop:Generator_UserColumnName="operationName" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -431,6 +432,7 @@
               <xs:element name="branchCode" msprop:Generator_ColumnVarNameInTable="columnbranchCode" msprop:Generator_ColumnPropNameInRow="branchCode" msprop:Generator_ColumnPropNameInTable="branchCodeColumn" msprop:Generator_UserColumnName="branchCode" type="xs:string" minOccurs="0" />
               <xs:element name="branchName" msprop:Generator_ColumnVarNameInTable="columnbranchName" msprop:Generator_ColumnPropNameInRow="branchName" msprop:Generator_ColumnPropNameInTable="branchNameColumn" msprop:Generator_UserColumnName="branchName" type="xs:string" minOccurs="0" />
               <xs:element name="sourceReferenceNumber" msprop:Generator_ColumnVarNameInTable="columnsourceReferenceNumber" msprop:Generator_ColumnPropNameInRow="sourceReferenceNumber" msprop:Generator_ColumnPropNameInTable="sourceReferenceNumberColumn" msprop:Generator_UserColumnName="sourceReferenceNumber" type="xs:string" minOccurs="0" />
+              <xs:element name="operationName" msprop:Generator_ColumnVarNameInTable="columnoperationName" msprop:Generator_ColumnPropNameInRow="operationName" msprop:Generator_ColumnPropNameInTable="operationNameColumn" msprop:Generator_UserColumnName="operationName" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

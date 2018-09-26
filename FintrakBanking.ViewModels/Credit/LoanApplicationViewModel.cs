@@ -625,7 +625,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string bankName { get; set; }
         public decimal amountContributed { get; set; }
         public short typeId { get; set; }
-      
+        public string typeName { get; set; }
+        public int productClassId { get; set; }
+
     }
 
     public class CamViewModel : GeneralEntity

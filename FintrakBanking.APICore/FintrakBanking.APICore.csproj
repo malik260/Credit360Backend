@@ -538,6 +538,13 @@
     <Compile Include="Reports\ReportViews\Lein.aspx.designer.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.cs">
+      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.designer.cs">
+      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\NonPeformingLoans.aspx.cs">
       <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -694,13 +701,6 @@
     <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.designer.cs">
       <DependentUpon>LoanAnniversery.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.cs">
-      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.designer.cs">
-      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportViews\LoanDocumentDeferral.aspx.cs">
       <DependentUpon>LoanDocumentDeferral.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -817,6 +817,7 @@
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
+    <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
@@ -829,7 +830,6 @@
     <Content Include="Reports\ReportViews\GetStakeholdersOnExpirationOfFTP.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
-    <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferral.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />

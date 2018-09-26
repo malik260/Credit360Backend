@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common.Extensions;
+using Microsoft.Reporting.WebForms;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -39,12 +40,21 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 10)
+                    if (dateDifference.Seconds > 30)
                     {
                         this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
+
+                    string exportOption = "PDF";
+                    RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
+                    if (extension != null)
+                    {
+                        System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                        fieldInfo.SetValue(extension, false);
+                    }
+
                     ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)

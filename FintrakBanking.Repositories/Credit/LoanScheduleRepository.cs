@@ -321,7 +321,8 @@ namespace FintrakBanking.Repositories.Credit
 
             return fileBytes;
         }
-        private int GetDaysInAYear(DayCountConventionEnum dayCountId)
+
+        public int GetDaysInAYear(DayCountConventionEnum dayCountId)
         {
             if (dayCountId == DayCountConventionEnum.Actual_Actual)
             {
