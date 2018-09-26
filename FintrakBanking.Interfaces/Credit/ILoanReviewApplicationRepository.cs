@@ -35,5 +35,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationViewModel> Search(string searchString);
         bool AppraisalReviewReferBack(ForwardViewModel entity);
+        bool UpdateManagementPosition(ManagementPositionViewModel entity);
+        ManagementPositionViewModel GetManagementPosition(int detailId);
     }
 }

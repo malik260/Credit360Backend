@@ -221,5 +221,32 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("management-position")]
+        public HttpResponseMessage UpdateManagementPosition([FromBody] ManagementPositionViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.createdBy = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+
+            bool response = repo.UpdateManagementPosition(entity);
+            if (response == true) return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("management-position/detailId/{detailId}")]
+        public HttpResponseMessage GetManagementPosition(int detailId)
+        {
+            ManagementPositionViewModel data = repo.GetManagementPosition(detailId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
+
     }
 }

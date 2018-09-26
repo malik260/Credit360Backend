@@ -55,6 +55,9 @@
 
         public bool OPERATIONPERFORMED { get; set; }
 
+        [StringLength(2000)]
+        public string MANAGEMENTPOSITION { get; set; }
+
         // public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         //public virtual TBL_CASA TBL_CASA { get; set; }
