@@ -592,7 +592,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         public List<Blacklist> Blacklist(DateTime startDate, DateTime endDate, string customercode)
         {
             var data = (from camsol in context.TBL_LOAN_CAMSOL
-                        where camsol.DATE >= startDate && camsol.DATE <= endDate && (camsol.CUSTOMERCODE == customercode || customercode == null)
+                        where DbFunctions.TruncateTime(camsol.DATE) >= DbFunctions.TruncateTime(startDate) 
+                        && DbFunctions.TruncateTime(camsol.DATE) <= DbFunctions.TruncateTime(endDate) 
+                        && (camsol.CUSTOMERNAME.ToLower().Contains(customercode.ToLower())
+                        || camsol.CUSTOMERCODE == customercode || customercode == null ||  customercode == "")
                         select new Blacklist
                         {
                             accountName = camsol.ACCOUNTNAME,

@@ -18,6 +18,8 @@ namespace FintrakBanking.Common.Enum
         T100 = 1,
         T200 = 2,
         T300=3,
-        T600=4
+        T300Fee = 4,
+        T600 =5
+
     }
 }

@@ -597,7 +597,7 @@ namespace FintrakBanking.ReportObjects
             }
         }
 
-        public IList<CasaLienViewModel> AccountsWithLein(DateTime endDate, DateTime startDate, string searchParamemter, int companyId)
+        public IList<CasaLienViewModel> AccountsWithLein(DateTime startDate, DateTime endDate,  string searchParamemter, int companyId)
         {
            
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -607,7 +607,8 @@ namespace FintrakBanking.ReportObjects
                             //join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.
                            // join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
                             where a.COMPANYID == companyId
-                            && (a.DATETIMECREATED <= endDate && a.DATETIMECREATED >= startDate)
+                            && (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate) 
+                            && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                             && (a.PRODUCTACCOUNTNUMBER == searchParamemter || a.LIENREFERENCENUMBER == searchParamemter || searchParamemter == null)
 
                             select new CasaLienViewModel
