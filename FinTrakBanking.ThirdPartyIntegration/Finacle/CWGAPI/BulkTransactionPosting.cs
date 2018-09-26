@@ -29,7 +29,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             values.Add(new ItemValue { valueCode = "BAF", valueName = "Repayment Fee" });
             values.Add(new ItemValue { valueCode = "BIF", valueName = "Interest payment" });
             values.Add(new ItemValue { valueCode = "BPP", valueName = "Principal Payment" });
-            values.Add(new ItemValue { valueCode = "FFF", valueName = "Others" });
+            values.Add(new ItemValue { valueCode = "FFF", valueName = "Interest Accrual Posting" });
 
             return values;
         }
@@ -115,7 +115,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                 addStaging.AMOUNT = (decimal)item.CONTINGENTAMOUNT;
                 addStaging.FLOWTYPE = "FFF";
-                addStaging.FORCEDEBITACCOUNT = "Y";
+                addStaging.FORCEDEBITACCOUNT = "N";
                 addStaging.VALUEDATENUMBER = 1;
                 addStaging.BATCHID = batchCode;
                 addStaging.BATCHREFID = count;
@@ -171,7 +171,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                 addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
                 addStaging.FLOWTYPE = "FFF";
-                addStaging.FORCEDEBITACCOUNT = "Y";
+                addStaging.FORCEDEBITACCOUNT = "N";
                 addStaging.VALUEDATENUMBER = 1;
                 addStaging.BATCHID = batchCode;
                 addStaging.BATCHREFID = count;
@@ -227,7 +227,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                 addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
                 addStaging.FLOWTYPE = "FFF";
-                addStaging.FORCEDEBITACCOUNT = "Y";
+                addStaging.FORCEDEBITACCOUNT = "N";
                 addStaging.VALUEDATENUMBER = 1;
                 addStaging.BATCHID = batchCode;
                 addStaging.BATCHREFID = count;
@@ -237,7 +237,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
                 addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
                 addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                addStaging.DESCRIPTION = "Fee Daily Interest Accrual Posting";
+                addStaging.DESCRIPTION = "Fee Daily Accrual Posting";
                 addStaging.DESTINATIONBRANCHID = item.branchId;
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
@@ -281,7 +281,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                 addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
                 addStaging.FLOWTYPE = "FFF";
-                addStaging.FORCEDEBITACCOUNT = "Y";
+                addStaging.FORCEDEBITACCOUNT = "N";
                 addStaging.VALUEDATENUMBER = 1;
                 addStaging.BATCHID = batchCode;
                 addStaging.BATCHREFID = count;
@@ -291,7 +291,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
                 addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
                 addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                addStaging.DESCRIPTION = "Tax Daily Interest Accrual Posting";
+                addStaging.DESCRIPTION = "Tax Daily Accrual Posting";
                 addStaging.DESTINATIONBRANCHID = item.branchId;
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
@@ -427,7 +427,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         }
 
         public bool WriteBulkDailyPastDueInterestAccrualToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
-                         IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
+                         IFinanceTransactionRepository financeTransaction, DateTime applicationDate, string description)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
@@ -443,17 +443,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                 addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
                 addStaging.FLOWTYPE = "FFF";
-                addStaging.FORCEDEBITACCOUNT = "Y";
+                addStaging.FORCEDEBITACCOUNT = "N";
                 addStaging.VALUEDATENUMBER = 1;
                 addStaging.BATCHID = batchCode;
                 addStaging.BATCHREFID = count;
                 addStaging.SID = count;
                 addStaging.COMPANYID = item.companyId;
-                addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTINCOMEEXPENSEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(product.PENALCHARGEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
                 addStaging.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
                 addStaging.CURRENCYRATE = financeTransaction.GetExchangeRate(item.date, item.currencyId, item.companyId).sellingRate;
                 addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
-                addStaging.DESCRIPTION = "Past Due Daily Interest Accrual Posting";
+                addStaging.DESCRIPTION = description;
                 addStaging.DESTINATIONBRANCHID = item.branchId;
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
@@ -466,7 +466,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.BANKID = "01";
                 addStaging.PRODUCTID = product.PRODUCTID;
                 addStaging.CURRENCYID = item.currencyId;
-                addStaging.CREDITGLACCOUNTID = product.INTERESTINCOMEEXPENSEGL.Value;
+                addStaging.CREDITGLACCOUNTID = product.PENALCHARGEGL.Value;
                 addStaging.DEBITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
@@ -497,7 +497,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                 addStaging.AMOUNT = (decimal)item.dailyAccuralAmount;
                 addStaging.FLOWTYPE = "FFF";
-                addStaging.FORCEDEBITACCOUNT = "Y";
+                addStaging.FORCEDEBITACCOUNT = "N";
                 addStaging.VALUEDATENUMBER = 1;
                 addStaging.BATCHID = batchCode;
                 addStaging.BATCHREFID = count;
@@ -550,22 +550,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 var addStagingPastDuePrincipal = new TBL_CUSTOM_TRANSACTION_BULK();
 
                 var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
-                //var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);
-                var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == item.loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate));
-
-                decimal interestAmount = 0;
-
-                if (interest.Count() > 0)
-                {
-                    interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
-                }
-                else
-                {
-                    interestAmount = 0;
-                }
-
-
-                item.periodInterestAmount = interestAmount;
+                //var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);          
 
                 TBL_CASA casa;
 
@@ -583,7 +568,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 {
                     addStagingPastDueInterest.AMOUNT = (decimal)item.pastDueInterestAmount;
                     addStagingPastDueInterest.FLOWTYPE = "BIF";
-                    addStagingPastDueInterest.FORCEDEBITACCOUNT = "Y";
+                    addStagingPastDueInterest.FORCEDEBITACCOUNT = "N";
                     addStagingPastDueInterest.VALUEDATENUMBER = 1;
                     addStagingPastDueInterest.BATCHID = batchCode;
                     addStagingPastDueInterest.BATCHREFID = count;
@@ -620,13 +605,13 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 {
                     addStagingPastDuePrincipal.AMOUNT = (decimal)item.pastDuePrincipalAmount;
                     addStagingPastDuePrincipal.FLOWTYPE = "BPP";
-                    addStagingPastDuePrincipal.FORCEDEBITACCOUNT = "Y";
+                    addStagingPastDuePrincipal.FORCEDEBITACCOUNT = "N";
                     addStagingPastDuePrincipal.VALUEDATENUMBER = 1;
                     addStagingPastDuePrincipal.BATCHID = batchCode;
                     addStagingPastDuePrincipal.BATCHREFID = count;
                     addStagingPastDuePrincipal.SID = count;
                     addStagingPastDuePrincipal.COMPANYID = item.companyId;
-                    addStagingPastDuePrincipal.CREDITACCOUNT = finacle.GetGlAccountCode(product.PRINCIPALBALANCEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
+                    addStagingPastDuePrincipal.CREDITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
                     addStagingPastDuePrincipal.CURRENCYCODE = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == item.currencyId).CURRENCYCODE;
                     addStagingPastDuePrincipal.CURRENCYRATE = financeTransaction.GetExchangeRate(applicationDate, item.currencyId, item.companyId).sellingRate;
                     addStagingPastDuePrincipal.DEBITACCOUNT = casa.PRODUCTACCOUNTNUMBER;//context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.PRINCIPALBALANCEGL.Value).ACCOUNTCODE;
@@ -643,7 +628,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDuePrincipal.BANKID = "01";
                     addStagingPastDuePrincipal.PRODUCTID = product.PRODUCTID;
                     addStagingPastDuePrincipal.CURRENCYID = item.currencyId;
-                    addStagingPastDuePrincipal.CREDITGLACCOUNTID = product.PRINCIPALBALANCEGL.Value;
+                    addStagingPastDuePrincipal.CREDITGLACCOUNTID = product.INTERESTRECEIVABLEPAYABLEGL.Value;
                     addStagingPastDuePrincipal.DEBITGLACCOUNTID = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;// product.INTERESTRECEIVABLEPAYABLEGL.Value;
                     addStagingPastDuePrincipal.CREDITCASAACCOUNTID = null;
                     addStagingPastDuePrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
@@ -656,7 +641,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 {
                     addStagingInterest.AMOUNT = (decimal)item.periodInterestAmount;
                     addStagingInterest.FLOWTYPE = "BIF";
-                    addStagingInterest.FORCEDEBITACCOUNT = "Y";
+                    addStagingInterest.FORCEDEBITACCOUNT = "N";
                     addStagingInterest.VALUEDATENUMBER = 1;
                     addStagingInterest.BATCHID = batchCode;
                     addStagingInterest.BATCHREFID = count;
@@ -693,7 +678,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 {
                     addStagingPrincipal.AMOUNT = (decimal)item.periodPrincipalAmount;
                     addStagingPrincipal.FLOWTYPE = "BPP";
-                    addStagingPrincipal.FORCEDEBITACCOUNT = "Y";
+                    addStagingPrincipal.FORCEDEBITACCOUNT = "N";
                     addStagingPrincipal.VALUEDATENUMBER = 1;
                     addStagingPrincipal.BATCHID = batchCode;
                     addStagingPrincipal.BATCHREFID = count;
@@ -755,6 +740,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                             bankId = a.BANKID,
                             branchId = (short)a.DESTINATIONBRANCHID,
                             sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
+                            forceDebitAccount = a.FORCEDEBITACCOUNT
+
                         }).ToList();
 
             List<FINTRAK_TRAN_PROC_DETAILS> staging = new List<FINTRAK_TRAN_PROC_DETAILS>();
@@ -777,7 +764,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.NARRATION = item.description;
                 addStaging.AMT_COLLECTED = item.amountCollected;
                 addStaging.BANK_ID = item.bankId;
-                addStaging.TOD_FLG = "N";
+                addStaging.TOD_FLG = item.forceDebitAccount;
                 addStaging.LOAN_ACCT = item.sourceReferenceNumber;
                 addStaging.STATUS = "NEW";
                 addStaging.RCRE_DATE = applicationDate;

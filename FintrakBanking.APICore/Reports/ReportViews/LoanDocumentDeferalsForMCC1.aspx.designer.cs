@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class CollateralEstimated {
+    public partial class LoanDocumentDeferalsForMCC {
         
         /// <summary>
         /// form1 control.
