@@ -18,32 +18,29 @@
 
         <rsweb:ReportViewer ID="ReportViewer" runat="server" Font-Names="Verdana" Font-Size="8pt" Height="800px" WaitMessageFont-Names="Verdana" 
             WaitMessageFont-Size="14pt" Width="100%" BackColor="" ClientIDMode="AutoID" HighlightBackgroundColor="" InternalBorderColor="204, 204, 204" InternalBorderStyle="Solid" InternalBorderWidth="1px" LinkActiveColor="" LinkActiveHoverColor="" LinkDisabledColor="" PrimaryButtonBackgroundColor="" PrimaryButtonForegroundColor="" PrimaryButtonHoverBackgroundColor="" PrimaryButtonHoverForegroundColor="" SecondaryButtonBackgroundColor="" SecondaryButtonForegroundColor="" SecondaryButtonHoverBackgroundColor="" SecondaryButtonHoverForegroundColor="" SplitterBackColor="" ToolbarDividerColor="" ToolbarForegroundColor="" ToolbarForegroundDisabledColor="" ToolbarHoverBackgroundColor="" ToolbarHoverForegroundColor="" ToolBarItemBorderColor="" ToolBarItemBorderStyle="Solid" ToolBarItemBorderWidth="1px" ToolBarItemHoverBackColor="" ToolBarItemPressedBorderColor="51, 102, 153" ToolBarItemPressedBorderStyle="Solid" ToolBarItemPressedBorderWidth="1px" ToolBarItemPressedHoverBackColor="153, 187, 226">
-            <LocalReport ReportPath="Reports\Report\CollateralEstimated.rdlc" >
+           <%-- <LocalReport ReportPath="Reports\Report\CollateralEstimated.rdlc" >
                 
                 <datasources>
                           <rsweb:ReportDataSource DataSourceId="ObjectDataSource1" Name="CollateralEstimated" />
                       </datasources>
-            </LocalReport>
+            </LocalReport>--%>
         </rsweb:ReportViewer>
      
-        <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="CollateralEstimated" TypeName="FintrakBanking.ReportObjects.LoanReportObjects">
+       <%-- <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="CollateralEstimated" TypeName="FintrakBanking.ReportObjects.LoanReportObjects">
             <SelectParameters> 
             
                 <asp:ControlParameter ControlID="companyId" DefaultValue="" Name="companyId" PropertyName="Text" Type="Int32" /> 
-                <%--<asp:ControlParameter ControlID="collateralCode" Name="collateralCode" PropertyName="Text" Type="collateralCode" />--%>
-
-
-          
+         
                 <asp:ControlParameter ControlID="collateralCode" Name="collateralCode" PropertyName="Text" Type="String" />
 
 
           
             </SelectParameters>
-        </asp:ObjectDataSource>
+        </asp:ObjectDataSource>--%>
         </div>
 
-        <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label> 
-        <asp:Label ID="collateralCode" runat="server" Visible="false" ></asp:Label>
+<%--        <asp:Label ID="companyId" runat="server"  Visible="false" ></asp:Label> 
+        <asp:Label ID="collateralCode" runat="server" Visible="false" ></asp:Label>--%>
         
     </form>
 </body>
