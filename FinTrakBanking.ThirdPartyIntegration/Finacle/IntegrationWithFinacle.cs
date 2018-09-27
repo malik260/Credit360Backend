@@ -442,12 +442,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 //}
                 else
                 {
-                    throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                    var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new ConditionNotMetException(message); //result.APIResponse.webRequestStatus
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+                var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{","").Replace("}", "").Replace(@"""", "");
+                throw new APIErrorException("Core Banking API Error - " + message); // .Message.ReasonPhrase);
             }
 
             //return result.APIStatus;
@@ -835,15 +837,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 transPosting.narration = item.description;
                 if(item.batchCode == null)
                 {
-                    transPosting.referenceNumber = "1222333444";  // to be change  transPosting.referenceNumber = item.sourceReferenceNumber
-                    //transPosting.referenceNumber = item.sourceReferenceNumber;
+                    transPosting.referenceNumber =  "1222333444";  // to be change  transPosting.referenceNumber = item.sourceReferenceNumber                    
                 }
                 else
                 {
-                    transPosting.referenceNumber = item.batchCode;
+                    transPosting.referenceNumber = item.batchCode;  
                 }
-                
 
+                transPosting.sourceReferenceNumber = item.sourceReferenceNumber;
                 transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
                 transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
 

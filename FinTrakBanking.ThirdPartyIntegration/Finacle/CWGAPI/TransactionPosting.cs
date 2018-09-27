@@ -383,7 +383,8 @@
                     //                                 new JavaScriptSerializer().Serialize(model), Encoding.UTF8, "application/json")).Result;
 
 
-                    responseDateTime = DateTime.Now; 
+                    responseDateTime = DateTime.Now;
+                    
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -416,6 +417,7 @@
 
                     responseJson = await response.Content.ReadAsStringAsync();
 
+                    responseMsg.responseMessage = responseJson;
                     //handler.Dispose();
                     //client.Dispose();
 
@@ -439,7 +441,7 @@
                     {
                         APIURL = "api/Transactions/PostTransactions",
                         LOGTYPEID = model.FirstOrDefault().operationId,
-                        REFERENCENUMBER = model.FirstOrDefault().referenceNumber,
+                        REFERENCENUMBER =  model.FirstOrDefault().sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = inputJson,
                         RESPONSEDATETIME = responseDateTime,
