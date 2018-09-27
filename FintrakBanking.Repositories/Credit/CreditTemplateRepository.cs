@@ -241,6 +241,8 @@ namespace FintrakBanking.Repositories.Credit
             var templateSections = context.TBL_DOC_TEMPLATE_SECTION
                 .Where(x => x.TEMPLATEID == entity.templateId && x.ISDISABLED == false && x.DELETED == false);
 
+            if (templateSections.Count() == 0 || IsLoadedSections(entity.operationId, entity.targetId, entity.staffId) == true) return true;
+
             foreach (var temp in templateSections)
             {
                 context.TBL_DOC_TEMPLATE_DETAIL.Add(new TBL_DOC_TEMPLATE_DETAIL
@@ -258,6 +260,17 @@ namespace FintrakBanking.Repositories.Credit
                 });
             }
             return context.SaveChanges() > 0;
+        }
+
+        private bool IsLoadedSections(int operationId, int targetId, int staffId)
+        {
+            var user = context.TBL_STAFF.Find(staffId);
+            var sections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.TARGETID == targetId && x.OPERATIONID == operationId)
+                .Join(context.TBL_DOC_TEMPLATE_SECTION, s => s.TEMPLATESECTIONID, d => d.TEMPLATESECTIONID, (s, d) => new { s, d })
+                .Join(context.TBL_DOC_TEMPLATE.Where(x => x.STAFFROLEID == user.STAFFROLEID), sd => sd.d.TEMPLATEID, t => t.TEMPLATEID, (sd, t) => new { sd, t })
+                .Count();
+            return sections > 0;
         }
 
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity) // dont call if not editable

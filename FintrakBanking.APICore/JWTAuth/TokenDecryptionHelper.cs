@@ -15,6 +15,7 @@ namespace FintrakBanking.APICore.JWTAuth
         public string GetUsername { get { return this.GetInfoFromToken(4).ToString(); } }
         public int GetUserId { get { return int.Parse(this.GetInfoFromToken(6).ToString()); } }
         public string LoginCode { get { return  this.GetInfoFromToken(8).ToString(); } }
+        public int GetRoleId { get { return int.Parse(this.GetInfoFromToken(9).ToString()); } }
 
         private object GetInfoFromToken(int tokenType)
         {
@@ -25,22 +26,15 @@ namespace FintrakBanking.APICore.JWTAuth
             
             switch (tokenType)
             {
-                case 1:
-                    return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
-                case 2:
-                    return decryptedToken.First(st => st.Type == "companyId").Value.ToString();
-                case 3:
-                    return decryptedToken.First(st => st.Type == "branchId").Value.ToString();
-                case 4:
-                    return decryptedToken.First(st => st.Type == "username").Value.ToString();
-                case 5:
-                    return decryptedToken.First(st => st.Type == "countryId").Value.ToString();
-                case 6:
-                    return decryptedToken.First(st => st.Type == "userId").Value.ToString();
-                case 8:
-                    return decryptedToken.First(st => st.Type == "logincode").Value.ToString();
-                default:
-                    return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
+                case 1: return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
+                case 2: return decryptedToken.First(st => st.Type == "companyId").Value.ToString();
+                case 3: return decryptedToken.First(st => st.Type == "branchId").Value.ToString();
+                case 4: return decryptedToken.First(st => st.Type == "username").Value.ToString();
+                case 5: return decryptedToken.First(st => st.Type == "countryId").Value.ToString();
+                case 6: return decryptedToken.First(st => st.Type == "userId").Value.ToString();
+                case 8: return decryptedToken.First(st => st.Type == "logincode").Value.ToString();
+                case 9: return decryptedToken.First(st => st.Type == "roleId").Value.ToString();
+                default: return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
             }
         }
     }
