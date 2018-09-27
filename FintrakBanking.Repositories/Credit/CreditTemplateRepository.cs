@@ -239,12 +239,17 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoadDocumentTemplate(DocumentTemplateViewModel entity)
         {
             var templateSections = context.TBL_DOC_TEMPLATE_SECTION
-                .Where(x => x.TEMPLATEID == entity.templateId && x.ISDISABLED == false && x.DELETED == false);
+                .Where(x => x.TEMPLATEID == entity.templateId && x.ISDISABLED == false && x.DELETED == false)
+                .ToList();
 
-            if (templateSections.Count() == 0 || IsLoadedSections(entity.operationId, entity.targetId, entity.staffId) == true) return true;
+            var loadedSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.TARGETID == entity.targetId && x.OPERATIONID == entity.operationId)
+                .ToList();
 
             foreach (var temp in templateSections)
             {
+                if (loadedSections.Any(x => x.TEMPLATESECTIONID == temp.TEMPLATESECTIONID)) continue;
+
                 context.TBL_DOC_TEMPLATE_DETAIL.Add(new TBL_DOC_TEMPLATE_DETAIL
                 {
                     OPERATIONID = entity.operationId,
@@ -259,18 +264,8 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now,
                 });
             }
-            return context.SaveChanges() > 0;
-        }
 
-        private bool IsLoadedSections(int operationId, int targetId, int staffId)
-        {
-            var user = context.TBL_STAFF.Find(staffId);
-            var sections = context.TBL_DOC_TEMPLATE_DETAIL
-                .Where(x => x.TARGETID == targetId && x.OPERATIONID == operationId)
-                .Join(context.TBL_DOC_TEMPLATE_SECTION, s => s.TEMPLATESECTIONID, d => d.TEMPLATESECTIONID, (s, d) => new { s, d })
-                .Join(context.TBL_DOC_TEMPLATE.Where(x => x.STAFFROLEID == user.STAFFROLEID), sd => sd.d.TEMPLATEID, t => t.TEMPLATEID, (sd, t) => new { sd, t })
-                .Count();
-            return sections > 0;
+            return context.SaveChanges() > 0;
         }
 
         public bool SaveLoadedDocumentSection(LoadedDocumentSectionViewModel entity) // dont call if not editable
