@@ -692,11 +692,11 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("two-factor-auth-last-approval")]
-        public HttpResponseMessage TwoFactorAuthenticationEnabled(int operationId,int? productClassId, int? productId)
+        public HttpResponseMessage TwoFactorAuthenticationEnabled(int operationId,int? productClassId, int? productId, decimal levelAmout = 0)
         {
             try
             {
-                var data = repo.Enable2FAForLastApproval(token.GetStaffId, operationId, productClassId ,productId);
+                var data = repo.Enable2FAForLastApproval(token.GetStaffId, operationId, productClassId ,productId, levelAmout);
                 if (!data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

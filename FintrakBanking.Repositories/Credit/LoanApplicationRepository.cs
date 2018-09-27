@@ -1303,7 +1303,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 if (a.bondDetails != null && a.productClassId == (short)ProductClassEnum.BondAndGuarantees)
                 {
-                    BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy);
+                    BondDetails(a.bondDetails, a.loanApplicationDetailId, createdBy); 
                 }
                 if (a.syndicatedLoan != null && a.syndicatedLoan.Count > 0 )
                 {
@@ -1356,6 +1356,16 @@ namespace FintrakBanking.Repositories.Credit
 
         private void BondDetails(BondsAndGuranty entity, int loanApplicationId, int createdBy)
         {
+            int? princId ;
+            if (entity.principalId == -1)
+            {
+                princId = null;
+            }
+            else
+            {
+                princId = entity.principalId;
+
+            }
             var data = new TBL_LOAN_APPLICATION_DETL_BG()
             {
                 AMOUNT = entity.bondAmount,
@@ -1365,11 +1375,12 @@ namespace FintrakBanking.Repositories.Credit
                 ISTENORED = entity.isTenored,
                 CURRENCYID = entity.bondCurrencyId,
                 REFERENCENO = entity.referenceNo,
-                CASAACCOUNTID = entity.casaAccountId,
-                PRINCIPALID = entity.principalId,
+                CASAACCOUNTID = entity.casaAccountId,               
+                PRINCIPALID = princId,
                 DATETIMECREATED = DateTime.Now,
                 LOANAPPLICATIONDETAILID = loanApplicationId,
-                CREATEDBY = createdBy
+                CREATEDBY = createdBy,
+                PRINCIPALNAME = entity.principalName
             };
             context.TBL_LOAN_APPLICATION_DETL_BG.Add(data);
         }
