@@ -75,7 +75,7 @@ namespace FintrakBanking.ViewModels.Finance
         public string currencyCrossCode { get; set; }
         public string rateUnit { get; set; }
         public string rateCode { get; set; }
-
+        public bool useDirectAccount { get; set; }
         public string accountNumber { get; set; }
     }
 
@@ -159,6 +159,7 @@ namespace FintrakBanking.ViewModels.Finance
         public short branchId { get; set; }
         public int recordCount { get; set; }
         public string status { get; set; }
+        public string forceDebitAccount { get; set; }
         public int sid { get; set; }
         public int productId { get; set; }
         public int currencyId { get; set; }

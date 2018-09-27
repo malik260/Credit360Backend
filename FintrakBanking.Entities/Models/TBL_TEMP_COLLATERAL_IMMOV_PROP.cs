@@ -75,6 +75,10 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string PERFECTIONSTATUSREASON { get; set; }
 
+        public bool? ISOWNEROCCUPIED { get; set; }
+
+        public bool? ISRESIDENTIAL { get; set; }
+
         public virtual TBL_CITY TBL_CITY { get; set; }
 
         public virtual TBL_COLLATERAL_PERFECTN_STAT TBL_COLLATERAL_PERFECTN_STAT { get; set; }

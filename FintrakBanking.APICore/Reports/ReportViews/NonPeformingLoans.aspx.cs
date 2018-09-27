@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Extensions;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.ReportObjects.ReportingObjects;
 using FintrakBanking.Repositories.Setups.General;
 using Microsoft.Reporting.WebForms;
 using System;
@@ -22,6 +23,8 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
                 {
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
+                    DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
+                    DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
 
                     HashHelper hash = new HashHelper();
 
@@ -40,17 +43,37 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
 
                     var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 10)
+                    if (dateDifference.Seconds > 30)
                     {
                         this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
-                    FinTrakBankingContext context = new FinTrakBankingContext();
-                    GeneralSetupRepository generalSetup = new GeneralSetupRepository(context);
-                    ReportParameter date = new ReportParameter("currentDate", generalSetup.GetApplicationDate().ToShortDateString());
 
-                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { date });
+                    LimitsMonitoringReportsObjects npl = new LimitsMonitoringReportsObjects();
+                    var data = npl.NPL(startDate, endDate, 0);
+
+                    this.ReportViewer.LocalReport.DataSources.Clear();
+                    ReportDataSource reportDataSource = new ReportDataSource();
+                    reportDataSource.Value = data;
+                    reportDataSource.Name = "CommercialLoan";
+
+                    this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/NonPeformingLoans.rdlc");
+
+
+                    string exportOption = "PDF";
+                    RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
+                    if (extension != null)
+                    {
+                        System.Reflection.FieldInfo fieldInfo = extension.GetType().GetField("m_isVisible", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+                        fieldInfo.SetValue(extension, false);
+                    }
+
+                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+
+                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)

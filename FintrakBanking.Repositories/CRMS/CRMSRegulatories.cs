@@ -10,6 +10,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -95,7 +96,7 @@ namespace FintrakBanking.Repositories.CRMS
                        join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                        join f in context.TBL_LOAN_FEE on x.TERMLOANID equals f.LOANID
                        join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                       where x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                       where DbFunctions.TruncateTime( x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                        select new CRMSTemplateViewModel
                        {
                            ACCOUNT = c.PRODUCTACCOUNTNUMBER,
@@ -106,7 +107,7 @@ namespace FintrakBanking.Repositories.CRMS
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                      join f in context.TBL_LOAN_FEE on x.REVOLVINGLOANID equals f.LOANID
                      join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                     where x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                     where DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                      select new CRMSTemplateViewModel
                      {
                          ACCOUNT = c.PRODUCTACCOUNTNUMBER,
@@ -117,7 +118,7 @@ namespace FintrakBanking.Repositories.CRMS
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join f in context.TBL_LOAN_FEE on x.CONTINGENTLOANID equals f.LOANID
                              join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                             where x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                             where DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                              select new CRMSTemplateViewModel
                              {
                                  ACCOUNT = c.PRODUCTACCOUNTNUMBER,
@@ -133,7 +134,8 @@ namespace FintrakBanking.Repositories.CRMS
             var tLoan = (from x in context.TBL_LOAN
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                         where x.COMPANYID == param.companyId && x.CRMSCODE != null && x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                         where x.COMPANYID == param.companyId && x.CRMSCODE != null 
+                         && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                          select new CRMSRegulatoryViewModel
                          {
                              accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -151,7 +153,8 @@ namespace FintrakBanking.Repositories.CRMS
             var revolving = (from x in context.TBL_LOAN_REVOLVING
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                             where x.COMPANYID == param.companyId && x.CRMSCODE != null && x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                             where x.COMPANYID == param.companyId && x.CRMSCODE != null 
+                             && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                              select new CRMSRegulatoryViewModel
                              {
                                  accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -169,7 +172,8 @@ namespace FintrakBanking.Repositories.CRMS
             var contingent = (from x in context.TBL_LOAN_CONTINGENT
                               join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                               join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                              where x.COMPANYID == param.companyId && x.CRMSCODE != null && x.CRMSDATE >= param.startDate && x.CRMSDATE <= param.endDate
+                              where x.COMPANYID == param.companyId && x.CRMSCODE != null 
+                              && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
                               select new CRMSRegulatoryViewModel
                               {
                                   accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -187,11 +191,10 @@ namespace FintrakBanking.Repositories.CRMS
             return tLoan.Union(revolving).Union(contingent).ToList();
         }
 
-        private List<CRMSRecord> GenerateCRMS300Template(List<CRMSTemplateViewModel> loanInput, CRMSViewModel param)
+        private CRMSRecord GenerateCRMS300Template(List<CRMSTemplateViewModel> loanInput, CRMSViewModel param)
         {
             Byte[] fileBytes = null;
             CRMSRecord excel = new CRMSRecord();
-            List<CRMSRecord> data = new List<CRMSRecord>();
             if (loanInput != null)
             {
                 using (ExcelPackage pck = new ExcelPackage())
@@ -299,8 +302,18 @@ namespace FintrakBanking.Repositories.CRMS
                     fileBytes = pck.GetAsByteArray();
                     excel.reportData = fileBytes;
                     excel.templateTypeName = "CRMS_T300";
-                    data.Add(excel);
+                }
+            }
 
+            return excel;
+        }
+
+        private CRMSRecord GenerateCRMS300Fee(List<CRMSTemplateViewModel> loanInput, CRMSViewModel param)
+        {
+            Byte[] fileBytes = null;
+            CRMSRecord feeCharge = new CRMSRecord();
+            if (loanInput != null)
+            {
                     var output = GetFee(param);
                     if (output != null)
                     {
@@ -322,27 +335,21 @@ namespace FintrakBanking.Repositories.CRMS
                             }
                             fileBytes = fee.GetAsByteArray();
 
-                            CRMSRecord feeCharge = new CRMSRecord();
+                            
                             feeCharge.reportData = fileBytes;
                             feeCharge.templateTypeName = "CRMS_T300_FEE";
-                            data.Add(feeCharge);
                         }
-                       
-                    }
 
-                }
+                    }
             }
 
-            return data;
+            return feeCharge;
         }
-
-
-        private List<CRMSRecord> GenerateCRMS100Template(List<CRMSTemplateViewModel> loanInput)
+        private CRMSRecord GenerateCRMS100Template(List<CRMSTemplateViewModel> loanInput)
         {
 
             Byte[] fileBytes = null;
             CRMSRecord data = new CRMSRecord();
-            List<CRMSRecord> result = new List<CRMSRecord>();
 
             if (loanInput != null)
             {
@@ -406,16 +413,15 @@ namespace FintrakBanking.Repositories.CRMS
                     fileBytes = pck.GetAsByteArray();
                     data.reportData = fileBytes;
                     data.templateTypeName = "CRMS_T100";
-                    result.Add(data);
                 }
 
 
             }
 
-            return result;
+            return data;
         }
 
-        private List<CRMSRecord> GenerateCRMS600Template(List<CRMSTemplateViewModel> loanInput)
+        private CRMSRecord GenerateCRMS600Template(List<CRMSTemplateViewModel> loanInput)
         {
 
             Byte[] fileBytes = null;
@@ -451,20 +457,18 @@ namespace FintrakBanking.Repositories.CRMS
                     fileBytes = pck.GetAsByteArray();
                     data.reportData = fileBytes;
                     data.templateTypeName = "CRMS_T600";
-                    result.Add(data);
                 }
 
 
             }
 
-            return result;
+            return data;
         }
-        private List<CRMSRecord> GenerateCRMS200Template(List<CRMSTemplateViewModel> loanInput)
+        private CRMSRecord GenerateCRMS200Template(List<CRMSTemplateViewModel> loanInput)
         {
 
             Byte[] fileBytes = null;
             CRMSRecord data = new CRMSRecord();
-            List<CRMSRecord> result = new List<CRMSRecord>();
             if (loanInput != null)
             {
                 using (ExcelPackage pck = new ExcelPackage())
@@ -544,13 +548,12 @@ namespace FintrakBanking.Repositories.CRMS
                     fileBytes = pck.GetAsByteArray();
                     data.reportData = fileBytes;
                     data.templateTypeName = "CRMS_T200";
-                    result.Add(data);
                 }
 
 
             }
 
-            return result;
+            return data;
         }
 
 
@@ -821,7 +824,7 @@ namespace FintrakBanking.Repositories.CRMS
             return data;
         }
 
-        private List<CRMSRecord> GenerateCRMS300Template(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS300Template(CRMSViewModel param)
         {
             var result = GenerateCRMSReport(param);
             result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA);
@@ -830,7 +833,7 @@ namespace FintrakBanking.Repositories.CRMS
 
             return GenerateCRMS300Template(result.ToList(), param);
         }
-        private List<CRMSRecord> GenerateCRMS100Template(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS100Template(CRMSViewModel param)
         {
             var result = GenerateCRMSReport(param);
             result = result.Where(x => x.CRMSLEGALSTATUSID == (int)CRMSRegulatory.Government);
@@ -839,7 +842,7 @@ namespace FintrakBanking.Repositories.CRMS
 
             return GenerateCRMS100Template(result.ToList());
         }
-        private List<CRMSRecord> GenerateCRMS200Template(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS200Template(CRMSViewModel param)
         {
             var result = GenerateCRMSReport(param);
             result = result.Where(x => x.CRMSLEGALSTATUSID == (int)CRMSRegulatory.Parastatals_MDA);
@@ -848,7 +851,7 @@ namespace FintrakBanking.Repositories.CRMS
 
             return GenerateCRMS200Template(result.ToList());
         }
-        private List<CRMSRecord> GenerateCRMS600Template(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS600Template(CRMSViewModel param)
         {
             var result = GenerateCRMSReport(param);
             result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA);
@@ -857,8 +860,17 @@ namespace FintrakBanking.Repositories.CRMS
 
             return GenerateCRMS600Template(result.ToList());
         }
+        private CRMSRecord GenerateCRMS300Fee(CRMSViewModel param)
+        {
+            var result = GenerateCRMSReport(param);
+            result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA);
+            if (result == null)
+                throw new ConditionNotMetException("Record Not Found For T300");
 
-        public List<CRMSRecord> GenerateCBNReport(CRMSViewModel param)
+            return GenerateCRMS300Fee(result.ToList(), param);
+        }
+
+        public CRMSRecord GenerateCBNReport(CRMSViewModel param)
         {
             if (param.templateTypeId == (int)CRMSTemplate.T100)
             {
@@ -876,7 +888,11 @@ namespace FintrakBanking.Repositories.CRMS
             {
                 return GenerateCRMS600Template(param);
             }
-            return new List<CRMSRecord>();
+            else if (param.templateTypeId == (int)CRMSTemplate.T300Fee)
+            {
+                return GenerateCRMS300Fee(param);
+            }
+            return new CRMSRecord();
         }
     }
 }

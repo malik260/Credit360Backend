@@ -11,7 +11,6 @@ namespace FintrakBanking.Interfaces.CRMS
     {
         string AddCRMSCode(CRMSViewModel code);
         List<CRMSRegulatoryViewModel> GetAllLoansWithCRMSCode(CRMSViewModel data);
-        List<CRMSRecord> GenerateCBNReport(CRMSViewModel param);
-
+        CRMSRecord GenerateCBNReport(CRMSViewModel param);
     }
 }

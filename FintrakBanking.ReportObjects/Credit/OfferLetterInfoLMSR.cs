@@ -54,6 +54,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           customerEmailAddress = b.EMAILADDRESS,
                                           customerPhoneNumber = g.PHONENUMBER,
                                           isFinal = h.ISFINAL,
+                                          operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
                                         //  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
 
                                       }).FirstOrDefault();

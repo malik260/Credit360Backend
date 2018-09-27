@@ -6,6 +6,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             {
                 IQueryable<TransactionViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
                                                          where a.COMPANYID == companyId
-                                                         && (a.POSTEDDATE <= endDate && a.POSTEDDATE >= startDate)
+                                                         && (DbFunctions.TruncateTime(a.POSTEDDATE) <= DbFunctions.TruncateTime(endDate) && DbFunctions.TruncateTime(a.POSTEDDATE) >= DbFunctions.TruncateTime(startDate))
                                                          && (branchId == null || branchId==0 || a.TBL_BRANCH.BRANCHID==branchId)
                                                          && (a.GLACCOUNTID == glAccountId || glAccountId==0)
                                                          && (a.POSTEDBY == PostedByStaffId || PostedByStaffId ==0)
@@ -56,21 +57,21 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }
 
         }
-        public List<TransactionViewModel> LoanRepayment(DateTime endDate, DateTime startDate, int operationId, int companyId)
+        public List<TransactionViewModel> LoanRepayment( DateTime startDate, DateTime endDate, int operationId, int companyId)
         {
-            int[] operations = { (int)OperationsEnum.InterestLoanRepayment, (int)OperationsEnum.PrincipalPastDueLoanRepayment, (int)OperationsEnum.InterestPastDueLoanRepayment, (int)OperationsEnum.PrincipalLoanRepayment, (int)OperationsEnum.TermLoanBooking };
+           int[] operations = { (int)OperationsEnum.InterestLoanRepayment, (int)OperationsEnum.PrincipalPastDueLoanRepayment, (int)OperationsEnum.InterestPastDueLoanRepayment, (int)OperationsEnum.PrincipalLoanRepayment, (int)OperationsEnum.TermLoanBooking };
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 List<TransactionViewModel> data = (from a in context.TBL_FINANCE_TRANSACTION
                                                    join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
                                                    join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
                                                    join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                                                   where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
-                                                   && a.COMPANYID == companyId
-                                                   && a.CREDITAMOUNT == 0
-                                                   && a.DEBITAMOUNT > 0
-                                                  && operations.Contains(a.OPERATIONID)
-                                                   && (a.OPERATIONID == operationId || operationId ==0 || operationId==null)
+                                                   where DbFunctions.TruncateTime(a.POSTEDDATE) >= DbFunctions.TruncateTime(startDate)
+                                                    && DbFunctions.TruncateTime(a.POSTEDDATE) <= DbFunctions.TruncateTime(endDate)
+                                                                           && a.COMPANYID == companyId
+                                                                            && a.CREDITAMOUNT == 0
+                                                                            && a.DEBITAMOUNT > 0
+                                                                          && operations.Contains(a.OPERATIONID)
                                                    orderby a.POSTEDDATE, a.TRANSACTIONID descending
 
                                                    select new TransactionViewModel()
@@ -98,7 +99,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                        customerCode = c.CUSTOMERCODE,
                                                        customerName = c.FIRSTNAME + " " + c.LASTNAME + " " + c.MIDDLENAME,
                                                        branchCode = context.TBL_BRANCH.Where(x => x.BRANCHID == l.BRANCHID).Select(x => x.BRANCHCODE).FirstOrDefault(),
-                                                       sourceReferenceNumber = a.SOURCEREFERENCENUMBER
+                                                       sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
+                                                       operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault()
                                                    }).ToList();
                 return data;
             }
@@ -113,9 +115,12 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                         join l in context.TBL_LOAN on a.REFERENCENUMBER equals l.LOANREFERENCENUMBER
                         join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                        where a.DATE >= startDate && a.DATE <= endDate
+                        where DbFunctions.TruncateTime(a.DATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DATE) <= DbFunctions.TruncateTime(endDate)
                         && a.COMPANYID == companyId
-                        && (a.REFERENCENUMBER.ToLower().StartsWith(searchParamemter) || searchParamemter =="")//(searchParamemter.ToLower().Trim().Contains(a.REFERENCENUMBER.ToLower()) || searchParamemter =="")
+                        && (a.REFERENCENUMBER.ToLower() ==searchParamemter.ToLower() 
+                        || a.REFERENCENUMBER.ToLower().Contains( searchParamemter.ToLower()) 
+                        || a.REFERENCENUMBER.ToLower().StartsWith(searchParamemter.ToLower()) 
+                        || searchParamemter == "")//(searchParamemter.ToLower().Trim().Contains(a.REFERENCENUMBER.ToLower()) || searchParamemter =="")
                         orderby a.DAILYACCURALID descending
                         select new DailyAccrualViewModel()
                         {
@@ -140,7 +145,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
             return data;
         }
-        public List<BulkTransactionViewModel> CustomeFacilityRepayment(DateTime endDate, DateTime startDate, int companyId,string valueCode)
+        public List<BulkTransactionViewModel> CustomeFacilityRepayment(DateTime startDate, DateTime endDate,  int companyId,string valueCode)
         {
             List<BulkTransactionViewModel> data;
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -149,9 +154,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         join l in context.TBL_LOAN on a.SOURCEREFERENCENUMBER equals l.LOANREFERENCENUMBER
                         join p in context.TBL_PRODUCT on l.PRODUCTID equals p.PRODUCTID
                         join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
-                        where a.POSTEDDATE >= startDate && a.POSTEDDATE <= endDate
+                        where DbFunctions.TruncateTime( a.POSTEDDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.POSTEDDATE) <= DbFunctions.TruncateTime(endDate)
                         && a.COMPANYID == companyId
-                        && (a.FLOWTYPE == valueCode || valueCode==null || valueCode=="") 
+                        && (a.FLOWTYPE.Trim() == valueCode.Trim() || valueCode==null || valueCode=="") 
                         orderby a.BULKTRANSACTIONID descending
                         select new BulkTransactionViewModel()
                         {

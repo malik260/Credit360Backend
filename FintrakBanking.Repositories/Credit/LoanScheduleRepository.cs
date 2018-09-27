@@ -185,7 +185,6 @@ namespace FintrakBanking.Repositories.Credit
             //    throw new ConditionNotMetException("First interest first payment date cannot be less than effective date ");
 
            
-
             List<LoanPaymentSchedulePeriodicViewModel> output = null; // new List<LoanPaymentSchedulePeriodicViewModel>();
             LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
 
@@ -193,6 +192,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (loanInput.maturityDate < loanInput.effectiveDate)
                     throw new ConditionNotMetException("Maturity date cannot be less than effective date");
+            }
+            else
+            {
+
             }
 
             if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
@@ -318,7 +321,8 @@ namespace FintrakBanking.Repositories.Credit
 
             return fileBytes;
         }
-        private int GetDaysInAYear(DayCountConventionEnum dayCountId)
+
+        public int GetDaysInAYear(DayCountConventionEnum dayCountId)
         {
             if (dayCountId == DayCountConventionEnum.Actual_Actual)
             {
@@ -961,6 +965,7 @@ namespace FintrakBanking.Repositories.Credit
             if (loanInput.effectiveDate > maximumPaymentDate)
                 throw new ConditionNotMetException("Effective Date should be less than the maturity date");
 
+
             List<LoanPaymentSchedulePeriodicViewModel> paymentSchedule = GenerateIrregularPeriodicSchedule(loanInput, false);
 
             double internalRateOfReturn = 0;
@@ -1028,10 +1033,12 @@ namespace FintrakBanking.Repositories.Credit
             var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
 
             
-            double previousPrincipalAmount = loanInput.principalAmount;
-            double previousPrincipalAmountForInterest = loanInput.principalAmount;
-            DateTime previousInterestPaymentDate = loanInput.effectiveDate;
+            double previousPrincipalAmount = loanInput.principalAmount;            
+            double cummulativeInterestAmount = 0;
+            DateTime previousPaymentDate = loanInput.effectiveDate;            
             int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loanInput.accrualBasis);
+
+            var itemCount = data.Count();
 
             int paymentNumber = 1;
             foreach (var item in data)
@@ -1043,34 +1050,35 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriod.paymentNumber = paymentNumber;
                 loanPeriod.paymentDate = item.paymentDate;
 
-                //if(paymentType != LoanIrregularSchedulePaymentTypeEnum.InterestOnly)
-                  loanPeriod.startPrincipalAmount = previousPrincipalAmount;
+                
+                loanPeriod.startPrincipalAmount = previousPrincipalAmount;
 
                 if (isArmotisedSchedule == false)
                 {
-                    //if (paymentType != LoanIrregularSchedulePaymentTypeEnum.InterestOnly)
+                    if (paymentType != LoanIrregularSchedulePaymentTypeEnum.InterestOnly)
                         loanPeriod.periodPrincipalAmount = item.paymentAmount;
                 }
                 else
                 {
                     if (loanInput.integralFeeAmount > 0)
-                    {
-                        //if (paymentType != LoanIrregularSchedulePaymentTypeEnum.InterestOnly)
-                        //{
-                            var feeDifferential = loanInput.principalAmount / (loanInput.principalAmount + loanInput.integralFeeAmount);
-                            loanPeriod.periodPrincipalAmount = item.paymentAmount * feeDifferential;
-                        //}
+                    {                        
+                        var feeDifferential = loanInput.principalAmount / (loanInput.principalAmount + loanInput.integralFeeAmount);
+                        loanPeriod.periodPrincipalAmount = item.paymentAmount * feeDifferential;                        
                     }
                     else
-                        loanPeriod.periodPrincipalAmount = item.paymentAmount; 
+                        loanPeriod.periodPrincipalAmount = item.paymentAmount;
 
                 }
 
-                    var dateDifferenceCount = (item.paymentDate - previousInterestPaymentDate).TotalDays;
+                var dateDifferenceCount = (item.paymentDate - previousPaymentDate).TotalDays;
+                var currentInterestAmount = (previousPrincipalAmount * (loanInput.interestRate / 100.0)) * (dateDifferenceCount / daysInAYear);
 
-                if (paymentType != LoanIrregularSchedulePaymentTypeEnum.PrincipalOnly)
+                cummulativeInterestAmount = cummulativeInterestAmount + currentInterestAmount;
+                 
+                if (paymentType != LoanIrregularSchedulePaymentTypeEnum.PrincipalOnly || paymentNumber == itemCount)
                 {
-                        loanPeriod.periodInterestAmount = (previousPrincipalAmountForInterest * (loanInput.interestRate / 100.0)) * (dateDifferenceCount / daysInAYear);
+                    loanPeriod.periodInterestAmount = cummulativeInterestAmount;
+                    cummulativeInterestAmount = 0;
                 }
 
                 loanPeriod.periodPaymentAmount = loanPeriod.periodPrincipalAmount + loanPeriod.periodInterestAmount;
@@ -1081,12 +1089,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 previousPrincipalAmount = loanPeriod.endPrincipalAmount;
 
-
-                if (paymentType != LoanIrregularSchedulePaymentTypeEnum.PrincipalOnly)
-                {
-                    previousInterestPaymentDate = loanPeriod.paymentDate;
-                    previousPrincipalAmountForInterest = loanPeriod.endPrincipalAmount;
-                }
+                previousPaymentDate = loanPeriod.paymentDate;
 
                 paymentNumber += 1;
 

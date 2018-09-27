@@ -17,6 +17,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanStatus { get; set; }
         public decimal recommendedLimit { get; set; }
         public string referenceNumber { get; set; }
+        public int productTypeId { get; set; }
+        public int loanId { get; set; }
     }
 
     public class FacilitySummary

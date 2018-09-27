@@ -942,6 +942,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
                 appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
             }
+            if (entity.moduleId == 2)
+            {
+                var appl = context.TBL_LMSR_APPLICATION.Find(entity.applicationId);
+                appl.NEXTAPPLICATIONSTATUSID = (short)entity.nextApplicationStatusId;
+                appl.FINALAPPROVAL_LEVELID = entity.finalApprovalLevelId;
+            }
 
             return context.SaveChanges() > 0;
         }
@@ -951,10 +957,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
             var preset = new PresetRouteViewModel();
 
             var process = context.TBL_LOAN_APPLICATION_STATUS.Select(x => new FintrakDropDownSelectList
-            {
-                id = x.APPLICATIONSTATUSID,
-                name = x.APPLICATIONSTATUSNAME,
-            })
+                {
+                    id = x.APPLICATIONSTATUSID,
+                    name = x.APPLICATIONSTATUSNAME,
+                })
                 .ToList();
 
             var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == classId)
@@ -1013,16 +1019,16 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
         public bool RerouteOperation(ForwardViewModel model) 
         {
-            workflow.StaffId = model.createdBy;
-            workflow.OperationId = model.operationId; 
-            workflow.TargetId = model.targetId;
-            workflow.CompanyId = model.companyId;
-            workflow.ProductClassId = model.productClassId;
-            workflow.ProductId = model.productId;
-            workflow.StatusId = (int)ApprovalStatusEnum.Authorised;
-            workflow.Comment = model.comment;
-            workflow.DeferredExecution = true;
-            workflow.LogActivity();
+            //workflow.StaffId = model.createdBy;
+            //workflow.OperationId = model.operationId; 
+            //workflow.TargetId = model.targetId;
+            //workflow.CompanyId = model.companyId;
+            //workflow.ProductClassId = model.productClassId;
+            //workflow.ProductId = model.productId;
+            //workflow.StatusId = (int)ApprovalStatusEnum.Authorised;
+            //workflow.Comment = model.comment;
+            //workflow.DeferredExecution = true;
+            //workflow.LogActivity();
 
             var currentTrail = context.TBL_APPROVAL_TRAIL.FirstOrDefault(x =>
                 x.OPERATIONID == model.operationId
@@ -1033,16 +1039,29 @@ namespace FintrakBanking.Repositories.Setups.Approval
             if (currentTrail != null)
             {
                 currentTrail.APPROVALSTATEID = (int)ApprovalState.Ended;
-                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                currentTrail.APPROVALSTATUSID = (int)ApprovalStatusEnum.Authorised;
                 currentTrail.COMMENT = model.comment;
                 currentTrail.TOAPPROVALLEVELID = null;
                 currentTrail.TOSTAFFID = null;
+                currentTrail.RESPONSESTAFFID = model.createdBy;
             }
 
             workflow.NextLevelId = model.nextApprovalLevelId;
             workflow.NextProcess(model.companyId, model.createdBy, model.nextOperationId, model.targetId, null, "NIL", true, true, true);
+
+            UpdateTarget(model.operationId,model.targetId, model.nextOperationId);
+
             return context.SaveChanges() > 0;
         }
 
+        private void UpdateTarget(int operationId, int targetId, int nextOperationId)
+        {
+            if (operationId == 46 || operationId == 71 || operationId == 79)
+            {
+                var appl = context.TBL_LMSR_APPLICATION.Find(targetId);
+                appl.OPERATIONID = nextOperationId;
+                context.Entry(appl).State = System.Data.Entity.EntityState.Modified;
+            }
+        }
     }
 }

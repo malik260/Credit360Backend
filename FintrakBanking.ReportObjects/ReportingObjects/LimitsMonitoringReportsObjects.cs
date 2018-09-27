@@ -204,7 +204,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                            join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                            join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                            join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                           where b.INT_PRUDENT_GUIDELINE_STATUSID == classification
+                                           where b.EXT_PRUDENT_GUIDELINE_STATUSID == (int)PrudentialGuidelineTypeEnum.NonPerforming
                                            && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
                                            select new LoanViewModel
                                            {
@@ -592,7 +592,10 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
         public List<Blacklist> Blacklist(DateTime startDate, DateTime endDate, string customercode)
         {
             var data = (from camsol in context.TBL_LOAN_CAMSOL
-                        where camsol.DATE >= startDate && camsol.DATE <= endDate && (camsol.CUSTOMERCODE == customercode || customercode == null)
+                        where DbFunctions.TruncateTime(camsol.DATE) >= DbFunctions.TruncateTime(startDate) 
+                        && DbFunctions.TruncateTime(camsol.DATE) <= DbFunctions.TruncateTime(endDate) 
+                        && (camsol.CUSTOMERNAME.ToLower().Contains(customercode.ToLower())
+                        || camsol.CUSTOMERCODE == customercode || customercode == null ||  customercode == "")
                         select new Blacklist
                         {
                             accountName = camsol.ACCOUNTNAME,

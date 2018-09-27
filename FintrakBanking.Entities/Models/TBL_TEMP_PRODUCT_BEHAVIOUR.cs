@@ -11,7 +11,7 @@ namespace FintrakBanking.Entities.Models
     {
         [Key]
         public int TEMPPRODUCT_BEHAVIOURID { get; set; }
-        public int? TEMP_PRODUCTID { get; set; }
+        public short? TEMP_PRODUCTID { get; set; }
        // public int PRODUCTID { get; set; }
         [Required]
         [StringLength(50)]

@@ -547,9 +547,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                    productCategoryName = data.TBL_PRODUCT_CATEGORY.PRODUCTCATEGORYNAME,
                                    productClassId = data.PRODUCTCLASSID,
                                    productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
-
+                                   riskRatingId=data.RISKRATINGID,
                                    customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
-
+                                   
                                    customerTypeId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
                                    productPriceIndexId = data.PRODUCTPRICEINDEXID,
@@ -943,7 +943,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                                                   principalBalanceGl2 = c.PRINCIPALBALANCEGL2,
                                                   principalBalanceGl2Code = (c.PRINCIPALBALANCEGL2.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
-
+                                                  penalChargeGl = c.PENALCHARGEGL,
+                                                  penalChargeGlCode = (c.PENALCHARGEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
 
                                                   interestIncomeExpenseGl = c.INTERESTINCOMEEXPENSEGL,
                                                   interestIncomeExpenseGlCode = (c.INTERESTINCOMEEXPENSEGL.HasValue ? c.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
@@ -971,7 +972,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                                   approvedBy = c.APPROVEDBY,
                                                   completed = c.COMPLETED,
                                                   approved = c.APPROVED,
-
+                                                  riskRatingId=c.RISKRATINGID,
+                                                  riskRatingName = context.TBL_CUSTOMER_RISK_RATING.Where(x => x.RISKRATINGID == c.RISKRATINGID).Select(x => x.RISKRATING).FirstOrDefault(),
                                                   //approvalStatusId = c.APPROVALSTATUSID,
                                                   operationId = atrail.OPERATIONID,
                                                   //currencies = context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Any() ? context.TBL_TEMP_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == c.PRODUCTID && curr.DELETED == false).Select(pc => new ProductCurrencyViewModel()
@@ -1086,6 +1088,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     item.requireCasaAccount = x.REQUIRECASAACCOUNT;
                     item.allowFundUsage = x.ALLOWFUNDUSAGE;
                     item.ProductBehaviour.crmsRegulatoryId = x.CRMSREGULATORYID;
+
                 }
             }
                 foreach (var currency in pendingProducts)
@@ -1123,12 +1126,20 @@ namespace FintrakBanking.Repositories.Setups.General
 
 
         }
-        public IEnumerable<LookupViewModel> GetAllCRMSType()
+        public IEnumerable<LookupViewModel> GetAllCRMSType(int companyId)
         {
-            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.LoanType).Select(x => new LookupViewModel()
+            return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.LoanType && x.COMPANYID == companyId).Select(x => new LookupViewModel()
             {
                 lookupId = (short)x.CRMSREGULATORYID,
                 lookupName = x.CODE + "-" + x.DESCRIPTION
+            }).ToList();
+        }
+        public IEnumerable<LookupViewModel> GetAllRiskRatingType(int companyId)
+        {
+            return context.TBL_CUSTOMER_RISK_RATING.Where(x => x.COMPANYID == companyId).Select(x => new LookupViewModel()
+            {
+                lookupId = (short)x.RISKRATINGID,
+                lookupName = x.RISKRATING
             }).ToList();
         }
         public ProductViewModel GetTempProductDetail(int productId)
@@ -1165,7 +1176,11 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         principalBalanceGl2 = tp.PRINCIPALBALANCEGL2,
                         principalBalanceGl2Code = (tp.PRINCIPALBALANCEGL2.HasValue ? context.TBL_CHART_OF_ACCOUNT.Find(tp.PRINCIPALBALANCEGL2).ACCOUNTCODE : ""),
+                        penalChargeGl = tp.PENALCHARGEGL,
+                        penalChargeGlCode = (tp.PENALCHARGEGL.HasValue ? context.TBL_CHART_OF_ACCOUNT.Find(tp.PENALCHARGEGL).ACCOUNTCODE : ""),
 
+
+                        riskRatingId =tp.RISKRATINGID,
 
                         interestIncomeExpenseGl = tp.INTERESTINCOMEEXPENSEGL,
                         interestIncomeExpenseGlCode = (tp.INTERESTINCOMEEXPENSEGL.HasValue ? tp.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
@@ -1422,9 +1437,10 @@ namespace FintrakBanking.Repositories.Setups.General
                         //existingProduct.PRODUCTCODE = productModel.PRODUCTCODE;
                         existingProduct.PRODUCTNAME = productModel.PRODUCTNAME;
                         existingProduct.PRODUCTDESCRIPTION = productModel.PRODUCTDESCRIPTION;
-
+                        existingProduct.RISKRATINGID = productModel.RISKRATINGID;
                         existingProduct.PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL;
                         existingProduct.PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2;
+                        existingProduct.PENALCHARGEGL = productModel.PENALCHARGEGL;
                         existingProduct.INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL;
                         existingProduct.INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL;
                         existingProduct.DORMANTGL = productModel.DORMANTGL;
@@ -1526,12 +1542,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
                             PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL,
                             PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2,
+                            PENALCHARGEGL = productModel.PENALCHARGEGL,
+
                             INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL,
                             INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL,
                             DORMANTGL = productModel.DORMANTGL,
                             PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL,
                             OVERDRAWNGL = productModel.OVERDRAWNGL,
-
+                            RISKRATINGID=productModel.RISKRATINGID,
                             PRODUCTPRICEINDEXID = productModel.PRODUCTPRICEINDEXID,
                             PRODUCTPRICEINDEXSPREAD = productModel.PRODUCTPRICEINDEXSPREAD,
 
@@ -1563,7 +1581,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             ALLOWSCHEDULETYPEOVERRIDE = productModel.ALLOWSCHEDULETYPEOVERRIDE,
                             SCHEDULETYPEID = productModel.SCHEDULETYPEID,
                             //PRODUCT_BEHAVIOURID = productModel.PRODUCT_BEHAVIOURID,
-
+                           
                             TBL_PRODUCT_CURRENCY = productCurrencies,
                             TBL_PRODUCT_COLLATERALTYPE = productCollateral,
                             TBL_PRODUCT_CHARGE_FEE = productFees,
@@ -1755,9 +1773,10 @@ namespace FintrakBanking.Repositories.Setups.General
                 PRODUCTCODE = GenerateProductCode(productModel.companyId),
                 PRODUCTNAME = productModel.productName,
                 PRODUCTDESCRIPTION = productModel.productDescription,
-
+                RISKRATINGID = productModel.riskRatingId,
                 PRINCIPALBALANCEGL = productModel.principalBalanceGl,
                 PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2,
+                PENALCHARGEGL = productModel.penalChargeGl,
                 INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl,
                 INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl,
                 DORMANTGL = productModel.dormantGl,
@@ -2005,9 +2024,12 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductToUpdate.PRODUCTCODE = productModel.productCode;
                 tempProductToUpdate.PRODUCTNAME = productModel.productName;
                 tempProductToUpdate.PRODUCTDESCRIPTION = productModel.productDescription;
+                tempProductToUpdate.RISKRATINGID = productModel.riskRatingId;
 
                 tempProductToUpdate.PRINCIPALBALANCEGL = productModel.principalBalanceGl;
                 tempProductToUpdate.PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2;
+                tempProductToUpdate.PENALCHARGEGL = productModel.penalChargeGl;
+
                 tempProductToUpdate.INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl;
                 tempProductToUpdate.INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl;
                 tempProductToUpdate.DORMANTGL = productModel.dormantGl;
@@ -2138,6 +2160,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
                     PRINCIPALBALANCEGL = productModel.principalBalanceGl,
                     PRINCIPALBALANCEGL2 = productModel.principalBalanceGl2,
+                    PENALCHARGEGL = productModel.penalChargeGl,
+
                     INTERESTINCOMEEXPENSEGL = productModel.interestIncomeExpenseGl,
                     INTERESTRECEIVABLEPAYABLEGL = productModel.interestReceivablePayableGl,
                     DORMANTGL = productModel.dormantGl,
@@ -2176,7 +2200,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     ISMULTIPLECURENCY = productModel.currencies.Any(),
                     //PRODUCT_BEHAVIOURID = productModel.productBehaviourId,
                     OPERATION = "update",
-
+                    RISKRATINGID = productModel.riskRatingId,
                     TBL_TEMP_PRODUCT_CURRENCY = productCurrencies,
                     TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals,
                     TBL_TEMP_PRODUCT_CHARGE_FEE = productFees

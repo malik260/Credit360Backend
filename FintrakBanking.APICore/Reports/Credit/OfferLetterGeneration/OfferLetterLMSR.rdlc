@@ -49,10 +49,14 @@
           <DataField>customerGroupName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
+        <Field Name="operationName">
+          <DataField>operationName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetter</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -433,7 +437,27 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>We refer to your application for ******** of your Credit Facility availed to you per our Offer Letter dated </Value>
+                    <Value>We refer to your application for </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=LCase(First(Fields!operationName.Value, "OfferLetterDetails"))</Value>
+                    <Style>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <Format>d MMM yyyy</Format>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value> of your Credit Facility availed to you per our Offer Letter dated </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -503,13 +527,13 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>CREDIT FACILITY</Value>
+                    <Value>=UCase(First(Fields!operationName.Value, "OfferLetterDetails"))</Value>
                     <Style>
-                      <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
                       <FontWeight>Bold</FontWeight>
+                      <Format>d MMM yyyy</Format>
                       <TextDecoration>Underline</TextDecoration>
-                      <Color>#000000</Color>
                     </Style>
                   </TextRun>
                 </TextRuns>
@@ -520,7 +544,7 @@
             <Top>3.0201cm</Top>
             <Left>0.48542cm</Left>
             <Height>0.67056cm</Height>
-            <Width>9.50516cm</Width>
+            <Width>16.66044cm</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
@@ -1415,7 +1439,7 @@
             <Top>3.01107in</Top>
             <Left>0.17861in</Left>
             <Height>1.75in</Height>
-            <Width>6.60123in</Width>
+            <Width>6.60122in</Width>
             <ZIndex>7</ZIndex>
             <Style>
               <Border>
@@ -1991,7 +2015,7 @@
             <Top>2.25878in</Top>
             <Left>0.1763in</Left>
             <Height>0.75in</Height>
-            <Width>6.60354in</Width>
+            <Width>6.60353in</Width>
             <ZIndex>11</ZIndex>
             <Style>
               <Border>

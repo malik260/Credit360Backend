@@ -7,10 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FintrakBanking.APICore.Reports.Credit.Monitoring {
+namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class NonPeformingLoans {
+    public partial class LoanDocumentDeferalsForMCC {
         
         /// <summary>
         /// form1 control.

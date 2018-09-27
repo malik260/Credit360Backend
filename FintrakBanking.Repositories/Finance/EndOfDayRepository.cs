@@ -133,6 +133,12 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyInterestOnPastDuePrincipalAccrual(date);
 
+           //loanOperation.ProcessDailyFeeAccrual(date);//TODO use batch posting and ensure the right accounting entries are passed
+
+            //loanOperation.ProcessDailyTaxAccrual(date); //TODO use batch posting and ensure the right accounting entries are passed
+
+            //loanOperation.ProcessIntervalFeeandCommissionPosting(date); //TODO use batch posting and ensure the right accounting entries are passed
+
             loanOperation.ProcessLoanRepaymentPostingForceDebit(date);
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
@@ -147,7 +153,7 @@ namespace FintrakBanking.Repositories.Finance
             //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
             //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
 
-            loanOperation.ProcessIntervalFeeandCommissionPosting(date);
+            
 
             //collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
