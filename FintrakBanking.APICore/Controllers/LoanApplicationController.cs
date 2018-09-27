@@ -1,6 +1,7 @@
 using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.ErrorLogger;
@@ -503,8 +504,25 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan/application")]
         public HttpResponseMessage AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
+
             try
             {
+
+                var loanDetail = entity.LoanApplicationDetail;
+                string msg = "";
+                if (entity.productClassId == (short)ProductClassEnum.BondAndGuarantees)
+                {
+                    foreach (var item in loanDetail)
+                    {
+                    var bond = item.bondDetails;
+                        if (bond == null)                   
+                        {
+                            msg = "Kindly Enter Records Into Compulsary Fields";
+                                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{msg}" });
+                        }
+                    }
+                   
+                }
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
