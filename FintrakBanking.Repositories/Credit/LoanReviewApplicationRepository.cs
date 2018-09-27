@@ -806,5 +806,25 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
         }
+
+        public bool UpdateManagementPosition(ManagementPositionViewModel model)
+        {
+            var entity = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == model.applicationDetailId);
+            if (entity == null) return false;
+            entity.MANAGEMENTPOSITION = model.managementPosition;
+            context.Entry(entity).State = System.Data.Entity.EntityState.Modified;
+            return context.SaveChanges() > 0;
+        }
+
+        public ManagementPositionViewModel GetManagementPosition(int detailId)
+        {
+            var entity = context.TBL_LMSR_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANREVIEWAPPLICATIONID == detailId);
+
+            ManagementPositionViewModel position = new ManagementPositionViewModel();
+            if (entity == null) return position;
+            position.managementPosition = entity.MANAGEMENTPOSITION;
+            position.applicationDetailId = detailId;
+            return position;
+        }
     }
 }

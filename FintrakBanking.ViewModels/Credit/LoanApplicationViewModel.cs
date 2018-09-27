@@ -684,4 +684,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerCode { get; set; }
     }
     
+    public class ManagementPositionViewModel : GeneralEntity
+    {
+        public int applicationDetailId { get; set; }
+        public string managementPosition { get; set; }
+    }
 }

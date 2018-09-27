@@ -722,7 +722,6 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         public FinanceTransactionViewModel PostDailyAuthorisedOverdraftInterestAccrual(DailyInterestAccrualViewModel model)
-
         {
 
             //FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
@@ -963,7 +962,6 @@ namespace FintrakBanking.Repositories.Finance
         }
 
         public FinanceTransactionViewModel PostDailyPastDuePrincipalAccrual(DailyInterestAccrualViewModel model)
-
         {
             //FinanceTransactionViewModel dailyInterestAccrualTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
