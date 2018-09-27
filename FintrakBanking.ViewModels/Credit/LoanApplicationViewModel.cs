@@ -361,7 +361,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int loanApplicationDetailId { get; set; }
         public decimal bondAmount { get; set; }
-        public int principalId { get; set; }
+        public int? principalId { get; set; }
         public int? casaAccountId { get; set; }        
         public short bondCurrencyId { get; set; }
         public DateTime contractStartDate { get; set; }
@@ -369,6 +369,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isTenored { get; set; }
         public bool isBankFormat { get; set; }
         public string referenceNo { get; set; }
+        public string principalName { get; set; }
+
 
     }
 
@@ -583,7 +585,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int loanApplicationDetailId { get; set; }
 
-        public int principalId { get; set; }
+        public int? principalId { get; set; }
 
          public int? casaAccountId { get; set; }
 

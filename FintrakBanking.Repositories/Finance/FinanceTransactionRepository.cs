@@ -514,7 +514,7 @@ namespace FintrakBanking.Repositories.Finance
                 else
                 {
                     var fromCurrencyCode = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == baseCurrency).CURRENCYCODE;
-                    var toCurrencyCode = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == currencyId).CURRENCYCODE;
+                    var toCurrencyCode = this.context.TBL_CURRENCY.Where(x => x.CURRENCYID == currencyId).Select(f=>f.CURRENCYCODE).FirstOrDefault();
                     var rateCode = "TTB";
 
                     // integration.
