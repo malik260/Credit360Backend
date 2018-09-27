@@ -418,7 +418,7 @@ namespace FintrakBanking.Repositories.Credit
                 var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId);
                 if (customerCreditBureauLog.Count() > 0)
                 {
-                    foreach (var cb in creditBureau)
+                    foreach (var cb in creditBureau.ToList())
                     {
                         if (customerCreditBureauLog.Where(x => x.creditBureauId == cb.creditBureauId).Any()) creditCount++;
                     }

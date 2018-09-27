@@ -14,7 +14,8 @@ namespace FintrakBanking.Entities.Models
 
         public int LOANAPPLICATIONDETAILID { get; set; }
 
-        public int PRINCIPALID { get; set; }
+        public int? PRINCIPALID { get; set; }
+        public string PRINCIPALNAME { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal AMOUNT { get; set; }

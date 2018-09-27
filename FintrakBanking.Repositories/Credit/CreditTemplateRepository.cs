@@ -239,10 +239,17 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoadDocumentTemplate(DocumentTemplateViewModel entity)
         {
             var templateSections = context.TBL_DOC_TEMPLATE_SECTION
-                .Where(x => x.TEMPLATEID == entity.templateId && x.ISDISABLED == false && x.DELETED == false);
+                .Where(x => x.TEMPLATEID == entity.templateId && x.ISDISABLED == false && x.DELETED == false)
+                .ToList();
+
+            var loadedSections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.TARGETID == entity.targetId && x.OPERATIONID == entity.operationId)
+                .ToList();
 
             foreach (var temp in templateSections)
             {
+                if (loadedSections.Any(x => x.TEMPLATESECTIONID == temp.TEMPLATESECTIONID)) continue;
+
                 context.TBL_DOC_TEMPLATE_DETAIL.Add(new TBL_DOC_TEMPLATE_DETAIL
                 {
                     OPERATIONID = entity.operationId,
@@ -257,6 +264,7 @@ namespace FintrakBanking.Repositories.Credit
                     DATETIMECREATED = DateTime.Now,
                 });
             }
+
             return context.SaveChanges() > 0;
         }
 

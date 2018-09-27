@@ -20,6 +20,7 @@ namespace FintrakBanking.ViewModels.Setups.General
 
         public int user_id { get; set; }
         public int staffId { get; set; }
+        public int? roleId { get; set; }
         public string staffName { get; set; }
         public int companyId { get; set; }
         public int countryId { get; set; }
