@@ -61,7 +61,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
                                                                                             && x.COMPANYDIRECTORID == null
-                                                                                            //&& (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                                                            && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)
                                                                                             );
 
             int creditBureauCount = data.Count();
@@ -133,7 +133,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var directorData = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == x.CUSTOMERID && x.DELETED == false
                                                                                     && x.COMPANYDIRECTORID == director.COMPANYDIRECTORID
-                                                                                    //&& (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)
+                                                                                    && (DbFunctions.DiffDays(x.DATETIMECREATED, DateTime.Now).Value <= 30)
                                                                                      );
                     var b = directorData.ToList();
                     int directorCount = directorData.Count();
@@ -418,7 +418,7 @@ namespace FintrakBanking.Repositories.Credit
                 var customerCreditBureauLog = GetCustomerCreditBureauReportLog(customer.customerId, customer.companyDirectorId);
                 if (customerCreditBureauLog.Count() > 0)
                 {
-                    foreach (var cb in creditBureau)
+                    foreach (var cb in creditBureau.ToList())
                     {
                         if (customerCreditBureauLog.Where(x => x.creditBureauId == cb.creditBureauId).Any()) creditCount++;
                     }
@@ -456,7 +456,6 @@ namespace FintrakBanking.Repositories.Credit
             var feedBackString = string.Empty;
             try
             {
-               // var task = Task.Run(() => searchResult.Add(_creditBureau.XDSSearchCreditBureau(searchInfoList)));
                 var task = Task.Run(() => feedBackString = _creditBureau.XDSSearchCreditBureau(searchInfoList));
                 if (task.Wait(TimeSpan.FromSeconds(600)))
                 {

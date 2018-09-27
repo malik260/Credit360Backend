@@ -3628,7 +3628,7 @@ namespace FintrakBanking.Repositories.Customer
                     lastName = c.LASTNAME,
                     customerTypeId = c.CUSTOMERTYPEID,
                     customerType = c.TBL_CUSTOMER_TYPE.NAME
-                });
+                }).ToList();
 
             foreach (var item in data)
             {

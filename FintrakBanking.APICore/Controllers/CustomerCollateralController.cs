@@ -222,12 +222,12 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet, Route("customer-collateral/customer/{customerId}/application/{applicationId}")]
-        public HttpResponseMessage GetCustomerCollateral(int customerId, int? applicationId)
+        [HttpGet, Route("customer-collateral/customer/{id}/application/{applicationId}")]
+        public HttpResponseMessage GetCustomerCollateral(int id, int? applicationId)
         {
             try
             {
-                var response = repo.GetCustomerCollateral(customerId, applicationId, token.GetCompanyId);
+                var response = repo.GetCustomerCollateral(id, applicationId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)

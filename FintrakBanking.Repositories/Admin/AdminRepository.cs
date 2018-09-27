@@ -930,20 +930,38 @@ namespace FintrakBanking.Repositories.Admin
             var output = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
             return output;
         }
-        public bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId)
+        public bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId, decimal levelAmount = 0)
         {
             bool output = false;
             if (USE_THIRD_PARTY_INTEGRATION == true)
             {
                 var staff = context.TBL_STAFF.Find(staffId);
 
-                var approvalLevelIds = (from x in context.TBL_APPROVAL_GROUP_MAPPING
+                List<int> approvalLevelIds = new List<int>();
+
+                if (levelAmount > 0)
+                {
+                    approvalLevelIds = (from x in context.TBL_APPROVAL_GROUP_MAPPING
                                         join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
                                         join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
-                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null && x.DELETED == false 
+                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null && x.DELETED == false
+                                        && z.MAXIMUMAMOUNT >= levelAmount && z.ISACTIVE == true
                                         orderby x.POSITION, z.POSITION ascending
                                         select z.APPROVALLEVELID
-                             ).ToList();
+                           ).ToList();
+                }
+                else
+                {
+                    approvalLevelIds = (from x in context.TBL_APPROVAL_GROUP_MAPPING
+                                        join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
+                                        join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
+                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null 
+                                        && x.DELETED == false && z.ISACTIVE == true
+                                        orderby x.POSITION, z.POSITION ascending
+                                        select z.APPROVALLEVELID
+                                               ).ToList();
+                }
+             
 
                 var levelCount = approvalLevelIds.Count;
 
