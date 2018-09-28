@@ -21,6 +21,8 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(200)]
         public string NAME { get; set; }
+        public string LGACODE { get; set; }
+        public string CRMSCODE { get; set; }
 
         public int STATEID { get; set; }
 
