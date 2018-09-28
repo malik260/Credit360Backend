@@ -25,6 +25,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string rateCode { get; set; }
         public string rateUnit { get; set; }
 
+        public string sourceReferenceNumber { get; set; }
+
     }
 
 
@@ -197,6 +199,7 @@ public class LienProcessViewModel //: GeneralEntity
         public string serialNumber { get; set; }
         public string message { get; set; }
         public HttpResponseMessage APIMessage { get; set; }
+        public bool responseStatus { get; set; }
     }
 
     public class AccountCreationResponseMessageViewModel : ResponseMessageViewModel
@@ -261,6 +264,7 @@ public class LienProcessViewModel //: GeneralEntity
         public HttpResponseMessage Message { get; set; }
         public bool TransactionIsSuccessfull { get; set; }
         public string TransactionMessage { get; set; }
+        public string responseMessage { get; set; }
     }
 
     public class AccountCreationRespones

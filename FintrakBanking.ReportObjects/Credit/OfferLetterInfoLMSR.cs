@@ -72,6 +72,22 @@ namespace FintrakBanking.ReportObjects.Credit
             return offerLetterDetails;
         }
 
+        public static OfferLetterViewModel GetManagementPosition(int loanId)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            //var managementPosition = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanId).Select(x=>x.MANAGEMENTPOSITION).FirstOrDefault();
+            var managementPosition =  (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                         where a.LOANAPPLICATIONID == loanId
+                         select new OfferLetterViewModel
+                         {
+                             managementPosition = a.MANAGEMENTPOSITION,
+                         }).FirstOrDefault();
+            return managementPosition;
+        }
+
+
+
         public static List<SignatoryViewModel> GetLoanApplicationSignatory(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();

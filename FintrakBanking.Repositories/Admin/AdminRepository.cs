@@ -47,13 +47,13 @@ namespace FintrakBanking.Repositories.Admin
             this.auth = _auth;
             workFlow = _workFlow;
             this.proSetting = _proSetting;
-            // level = _level;
+           // level = _level;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
 
         }
-
+      
         #region Users
 
         public bool isUserExist(string username)
@@ -768,9 +768,9 @@ namespace FintrakBanking.Repositories.Admin
 
         public bool IsSuperAdmin(int staffId)
         {
-            var userId = (from a in context.TBL_PROFILE_USER
-                          where a.STAFFID == staffId
-                          select a.USERID).FirstOrDefault();
+            var userId = (from a in context.TBL_PROFILE_USER                               
+                               where a.STAFFID == staffId
+                               select a.USERID).FirstOrDefault();
 
             var userActivities = GetUserActivitiesByUser(userId);
 
@@ -779,7 +779,7 @@ namespace FintrakBanking.Repositories.Admin
             if (superAdmin != null)
                 return true;
             else
-                return false;
+                return false;            
         }
 
         public List<string> GetUserActivitiesByUser(int userId)
@@ -923,7 +923,7 @@ namespace FintrakBanking.Repositories.Admin
             {
                 throw new TwoFactorAuthenticationException(ex.Message);
             }
-
+             
         }
         public bool TwoFactorAuthenticationEnabled()
         {
@@ -938,34 +938,37 @@ namespace FintrakBanking.Repositories.Admin
                 var staff = context.TBL_STAFF.Find(staffId);
 
                 List<int> approvalLevelIds = new List<int>();
+
                 if (levelAmount > 0)
                 {
                     approvalLevelIds = (from x in context.TBL_APPROVAL_GROUP_MAPPING
                                         join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
                                         join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
                                         where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null && x.DELETED == false
-                                        && z.ISACTIVE == true && z.MAXIMUMAMOUNT <= levelAmount
+                                        && z.MAXIMUMAMOUNT >= levelAmount && z.ISACTIVE == true && z.DELETED == false 
                                         orderby x.POSITION, z.POSITION ascending
                                         select z.APPROVALLEVELID
-                            ).ToList();
+                           ).ToList();
                 }
                 else
                 {
                     approvalLevelIds = (from x in context.TBL_APPROVAL_GROUP_MAPPING
                                         join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
                                         join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
-                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null && x.DELETED == false
+                                        where x.OPERATIONID == operationId && x.PRODUCTCLASSID == null 
+                                        && x.DELETED == false && z.ISACTIVE == true && z.DELETED == false
                                         orderby x.POSITION, z.POSITION ascending
                                         select z.APPROVALLEVELID
                                                ).ToList();
                 }
+             
 
-                var levelCount = approvalLevelIds.Count();
+                var levelCount = approvalLevelIds.Count;
 
                 var staffLevelId = (from x in context.TBL_APPROVAL_GROUP_MAPPING
                                     join y in context.TBL_APPROVAL_GROUP on x.GROUPID equals y.GROUPID
                                     join z in context.TBL_APPROVAL_LEVEL on x.GROUPID equals z.GROUPID
-                                    join st in context.TBL_APPROVAL_LEVEL_STAFF on z.APPROVALLEVELID equals st.APPROVALLEVELID
+                                    join st in context.TBL_APPROVAL_LEVEL_STAFF on z.APPROVALLEVELID equals st.APPROVALLEVELID 
                                     where x.OPERATIONID == operationId && (z.STAFFROLEID == staff.STAFFROLEID || st.STAFFID == staff.STAFFID)
                                     select z.APPROVALLEVELID).FirstOrDefault();
 
