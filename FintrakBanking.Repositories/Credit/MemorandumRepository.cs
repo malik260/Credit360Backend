@@ -59,6 +59,10 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string shareHoldersHolder = "@{{ShareHolders}}";
         private readonly string signitoriesHolder = "@{{Signitories}}";
         private readonly string directorsHolder = "@{{Directors}}";
+        private readonly string amountDisbursedHolder = "@{{AmountDisbursed}}";
+        private readonly string amountPaidSoFarHolder = "@{{AmountPaidSoFar}}";
+        private readonly string amountProposedHolder = "@{{AmountProposed}}";
+
 
 
         // properties to have getter methods for interfacing
@@ -87,6 +91,9 @@ namespace FintrakBanking.Repositories.Credit
         private string directors;
         private string isSecurity;
         private string isOwnerOccupied;
+        private string amountDisbursed;
+        private string amountPaidSoFar;
+        private string amountProposed;
 
 
         // init
@@ -150,7 +157,9 @@ namespace FintrakBanking.Repositories.Credit
                 this.directors = cam.directors;
                 this.isSecurity = cam.isResidential == true ? "Yes" : "No";
                 this.isOwnerOccupied = cam.isOwnerOccupied == true ? "Yes" : "No";
-
+                this.amountDisbursed = cam.amountDisbursed.ToString();
+                this.amountPaidSoFar = cam.amountPaidSoFar.ToString();
+                this.amountProposed = cam.amountProposed.ToString();
             }
 
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
@@ -234,6 +243,10 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(directorsHolder, directors);
             content = content.Replace(isSecurityHolder, isSecurity);
             content = content.Replace(isOwnerOccupiedHolder, isOwnerOccupied);
+            content = content.Replace(amountDisbursedHolder, amountDisbursed);
+            content = content.Replace(amountPaidSoFarHolder, amountPaidSoFar);
+            content = content.Replace(amountProposedHolder, amountProposed);
+
 
             return content;
         }
@@ -527,10 +540,11 @@ namespace FintrakBanking.Repositories.Credit
                            facilityType = context.TBL_PRODUCT.Where(o => o.PRODUCTID == d.PRODUCTID).Select(o => o.PRODUCTNAME).FirstOrDefault(),
                            facilityAmountGranted = b.APPROVEDAMOUNT,
                            incumbentAccountOfficer = context.TBL_STAFF.Where(o=>o.STAFFID==d.RELATIONSHIPOFFICERID).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
-                           interestOverdue = d.PASTDUEINTEREST + d.INTERESTONPASTDUEINTEREST + d.INTERESTONPASTDUEPRINCIPAL, 
                            nameOfInitialAccountOfficer = context.TBL_STAFF.Where(o => o.STAFFID == context.TBL_STAFF_ACCOUNT_HISTORY.Where(y => y.TARGETID == d.TERMLOANID).OrderByDescending(y => y.DATETIMECREATED).Select(y => o.STAFFID).FirstOrDefault()).Select(o => o.FIRSTNAME + " " + o.MIDDLENAME + " " + o.LASTNAME).FirstOrDefault(),
+
+                           interestOverdue = d.PASTDUEINTEREST + d.INTERESTONPASTDUEINTEREST + d.INTERESTONPASTDUEPRINCIPAL, 
                            pricipalOutstanding = d.OUTSTANDINGPRINCIPAL + d.PASTDUEPRINCIPAL,
-                           proposedRepaymentTenor = (d.MATURITYDATE - d.EFFECTIVEDATE).Days,
+                           //proposedRepaymentTenor = (d.MATURITYDATE - d.EFFECTIVEDATE).TotalDays,
                            totalPaidAndProposed = (d.PRINCIPALAMOUNT - d.OUTSTANDINGPRINCIPAL) - b.PROPOSEDAMOUNT, 
                            totalOutstanding = 0 //
 
@@ -563,15 +577,18 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var x in director)
                 listOfDirectors = listOfDirectors + x + ", ";
 
-            cam.securityType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == securty.b.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault();
-            cam.isResidential = securty.c.ISRESIDENTIAL;
-            cam.securityDescription = securty.c.PROPERTYNAME;
-            cam.securityFirstSellValue = securty.c.FORCEDSALEVALUE;
-            cam.securityLocation = securty.c.PROPERTYADDRESS;
-            cam.securityOpenMarketValue = securty.c.OPENMARKETVALUE;
-            cam.isOwnerOccupied = securty.c.ISOWNEROCCUPIED;
-            cam.securityPerfectionStatus = securty.c.PERFECTIONSTATUSID;
-            cam.securityValuationDate = securty.c.LASTVALUATIONDATE;
+            if (securty != null)
+            {
+                cam.securityType = context.TBL_COLLATERAL_TYPE.Where(o => o.COLLATERALTYPEID == securty.b.COLLATERALTYPEID).Select(o => o.COLLATERALTYPENAME).FirstOrDefault();
+                cam.isResidential = securty.c.ISRESIDENTIAL;
+                cam.securityDescription = securty.c.PROPERTYNAME;
+                cam.securityFirstSellValue = securty.c.FORCEDSALEVALUE;
+                cam.securityLocation = securty.c.PROPERTYADDRESS;
+                cam.securityOpenMarketValue = securty.c.OPENMARKETVALUE;
+                cam.isOwnerOccupied = securty.c.ISOWNEROCCUPIED;
+                cam.securityPerfectionStatus = securty.c.PERFECTIONSTATUSID;
+                cam.securityValuationDate = securty.c.LASTVALUATIONDATE;
+            }
             cam.shareHolders = listOfshareHolders.TrimEnd(',');
             cam.signitories = listOfSignitories.TrimEnd(',');
             cam.directors = listOfDirectors;

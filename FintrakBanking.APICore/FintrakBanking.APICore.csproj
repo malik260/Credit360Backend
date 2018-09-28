@@ -435,6 +435,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Credit.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx.cs">
+      <DependentUpon>ClassifiedAssetManagement.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx.designer.cs">
+      <DependentUpon>ClassifiedAssetManagement.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx.cs">
       <DependentUpon>OfferLetterLMSR.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -537,6 +544,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\Lein.aspx.designer.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.cs">
+      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.designer.cs">
+      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\NonPeformingLoans.aspx.cs">
       <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
@@ -694,13 +708,6 @@
     <Compile Include="Reports\ReportViews\LoanAnniversery.aspx.designer.cs">
       <DependentUpon>LoanAnniversery.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.cs">
-      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx.designer.cs">
-      <DependentUpon>LoanDocumentDeferalsForMCC.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Reports\ReportViews\LoanDocumentDeferral.aspx.cs">
       <DependentUpon>LoanDocumentDeferral.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -798,6 +805,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Reports\Collateral\ScheduledCollateralReport.aspx" />
+    <Content Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMbase.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
@@ -817,6 +825,7 @@
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
+    <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
@@ -829,7 +838,6 @@
     <Content Include="Reports\ReportViews\GetStakeholdersOnExpirationOfFTP.aspx" />
     <Content Include="Reports\ReportViews\GrantedFacilities.aspx" />
     <Content Include="Reports\ReportViews\LoanAnniversery.aspx" />
-    <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferral.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentWaived.aspx" />
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
@@ -1053,6 +1061,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />

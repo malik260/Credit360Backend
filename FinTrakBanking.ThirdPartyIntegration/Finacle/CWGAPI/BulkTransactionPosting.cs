@@ -29,7 +29,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             values.Add(new ItemValue { valueCode = "BAF", valueName = "Repayment Fee" });
             values.Add(new ItemValue { valueCode = "BIF", valueName = "Interest payment" });
             values.Add(new ItemValue { valueCode = "BPP", valueName = "Principal Payment" });
-            values.Add(new ItemValue { valueCode = "FFF", valueName = "Others" });
+            values.Add(new ItemValue { valueCode = "FFF", valueName = "Interest Accrual Posting" });
 
             return values;
         }

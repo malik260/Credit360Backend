@@ -10,8 +10,8 @@ namespace FintrakBanking.Interfaces.CRMS
     public interface ICRMSRegulatories
     {
         string AddCRMSCode(CRMSViewModel code);
-        List<CRMSRegulatoryViewModel> GetAllLoansWithCRMSCode(CRMSViewModel data);
-        List<CRMSRecord> GenerateCBNReport(CRMSViewModel param);
-
+        List<CRMSRegulatoryViewModel> GetAllLoansForCRMS(CRMSViewModel data);
+        CRMSRecord GenerateCBNReport(CRMSViewModel param);
+        List<LoansCount> LoanCountsByLegalStatus(List<CRMSRegulatoryViewModel> loans);
     }
 }

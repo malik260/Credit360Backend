@@ -96,6 +96,7 @@ namespace FintrakBanking.Common.Enum
         //Added by Yemi
         StaffReliefCreation = 84,
         AccreditedConsultantCreated = 88,
+        WrittenOffLoanReviewApprovalAppraisal = 79,
         CollateralSearchCompletion = 90
 
     }

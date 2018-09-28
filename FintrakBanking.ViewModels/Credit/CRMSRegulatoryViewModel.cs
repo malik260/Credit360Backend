@@ -19,6 +19,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime effectiveDate { get; set; }
         public int loanId { get; set; }
         public int loanSystemTypeId { get; set; }
+        public LoansCount loansCount { get; set; }
+        public int? crmsLegalStatusId { get; set; }
     }
 
     public class CRMSViewModel : GeneralEntity
@@ -38,11 +40,18 @@ namespace FintrakBanking.ViewModels.Credit
         public string templateTypeName  { get; set; }
     }
 
+    public class LoansCount
+    {
+        public int count { get; set; }
+        public string crmsLegalStatusName { get; set; }
+        public string code { get; set; }
+    }
+
     public  class CRMSTemplateViewModel 
     {
         public string UNIQUE_IDENTIFICATION_TYPE { get; set; }
         public string UNIQUE_IDENTIFICATION_NO { get; set; }
-        public int? CREDIT_TYPE { get; set; }
+        public string CREDIT_TYPE { get; set; }
         public string CREDIT_PURPOSE_BY_BUSINESSLINES { get; set; }
         public string CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR { get; set; }
         public decimal? CREDIT_LIMIT { get; set; }
@@ -51,16 +60,16 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime EFFECTIVE_DATE { get; set; }
         public double TENOR { get; set; }
         public DateTime EXPIRY_DATE { get; set; }
-        public int? REPAYMENT_AGREEMENT_MODE { get; set; }
-        public string INTEREST_RATE { get; set; }
+        public string REPAYMENT_AGREEMENT_MODE { get; set; }
+        public double INTEREST_RATE { get; set; }
         public string BENEFICIARY_ACCOUNT_NUMBER { get; set; }
         public string LOCATION_OF_BENEFICIARY { get; set; }
-        public short? RELATIONSHIP_TYPE { get; set; }
-        public int? COMPANY_SIZE { get; set; }
+        public string RELATIONSHIP_TYPE { get; set; }
+        public string COMPANY_SIZE { get; set; }
         public string FUNDING_SOURCE_CATEGORY { get; set; }
         public string ECCI_NUMBER { get; set; }
-        public int? FUNDING_SOURCE { get; set; }
-        public int? LEGAL_STATUS { get; set; }
+        public string FUNDING_SOURCE { get; set; }
+        public string LEGAL_STATUS { get; set; }
         public string CLASSIFICATION_BY_BUSINESS_LINES { get; set; }
         public string CLASSIFICATION_BY_BUSINESS_LINES_SUB_SECTOR { get; set; }
         public string SPECIALISED_LOAN { get; set; }
@@ -71,7 +80,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string SYNDICATION_REF_NUMBER { get; set; }
         public string COLLATERAL_PRESENT { get; set; }
         public string COLLATERAL_SECURE { get; set; }
-        public int? SECURITY_TYPE { get; set; }
+        public string SECURITY_TYPE { get; set; }
         public string ADDRESS_OF_SECURITY { get; set; }
         public string OWNER_OF_SECURITY { get; set; }
         public string UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER { get; set; }
@@ -84,6 +93,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? FIRSTPRINCIPALPAYMENTDATE { get; set; }
         public int LOANID { get; set; }
         public int? CRMSLEGALSTATUSID { get; set; }
+        public string ID_TTPE { get; set; }
+        public string ID_DETAIL { get; set; }
 
         //100
         public string GOVERNMENT_CODE   { get; set; }
@@ -103,5 +114,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string ACCOUNT { get; set; }
         public int? FEE_TYPE { get; set; }
         public decimal FEE_AMOUNT { get; set; }
+        public int CUSTOMERID { get; set; }
+        public string CONDITIONPRECIDENT { get; set; }
     }
 }

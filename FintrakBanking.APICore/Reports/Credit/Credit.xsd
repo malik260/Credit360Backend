@@ -432,6 +432,7 @@
               <xs:element name="branchCode" msprop:Generator_ColumnVarNameInTable="columnbranchCode" msprop:Generator_ColumnPropNameInRow="branchCode" msprop:Generator_ColumnPropNameInTable="branchCodeColumn" msprop:Generator_UserColumnName="branchCode" type="xs:string" minOccurs="0" />
               <xs:element name="branchName" msprop:Generator_ColumnVarNameInTable="columnbranchName" msprop:Generator_ColumnPropNameInRow="branchName" msprop:Generator_ColumnPropNameInTable="branchNameColumn" msprop:Generator_UserColumnName="branchName" type="xs:string" minOccurs="0" />
               <xs:element name="sourceReferenceNumber" msprop:Generator_ColumnVarNameInTable="columnsourceReferenceNumber" msprop:Generator_ColumnPropNameInRow="sourceReferenceNumber" msprop:Generator_ColumnPropNameInTable="sourceReferenceNumberColumn" msprop:Generator_UserColumnName="sourceReferenceNumber" type="xs:string" minOccurs="0" />
+              <xs:element name="operationName" msprop:Generator_ColumnVarNameInTable="columnoperationName" msprop:Generator_ColumnPropNameInRow="operationName" msprop:Generator_ColumnPropNameInTable="operationNameColumn" msprop:Generator_UserColumnName="operationName" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -505,6 +506,13 @@
               <xs:element name="lienTypeName" msprop:Generator_ColumnVarNameInTable="columnlienTypeName" msprop:Generator_ColumnPropNameInRow="lienTypeName" msprop:Generator_ColumnPropNameInTable="lienTypeNameColumn" msprop:Generator_UserColumnName="lienTypeName" type="xs:string" minOccurs="0" />
               <xs:element name="dateTimeCreated" msprop:Generator_ColumnVarNameInTable="columndateTimeCreated" msprop:Generator_ColumnPropNameInRow="dateTimeCreated" msprop:Generator_ColumnPropNameInTable="dateTimeCreatedColumn" msprop:Generator_UserColumnName="dateTimeCreated" type="xs:string" minOccurs="0" />
               <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="WriteOff" msprop:Generator_TableClassName="WriteOffDataTable" msprop:Generator_TableVarName="tableWriteOff" msprop:Generator_TablePropName="WriteOff" msprop:Generator_RowDeletingName="WriteOffRowDeleting" msprop:Generator_RowChangingName="WriteOffRowChanging" msprop:Generator_RowEvHandlerName="WriteOffRowChangeEventHandler" msprop:Generator_RowDeletedName="WriteOffRowDeleted" msprop:Generator_UserTableName="WriteOff" msprop:Generator_RowChangedName="WriteOffRowChanged" msprop:Generator_RowEvArgName="WriteOffRowChangeEvent" msprop:Generator_RowClassName="WriteOffRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="managementPosition" msprop:Generator_ColumnVarNameInTable="columnmanagementPosition" msprop:Generator_ColumnPropNameInRow="managementPosition" msprop:Generator_ColumnPropNameInTable="managementPositionColumn" msprop:Generator_UserColumnName="managementPosition" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
