@@ -624,7 +624,7 @@
 
                 try
                 {
-                    InterestRateInquiryIntegrationViewModel apiModel = new InterestRateInquiryIntegrationViewModel
+                    InterestRateDetails apiModel = new InterestRateDetails
                     {
                         accountNumber = model.accountNumber,
                         accountType = accountType,

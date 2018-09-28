@@ -199,6 +199,7 @@ public class LienProcessViewModel //: GeneralEntity
         public string serialNumber { get; set; }
         public string message { get; set; }
         public HttpResponseMessage APIMessage { get; set; }
+        public bool responseStatus { get; set; }
     }
 
     public class AccountCreationResponseMessageViewModel : ResponseMessageViewModel
