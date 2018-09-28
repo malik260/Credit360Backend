@@ -15,11 +15,12 @@ namespace FintrakBanking.Common.Enum
 
     public enum CRMSTemplate
     {
-        T100 = 1,
-        T200 = 2,
-        T300=3,
-        T300Fee = 4,
-        T600 =5
+        Template100 = 1,
+        Template200 = 2,
+        Template300 = 3,
+        Template300Fee = 4,
+        Template300Directors = 5,
+        Template600 = 6
 
     }
 }

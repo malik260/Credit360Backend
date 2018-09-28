@@ -4468,7 +4468,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool OverdraftInterestRate(TwoFactorAutheticationViewModel twoFactorAuth, int loanId)
         {
             bool output = false;
-            ResponseMessageViewModel interestRateResult = new ResponseMessageViewModel();
+            bool interestRateResult = false;
+            //ResponseMessageViewModel interestRateResult = new ResponseMessageViewModel();
             InterestRateInquiryViewModel accountOutput = null;
             try
             {
@@ -4609,7 +4610,7 @@ namespace FintrakBanking.Repositories.Credit
                             startDate = loan.effectiveDate.ToString("dd-MMM-yyyy", null),
                         };
 
-                        interestRateResult = finacle.OverDraftInterestRate(data, data.accountType, twoFactorAuth);
+                        interestRateResult = finacle.ChangeOverDraftInterestRate(data, data.accountType, twoFactorAuth);
                     }
                     else
                     {
@@ -4618,13 +4619,13 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 addOverDraft.SERIALNUMBER = "1010101010";
                 var result = context.SaveChanges() > 0;
-                if (interestRateResult.message == "interest Rate Modified sucessfully" && result == true)
+                if (interestRateResult == true && result == true)
                 {
                     output = true;
                 }
                 else
                 {
-                    throw new SecureException(interestRateResult.message);
+                    throw new SecureException("OD Operation Not Completed because interest rate cannot be set");
                 }
             }
             catch (Exception ex)

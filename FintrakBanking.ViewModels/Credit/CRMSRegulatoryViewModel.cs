@@ -19,6 +19,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime effectiveDate { get; set; }
         public int loanId { get; set; }
         public int loanSystemTypeId { get; set; }
+        public LoansCount loansCount { get; set; }
+        public int? crmsLegalStatusId { get; set; }
     }
 
     public class CRMSViewModel : GeneralEntity
@@ -38,6 +40,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string templateTypeName  { get; set; }
     }
 
+    public class LoansCount
+    {
+        public int count { get; set; }
+        public string crmsLegalStatusName { get; set; }
+        public string code { get; set; }
+    }
+
     public  class CRMSTemplateViewModel 
     {
         public string UNIQUE_IDENTIFICATION_TYPE { get; set; }
@@ -52,7 +61,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double TENOR { get; set; }
         public DateTime EXPIRY_DATE { get; set; }
         public string REPAYMENT_AGREEMENT_MODE { get; set; }
-        public string INTEREST_RATE { get; set; }
+        public double INTEREST_RATE { get; set; }
         public string BENEFICIARY_ACCOUNT_NUMBER { get; set; }
         public string LOCATION_OF_BENEFICIARY { get; set; }
         public string RELATIONSHIP_TYPE { get; set; }
@@ -84,6 +93,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? FIRSTPRINCIPALPAYMENTDATE { get; set; }
         public int LOANID { get; set; }
         public int? CRMSLEGALSTATUSID { get; set; }
+        public string ID_TTPE { get; set; }
+        public string ID_DETAIL { get; set; }
 
         //100
         public string GOVERNMENT_CODE   { get; set; }

@@ -2535,15 +2535,16 @@ namespace FintrakBanking.Repositories.Credit
                                 startDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             };
 
-                            ResponseMessageViewModel interestRateResult = finacle.OverDraftInterestRate(data, data.accountType, twoFactorAuthDetails);
-                            if (interestRateResult.message == "interest Rate Modified sucessfully")
+                            var result  = finacle.ChangeOverDraftInterestRate(data, data.accountType, twoFactorAuthDetails);
+                            if (result == true)
                             {
+                                twoFactorAuthDetails.skipAuthentication = true;
                                 ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
                                 revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                             }
                             else
                             {
-                                throw new SecureException(interestRateResult.message);
+                                throw new SecureException("OD Operation Not Completed because interest rate cannot be set");
                             }
                         }
                     }

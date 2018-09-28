@@ -55,18 +55,19 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("regulatory/all-loan-with-crms-code")]
-        public HttpResponseMessage GetAllLoansWithCRMSCode([FromBody]CRMSViewModel model)
+        public HttpResponseMessage GetAllLoans([FromBody]CRMSViewModel model)
         {
             try
             {
                 model.companyId = token.GetCompanyId;
-                var data = repo.GetAllLoansWithCRMSCode(model);
+                var data = repo.GetAllLoansForCRMS(model);
+                var dataCount = repo.LoansCountByLegalStatus(data);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count= dataCount });
             }
             catch (ConditionNotMetException ce)
             {

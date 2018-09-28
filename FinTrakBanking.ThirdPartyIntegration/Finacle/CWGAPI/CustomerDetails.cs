@@ -480,14 +480,14 @@
                     if (response.IsSuccessStatusCode)
                     {
                         accountAPI = await response.Content.ReadAsAsync<InterestRateInquiryIntegrationViewModel>();
-                        accountOutput.accountNumber = accountAPI.accountNumber;
-                        accountOutput.accountType = accountAPI.accountType;
-                        accountOutput.interestTableCode = accountAPI.interestTableCode;
-                        accountOutput.interestSerialNumber = accountAPI.interestSerialNumber;
-                        accountOutput.startDate = accountAPI.startDate;
-                        accountOutput.endDate = accountAPI.endDate;
-                        accountOutput.interestRateAmount = accountAPI.interestRateAmount;
-                        accountOutput.lastChangedDate = accountAPI.lastChangedDate;
+                        accountOutput.accountNumber = accountAPI.interestRateDetails.accountNumber;
+                        accountOutput.accountType = accountAPI.interestRateDetails.accountType;
+                        accountOutput.interestTableCode = accountAPI.interestRateDetails.interestTableCode;
+                        accountOutput.interestSerialNumber = accountAPI.interestRateDetails.interestSerialNumber;
+                        accountOutput.startDate = accountAPI.interestRateDetails.startDate;
+                        accountOutput.endDate = accountAPI.interestRateDetails.endDate;
+                        accountOutput.interestRateAmount = accountAPI.interestRateDetails.interestRateAmount;
+                        accountOutput.lastChangedDate = accountAPI.interestRateDetails.lastChangedDate;
                     }
 
                     //responseApi = await response.Content.ReadAsAsync<TransactionPostingViewModel>();

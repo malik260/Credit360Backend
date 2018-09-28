@@ -136,8 +136,17 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     }
 
-
     public class InterestRateInquiryIntegrationViewModel : GeneralEntity
+    {
+        public string webRequestDate { get; set; }
+        public string webRequestStatus { get; set; }
+        public string message { get; set; }
+       
+        public InterestRateDetails interestRateDetails { get; set; }
+    }
+
+
+    public class InterestRateDetails 
     {
         public string accountNumber { get; set; }
         public string accountType { get; set; }
