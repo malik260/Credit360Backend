@@ -130,7 +130,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.ContingentLiabilityTermination;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = applicationDate;
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.BRANCHID;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = applicationDate;
@@ -144,7 +144,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = item.CONTINGENTLOANID;
                 addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
+
                 context.SaveChanges();
 
             }
@@ -186,7 +189,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = item.date;
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -199,7 +202,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-                addStaging.SYSTEMDATETIME = item.date;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
@@ -242,7 +247,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = item.date;
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -255,7 +260,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-                addStaging.SYSTEMDATETIME = item.date;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
@@ -296,7 +303,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = item.date;
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -309,7 +316,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-                addStaging.SYSTEMDATETIME = item.date;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
@@ -350,7 +359,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = item.date;
+                addStaging.POSTEDDATE = DateTime.Now.Date; 
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -363,7 +372,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-                addStaging.SYSTEMDATETIME = item.date;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
@@ -404,7 +415,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = item.date;
+                addStaging.POSTEDDATE = DateTime.Now.Date; 
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -417,7 +428,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-                addStaging.SYSTEMDATETIME = item.date;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
@@ -458,7 +471,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = item.date;
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -471,7 +484,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-                addStaging.SYSTEMDATETIME = item.date;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
@@ -512,7 +527,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = item.date;
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -525,7 +540,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = null;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = null;
-                addStaging.SYSTEMDATETIME = item.date;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 
@@ -583,7 +600,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDueInterest.ISPOSTED = false;
                     addStagingPastDueInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;
                     addStagingPastDueInterest.POSTEDBY = "SYSTEM";
-                    addStagingPastDueInterest.POSTEDDATE = applicationDate;
+                    addStagingPastDueInterest.POSTEDDATE = DateTime.Now.Date;;
                     addStagingPastDueInterest.SOURCEBRANCHID = item.branchId;
                     addStagingPastDueInterest.SOURCEREFERENCENUMBER = item.loanRefNo;
                     addStagingPastDueInterest.VALUEDATE = applicationDate;
@@ -596,6 +613,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDueInterest.CREDITCASAACCOUNTID = null;
                     addStagingPastDueInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                     addStagingPastDueInterest.LOANID = item.loanId;
+                    addStagingPastDueInterest.SYSTEMDATETIME = DateTime.Now;
+
                     context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPastDueInterest);
                 }
 
@@ -620,7 +639,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDuePrincipal.ISPOSTED = false;
                     addStagingPastDuePrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
                     addStagingPastDuePrincipal.POSTEDBY = "SYSTEM";
-                    addStagingPastDuePrincipal.POSTEDDATE = applicationDate;
+                    addStagingPastDuePrincipal.POSTEDDATE = DateTime.Now.Date; 
                     addStagingPastDuePrincipal.SOURCEBRANCHID = item.branchId;
                     addStagingPastDuePrincipal.SOURCEREFERENCENUMBER = item.loanRefNo;
                     addStagingPastDuePrincipal.VALUEDATE = applicationDate;
@@ -633,6 +652,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDuePrincipal.CREDITCASAACCOUNTID = null;
                     addStagingPastDuePrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                     addStagingPastDuePrincipal.LOANID = item.loanId;
+                    addStagingPastDuePrincipal.SYSTEMDATETIME = DateTime.Now;
+
                     context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPastDuePrincipal);
                 }
 
@@ -656,7 +677,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingInterest.ISPOSTED = false;
                     addStagingInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;
                     addStagingInterest.POSTEDBY = "SYSTEM";
-                    addStagingInterest.POSTEDDATE = applicationDate;
+                    addStagingInterest.POSTEDDATE = DateTime.Now.Date;
                     addStagingInterest.SOURCEBRANCHID = item.branchId;
                     addStagingInterest.SOURCEREFERENCENUMBER = item.loanRefNo;
                     addStagingInterest.VALUEDATE = applicationDate;
@@ -669,6 +690,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingInterest.CREDITCASAACCOUNTID = null;
                     addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                     addStagingInterest.LOANID = item.loanId;
+                    addStagingInterest.SYSTEMDATETIME = DateTime.Now;
+
                     context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
                 }
 
@@ -693,7 +716,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPrincipal.ISPOSTED = false;
                     addStagingPrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
                     addStagingPrincipal.POSTEDBY = "SYSTEM";
-                    addStagingPrincipal.POSTEDDATE = applicationDate;
+                    addStagingPrincipal.POSTEDDATE = DateTime.Now.Date;
                     addStagingPrincipal.SOURCEBRANCHID = item.branchId;
                     addStagingPrincipal.SOURCEREFERENCENUMBER = item.loanRefNo;
                     addStagingPrincipal.VALUEDATE = applicationDate;
@@ -706,6 +729,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPrincipal.CREDITCASAACCOUNTID = null;
                     addStagingPrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                     addStagingPrincipal.LOANID = item.loanId;
+                    addStagingPrincipal.SYSTEMDATETIME = DateTime.Now;
+
                     context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPrincipal);
                 }
 
@@ -740,8 +765,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                             bankId = a.BANKID,
                             branchId = (short)a.DESTINATIONBRANCHID,
                             sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
-                            forceDebitAccount = a.FORCEDEBITACCOUNT
-
+                            forceDebitAccount = a.FORCEDEBITACCOUNT,
+                            valueDate = a.VALUEDATE,
+                            transactionDate= a.POSTEDDATE
+                            
                         }).ToList();
 
             List<FINTRAK_TRAN_PROC_DETAILS> staging = new List<FINTRAK_TRAN_PROC_DETAILS>();
@@ -886,7 +913,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingInterest.ISPOSTED = false;
                 addStagingInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;///change to periodInterestAmount
                 addStagingInterest.POSTEDBY = "SYSTEM";
-                addStagingInterest.POSTEDDATE = applicationDate;
+                addStagingInterest.POSTEDDATE = DateTime.Now.Date; 
                 addStagingInterest.SOURCEBRANCHID = item.branchId;
                 addStagingInterest.SOURCEREFERENCENUMBER = item.loanRefNo;
                 addStagingInterest.VALUEDATE = applicationDate;
@@ -899,7 +926,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingInterest.CREDITCASAACCOUNTID = null;
                 addStagingInterest.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                 addStagingInterest.LOANID = item.loanId;
+                addStagingInterest.SYSTEMDATETIME = DateTime.Now;
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
+
+
                 var addStagingPrincipal = new TBL_CUSTOM_TRANSACTION_BULK();
 
                 count++;
@@ -921,7 +952,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingPrincipal.ISPOSTED = false;
                 addStagingPrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
                 addStagingPrincipal.POSTEDBY = "SYSTEM";
-                addStagingPrincipal.POSTEDDATE = applicationDate;
+                addStagingPrincipal.POSTEDDATE = DateTime.Now.Date;
                 addStagingPrincipal.SOURCEBRANCHID = item.branchId;
                 addStagingPrincipal.SOURCEREFERENCENUMBER = item.loanRefNo;
                 addStagingPrincipal.VALUEDATE = applicationDate;
@@ -934,6 +965,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStagingPrincipal.CREDITCASAACCOUNTID = null;
                 addStagingPrincipal.DEBITCASAACCOUNTID = casa.CASAACCOUNTID;
                 addStagingPrincipal.LOANID = item.loanId;
+                addStagingPrincipal.SYSTEMDATETIME = DateTime.Now;
+
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPrincipal);
                 context.SaveChanges();
 
@@ -982,7 +1016,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.CommercialLoanRollOver;///change to periodInterestAmount
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = applicationDate;
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = item.loanRefNo;
                 addStaging.VALUEDATE = applicationDate;
@@ -995,6 +1029,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.CREDITCASAACCOUNTID = casa.CASAACCOUNTID;
                 addStaging.DEBITCASAACCOUNTID = null;
                 addStaging.LOANID = item.loanId;
+                addStaging.SYSTEMDATETIME = DateTime.Now;
+
                 context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStaging);
                 context.SaveChanges();
 

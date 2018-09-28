@@ -302,7 +302,7 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             //api call
-            if (USE_TWO_FACTOR_AUTHENTICATION)
+            if (USE_TWO_FACTOR_AUTHENTICATION && isBulkPosting == false)
             {
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
