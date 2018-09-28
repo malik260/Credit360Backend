@@ -84,7 +84,8 @@ namespace FintrakBanking.ViewModels.Finance
     {                
         public string username { get; set; }
         public string passcode { get; set; }
-    }
+        public bool skipAuthentication { get; set; }
+}
 
     public class TwoFactorAutheticationOutputViewModel
     {
