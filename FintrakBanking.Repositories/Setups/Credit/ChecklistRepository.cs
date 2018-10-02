@@ -1143,14 +1143,31 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
-        public bool ValidateChecklistForDefferalOrWaival(int conditionId)
+        public bool ValidateChecklistForDefferalOrWaival(ConditionPrecedentViewModel entity)
         {
-            var data = context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionId);
-            if (data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved &&
-                (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived))
+            //var data = context.TBL_LOAN_CONDITION_PRECEDENT.Find(entity.conditionId);
+            if (entity == null) return false;
+            if (entity.isLMSChecklist == true)
             {
-                return true;
+                var data = this.context.TBL_LMSR_CONDITION_PRECEDENT.Find(entity.conditionId);
+                if (data == null){ return false; }
+                if (data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved &&
+              (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived))
+                {
+                    return true;
+                }
             }
+            else
+            {
+                var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(entity.conditionId);
+                if (data == null) { return false; }
+                if (data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved &&
+              (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived))
+                {
+                    return true;
+                }
+            }
+          
             return false;
         }
         #endregion
