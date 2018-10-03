@@ -4468,7 +4468,8 @@ namespace FintrakBanking.Repositories.Credit
         public bool OverdraftInterestRate(TwoFactorAutheticationViewModel twoFactorAuth, int loanId)
         {
             bool output = false;
-            ResponseMessageViewModel interestRateResult = new ResponseMessageViewModel();
+            bool interestRateResult = false;
+            //ResponseMessageViewModel interestRateResult = new ResponseMessageViewModel();
             InterestRateInquiryViewModel accountOutput = null;
             try
             {
@@ -4609,7 +4610,7 @@ namespace FintrakBanking.Repositories.Credit
                             startDate = loan.effectiveDate.ToString("dd-MMM-yyyy", null),
                         };
 
-                        interestRateResult = finacle.OverDraftInterestRate(data, data.accountType, twoFactorAuth);
+                        interestRateResult = finacle.ChangeOverDraftInterestRate(data, data.accountType, twoFactorAuth);
                     }
                     else
                     {
@@ -4618,13 +4619,13 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 addOverDraft.SERIALNUMBER = "1010101010";
                 var result = context.SaveChanges() > 0;
-                if (interestRateResult.message == "interest Rate Modified sucessfully" && result == true)
+                if (interestRateResult == true && result == true)
                 {
                     output = true;
                 }
                 else
                 {
-                    throw new SecureException(interestRateResult.message);
+                    throw new SecureException("OD Operation Not Completed because interest rate cannot be set");
                 }
             }
             catch (Exception ex)
@@ -9710,6 +9711,44 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
+
+            if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+
+            {
+                model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+                
+
+                
+            }
+            else if (model.operationTypeId == (int)OperationsEnum.Fee_chargeChange)
+            {
+                if (DoesChargeFeeExist(model.loanId, model.operationTypeId, (int)model.interestFrequencyTypeId))
+                {
+                    throw new ConditionNotMetException("The requested charge fee type already exist and going through approval");
+                }
+                
+            }
+            else
+            {
+                //if (model.principalFirstPaymentDate < model.proposedEffectiveDate)
+                //{
+                //    throw new ConditionNotMetException("Principal First Payment Date cannot be less than Effective date");
+                //}
+
+                //if (model.interestFirstPaymentDate < model.proposedEffectiveDate)
+                //{
+                //    throw new ConditionNotMetException ("Interest First Payment Date cannot be less than Effective date");
+                //}
+
+
+            }
+
+            if (DoesOperationExist(model.loanId, model.operationTypeId))
+            {
+               throw new ConditionNotMetException ("The requested operation already exist and going through approval");
+            }
+
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
             if (model.reviewIrregularSchedule.Count > 0)

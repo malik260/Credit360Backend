@@ -982,7 +982,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.userIPAddress = CommonHelpers.GetUserIP();
-                if (repo.ValidateChecklistForDefferalOrWaival(model.conditionId))
+                if (repo.ValidateChecklistForDefferalOrWaival(model))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "The request for deferral/waival of this item is still being processed. " });

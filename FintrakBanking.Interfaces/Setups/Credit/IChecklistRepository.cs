@@ -63,7 +63,7 @@ namespace FintrakBanking.Interfaces.Setups
 
         bool ValidateChecklistDetailEntry(int checklistDefinitionId, int targetId);
         bool ValidateConditionPrecedentDetail(ConditionPrecedentViewModel entity);
-        bool ValidateChecklistForDefferalOrWaival(int conditionId);
+        bool ValidateChecklistForDefferalOrWaival(ConditionPrecedentViewModel entity);
         #endregion
 
         // IEnumerable<ConditionPrecedentViewModel> GetConditionPrecedenceChecklist(int loanApplicationId);

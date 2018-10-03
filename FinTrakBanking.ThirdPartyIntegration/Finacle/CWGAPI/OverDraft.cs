@@ -686,13 +686,14 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                 HttpClient client = new HttpClient(handler);
                 var objData = new JavaScriptSerializer().Serialize(model);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
+                //TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 HttpResponseMessage response = null;
                 ResponseMessage responseMsg = null;
                 string responseMessage = "";
-
+                string responseJson = "";
                 try
                 {
-                    InterestRateInquiryIntegrationViewModel apiModel = new InterestRateInquiryIntegrationViewModel
+                    InterestRateDetails apiModel = new InterestRateDetails
                     {
                         accountNumber = model.accountNumber,
                         accountType = accountType,
@@ -751,6 +752,8 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                             Message = response
                         };
                     }
+                    responseJson = await response.Content.ReadAsStringAsync();
+                    responseMsg.responseMessage = responseJson;
 
                     return responseMsg;
                 }
@@ -775,7 +778,7 @@ using FintrakBanking.ViewModels.ThridPartyIntegration;
                         REQUESTDATETIME = requestDatetime,
                         REQUESTMESSAGE = objData,
                         RESPONSEDATETIME = responseDateTime,
-                        RESPONSEMESSAGE = responseModel.webRequestStatus,
+                        RESPONSEMESSAGE = responseModel.webRequestStatus + ". " + responseJson,
                     };
                     FinTrakBankingContext logContext = new FinTrakBankingContext();
 

@@ -86,12 +86,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public ResponseMessageViewModel OverDraftNormal(OverDraftNormalViewModel model, TwoFactorAutheticationViewModel twoFADetails = null)
         {
-            if (USE_TWO_FACTOR_AUTHENTICATION)
+            if (USE_TWO_FACTOR_AUTHENTICATION && twoFADetails.skipAuthentication == false)
             {
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
                 var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
 
                 if (authenticated.authenticated == false)
                     throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
@@ -442,12 +443,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 //}
                 else
                 {
-                    throw new ConditionNotMetException(result.APIResponse.webRequestStatus);
+                    var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new ConditionNotMetException(message); //result.APIResponse.webRequestStatus
                 }
             }
             else
             {
-                throw new APIErrorException("Core Banking API Error - " + result.Message.ReasonPhrase);
+                var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{","").Replace("}", "").Replace(@"""", "");
+                throw new APIErrorException("Core Banking API Error - " + message); // .Message.ReasonPhrase);
             }
 
             //return result.APIStatus;
@@ -631,7 +634,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
         }
 
-        public ResponseMessageViewModel OverDraftInterestRate(InterestRateInquiryViewModel model, string accountType,TwoFactorAutheticationViewModel twoFADetails = null)
+        public bool ChangeOverDraftInterestRate(InterestRateInquiryViewModel model, string accountType,TwoFactorAutheticationViewModel twoFADetails = null)
         {
             if (USE_TWO_FACTOR_AUTHENTICATION)
             {
@@ -652,18 +655,23 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (result.APIResponse.webRequestStatus.Replace(":", "") == "FAILURE")
                 {
-                    throw new SecureException(result.APIResponse.message);
+                    //throw new SecureException(result.APIResponse.message);
+                    var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                    throw new SecureException("Core Banking API Error - " + message);
                 }
                 else
                 {
                     //LogTemporaryOverDraft(model);
-                    return result.APIResponse;
+                    result.APIResponse.responseStatus = true;
+                    return true; // result.APIResponse;
                 }
             }
             else
             {
 
-                throw new APIErrorException("Core Banking API Error - " + result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                //throw new APIErrorException("Core Banking API Error - " + result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
+                throw new APIErrorException("Core Banking API Error - " + result.Message.StatusCode + "" + message);
             }
         }
 
@@ -835,15 +843,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 transPosting.narration = item.description;
                 if(item.batchCode == null)
                 {
-                    transPosting.referenceNumber = "1222333444";  // to be change  transPosting.referenceNumber = item.sourceReferenceNumber
-                    //transPosting.referenceNumber = item.sourceReferenceNumber;
+                    transPosting.referenceNumber =  "1222333444";  // to be change  transPosting.referenceNumber = item.sourceReferenceNumber                    
                 }
                 else
                 {
-                    transPosting.referenceNumber = item.batchCode;
+                    transPosting.referenceNumber = item.batchCode;  
                 }
-                
 
+                transPosting.sourceReferenceNumber = item.sourceReferenceNumber;
                 transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
                 transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
 

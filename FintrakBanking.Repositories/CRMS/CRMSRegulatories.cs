@@ -94,48 +94,111 @@ namespace FintrakBanking.Repositories.CRMS
         {
             var term = from x in context.TBL_LOAN
                        join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                       join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
                        join f in context.TBL_LOAN_FEE on x.TERMLOANID equals f.LOANID
                        join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                       where DbFunctions.TruncateTime( x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
+                       where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                       && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                       && x.CRMSCODE == null
                        select new CRMSTemplateViewModel
                        {
                            ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                            FEE_TYPE = cf.CRMSREGULATORYID,
-                           FEE_AMOUNT = f.FEEAMOUNT
+                           FEE_AMOUNT = f.FEEAMOUNT,
+                           CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
                        };
             var OD = from x in context.TBL_LOAN_REVOLVING
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                     join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
                      join f in context.TBL_LOAN_FEE on x.REVOLVINGLOANID equals f.LOANID
                      join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                     where DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
+                     where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                     && x.CRMSCODE == null
                      select new CRMSTemplateViewModel
                      {
                          ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                          FEE_TYPE = cf.CRMSREGULATORYID,
-                         FEE_AMOUNT = f.FEEAMOUNT
+                         FEE_AMOUNT = f.FEEAMOUNT,
+                         CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
+
                      };
             var contingent = from x in context.TBL_LOAN_CONTINGENT
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                             join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
                              join f in context.TBL_LOAN_FEE on x.CONTINGENTLOANID equals f.LOANID
                              join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
-                             where DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
+                             where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                             && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                              select new CRMSTemplateViewModel
                              {
                                  ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                                  FEE_TYPE = cf.CRMSREGULATORYID,
-                                 FEE_AMOUNT = f.FEEAMOUNT
+                                 FEE_AMOUNT = f.FEEAMOUNT,
+                                 CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
                              };
 
 
             return term.Union(OD).Union(contingent).OrderBy(x => x.ACCOUNT).ToList();
         }
-        public List<CRMSRegulatoryViewModel> GetAllLoansWithCRMSCode(CRMSViewModel param)
+        private List<CRMSTemplateViewModel> GetDirectors(CRMSViewModel param)
         {
+            var term = from x in context.TBL_LOAN
+                       join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                       join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
+                       join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                       where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                       && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                       && x.CRMSCODE == null
+                       select new CRMSTemplateViewModel
+                       {
+                           ACCOUNT = c.PRODUCTACCOUNTNUMBER,
+                           ID_TTPE = d.TAX_NUMBER != null ? "TIN" : "BVN",
+                           ID_DETAIL = d.TAX_NUMBER != null ? d.TAX_NUMBER : d.CUSTOMERBVN,
+                           CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
+
+                       };
+            var OD = from x in context.TBL_LOAN_REVOLVING
+                     join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
+                     join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                     join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                     where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                     && x.CRMSCODE == null
+                     select new CRMSTemplateViewModel
+                     {
+                         ACCOUNT = c.PRODUCTACCOUNTNUMBER,
+                         ID_TTPE = d.TAX_NUMBER != null ? "TIN" : "BVN",
+                         ID_DETAIL = d.TAX_NUMBER != null ? d.TAX_NUMBER : d.CUSTOMERBVN,
+                         CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
+
+                     };
+            var contingent = from x in context.TBL_LOAN_CONTINGENT
+                             join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
+                             join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                             join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                             where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                             && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                             && x.CRMSCODE == null
+                             select new CRMSTemplateViewModel
+                             {
+                                 ACCOUNT = c.PRODUCTACCOUNTNUMBER,
+                                 ID_TTPE = d.TAX_NUMBER != null ? "TIN" : "BVN",
+                                 ID_DETAIL = d.TAX_NUMBER != null ? d.TAX_NUMBER : d.CUSTOMERBVN,
+                                 CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
+                             };
+
+            return term.Union(OD).Union(contingent).OrderBy(x => x.ACCOUNT).ToList();
+        }
+        public List<CRMSRegulatoryViewModel> GetAllLoansForCRMS(CRMSViewModel param)
+        {
+
             var tLoan = (from x in context.TBL_LOAN
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                         where x.COMPANYID == param.companyId && x.CRMSCODE != null 
-                         && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
+                         where x.COMPANYID == param.companyId && x.CRMSCODE == null
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                          select new CRMSRegulatoryViewModel
                          {
                              accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -147,14 +210,17 @@ namespace FintrakBanking.Repositories.CRMS
                              grantedAmount = x.PRINCIPALAMOUNT,
                              interestRate = x.INTERESTRATE,
                              loanId = x.TERMLOANID,
-                             loanSystemTypeId = x.LOANSYSTEMTYPEID
+                             loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                             crmsLegalStatusId = b.CRMSLEGALSTATUSID,
+
                          });
 
             var revolving = (from x in context.TBL_LOAN_REVOLVING
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                             where x.COMPANYID == param.companyId && x.CRMSCODE != null 
-                             && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
+                             where x.COMPANYID == param.companyId && x.CRMSCODE == null
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                              select new CRMSRegulatoryViewModel
                              {
                                  accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -166,14 +232,17 @@ namespace FintrakBanking.Repositories.CRMS
                                  grantedAmount = x.OVERDRAFTLIMIT,
                                  interestRate = x.INTERESTRATE,
                                  loanId = x.REVOLVINGLOANID,
-                                 loanSystemTypeId = x.LOANSYSTEMTYPEID
+                                 loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                                 crmsLegalStatusId = b.CRMSLEGALSTATUSID,
                              });
 
             var contingent = (from x in context.TBL_LOAN_CONTINGENT
                               join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                               join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                              where x.COMPANYID == param.companyId && x.CRMSCODE != null 
-                              && DbFunctions.TruncateTime(x.CRMSDATE) >= DbFunctions.TruncateTime(param.startDate) && DbFunctions.TruncateTime(x.CRMSDATE) <= DbFunctions.TruncateTime(param.endDate)
+                              where x.COMPANYID == param.companyId && x.CRMSCODE == null
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                         && x.CRMSCODE == null
                               select new CRMSRegulatoryViewModel
                               {
                                   accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -186,9 +255,28 @@ namespace FintrakBanking.Repositories.CRMS
                                   interestRate = 0,
                                   loanId = x.CONTINGENTLOANID,
                                   loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                                  crmsLegalStatusId = b.CRMSLEGALSTATUSID,
+                                  //loansCount
                               });
 
-            return tLoan.Union(revolving).Union(contingent).ToList();
+            var loans = tLoan.Union(revolving).Union(contingent).ToList();
+
+            
+            return loans;
+        }
+
+        public List<LoansCount> LoanCountsByLegalStatus(List<CRMSRegulatoryViewModel> loans)
+        {
+            var groupLaon = from x in loans
+                            group x by new { x.crmsLegalStatusId } into xx
+                            select new LoansCount
+                            {
+                                count = xx.Count(),
+                                crmsLegalStatusName = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSTYPEID == xx.Key.crmsLegalStatusId).Select(o => o.DESCRIPTION).FirstOrDefault(),
+                                code = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSTYPEID == xx.Key.crmsLegalStatusId).Select(o => o.CODE).FirstOrDefault(),
+                            };
+            return groupLaon.ToList();
+
         }
 
         private CRMSRecord GenerateCRMS300Template(List<CRMSTemplateViewModel> loanInput, CRMSViewModel param)
@@ -288,7 +376,7 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 34].Value = record.OWNER_OF_SECURITY;
                         ws.Cells[i, 35].Value = record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER;
                         ws.Cells[i, 36].Value = record.UNIQUE_IDENTIFIER_OF_SECURITY_OWNER;
-                        ws.Cells[i, 37].Value = guarantee!=null ? "YES" : "NO";
+                        ws.Cells[i, 37].Value = guarantee != null ? "YES" : "NO";
 
                         if (guarantee != null)
                         {
@@ -309,40 +397,77 @@ namespace FintrakBanking.Repositories.CRMS
             return excel;
         }
 
-        private CRMSRecord GenerateCRMS300Fee(List<CRMSTemplateViewModel> loanInput, CRMSViewModel param)
+        private CRMSRecord GenerateCRMS300Fee(CRMSViewModel param)
         {
             Byte[] fileBytes = null;
             CRMSRecord feeCharge = new CRMSRecord();
-            if (loanInput != null)
+            var output = GetFee(param);
+
+            if (output != null)
             {
-                    var output = GetFee(param);
-                    if (output != null)
+                output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
+
+                using (ExcelPackage fee = new ExcelPackage())
+                {
+                    ExcelWorksheet sheet = fee.Workbook.Worksheets.Add("FEE");
+                    sheet.Cells[1, 1].Value = "ACCOUNT";
+                    sheet.Cells[1, 2].Value = "FEE_TYPE";
+                    sheet.Cells[1, 3].Value = "FEE_AMOUNT";
+
+                    for (int i = 2; i <= output.Count + 1; i++)
                     {
-                        using (ExcelPackage fee = new ExcelPackage())
-                        {
-                            ExcelWorksheet sheet = fee.Workbook.Worksheets.Add("FEE");
-                            sheet.Cells[1, 1].Value = "ACCOUNT";
-                            sheet.Cells[1, 2].Value = "FEE_TYPE";
-                            sheet.Cells[1, 3].Value = "FEE_AMOUNT";
+                        var feeRecord = output[i - 2];
 
-                            for (int i = 2; i <= output.Count + 1; i++)
-                            {
-                                var feeRecord = output[i - 2];
-
-                                sheet.Cells[i, 1].Value = i - 1;
-                                sheet.Cells[i, 2].Value = feeRecord.ACCOUNT;
-                                sheet.Cells[i, 3].Value = feeRecord.FEE_TYPE;
-                                sheet.Cells[i, 4].Value = feeRecord.FEE_AMOUNT;
-                            }
-                            fileBytes = fee.GetAsByteArray();
-
-                            
-                            feeCharge.reportData = fileBytes;
-                            feeCharge.templateTypeName = "CRMS_T300_FEE";
-                        }
-
+                        sheet.Cells[i, 1].Value = feeRecord.ACCOUNT;
+                        sheet.Cells[i, 2].Value = feeRecord.FEE_TYPE;
+                        sheet.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
                     }
+                    fileBytes = fee.GetAsByteArray();
+
+
+                    feeCharge.reportData = fileBytes;
+                    feeCharge.templateTypeName = "CRMS_T300_FEE";
+                }
+
             }
+
+
+            return feeCharge;
+        }
+
+        private CRMSRecord GenerateCRMS300Director(CRMSViewModel param)
+        {
+            Byte[] fileBytes = null;
+            CRMSRecord feeCharge = new CRMSRecord();
+            var output = GetDirectors(param);
+            if (output != null)
+            {
+                output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
+
+                using (ExcelPackage fee = new ExcelPackage())
+                {
+                    ExcelWorksheet sheet = fee.Workbook.Worksheets.Add("FEE");
+                    sheet.Cells[1, 1].Value = "ACCOUNT";
+                    sheet.Cells[1, 2].Value = "FEE_TYPE";
+                    sheet.Cells[1, 3].Value = "FEE_AMOUNT";
+
+                    for (int i = 2; i <= output.Count + 1; i++)
+                    {
+                        var feeRecord = output[i - 2];
+
+                        sheet.Cells[i, 1].Value = feeRecord.ACCOUNT;
+                        sheet.Cells[i, 2].Value = feeRecord.FEE_TYPE;
+                        sheet.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
+                    }
+                    fileBytes = fee.GetAsByteArray();
+
+
+                    feeCharge.reportData = fileBytes;
+                    feeCharge.templateTypeName = "CRMS_T300_DIRECTORS";
+                }
+
+            }
+
 
             return feeCharge;
         }
@@ -387,29 +512,28 @@ namespace FintrakBanking.Repositories.CRMS
 
                         var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
 
-                        ws.Cells[i, 1].Value = i - 1;
-                        ws.Cells[i, 2].Value = record.GOVERNMENT_CODE;
-                        ws.Cells[i, 3].Value = record.LEGAL_STATUS;
-                        ws.Cells[i, 4].Value = record.CREDIT_TYPE;
-                        ws.Cells[i, 5].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES;
-                        ws.Cells[i, 6].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR;
-                        ws.Cells[i, 7].Value = record.CREDIT_LIMIT;
-                        ws.Cells[i, 8].Value = record.OUTSTANDING_AMOUNT;
-                        ws.Cells[i, 9].Value = record.FEES;
-                        ws.Cells[i, 10].Value = record.EFFECTIVE_DATE.ToString("dd/MM/yyyy");
-                        ws.Cells[i, 11].Value = record.TENOR; //temor
-                        ws.Cells[i, 12].Value = record.EXPIRY_DATE.ToString("dd/MM/yyyy");
-                        ws.Cells[i, 13].Value = record.REPAYMENT_AGREEMENT_MODE;
-                        ws.Cells[i, 14].Value = record.SPECIALISED_LOAN;
-                        ws.Cells[i, 15].Value = record.SPECIALISED_LOAN_PERIOD;
-                        ws.Cells[i, 16].Value = record.INTEREST_RATE;
-                        ws.Cells[i, 17].Value = record.COLLATERAL_PRESENT;
-                        ws.Cells[i, 18].Value = record.COLLATERAL_SECURE;
-                        ws.Cells[i, 19].Value = record.SECURITY_TYPE;
-                        ws.Cells[i, 20].Value = record.FUNDING_SOURCE;
-                        ws.Cells[i, 21].Value = record.SYNDICATION;
-                        ws.Cells[i, 22].Value = record.SYNDICATION_STATUS;
-                        ws.Cells[i, 23].Value = record.SYNDICATION_REF_NUMBER;
+                        ws.Cells[i, 1].Value = record.GOVERNMENT_CODE;
+                        ws.Cells[i, 2].Value = record.LEGAL_STATUS;
+                        ws.Cells[i, 3].Value = record.CREDIT_TYPE;
+                        ws.Cells[i, 4].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES;
+                        ws.Cells[i, 5].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR;
+                        ws.Cells[i, 6].Value = record.CREDIT_LIMIT;
+                        ws.Cells[i, 7].Value = record.OUTSTANDING_AMOUNT;
+                        ws.Cells[i, 8].Value = record.FEES;
+                        ws.Cells[i, 8].Value = record.EFFECTIVE_DATE.ToString("dd/MM/yyyy");
+                        ws.Cells[i, 10].Value = record.TENOR; //temor
+                        ws.Cells[i, 11].Value = record.EXPIRY_DATE.ToString("dd/MM/yyyy");
+                        ws.Cells[i, 12].Value = record.REPAYMENT_AGREEMENT_MODE;
+                        ws.Cells[i, 13].Value = record.SPECIALISED_LOAN;
+                        ws.Cells[i, 14].Value = record.SPECIALISED_LOAN_PERIOD;
+                        ws.Cells[i, 15].Value = record.INTEREST_RATE;
+                        ws.Cells[i, 16].Value = record.COLLATERAL_PRESENT;
+                        ws.Cells[i, 17].Value = record.COLLATERAL_SECURE;
+                        ws.Cells[i, 18].Value = record.SECURITY_TYPE;
+                        ws.Cells[i, 19].Value = record.FUNDING_SOURCE;
+                        ws.Cells[i, 20].Value = record.SYNDICATION;
+                        ws.Cells[i, 21].Value = record.SYNDICATION_STATUS;
+                        ws.Cells[i, 22].Value = record.SYNDICATION_REF_NUMBER;
                     }
                     fileBytes = pck.GetAsByteArray();
                     data.reportData = fileBytes;
@@ -448,11 +572,10 @@ namespace FintrakBanking.Repositories.CRMS
 
                         var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
 
-                        ws.Cells[i, 1].Value = i - 1;
-                        ws.Cells[i, 2].Value = record.SYNDICATION_REF_NUMBER;
-                        ws.Cells[i, 3].Value = record.SYNDICATION_NAME;
-                        ws.Cells[i, 4].Value = record.SYNDICATION_TOTAL_AMOUNT;
-                        ws.Cells[i, 5].Value = record.PARTICIPATING_BANK_CODE;
+                        ws.Cells[i, 1].Value = record.SYNDICATION_REF_NUMBER;
+                        ws.Cells[i, 2].Value = record.SYNDICATION_NAME;
+                        ws.Cells[i, 3].Value = record.SYNDICATION_TOTAL_AMOUNT;
+                        ws.Cells[i, 4].Value = record.PARTICIPATING_BANK_CODE;
 
                     }
                     fileBytes = pck.GetAsByteArray();
@@ -519,30 +642,29 @@ namespace FintrakBanking.Repositories.CRMS
 
                         var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
 
-                        ws.Cells[i, 1].Value = i - 1;
-                        ws.Cells[i, 2].Value = record.GOVERNMENT_MDA_TIN;
-                        ws.Cells[i, 3].Value = record.LEGAL_STATUS;
-                        ws.Cells[i, 4].Value = record.CREDIT_TYPE;
-                        ws.Cells[i, 5].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES;
-                        ws.Cells[i, 6].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR;
-                        ws.Cells[i, 7].Value = record.CREDIT_LIMIT;
-                        ws.Cells[i, 8].Value = record.OUTSTANDING_AMOUNT;
-                        ws.Cells[i, 9].Value = record.FEES;
-                        ws.Cells[i, 10].Value = record.EFFECTIVE_DATE.ToString("dd/MM/yyyy");
-                        ws.Cells[i, 11].Value = (record.EXPIRY_DATE - record.EFFECTIVE_DATE).TotalDays; //temor
-                        ws.Cells[i, 12].Value = record.EXPIRY_DATE.ToString("dd/MM/yyyy");
-                        ws.Cells[i, 13].Value = record.REPAYMENT_AGREEMENT_MODE;
-                        ws.Cells[i, 14].Value = record.PERFORMANCE_REPAYMENT_STATUS;
-                        ws.Cells[i, 15].Value = record.INTEREST_RATE;
-                        ws.Cells[i, 16].Value = record.SPECIALISED_LOAN;
-                        ws.Cells[i, 17].Value = record.SPECIALISED_LOAN_PERIOD;
-                        ws.Cells[i, 18].Value = record.COLLATERAL_PRESENT;
-                        ws.Cells[i, 19].Value = record.COLLATERAL_SECURE;
-                        ws.Cells[i, 20].Value = record.SECURITY_TYPE;
-                        ws.Cells[i, 21].Value = record.REPAYMENT_SOURCE;
-                        ws.Cells[i, 22].Value = record.SYNDICATION;
-                        ws.Cells[i, 23].Value = record.SYNDICATION_STATUS;
-                        ws.Cells[i, 24].Value = record.SYNDICATION_REF_NUMBER;
+                        ws.Cells[i, 1].Value = record.GOVERNMENT_MDA_TIN;
+                        ws.Cells[i, 2].Value = record.LEGAL_STATUS;
+                        ws.Cells[i, 3].Value = record.CREDIT_TYPE;
+                        ws.Cells[i, 4].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES;
+                        ws.Cells[i, 5].Value = record.CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR;
+                        ws.Cells[i, 6].Value = record.CREDIT_LIMIT;
+                        ws.Cells[i, 7].Value = record.OUTSTANDING_AMOUNT;
+                        ws.Cells[i, 8].Value = record.FEES;
+                        ws.Cells[i, 9].Value = record.EFFECTIVE_DATE.ToString("dd/MM/yyyy");
+                        ws.Cells[i, 10].Value = (record.EXPIRY_DATE - record.EFFECTIVE_DATE).TotalDays; //temor
+                        ws.Cells[i, 11].Value = record.EXPIRY_DATE.ToString("dd/MM/yyyy");
+                        ws.Cells[i, 12].Value = record.REPAYMENT_AGREEMENT_MODE;
+                        ws.Cells[i, 13].Value = record.PERFORMANCE_REPAYMENT_STATUS;
+                        ws.Cells[i, 14].Value = record.INTEREST_RATE;
+                        ws.Cells[i, 15].Value = record.SPECIALISED_LOAN;
+                        ws.Cells[i, 16].Value = record.SPECIALISED_LOAN_PERIOD;
+                        ws.Cells[i, 17].Value = record.COLLATERAL_PRESENT;
+                        ws.Cells[i, 18].Value = record.COLLATERAL_SECURE;
+                        ws.Cells[i, 19].Value = record.SECURITY_TYPE;
+                        ws.Cells[i, 20].Value = record.REPAYMENT_SOURCE;
+                        ws.Cells[i, 21].Value = record.SYNDICATION;
+                        ws.Cells[i, 22].Value = record.SYNDICATION_STATUS;
+                        ws.Cells[i, 23].Value = record.SYNDICATION_REF_NUMBER;
 
 
                     }
@@ -592,7 +714,6 @@ namespace FintrakBanking.Repositories.CRMS
 
             return guaranteeInfo.AsQueryable();
         }
-
         private IQueryable<CRMSTemplateViewModel> GenerateCRMSReport(CRMSViewModel param)
         {
             // int[] crmsRegulatoryIds = { (int)CRMSRegulatory.Government, (int)CRMSRegulatory.Parastatals_MDA };
@@ -607,27 +728,32 @@ namespace FintrakBanking.Repositories.CRMS
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                      join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                      join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
-                     where x.CRMSCODE != null && x.COMPANYID == param.companyId
-                     && x.CRMSDATE >= param.startDate
-                     && x.CRMSDATE <= param.endDate
+                     let lgaId = context.TBL_CUSTOMER_ADDRESS
+                     .Join(context.TBL_CITY, q=>q.CITYID,ci=>ci.CITYID, (q,ci)=> new { q, ci}).Where(f=>f.q.CUSTOMERID==b.CUSTOMERID)
+                     .Select(q=>q.ci.LOCALGOVERNMENTID).FirstOrDefault()
+                     let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa=>aa.LOCALGOVERNMENTID==lgaId).Select(aa=>aa.LGACODE).FirstOrDefault()
+                     let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+                     where x.CRMSCODE == null && x.COMPANYID == param.companyId
+                     && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
 
 
                      select new CRMSTemplateViewModel
                      {
                          BENEFICIARY_ACCOUNT_NUMBER = c.PRODUCTACCOUNTNUMBER,
-                         EFFECTIVE_DATE = x.EFFECTIVEDATE,//.ToString("dd/MM/yyyy"),
+                         EFFECTIVE_DATE = x.EFFECTIVEDATE,
                          CREDIT_LIMIT = x.PRINCIPALAMOUNT,
-                         INTEREST_RATE = x.INTERESTRATE.ToString(),
+                         INTEREST_RATE = x.INTERESTRATE,
                          UNIQUE_IDENTIFICATION_TYPE = b.CUSTOMERBVN != null ? "BVN" : "TIN",
                          UNIQUE_IDENTIFICATION_NO = b.CUSTOMERBVN != null ? b.CUSTOMERBVN : b.TAXNUMBER,
-                         CREDIT_TYPE = context.TBL_CRMS_REGULATORY.Where(s=>s.CRMSREGULATORYID==p.TBL_PRODUCT_BEHAVIOUR.Where(o => o.PRODUCTID == p.PRODUCTID).Select(o => o.CRMSREGULATORYID).FirstOrDefault()).Select(s=>s.CODE).FirstOrDefault(),
+                         CREDIT_TYPE = context.TBL_CRMS_REGULATORY.Where(s => s.CRMSREGULATORYID == p.TBL_PRODUCT_BEHAVIOUR.Where(o => o.PRODUCTID == p.PRODUCTID).Select(o => o.CRMSREGULATORYID).FirstOrDefault()).Select(s => s.CODE).FirstOrDefault(),
                          CREDIT_PURPOSE_BY_BUSINESSLINES = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SECTORID).Select(o => o.CODE).FirstOrDefault(),
                          CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                          OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
                          FEES = "",
                          // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
-                         EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
-                         REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o=>o.CRMSREGULATORYID== a.CRMSREPAYMENTSOURCEID).Select(o=>o.CODE).FirstOrDefault(),
+                         EXPIRY_DATE = x.MATURITYDATE,
+                         REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                          LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                          RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                          COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
@@ -660,7 +786,7 @@ namespace FintrakBanking.Repositories.CRMS
                          CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
 
                          //100
-                         GOVERNMENT_CODE = "",
+                         GOVERNMENT_CODE = stateCode + "-" + lgaCode,
                          REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
 
                          //200
@@ -681,22 +807,26 @@ namespace FintrakBanking.Repositories.CRMS
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                          join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
-                         where x.CRMSCODE != null && x.COMPANYID == param.companyId
-                         && x.CRMSDATE >= param.startDate
-                         && x.CRMSDATE <= param.endDate
-
+                         let lgaId = context.TBL_CUSTOMER_ADDRESS
+                     .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
+                     .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
+                         let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
+                         let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+                         where x.CRMSCODE == null && x.COMPANYID == param.companyId
+                     && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                          select new CRMSTemplateViewModel
                          {
                              BENEFICIARY_ACCOUNT_NUMBER = c.PRODUCTACCOUNTNUMBER,
                              EFFECTIVE_DATE = x.EFFECTIVEDATE,//.ToString("dd/MM/yyyy"),
                              CREDIT_LIMIT = x.OVERDRAFTLIMIT,
-                             INTEREST_RATE = x.INTERESTRATE.ToString(),
+                             INTEREST_RATE = x.INTERESTRATE,
                              UNIQUE_IDENTIFICATION_TYPE = b.CUSTOMERBVN != null ? "BVN" : "TIN",
                              UNIQUE_IDENTIFICATION_NO = b.CUSTOMERBVN != null ? b.CUSTOMERBVN : b.TAXNUMBER,
                              CREDIT_TYPE = context.TBL_CRMS_REGULATORY.Where(s => s.CRMSREGULATORYID == p.TBL_PRODUCT_BEHAVIOUR.Where(o => o.PRODUCTID == p.PRODUCTID).Select(o => o.CRMSREGULATORYID).FirstOrDefault()).Select(s => s.CODE).FirstOrDefault(),
                              CREDIT_PURPOSE_BY_BUSINESSLINES = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SECTORID).Select(o => o.CODE).FirstOrDefault(),
                              CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
-                            // OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
+                             // OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
                              FEES = "",
                              // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                              EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
@@ -733,7 +863,7 @@ namespace FintrakBanking.Repositories.CRMS
                              CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
 
                              //100
-                             GOVERNMENT_CODE = "",
+                             GOVERNMENT_CODE = stateCode + "-" + lgaCode,
                              REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
 
                              //200
@@ -753,22 +883,26 @@ namespace FintrakBanking.Repositories.CRMS
                           join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                           join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                           join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
-                          where x.CRMSCODE != null && x.COMPANYID == param.companyId
-                          && x.CRMSDATE >= param.startDate
-                          && x.CRMSDATE <= param.endDate
-
+                          let lgaId = context.TBL_CUSTOMER_ADDRESS
+                     .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
+                     .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
+                          let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
+                          let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+                          where x.CRMSCODE == null && x.COMPANYID == param.companyId
+                     && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                           select new CRMSTemplateViewModel
                           {
                               BENEFICIARY_ACCOUNT_NUMBER = c.PRODUCTACCOUNTNUMBER,
                               EFFECTIVE_DATE = x.EFFECTIVEDATE,//.ToString("dd/MM/yyyy"),
                               CREDIT_LIMIT = x.CONTINGENTAMOUNT,
-                             // INTEREST_RATE = x.INTERESTRATE.ToString(),
+                              // INTEREST_RATE = x.INTERESTRATE.ToString(),
                               UNIQUE_IDENTIFICATION_TYPE = b.CUSTOMERBVN != null ? "BVN" : "TIN",
                               UNIQUE_IDENTIFICATION_NO = b.CUSTOMERBVN != null ? b.CUSTOMERBVN : b.TAXNUMBER,
                               CREDIT_TYPE = context.TBL_CRMS_REGULATORY.Where(s => s.CRMSREGULATORYID == p.TBL_PRODUCT_BEHAVIOUR.Where(o => o.PRODUCTID == p.PRODUCTID).Select(o => o.CRMSREGULATORYID).FirstOrDefault()).Select(s => s.CODE).FirstOrDefault(),
                               CREDIT_PURPOSE_BY_BUSINESSLINES = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SECTORID).Select(o => o.CODE).FirstOrDefault(),
                               CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
-                             // OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
+                              // OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
                               FEES = "",
                               // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                               EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
@@ -805,7 +939,7 @@ namespace FintrakBanking.Repositories.CRMS
                               CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
 
                               //100
-                              GOVERNMENT_CODE = "",
+                              GOVERNMENT_CODE = stateCode + "-" + lgaCode,
                               REPAYMENT_SOURCE = a.REPAYMENTSCHEDULE,
 
                               //200
@@ -860,37 +994,40 @@ namespace FintrakBanking.Repositories.CRMS
 
             return GenerateCRMS600Template(result.ToList());
         }
-        private CRMSRecord GenerateCRMS300Fee(CRMSViewModel param)
+        private CRMSRecord GenerateCRMS300Fees(CRMSViewModel param)
         {
-            var result = GenerateCRMSReport(param);
-            result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA);
-            if (result == null)
-                throw new ConditionNotMetException("Record Not Found For T300");
-
-            return GenerateCRMS300Fee(result.ToList(), param);
+            return GenerateCRMS300Fee(param);
+        }
+        private CRMSRecord GenerateCRMS300Directors(CRMSViewModel param)
+        {
+            return GenerateCRMS300Director(param);
         }
 
         public CRMSRecord GenerateCBNReport(CRMSViewModel param)
         {
-            if (param.templateTypeId == (int)CRMSTemplate.T100)
+            if (param.templateTypeId == (int)CRMSTemplate.Template100)
             {
                 return GenerateCRMS100Template(param);
             }
-            else if (param.templateTypeId == (int)CRMSTemplate.T200)
+            else if (param.templateTypeId == (int)CRMSTemplate.Template200)
             {
                 return GenerateCRMS200Template(param);
             }
-            else if (param.templateTypeId == (int)CRMSTemplate.T300)
+            else if (param.templateTypeId == (int)CRMSTemplate.Template300)
             {
                 return GenerateCRMS300Template(param);
             }
-            else if (param.templateTypeId == (int)CRMSTemplate.T600)
+            else if (param.templateTypeId == (int)CRMSTemplate.Template600)
             {
                 return GenerateCRMS600Template(param);
             }
-            else if (param.templateTypeId == (int)CRMSTemplate.T300Fee)
+            else if (param.templateTypeId == (int)CRMSTemplate.Template300Fee)
             {
                 return GenerateCRMS300Fee(param);
+            }
+            else if (param.templateTypeId == (int)CRMSTemplate.Template300Directors)
+            {
+                return GenerateCRMS300Director(param);
             }
             return new CRMSRecord();
         }
