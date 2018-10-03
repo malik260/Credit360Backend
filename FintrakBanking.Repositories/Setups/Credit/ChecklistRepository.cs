@@ -1864,7 +1864,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                              join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
-                             where d.LOANREVIEWAPPLICATIONID == loanReviewApplicationId && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false &&
+                             join e in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                             where e.LOANAPPLICATIONID == loanReviewApplicationId && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false &&
                               c.CHECKLISTSTATUSID == null
                              select new ConditionPrecedentViewModel()
                              {
@@ -1885,9 +1886,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                           join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
+                          join g in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
                           join e in context.TBL_CHECKLIST_STATUS on c.CHECKLISTSTATUSID equals e.CHECKLISTSTATUSID
                           join f in context.TBL_APPROVAL_STATUS on c.APPROVALSTATUSID equals f.APPROVALSTATUSID
-                          where d.LOANREVIEWAPPLICATIONID == loanReviewApplicationId &&
+                          where g.LOANAPPLICATIONID == loanReviewApplicationId &&
                            c.CHECKLISTSTATUSID != null
                           orderby c.ISEXTERNAL descending
                           select new ConditionPrecedentViewModel()
