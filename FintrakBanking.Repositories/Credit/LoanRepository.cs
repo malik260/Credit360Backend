@@ -4885,8 +4885,8 @@ namespace FintrakBanking.Repositories.Credit
                     || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                     || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    && bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)
-                    //&& ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
+                    //&& bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)
+                    && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && atrail.RESPONSESTAFFID == null
                     orderby s.LOAN_BOOKING_REQUESTID descending
@@ -4948,7 +4948,7 @@ namespace FintrakBanking.Repositories.Credit
                     operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
                 if (item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
                     operationId = (short)OperationsEnum.CommercialLoanBooking;
-                if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
+                if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating || item.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     operationId = (short)OperationsEnum.TermLoanBooking;
 
                 var trailInfo = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == item.loanBookingRequestId);
