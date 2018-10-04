@@ -39,7 +39,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string dateOfBirth { get; set; }
         public string identification { get; set; }
         public string accountOrRegistrationNumber { get; set; }
-    }
+        public bool chargeBusiness  { get; set; }
+}
 
     public class SearchInput : GeneralEntity
     {
@@ -56,6 +57,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public int enquiryID { get; set; }
         public LoanCreditBureauViewModel customerCreditBureauUploadDetails { get; set; }
         public int casaAccountId { get; set; }
+        public bool chargeBusiness { get; set; }
     }
 
     public class XDSIndividualSearchViewModel
@@ -169,6 +171,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string number { get; set; }
         public string productCode { get; set; }
         public string branchCode { get; set; }
+        public bool debitBusiness { get; set; }
     }
 
     public class MultiHitRequestViewModel : GeneralEntity
@@ -189,7 +192,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string productCode { get; set; }
 
 
-        public List<int> bureauID { get; set; }
+        public List<string> bureauID { get; set; }
         public int referenceNo { get; set; }
 
         /// <summary>
@@ -202,6 +205,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         /// </summary>
         public int responseType { get; set; }
         public object reportID { get; set; }
+        public bool debitBusiness { get; set; }
     }
 
     public class CRCSearchResult
