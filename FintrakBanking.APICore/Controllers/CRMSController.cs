@@ -61,7 +61,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 model.companyId = token.GetCompanyId;
                 var data = repo.GetAllLoansForCRMS(model);
-                var dataCount = repo.LoansCountByLegalStatus(data);
+                var dataCount = repo.LoanCountsByLegalStatus(data);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });

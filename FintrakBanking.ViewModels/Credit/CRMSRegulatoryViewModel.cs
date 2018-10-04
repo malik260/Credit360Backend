@@ -114,5 +114,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string ACCOUNT { get; set; }
         public int? FEE_TYPE { get; set; }
         public decimal FEE_AMOUNT { get; set; }
+        public int CUSTOMERID { get; set; }
+        public string CONDITIONPRECIDENT { get; set; }
     }
 }
