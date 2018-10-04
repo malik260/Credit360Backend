@@ -45,7 +45,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 companyName = x.TBL_COMPANY.NAME,
                 houStaffId = x.CAM_HOU_STAFFID,
                 regionTypeId = x.REGIONTYPEID,
-               // regionTypeName = context.TBL_BRANCH_REGION_STAFF_TYPE.Where(a=>a.REGIONSTAFFTYPEID == x.REGIONTYPEID).FirstOrDefault().REGIONSTAFFTYPENAME,
+                regionTypeName = context.TBL_BRANCH_REGION_STAFF_TYPE.FirstOrDefault(a=>a.REGIONSTAFFTYPEID == x.REGIONTYPEID).REGIONSTAFFTYPENAME,
                 houStaffName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME
             }).ToList();
 
