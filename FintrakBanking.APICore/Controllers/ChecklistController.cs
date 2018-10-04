@@ -155,6 +155,31 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+       
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("checklist-item-simulation/")]
+        public HttpResponseMessage GetChecklistItemSimulationDetails(int checklistTypeId, int operationId,  int? productId, int? approvalLevelId)
+        {
+            try
+            {
+                var data = repo.GetChecklistItemSimulationDetails(checklistTypeId, operationId, productId, approvalLevelId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("checklist-definition-checklisttype/")]

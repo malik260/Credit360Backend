@@ -862,7 +862,7 @@ namespace FintrakBanking.Repositories.Credit
                     syndicationName = x.d.FIELD2,
                     syndicationRefNo = x.d.FIELD1,
                     syndicationAmount = x.d.FIELD3,
-
+                    
                 }).ToList();
             //var syndicated = context.TBL_LOAN_APPLICATION_DETAIL//.Where(x => x.LOANAPPLICATIONID == applicationId)
             //    .Join(context.TBL_LOAN_APPLICATION_DETL_SYN.Where(x => x.LOANAPPLICATIONDETAILID == detailId),
@@ -924,6 +924,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationTenor = a.APPLICATIONTENOR,
                 applicationAmount = a.APPLICATIONAMOUNT,
                 dateTimeCreated = a.DATETIMECREATED,
+                collateralDetail = a.COLLATERALDETAIL,
                 LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
                                             .Select(c => new LoanApplicationDetailViewModel
                                             {
