@@ -4948,7 +4948,7 @@ namespace FintrakBanking.Repositories.Credit
                     operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
                 if (item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
                     operationId = (short)OperationsEnum.CommercialLoanBooking;
-                if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
+                if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating || item.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     operationId = (short)OperationsEnum.TermLoanBooking;
 
                 var trailInfo = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == item.loanBookingRequestId);
