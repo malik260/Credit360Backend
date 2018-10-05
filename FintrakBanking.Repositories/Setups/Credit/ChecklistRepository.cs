@@ -147,6 +147,49 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
 
         }
+
+        public IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int checkListTypeId, int operationId, int? productId, int? approvalLevelId)
+        {
+           var checklistTypes = context.TBL_CHECKLIST_TYPE.ToList();
+
+            List<ChecklistDefinitionAndDetailViewModel> checkItems = new List<ChecklistDefinitionAndDetailViewModel>();
+
+            foreach (var item in checklistTypes)
+            {
+                var data = (from a in context.TBL_CHECKLIST_DEFINITION
+                            join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
+                            where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID //&& a.APPROVALLEVELID == approvalLevelId
+                            && a.OPERATIONID == operationId && a.DELETED == false
+                            select new ChecklistDefinitionAndDetailViewModel
+                            {
+                                checkListDetailId = 0,
+                                checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                                responseTypeId = d.RESPONSE_TYPEID,
+                                requireUpload = d.REQUIREUPLOAD,
+                                checkListTypeId = a.CHECKLIST_TYPEID,
+                                checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+                                checkListItemId = a.CHECKLISTITEMID,
+                                checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                                itemDescription = a.ITEMDESCRIPTION,
+                                productId = a.PRODUCTID,
+                                approvalLevelId = a.APPROVALLEVELID,
+
+                            });
+
+                if (item.ISPRODUCT_BASED)
+                {
+                    if (productId > 0)
+                    {
+                        data = data.Where(x => x.productId == productId);
+                    }
+                }
+              var typeItems =  data.ToList();
+
+                checkItems.AddRange(typeItems);
+            }
+           
+            return checkItems;
+        }
         //    public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
         //{
         //    var detailItem = (from s in context.TBL_CHECKLIST_DETAIL

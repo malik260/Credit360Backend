@@ -44,6 +44,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 companyId = x.COMPANYID,
                 companyName = x.TBL_COMPANY.NAME,
                 houStaffId = x.CAM_HOU_STAFFID,
+                regionTypeId = x.REGIONTYPEID,
+               // regionTypeName = context.TBL_BRANCH_REGION_STAFF_TYPE.Where(a=>a.REGIONSTAFFTYPEID == x.REGIONTYPEID).FirstOrDefault().REGIONSTAFFTYPENAME,
                 houStaffName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME
             }).ToList();
 
@@ -65,6 +67,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             region.REGION_NAME = entity.regionName;
                             region.CAM_HOU_STAFFID = entity.houStaffId;
                             region.LASTUPDATEDBY = entity.createdBy;
+                            region.REGIONTYPEID = entity.regionTypeId;
                             region.DATETIMEUPDATED = DateTime.Now;
                         }
                     }
@@ -74,6 +77,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         region.REGION_NAME = entity.regionName;
                         region.CAM_HOU_STAFFID = entity.houStaffId;
+                        region.REGIONTYPEID = entity.regionTypeId;
                         region.COMPANYID = entity.companyId;
                         region.DELETED = false;
                         region.CREATEDBY = entity.createdBy;
