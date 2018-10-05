@@ -549,7 +549,9 @@ namespace FintrakBanking.Repositories.Setups.General
                                    productClassName = data.TBL_PRODUCT_CLASS.PRODUCTCLASSNAME,
                                    riskRatingId=data.RISKRATINGID,
                                    customerId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
-                                   
+                                   penalChargeGl = data.PENALCHARGEGL,
+                                   penalChargeGlCode = (data.PENALCHARGEGL.HasValue ? data.TBL_CHART_OF_ACCOUNT.ACCOUNTCODE : ""),
+
                                    customerTypeId = data.TBL_PRODUCT_CLASS.CUSTOMERTYPEID,
 
                                    productPriceIndexId = data.PRODUCTPRICEINDEXID,
@@ -634,7 +636,7 @@ namespace FintrakBanking.Repositories.Setups.General
                           // glAccountName = pf.tbl_Fee.tbl_Chart_Of_Account.AccountName
 
                       }).ToList();
-                item.ProductBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
+                item.productBehaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == item.productId).Select(d => new ProductBehaviourViewModel()
                 {
                     crmsRegulatoryId = d.CRMSREGULATORYID,
                     customerLimit = d.CUSTOMER_LIMIT,
@@ -854,7 +856,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 }).FirstOrDefault();
 
-                item.ProductBehaviour = ProductBehaviour;
+                item.productBehaviour = ProductBehaviour;
 
 
                 var currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
@@ -1087,7 +1089,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     item.invoiceBased = x.ISINVOICEBASED;
                     item.requireCasaAccount = x.REQUIRECASAACCOUNT;
                     item.allowFundUsage = x.ALLOWFUNDUSAGE;
-                    item.ProductBehaviour.crmsRegulatoryId = x.CRMSREGULATORYID;
+                    item.productBehaviour.crmsRegulatoryId = x.CRMSREGULATORYID;
 
                 }
             }
@@ -1212,7 +1214,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             collateralTypeId = pcc.COLLATERALTYPEID,
                             collateralTypeName = pcc.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME
                         }).ToList(),
-                        ProductBehaviour = context.TBL_TEMP_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTCODE == tp.PRODUCTCODE).Select(d => new ProductBehaviourViewModel()
+                        productBehaviour = context.TBL_TEMP_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTCODE == tp.PRODUCTCODE).Select(d => new ProductBehaviourViewModel()
                         {
                             customerLimit = d.CUSTOMER_LIMIT,
                             collateralFcyLimit = d.COLLATERAL_FCY_LIMIT ?? 0,
@@ -1822,7 +1824,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 TBL_TEMP_PRODUCT_COLLATERALTYP = collaterals
             };
 
-            var behaviour = productModel.ProductBehaviour;
+            var behaviour = productModel.productBehaviour;
             var productBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
             {
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
@@ -2078,18 +2080,18 @@ namespace FintrakBanking.Repositories.Setups.General
                     tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
                     {
                         PRODUCTCODE = productModel.productCode,
-                        COLLATERAL_FCY_LIMIT = productModel.ProductBehaviour.collateralFcyLimit,
-                        COLLATERAL_LCY_LIMIT = productModel.ProductBehaviour.collateralLcyLimit,
-                        CUSTOMER_LIMIT = productModel.ProductBehaviour.customerLimit,
+                        COLLATERAL_FCY_LIMIT = productModel.productBehaviour.collateralFcyLimit,
+                        COLLATERAL_LCY_LIMIT = productModel.productBehaviour.collateralLcyLimit,
+                        CUSTOMER_LIMIT = productModel.productBehaviour.customerLimit,
                         ISCURRENT = true,
                         APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                    ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased,
-                        PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit,
-                       ISTEMPORARYOVERDRAFT = productModel.ProductBehaviour.isTemporaryOverDraft,
-                        ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage,
+                    ISINVOICEBASED = productModel.productBehaviour.isInvoiceBased,
+                        PRODUCT_LIMIT = productModel.productBehaviour.productLimit,
+                       ISTEMPORARYOVERDRAFT = productModel.productBehaviour.isTemporaryOverDraft,
+                        ALLOWFUNDUSAGE = productModel.productBehaviour.allowFundUsage,
                         DATETIMECREATED = DateTime.Now,
                         CREATEDBY = productModel.createdBy,
-                        CRMSREGULATORYID= productModel.ProductBehaviour.crmsRegulatoryId,
+                        CRMSREGULATORYID= productModel.productBehaviour.crmsRegulatoryId,
                     };
                 }
                 context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
@@ -2209,17 +2211,17 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
                 {
                     PRODUCTCODE = productModel.productCode,
-                    COLLATERAL_FCY_LIMIT = productModel.ProductBehaviour.collateralFcyLimit,
-                    COLLATERAL_LCY_LIMIT = productModel.ProductBehaviour.collateralLcyLimit,
-                    CUSTOMER_LIMIT = productModel.ProductBehaviour.customerLimit,
+                    COLLATERAL_FCY_LIMIT = productModel.productBehaviour.collateralFcyLimit,
+                    COLLATERAL_LCY_LIMIT = productModel.productBehaviour.collateralLcyLimit,
+                    CUSTOMER_LIMIT = productModel.productBehaviour.customerLimit,
                     ISCURRENT = true,
-                    ISINVOICEBASED = productModel.ProductBehaviour.isInvoiceBased,
-                    PRODUCT_LIMIT = productModel.ProductBehaviour.productLimit,
-                    ALLOWFUNDUSAGE = productModel.ProductBehaviour.allowFundUsage,
-                    ISTEMPORARYOVERDRAFT = productModel.ProductBehaviour.isTemporaryOverDraft,
+                    ISINVOICEBASED = productModel.productBehaviour.isInvoiceBased,
+                    PRODUCT_LIMIT = productModel.productBehaviour.productLimit,
+                    ALLOWFUNDUSAGE = productModel.productBehaviour.allowFundUsage,
+                    ISTEMPORARYOVERDRAFT = productModel.productBehaviour.isTemporaryOverDraft,
                     DATETIMECREATED = DateTime.Now,
                     CREATEDBY = productModel.createdBy,
-                    CRMSREGULATORYID=productModel.ProductBehaviour.crmsRegulatoryId,
+                    CRMSREGULATORYID=productModel.productBehaviour.crmsRegulatoryId,
                     APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
 
                 };

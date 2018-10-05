@@ -27,6 +27,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? CAM_HOU_STAFFID { get; set; }
 
+        public int? REGIONTYPEID { get; set; }
+
         public int CREATEDBY { get; set; }
 
         public DateTime DATETIMECREATED { get; set; }

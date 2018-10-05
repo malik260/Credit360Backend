@@ -407,6 +407,16 @@ namespace FintrakBanking.APICore.Controllers
                         new { success = true, message = " download failed" });
                 }
             }
+            catch (APIErrorException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
             catch (ConditionNotMetException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,

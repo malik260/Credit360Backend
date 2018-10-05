@@ -147,6 +147,49 @@ namespace FintrakBanking.Repositories.Credit
             return data.ToList();
 
         }
+
+        public IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int checkListTypeId, int operationId, int? productId, int? approvalLevelId)
+        {
+           var checklistTypes = context.TBL_CHECKLIST_TYPE.ToList();
+
+            List<ChecklistDefinitionAndDetailViewModel> checkItems = new List<ChecklistDefinitionAndDetailViewModel>();
+
+            foreach (var item in checklistTypes)
+            {
+                var data = (from a in context.TBL_CHECKLIST_DEFINITION
+                            join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
+                            where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID //&& a.APPROVALLEVELID == approvalLevelId
+                            && a.OPERATIONID == operationId && a.DELETED == false
+                            select new ChecklistDefinitionAndDetailViewModel
+                            {
+                                checkListDetailId = 0,
+                                checkListDefinitionId = a.CHECKLISTDEFINITIONID,
+                                responseTypeId = d.RESPONSE_TYPEID,
+                                requireUpload = d.REQUIREUPLOAD,
+                                checkListTypeId = a.CHECKLIST_TYPEID,
+                                checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+                                checkListItemId = a.CHECKLISTITEMID,
+                                checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                                itemDescription = a.ITEMDESCRIPTION,
+                                productId = a.PRODUCTID,
+                                approvalLevelId = a.APPROVALLEVELID,
+
+                            });
+
+                if (item.ISPRODUCT_BASED)
+                {
+                    if (productId > 0)
+                    {
+                        data = data.Where(x => x.productId == productId);
+                    }
+                }
+              var typeItems =  data.ToList();
+
+                checkItems.AddRange(typeItems);
+            }
+           
+            return checkItems;
+        }
         //    public IEnumerable<ChecklistDefinitionViewModel> GetChecklistDefinitionByApprovalLevelCheckListType(int staffId, int? productId, int loanTargetId, int operationId, int checkListTypeId)
         //{
         //    var detailItem = (from s in context.TBL_CHECKLIST_DETAIL
@@ -1143,14 +1186,31 @@ namespace FintrakBanking.Repositories.Credit
             }
             return false;
         }
-        public bool ValidateChecklistForDefferalOrWaival(int conditionId)
+        public bool ValidateChecklistForDefferalOrWaival(ConditionPrecedentViewModel entity)
         {
-            var data = context.TBL_LOAN_CONDITION_PRECEDENT.Find(conditionId);
-            if (data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved &&
-                (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived))
+            //var data = context.TBL_LOAN_CONDITION_PRECEDENT.Find(entity.conditionId);
+            if (entity == null) return false;
+            if (entity.isLMSChecklist == true)
             {
-                return true;
+                var data = this.context.TBL_LMSR_CONDITION_PRECEDENT.Find(entity.conditionId);
+                if (data == null){ return false; }
+                if (data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved &&
+              (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived))
+                {
+                    return true;
+                }
             }
+            else
+            {
+                var data = this.context.TBL_LOAN_CONDITION_PRECEDENT.Find(entity.conditionId);
+                if (data == null) { return false; }
+                if (data.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved &&
+              (data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred || data.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Waived))
+                {
+                    return true;
+                }
+            }
+          
             return false;
         }
         #endregion
@@ -1847,7 +1907,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                              join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
-                             where d.LOANREVIEWAPPLICATIONID == loanReviewApplicationId && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false &&
+                             join e in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                             where e.LOANAPPLICATIONID == loanReviewApplicationId && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false &&
                               c.CHECKLISTSTATUSID == null
                              select new ConditionPrecedentViewModel()
                              {
@@ -1868,9 +1929,10 @@ namespace FintrakBanking.Repositories.Credit
         {
             var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                           join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
+                          join g in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals g.LOANAPPLICATIONID
                           join e in context.TBL_CHECKLIST_STATUS on c.CHECKLISTSTATUSID equals e.CHECKLISTSTATUSID
                           join f in context.TBL_APPROVAL_STATUS on c.APPROVALSTATUSID equals f.APPROVALSTATUSID
-                          where d.LOANREVIEWAPPLICATIONID == loanReviewApplicationId &&
+                          where g.LOANAPPLICATIONID == loanReviewApplicationId &&
                            c.CHECKLISTSTATUSID != null
                           orderby c.ISEXTERNAL descending
                           select new ConditionPrecedentViewModel()

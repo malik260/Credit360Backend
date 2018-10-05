@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, new { data ="no-record", success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { data ="no-record", success = false, message = $"Error: {ce.Message}" });
             }
             catch (BadLogicException be)
             {

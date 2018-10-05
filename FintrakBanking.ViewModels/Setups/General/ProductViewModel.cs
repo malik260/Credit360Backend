@@ -118,8 +118,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short? dayCountConventionId { get; set; }
         //public short? productBehaviourId { get; set; }
         //public string productBehaviourName { get; set; }
-
-        public ProductBehaviourViewModel ProductBehaviour { get;set;}
+        public ProductBehaviourViewModel productBehaviour { get;set;}
         public short productClassProcessId { get; set; }
         public short customerTypeId { get; set; }
     }
