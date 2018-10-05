@@ -48,7 +48,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                 var codeExist = context.TBL_LOAN.Where(x => x.CRMSCODE == param.crmsCode).Any();
                 if (codeExist == true)
-                    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has been assigned");
+                    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
 
                 loan.CRMSCODE = param.crmsCode;
                 loan.CRMSDATE = DateTime.Now;
@@ -62,7 +62,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                 var codeExist = context.TBL_LOAN_REVOLVING.Where(x => x.CRMSCODE == param.crmsCode).Any();
                 if (codeExist == true)
-                    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has been assigned");
+                    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
 
                 loan.CRMSCODE = param.crmsCode;
                 loan.CRMSDATE = DateTime.Now;
@@ -76,7 +76,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                 var codeExist = context.TBL_LOAN_CONTINGENT.Where(x => x.CRMSCODE == param.crmsCode).Any();
                 if (codeExist == true)
-                    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has been assigned");
+                    throw new ConditionNotMetException($"This CRMS {param.crmsCode} code has aleady been Assigned, Kindly Provide Another Code..");
 
                 loan.CRMSCODE = param.crmsCode;
                 loan.CRMSDATE = DateTime.Now;

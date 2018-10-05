@@ -667,7 +667,8 @@ namespace FintrakBanking.Repositories.Credit
                 finalConditionSubsequents += conditions;
             }
 
-            fee = $"<p><strong> Fee Deatils: </strong></p>";
+            fee = $"<br/>"+ $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" +
+                $"<p><strong> Fee Details: </strong></p>";
 
             fee = fee +
                     $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
@@ -702,7 +703,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-            loanDetail = $" ";//<p><strong> Facility Deatils: </strong></p>
+            loanDetail = $" ";//<p><strong> Facility Details: </strong></p>
 
             loanDetail = loanDetail +
                     $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
@@ -713,7 +714,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<strong> Purpose </strong></td>" +
                      $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
                     $"<strong> Limits N </strong></p></td>" +
-                    $"<td style='height:29.65pt; vertical-align:top; width:49.5pt'><p> &nbsp;</p>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:49.51n'><p> &nbsp;</p>" +
                     $"<strong> Tenor </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
                     $"<strong> Interest/Margin </strong></p></td>" +
