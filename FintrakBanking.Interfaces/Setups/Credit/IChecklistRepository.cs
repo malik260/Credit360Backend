@@ -106,7 +106,6 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ConditionPrecedentViewModel> GetLMSConditionPrecedenceChecklist(int loanReviewApplicationId);
         IEnumerable<ConditionPrecedentViewModel> GetLMSConditionPrecedenceChecklistStatus(int loanReviewApplicationId);
         #endregion
-
-        IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int checkListTypeId, int operationId, int? productId, int? approvalLevelId);
+        IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int productId);
     }
 }
