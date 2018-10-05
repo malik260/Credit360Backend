@@ -5953,7 +5953,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (System.Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6066,7 +6066,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (System.Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6180,9 +6180,9 @@ namespace FintrakBanking.Repositories.Credit
                // return allFilteredLoan;
                 return allFilteredLoan.Where(x => x.operationId == (short)OperationsEnum.CommercialLoanBooking);
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6220,9 +6220,9 @@ namespace FintrakBanking.Repositories.Credit
                                        }).ToList();
                 return allFilteredLoan;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6374,7 +6374,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6486,7 +6486,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -7774,7 +7774,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                
                 throw new SecureException(ex.Message);
 
             }
@@ -8041,7 +8041,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -8054,11 +8054,11 @@ namespace FintrakBanking.Repositories.Credit
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                       join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
+                                     //join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
-                                      && b.OPERATIONPERFORMED == false
-                                      && d.DATE == DbFunctions.TruncateTime(applicationDate)
+                                      && b.OPERATIONPERFORMED == false && b.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.TermDisbursedFacility
+                                      //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
@@ -8140,7 +8140,7 @@ namespace FintrakBanking.Repositories.Credit
                                            interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
                                            interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                            pastDueInterest = a.PASTDUEINTEREST,
-                                           accrualedAmount = d.ACCRUEDINTEREST, //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,
+                                           accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.TERMLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
                                            systemCurrentDate = applicationDate,
                                            lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                        }).ToList();
@@ -8149,7 +8149,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -8255,7 +8255,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -8363,7 +8363,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
