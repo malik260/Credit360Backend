@@ -2147,11 +2147,11 @@ namespace FintrakBanking.Repositories.Finance
             debit.companyId = model.companyId;
 
 
-            debit.glAccountId = creditGL;
-            debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             debit.casaAccountId = casa.CASAACCOUNTID;
-            debit.debitAmount = 0;
-            debit.creditAmount = postedAmount;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
             debit.sourceBranchId = casa.BRANCHID;
             debit.destinationBranchId = casa.BRANCHID;
 
@@ -2171,12 +2171,13 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value; ;
 
-            credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-            credit.casaAccountId = casa.CASAACCOUNTID;
-            credit.debitAmount = postedAmount;
-            credit.creditAmount = 0;
+
+            credit.glAccountId = creditGL;
+            credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
             credit.sourceBranchId = casa.BRANCHID;
             credit.destinationBranchId = casa.BRANCHID;
 

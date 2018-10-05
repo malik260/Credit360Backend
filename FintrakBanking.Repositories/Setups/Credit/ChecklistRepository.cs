@@ -148,14 +148,31 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int checkListTypeId, int operationId, int? productId, int? approvalLevelId)
+        public IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int productId)
         {
            var checklistTypes = context.TBL_CHECKLIST_TYPE.ToList();
-
+            int operationId = 0;
             List<ChecklistDefinitionAndDetailViewModel> checkItems = new List<ChecklistDefinitionAndDetailViewModel>();
 
             foreach (var item in checklistTypes)
             {
+                if(item.ISPRODUCT_BASED == true)
+                {
+                    if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.AvailmentCheckList)
+                    {
+                        operationId = (int)OperationsEnum.LoanAvailment;
+                    }
+                    else if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.EligibilityChecklist)
+                    {
+                        operationId = (int)OperationsEnum.LoanApplication;
+                    } else if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.CAPChecklist)
+                    {
+                        operationId = (int)OperationsEnum.CAM;
+                    }
+                } else
+                {
+                    operationId = (int)OperationsEnum.LoanApplication;
+                }
                 var data = (from a in context.TBL_CHECKLIST_DEFINITION
                             join d in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals d.CHECKLISTITEMID
                             where a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID //&& a.APPROVALLEVELID == approvalLevelId
@@ -170,10 +187,9 @@ namespace FintrakBanking.Repositories.Credit
                                 checkListTypeName = a.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
                                 checkListItemId = a.CHECKLISTITEMID,
                                 checkListItemName = a.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
-                                itemDescription = a.ITEMDESCRIPTION,
                                 productId = a.PRODUCTID,
                                 approvalLevelId = a.APPROVALLEVELID,
-
+                                itemDescription = a.TBL_APPROVAL_LEVEL.LEVELNAME
                             });
 
                 if (item.ISPRODUCT_BASED)

@@ -5944,7 +5944,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (System.Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6057,7 +6057,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (System.Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6171,9 +6171,9 @@ namespace FintrakBanking.Repositories.Credit
                // return allFilteredLoan;
                 return allFilteredLoan.Where(x => x.operationId == (short)OperationsEnum.CommercialLoanBooking);
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6211,9 +6211,9 @@ namespace FintrakBanking.Repositories.Credit
                                        }).ToList();
                 return allFilteredLoan;
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6365,7 +6365,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -6477,7 +6477,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -7765,7 +7765,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                
                 throw new SecureException(ex.Message);
 
             }
@@ -8032,7 +8032,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -8140,7 +8140,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                throw ex; // return null;
+                throw ex;
             }
         }
 
@@ -8246,7 +8246,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
@@ -8354,7 +8354,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                return null;
+                throw ex;
             }
         }
 
