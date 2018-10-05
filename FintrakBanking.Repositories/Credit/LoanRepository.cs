@@ -371,8 +371,9 @@ namespace FintrakBanking.Repositories.Credit
                     //...................Adding Revolving Loan Record.........................
                     var loan = context.TBL_LOAN_REVOLVING.Add(data);
 
-                    if (model.monitoringTriggers.Count > 0)
-                        AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+                    //if (model.monitoringTriggers.Count > 0)
+                    AddLoanMonitoringTrigger(model.loanApplicationDetailId, model.createdBy, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
+                    //AddLoanMonitoringTrigger(model.monitoringTriggers, loan.REVOLVINGLOANID, (short)LoanSystemTypeEnum.OverdraftFacility);
 
                     //...................Update the Loan Request table.......................
                     request.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
@@ -587,6 +588,7 @@ namespace FintrakBanking.Repositories.Credit
                         AddLoanCollateralMapping(entity.loanApplicationId, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
 
                         //...................Mapping Loan Monitoring Trigger.......................
+                        AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
                         //if (entity.monitoringTriggers.Count > 0)
                         //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.CONTINGENTLOANID, (short)LoanSystemTypeEnum.ContingentLiability);
 
@@ -826,7 +828,8 @@ namespace FintrakBanking.Repositories.Credit
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             //if (entity.monitoringTriggers.Count > 0)
-                            //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
+                            //AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             entity.loanReferenceNumber = loan.LOANREFERENCENUMBER;
                             if (!entity.feeOverride) PostLoanFees(entity);
@@ -1029,6 +1032,7 @@ namespace FintrakBanking.Repositories.Credit
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             //...................Mapping Commercial Loan Monitoring Trigger.......................
+                            AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
                             //if (entity.monitoringTriggers.Count > 0)
                             //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
@@ -1236,6 +1240,7 @@ namespace FintrakBanking.Repositories.Credit
                             AddLoanCollateralMapping(entity.loanApplicationId, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
                             //...................Mapping FX Loan Monitoring Trigger.......................
+                            AddLoanMonitoringTrigger(entity.loanApplicationDetailId, entity.createdBy, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
                             //if (entity.monitoringTriggers.Count > 0)
                             //    AddLoanMonitoringTrigger(entity.monitoringTriggers, loan.TERMLOANID, (short)LoanSystemTypeEnum.TermDisbursedFacility);
 
@@ -3351,19 +3356,20 @@ namespace FintrakBanking.Repositories.Credit
         /// <param name="loanId">The loan identifier.</param>
         /// <param name="productTypeId">The product type identifier.</param>
         /// <returns></returns>
-        private bool AddLoanMonitoringTrigger(List<LoanMonitoringTriggerViewModel> monitoringTriggersModel, int loanId, short loanSystemTypeId)
+        private bool AddLoanMonitoringTrigger(int loanApplicationDetailId, int createdBy, int loanId, short loanSystemTypeId)
         {
-            foreach (LoanMonitoringTriggerViewModel entity in monitoringTriggersModel)
+            var mornitoringTrigger = context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
+            foreach (var entity in mornitoringTrigger)
             {
-                if (entity.monitoringTrigger != null && entity.monitoringTrigger != string.Empty)
+                if (entity.MONITORING_TRIGGER != null && entity.MONITORING_TRIGGER != string.Empty)
                 {
                     var data = new TBL_LOAN_MONITORING_TRIGGER
                     {
-                        MONITORING_TRIGGER = entity.monitoringTrigger,
-                        MONITORING_TRIGGERID = entity.monitoringTriggerId,
+                        MONITORING_TRIGGER = entity.MONITORING_TRIGGER,
+                        MONITORING_TRIGGERID = entity.MONITORING_TRIGGERID,
                         LOANID = loanId,
                         LOANSYSTEMTYPEID = loanSystemTypeId,
-                        CREATEDBY = entity.createdBy,
+                        CREATEDBY = createdBy,
                         DATETIMECREATED = DateTime.Now,
                         DELETED = false
 

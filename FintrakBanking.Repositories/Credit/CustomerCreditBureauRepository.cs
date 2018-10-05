@@ -518,11 +518,11 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (BadLogicException ex)
             {
-                throw new ConditionNotMetException(ex.Message);
+                throw new BadLogicException(ex.Message);
             }
             catch (APIErrorException ex)
             {
-                throw new ConditionNotMetException(ex.Message);
+                throw new APIErrorException(ex.Message);
             }
             catch (Exception ex)
             {
@@ -611,7 +611,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
-                    if (task.Wait(TimeSpan.FromSeconds(2500)))
+                    if (task.Wait(TimeSpan.FromSeconds(4500)))
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {
@@ -661,33 +661,31 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                       // ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                         throw new ConditionNotMetException("Search result Timed out");
                     }
                 }
                 catch (ConditionNotMetException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message.ToString());
+                    throw new ConditionNotMetException(ex.Message);
 
                 }
                 catch (APIErrorException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message.ToString());
+                    throw new ConditionNotMetException(ex.Message);
 
                 }
                 catch (SecureException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message.ToString());
+                    throw new ConditionNotMetException(ex.Message);
 
                 }
                 catch (Exception ex)
                 {
-                    //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                     trans.Rollback();
-                    throw new BadLogicException(ex.Message.ToString());
+                    throw new BadLogicException(ex.Message);
                     
                 }
             }
@@ -945,6 +943,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     if (binaryData == null)
                         throw new SecureException("File report not found. Please try again.");
+
+                    //var base64StringData = Convert.ToBase64String(binaryData);
+                    //byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
 
                     using (var docTrans = docContext.Database.BeginTransaction())
                     using (var trans = context.Database.BeginTransaction())
