@@ -911,6 +911,11 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             var systemDate = generalSetup.GetApplicationDate();
 
+            
+            var loanTenorDays = (entity.maturityDate - entity.effectiveDate).Days;
+            if (loanTenorDays > applicationDetail.APPROVEDTENOR)
+                throw new ConditionNotMetException("The loan tenor cannot be more than the tenor of its line");
+
             if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                 throw new ConditionNotMetException("Specify the recieving account.");
 
@@ -2473,7 +2478,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking)
                 {
 
-                    int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE);
+                    int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE) - 1;
                     var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
 
                     loanRecord.OUTSTANDINGINTEREST = totalInterest;
@@ -4923,7 +4928,6 @@ namespace FintrakBanking.Repositories.Credit
                     || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                     || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    //&& bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                     && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && atrail.RESPONSESTAFFID == null
@@ -5045,6 +5049,14 @@ namespace FintrakBanking.Repositories.Credit
                             if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount4 = customerAvailableAmount4 + loan.PRINCIPALAMOUNT;
                         }
                         item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount4;
+                        break;
+                    case (short)LoanProductTypeEnum.SyndicatedTermLoan:
+                        decimal customerAvailableAmount5 = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount = customerAvailableAmount5 + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount5;
                         break;
                 }
 

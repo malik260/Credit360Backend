@@ -1016,7 +1016,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.staffId = token.GetStaffId;
 
                 var responseId = repo.GoForApproval(model, loanBookingRequestId);
-
+                var dynamicMessage = string.Empty;
                 if (responseId == 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1024,11 +1024,26 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 }
                 else if (responseId == 2)
                 {
+                    dynamicMessage = "Loan has been successfully disbursed";
+                    if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
+                        dynamicMessage = "Overdraft facility grant successfully committed";
+                    if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
+                        dynamicMessage = "Contingent Liability has been committed successfully";
+                    if (model.operationId == (short)OperationsEnum.TermLoanBooking)
+                        dynamicMessage = "Loan has been successfully disbursed";
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Loan has been successfully disbursed" });
+                                            new { success = true, message = dynamicMessage });
                 }
                 else if (responseId == 3)
                 {
+                    dynamicMessage = "Loan disapproval was successful";
+                    if (model.operationId == (short)OperationsEnum.RevolvingLoanBooking)
+                        dynamicMessage = "Overdraft facility grant disapproved";
+                    if (model.operationId == (short)OperationsEnum.ContigentLoanBooking)
+                        dynamicMessage = "Contingent Liability disapproved";
+                    if (model.operationId == (short)OperationsEnum.TermLoanBooking)
+                        dynamicMessage = "Loan disapproval was successful";
+
                     return Request.CreateResponse(HttpStatusCode.OK,
                                             new { success = true, message = "Loan disapproval was successful" });
                 }
