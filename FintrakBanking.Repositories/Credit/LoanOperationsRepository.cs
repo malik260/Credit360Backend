@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.Credit
                              //let daysInYear = (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)a.SCHEDULEDAYCOUNTCONVENTIONID)
                              where a.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                               (f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
-                             && a.MATURITYDATE == DbFunctions.TruncateTime(applicationDate)
+                             && a.MATURITYDATE <= DbFunctions.TruncateTime(applicationDate)
 
 
                              select new DailyInterestAccrualViewModel()
@@ -1216,12 +1216,488 @@ namespace FintrakBanking.Repositories.Credit
         {
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             bool output = false;
+            byte transType = 0;
+            short lienType = 0;
+
+            TBL_CUSTOM_TRANSACTION_BULK source = new TBL_CUSTOM_TRANSACTION_BULK();
+            bool postingResult = false;
+
+            var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+                        where a.AMT_COLLECTED <= a.AMT && a.FINTRAK_FLG != "Y"  //|| a.PSTD_FLG == "P"
+                        select new FinanceTransactionStagingViewModel()
+                        {
+                            batchId = a.BATCH_ID,
+                            batchRefId = (int)a.BATCH_REF_ID,
+                            transType = a.TRAN_TYPE,
+                            flowType = a.FLOW_TYPE,
+                            amount = (decimal)a.AMT,
+                            debitGlAccount = a.DR_ACCT,
+                            creditGlAccount = a.CR_ACCT,
+                            currencyRate = (double)a.RATE,
+                            currencyRateCode = a.RATE_CODE,
+                            description = a.NARRATION,
+                            amountCollected = (decimal)a.AMT_COLLECTED,
+                            bankId = a.BANK_ID,
+                            sourceReferenceNumber = a.LOAN_ACCT,
+
+                        }).ToList();
+
+            //int counter = 0;
+
+            foreach (var item in data)
+            {
+                if (item.amountCollected > item.amount)
+                {
+                    item.amountCollected = item.amount;
+                }
+
+                source = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
+                          where p.BATCHID == item.batchId && p.BATCHREFID
+                                                  == item.batchRefId
+                          select p).SingleOrDefault();
+
+                if (source == null)
+                    continue;
+
+                var operationType = (OperationsEnum)source.OPERATIONID;
+
+
+                FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
+                if (item.amountCollected != source.AMOUNTCOLLECTED)
+                {
+                    model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+                    model.operationId = source.OPERATIONID;
+                    model.description = source.DESCRIPTION;
+                    model.valueDate = source.VALUEDATE;
+                    model.transactionDate = source.VALUEDATE;
+                    model.currencyId = source.CURRENCYID;
+                    model.currencyRate = source.CURRENCYRATE;
+                    model.companyId = source.COMPANYID;
+                    model.debitGlAccountId = source.DEBITGLACCOUNTID;
+                    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+                    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+                    model.sourceBranchId = (short)source.SOURCEBRANCHID;
+                    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+                    model.creditGlAccountId = source.CREDITGLACCOUNTID;
+                    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+                    model.batchId = source.BATCHID;
+                    model.batchRefId = source.BATCHREFID;
+                    model.loanId = source.LOANID;
+                    model.flowType = source.FLOWTYPE;
+
+                    postingResult = financeTransaction.BulkIntegrationPosting(model);
+
+                    if (model.flowType == "BIF")
+                    {
+                        updateloanTableInterest((int)model.loanId, model.actualAmount);
+                    }
+                    else if (model.flowType == "BPP")
+                    {
+                        updateloanTablePrincipal((int)model.loanId, model.actualAmount);
+                    }
+
+
+                    if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
+                    {
+
+                        List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
+                        //TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
+                        var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
+                        var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
+                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
+                        var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
+
+
+                        if (model.flowType == "BIF")
+                        {
+
+                            transType = (byte)LoanTransactionTypeEnum.Interest;
+                            lienType = (short)LienTypeEnum.InterestRepayment;
+
+                            updateloanTableInterest((int)model.loanId, model.actualAmount);
+
+                            var pastDue = new TBL_LOAN_PAST_DUE
+                            {
+                                LOANID = (int)model.loanId,
+                                PASTDUECODE = PastDueCode,
+                                CREDITAMOUNT = 0,
+                                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+                                DEBITAMOUNT = Math.Abs(model.actualAmount),
+                                DATE = model.transactionDate,
+                                TRANSACTIONTYPEID = transType,
+                                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                                PRODUCTTYPEID = product.PRODUCTTYPEID,
+                            };
+
+                            transPastDue.Add(pastDue);
+
+                            updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT * -1);
+                        }
+                        else if (model.flowType == "BPP")
+                        {
+                            transType = (byte)LoanTransactionTypeEnum.Principal;
+                            lienType = (short)LienTypeEnum.PrincipalRepayment;
+
+                            updateloanTablePrincipal((int)model.loanId, model.actualAmount);
+
+                            var pastDue = new TBL_LOAN_PAST_DUE
+                            {
+                                LOANID = (int)model.loanId,
+                                PASTDUECODE = PastDueCode,
+                                CREDITAMOUNT = 0,
+                                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+                                DEBITAMOUNT = Math.Abs(model.actualAmount),
+                                DATE = model.transactionDate,
+                                TRANSACTIONTYPEID = transType,
+                                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                                PRODUCTTYPEID = product.PRODUCTTYPEID,
+                            };
+
+                            transPastDue.Add(pastDue);
+
+                            updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT * -1);
+                        }
+
+                        updateloanPastDueDate((int)model.loanId, item.transactionDate);
+                    }
+
+                    source.AMOUNTCOLLECTED = item.amountCollected;
+
+                    context.SaveChanges();
+
+                    if (model.operationId == (int)OperationsEnum.CommercialLoanRollOver) ///TODO check this logic later
+                    {
+                        var loan = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == model.sourceReferenceNumber);
+                        var instruction = context.TBL_LOAN_MATURITY_INSTRUCTION.FirstOrDefault(x => x.LOANID == loan.TERMLOANID);
+
+                        ArchiveLoan(loan.TERMLOANID, model.operationId, archiveBatchCode);//change to method that will disburs new loan
+
+                    }
+
+                    if (postingResult == true)
+                    {
+                        if (source.AMOUNT == item.amountCollected)
+                        {
+                            source.ISPOSTED = true;
+
+                            FINTRAK_TRAN_PROC_DETAILS bulk = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+                                                              where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
+                                                                == model.batchRefId
+                                                              select a).SingleOrDefault();
+                            bulk.FINTRAK_FLG = "Y";
+                        }
+
+                    }
+
+                    output = stagingContext.SaveChanges() > 0;
+
+                }
+
+                //FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
+                //if (item.amountCollected != 0 && LoanPayment == 0)
+                //{
+                //    model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+                //    model.operationId = source.OPERATIONID;
+                //    model.description = source.DESCRIPTION;
+                //    model.valueDate = source.VALUEDATE;
+                //    model.transactionDate = source.VALUEDATE;
+                //    model.currencyId = source.CURRENCYID;
+                //    model.currencyRate = source.CURRENCYRATE;
+                //    model.companyId = source.COMPANYID;
+                //    model.debitGlAccountId = source.DEBITGLACCOUNTID;
+                //    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+                //    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+                //    model.sourceBranchId = (short)source.SOURCEBRANCHID;
+                //    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+                //    model.creditGlAccountId = source.CREDITGLACCOUNTID;
+                //    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+                //    model.batchId = source.BATCHID;
+                //    model.batchRefId = source.BATCHREFID;
+                //    model.loanId = source.LOANID;
+                //    model.flowType = source.FLOWTYPE;
+
+                //    postingResult = financeTransaction.BulkIntegrationPosting(model);
+
+                //    if (model.flowType == "BIF")
+                //    {
+                //        updateloanTableInterest((int)model.loanId, model.actualAmount);
+                //    }
+                //    else if (model.flowType == "BPP")
+                //    {
+                //        updateloanTablePrincipal((int)model.loanId, model.actualAmount);
+                //    }
+
+                //    source.AMOUNTCOLLECTED = item.amountCollected;
+
+                //    context.SaveChanges();
+
+                //    if (model.operationId == (int)OperationsEnum.CommercialLoanRollOver)
+                //    {
+                //        var loan = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == model.sourceReferenceNumber);
+                //        var instruction = context.TBL_LOAN_MATURITY_INSTRUCTION.FirstOrDefault(x => x.LOANID == loan.TERMLOANID);
+
+                //        ArchiveLoan(loan.TERMLOANID, model.operationId, archiveBatchCode);//change to method that will disburs new loan
+
+                //    }
+                //    if (postingResult == true)
+                //    {
+                //        if (source.AMOUNT == item.amountCollected)
+                //        {
+                //            source.ISPOSTED = true;
+
+                //            FINTRAK_TRAN_PROC_DETAILS bulk = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+                //                                              where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
+                //                                                == model.batchRefId
+                //                                              select a).SingleOrDefault();
+                //            bulk.FINTRAK_FLG = "Y";
+                //        }
+
+                //    }
+                //    output = stagingContext.SaveChanges() > 0;
+                //}
+
+
+
+                //else if (item.amountCollected != 0 && fullAmount != 0)
+                //{
+                //    model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+                //    model.operationId = source.OPERATIONID;
+                //    model.description = source.DESCRIPTION;
+                //    model.valueDate = source.VALUEDATE;
+                //    model.transactionDate = source.VALUEDATE;
+                //    model.currencyId = source.CURRENCYID;
+                //    model.currencyRate = source.CURRENCYRATE;
+                //    model.companyId = source.COMPANYID;
+                //    model.debitGlAccountId = source.DEBITGLACCOUNTID;
+                //    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+                //    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+                //    model.sourceBranchId = (short)source.SOURCEBRANCHID;
+                //    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+                //    model.creditGlAccountId = source.CREDITGLACCOUNTID;
+                //    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+                //    model.batchId = source.BATCHID;
+                //    model.batchRefId = source.BATCHREFID;
+                //    model.loanId = source.LOANID;
+                //    model.flowType = source.FLOWTYPE;
+
+                //    if (model.actualAmount > 0)
+                //    {
+                //        postingResult = financeTransaction.BulkIntegrationPosting(model);
+
+                //        if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
+                //        {
+
+                //            List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
+                //            //TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
+                //            var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //            var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
+                //            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
+                //            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
+
+
+                //            if (model.flowType == "BIF")
+                //            {
+
+                //                transType = (byte)LoanTransactionTypeEnum.Interest;
+                //                lienType = (short)LienTypeEnum.InterestRepayment;
+
+                //                updateloanTableInterest((int)model.loanId, model.actualAmount);
+
+                //                var pastDue = new TBL_LOAN_PAST_DUE
+                //                {
+                //                    LOANID = (int)model.loanId,
+                //                    PASTDUECODE = PastDueCode,
+                //                    CREDITAMOUNT = 0,
+                //                    DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+                //                    DEBITAMOUNT = Math.Abs(model.actualAmount),
+                //                    DATE = model.transactionDate,
+                //                    TRANSACTIONTYPEID = transType,
+                //                    PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                //                    PRODUCTTYPEID = product.PRODUCTTYPEID,
+                //                };
+
+                //                transPastDue.Add(pastDue);
+
+                //                updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT * -1);
+                //            }
+                //            else if (model.flowType == "BPP")
+                //            {
+                //                transType = (byte)LoanTransactionTypeEnum.Principal;
+                //                lienType = (short)LienTypeEnum.PrincipalRepayment;
+
+                //                updateloanTablePrincipal((int)model.loanId, model.actualAmount);
+
+                //                var pastDue = new TBL_LOAN_PAST_DUE
+                //                {
+                //                    LOANID = (int)model.loanId,
+                //                    PASTDUECODE = PastDueCode,
+                //                    CREDITAMOUNT = 0,
+                //                    DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+                //                    DEBITAMOUNT = Math.Abs(model.actualAmount),
+                //                    DATE = model.transactionDate,
+                //                    TRANSACTIONTYPEID = transType,
+                //                    PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                //                    PRODUCTTYPEID = product.PRODUCTTYPEID,
+                //                };
+
+                //                transPastDue.Add(pastDue);
+
+                //                updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT * -1);
+                //            }
+
+                //            updateloanPastDueDate((int)model.loanId, item.transactionDate);
+                //        }
+
+                //        //pastDue.LOANID = (int)item.loanId;
+                //        //pastDue.PARENT_PASTDUECODE = PastDueCode;
+                //        //pastDue.CREDITAMOUNT = 0;
+                //        //pastDue.DESCRIPTION = "Past Due Entries on " + source.DESCRIPTION + "as a result of Account not funded";
+                //        //pastDue.DEBITAMOUNT = Math.Abs(partailAmount);
+                //        //pastDue.DATE = item.transactionDate;
+                //        //pastDue.TRANSACTIONTYPEID = transType;
+                //        //pastDue.PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER;
+                //        //pastDue.PRODUCTTYPEID = product.PRODUCTTYPEID;
+
+                //        //transPastDue.Add(pastDue);
+                //        //updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+
+
+
+                //        //CasaLienViewModel lien = new CasaLienViewModel();
+
+                //        //lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                //        //lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
+                //        //lien.lienAmount = pastDue.DEBITAMOUNT;
+                //        //lien.branchId = item.branchId;
+                //        //lien.companyId = item.companyId;
+                //        //lien.lienTypeId = lienType;
+                //        //lien.createdBy = (int)SystemStaff.System;
+                //        //lien.description = "lien placed due to Account not funded at Anniversary Date";
+
+                //        //casaLien.PlaceLien(lien);
+
+                //        source.AMOUNTCOLLECTED = item.amountCollected;
+                //        context.SaveChanges();
+                //    }
+
+
+                //}
+                //else if (item.amountCollected == 0)
+                //{
+
+                //    model.actualAmount = 0;
+                //    model.operationId = source.OPERATIONID;
+                //    model.description = source.DESCRIPTION;
+                //    model.valueDate = source.VALUEDATE;
+                //    model.transactionDate = source.VALUEDATE;
+                //    model.currencyId = source.CURRENCYID;
+                //    model.currencyRate = source.CURRENCYRATE;
+                //    model.companyId = source.COMPANYID;
+                //    model.debitGlAccountId = source.DEBITGLACCOUNTID;
+                //    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+                //    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+                //    model.sourceBranchId = (short)source.SOURCEBRANCHID;
+                //    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+                //    model.creditGlAccountId = source.CREDITGLACCOUNTID;
+                //    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+                //    model.batchId = source.BATCHID;
+                //    model.batchRefId = source.BATCHREFID;
+                //    model.loanId = source.LOANID;
+                //    model.flowType = source.FLOWTYPE;
+
+                //    if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
+                //    {
+                //        List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
+                //        //TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
+                //        var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //        var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
+                //        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
+                //        var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
+
+
+                //        if (model.flowType == "BIF")
+                //        {
+                //            transType = (byte)LoanTransactionTypeEnum.Interest;
+                //            lienType = (short)LienTypeEnum.InterestRepayment;
+                //            var pastDue = new TBL_LOAN_PAST_DUE
+                //            {
+                //                LOANID = (int)model.loanId,
+                //                PASTDUECODE = PastDueCode,
+                //                CREDITAMOUNT = 0,
+                //                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+                //                DEBITAMOUNT = Math.Abs(partailAmount),
+                //                DATE = model.transactionDate,
+                //                TRANSACTIONTYPEID = transType,
+                //                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                //                PRODUCTTYPEID = product.PRODUCTTYPEID,
+                //            };
+                //            transPastDue.Add(pastDue);
+                //            context.SaveChanges();
+
+                //            updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT);
+                //        }
+                //        else if (model.flowType == "BPP")
+                //        {
+                //            transType = (byte)LoanTransactionTypeEnum.Principal;
+                //            lienType = (short)LienTypeEnum.PrincipalRepayment;
+
+                //            var pastDue = new TBL_LOAN_PAST_DUE
+                //            {
+                //                LOANID = (int)model.loanId,
+                //                PASTDUECODE = PastDueCode,
+                //                CREDITAMOUNT = 0,
+                //                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+                //                DEBITAMOUNT = Math.Abs(partailAmount),
+                //                DATE = model.transactionDate,
+                //                TRANSACTIONTYPEID = transType,
+                //                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                //                PRODUCTTYPEID = product.PRODUCTTYPEID,
+                //            };
+
+                //            transPastDue.Add(pastDue);
+                //            context.SaveChanges();
+
+                //            updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+                //        }
+
+
+
+                //        updateloanPastDueDate((int)model.loanId, model.transactionDate);
+                //    }
+                //    //CasaLienViewModel lien = new CasaLienViewModel();
+                //    //lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+                //    //lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
+                //    //lien.lienAmount = pastDue.DEBITAMOUNT;
+                //    //lien.branchId = item.branchId;
+                //    //lien.companyId = item.companyId;
+                //    //lien.lienTypeId = lienType;
+                //    //lien.createdBy = (int)SystemStaff.System;
+                //    //lien.description = "lien placed due to Account not funded at Anniversary Date";
+
+                //    //casaLien.PlaceLien(lien);
+                //    //source.AMOUNTCOLLECTED = item.amountCollected;
+                //    context.SaveChanges();
+                //}
+
+
+                //}
+
+
+            }
+
+            return true;
+        }
+
+        public bool GetRepaymentFromStagingOld()
+        {
+            var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            bool output = false;
             decimal fullAmount = 0;
             decimal partailAmount = 0;
             byte transType = 0;
             short lienType = 0;
-            TBL_CUSTOM_TRANSACTION_BULK result = new TBL_CUSTOM_TRANSACTION_BULK();
-            bool results = false;
+            TBL_CUSTOM_TRANSACTION_BULK source = new TBL_CUSTOM_TRANSACTION_BULK();
+            bool postingResult = false;
 
             var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
                         where a.AMT_COLLECTED <= a.AMT && a.FINTRAK_FLG != "Y"  //|| a.PSTD_FLG == "P"
@@ -1251,51 +1727,53 @@ namespace FintrakBanking.Repositories.Credit
 
                 //var test = item;
 
-                result = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
+                source = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
                           where p.BATCHID == item.batchId && p.BATCHREFID
                                                   == item.batchRefId
                           select p).SingleOrDefault();
 
 
-                if (result == null)
+                if (source == null)
                     continue;
 
 
-                var operationType = (OperationsEnum)result.OPERATIONID;
+
+                var operationType = (OperationsEnum)source.OPERATIONID;
 
                 if (item.amountCollected != 0)
                 {
-                    fullAmount = item.amountCollected - result.AMOUNT;
-                    partailAmount = result.AMOUNT - item.amountCollected;
+                    fullAmount = item.amountCollected - source.AMOUNT;
+                    partailAmount = source.AMOUNT - item.amountCollected;
                 }
                 else
                 {
-                    partailAmount = result.AMOUNT - item.amountCollected;
+                    partailAmount = source.AMOUNT - item.amountCollected;
                 }
-                FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
-                if (result != null && item.amountCollected != 0 && fullAmount == 0)
-                {
-                    model.actualAmount = item.amountCollected - result.AMOUNTCOLLECTED;
-                    model.operationId = result.OPERATIONID;
-                    model.description = result.DESCRIPTION;
-                    model.valueDate = result.VALUEDATE;
-                    model.transactionDate = result.VALUEDATE;
-                    model.currencyId = result.CURRENCYID;
-                    model.currencyRate = result.CURRENCYRATE;
-                    model.companyId = result.COMPANYID;
-                    model.debitGlAccountId = result.DEBITGLACCOUNTID;
-                    model.sourceReferenceNumber = result.SOURCEREFERENCENUMBER;
-                    model.debitCasaAccountId = result.DEBITCASAACCOUNTID;
-                    model.sourceBranchId = (short)result.SOURCEBRANCHID;
-                    model.destinationBranchId = (short)result.DESTINATIONBRANCHID;
-                    model.creditGlAccountId = result.CREDITGLACCOUNTID;
-                    model.creditCasaAccountId = result.CREDITCASAACCOUNTID;
-                    model.batchId = result.BATCHID;
-                    model.batchRefId = result.BATCHREFID;
-                    model.loanId = result.LOANID;
-                    model.flowType = result.FLOWTYPE;
 
-                    results = financeTransaction.BulkIntegrationPosting(model);
+                FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
+                if (item.amountCollected != 0 && fullAmount == 0)
+                {
+                    model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+                    model.operationId = source.OPERATIONID;
+                    model.description = source.DESCRIPTION;
+                    model.valueDate = source.VALUEDATE;
+                    model.transactionDate = source.VALUEDATE;
+                    model.currencyId = source.CURRENCYID;
+                    model.currencyRate = source.CURRENCYRATE;
+                    model.companyId = source.COMPANYID;
+                    model.debitGlAccountId = source.DEBITGLACCOUNTID;
+                    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+                    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+                    model.sourceBranchId = (short)source.SOURCEBRANCHID;
+                    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+                    model.creditGlAccountId = source.CREDITGLACCOUNTID;
+                    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+                    model.batchId = source.BATCHID;
+                    model.batchRefId = source.BATCHREFID;
+                    model.loanId = source.LOANID;
+                    model.flowType = source.FLOWTYPE;
+
+                    postingResult = financeTransaction.BulkIntegrationPosting(model);
 
                     if (model.flowType == "BIF")
                     {
@@ -1305,7 +1783,8 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         updateloanTablePrincipal((int)model.loanId, model.actualAmount);
                     }
-                    result.AMOUNTCOLLECTED = item.amountCollected;
+
+                    source.AMOUNTCOLLECTED = item.amountCollected;
 
                     context.SaveChanges();
                     if (model.operationId == (int)OperationsEnum.CommercialLoanRollOver)
@@ -1316,11 +1795,11 @@ namespace FintrakBanking.Repositories.Credit
                         ArchiveLoan(loan.TERMLOANID, model.operationId, archiveBatchCode);//change to method that will disburs new loan
 
                     }
-                    if (results == true)
+                    if (postingResult == true)
                     {
-                        if (result.AMOUNT == item.amountCollected)
+                        if (source.AMOUNT == item.amountCollected)
                         {
-                            result.ISPOSTED = true;
+                            source.ISPOSTED = true;
 
                             FINTRAK_TRAN_PROC_DETAILS bulk = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
                                                               where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
@@ -1332,31 +1811,31 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     output = stagingContext.SaveChanges() > 0;
                 }
-                else if (result != null && item.amountCollected != 0 && fullAmount != 0)
+                else if (item.amountCollected != 0 && fullAmount != 0)
                 {
-                    model.actualAmount = item.amountCollected - result.AMOUNTCOLLECTED;
-                    model.operationId = result.OPERATIONID;
-                    model.description = result.DESCRIPTION;
-                    model.valueDate = result.VALUEDATE;
-                    model.transactionDate = result.VALUEDATE;
-                    model.currencyId = result.CURRENCYID;
-                    model.currencyRate = result.CURRENCYRATE;
-                    model.companyId = result.COMPANYID;
-                    model.debitGlAccountId = result.DEBITGLACCOUNTID;
-                    model.sourceReferenceNumber = result.SOURCEREFERENCENUMBER;
-                    model.debitCasaAccountId = result.DEBITCASAACCOUNTID;
-                    model.sourceBranchId = (short)result.SOURCEBRANCHID;
-                    model.destinationBranchId = (short)result.DESTINATIONBRANCHID;
-                    model.creditGlAccountId = result.CREDITGLACCOUNTID;
-                    model.creditCasaAccountId = result.CREDITCASAACCOUNTID;
-                    model.batchId = result.BATCHID;
-                    model.batchRefId = result.BATCHREFID;
-                    model.loanId = result.LOANID;
-                    model.flowType = result.FLOWTYPE;
+                    model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+                    model.operationId = source.OPERATIONID;
+                    model.description = source.DESCRIPTION;
+                    model.valueDate = source.VALUEDATE;
+                    model.transactionDate = source.VALUEDATE;
+                    model.currencyId = source.CURRENCYID;
+                    model.currencyRate = source.CURRENCYRATE;
+                    model.companyId = source.COMPANYID;
+                    model.debitGlAccountId = source.DEBITGLACCOUNTID;
+                    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+                    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+                    model.sourceBranchId = (short)source.SOURCEBRANCHID;
+                    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+                    model.creditGlAccountId = source.CREDITGLACCOUNTID;
+                    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+                    model.batchId = source.BATCHID;
+                    model.batchRefId = source.BATCHREFID;
+                    model.loanId = source.LOANID;
+                    model.flowType = source.FLOWTYPE;
 
                     if (model.actualAmount > 0)
                     {
-                        results = financeTransaction.BulkIntegrationPosting(model);
+                        postingResult = financeTransaction.BulkIntegrationPosting(model);
 
                         if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
                         {
@@ -1419,7 +1898,7 @@ namespace FintrakBanking.Repositories.Credit
                         //pastDue.LOANID = (int)item.loanId;
                         //pastDue.PARENT_PASTDUECODE = PastDueCode;
                         //pastDue.CREDITAMOUNT = 0;
-                        //pastDue.DESCRIPTION = "Past Due Entries on " + result.DESCRIPTION + "as a result of Account not funded";
+                        //pastDue.DESCRIPTION = "Past Due Entries on " + source.DESCRIPTION + "as a result of Account not funded";
                         //pastDue.DEBITAMOUNT = Math.Abs(partailAmount);
                         //pastDue.DATE = item.transactionDate;
                         //pastDue.TRANSACTIONTYPEID = transType;
@@ -1444,34 +1923,34 @@ namespace FintrakBanking.Repositories.Credit
 
                         //casaLien.PlaceLien(lien);
 
-                        result.AMOUNTCOLLECTED = item.amountCollected;
+                        source.AMOUNTCOLLECTED = item.amountCollected;
                         context.SaveChanges();
                     }
 
 
                 }
-                else if (result != null && item.amountCollected == 0)
+                else if (item.amountCollected == 0)
                 {
 
                     model.actualAmount = 0;
-                    model.operationId = result.OPERATIONID;
-                    model.description = result.DESCRIPTION;
-                    model.valueDate = result.VALUEDATE;
-                    model.transactionDate = result.VALUEDATE;
-                    model.currencyId = result.CURRENCYID;
-                    model.currencyRate = result.CURRENCYRATE;
-                    model.companyId = result.COMPANYID;
-                    model.debitGlAccountId = result.DEBITGLACCOUNTID;
-                    model.sourceReferenceNumber = result.SOURCEREFERENCENUMBER;
-                    model.debitCasaAccountId = result.DEBITCASAACCOUNTID;
-                    model.sourceBranchId = (short)result.SOURCEBRANCHID;
-                    model.destinationBranchId = (short)result.DESTINATIONBRANCHID;
-                    model.creditGlAccountId = result.CREDITGLACCOUNTID;
-                    model.creditCasaAccountId = result.CREDITCASAACCOUNTID;
-                    model.batchId = result.BATCHID;
-                    model.batchRefId = result.BATCHREFID;
-                    model.loanId = result.LOANID;
-                    model.flowType = result.FLOWTYPE;
+                    model.operationId = source.OPERATIONID;
+                    model.description = source.DESCRIPTION;
+                    model.valueDate = source.VALUEDATE;
+                    model.transactionDate = source.VALUEDATE;
+                    model.currencyId = source.CURRENCYID;
+                    model.currencyRate = source.CURRENCYRATE;
+                    model.companyId = source.COMPANYID;
+                    model.debitGlAccountId = source.DEBITGLACCOUNTID;
+                    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+                    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+                    model.sourceBranchId = (short)source.SOURCEBRANCHID;
+                    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+                    model.creditGlAccountId = source.CREDITGLACCOUNTID;
+                    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+                    model.batchId = source.BATCHID;
+                    model.batchRefId = source.BATCHREFID;
+                    model.loanId = source.LOANID;
+                    model.flowType = source.FLOWTYPE;
 
                     if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
                     {
@@ -1541,7 +2020,7 @@ namespace FintrakBanking.Repositories.Credit
                     //lien.description = "lien placed due to Account not funded at Anniversary Date";
 
                     //casaLien.PlaceLien(lien);
-                    //result.AMOUNTCOLLECTED = item.amountCollected;
+                    //source.AMOUNTCOLLECTED = item.amountCollected;
                     context.SaveChanges();
                 }
 
@@ -8603,7 +9082,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 if (inputTransactions.Count > 0)
-                   financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuth);
+                    financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuth);
 
                 context.SaveChanges();
 
@@ -9747,9 +10226,9 @@ namespace FintrakBanking.Repositories.Credit
             {
                 model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
 
-                
 
-                
+
+
             }
             else if (model.operationTypeId == (int)OperationsEnum.Fee_chargeChange)
             {
@@ -9757,7 +10236,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new ConditionNotMetException("The requested charge fee type already exist and going through approval");
                 }
-                
+
             }
             else
             {
@@ -9776,7 +10255,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (DoesOperationExist(model.loanId, model.operationTypeId))
             {
-               throw new ConditionNotMetException ("The requested operation already exist and going through approval");
+                throw new ConditionNotMetException("The requested operation already exist and going through approval");
             }
 
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
@@ -12033,49 +12512,49 @@ namespace FintrakBanking.Repositories.Credit
                     var scheduleMethod = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId).SCHEDULETYPEID;
                     var operationType = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).OPERATIONTYPEID;
 
-                    
-                        var model = (
-                                 from a in context.TBL_LOAN_REVIEW_OPERATION
-                                 join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                                 where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
-                                 && a.LOANREVIEWOPERATIONID == loanReviewOperationsId
 
-                                 select new LoanPaymentRestructureScheduleInputViewModel()
-                                 {
-                                     loanId = b.TERMLOANID,
-                                     scheduleMethodId = b.SCHEDULETYPEID,
-                                     principalAmount = (double)b.OUTSTANDINGPRINCIPAL,
-                                     principalFrequency = b.PRINCIPALFREQUENCYTYPEID,
-                                     interestFrequency = b.INTERESTFREQUENCYTYPEID,
-                                     principalFirstpaymentDate = (DateTime)b.FIRSTPRINCIPALPAYMENTDATE,
-                                     interestFirstpaymentDate = (DateTime)b.FIRSTINTERESTPAYMENTDATE,
-                                     interestRate = b.INTERESTRATE,
-                                     effectiveDate = b.EFFECTIVEDATE,
-                                     maturityDate = b.MATURITYDATE,
-                                     accrualBasis = b.SCHEDULEDAYCOUNTCONVENTIONID,
-                                     firstDayType = b.SCHEDULEDAYINTERESTTYPEID,
-                                     integralFeeAmount = 0,
-                                     newEffectiveDate = a.EFFECTIVEDATE,
-                                     newMaturityDate = a.MATURITYDATE,// change to maturity date affter scarfolding
+                    var model = (
+                             from a in context.TBL_LOAN_REVIEW_OPERATION
+                             join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                             where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
+                             && a.LOANREVIEWOPERATIONID == loanReviewOperationsId
+
+                             select new LoanPaymentRestructureScheduleInputViewModel()
+                             {
+                                 loanId = b.TERMLOANID,
+                                 scheduleMethodId = b.SCHEDULETYPEID,
+                                 principalAmount = (double)b.OUTSTANDINGPRINCIPAL,
+                                 principalFrequency = b.PRINCIPALFREQUENCYTYPEID,
+                                 interestFrequency = b.INTERESTFREQUENCYTYPEID,
+                                 principalFirstpaymentDate = (DateTime)b.FIRSTPRINCIPALPAYMENTDATE,
+                                 interestFirstpaymentDate = (DateTime)b.FIRSTINTERESTPAYMENTDATE,
+                                 interestRate = b.INTERESTRATE,
+                                 effectiveDate = b.EFFECTIVEDATE,
+                                 maturityDate = b.MATURITYDATE,
+                                 accrualBasis = b.SCHEDULEDAYCOUNTCONVENTIONID,
+                                 firstDayType = b.SCHEDULEDAYINTERESTTYPEID,
+                                 integralFeeAmount = 0,
+                                 newEffectiveDate = a.EFFECTIVEDATE,
+                                 newMaturityDate = a.MATURITYDATE,// change to maturity date affter scarfolding
                                      newInterestFrequency = (short?)a.INTERESTFREQUENCYTYPEID ?? (short)b.INTERESTFREQUENCYTYPEID,
-                                     newPrincipalFrequency = (short?)a.PRINCIPALFREQUENCYTYPEID ?? (short)b.PRINCIPALFREQUENCYTYPEID,
-                                     newInterestFirstpaymentDate = (DateTime)a.INTERESTFIRSTPAYMENTDATE,
-                                     newInterest = (double)a.INTERATERATE,
-                                     payAmount = (double?)a.PREPAYMENT ?? 0,
-                                     operationId = a.OPERATIONTYPEID,
-                                     newPrincipalFirstpaymentDate = (DateTime)a.PRINCIPALFIRSTPAYMENTDATE,
-                                     isManagementInterestRate = a.ISMANAGEMENTINTERESTRATE,
-                                     proposedTenor = a.TENOR,                                     
-                                     companyId = b.COMPANYID,
-                                     staffId = staffId,
-                                     createdBy = staffId,
-                                     customerId = b.CUSTOMERID,
-                                     productId = b.PRODUCTID,
-                                     oldCasaAccountId = b.CASAACCOUNTID,
-                                     newCasaAccountId = a.CASA_ACCOUNTID,
+                                 newPrincipalFrequency = (short?)a.PRINCIPALFREQUENCYTYPEID ?? (short)b.PRINCIPALFREQUENCYTYPEID,
+                                 newInterestFirstpaymentDate = (DateTime)a.INTERESTFIRSTPAYMENTDATE,
+                                 newInterest = (double)a.INTERATERATE,
+                                 payAmount = (double?)a.PREPAYMENT ?? 0,
+                                 operationId = a.OPERATIONTYPEID,
+                                 newPrincipalFirstpaymentDate = (DateTime)a.PRINCIPALFIRSTPAYMENTDATE,
+                                 isManagementInterestRate = a.ISMANAGEMENTINTERESTRATE,
+                                 proposedTenor = a.TENOR,
+                                 companyId = b.COMPANYID,
+                                 staffId = staffId,
+                                 createdBy = staffId,
+                                 customerId = b.CUSTOMERID,
+                                 productId = b.PRODUCTID,
+                                 oldCasaAccountId = b.CASAACCOUNTID,
+                                 newCasaAccountId = a.CASA_ACCOUNTID,
 
 
-                                 }).FirstOrDefault();
+                             }).FirstOrDefault();
 
 
                     if (scheduleMethod == (short)LoanScheduleTypeEnum.IrregularSchedule)
@@ -12094,514 +12573,343 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                     var unEarnedFees = (from d in context.TBL_LOAN_SCHEDULE_DAILY
-                                           where d.LOANID == model.loanId
-                                           //let sumUnEarnedFee = context.TBL_LOAN_SCHEDULE_DAILY.Where(a => a.LOANID == model.loanId
-                                           && d.DATE >= DbFunctions.TruncateTime(model.newEffectiveDate) // .Sum(a => (double?)a.UNEARNEDFEE ?? 0)
-                                           select d.UNEARNEDFEE).ToList();
+                                        where d.LOANID == model.loanId
+                                        //let sumUnEarnedFee = context.TBL_LOAN_SCHEDULE_DAILY.Where(a => a.LOANID == model.loanId
+                                        && d.DATE >= DbFunctions.TruncateTime(model.newEffectiveDate) // .Sum(a => (double?)a.UNEARNEDFEE ?? 0)
+                                        select d.UNEARNEDFEE).ToList();
 
-                        //var unEarnedFee = from d in context.TBL_LOAN_SCHEDULE_DAILY
-                        //                  where d.LOANID == model.loanId
-                        //                  let sumUnEarnedFee = context.TBL_LOAN_SCHEDULE_DAILY.Where(a => a.LOANID == model.loanId
-                        //                  && a.DATE >= DbFunctions.TruncateTime(model.newEffectiveDate)).Sum(a => (double?)a.UNEARNEDFEE ?? 0)
-                        //                  select sumUnEarnedFee;
+                    //var unEarnedFee = from d in context.TBL_LOAN_SCHEDULE_DAILY
+                    //                  where d.LOANID == model.loanId
+                    //                  let sumUnEarnedFee = context.TBL_LOAN_SCHEDULE_DAILY.Where(a => a.LOANID == model.loanId
+                    //                  && a.DATE >= DbFunctions.TruncateTime(model.newEffectiveDate)).Sum(a => (double?)a.UNEARNEDFEE ?? 0)
+                    //                  select sumUnEarnedFee;
 
-                        model.integralFeeAmount = 0;
-                        if (unEarnedFees.Count > 0)
-                            model.integralFeeAmount = (double) unEarnedFees.Sum();
+                    model.integralFeeAmount = 0;
+                    if (unEarnedFees.Count > 0)
+                        model.integralFeeAmount = (double)unEarnedFees.Sum();
 
-                        //model.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault() ?? 0;
+                    //model.integralFeeAmount = (double?)unEarnedFee.FirstOrDefault() ?? 0;
 
-                        string appDate = model.newEffectiveDate.ToString(@"yyyy-MM-dd");
-                        var applicationDate = Convert.ToDateTime(appDate);
+                    string appDate = model.newEffectiveDate.ToString(@"yyyy-MM-dd");
+                    var applicationDate = Convert.ToDateTime(appDate);
 
-                        DateTime nextPaymentDate = DateTime.Now.Date;
-                        
-                        if (model.maturityDate > model.newEffectiveDate)
-                        {
-                           var paymentDate = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
+                    DateTime nextPaymentDate = DateTime.Now.Date;
+
+                    if (model.maturityDate > model.newEffectiveDate)
+                    {
+                        var paymentDate = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                                            where a.LOANID == loanId && a.PAYMENTDATE >= applicationDate
                                            select a).FirstOrDefault();
 
-                           if (paymentDate != null)
-                            {
-                                nextPaymentDate = paymentDate.PAYMENTDATE;
-                            }
-                            else
-                            {
-                                throw new SecureException("Application Date not found in Payment Schedule");
-                            }
-                        }
-
-                        if ((int)OperationsEnum.ContractualInterestRateChange == model.operationId)
+                        if (paymentDate != null)
                         {
-                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
-                            {
-                                model.interestRate = model.newInterest;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                            }
-                            else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                            {
-                                model.interestRate = model.newInterest;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                                model.principalFirstpaymentDate = nextPaymentDate;
-                                model.interestFirstpaymentDate = nextPaymentDate;
-                            }
-                            else
-                            {
-                                model.interestRate = model.newInterest;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                                model.principalFirstpaymentDate = nextPaymentDate;
-                                model.interestFirstpaymentDate = nextPaymentDate;
-                            }
-
-                            if (model.interestFirstpaymentDate <= model.effectiveDate)
-                            {
-                                throw new ConditionNotMetException("First Payment Date must be greater than Effective Date");
-                            }
-
-                             result = InterestRateReview(loanId, model, applicationDate, staffId);
-
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-
+                            nextPaymentDate = paymentDate.PAYMENTDATE;
                         }
-                        else if ((int)OperationsEnum.Prepayment == model.operationId)
+                        else
                         {
-                            if (model.isManagementInterestRate == true)
-                            {
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenorPrepayment;
-                                model.interestFirstpaymentDate = nextPaymentDate;
-                                model.principalFirstpaymentDate = nextPaymentDate;
-                            }
-                            else
-                            {
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenorPrepayment;
-                                model.interestFirstpaymentDate = nextPaymentDate;
-                                model.principalFirstpaymentDate = nextPaymentDate;
-                            }
-
-                            result = UpdateLoanPrepaymentSchedule(twoFactorAuth, loanId, model, applicationDate, staffId);
-
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
+                            throw new SecureException("Application Date not found in Payment Schedule");
                         }
-                        else if ((int)OperationsEnum.PaymentDateChange == model.operationId)
-                        {
-                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                            {
-                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
-                            }
-                            else
-                            {
-                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
-                                model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;
-                            }
+                    }
 
-
-                            result = PaymentDateChange(loanId, model, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                updateLoanPrincipalInterestPaymentDate(model.interestFirstpaymentDate, model.principalFirstpaymentDate, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-
-                        }
-                        else if ((int)OperationsEnum.PrincipalFrequencyChange == model.operationId || (int)OperationsEnum.InterestFrequencyChange == model.operationId
-                            || (int)OperationsEnum.InterestandPrincipalFrequencyChange == model.operationId)
-                        {
-                            if ((int)OperationsEnum.PrincipalFrequencyChange == model.operationId)
-                            {
-                                if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment || scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                                {
-                                    model.principalFrequency = (short)model.newPrincipalFrequency;
-                                    model.interestFrequency = (short)model.newPrincipalFrequency;
-                                }
-                                else
-                                {
-                                    model.principalFrequency = (short)model.newPrincipalFrequency;
-                                    model.interestFrequency = (short)model.interestFrequency;
-                                }
-
-                            }
-                            if ((int)OperationsEnum.InterestFrequencyChange == model.operationId)
-                            {
-                                if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment || scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                                {
-                                    model.interestFrequency = (short)model.newInterestFrequency;
-                                    model.principalFrequency = (short)model.newInterestFrequency;
-                                }
-                                else
-                                {
-                                    model.interestFrequency = (short)model.newInterestFrequency;
-                                    model.principalFrequency = (short)model.principalFrequency;
-                                }
-
-                            }
-                            if ((int)OperationsEnum.InterestandPrincipalFrequencyChange == model.operationId)
-                            {
-                                model.interestFrequency = (short)model.newInterestFrequency;
-                                model.principalFrequency = (short)model.newPrincipalFrequency;
-                            }
-                            result = PaymentFrequencyChange(loanId, model, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                updateLoanFrequency((short)model.principalFrequency, (short)model.interestFrequency, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-                        else if ((int)OperationsEnum.CompleteWriteOff == model.operationId)
-                        {
-                            //model.interestRate = model.newInterest;
-                            //model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
-                            //model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
-                            //model.maturityDate = (DateTime)model.newMaturityDate;
-                            model.effectiveDate = model.newEffectiveDate;
-                            //model.tenor = model.newTenor;
-                            //model.interestFrequency = (short)model.newInterestFrequency;
-                            //model.principalFrequency = (short)model.newPrincipalFrequency;
-                            result = CompleteWriteOff(loanId, model, twoFactorAuth, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-                        else if ((int)OperationsEnum.TerminateAndRebook == model.operationId)
-                        {
-                            TerminateAndRebookLoanSchedule(loanId, model, twoFactorAuth, applicationDate, staffId);
-                            var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
-                            var data = (
-                                        from b in context.TBL_LOAN
-                                        where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.RELATED_LOAN_REFERENCE_NUMBER == loan.LOANREFERENCENUMBER
-                                        select new LoanPaymentRestructureScheduleInputViewModel()
-                                        {
-                                            loanId = b.TERMLOANID,
-                                            scheduleMethodId = b.SCHEDULETYPEID,
-                                            principalAmount = (double)b.OUTSTANDINGPRINCIPAL,
-                                            principalFrequency = b.PRINCIPALFREQUENCYTYPEID,
-                                            interestFrequency = b.INTERESTFREQUENCYTYPEID,
-                                            principalFirstpaymentDate = (DateTime)b.FIRSTPRINCIPALPAYMENTDATE,
-                                            interestFirstpaymentDate = (DateTime)b.FIRSTINTERESTPAYMENTDATE,
-                                            interestRate = b.INTERESTRATE,
-                                            effectiveDate = b.EFFECTIVEDATE,
-                                            maturityDate = b.MATURITYDATE,
-                                            accrualBasis = b.SCHEDULEDAYCOUNTCONVENTIONID,
-                                            firstDayType = b.SCHEDULEDAYINTERESTTYPEID,
-                                            integralFeeAmount = 0,
-                                            companyId = b.COMPANYID,
-                                            staffId = staffId,
-                                            createdBy = staffId,
-                                            customerId = b.CUSTOMERID,
-
-                                        }).FirstOrDefault();
-                            result = RegenerateSchedule(data.loanId, data, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-                        else if ((int)OperationsEnum.Fee_chargeChange == model.operationId)
-                        {
-                            result = ProcessChargeReversal(twoFactorAuth, loanId, model.operationId, staffId);
-                            if (result == true)
-                            {
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-                        else if ((int)OperationsEnum.TenorChange == model.operationId)
-                        {
-                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
-                            {
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.tenor = model.newTenor;
-                            }
-                            else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                            {
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.tenor = model.newTenor;
-                                model.interestFirstpaymentDate = nextPaymentDate;
-                            }
-                            else
-                            {
-                                model.maturityDate = model.maturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.tenor = model.newTenor;
-                                model.principalFirstpaymentDate = nextPaymentDate;
-                                model.interestFirstpaymentDate = nextPaymentDate;
-                            }
-
-                            result = TenorExtension(loanId, model, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-
-                        else if ((int)OperationsEnum.LoanSales == model.operationId)
-                        {
-                            result = LoanSales(loanId, model, twoFactorAuth, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-
-                        else if ((int)OperationsEnum.Restructured == model.operationId)
-                        {
-                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
-                            {
-                                model.interestRate = model.newInterest;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                            }
-                            else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                            {
-                                model.interestRate = model.newInterest;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                                model.interestFrequency = (short)model.newInterestFrequency;
-                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
-                            }
-                            else
-                            {
-                                model.interestRate = model.newInterest;
-                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
-                                model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                                model.interestFrequency = (short)model.newInterestFrequency;
-                                model.principalFrequency = (short)model.newPrincipalFrequency;
-                            }
-                            result = Restructured(loanId, model, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-                        else if ((int)OperationsEnum.LoanWorkOut == model.operationId)
+                    if ((int)OperationsEnum.ContractualInterestRateChange == model.operationId)
+                    {
+                        if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
                         {
                             model.interestRate = model.newInterest;
                             model.effectiveDate = model.newEffectiveDate;
-                            model.scheduleMethodId = (short)LoanScheduleTypeEnum.IrregularSchedule;
-                            result = LoanWorkOut(loanId, model, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
+                            model.tenor = model.newTenor;
                         }
-
-                        else if ((int)OperationsEnum.LoanRecapitilization == model.operationId)
+                        else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
                         {
-                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
-                            {
-                                model.interestRate = model.newInterest;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                            }
-                            else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                            {
-                                model.interestRate = model.newInterest;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
-                                model.interestFrequency = (short)model.newInterestFrequency;
-                            }
-                            else
-                            {
-
-                                model.interestRate = model.newInterest;
-                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
-                                model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                                model.interestFrequency = (short)model.newInterestFrequency;
-                                model.principalFrequency = (short)model.newPrincipalFrequency;
-                                model.scheduleMethodId = model.scheduleMethodId;
-                            }
-
-                            result = LoanRecapitilization(loanId, model, applicationDate, staffId);
-
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-                        else if ((int)OperationsEnum.LoanRecovery == model.operationId)
-                        {
-                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
-                            {
-                                model.interestRate = model.newInterest;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                            }
-                            else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                            {
-                                model.interestRate = model.newInterest;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
-                                model.interestFrequency = (short)model.newInterestFrequency;
-                            }
-                            else
-                            {
-                                model.interestRate = model.newInterest;
-                                model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
-                                model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
-                                model.maturityDate = (DateTime)model.newMaturityDate;
-                                model.effectiveDate = model.newEffectiveDate;
-                                model.tenor = model.newTenor;
-                                model.interestFrequency = (short)model.newInterestFrequency;
-                                model.principalFrequency = (short)model.newPrincipalFrequency;
-                            }
-
-                            result = LoanRecovery(loanId, model, twoFactorAuth, applicationDate, staffId);
-
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-                        else if ((int)OperationsEnum.CASAAccountChange == model.operationId)
-                        {
-                            result = ChangeOperativeAccount(model.oldCasaAccountId, (int)model.newCasaAccountId, loanId, facilityType);
-                            if (result == true)
-                            {
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
-                        }
-
-                        else if ((int)OperationsEnum.LoanTermination == model.operationId)
-                        {
-                            //model.interestRate = model.newInterest;
+                            model.interestRate = model.newInterest;
                             model.effectiveDate = model.newEffectiveDate;
-                            //model.maturityDate = (DateTime)model.newMaturityDate;
-                            result = LoanTermination(loanId, model, twoFactorAuth, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-
+                            model.tenor = model.newTenor;
+                            model.principalFirstpaymentDate = nextPaymentDate;
+                            model.interestFirstpaymentDate = nextPaymentDate;
                         }
-                        else if ((int)OperationsEnum.CancelUndisbursedLoan == model.operationId)
+                        else
                         {
-                            result = LoanCancellation(loanId, applicationDate, staffId);
-                            if (result == true)
+                            model.interestRate = model.newInterest;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                            model.principalFirstpaymentDate = nextPaymentDate;
+                            model.interestFirstpaymentDate = nextPaymentDate;
+                        }
+
+                        if (model.interestFirstpaymentDate <= model.effectiveDate)
+                        {
+                            throw new ConditionNotMetException("First Payment Date must be greater than Effective Date");
+                        }
+
+                        result = InterestRateReview(loanId, model, applicationDate, staffId);
+
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+
+                    }
+                    else if ((int)OperationsEnum.Prepayment == model.operationId)
+                    {
+                        if (model.isManagementInterestRate == true)
+                        {
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenorPrepayment;
+                            model.interestFirstpaymentDate = nextPaymentDate;
+                            model.principalFirstpaymentDate = nextPaymentDate;
+                        }
+                        else
+                        {
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenorPrepayment;
+                            model.interestFirstpaymentDate = nextPaymentDate;
+                            model.principalFirstpaymentDate = nextPaymentDate;
+                        }
+
+                        result = UpdateLoanPrepaymentSchedule(twoFactorAuth, loanId, model, applicationDate, staffId);
+
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.PaymentDateChange == model.operationId)
+                    {
+                        if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
+                        {
+                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
+                        }
+                        else
+                        {
+                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
+                            model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;
+                        }
+
+
+                        result = PaymentDateChange(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            updateLoanPrincipalInterestPaymentDate(model.interestFirstpaymentDate, model.principalFirstpaymentDate, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+
+                    }
+                    else if ((int)OperationsEnum.PrincipalFrequencyChange == model.operationId || (int)OperationsEnum.InterestFrequencyChange == model.operationId
+                        || (int)OperationsEnum.InterestandPrincipalFrequencyChange == model.operationId)
+                    {
+                        if ((int)OperationsEnum.PrincipalFrequencyChange == model.operationId)
+                        {
+                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment || scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
                             {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
+                                model.principalFrequency = (short)model.newPrincipalFrequency;
+                                model.interestFrequency = (short)model.newPrincipalFrequency;
                             }
                             else
                             {
-                                output = false;
+                                model.principalFrequency = (short)model.newPrincipalFrequency;
+                                model.interestFrequency = (short)model.interestFrequency;
                             }
 
                         }
+                        if ((int)OperationsEnum.InterestFrequencyChange == model.operationId)
+                        {
+                            if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment || scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
+                            {
+                                model.interestFrequency = (short)model.newInterestFrequency;
+                                model.principalFrequency = (short)model.newInterestFrequency;
+                            }
+                            else
+                            {
+                                model.interestFrequency = (short)model.newInterestFrequency;
+                                model.principalFrequency = (short)model.principalFrequency;
+                            }
 
-                        else if ((int)OperationsEnum.LoanReversal == model.operationId)
+                        }
+                        if ((int)OperationsEnum.InterestandPrincipalFrequencyChange == model.operationId)
+                        {
+                            model.interestFrequency = (short)model.newInterestFrequency;
+                            model.principalFrequency = (short)model.newPrincipalFrequency;
+                        }
+                        result = PaymentFrequencyChange(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            updateLoanFrequency((short)model.principalFrequency, (short)model.interestFrequency, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.CompleteWriteOff == model.operationId)
+                    {
+                        //model.interestRate = model.newInterest;
+                        //model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
+                        //model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
+                        //model.maturityDate = (DateTime)model.newMaturityDate;
+                        model.effectiveDate = model.newEffectiveDate;
+                        //model.tenor = model.newTenor;
+                        //model.interestFrequency = (short)model.newInterestFrequency;
+                        //model.principalFrequency = (short)model.newPrincipalFrequency;
+                        result = CompleteWriteOff(loanId, model, twoFactorAuth, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.TerminateAndRebook == model.operationId)
+                    {
+                        TerminateAndRebookLoanSchedule(loanId, model, twoFactorAuth, applicationDate, staffId);
+                        var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
+                        var data = (
+                                    from b in context.TBL_LOAN
+                                    where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.RELATED_LOAN_REFERENCE_NUMBER == loan.LOANREFERENCENUMBER
+                                    select new LoanPaymentRestructureScheduleInputViewModel()
+                                    {
+                                        loanId = b.TERMLOANID,
+                                        scheduleMethodId = b.SCHEDULETYPEID,
+                                        principalAmount = (double)b.OUTSTANDINGPRINCIPAL,
+                                        principalFrequency = b.PRINCIPALFREQUENCYTYPEID,
+                                        interestFrequency = b.INTERESTFREQUENCYTYPEID,
+                                        principalFirstpaymentDate = (DateTime)b.FIRSTPRINCIPALPAYMENTDATE,
+                                        interestFirstpaymentDate = (DateTime)b.FIRSTINTERESTPAYMENTDATE,
+                                        interestRate = b.INTERESTRATE,
+                                        effectiveDate = b.EFFECTIVEDATE,
+                                        maturityDate = b.MATURITYDATE,
+                                        accrualBasis = b.SCHEDULEDAYCOUNTCONVENTIONID,
+                                        firstDayType = b.SCHEDULEDAYINTERESTTYPEID,
+                                        integralFeeAmount = 0,
+                                        companyId = b.COMPANYID,
+                                        staffId = staffId,
+                                        createdBy = staffId,
+                                        customerId = b.CUSTOMERID,
+
+                                    }).FirstOrDefault();
+                        result = RegenerateSchedule(data.loanId, data, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.Fee_chargeChange == model.operationId)
+                    {
+                        result = ProcessChargeReversal(twoFactorAuth, loanId, model.operationId, staffId);
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.TenorChange == model.operationId)
+                    {
+                        if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
+                        {
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.tenor = model.newTenor;
+                        }
+                        else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
+                        {
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.tenor = model.newTenor;
+                            model.interestFirstpaymentDate = nextPaymentDate;
+                        }
+                        else
+                        {
+                            model.maturityDate = model.maturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.tenor = model.newTenor;
+                            model.principalFirstpaymentDate = nextPaymentDate;
+                            model.interestFirstpaymentDate = nextPaymentDate;
+                        }
+
+                        result = TenorExtension(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+
+                    else if ((int)OperationsEnum.LoanSales == model.operationId)
+                    {
+                        result = LoanSales(loanId, model, twoFactorAuth, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+
+                    else if ((int)OperationsEnum.Restructured == model.operationId)
+                    {
+                        if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
+                        {
+                            model.interestRate = model.newInterest;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                        }
+                        else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
+                        {
+                            model.interestRate = model.newInterest;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                            model.interestFrequency = (short)model.newInterestFrequency;
+                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
+                        }
+                        else
                         {
                             model.interestRate = model.newInterest;
                             model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
@@ -12611,19 +12919,190 @@ namespace FintrakBanking.Repositories.Credit
                             model.tenor = model.newTenor;
                             model.interestFrequency = (short)model.newInterestFrequency;
                             model.principalFrequency = (short)model.newPrincipalFrequency;
-                            result = LoanReversal(loanId, model, twoFactorAuth, applicationDate, staffId);
-                            if (result == true)
-                            {
-                                updateLoanReviewOperation(loanReviewOperationsId, loanId);
-                                output = true;
-                            }
-                            else
-                            {
-                                output = false;
-                            }
-
                         }
-                    
+                        result = Restructured(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.LoanWorkOut == model.operationId)
+                    {
+                        model.interestRate = model.newInterest;
+                        model.effectiveDate = model.newEffectiveDate;
+                        model.scheduleMethodId = (short)LoanScheduleTypeEnum.IrregularSchedule;
+                        result = LoanWorkOut(loanId, model, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+
+                    else if ((int)OperationsEnum.LoanRecapitilization == model.operationId)
+                    {
+                        if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
+                        {
+                            model.interestRate = model.newInterest;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                        }
+                        else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
+                        {
+                            model.interestRate = model.newInterest;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
+                            model.interestFrequency = (short)model.newInterestFrequency;
+                        }
+                        else
+                        {
+
+                            model.interestRate = model.newInterest;
+                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
+                            model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                            model.interestFrequency = (short)model.newInterestFrequency;
+                            model.principalFrequency = (short)model.newPrincipalFrequency;
+                            model.scheduleMethodId = model.scheduleMethodId;
+                        }
+
+                        result = LoanRecapitilization(loanId, model, applicationDate, staffId);
+
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.LoanRecovery == model.operationId)
+                    {
+                        if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
+                        {
+                            model.interestRate = model.newInterest;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                        }
+                        else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
+                        {
+                            model.interestRate = model.newInterest;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
+                            model.interestFrequency = (short)model.newInterestFrequency;
+                        }
+                        else
+                        {
+                            model.interestRate = model.newInterest;
+                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
+                            model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
+                            model.maturityDate = (DateTime)model.newMaturityDate;
+                            model.effectiveDate = model.newEffectiveDate;
+                            model.tenor = model.newTenor;
+                            model.interestFrequency = (short)model.newInterestFrequency;
+                            model.principalFrequency = (short)model.newPrincipalFrequency;
+                        }
+
+                        result = LoanRecovery(loanId, model, twoFactorAuth, applicationDate, staffId);
+
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.CASAAccountChange == model.operationId)
+                    {
+                        result = ChangeOperativeAccount(model.oldCasaAccountId, (int)model.newCasaAccountId, loanId, facilityType);
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+
+                    else if ((int)OperationsEnum.LoanTermination == model.operationId)
+                    {
+                        //model.interestRate = model.newInterest;
+                        model.effectiveDate = model.newEffectiveDate;
+                        //model.maturityDate = (DateTime)model.newMaturityDate;
+                        result = LoanTermination(loanId, model, twoFactorAuth, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.CancelUndisbursedLoan == model.operationId)
+                    {
+                        result = LoanCancellation(loanId, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+
+                    else if ((int)OperationsEnum.LoanReversal == model.operationId)
+                    {
+                        model.interestRate = model.newInterest;
+                        model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
+                        model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
+                        model.maturityDate = (DateTime)model.newMaturityDate;
+                        model.effectiveDate = model.newEffectiveDate;
+                        model.tenor = model.newTenor;
+                        model.interestFrequency = (short)model.newInterestFrequency;
+                        model.principalFrequency = (short)model.newPrincipalFrequency;
+                        result = LoanReversal(loanId, model, twoFactorAuth, applicationDate, staffId);
+                        if (result == true)
+                        {
+                            updateLoanReviewOperation(loanReviewOperationsId, loanId);
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+
 
                 }
 

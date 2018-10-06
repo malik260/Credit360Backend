@@ -2498,8 +2498,8 @@ namespace FintrakBanking.Repositories.Finance
         public bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model)
 
         {
-            model.branchId = 100;
-            model.staffId = 1;
+            //model.branchId = 100;
+            //model.staffId = 1;
             //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -2521,8 +2521,8 @@ namespace FintrakBanking.Repositories.Finance
             debit.casaAccountId = model.debitCasaAccountId;
             debit.debitAmount = model.actualAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = model.branchId;
-            debit.destinationBranchId = model.branchId;
+            debit.sourceBranchId = model.sourceBranchId;
+            debit.destinationBranchId = model.destinationBranchId;
             debit.batchId = model.batchId;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
@@ -2545,8 +2545,8 @@ namespace FintrakBanking.Repositories.Finance
             credit.casaAccountId = model.creditCasaAccountId;
             credit.debitAmount = 0;
             credit.creditAmount = model.actualAmount;
-            credit.sourceBranchId = model.branchId;
-            credit.destinationBranchId = model.branchId;
+            credit.sourceBranchId = model.sourceBranchId;
+            credit.destinationBranchId = model.destinationBranchId;
             credit.batchId = model.batchId;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();

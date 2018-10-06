@@ -69,7 +69,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
 
+            const int BUSINESS_UNIT_GROUP = 1; //Todo: Business unit approval group
 
+            if (operationId == (int)OperationsEnum.LoanApplication)
+            {
+                var businessIds = (from a in  context.TBL_APPROVAL_LEVEL where a.GROUPID == BUSINESS_UNIT_GROUP select a.APPROVALLEVELID).ToList();
+                if (businessIds.Count > 0)
+                {
+                    ids.AddRange(businessIds);
+                } 
+            }
+          
             List<CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
             var detailItem = (from s in context.TBL_CHECKLIST_DETAIL
                               join k in context.TBL_CHECKLIST_DEFINITION
