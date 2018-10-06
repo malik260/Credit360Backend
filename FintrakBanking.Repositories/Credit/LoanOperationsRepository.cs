@@ -7996,8 +7996,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var loanSchePeriodic = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.TBL_LOAN.TERMLOANID == loanId
                    && x.PAYMENTDATE >= effectiveDate && x.PAYMENTDATE <= currentDate && x.PAYMENTNUMBER != 0).OrderBy(x => x.PERIODICSCHEDULEID);
-            int Count = loanSchePeriodic.Count();
-            if (Count == 0)
+            int countRepayments = loanSchePeriodic.Count();
+            if (countRepayments == 0)
             {
                 throw new SecureException("Application Date not found in Payment Schedule");
             }
@@ -8009,8 +8009,8 @@ namespace FintrakBanking.Repositories.Credit
                         ).Sum(a => (double?)a.DAILYINTERESTAMOUNT ?? 0)
                         select dailyAccruedInterest;
 
-            decimal previousAccruedInterest = (decimal?)previousDailyInterest.FirstOrDefault() ?? 0;
-            decimal.Round(previousAccruedInterest, 2, MidpointRounding.AwayFromZero);
+            decimal previousAccruedDailyInterest = (decimal?)previousDailyInterest.FirstOrDefault() ?? 0;
+            decimal.Round(previousAccruedDailyInterest, 2, MidpointRounding.AwayFromZero);
 
             var currentDailyInterest = from d in context.TBL_LOAN_SCHEDULE_DAILY_TEMP
                         where d.LOANID == loanId
@@ -8019,8 +8019,8 @@ namespace FintrakBanking.Repositories.Credit
                         ).Sum(a => (double?)a.DAILYINTERESTAMOUNT ?? 0)
                         select dailyAccruedInterest;
 
-            decimal currentAccruedInterest = (decimal?)currentDailyInterest.FirstOrDefault() ?? 0;
-            decimal.Round(currentAccruedInterest, 2, MidpointRounding.AwayFromZero);
+            decimal currentAccruedDailyInterest = (decimal?)currentDailyInterest.FirstOrDefault() ?? 0;
+            decimal.Round(currentAccruedDailyInterest, 2, MidpointRounding.AwayFromZero);
 
             var previousPeriodic = from d in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
                         where d.LOANID == loanId
@@ -8072,10 +8072,9 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             date = a.DATE,
                             amount = b.PERIODINTERESTAMOUNT
-
                         }).ToList();
 
-            List<PastDueOnPastDueViewModel1> abc = new List<PastDueOnPastDueViewModel1>();
+            List<PastDueOnPastDueViewModel1> currentPastDuesInterst = new List<PastDueOnPastDueViewModel1>();
 
 
             foreach (var item in pastDueList)
@@ -8087,17 +8086,16 @@ namespace FintrakBanking.Repositories.Credit
                 xyz.count = (int)(currentDate - item.date).TotalDays;
                 xyz.interestOnAmount = ((pastDueRate / 100) * ((int)(currentDate - item.date).TotalDays) * item.amount);
 
-                abc.Add(xyz);
+                currentPastDuesInterst.Add(xyz);
 
             }
 
-            var data7 = from d in abc
-                        select d.interestOnAmount;
-            decimal currentPastDueInterest = (decimal?)data7.FirstOrDefault() ?? 0;
+            var pastDueItems = from d in currentPastDuesInterst
+                               select d.interestOnAmount;
+            decimal currentPastDueInterest = (decimal?)pastDueItems.FirstOrDefault() ?? 0;
 
 
-
-            var model = (from a in context.TBL_LOAN_PAST_DUE
+            var pastDueForPrincipals = (from a in context.TBL_LOAN_PAST_DUE
                          join b in context.TBL_LOAN_SCHEDULE_PERIODIC on a.LOANID equals b.LOANID
                          where a.DATE >= DbFunctions.TruncateTime(effectiveDate) && a.DATE <= DbFunctions.TruncateTime(currentDate)
                          && a.TRANSACTIONTYPEID == (int)LoanTransactionTypeEnum.Principal && a.DATE == b.PAYMENTDATE
@@ -8109,10 +8107,10 @@ namespace FintrakBanking.Repositories.Credit
 
                          }).ToList();
 
-            List<PastDueOnPastDueViewModel1> abcPrincipal = new List<PastDueOnPastDueViewModel1>();
+            List<PastDueOnPastDueViewModel1> currentPastDuesPrincipal = new List<PastDueOnPastDueViewModel1>();
 
 
-            foreach (var item in model)
+            foreach (var item in pastDueForPrincipals)
             {
                 PastDueOnPastDueViewModel1 xyzPrincipal = new PastDueOnPastDueViewModel1();
 
@@ -8121,17 +8119,16 @@ namespace FintrakBanking.Repositories.Credit
                 xyzPrincipal.count = (int)(currentDate - item.date).TotalDays;
                 xyzPrincipal.interestOnAmount = ((pastDueRate / 100) * ((int)(currentDate - item.date).TotalDays) * item.amount);
 
-
-                abcPrincipal.Add(xyzPrincipal);
-
+                currentPastDuesPrincipal.Add(xyzPrincipal);
             }
 
-            var data8 = from d in abcPrincipal
+            var pastDueItemsPrincipal = from d in currentPastDuesPrincipal
                         select d.interestOnAmount;
-            decimal currentPastDuePrincipal = (decimal?)data8.FirstOrDefault() ?? 0;
+
+            decimal currentPastDuePrincipal = (decimal?)pastDueItemsPrincipal.FirstOrDefault() ?? 0;
 
 
-            decimal accruedInterestDiff = previousAccruedInterest - currentAccruedInterest;
+            decimal accruedDailyInterestDiff = previousAccruedDailyInterest - currentAccruedDailyInterest;
             decimal periodicInterestDiff = previousPeriodicInterest - currentPeriodicInterest;
             decimal periodicPrincipalDiff = previousPeriodicPrincipal - currentPeriodicPrincipal;
             decimal pastDueInterestDiff = loan.INTERESTONPASTDUEINTEREST - currentPastDueInterest;
@@ -8139,19 +8136,19 @@ namespace FintrakBanking.Repositories.Credit
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             //All the posting here are not correct please, we need to build each if we are to debit or credit the customer
-            if (Count < 1 && effectiveDate == currentDate)
+            if (countRepayments < 1 && effectiveDate == currentDate)
             {
             }
-            else if (Count < 1 && effectiveDate <= currentDate)
+            else if (countRepayments < 1 && effectiveDate <= currentDate)
             {
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId)); //change later));
+                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId)); //change later));
 
                 //result = financeTransaction.PostTransaction(inputTransactions);
             }
             else
             {
-                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
+                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
 
                 inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal", loanInput.operationId));
 
