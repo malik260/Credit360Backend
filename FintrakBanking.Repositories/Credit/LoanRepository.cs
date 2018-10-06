@@ -212,7 +212,30 @@ namespace FintrakBanking.Repositories.Credit
             else throw new ConditionNotMetException("Loan Product Type not defined for Loan Booking");
 
         }
+        public bool TwoFactorAuthenticationEnabledWithoutFeeOverride(LoanViewModel model)
+        {
+            var output = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
 
+            if (output == true)
+            {
+                var customer = context.TBL_CUSTOMER.Find(model.customerId);
+
+                    var data = context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false
+                                                            && e.CUSTOMERCODE == customer.CUSTOMERCODE
+                                                            && e.APPROVALSTATUSID ==
+                                                            (int)ApprovalStatusEnum.Approved
+                                                            && e.OVERRIDE_ITEMID == (short)OverrideEnum.TakeFeeAtDisbursement).FirstOrDefault();
+                    if (data == null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+            }
+            return false;
+        }
         private bool confirmCustomerAccountFunded(List<LoanChargeFeeViewModel> model, int casaAccountId, int companyId, int customerId,string loanReferenceNumber )
         {
             decimal AllfeeAmount = 0;
@@ -887,6 +910,11 @@ namespace FintrakBanking.Repositories.Credit
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             var systemDate = generalSetup.GetApplicationDate();
+
+            
+            var loanTenorDays = (entity.maturityDate - entity.effectiveDate).Days;
+            if (loanTenorDays > applicationDetail.APPROVEDTENOR)
+                throw new ConditionNotMetException("The loan tenor cannot be more than the tenor of its line");
 
             if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                 throw new ConditionNotMetException("Specify the recieving account.");
@@ -4900,7 +4928,6 @@ namespace FintrakBanking.Repositories.Credit
                     || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
                     || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
                     && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
-                    //&& bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)
                     && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                     && operationIds.Contains(atrail.OPERATIONID)
                     && atrail.RESPONSESTAFFID == null
@@ -5022,6 +5049,14 @@ namespace FintrakBanking.Repositories.Credit
                             if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount4 = customerAvailableAmount4 + loan.PRINCIPALAMOUNT;
                         }
                         item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount4;
+                        break;
+                    case (short)LoanProductTypeEnum.SyndicatedTermLoan:
+                        decimal customerAvailableAmount5 = 0;
+                        foreach (var loan in loans)
+                        {
+                            if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount = customerAvailableAmount5 + loan.PRINCIPALAMOUNT;
+                        }
+                        item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount5;
                         break;
                 }
 
@@ -6216,7 +6251,7 @@ namespace FintrakBanking.Repositories.Credit
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                            systemCurrentDate = currentDate,
                                            lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
-
+                                           loanSystemTypeId = b.LOANSYSTEMTYPEID
                                        }).ToList();
                 return allFilteredLoan;
             }
