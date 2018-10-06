@@ -2473,7 +2473,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking)
                 {
 
-                    int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE) - 1;
+                    int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE);
                     var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
 
                     loanRecord.OUTSTANDINGINTEREST = totalInterest;
