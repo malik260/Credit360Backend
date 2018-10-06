@@ -218,10 +218,23 @@ namespace FintrakBanking.Repositories.Credit
 
             if (output == true)
             {
-                //confirmCustomerAccountFunded(model.loanChargeFee, model.casaAccountId, model.companyId, model.customerId, loanReferenceNumber);
-            }
+                var customer = context.TBL_CUSTOMER.Find(model.customerId);
 
-            return output;
+                    var data = context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false
+                                                            && e.CUSTOMERCODE == customer.CUSTOMERCODE
+                                                            && e.APPROVALSTATUSID ==
+                                                            (int)ApprovalStatusEnum.Approved
+                                                            && e.OVERRIDE_ITEMID == (short)OverrideEnum.TakeFeeAtDisbursement).FirstOrDefault();
+                    if (data == null)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+            }
+            return false;
         }
         private bool confirmCustomerAccountFunded(List<LoanChargeFeeViewModel> model, int casaAccountId, int companyId, int customerId,string loanReferenceNumber )
         {

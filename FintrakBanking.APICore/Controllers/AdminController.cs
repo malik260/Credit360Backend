@@ -689,28 +689,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-        //[HttpGet]
-        //[ClaimsAuthorization]
-        //[Route("two-factor-auth-enabled-fee-override")]
-        //public HttpResponseMessage TwoFactorAuthenticationEnabledWithoutFeeOverride( )
-        //{
-        //    try
-        //    {
-        //        var data = repo.TwoFactorAuthenticationEnabledWithoutFeeOverride();
-        //        if (!data)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = false, result = data, message = "" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = true, result = data });
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK,
-        //              new { success = false, message = ex.Message });
-        //    }
-        //}
+     
         [HttpGet]
         [ClaimsAuthorization]
         [Route("two-factor-auth-last-approval")]
