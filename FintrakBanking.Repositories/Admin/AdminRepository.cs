@@ -930,6 +930,12 @@ namespace FintrakBanking.Repositories.Admin
             var output = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
             return output;
         }
+        public bool TwoFactorAuthenticationEnabledWithoutFeeOverride()
+        {
+            var output = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
+            return output;
+        }
+        
         public bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId, decimal levelAmount = 0)
         {
             bool output = false;

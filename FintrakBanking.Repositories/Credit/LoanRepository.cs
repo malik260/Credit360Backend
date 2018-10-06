@@ -212,7 +212,17 @@ namespace FintrakBanking.Repositories.Credit
             else throw new ConditionNotMetException("Loan Product Type not defined for Loan Booking");
 
         }
+        public bool TwoFactorAuthenticationEnabledWithoutFeeOverride(LoanViewModel model)
+        {
+            var output = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
 
+            if (output == true)
+            {
+                //confirmCustomerAccountFunded(model.loanChargeFee, model.casaAccountId, model.companyId, model.customerId, loanReferenceNumber);
+            }
+
+            return output;
+        }
         private bool confirmCustomerAccountFunded(List<LoanChargeFeeViewModel> model, int casaAccountId, int companyId, int customerId,string loanReferenceNumber )
         {
             decimal AllfeeAmount = 0;
