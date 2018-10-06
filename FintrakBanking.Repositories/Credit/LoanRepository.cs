@@ -6239,7 +6239,7 @@ namespace FintrakBanking.Repositories.Credit
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                            systemCurrentDate = currentDate,
                                            lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
-
+                                           loanSystemTypeId = b.LOANSYSTEMTYPEID
                                        }).ToList();
                 return allFilteredLoan;
             }
