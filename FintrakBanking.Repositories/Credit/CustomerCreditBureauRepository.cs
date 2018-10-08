@@ -586,8 +586,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (chargeAmount > accountBalance)
             {
-                if(!searchInfo.debitBusiness)
-                throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                if (!searchInfo.debitBusiness)
+                    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -611,7 +611,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
-                    if (task.Wait(TimeSpan.FromSeconds(4500)))
+                    if (task.Wait(TimeSpan.FromSeconds(2000)))
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {
@@ -944,8 +944,8 @@ namespace FintrakBanking.Repositories.Credit
                     if (binaryData == null)
                         throw new SecureException("File report not found. Please try again.");
 
-                    //var base64StringData = Convert.ToBase64String(binaryData);
-                    //byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
+                    var base64StringData = Convert.ToBase64String(binaryData);
+                    byte[] fileArray = Encoding.ASCII.GetBytes(base64StringData);
 
                     using (var docTrans = docContext.Database.BeginTransaction())
                     using (var trans = context.Database.BeginTransaction())
@@ -953,7 +953,7 @@ namespace FintrakBanking.Repositories.Credit
                         try
                         {
                             var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
-                            if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
+                            if (!SaveCreditBureauReportFile(customerCreditBureauId, fileArray, searchInput))
                             {
                                 response.fileSaved = false;
                                 response.errorOccured = true;
@@ -962,8 +962,8 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             else
                             {
-                                response.file = binaryData;
-                                response.searchResult = Convert.ToBase64String(binaryData); //Encoding.ASCII.GetString(binaryData);
+                                response.file = fileArray;
+                                response.searchResult = base64StringData; // Convert.ToBase64String(fileArray); //Encoding.ASCII.GetString(binaryData);
                                 response.errorOccured = false;
                                 response.status = 0;
                                 response.fileSaved = true;
