@@ -212,30 +212,24 @@ namespace FintrakBanking.Repositories.Credit
             else throw new ConditionNotMetException("Loan Product Type not defined for Loan Booking");
 
         }
+
         public bool TwoFactorAuthenticationEnabledWithoutFeeOverride(LoanViewModel model)
         {
-            var output = context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION;
-
-            if (output == true)
+            if (context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_TWO_FACTOR_AUTHENTICATION)
             {
                 var customer = context.TBL_CUSTOMER.Find(model.customerId);
+                var customerOverrides = context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false 
+                                    && e.CUSTOMERCODE == customer.CUSTOMERCODE
+                                    && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                    && e.OVERRIDE_ITEMID == (short)OverrideEnum.TakeFeeAtDisbursement
+                                 );
 
-                    var data = context.TBL_OVERRIDE_DETAIL.Where(e => e.ISUSED == false
-                                                            && e.CUSTOMERCODE == customer.CUSTOMERCODE
-                                                            && e.APPROVALSTATUSID ==
-                                                            (int)ApprovalStatusEnum.Approved
-                                                            && e.OVERRIDE_ITEMID == (short)OverrideEnum.TakeFeeAtDisbursement).FirstOrDefault();
-                    if (data == null)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                return customerOverrides.Count() > 0;
             }
+
             return false;
         }
+
         private bool confirmCustomerAccountFunded(List<LoanChargeFeeViewModel> model, int casaAccountId, int companyId, int customerId,string loanReferenceNumber )
         {
             decimal AllfeeAmount = 0;
