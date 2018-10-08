@@ -882,7 +882,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == item.loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate));
                 var interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
 
-                item.periodInterestAmount = interestAmount;
+                item.periodInterestAmount = interestAmount; ///TODO will not work for CP since its unscheduled 
 
 
                 if (product.PRODUCTCLASSID != (short)ProductClassEnum.InvoiceDiscountingFacility)
