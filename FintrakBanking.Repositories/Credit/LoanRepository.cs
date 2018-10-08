@@ -7422,7 +7422,7 @@ namespace FintrakBanking.Repositories.Credit
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
-                                       writtenOff = a.LOANSTATUSID == 7
+                                       writtenOff = a.LOANSTATUSID == 7,
                                    });
 
             return allFilteredLoan;
@@ -7532,14 +7532,14 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
-        public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int loanSystemTypeId, string searchQuery)
+        public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery)
         {
             //if (searchQuery == "test1") throw new Exception("Exception 1");
             //if (searchQuery == "test2") throw new SecureException("SecuredException 2");
             //if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
 
-            bool all = (performanceTypeId != 1) && (performanceTypeId != 2);
-            bool performing = performanceTypeId == 1;
+            //bool all = (performanceTypeId != 1) && (performanceTypeId != 2);
+            //bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
 
             IEnumerable<LoanViewModel> allFilteredLoan = null;
@@ -7552,11 +7552,11 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
                 {
-                    allFilteredLoan = SearchTermLoan(searchQuery).Where(x => x.isPerforming == performing || all);
+                    allFilteredLoan = SearchTermLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
                 }
                 else if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
                 {
-                    allFilteredLoan = SearchRevolvingLoan(searchQuery).Where(x => x.isPerforming == performing || all);
+                    allFilteredLoan = SearchRevolvingLoan(searchQuery);//.Where(x => x.isPerforming == performing || all);
                 }
                 else if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
                 {
@@ -7573,10 +7573,10 @@ namespace FintrakBanking.Repositories.Credit
 
             }
 
-            if (performanceTypeId == 3) // writeoff
-            {
-                allFilteredLoan = allFilteredLoan.Where(x => x.writtenOff == true);
-            }
+            //if (performanceTypeId == 3) // writeoff
+            //{
+            //    allFilteredLoan = allFilteredLoan.Where(x => x.writtenOff == true);
+            //}
 
             return allFilteredLoan;
         }

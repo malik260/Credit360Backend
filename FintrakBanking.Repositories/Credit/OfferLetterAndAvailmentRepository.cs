@@ -1805,8 +1805,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.OperationId = operationId;
             workflow.TargetId = loanApplication.LOANAPPLICATIONID;
             workflow.CompanyId = loanApplication.COMPANYID;
-            workflow.ProductClassId = loanApplication.PRODUCTCLASSID;
-            workflow.ProductId = null;
+            //workflow.ProductClassId = loanApplication.PRODUCTCLASSID; // commented out to allow B&G approval fly
             workflow.StatusId = initiated == true ? (int)ApprovalStatusEnum.Approved : (int)ApprovalStatusEnum.Processing;
             workflow.Comment = entity.comment;
             workflow.Amount = entity.amount;
