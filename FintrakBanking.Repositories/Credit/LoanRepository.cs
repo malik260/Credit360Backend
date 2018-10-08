@@ -932,11 +932,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException($"Commercial Loan maturity date should not exceed the line expiry date [{applicationDetail.EXPIRYDATE}]. ");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
-            //if (loans.Any())
-            //{
-            //    if (loans.First().OUTSTANDINGPRINCIPAL > 0)
-            //        throw new ConditionNotMetException("The customer already have a running Commercial Loan which has not been paid down");
-            //}
+
 
             var principalAmount = from a in context.TBL_LOAN
                                   where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
@@ -4960,7 +4956,7 @@ namespace FintrakBanking.Repositories.Credit
                         effectiveDate = (DateTime)d.EFFECTIVEDATE,
                         expiryDate = (DateTime)d.EXPIRYDATE,
 
-                        ////currencyId = d.CURRENCYID,
+                        currencyId = d.TBL_CURRENCY.CURRENCYID,
                         currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
                         exchangeRate = d.EXCHANGERATE,
                         loanTypeId = m.LOANAPPLICATIONTYPEID,
@@ -5065,6 +5061,16 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     item.amountDisbursed = disbursedLoan.Sum(c => c.PRINCIPALAMOUNT);
                 }
+
+                //var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == item.currencyId).FirstOrDefault();
+                //var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+
+                //var interestRate = Convert.ToDouble(item.interestRate);
+                //if (priceIndex != null)
+                //{
+                //    //priceIndex.PRICEINDEXNAME
+                //    interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                //}
             }
             data = (from a in data where ((a.customerAvailableAmount >= 0)) select a).ToList();
             return data;

@@ -58,6 +58,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public LoanCreditBureauViewModel customerCreditBureauUploadDetails { get; set; }
         public int casaAccountId { get; set; }
         public bool chargeBusiness { get; set; }
+        public bool debitBusiness { get; set; }
     }
 
     public class XDSIndividualSearchViewModel

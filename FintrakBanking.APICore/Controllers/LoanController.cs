@@ -1045,7 +1045,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                         dynamicMessage = "Loan disapproval was successful";
 
                     return Request.CreateResponse(HttpStatusCode.OK,
-                                            new { success = true, message = "Loan disapproval was successful" });
+                                            new { success = true, message = dynamicMessage  });
                 }
                 else
                 {
