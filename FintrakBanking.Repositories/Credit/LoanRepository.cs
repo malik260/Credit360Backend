@@ -1311,10 +1311,10 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                 }
-                catch (BadLogicException be)
+                catch (BadLogicException xe)
                 {
                     trans.Rollback();
-                    throw new BadLogicException(be.Message);
+                    throw new BadLogicException(xe.Message);
                 }
                 catch (ConditionNotMetException ce)
                 {
