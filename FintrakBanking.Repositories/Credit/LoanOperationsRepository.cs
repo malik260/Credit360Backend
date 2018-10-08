@@ -1264,7 +1264,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
-                if (item.amountCollected != source.AMOUNTCOLLECTED)
+                if (item.amountCollected != source.AMOUNTCOLLECTED && item.amountCollected > 0)
                 {
                     model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
                     model.operationId = source.OPERATIONID;
