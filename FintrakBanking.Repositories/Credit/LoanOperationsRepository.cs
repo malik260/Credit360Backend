@@ -1253,8 +1253,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 source = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
-                          where p.BATCHID == item.batchId && p.BATCHREFID
-                                                  == item.batchRefId
+                          where p.BATCHID == item.batchId && p.BATCHREFID == item.batchRefId
                           select p).SingleOrDefault();
 
                 if (source == null)
@@ -1298,7 +1297,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
 
-                    if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
+                    if (operationType == OperationsEnum.InterestLoanRepayment || operationType == OperationsEnum.PrincipalLoanRepayment)
                     {
 
                         List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
@@ -1309,7 +1308,7 @@ namespace FintrakBanking.Repositories.Credit
                         var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
 
 
-                        if (model.flowType == "BIF")
+                        if (model.flowType == "BIF" && item.amountCollected < item.amount)
                         {
 
                             transType = (byte)LoanTransactionTypeEnum.Interest;
@@ -1334,7 +1333,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT * -1);
                         }
-                        else if (model.flowType == "BPP")
+                        else if (model.flowType == "BPP" && item.amountCollected < item.amount)
                         {
                             transType = (byte)LoanTransactionTypeEnum.Principal;
                             lienType = (short)LienTypeEnum.PrincipalRepayment;
