@@ -20,6 +20,7 @@ namespace FintrakBanking.Common.Enum
         RegulatoryChecklist = 2,
         ESGMChecklist = 3,
         PreLendingCallGrid = 4,
+        CAPChecklist = 5,
         AvailmentCheckList = 6
     }
 }

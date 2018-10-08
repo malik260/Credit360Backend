@@ -18,15 +18,16 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/workflow")]
     public class JobRequestController : ApiControllerBase
     {
-        TokenDecryptionHelper token = new TokenDecryptionHelper();
+        
         private IJobRequestRepository repo;
 
         public JobRequestController(IJobRequestRepository repo)
         {
             this.repo = repo;
         }
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-request")]
         public HttpResponseMessage GetJobRequest()
         {
@@ -409,7 +410,7 @@ namespace FintrakBanking.APICore.Controllers
          {
             try
             {
-                entity.companyId = token.GetCompanyId;
+                entity.companyId = (int)token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;

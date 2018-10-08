@@ -49,13 +49,15 @@ namespace FintrakBanking.ReportObjects.Credit
                                       select new OfferLetterViewModel
                                       {
                                           companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
-                                          customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
-                                          customerAddress = e.ADDRESS ?? " ",
-                                          customerEmailAddress = b.EMAILADDRESS,
-                                          customerPhoneNumber = g.PHONENUMBER,
+                                          customerName = customerExist != null ? context.TBL_CUSTOMER.Where(x=>x.CUSTOMERID == customerExist).Select(f=>f.TITLE + " " + f.FIRSTNAME + " " + f.LASTNAME).FirstOrDefault(): c.GROUPNAME,
+                                          customerAddress = customerExist != null ? context.TBL_CUSTOMER_ADDRESS.Where(x => x.CUSTOMERID == customerExist).Select(f => f.ADDRESS).FirstOrDefault() : e.ADDRESS ?? " ",
+                                         
+                                          customerEmailAddress = customerExist != null ? context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerExist).Select(f => f.EMAILADDRESS).FirstOrDefault() : b.EMAILADDRESS,
+                                          customerPhoneNumber = customerExist != null ? context.TBL_CUSTOMER_PHONECONTACT.Where(x => x.CUSTOMERID == customerExist).Select(f => f.PHONENUMBER).FirstOrDefault() : g.PHONENUMBER,
                                           isFinal = h.ISFINAL,
                                           operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
-                                        //  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+                                          //  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
+                                          //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
 
                                       }).FirstOrDefault();
 
@@ -71,6 +73,22 @@ namespace FintrakBanking.ReportObjects.Credit
 
             return offerLetterDetails;
         }
+
+        public static OfferLetterViewModel GetManagementPosition(int loanId)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            //var managementPosition = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanId).Select(x=>x.MANAGEMENTPOSITION).FirstOrDefault();
+            var managementPosition =  (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                         where a.LOANAPPLICATIONID == loanId
+                         select new OfferLetterViewModel
+                         {
+                             managementPosition = a.MANAGEMENTPOSITION,
+                         }).FirstOrDefault();
+            return managementPosition;
+        }
+
+
 
         public static List<SignatoryViewModel> GetLoanApplicationSignatory(string applicationRefNumber)
         {

@@ -241,9 +241,21 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
         public string GetGeneratedOfferLetterLMS(string applicationRefNumber)
         {
-            HashProperty hashValue = GetHashedDateValue(dateInfor);
+            FinTrakBankingContext context = new FinTrakBankingContext();
+            var OpID = context.TBL_LMSR_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(a => a).FirstOrDefault();
+            if(OpID.OPERATIONID == (int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal)
+            {
+                HashProperty hashValue = GetHashedDateValue(dateInfor);
 
-            return reportPath + "Credit/OfferLetterGeneration/OfferLetterLMSR.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+                return reportPath + "Credit/OfferLetterGeneration/ClassifiedAssetManagement.aspx?loanId=" + OpID.LOANAPPLICATIONID + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+            }
+            else
+            {
+                HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+                return reportPath + "Credit/OfferLetterGeneration/OfferLetterLMSR.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+
+            }
         }
 
         public string GetProductSpecificTemplate(short? productClassProcessId, short? productClassId, string applicationRefNumber)

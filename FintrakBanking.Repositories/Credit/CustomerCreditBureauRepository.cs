@@ -450,14 +450,14 @@ namespace FintrakBanking.Repositories.Credit
                 searchInfoList.password = creditBureau.PASSWORD;
             }
             else
-                throw new ConditionNotMetException("Could not resolve the selected Credit Bureau entity. Contact admin.");
+                throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin.");
 
             List<string> searchResult = new List<string>();
             var feedBackString = string.Empty;
             try
             {
                 var task = Task.Run(() => feedBackString = _creditBureau.XDSSearchCreditBureau(searchInfoList));
-                if (task.Wait(TimeSpan.FromSeconds(600)))
+                if (task.Wait(TimeSpan.FromSeconds(2000)))
                 {
                     resultData = new XDSSearchResult()
                     {
@@ -518,11 +518,11 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (BadLogicException ex)
             {
-                throw new ConditionNotMetException(ex.Message);
+                throw new BadLogicException(ex.Message);
             }
             catch (APIErrorException ex)
             {
-                throw new ConditionNotMetException(ex.Message);
+                throw new APIErrorException(ex.Message);
             }
             catch (Exception ex)
             {
@@ -573,6 +573,9 @@ namespace FintrakBanking.Repositories.Credit
 
             var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
 
+            if (creditBureauInputs.casaAccountId == 0)
+                throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin.");
+
             if (casa == null) throw new SecureException("Norminated Account Does not Exist");
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
@@ -583,7 +586,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (chargeAmount > accountBalance)
             {
-                throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                if (!searchInfo.debitBusiness)
+                    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -607,7 +611,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
-                    if (task.Wait(TimeSpan.FromSeconds(2500)))
+                    if (task.Wait(TimeSpan.FromSeconds(2000)))
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {
@@ -657,33 +661,31 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else
                     {
-                       // ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                         throw new ConditionNotMetException("Search result Timed out");
                     }
                 }
                 catch (ConditionNotMetException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message.ToString());
+                    throw new ConditionNotMetException(ex.Message);
 
                 }
                 catch (APIErrorException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message.ToString());
+                    throw new ConditionNotMetException(ex.Message);
 
                 }
                 catch (SecureException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message.ToString());
+                    throw new ConditionNotMetException(ex.Message);
 
                 }
                 catch (Exception ex)
                 {
-                    //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                     trans.Rollback();
-                    throw new BadLogicException(ex.Message.ToString());
+                    throw new BadLogicException(ex.Message);
                     
                 }
             }
@@ -703,7 +705,7 @@ namespace FintrakBanking.Repositories.Credit
                 creditBureauId = request.creditBureauId,
                 casaAccountId = request.casaAccountId,
                 searchType = request.searchType,
-
+                
                 customerCreditBureauUploadDetails = new LoanCreditBureauViewModel
                 {
                     creditBureauId = request.creditBureauId,
@@ -712,25 +714,36 @@ namespace FintrakBanking.Repositories.Credit
                     customerId = request.customerId,
                     chargeAmount = request.companyDirectorId != 0 ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT,
                     usedIntegration = true,
-                    dateCompleted = DateTime.Now
+                    dateCompleted = DateTime.Now,
+                    debitBusiness = request.debitBusiness
                 }
-
             };
 
             var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
-            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+            if (casa == null && !request.debitBusiness) throw new SecureException("Norminated Account Does not Exist");
 
-            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
+            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa.PRODUCTACCOUNTNUMBER : null;
 
-            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+            decimal accountBalance = 0;
+
+            if(casa != null) accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
 
             var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
 
             if (chargeAmount > accountBalance)
             {
+                if(!request.debitBusiness)
                 throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             }
+
+            if (creditBureau != null)
+            {
+                request.userName = creditBureau.USERNAME;
+                request.password = creditBureau.PASSWORD;
+            }
+            else
+                throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
@@ -750,6 +763,23 @@ namespace FintrakBanking.Repositories.Credit
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauMerge(request));
                     if (task.Wait(TimeSpan.FromSeconds(2000)))
                     {
+                        JObject json = JObject.Parse(searchResponse.SearchResult);
+                        if (json.Count >= 1)
+                        {
+                            if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
+                            {
+                                string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
+                                errorCode.Replace("{", string.Empty);
+                                errorCode.Replace("}", string.Empty);
+                                var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
+                                if (errorLog.Any())
+                                {
+                                    throw new APIErrorException("Credit Bureau API Error - " + errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: " + errorCode);
+                                }
+                            }
+                        }
+
+                        //TODO: DO Transaction Posting Here
                         byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
 
                         var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
@@ -772,9 +802,20 @@ namespace FintrakBanking.Repositories.Credit
                     throw new Exception("Application failed to fetch merge file");
                     
                 }
+                catch (ConditionNotMetException ex)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(ex.Message.ToString());
+
+                }
+                catch (APIErrorException ex)
+                {
+                    trans.Rollback();
+                    throw new APIErrorException(ex.Message.ToString());
+
+                }
                 catch (Exception ex)
                 {
-                    //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                     trans.Rollback();
                     throw new BadLogicException(ex.Message.ToString());
 
@@ -827,19 +868,28 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
-                            //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                             throw new SecureException("An error occured");
                         }
                     }
                     else
                     {
-                        //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                         throw new SecureException("Timed out");
                     }
                 }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.Message.ToString());
+                }
+                catch (TimeoutException ex)
+                {
+                    throw new ConditionNotMetException(ex.Message.ToString());
+                }
+                catch (ConditionNotMetException ex)
+                {
+                    throw new ConditionNotMetException(ex.Message.ToString());
+                }
                 catch (Exception ex)
                 {
-                    //ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                     throw new SecureException(ex.Message.ToString());
                 }
             }
@@ -848,8 +898,12 @@ namespace FintrakBanking.Repositories.Credit
         public XDSSearchResult GetXDSFullSearchResultInPDF(SearchInput searchInput)
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+            if(searchInput.casaAccountId == 0)
+                throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin.");
+
             var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
-            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+            if (casa == null) throw new ConditionNotMetException("Norminated Account Does not Exist");
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
@@ -890,13 +944,16 @@ namespace FintrakBanking.Repositories.Credit
                     if (binaryData == null)
                         throw new SecureException("File report not found. Please try again.");
 
+                    var base64StringData = Convert.ToBase64String(binaryData);
+                    byte[] fileArray = Encoding.ASCII.GetBytes(base64StringData);
+
                     using (var docTrans = docContext.Database.BeginTransaction())
                     using (var trans = context.Database.BeginTransaction())
                     {
                         try
                         {
                             var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
-                            if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
+                            if (!SaveCreditBureauReportFile(customerCreditBureauId, fileArray, searchInput))
                             {
                                 response.fileSaved = false;
                                 response.errorOccured = true;
@@ -905,8 +962,8 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             else
                             {
-                                response.file = binaryData;
-                                response.searchResult = Convert.ToBase64String(binaryData); //Encoding.ASCII.GetString(binaryData);
+                                response.file = fileArray;
+                                response.searchResult = base64StringData; // Convert.ToBase64String(fileArray); //Encoding.ASCII.GetString(binaryData);
                                 response.errorOccured = false;
                                 response.status = 0;
                                 response.fileSaved = true;
@@ -930,6 +987,10 @@ namespace FintrakBanking.Repositories.Credit
                     // ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                     throw new ConditionNotMetException("Search result Timed out");
                 }
+            }
+            catch (TimeoutException ex)
+            {
+                throw new ConditionNotMetException(ex.ToString());
             }
             catch (APIErrorException ex)
             {

@@ -589,9 +589,9 @@
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
             <Top>2.25253cm</Top>
-            <Left>0.43696cm</Left>
+            <Left>0.45367cm</Left>
             <Height>0.5559cm</Height>
-            <Width>4.76786cm</Width>
+            <Width>6.26008cm</Width>
             <ZIndex>3</ZIndex>
             <Style>
               <Border>
@@ -624,7 +624,7 @@
             <Top>1.03825cm</Top>
             <Left>0.48543cm</Left>
             <Height>1.10845cm</Height>
-            <Width>4.76786cm</Width>
+            <Width>6.22832cm</Width>
             <ZIndex>4</ZIndex>
             <Style>
               <Border>
@@ -661,7 +661,7 @@
             <Top>0.26186cm</Top>
             <Left>0.4478cm</Left>
             <Height>0.70583cm</Height>
-            <Width>5.7897cm</Width>
+            <Width>6.26595cm</Width>
             <ZIndex>5</ZIndex>
             <Style>
               <Border>

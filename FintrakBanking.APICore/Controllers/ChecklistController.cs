@@ -155,6 +155,31 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+       
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("checklist-item-simulation/")]
+        public HttpResponseMessage GetChecklistItemSimulationDetails(int productId)
+        {
+            try
+            {
+                var data = repo.GetChecklistItemSimulationDetails(productId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = $"Error: {e.Message}" });
+            }
+
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("checklist-definition-checklisttype/")]
@@ -982,7 +1007,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.userIPAddress = CommonHelpers.GetUserIP();
-                if (repo.ValidateChecklistForDefferalOrWaival(model.conditionId))
+                if (repo.ValidateChecklistForDefferalOrWaival(model))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = "The request for deferral/waival of this item is still being processed. " });

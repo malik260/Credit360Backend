@@ -155,6 +155,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? scheduledPrepaymentAmount { get; set; }
         public DateTime? scheduledPrepaymentDate { get; set; }
         public short? scheduledPrepaymentFrequencyTypeId { get; set; }
+        public string scheduledPrepaymentFrequencyTypeName { get; set; }
         public short customerSensitivityLevelId { get; set; }
         public string firstName { get; set; }
         public string middleName { get; set; }
@@ -171,6 +172,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int externalPrudentialGuidelineStatusId { get; set; }
         public DateTime nplDate { get; set; }
         public short? scheduleDayCountConventionId { get; set; }
+        public string scheduleDayCountConventionIName { get; set; }
+
         public short? scheduleDayInterestTypeId { get; set; }
         public int customerRiskRatingId { get; set; }
 
@@ -212,8 +215,10 @@ namespace FintrakBanking.ViewModels.Credit
         public double? newInterateRate { get; set; }
         public decimal? prepayment { get; set; }
         public int? newPrincipalFrequencyTypeId { get; set; }
-        public int? newInterestFrequencyTypeId { get; set; }
-        public DateTime? newPrincipalFirstPaymentDate { get; set; }
+                public string newPrincipalFrequencyTypeName { get; set; }
+public int? newInterestFrequencyTypeId { get; set; }
+       public string newInterestFrequencyTypeName { get; set; }
+ public DateTime? newPrincipalFirstPaymentDate { get; set; }
         public DateTime? newInterestFirstPaymentDate { get; set; }
         public int? newTenor { get; set; }
         public int? cASA_AccountId { get; set; }

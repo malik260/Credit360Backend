@@ -302,7 +302,7 @@ namespace FintrakBanking.Repositories.Finance
             }
 
             //api call
-            if (USE_TWO_FACTOR_AUTHENTICATION)
+            if (USE_TWO_FACTOR_AUTHENTICATION && isBulkPosting == false)
             {
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
@@ -2147,11 +2147,11 @@ namespace FintrakBanking.Repositories.Finance
             debit.companyId = model.companyId;
 
 
-            debit.glAccountId = creditGL;
-            debit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
             debit.casaAccountId = casa.CASAACCOUNTID;
-            debit.debitAmount = 0;
-            debit.creditAmount = postedAmount;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
             debit.sourceBranchId = casa.BRANCHID;
             debit.destinationBranchId = casa.BRANCHID;
 
@@ -2171,12 +2171,13 @@ namespace FintrakBanking.Repositories.Finance
             credit.approvedDateTime = DateTime.Now;
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
-            credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value; ;
 
-            credit.sourceReferenceNumber = casa.PRODUCTACCOUNTNUMBER;
-            credit.casaAccountId = casa.CASAACCOUNTID;
-            credit.debitAmount = postedAmount;
-            credit.creditAmount = 0;
+
+            credit.glAccountId = creditGL;
+            credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
             credit.sourceBranchId = casa.BRANCHID;
             credit.destinationBranchId = casa.BRANCHID;
 
@@ -2497,8 +2498,8 @@ namespace FintrakBanking.Repositories.Finance
         public bool BulkIntegrationPosting(FinanceTransactionStagingViewModel model)
 
         {
-            model.branchId = 100;
-            model.staffId = 1;
+            //model.branchId = 100;
+            //model.staffId = 1;
             //var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId);
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -2520,8 +2521,8 @@ namespace FintrakBanking.Repositories.Finance
             debit.casaAccountId = model.debitCasaAccountId;
             debit.debitAmount = model.actualAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = model.branchId;
-            debit.destinationBranchId = model.branchId;
+            debit.sourceBranchId = model.sourceBranchId;
+            debit.destinationBranchId = model.destinationBranchId;
             debit.batchId = model.batchId;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
@@ -2544,8 +2545,8 @@ namespace FintrakBanking.Repositories.Finance
             credit.casaAccountId = model.creditCasaAccountId;
             credit.debitAmount = 0;
             credit.creditAmount = model.actualAmount;
-            credit.sourceBranchId = model.branchId;
-            credit.destinationBranchId = model.branchId;
+            credit.sourceBranchId = model.sourceBranchId;
+            credit.destinationBranchId = model.destinationBranchId;
             credit.batchId = model.batchId;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();

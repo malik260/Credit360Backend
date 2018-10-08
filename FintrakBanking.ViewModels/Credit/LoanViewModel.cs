@@ -238,7 +238,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         public decimal overdraftLimit { get; set; }
         public bool maintainTenor { get; set; }
-        public decimal accrualedAmount { get; set; }       
+        public decimal? accrualedAmount { get; set; }       
         public int newtenor { get; set; }
         public short scheduleTypeCategoryId { get; set; }
         public DateTime previousEffectiveDate { get; set; }
