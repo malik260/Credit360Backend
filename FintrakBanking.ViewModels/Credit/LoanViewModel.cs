@@ -821,6 +821,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string monitoringTriggerSetupName { get; set; }
     }
 
+
     public class DailyInterestAccrualViewModel : GeneralEntity
 
     {

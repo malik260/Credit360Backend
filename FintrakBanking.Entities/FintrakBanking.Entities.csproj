@@ -75,6 +75,7 @@
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
+    <Compile Include="Models\TBL_LOAN_REPRICING_MODE.cs" />
     <Compile Include="Models\TBL_TEMP_ACCREDITEDCONSULTANT.cs" />
     <Compile Include="Models\TBL_TEMP_ACCREDITEDCONSULTANT_STATE.cs" />
     <Compile Include="Models\TBL_BRANCH_REGION_STAFF_TYPE.cs" />

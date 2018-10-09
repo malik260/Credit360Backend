@@ -188,7 +188,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
         IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
 
-       // bool TwoFactorAuthenticationEnabledWithoutFeeOverride(LoanViewModel model);
+        decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate);
+        List<LookupViewModel> GetLoanRepricingModes();
 
     }
 }

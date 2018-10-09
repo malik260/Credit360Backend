@@ -418,9 +418,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CRMS_TYPE> TBL_CRMS_TYPE { get; set; }
         public virtual DbSet<TBL_TEMP_STAFF_RELIEF> TBL_TEMP_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_COMP_BENEFIC> TBL_TEMP_CUSTOMER_COMP_BENEFIC { get; set; }
-      public virtual DbSet<TBL_LOAN_APPLICATION_DETL_SYN> TBL_LOAN_APPLICATION_DETL_SYN { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_DETL_SYN> TBL_LOAN_APPLICATION_DETL_SYN { get; set; }
         public virtual DbSet<TBL_LOAN_SYNDICATION_PARTY_TYP> TBL_LOAN_SYNDICATION_PARTY_TYP { get; set; }
-        
+
+        public virtual DbSet<TBL_LOAN_REPRICING_MODE> TBL_LOAN_REPRICING_MODE { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var databaseUsername =
