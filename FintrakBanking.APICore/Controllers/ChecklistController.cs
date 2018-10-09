@@ -1092,6 +1092,25 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("lms-validate-precedence-checklist-completed/{applicationId}")]
+        public HttpResponseMessage LMSValidatePrecedenceChecklistCompleted(int applicationId)
+        {
+            try
+            {
+                var data = repo.LMSValidatePrecedenceChecklistCompleted(applicationId);
+                if (data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("deferred-checklist-awaiting-approval")]
         public HttpResponseMessage GetChecklistAwaitingApproval()
         {

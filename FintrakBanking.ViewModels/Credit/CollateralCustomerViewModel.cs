@@ -132,7 +132,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? openMarketValue { get; set; }
         public decimal? collateralValue { get; set; }
         public decimal? forcedSaleValue { get; set; }
-        public string stampToCovers { get; set; }
+        public string stampToCover { get; set; }
         public string valuationSource { get; set; }
         public decimal originalValue { get; set; }
         public decimal availableValue { get; set; }
