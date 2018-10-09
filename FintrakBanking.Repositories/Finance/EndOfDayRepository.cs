@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.CalculateLoanClassification(date);
 
-            // loanOperation.GetRepaymentFromStaging();
+            //loanOperation.GetRepaymentFromStaging();
 
             endOfDay.ENDDATETIME = DateTime.Now;
 
