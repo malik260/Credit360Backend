@@ -238,7 +238,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<LoanMonitoringTriggerViewModel> monitoringTriggers { get; set; }
         public decimal overdraftLimit { get; set; }
         public bool maintainTenor { get; set; }
-        public decimal accrualedAmount { get; set; }       
+        public decimal? accrualedAmount { get; set; }       
         public int newtenor { get; set; }
         public short scheduleTypeCategoryId { get; set; }
         public DateTime previousEffectiveDate { get; set; }
@@ -306,7 +306,27 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
-       
+        public int performanceTypeId
+        {
+            get
+            {
+                if (writtenOff) return 3;
+                if (!isPerforming) return 2;
+                return 1;
+            }
+        }
+
+        public string performanceType
+        {
+            get
+            {
+                if (writtenOff) return "Written Off";
+                if (!isPerforming) return "Non Performing";
+                return "Performing";
+            }
+        }
+
+
 
 
 

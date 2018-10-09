@@ -64,8 +64,13 @@ namespace FintrakBanking.Repositories.Finance
                 do
                 {
                     ProcessEndOfDay(runDate, model.companyId, model.createdBy);
-
+                  
                     runDate = runDate.AddDays(1);
+
+                    var currentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
+                    currentDate.CURRENTDATE = runDate;
+
+                    context.SaveChanges();
                 }
                 while (runDate < nextWorkDay);
             }
@@ -133,7 +138,7 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessDailyInterestOnPastDuePrincipalAccrual(date);
 
-           //loanOperation.ProcessDailyFeeAccrual(date);//TODO use batch posting and ensure the right accounting entries are passed
+            //loanOperation.ProcessDailyFeeAccrual(date);//TODO use batch posting and ensure the right accounting entries are passed
 
             //loanOperation.ProcessDailyTaxAccrual(date); //TODO use batch posting and ensure the right accounting entries are passed
 
@@ -161,7 +166,7 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.CalculateLoanClassification(date);
 
-            // loanOperation.GetRepaymentFromStaging();
+            //loanOperation.GetRepaymentFromStaging();
 
             endOfDay.ENDDATETIME = DateTime.Now;
 

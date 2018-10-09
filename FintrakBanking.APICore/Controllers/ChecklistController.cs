@@ -159,11 +159,11 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("checklist-item-simulation/")]
-        public HttpResponseMessage GetChecklistItemSimulationDetails(int checklistTypeId, int operationId,  int? productId, int? approvalLevelId)
+        public HttpResponseMessage GetChecklistItemSimulationDetails(int productId)
         {
             try
             {
-                var data = repo.GetChecklistItemSimulationDetails(checklistTypeId, operationId, productId, approvalLevelId);
+                var data = repo.GetChecklistItemSimulationDetails(productId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

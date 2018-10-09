@@ -20,7 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
 
-        private List<int> camOperationIds = new List<int> { 46, 71, 79 };
+        private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
 
         private readonly int classifiedAssetManagementRoleId = 46;
 

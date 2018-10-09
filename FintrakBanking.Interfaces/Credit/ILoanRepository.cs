@@ -129,7 +129,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
-        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int performanceTypeId, int loanSystemTypeId, string searchQuery);
+        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
 
         string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);
 
@@ -190,6 +190,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanByApplicationDetailId(int loanApplicationDetailId);
         IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
         IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
+
+       // bool TwoFactorAuthenticationEnabledWithoutFeeOverride(LoanViewModel model);
 
     }
 }
