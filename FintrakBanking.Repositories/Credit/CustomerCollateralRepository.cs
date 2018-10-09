@@ -1106,6 +1106,17 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 });
+
+                workflow.StaffId = entity.createdBy;
+                workflow.CompanyId = entity.companyId;
+                workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                workflow.TargetId = collateralId;
+                workflow.Comment = "Request for join Guarantee collateral approval";
+                workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+                workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                workflow.ExternalInitialization = true;
+                workflow.LogActivity();
+
                 context.SaveChanges();
                 entity.TargetId = guarantee.TEMPCOLLATERALGAURANTEEID;
                 if (buffer != null) { SaveCollateralMainDocument(entity, collateralId, buffer); }
@@ -1137,6 +1148,17 @@ namespace FintrakBanking.Repositories.Credit
                         RELATIONSHIPDURATION = entity.relationshipDuration
 
                     });
+
+                    workflow.StaffId = entity.createdBy;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    workflow.TargetId = collateralId;
+                    workflow.Comment = "Request for join Guarantee collateral approval";
+                    workflow.OperationId = (int)OperationsEnum.CollateralApproval;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+
                     context.SaveChanges();
                     entity.TargetId = guarantee.TEMPCOLLATERALGAURANTEEID;
                     if (buffer != null) { SaveCollateralMainDocument(entity, entity.collateralId, buffer); }
@@ -1265,7 +1287,7 @@ namespace FintrakBanking.Repositories.Credit
             // collateral.COLLATERALVALUE = (decimal)entity.collateralValue;
 
             collateral.FORCEDSALEVALUE = entity.forcedSaleValue;
-            collateral.STAMPTOCOVER = entity.stampToCovers.ToString();
+            collateral.STAMPTOCOVER = entity.stampToCover.ToString();
             //collateral.VALUATIONSOURCE = entity.valuationSource;
             //collateral.ORIGINALVALUE = entity.originalValue;
 
@@ -1307,7 +1329,7 @@ namespace FintrakBanking.Repositories.Credit
                 openMarketValue = (decimal)specifics.OPENMARKETVALUE,
                 //collateralValue = specifics.COLLATERALVALUE,
                 forcedSaleValue = specifics.FORCEDSALEVALUE,
-                stampToCovers = specifics.STAMPTOCOVER,
+                stampToCover = specifics.STAMPTOCOVER,
 
                 //valuationSource = specifics.VALUATIONSOURCE,
                 //originalValue = specifics.ORIGINALVALUE,
@@ -3638,7 +3660,7 @@ namespace FintrakBanking.Repositories.Credit
                 PROPERTYVALUEBASETYPEID = entity.propertyValueBaseTypeId,
                 OPENMARKETVALUE = entity.openMarketValue,
                 FORCEDSALEVALUE = entity.forcedSaleValue,
-                STAMPTOCOVER = entity.stampToCovers,
+                STAMPTOCOVER = entity.stampToCover,
                 SECURITYVALUE = entity.securityValue,
                 COLLATERALUSABLEAMOUNT = entity.collateralUsableAmount,
                 REMARK = entity.remark,
@@ -5037,7 +5059,7 @@ namespace FintrakBanking.Repositories.Credit
                                propertyValueBaseTypeId = x.PROPERTYVALUEBASETYPEID,
                                openMarketValue = x.OPENMARKETVALUE,
                                forcedSaleValue = x.FORCEDSALEVALUE,
-                               stampToCovers = x.STAMPTOCOVER,
+                               stampToCover = x.STAMPTOCOVER,
                                securityValue = x.SECURITYVALUE,
                                collateralUsableAmount = x.COLLATERALUSABLEAMOUNT,
                                remark = x.REMARK,
@@ -5052,7 +5074,7 @@ namespace FintrakBanking.Repositories.Credit
                                isOwnerOccupied =x.ISOWNEROCCUPIED,
                                isResidential =x.ISRESIDENTIAL,
                                countryName = context.TBL_COUNTRY.Where(a => a.COUNTRYID == x.COUNTRYID).Select(a => a.NAME).FirstOrDefault(),
-                               collateralValuer = context.TBL_COLLATERAL_VALUER.Where(a => a.COLLATERALVALUERID == x.VALUERID).Select(a => a.NAME).FirstOrDefault(),
+                               collateralValuer = context.TBL_ACCREDITEDCONSULTANT.Where(a => a.ACCREDITEDCONSULTANTID == x.VALUERID).Select(a => a.NAME + ", " + a.FIRMNAME).FirstOrDefault(),
                                propertyBaseType = context.TBL_COLLATERAL_VALUEBASE_TYPE.Where(a => a.COLLATERALVALUEBASETYPEID == x.PROPERTYVALUEBASETYPEID).Select(a => a.VALUEBASETYPENAME).FirstOrDefault(),
                                perfectionStatusName = context.TBL_COLLATERAL_PERFECTN_STAT.Where(a => a.PERFECTIONSTATUSID == x.PERFECTIONSTATUSID).Select(a => a.PERFECTIONSTATUSNAME).FirstOrDefault()
 
