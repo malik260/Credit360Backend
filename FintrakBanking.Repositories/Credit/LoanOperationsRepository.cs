@@ -2107,10 +2107,14 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 bool result = false;
-                var model = (from b in context.TBL_LOAN
+
+                List<LoanRepaymentViewModel> model = new List<LoanRepaymentViewModel>();
+                
+                var scheduledLoan = (from b in context.TBL_LOAN
                              where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                              && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
-                             select new LoanRepaymentViewModel()
+                             &&  (b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
+                                     select new LoanRepaymentViewModel()
                              {
                                  productId = b.PRODUCTID,
                                  branchId = b.BRANCHID,
@@ -2126,7 +2130,57 @@ namespace FintrakBanking.Repositories.Credit
                                  casaAccountId = b.CASAACCOUNTID,
                                  loanRefNo = b.LOANREFERENCENUMBER,
                                  casaAccountId2 = b.CASAACCOUNTID2,
+                             }).ToList().Select(x =>
+                             {
+                                 x.periodInterestAmount = GetPeriodInterestAmount(x.loanId, x.paymentDate);
+                                 return x;
                              }).ToList();
+
+                var commercialLoan = (from b in context.TBL_LOAN
+                                     where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                     && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
+                                     && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan )
+                                     select new LoanRepaymentViewModel()
+                                     {
+                                         productId = b.PRODUCTID,
+                                         branchId = b.BRANCHID,
+                                         companyId = b.COMPANYID,
+                                         currencyId = b.CURRENCYID,
+                                         exchangeRate = b.EXCHANGERATE,
+                                         periodInterestAmount = b.OUTSTANDINGINTEREST,
+                                         periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
+                                         interestRate = b.INTERESTRATE,
+                                         paymentDate = applicationDate,
+                                         loanId = b.TERMLOANID,
+                                         totalAmount = 0,
+                                         casaAccountId = b.CASAACCOUNTID,
+                                         loanRefNo = b.LOANREFERENCENUMBER,
+                                         casaAccountId2 = b.CASAACCOUNTID2,
+                                     }).ToList();
+
+                var fxLoan = (from b in context.TBL_LOAN
+                                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                      && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
+                                      && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                                      select new LoanRepaymentViewModel()
+                                      {
+                                          productId = b.PRODUCTID,
+                                          branchId = b.BRANCHID,
+                                          companyId = b.COMPANYID,
+                                          currencyId = b.CURRENCYID,
+                                          exchangeRate = b.EXCHANGERATE,
+                                          periodInterestAmount = b.OUTSTANDINGINTEREST,
+                                          periodPrincipalAmount = 0,
+                                          interestRate = b.INTERESTRATE,
+                                          paymentDate = applicationDate,
+                                          loanId = b.TERMLOANID,
+                                          totalAmount = 0,
+                                          casaAccountId = b.CASAACCOUNTID,
+                                          loanRefNo = b.LOANREFERENCENUMBER,
+                                          casaAccountId2 = b.CASAACCOUNTID2,
+                                      }).ToList();
+
+                model = scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
 
                 List<TBL_LOAN_FORCE_DEBIT> transForceDebit = new List<TBL_LOAN_FORCE_DEBIT>();
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
