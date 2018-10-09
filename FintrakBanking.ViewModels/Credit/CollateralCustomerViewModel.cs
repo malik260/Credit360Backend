@@ -132,7 +132,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? openMarketValue { get; set; }
         public decimal? collateralValue { get; set; }
         public decimal? forcedSaleValue { get; set; }
-        public string stampToCovers { get; set; }
+        public string stampToCover { get; set; }
         public string valuationSource { get; set; }
         public decimal originalValue { get; set; }
         public decimal availableValue { get; set; }
@@ -802,8 +802,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralCode { get; set; }
         public double collateralValue { get; set; }
         public int collateralId { get; set; }
+        public int? collateralTypeId { get; set; }
         public string collateralType { get; set; }
         public double securityValue { get { return collateralValue - (haircut * 0.01 * collateralValue); } }
+        public int? loanId { get; set; }
+        public int? loanType { get; set; }
+
     }
 
     public class ApplicationCollateralMapping

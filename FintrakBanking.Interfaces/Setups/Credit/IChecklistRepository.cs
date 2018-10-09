@@ -101,6 +101,7 @@ namespace FintrakBanking.Interfaces.Setups
         bool RegulatoryChecklistAutomapping(int customerId, ChecklistDetailViewModel model);
         bool DeleteLoanConditionPrecedenceStatus(int conditionId, bool isLMSChecklist, UserInfo user);
         bool ValidatePrecedenceChecklistCompleted(int loanApplicationId);
+        bool LMSValidatePrecedenceChecklistCompleted(int applicationId);
 
         #region Condition Precedence Checklist
         IEnumerable<ConditionPrecedentViewModel> GetLMSConditionPrecedenceChecklist(int loanReviewApplicationId);
