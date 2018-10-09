@@ -20,7 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
 
-        private List<int> camOperationIds = new List<int> { 46, 71, 79 };
+        private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
 
         private readonly int classifiedAssetManagementRoleId = 46;
 
@@ -181,6 +181,9 @@ namespace FintrakBanking.Repositories.Credit
             return list;
         }
 
+
+
+
         public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
             int staffId = model.createdBy;
@@ -262,8 +265,25 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
             throw new SecureException("An error occured while saving the data!");
         }
-
-        private int GetCamOperation(int performanceTypeId)
+        public bool validateCustomer(int loanApplicationDetailId)
+        {
+            var loanData = (from a in context.TBL_LOAN
+                        join b in context.TBL_PRODUCT
+                        on a.PRODUCTID equals b.PRODUCTID
+                        where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                        && b.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan
+                        && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                        select a).ToList();
+            if (loanData.Count < 2 || loanData == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+            private int GetCamOperation(int performanceTypeId)
         {
             switch (performanceTypeId)
             {
