@@ -265,23 +265,48 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
             throw new SecureException("An error occured while saving the data!");
         }
-        public bool validateCustomer(int loanApplicationDetailId)
+        public bool validateCustomer(int loanApplicationDetailId, int customerId)
         {
-            var loanData = (from a in context.TBL_LOAN
-                        join b in context.TBL_PRODUCT
-                        on a.PRODUCTID equals b.PRODUCTID
-                        where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                        && b.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan
-                        && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                        select a).ToList();
-            if (loanData.Count < 2 || loanData == null)
+
+            if (loanApplicationDetailId != 0)
             {
-                return false;
+                var loanData = (from a in context.TBL_LOAN
+                                join b in context.TBL_PRODUCT
+                                on a.PRODUCTID equals b.PRODUCTID
+                                where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                && b.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan
+                                && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                select a).ToList();
+                if (loanData.Count < 2 || loanData == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
             else
             {
-                return true;
+                var loanData = (from a in context.TBL_LOAN_REVOLVING
+                                where a.CUSTOMERID == customerId
+                                && a.MATURITYDATE < context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
+                                && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                select a).ToList();
+                //var test = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+
+                if (loanData.Count < 2 || loanData == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
+
+
+           
         }
             private int GetCamOperation(int performanceTypeId)
         {

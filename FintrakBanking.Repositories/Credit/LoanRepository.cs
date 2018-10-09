@@ -4168,7 +4168,24 @@ namespace FintrakBanking.Repositories.Credit
 
             return value;
         }
+        public List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType)
+        {
+            var data = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                        join b in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                        where a.LOANID == loanId && a.DELETED == false && a.LOANSYSTEMTYPEID == loanType
+                        select new CollateralLoanApplication
+                        {
 
+                            haircut = b.HAIRCUT,
+                            collateralCode = b.COLLATERALCODE,
+                            collateralValue = (double)b.COLLATERALVALUE,
+                            collateralId = b.COLLATERALCUSTOMERID,
+                            collateralTypeId=(int)b.COLLATERALTYPEID,
+                            collateralType = context.TBL_COLLATERAL_TYPE.Where(x=>x.COLLATERALTYPEID == b.COLLATERALTYPEID).Select(m=>m.COLLATERALTYPENAME).FirstOrDefault(),
+
+                        }).ToList();
+            return data;
+        }
         /// <summary>
         /// Gets the loan covenant.
         /// </summary>
@@ -5950,7 +5967,7 @@ namespace FintrakBanking.Repositories.Credit
                                      productAccountName = c.PRODUCTACCOUNTNAME,
                                      loanReferenceNumber = a.LOANREFERENCENUMBER,
                                      principalAmount = a.PRINCIPALAMOUNT,
-
+                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                      //applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                      //principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                      //pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
@@ -7533,6 +7550,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanId = a.REVOLVINGLOANID,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
+                                       //loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",

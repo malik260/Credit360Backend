@@ -118,6 +118,7 @@ namespace FintrakBanking.Interfaces.Credit
         // decimal GetCustomerLoanAvailableBalance(int loanAplicationDetailId);
 
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId, int loanType);
+        List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType);
 
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
         List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
