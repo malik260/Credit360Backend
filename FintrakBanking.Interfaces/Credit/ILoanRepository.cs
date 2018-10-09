@@ -118,6 +118,7 @@ namespace FintrakBanking.Interfaces.Credit
         // decimal GetCustomerLoanAvailableBalance(int loanAplicationDetailId);
 
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId, int loanType);
+        List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType);
 
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
         List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
@@ -191,7 +192,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
         IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
 
-       // bool TwoFactorAuthenticationEnabledWithoutFeeOverride(LoanViewModel model);
+        decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate);
+        List<LookupViewModel> GetLoanRepricingModes();
 
     }
 }

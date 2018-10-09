@@ -10011,6 +10011,7 @@ namespace FintrakBanking.Repositories.Credit
                                    relationshipOfficerId = l.RELATIONSHIPOFFICERID,
                                    productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
                                    systemCurrentDate = applicationDate,
+                                   loanSystemTypeId = l.LOANSYSTEMTYPEID,
                                }).FirstOrDefault();
 
             return runningLoan;
@@ -10521,6 +10522,7 @@ namespace FintrakBanking.Repositories.Credit
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
                                 loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                 customerId = ln.CUSTOMERID,
@@ -10638,6 +10640,7 @@ namespace FintrakBanking.Repositories.Credit
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
+                                         loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                          customerId = ln.CUSTOMERID,
@@ -10725,6 +10728,7 @@ namespace FintrakBanking.Repositories.Credit
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
+                                loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
@@ -10814,6 +10818,7 @@ namespace FintrakBanking.Repositories.Credit
                                  orderby op.DATECREATED descending
                                  select new LoanReviewOperationApprovalViewModel
                                  {
+                                     loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                      loanId = ln.REVOLVINGLOANID,
                                      customerId = ln.CUSTOMERID,
                                      productId = ln.PRODUCTID,

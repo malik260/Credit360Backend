@@ -117,10 +117,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
                 new XElement("APPLICATION", new XAttribute("CURRENCY", request.currencyCode),
                 new XAttribute("AMOUNT", request.amount), new XAttribute("NUMBER", request.number),
                 new XAttribute("PRODUCT", request.productCode)),
-                new XElement("REQUEST_REFERENCE", new XAttribute("REFERENCE-NO", request.productCode),
+                //new XElement("REQUEST_REFERENCE", new XAttribute("REFERENCE-NO", request.productCode),
                 new XElement("REQUEST_REFERENCE", new XAttribute("REFERENCE-NO", request.referenceNo)),
                 new XElement("MERGE_REPORT", new XAttribute("PRIMARY-BUREAU-ID", request.bureauID.FirstOrDefault()),
-                from i in request.bureauID select new XElement("BUREAU_ID", i)))));
+                from i in request.bureauID select new XElement("BUREAU_ID", i))));
 
         }
 

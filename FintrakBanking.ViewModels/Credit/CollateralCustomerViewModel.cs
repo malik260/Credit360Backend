@@ -802,8 +802,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string collateralCode { get; set; }
         public double collateralValue { get; set; }
         public int collateralId { get; set; }
+        public int? collateralTypeId { get; set; }
         public string collateralType { get; set; }
         public double securityValue { get { return collateralValue - (haircut * 0.01 * collateralValue); } }
+        public int? loanId { get; set; }
+        public int? loanType { get; set; }
+
     }
 
     public class ApplicationCollateralMapping

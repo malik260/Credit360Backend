@@ -2198,6 +2198,13 @@ namespace FintrakBanking.Repositories.Credit
             return totalInterest;
         }
 
+        public decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate)
+        {
+            int interestDaysPeriod = getDaysInLoanPeriod(startDate, endDate) - 1;
+            var totalInterest = getTotalInterest(principal, interestRate, interestDaysPeriod);
+
+            return totalInterest;
+        }
         /// <summary>
         /// Approves the loan booking.
         /// </summary>
@@ -2438,15 +2445,6 @@ namespace FintrakBanking.Repositories.Credit
                         casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
                     }
 
-                    //var firstPrincipalPaymentDaysInterval = (loanRecord.FIRSTPRINCIPALPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
-                    //var firstInterestPayementDaysInterval = (loanRecord.FIRSTINTERESTPAYMENTDATE.Value - loanRecord.EFFECTIVEDATE).Days;
-
-                    //if (loanRecord.EFFECTIVEDATE != systemDate)
-                    //{
-                    //    loanRecord.EFFECTIVEDATE = systemDate;
-                    //    loanRecord.FIRSTPRINCIPALPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstPrincipalPaymentDaysInterval);
-                    //    loanRecord.FIRSTINTERESTPAYMENTDATE = loanRecord.EFFECTIVEDATE.AddDays(firstInterestPayementDaysInterval);
-                    //}
                 }
 
                 if (user.operationId == (int)OperationsEnum.CommercialLoanBooking)
@@ -2758,13 +2756,6 @@ namespace FintrakBanking.Repositories.Credit
             contingentLoanRecord.FIELD9 = relationshipOfficerStaffInfo.field9;
             contingentLoanRecord.FIELD10 = relationshipOfficerStaffInfo.field10;
         }
-        /// <summary>
-        /// Builds the schedule model.
-        /// </summary>
-        /// <param name="targetId">The target identifier.</param>
-        /// <param name="createdBy">The created by.</param>
-        /// <returns></returns>
-        /// 
 
         private IEnumerable<DailyInterestAccrualViewModel> ProcessAccrualTeamLoansInterestAccrual(DateTime applicationDate, int loanId)
         {
@@ -2980,13 +2971,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return loanModel;
         }
-        /// <summary>
-        /// Builds the disbursement model.
-        /// </summary>
-        /// <param name="loanId">The loan identifier.</param>
-        /// <param name="loanInputModel">The loan input model.</param>
-        /// <param name="staffId">The staff identifier.</param>
-        /// <returns></returns>
+
         public LoanViewModel BuildDisbursementModel(int loanId, LoanPaymentScheduleInputViewModel loanInputModel, int staffId)
         {
             var covenantRecord = context.TBL_LOAN_COVENANT_DETAIL.Where(x => x.LOANID == loanId).ToList();
@@ -3108,11 +3093,6 @@ namespace FintrakBanking.Repositories.Credit
             return loanModel;
         }
 
-        /// <summary>
-        /// Builds the loan disbursment posting.
-        /// </summary>
-        /// <param name="model">The model.</param>
-        /// <returns></returns>
         public List<FinanceTransactionViewModel> BuildLoanDisbursmentPosting(LoanViewModel model)
         {
             List<FinanceTransactionViewModel> loanTransaction = new List<FinanceTransactionViewModel>();
@@ -3272,11 +3252,6 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        /// <summary>
-        /// Builds the loan charge fees posting.
-        /// </summary>
-        /// <param name="loanDetails">The loan details.</param>
-        /// <returns></returns>
         public List<FinanceTransactionViewModel> BuildLoanChargeFeesPosting(LoanViewModel loanDetails)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -3377,13 +3352,6 @@ namespace FintrakBanking.Repositories.Credit
             return inputTransactions;
         }
 
-        /// <summary>
-        /// Adds the loan monitoring trigger.
-        /// </summary>
-        /// <param name="loanApplicationId">The loan application identifier.</param>
-        /// <param name="loanId">The loan identifier.</param>
-        /// <param name="productTypeId">The product type identifier.</param>
-        /// <returns></returns>
         private bool AddLoanMonitoringTrigger(int loanApplicationDetailId, int createdBy, int loanId, short loanSystemTypeId)
         {
             var mornitoringTrigger = context.TBL_LOAN_APPLICATN_DETL_MTRIG.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId);
@@ -3409,14 +3377,6 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        /// <summary>
-        /// Adds the loan covenant.
-        /// </summary>
-        /// <param name="covenantModel">The covenant model.</param>
-        /// <param name="loanApplicationId">The loan application identifier.</param>
-        /// <param name="loanId">The loan identifier.</param>
-        /// <param name="productTypeId">The product type identifier.</param>
-        /// <returns></returns>
         private bool AddLoanCovenant(LoanViewModel model, int loanId, short loanSystemTypeId)
         {
             var covenantModel = context.TBL_LOAN_APPLICATION_COVENANT.Where(x => x.LOANAPPLICATIONDETAILID == model.loanApplicationDetailId).ToList();
@@ -3444,13 +3404,6 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        /// <summary>
-        /// Adds the loan guarantor.
-        /// </summary>
-        /// <param name="guarantorModel">The guarantor model.</param>
-        /// <param name="productTypeId">The product type identifier.</param>
-        /// <param name="loanApplicationId">The loan application identifier.</param>
-        /// <returns></returns>
         public bool AddLoanGuarantor(LoanGuarantorViewModel entity, short productTypeId, int loanApplicationId)
         {
             if (entity.customerType == "Corporate")
@@ -3477,12 +3430,6 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        /// <summary>
-        /// Adds the loan covenant.
-        /// </summary>
-        /// <param name="entity">The entity.</param>
-        /// <param name="productTypeId">The product type identifier.</param>
-        /// <returns></returns>
         private ICollection<TBL_LOAN_COVENANT_DETAIL> AddLoanCovenant(LoanCovenantDetailViewModel entity, short loanSystemTypeId)
         {
             ICollection<TBL_LOAN_COVENANT_DETAIL> covenant;
@@ -3562,6 +3509,17 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             monitoringTriggerId = c.MONITORING_TRIGGERID,
                             monitoringTriggerSetupName = c.MONITORING_TRIGGER_NAME
+                        }).ToList();
+            return data;
+        }
+
+        public List<LookupViewModel> GetLoanRepricingModes()
+        {
+            var data = (from c in context.TBL_LOAN_REPRICING_MODE
+                        select new LookupViewModel
+                        {
+                            lookupId = (short)c.REPRICINGMODEID,
+                            lookupName = c.REPRICINGMODENAME
                         }).ToList();
             return data;
         }
@@ -4168,7 +4126,24 @@ namespace FintrakBanking.Repositories.Credit
 
             return value;
         }
+        public List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType)
+        {
+            var data = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
+                        join b in context.TBL_COLLATERAL_CUSTOMER on a.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
+                        where a.LOANID == loanId && a.DELETED == false && a.LOANSYSTEMTYPEID == loanType
+                        select new CollateralLoanApplication
+                        {
 
+                            haircut = b.HAIRCUT,
+                            collateralCode = b.COLLATERALCODE,
+                            collateralValue = (double)b.COLLATERALVALUE,
+                            collateralId = b.COLLATERALCUSTOMERID,
+                            collateralTypeId=(int)b.COLLATERALTYPEID,
+                            collateralType = context.TBL_COLLATERAL_TYPE.Where(x=>x.COLLATERALTYPEID == b.COLLATERALTYPEID).Select(m=>m.COLLATERALTYPENAME).FirstOrDefault(),
+
+                        }).ToList();
+            return data;
+        }
         /// <summary>
         /// Gets the loan covenant.
         /// </summary>
@@ -5950,7 +5925,7 @@ namespace FintrakBanking.Repositories.Credit
                                      productAccountName = c.PRODUCTACCOUNTNAME,
                                      loanReferenceNumber = a.LOANREFERENCENUMBER,
                                      principalAmount = a.PRINCIPALAMOUNT,
-
+                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                      //applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                      //principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                      //pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
@@ -7533,6 +7508,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanId = a.REVOLVINGLOANID,
                                        customerId = a.CUSTOMERID,
                                        productId = a.PRODUCTID,
+                                       //loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
@@ -7583,22 +7559,19 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
         }
 
-
-
-
         private IQueryable<LoanViewModel> SearchLoanLine(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_APPLICATION
                                    join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                                   join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                   //join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.APPROVALSTATUSID == 2 && d.STATUSID == 2
                                    && (
                                        a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
                                        b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                        b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                       b.LASTNAME.ToLower().Contains(searchQuery) ||
-                                       c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
+                                       b.LASTNAME.ToLower().Contains(searchQuery)// ||
+                                      // c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
                                    )
                                    select new LoanViewModel
                                    {

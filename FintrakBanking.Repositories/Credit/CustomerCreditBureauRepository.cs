@@ -611,7 +611,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
-                    if (task.Wait(TimeSpan.FromSeconds(2000)))
+                    if (task.Wait(TimeSpan.FromSeconds(3500)))
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {
@@ -761,7 +761,7 @@ namespace FintrakBanking.Repositories.Credit
                 try
                 {
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauMerge(request));
-                    if (task.Wait(TimeSpan.FromSeconds(2000)))
+                    if (task.Wait(TimeSpan.FromSeconds(3500)))
                     {
                         JObject json = JObject.Parse(searchResponse.SearchResult);
                         if (json.Count >= 1)
