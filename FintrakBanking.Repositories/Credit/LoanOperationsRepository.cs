@@ -1263,7 +1263,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
-                if (item.amountCollected != source.AMOUNTCOLLECTED && item.amountCollected > 0)
+                if (item.amountCollected != source.AMOUNTCOLLECTED)
                 {
                     model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
                     model.operationId = source.OPERATIONID;
@@ -1297,7 +1297,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
 
-                    if (operationType == OperationsEnum.InterestLoanRepayment || operationType == OperationsEnum.PrincipalLoanRepayment)
+                    if (operationType == OperationsEnum.InterestLoanRepayment || operationType == OperationsEnum.PrincipalLoanRepayment && item.amountCollected == 0)
                     {
 
                         List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
@@ -1361,6 +1361,7 @@ namespace FintrakBanking.Repositories.Credit
                         updateloanPastDueDate((int)model.loanId, item.transactionDate);
                     }
 
+                    
                     source.AMOUNTCOLLECTED = item.amountCollected;
 
                     context.SaveChanges();
@@ -8641,11 +8642,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 var sllp = 27;////Get SLLP GL
 
-                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off"));
+                financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
 
-                inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off"));
+                financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off", twoFactorAuth);
 
 
                 TBL_LOAN results = (from p in context.TBL_LOAN
@@ -10905,6 +10906,8 @@ namespace FintrakBanking.Repositories.Credit
                                            && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                             && s.OPERATIONCOMPLETED == false
                                             select s).FirstOrDefault();
+
+
 
                         if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                         {
