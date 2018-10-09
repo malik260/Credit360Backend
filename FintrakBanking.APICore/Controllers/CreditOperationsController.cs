@@ -468,6 +468,51 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-convenant/")]
+        public HttpResponseMessage GetLoanConvenant(int loanId, int loanType)
+        {
+            try
+            {
+                var data = loanRepo.GetLoanCovenant(loanId, loanType);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-chargefee/")]
+        public HttpResponseMessage GetLoanChargeFee(int loanId, int loanType)
+        {
+            try
+            {
+                var data = loanRepo.GetLoanChargeFee(loanId, loanType);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-convenant/")]
         public HttpResponseMessage GetLoanConvenant(int loanId)
         {
             try

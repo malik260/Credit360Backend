@@ -4146,6 +4146,23 @@ namespace FintrakBanking.Repositories.Credit
         /// </summary>
         /// <param name="loanId">The loan identifier.</param>
         /// <returns></returns>
+        public List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId, int loanType)
+        {
+            var data = (from a in context.TBL_LOAN_COVENANT_DETAIL
+                        where a.LOANID == loanId && a.DELETED == false && a.LOANSYSTEMTYPEID == loanType
+                        select new LoanCovenantDetailViewModel
+                        {
+                            loanCovenantDetailId = a.LOANCOVENANTDETAILID,
+                            covenantDetail = a.COVENANTDETAIL,
+                            loanId = a.LOANID,
+                            covenantTypeId = (short)a.COVENANTTYPEID,
+                            frequencyTypeId = (short)a.FREQUENCYTYPEID,
+                            covenantAmount = a.COVENANTAMOUNT,
+                            covenantDate = a.COVENANTDATE,
+                            casaAccountId = a.CASAACCOUNTID
+                        }).ToList();
+            return data;
+        }
         public List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId)
         {
             var data = (from a in context.TBL_LOAN_COVENANT_DETAIL
@@ -4163,7 +4180,6 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
-
         /// <summary>
         /// Gets the product fees.
         /// </summary>
@@ -4207,6 +4223,24 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId, int loanType)
+        {
+            var data = (from c in context.TBL_LOAN_FEE
+                        where c.LOANID == loanId && c.LOANSYSTEMTYPEID == loanType //&& c.Deleted == false
+                        select new LoanChargeFeeViewModel
+                        {
+                            loanChargeFeeId = c.LOANCHARGEFEEID,
+                            loanId = c.LOANID,
+                            chargeFeeId = c.CHARGEFEEID,
+                            chargeFeeName = c.TBL_CHARGE_FEE.CHARGEFEENAME,
+                            feeRateValue = c.FEERATEVALUE,
+                            feeDependentAmount = c.FEEDEPENDENTAMOUNT,
+                            feeAmount = c.FEEAMOUNT,
+                            feeIntervalId = c.TBL_CHARGE_FEE.FEEINTERVALID,
+                            feeIntervalName = c.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
+                        }).ToList();
+            return data;
+        }
         public List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId)
         {
             var data = (from c in context.TBL_LOAN_FEE
@@ -4225,7 +4259,6 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
-
         /// <summary>
         /// Gets the loan product charge fees by product identifier.
         /// </summary>
@@ -6207,6 +6240,7 @@ namespace FintrakBanking.Repositories.Credit
                                            loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                            systemCurrentDate = currentDate,
                                            lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
+                                           loanSystemTypeId = b.LOANSYSTEMTYPEID,
 
                                        }).ToList();
                 return allFilteredLoan;
@@ -7401,15 +7435,19 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchTermLoan(string searchQuery)
         {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToUpper();
+            }
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
                                    (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                   b.LASTNAME.ToLower().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
+                                   b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
+                                   b.LASTNAME.ToUpper().Contains(searchQuery) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery))
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -7417,6 +7455,7 @@ namespace FintrakBanking.Repositories.Credit
                                        productId = a.PRODUCTID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                        interestRate = a.INTERESTRATE,
@@ -7534,6 +7573,7 @@ namespace FintrakBanking.Repositories.Credit
                                        productName = d.TBL_PRODUCT1.PRODUCTNAME, // 1
                                        //writtenOff = a.LOANSTATUSID == 7
                                    });
+            var test = allFilteredLoan.ToList();
             return allFilteredLoan;
         }
 

@@ -1313,6 +1313,20 @@ namespace FintrakBanking.Repositories.Credit
             var output = condition.Count == status.Count;
             return output;
         }
+        public bool LMSValidatePrecedenceChecklistCompleted(int applicationId)
+        {
+
+            var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                             where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                             && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
+                             select c).ToList();
+            var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                          where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                          && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
+                          select c).ToList();
+            var output = condition.Count == status.Count;
+            return output;
+        }
         public bool DeleteLoanConditionPrecedenceStatus(int conditionId, bool isLMSChecklist, UserInfo user)
         {
             if (isLMSChecklist == true)
