@@ -1922,7 +1922,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
                     throw new ConditionNotMetException("There are unapproved middle office request.");
-                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID != (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
                     throw new ConditionNotMetException("There are unattended job request which must be attended to.");
             }
         }
@@ -1986,18 +1986,23 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (appl.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees) // Bonds and Guarantees adapter
                 {
-                    appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
-                    context.SaveChanges(); // save changes at this point
+                    if (PendingBondsAndGuaranteeJobRequest(appl.LOANAPPLICATIONID) == false)
+                    {
+                        throw new ConditionNotMetException("There is no Job Request sent to Legal for the B&G document. Please send one to proceed to availment!.");
+                    }
 
-                    workflow.ProductClassId = appl.PRODUCTCLASSID;
-                    workflow.StatusId = (int)ApprovalStatusEnum.Processing;
-                    workflow.Comment = "Bonds and Guarantees document process started";
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = true;
-                    workflow.LogActivity();
+                    //appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
+                    //context.SaveChanges(); // save changes at this point
+
+                    //workflow.ProductClassId = appl.PRODUCTCLASSID;
+                    //workflow.StatusId = (int)ApprovalStatusEnum.Processing;
+                    //workflow.Comment = "Bonds and Guarantees document process started";
+                    //workflow.DeferredExecution = true;
+                    //workflow.ExternalInitialization = true;
+                    //workflow.LogActivity();
                 }
-                else
-                {
+                //else
+                //{
                     int staffId = model.createdBy;
                     int? receiverLevelId = null;
 
@@ -2013,12 +2018,24 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.DeferredExecution = true;
 
                     workflow.LogActivity();
-                }
+                //}
             }
 
             var success = context.SaveChanges() > 0;
             workflow.Response.success = success;
             return workflow.Response;
+        }
+
+        private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
+        {
+            var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x => x.LOANAPPLICATIONDETAILID)
+                .ToList();
+            return context.TBL_JOB_REQUEST.Where(x => detailids.Contains(x.TARGETID)
+                && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+                && x.JOBTYPEID == (short)JobTypeEnum.legal
+                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
+            ).Any();
         }
 
         private bool OfferLetterChecklistValidation(int id, int type)
@@ -2179,19 +2196,19 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        private void PassApplicationToOperation(int companyId, int staffId, int operationId, int targetId, string comment)
-        {
-            workflow.StaffId = staffId;
-            workflow.CompanyId = companyId;
-            workflow.OperationId = operationId;
-            workflow.TargetId = targetId;
-            workflow.ProductClassId = null;
-            workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-            workflow.Comment = comment;
-            workflow.ExternalInitialization = true;
-            workflow.DeferredExecution = true;
-            workflow.LogActivity();
-        }
+        //private void PassApplicationToOperation(int companyId, int staffId, int operationId, int targetId, string comment)
+        //{
+        //    workflow.StaffId = staffId;
+        //    workflow.CompanyId = companyId;
+        //    workflow.OperationId = operationId;
+        //    workflow.TargetId = targetId;
+        //    workflow.ProductClassId = null;
+        //    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+        //    workflow.Comment = comment;
+        //    workflow.ExternalInitialization = true;
+        //    workflow.DeferredExecution = true;
+        //    workflow.LogActivity();
+        //}
 
         public bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel model)
         {
