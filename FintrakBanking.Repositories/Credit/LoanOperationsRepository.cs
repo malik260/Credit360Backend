@@ -8641,11 +8641,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 var sllp = 27;////Get SLLP GL
 
-                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off"));
+                financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
 
-                inputTransactions.Add(financeTransaction.BuildTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off"));
+                financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off", twoFactorAuth);
 
 
                 TBL_LOAN results = (from p in context.TBL_LOAN
@@ -10351,10 +10351,13 @@ namespace FintrakBanking.Repositories.Credit
                 _operationTypeId = model.productTypeId;
             }
 
+            var operationPerformed = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+
             var data = new TBL_LOAN_REVIEW_OPERATION
             {
                 LOANID = model.loanId,
-                LOANSYSTEMTYPEID = _operationTypeId,
+                LOANREVIEWAPPLICATIONID = operationPerformed.LOANREVIEWAPPLICATIONID,
+                LOANSYSTEMTYPEID = operationPerformed.LOANSYSTEMTYPEID,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
@@ -10382,7 +10385,7 @@ namespace FintrakBanking.Repositories.Credit
             // Audit Section ---------------------------
 
 
-            var operationPerformed = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+            
             if (operationPerformed != null)
             {
                 operationPerformed.OPERATIONPERFORMED = true;

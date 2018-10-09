@@ -514,7 +514,7 @@ namespace FintrakBanking.Repositories.Finance
                 else
                 {
                     var fromCurrencyCode = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == baseCurrency).CURRENCYCODE;
-                    var toCurrencyCode = this.context.TBL_CURRENCY.Where(x => x.CURRENCYID == currencyId).Select(f=>f.CURRENCYCODE).FirstOrDefault();
+                    var toCurrencyCode = this.context.TBL_CURRENCY.Where(x => x.CURRENCYID == currencyId).Select(f => f.CURRENCYCODE).FirstOrDefault();
                     var rateCode = "TTB";
 
                     // integration.
@@ -2122,6 +2122,78 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
+
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public FinanceTransactionViewModel PostTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, TwoFactorAutheticationViewModel twoFactorAuth)
+        {
+            var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
+
+            //FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
+            FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanData.CASAACCOUNTID && x.COMPANYID == model.companyId);
+
+            debit.operationId = (int)OperationsEnum.LoanTermination;
+            debit.description = description;
+            debit.valueDate = model.date;//generalSetup.GetApplicationDate();
+            debit.transactionDate = debit.valueDate;
+            debit.currencyId = casa.CURRENCYID;
+            debit.currencyRate = GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+            debit.isApproved = true;
+            debit.postedBy = model.createdBy;
+            debit.approvedBy = model.createdBy;
+            debit.approvedDate = debit.transactionDate;
+            debit.approvedDateTime = DateTime.Now;
+            debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            debit.companyId = model.companyId;
+
+
+            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+            debit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+            debit.casaAccountId = casa.CASAACCOUNTID;
+            debit.debitAmount = postedAmount;
+            debit.creditAmount = 0;
+            debit.sourceBranchId = casa.BRANCHID;
+            debit.destinationBranchId = casa.BRANCHID;
+
+
+            FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+
+            credit.operationId = (int)OperationsEnum.LoanTermination;
+            credit.description = description;
+            credit.valueDate = model.date;//generalSetup.GetApplicationDate();
+            credit.transactionDate = credit.valueDate;
+            credit.currencyId = casa.CURRENCYID;
+            credit.currencyRate = GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+            credit.isApproved = true;
+            credit.postedBy = model.createdBy;
+            credit.approvedBy = model.createdBy;
+            credit.approvedDate = credit.transactionDate;
+            credit.approvedDateTime = DateTime.Now;
+            credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+            credit.companyId = model.companyId;
+
+
+            credit.glAccountId = creditGL;
+            credit.sourceReferenceNumber = loanData.LOANREFERENCENUMBER;
+            credit.casaAccountId = null;
+            credit.debitAmount = 0;
+            credit.creditAmount = postedAmount;
+            credit.sourceBranchId = casa.BRANCHID;
+            credit.destinationBranchId = casa.BRANCHID;
+
+
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            inputTransactions.Add(debit);
+            inputTransactions.Add(credit);
+
+            PostTransaction(inputTransactions,false, twoFactorAuth);
+
+            return null;
+
+        }
+
+        
         [OperationBehavior(TransactionScopeRequired = true)]
         public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
@@ -2185,6 +2257,7 @@ namespace FintrakBanking.Repositories.Finance
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
+
             PostTransaction(inputTransactions);
 
             return null;
@@ -2192,7 +2265,7 @@ namespace FintrakBanking.Repositories.Finance
         }
 
 
-       
+
         public List<FinanceTransactionViewModel> BuildRecapitalisationAccuredInterestReceivablePosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
             var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
