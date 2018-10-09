@@ -2010,18 +2010,34 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //}
         #endregion
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("two-factor-auth-enabled-fee-override")]
-        public HttpResponseMessage TwoFactorAuthenticationEnabledWithoutFeeOverride([FromBody]LoanViewModel entity)
-        {
-            entity.userBranchId = (short)token.GetBranchId;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
-            entity.createdBy = token.GetStaffId;
-            entity.companyId = token.GetCompanyId;
-            var enabled = repo.TwoFactorAuthenticationEnabledWithoutFeeOverride(entity);
-            if (enabled == false) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = enabled, message = "" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = enabled });
-        }
+    //    [HttpPost]
+    //    [ClaimsAuthorization]
+    //    [Route("two-factor-auth-enabled-fee-override")]
+    //    public HttpResponseMessage TwoFactorAuthenticationEnabledWithoutFeeOverride([FromBody]LoanViewModel entity)
+    //    {
+    //        try
+    //        {
+    //            TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+    //            entity.userBranchId = (short)token.GetBranchId;
+    //            entity.applicationUrl = HttpContext.Current.Request.Path;
+    //            entity.createdBy = token.GetStaffId;
+    //            entity.companyId = token.GetCompanyId;
+
+    //            var data = repo.TwoFactorAuthenticationEnabledWithoutFeeOverride(entity);
+    //            if (!data)
+    //            {
+    //                return Request.CreateResponse(HttpStatusCode.OK,
+    //                   new { success = false, result = data, message = "" });
+    //            }
+    //            return Request.CreateResponse(HttpStatusCode.OK,
+    //                   new { success = true, result = data });
+    //        }
+    //        catch (System.Exception ex)
+    //        {
+    //            return Request.CreateResponse(HttpStatusCode.OK,
+    //                  new { success = false, message = ex.Message });
+    //        }
+    //    }
     }
 }
