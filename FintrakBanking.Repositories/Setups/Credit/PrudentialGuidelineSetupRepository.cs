@@ -38,13 +38,16 @@ namespace FintrakBanking.Repositories.Setups.Credit
         public string AddGuideline(PrudentialGuidelineViewModel guideline)
         {
             int confirmation = 0;
-            string prudentialGuidelineName = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(w => w.PRUDENTIALGUIDELINETYPEID == guideline.prudentialGuidelineTypeId).FirstOrDefault().PRUDENTIALGUIDELINETYPENAME;
+           // string prudentialGuidelineName = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(w => w.PRUDENTIALGUIDELINETYPEID == guideline.prudentialGuidelineTypeId).FirstOrDefault().PRUDENTIALGUIDELINETYPENAME;
             if (guideline!=null)
             {
+                short a = (short)guideline.prudentialGuidelineTypeId;
+                int ass = guideline.prudentialGuidelineTypeId;
+
                 var guidelineList = new TBL_LOAN_PRUDENTIALGUIDELINE()
                 {
-                    STATUSNAME = prudentialGuidelineName,
-                    PRUDENTIALGUIDELINETYPEID = (short)guideline.prudentialGuidelineId,
+                    STATUSNAME = guideline.classification,
+                    PRUDENTIALGUIDELINETYPEID = (short)guideline.prudentialGuidelineTypeId,
                     INTERNALMINIMUM=guideline.internalMinimun,
                     INTERNALMAXIMUM=guideline.internalMaximun,
                     EXTERNALMINIMUM=guideline.externalMinimun,

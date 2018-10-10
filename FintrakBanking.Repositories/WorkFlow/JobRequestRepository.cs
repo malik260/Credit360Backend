@@ -1258,7 +1258,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeId = x.JOBTYPEID,
                 jobTypeName = x.JOBTYPENAME,
                 inUse = x.INUSE
-            });
+            }).Where(c=>c.inUse == true);
         }
 
         public IEnumerable<JobTypeViewModel> GetJobSubType(short jobId)

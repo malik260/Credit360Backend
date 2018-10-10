@@ -217,7 +217,8 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = model.customerId,
                 CAMREFNUMBER = model.camRefNumber,
                 CREATEDBY = model.createdBy,
-                DATETIMECREATED = genSetup.GetApplicationDate()
+                DATETIMECREATED = genSetup.GetApplicationDate(),
+                ISCURRENT = true,
             });
 
             if (context.SaveChanges() == 1)
@@ -1081,6 +1082,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (context.TBL_TEMP_COLLATERAL_CUSTOMER.Where(x => x.TEMPCOLLATERALCUSTOMERID == entity.collateralId).Any() != true)
             {
+
+
+               
                 collateralId = AddCollateralMainFormForGurantee(entity);
 
                 var guarantee = context.TBL_TEMP_COLLATERAL_GAURANTEE.Add(new TBL_TEMP_COLLATERAL_GAURANTEE
@@ -1101,10 +1105,8 @@ namespace FintrakBanking.Repositories.Credit
                     PHONENUMBER2 = entity.phoneNumber2,
                     EMAILADDRESS = entity.emailAddress,
                     RELATIONSHIP = entity.relationship,
-                    RELATIONSHIPDURATION = entity.relationshipDuration
-
-
-
+                    RELATIONSHIPDURATION = entity.relationshipDuration,
+                    
                 });
 
                 workflow.StaffId = entity.createdBy;
