@@ -7561,17 +7561,17 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchLoanLine(string searchQuery)
         {
+            if (!string.IsNullOrWhiteSpace(searchQuery)) searchQuery = searchQuery.ToUpper();
+            
             var allFilteredLoan = (from a in context.TBL_LOAN_APPLICATION
                                    join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                                   //join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.APPROVALSTATUSID == 2 && d.STATUSID == 2
                                    && (
                                        a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
-                                       b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                       b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                       b.LASTNAME.ToLower().Contains(searchQuery)// ||
-                                      // c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
+                                       b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
+                                       b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
+                                       b.LASTNAME.ToUpper().Contains(searchQuery)
                                    )
                                    select new LoanViewModel
                                    {
