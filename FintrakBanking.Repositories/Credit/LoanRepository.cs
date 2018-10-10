@@ -1320,7 +1320,7 @@ namespace FintrakBanking.Repositories.Credit
                         //.......................END OF APPROVAL LOG......................................................
 
                         //.....Commit transaction ............
-                        trans.Commit();
+                        //trans.Commit();
 
                         return loanReferenceNumber;
                     }
