@@ -288,6 +288,27 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        //private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
+        //{
+        //    var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
+        //        .Select(x => x.LOANAPPLICATIONDETAILID)
+        //        .ToList();
+        //    return context.TBL_JOB_REQUEST.Where(x => detailids.Contains(x.TARGETID)
+        //        && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+        //        && x.JOBTYPEID == (short)JobTypeEnum.legal
+        //        && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
+        //    ).Any();
+        //}
+
+        private bool PendingBondsAndGuaranteeJobRequest(int applicationDetailId)
+        {
+            return context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId
+                && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+                && x.JOBTYPEID == (short)JobTypeEnum.legal
+                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
+            ).Any();
+        }
+
         private string addRevolvingLoan(LoanViewModel model)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(model.loanApplicationId);
@@ -513,6 +534,12 @@ namespace FintrakBanking.Repositories.Credit
                 if (bgRecord.ISTENORED) isTenored = true;
                 if (bgRecord.ISBANKFORMAT) isBankFormat = true;
             }
+            
+            if(application.PRODUCTCLASSID == (short) ProductClassEnum.BondAndGuarantees)
+            {
+                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationDetailId))
+                    throw new ConditionNotMetException("There are pending bonds and gaurantees that must be attended to");
+            }
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, entity.productId, (short)LoanSystemTypeEnum.ContingentLiability);
 
@@ -649,6 +676,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
         }
+
         private string AddTermLoan(LoanViewModel entity)
         {
             var application = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);

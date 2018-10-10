@@ -4,6 +4,8 @@ using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Admin;
+using FintrakBanking.ViewModels.Finance;
+using FinTrakBanking.ThirdPartyIntegration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +17,18 @@ namespace FintrakBanking.Repositories.Admin
         private FinTrakBankingContext context;
         private IGeneralSetupRepository _genSetup;
         private IAuditTrailRepository auditTrail;
+        private IntegrationWithFinacle integration;
 
         public CurrencyRateRepository(FinTrakBankingContext _context,
                                                     IGeneralSetupRepository genSetup,
-                                                    IAuditTrailRepository _auditTrail)
+                                                    IAuditTrailRepository _auditTrail,
+                                                    IntegrationWithFinacle _integration )
         {
             this.context = _context;
             this._genSetup = genSetup;
             auditTrail = _auditTrail;
-        }
+            this.integration =_integration;
+    }
 
         public IEnumerable<CurrencyViewModel> GetCurrency()
         {
@@ -203,6 +208,6 @@ namespace FintrakBanking.Repositories.Admin
                     });
         }
 
-       
+
     }
 }
