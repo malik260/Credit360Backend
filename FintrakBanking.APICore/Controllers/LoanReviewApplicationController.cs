@@ -96,6 +96,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 entity.createdBy =  token.GetStaffId;
                 entity.companyId =  token.GetCompanyId;
+                entity.branchId = (short)token.GetBranchId;
                 string response = repo.SubmitLoanReviewApplication(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
             }
@@ -106,13 +107,13 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-review-application/validatecustomer/{loanApplicationDetailId}")]
-        public HttpResponseMessage validateCustomer(int loanApplicationDetailId)
+        [Route("loan-review-application/validatecustomer/{loanApplicationDetailId}/{customerId}")]
+        public HttpResponseMessage validateCustomer(int loanApplicationDetailId,int customerId)
         {
             try
             {
-
-                bool response = repo.validateCustomer(loanApplicationDetailId);
+                
+                bool response = repo.validateCustomer(loanApplicationDetailId, customerId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
             }
             catch (SecureException ex)

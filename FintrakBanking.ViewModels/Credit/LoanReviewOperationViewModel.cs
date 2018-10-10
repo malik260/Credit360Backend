@@ -231,6 +231,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string cancelUndisbursedLoan { get; set; }
         public string lmsLoanReferenceNumber { get; set; }
         public DateTime? newMaturityDate { get; set; }
+        public int? loanSystemTypeId { get; set; }
     }
 
 

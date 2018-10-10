@@ -17,7 +17,8 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public int LOANREVIEWOPERATIONID { get; set; }
-        public int LOANREVIEWAPPLICATIONID { get; set; }
+
+        public int? LOANREVIEWAPPLICATIONID { get; set; }
 
         public int LOANID { get; set; }
 
