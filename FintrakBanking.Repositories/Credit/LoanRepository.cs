@@ -1422,21 +1422,24 @@ namespace FintrakBanking.Repositories.Credit
 
         public void DisburseLoan(LoanViewModel entity, TwoFactorAutheticationViewModel twoFactorAuthDetails = null)
         {
-            //PostLoanDisbursment(entity);
-            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            List<FinanceTransactionViewModel>  disbursementTransactions = new List<FinanceTransactionViewModel>();
 
-            inputTransactions.AddRange(BuildLoanDisbursmentPosting(entity));
+            disbursementTransactions.AddRange(BuildLoanDisbursmentPosting(entity));
 
             var feePostings = BuildLoanChargeFeesPosting(entity);
 
-            //if fee has not been taken from the customer account due to override
             if (feePostings.Count() > 0)
-                inputTransactions.AddRange(feePostings);
+            {
+                financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails);
 
-            financeTransaction.PostTransaction(inputTransactions, false, twoFactorAuthDetails);
+                twoFactorAuthDetails.skipAuthentication = true;
+                financeTransaction.PostTransaction(disbursementTransactions, false, twoFactorAuthDetails);
+            }
+            else
+            {
+                financeTransaction.PostTransaction(disbursementTransactions, false, twoFactorAuthDetails);
+            }
 
-            //if (feePostings.Count() > 0)
-            //    financeTransaction.PostTransaction(feePostings);
         }
 
         public void PostLoanFees(LoanViewModel entity)
