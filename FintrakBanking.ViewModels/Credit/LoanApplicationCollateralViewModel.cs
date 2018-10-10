@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -79,4 +80,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class CusotmerInfoViewModel
+    {
+        public string customer { get; set; }
+
+        public string branch { get; set; }
+
+        public DateTime date { get; set; }
+
+    }
 }
