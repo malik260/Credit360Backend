@@ -451,7 +451,10 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddDocumentTemplateSection(DocumentTemplateSectionViewModel model)
         {
             //if (String.IsNullOrEmpty(model.templateDocument)) { throw new SecureException("Document is blank. Cannot create a blank document!"); }
-
+            if (string.IsNullOrEmpty(model.templateDocument))
+            {
+                model.templateDocument = "<p> </p>";
+            }
             var data = new TBL_DOC_TEMPLATE_SECTION
             {
                 TEMPLATEID = model.templateId,
@@ -491,6 +494,10 @@ namespace FintrakBanking.Repositories.Credit
             if (data == null)
             {
                 return false;
+            }
+            if(string.IsNullOrEmpty(model.templateDocument))
+            {
+                model.templateDocument = "<p> </p>";
             }
             data.TEMPLATEID = model.templateId;
             data.TITLE = model.title;
