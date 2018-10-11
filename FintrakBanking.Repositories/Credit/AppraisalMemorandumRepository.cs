@@ -1459,56 +1459,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return limits;
         }
-        public async Task<bool> UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model)
-        {
-            bool output = false;
-            var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
-            LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
-            LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
-            LoanDetails.ISSPECIALISED = model.isSpecialised;
-
-            var auditRec = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.StaffReliefUpdated,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Record Added For CRMS Collateral On Loan Detail '{model.applicationId}'",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = model.applicationId
-            };
-
-            using (var trans = context.Database.BeginTransaction())
-            {
-                try
-                {
-
-
-                    this.audit.AddAuditTrail(auditRec);
-                    //end of Audit section -------------------------------
-
-
-                    output = await context.SaveChangesAsync() > 0;
-
-                 
-                    if (output)
-                    {
-                        trans.Commit();
-
-                        return output;
-                    }
-
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new SecureException(ex.Message);
-                }
-            }
-        }
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId)
         {
