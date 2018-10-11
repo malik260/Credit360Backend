@@ -811,7 +811,12 @@ namespace FintrakBanking.Repositories.Credit
                         var detail = from a in context.TBL_CHECKLIST_DEFINITION
                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
                                      equals b.CHECKLISTDEFINITIONID
-                                     where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                     where b.TARGETID == targetId 
+                                     && b.TARGETTYPEID == 
+                                     //(item.ISPRODUCT_BASED ? 
+                                     //(short)CheckListTargetTypeEnum.LoanApplicationProductChecklist 
+                                     //: 
+                                     (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist//)
                                      && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
                                      select b;
                         var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);

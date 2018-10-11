@@ -599,20 +599,9 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-operation/awaiting-approval")]
         public HttpResponseMessage GetLoanOperationAwaitingApproval()
         {
-            try
-            {
                 var data = repo.GetLoanOperationAwaitingApproval(token.GetStaffId, token.GetCompanyId);
-
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
-                }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
+
         }
         [HttpGet]
         [ClaimsAuthorization]

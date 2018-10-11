@@ -10497,9 +10497,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
         {
-            var levelResult = context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
-            int staffApprovalLevelId = 0;
-            if (levelResult != null) staffApprovalLevelId = levelResult.APPROVALLEVELID;
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
@@ -10516,7 +10514,7 @@ namespace FintrakBanking.Repositories.Credit
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
                             where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
-                            && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == false
                             orderby op.DATECREATED descending
@@ -10634,7 +10632,7 @@ namespace FintrakBanking.Repositories.Credit
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                                      where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      && atrail.OPERATIONID == op.OPERATIONTYPEID
-                                     && atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                                     && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                      && op.OPERATIONCOMPLETED == false
                                      orderby op.DATECREATED descending

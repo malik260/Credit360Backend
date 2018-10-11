@@ -1898,9 +1898,11 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext ctx = new FinTrakBankingContext();
             foreach (var record in loanApplicationDetails.ToList())
             {
-                record.EFFECTIVEDATE = DateTime.Now;
-                record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
+                var systemdate = genSetup.GetApplicationDate();
+                record.EFFECTIVEDATE = systemdate;
+                record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
 
+                
                 if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                 {
                     var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
