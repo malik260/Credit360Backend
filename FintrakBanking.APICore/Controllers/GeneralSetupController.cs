@@ -416,7 +416,19 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("region/type/{regionTypeId}")]
+        public HttpResponseMessage RegionByType(int regionTypeId)
+        {
+                var data = repo.GetRegionByType(regionTypeId);
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = true, result = data, count = data.Count() });
+        }
+
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("subsector/{subSectorId}/sectors")]
         public HttpResponseMessage GetAllSectorsBySubSectorId(short subSectorId)
         {

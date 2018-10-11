@@ -294,6 +294,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int requestStaffId { get; set; }
         public int? toApprovalLevelId { get; set; }
         public bool atInitiator { get; set; }
+        public int? regionId { get; set; }
     }
 
     public class applicationDetails

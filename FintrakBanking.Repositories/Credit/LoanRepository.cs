@@ -952,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
             if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
-                throw new ConditionNotMetException($"Commercial Loan maturity date should not exceed the line expiry date [{applicationDetail.EXPIRYDATE}]. ");
+                throw new ConditionNotMetException($"Commercial Loan maturity date should not exceed the line expiry date [{Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}]. ");
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
 
@@ -1156,7 +1156,8 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
             if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
-                throw new ConditionNotMetException($"FX revolving loan maturity date should not exceed the line expiry date [{applicationDetail.EXPIRYDATE}]. ");
+                throw new ConditionNotMetException($"FX revolving loan maturity date should not exceed the line expiry date [{Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}]. ");
+            
 
             var loans = context.TBL_LOAN.Where(x => x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).OrderByDescending(l => l.TERMLOANID);
 
@@ -3287,6 +3288,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            TBL_LOAN loanTable = new TBL_LOAN();
 
             foreach (var item in loanDetails.loanChargeFee)
             {
@@ -3332,7 +3334,7 @@ namespace FintrakBanking.Repositories.Credit
                             debit.creditAmount = 0;
                             debit.sourceBranchId = loanDetails.branchId;
                             debit.destinationBranchId = casa.BRANCHID;
-                            debit.rateCode = loanDetails.nostroRateCode; //"TTB";
+                            debit.rateCode = "TTB"; //loanDetails.nostroRateCode;
                             debit.rateUnit = string.Empty;
                             debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
@@ -3370,7 +3372,7 @@ namespace FintrakBanking.Repositories.Credit
                             credit.creditAmount = creditAmount;
                             credit.sourceBranchId = loanDetails.branchId;
                             credit.destinationBranchId = loanDetails.branchId;
-                            credit.rateCode = loanDetails.nostroRateCode; // "TTB";
+                            credit.rateCode =  "TTB"; //loanDetails.nostroRateCode;
                             credit.rateUnit = string.Empty;
                             credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
@@ -5027,6 +5029,17 @@ namespace FintrakBanking.Repositories.Credit
                 if (trailInfo.Any())
                     item.isUnderApproval = true;
 
+                var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == item.currencyId).FirstOrDefault();
+                var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+
+                var interestRate = Convert.ToDouble(item.interestRate);
+                if (priceIndex != null)
+                {
+                    item.interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                    item.productPriceIndex = priceIndex.PRICEINDEXNAME;
+                    item.productPriceDescription = priceIndex.PRICEINDEXDESCRIPTION;
+                }
+                
                 var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
@@ -5262,6 +5275,17 @@ namespace FintrakBanking.Repositories.Credit
                             item.isApprovalOwner = true;
                         }
                     }
+                }
+
+                var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == item.currencyId).FirstOrDefault();
+                var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+
+                var interestRate = Convert.ToDouble(item.interestRate);
+                if (priceIndex != null)
+                {
+                    item.interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                    item.productPriceIndex = priceIndex.PRICEINDEXNAME;
+                    item.productPriceDescription = priceIndex.PRICEINDEXDESCRIPTION;
                 }
 
                 var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);

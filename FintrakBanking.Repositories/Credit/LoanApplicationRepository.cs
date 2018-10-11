@@ -929,8 +929,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            try
-            {
 
                 if (loan.relationshipOfficerId != 0)
                 {
@@ -1004,11 +1002,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 return returndate;
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
 
 
@@ -1142,6 +1135,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.APPLICATIONAMOUNT = totalApplicationAmount;
             this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             this.loanData.COLLATERALDETAIL = loan.collateralDetail;
+            this.loanData.CAPREGIONID = loan.regionId;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
