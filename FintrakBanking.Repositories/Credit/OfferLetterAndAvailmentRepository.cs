@@ -1852,11 +1852,9 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var record in loanApplicationDetails.ToList())
             {
                 var systemdate = genSetup.GetApplicationDate();
-                if(entity.productClassId == (short)ProductClassEnum.Commercial)
-                {
-                    record.EFFECTIVEDATE = systemdate;
-                    record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
-                }
+                record.EFFECTIVEDATE = systemdate;
+                record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
+
                 
                 if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                 {
