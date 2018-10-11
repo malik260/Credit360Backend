@@ -79,6 +79,7 @@ namespace FintrakBanking.Repositories.Credit
                 currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
                 lastComment = x.trail == null ? "" : x.trail.COMMENT,
                 toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
+                requestStaffId = x.trail == null ? 0 : x.trail.REQUESTSTAFFID,
 
                 applicationDate = x.application.APPLICATIONDATE,
                 approvalStatus = x.application.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
