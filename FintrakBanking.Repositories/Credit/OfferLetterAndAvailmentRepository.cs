@@ -49,6 +49,53 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region OfferLetter & Availment Process
+                public bool UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model)
+        {
+            bool output = false;
+            var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
+            LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
+            LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            LoanDetails.ISSPECIALISED = model.isSpecialised;
+
+            var auditRec = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffReliefUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Record Added For CRMS Collateral On Loan Detail '{model.applicationId}'",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.applicationId
+            };
+
+
+                try
+                {
+
+
+                    this.auditTrail.AddAuditTrail(auditRec);
+                    //end of Audit section -------------------------------
+
+
+                    output = context.SaveChanges() > 0;
+
+
+                    if (output)
+                    {
+                        return output;
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+
+        }
+
         public IQueryable<CamProcessedLoanViewModel> GetApplicationsAtOfferLetter(int staffId, int companyId) // Control Generation
         {
             var exceptIds = context.TBL_LOAN_RATE_FEE_CONCESSION

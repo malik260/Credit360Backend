@@ -106,17 +106,17 @@ namespace FintrakBanking.ReportObjects
         }
 
         public static IList<LoanStatementViewModel> LoanStatement(int companyId, int loanId)
-        {
+         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                IQueryable<LoanStatementViewModel> Loandata = from a in context.TBL_LOAN
+                IQueryable<LoanStatementViewModel> Loandata = (from a in context.TBL_LOAN
                                                               join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
                                                               where a.COMPANYID == companyId && a.LOANSTATUSID == 1
                                                               && a.TERMLOANID == loanId 
                                                               && b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanSchedule
                                                               select new LoanStatementViewModel()
                                                               {
-                                                                  balance = a.OUTSTANDINGPRINCIPAL,
+                                                                  //balance = a.OUTSTANDINGPRINCIPAL,
                                                                   companyName = a.TBL_COMPANY.NAME,
                                                                   logoPath = a.TBL_COMPANY.LOGOPATH,
                                                                   firstName = a.TBL_CUSTOMER.FIRSTNAME,
@@ -135,9 +135,18 @@ namespace FintrakBanking.ReportObjects
                                                                   debitAmount = b.DEBITAMOUNT,
                                                                   discription = b.DESCRIPTION,
                                                                   transactionCurrency = b.TBL_CURRENCY.CURRENCYCODE,
-                                                              };
+                                                              });
+                var list = Loandata.OrderBy(x => x.valueDate).ToList();
+                decimal rbalance = 0;
+                list = list.Select(i => {
+                    rbalance += i.creditAmount - i.debitAmount;
+                    i.balance = rbalance;
+                    return i;
+                }).ToList();
 
-                return Loandata.ToList();
+
+
+                return list;
             }
 
         }
