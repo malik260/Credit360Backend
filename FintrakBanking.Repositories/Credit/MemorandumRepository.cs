@@ -145,21 +145,24 @@ namespace FintrakBanking.Repositories.Credit
                 // cam
                 var cam = ClassifiedAssetManagementReview(lmsrAppllication.APPLICATIONREFERENCENUMBER);
 
-                this.securityType = cam.securityType;
-                this.securityDescription = cam.securityDescription;
-                this.securityFirstSellValue = cam.securityFirstSellValue.ToString();
-                this.securityLocation = cam.securityLocation;
-                this.securityOpenMarketValue = cam.securityOpenMarketValue.ToString();
-                this.securityPerfectionStatus = cam.securityPerfectionStatus.ToString();
-                this.securityValuationDate = cam.securityValuationDate.ToString();
-                this.shareHolders = cam.shareHolders;
-                this.signitories = cam.signitories;
-                this.directors = cam.directors;
-                this.isSecurity = cam.isResidential == true ? "Yes" : "No";
-                this.isOwnerOccupied = cam.isOwnerOccupied == true ? "Yes" : "No";
-                this.amountDisbursed = cam.amountDisbursed.ToString();
-                this.amountPaidSoFar = cam.amountPaidSoFar.ToString();
-                this.amountProposed = cam.amountProposed.ToString();
+                if (cam != null)
+                {
+                    this.securityType = cam.securityType;
+                    this.securityDescription = cam.securityDescription;
+                    this.securityFirstSellValue = cam.securityFirstSellValue.ToString();
+                    this.securityLocation = cam.securityLocation;
+                    this.securityOpenMarketValue = cam.securityOpenMarketValue.ToString();
+                    this.securityPerfectionStatus = cam.securityPerfectionStatus.ToString();
+                    this.securityValuationDate = cam.securityValuationDate.ToString();
+                    this.shareHolders = cam.shareHolders;
+                    this.signitories = cam.signitories;
+                    this.directors = cam.directors;
+                    this.isSecurity = cam.isResidential == true ? "Yes" : "No";
+                    this.isOwnerOccupied = cam.isOwnerOccupied == true ? "Yes" : "No";
+                    this.amountDisbursed = cam.amountDisbursed.ToString();
+                    this.amountPaidSoFar = cam.amountPaidSoFar.ToString();
+                    this.amountProposed = cam.amountProposed.ToString();
+                }
             }
 
             this.accountNumbers = AccountNumbersMarkup(this.customerIds.Select(x => x.customerId).ToList());
@@ -549,6 +552,8 @@ namespace FintrakBanking.Repositories.Credit
                            totalOutstanding = 0 //
 
                        }).FirstOrDefault();
+
+            if (cam == null) return null;
 
             var securty = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
                           join b in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals b.COLLATERALCUSTOMERID
