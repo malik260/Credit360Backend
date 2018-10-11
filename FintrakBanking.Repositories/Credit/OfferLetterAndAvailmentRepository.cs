@@ -27,6 +27,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IWorkflow workflow;
+
         //private IApprovalLevelStaffRepository approvalLevel;
         //private ILoanRepository loans;
 
@@ -48,6 +49,52 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region OfferLetter & Availment Process
+                public bool UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model)
+        {
+            bool output = false;
+            var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
+            LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
+            LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
+            LoanDetails.ISSPECIALISED = model.isSpecialised;
+
+            var auditRec = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffReliefUpdated,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Record Added For CRMS Collateral On Loan Detail '{model.applicationId}'",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = model.applicationId
+            };
+
+
+                try
+                {
+
+
+                    this.auditTrail.AddAuditTrail(auditRec);
+                    //end of Audit section -------------------------------
+
+
+                    output = context.SaveChanges() > 0;
+
+
+                    if (output)
+                    {
+                        return output;
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+
+        }
 
         public IQueryable<CamProcessedLoanViewModel> GetApplicationsAtOfferLetter(int staffId, int companyId) // Control Generation
         {
@@ -667,7 +714,7 @@ namespace FintrakBanking.Repositories.Credit
                 finalConditionSubsequents += conditions;
             }
 
-            fee = $"<br/>"+ $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" +
+            fee = $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" +
                 $"<p><strong> Fee Details: </strong></p>";
 
             fee = fee +
@@ -1851,9 +1898,11 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext ctx = new FinTrakBankingContext();
             foreach (var record in loanApplicationDetails.ToList())
             {
-                record.EFFECTIVEDATE = DateTime.Now;
-                record.EXPIRYDATE = (DateTime.Now.AddDays(record.APPROVEDTENOR));
+                var systemdate = genSetup.GetApplicationDate();
+                record.EFFECTIVEDATE = systemdate;
+                record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
 
+                
                 if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                 {
                     var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
@@ -1978,7 +2027,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                bool cleared = OfferLetterChecklistValidation(appl.LOANAPPLICATIONID,1);
+                bool cleared = OfferLetterChecklistValidation(appl.LOANAPPLICATIONID, 1);
 
                 if (cleared == false) throw new SecureException("Checklist not cleared to go further!");
 
@@ -2358,5 +2407,376 @@ namespace FintrakBanking.Repositories.Credit
             };
 
         }
-    }
+
+
+        #region FORM3800B LOS report
+
+        public List<CamProcessedLoanViewModel> Los_LoanDetail(string applicationRefNumber)
+        {
+            var loanDetails = (from a in context.TBL_LOAN_APPLICATION
+                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                               join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                               from c in cc.DefaultIfEmpty()
+                               join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
+                               from d in cg.DefaultIfEmpty()
+                               join e in context.TBL_CURRENCY on b.CURRENCYID equals e.CURRENCYID
+
+                               where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
+                               && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                               && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                               && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                               select new CamProcessedLoanViewModel()
+                               {
+                                   productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.APPROVEDPRODUCTID).PRODUCTNAME,
+                                   tenor = b.APPROVEDTENOR,
+                                   interestRate = b.APPROVEDINTERESTRATE,
+                                   purpose = b.LOANPURPOSE,
+                                   applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                                   approvedAmountCurrency = e.CURRENCYNAME + " " + b.APPROVEDAMOUNT + " % p.a ",
+                                   productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
+
+                                   //approvedAmount = b.APPROVEDAMOUNT
+                               }).ToList();
+
+            return loanDetails;
+
+
+        }
+
+        private List<OfferLetterConditionPrecidentViewModel> Los_ConditionPrecedents(string applicationRefNumber)
+        {
+            var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
+                                       join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                       && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                       && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                       && b.ISSUBSEQUENT == false
+                                       select new OfferLetterConditionPrecidentViewModel()
+                                       {
+                                           conditionPrecident = b.CONDITION,
+                                           loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                           isExternal = b.ISEXTERNAL,
+                                           productName = c.TBL_PRODUCT.PRODUCTNAME
+                                       }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+
+
+            return conditionPrecedents;
+        }
+
+        public List<OfferLetterConditionPrecidentViewModel> Internal_ConditionPrecedents(string applicationRefNumber)
+        {
+            var ConditionsPrecedents = Los_ConditionPrecedents(applicationRefNumber);
+            return ConditionsPrecedents.Where(x => x.isExternal == false).ToList();
+        }
+        public List<OfferLetterConditionPrecidentViewModel> External_ConditionPrecedents(string applicationRefNumber)
+        {
+            var ConditionsPrecedents = Los_ConditionPrecedents(applicationRefNumber);
+            return ConditionsPrecedents.Where(x => x.isExternal == true).ToList();
+        }
+        public List<OfferLetterConditionPrecidentViewModel> External_ConditionSubsequents(string applicationRefNumber)
+        {
+            var conditionSubsequents = Los_ConditionSubsequents(applicationRefNumber);
+            return conditionSubsequents.Where(x => x.isExternal == true).ToList();
+        }
+        public List<OfferLetterConditionPrecidentViewModel> Internal_ConditionSubsequents(string applicationRefNumber)
+        {
+            var conditionSubsequents = Los_ConditionSubsequents(applicationRefNumber);
+               return conditionSubsequents.Where(x => x.isExternal == false).ToList();
+        }
+        private List<OfferLetterConditionPrecidentViewModel> Los_ConditionSubsequents(string applicationRefNumber)
+        {
+            var conditionSubsequents = (from a in context.TBL_LOAN_APPLICATION
+                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                        where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                        && b.ISSUBSEQUENT == true
+                                        select new OfferLetterConditionPrecidentViewModel()
+                                        {
+                                            conditionPrecident = b.CONDITION,
+                                            loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                            isExternal = b.ISEXTERNAL,
+                                            productName = c.TBL_PRODUCT.PRODUCTNAME
+                                        }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+            return conditionSubsequents;
+        }
+
+
+        public List<ProductFeeViewModel> Los_Fee(string applicationRefNumber)
+        {
+            var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
+                        join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                        where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                        && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                        && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                        select new ProductFeeViewModel()
+                        {
+                            feeName = c.CHARGEFEENAME,
+                            rateValue = a.RECOMMENDED_FEERATEVALUE
+                        }).ToList();
+
+            return fees;
+        }
+
+
+        public List<TransactionDynamicsViewModel> Los_ConditionDynamics(string applicationRefNumber)
+        {
+            var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
+                                              join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                              join c in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                              //join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                                              //from c in cc.DefaultIfEmpty()
+                                              //join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
+                                              //from d in cg.DefaultIfEmpty()
+                                              where c.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                              && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                              && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                              select new TransactionDynamicsViewModel()
+                                              {
+                                                  dynamics = a.DYNAMICS,
+                                              }).Distinct().ToList();
+
+            return transactionDynamicsDetails;
+        }
+
+        public List<LoanApplicationCollateralViewModel> Collateral(string applicationRefNumber)
+        {
+            var loanCollaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
+                                   join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                                   where y.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                   && y.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                   && y.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                   select new LoanApplicationCollateralViewModel()
+                                   {
+                                       collateralDetail = x.COLLATERALDETAIL,
+                                       collateralValue = x.COLLATERALVALUE,
+                                       stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
+                                       facilityAmount = y.APPROVEDAMOUNT
+                                   }).ToList();
+
+            return loanCollaterals;
+        }
+
+        public List<MonitoringTriggersViewModel> Los_loanMonitoringTriggers(string applicationRefNumber)
+        {
+            var loanMonitoringTriggers = (from x in context.TBL_LOAN_APPLICATN_DETL_MTRIG
+                                          join y in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals y.LOANAPPLICATIONDETAILID
+                                          join z in context.TBL_LOAN_APPLICATION on y.LOANAPPLICATIONID equals z.LOANAPPLICATIONID
+                                          where z.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                          && z.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                          && z.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                          select new MonitoringTriggersViewModel()
+                                          {
+                                              monitoringTrigger = x.MONITORING_TRIGGER,
+                                          }).Distinct().ToList();
+
+            return loanMonitoringTriggers;
+        }
+
+        public List<LoanApplicationCommentViewModel> LoanComments(string applicationRefNumber)
+        {
+            var loanComments = (from x in context.TBL_LOAN_APPLICATION_COMMENT
+                                join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                                where y.APPLICATIONREFERENCENUMBER == applicationRefNumber && x.OPERATIONID == (int)CommentsTypeEnum.LOS
+                                select new LoanApplicationCommentViewModel()
+                                {
+                                    comments = x.COMMENTS,
+                                }).ToList();
+
+            return loanComments;
+
+           
+        }
+
+        public List<CusotmerInfoViewModel> Los_Customer(string applicationRefNumber)
+        {
+            var loanComments = (from x in context.TBL_LOAN_APPLICATION
+                                join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
+                                join b in context.TBL_BRANCH on y.BRANCHID equals b.BRANCHID
+                                where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                select new CusotmerInfoViewModel()
+                                {
+                                    customer = y.LASTNAME + " " + y.FIRSTNAME + " " + y.MIDDLENAME,
+                                    date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                                    branch = b.BRANCHNAME
+                                }).ToList();
+
+            return loanComments;
+        }
+
+        #endregion
+        #region FORM3800B MLSR report
+
+        public List<CamProcessedLoanViewModel> Lmsr_LoanDetail(string applicationRefNumber)
+        {
+            var loanDetails = (from a in context.TBL_LMSR_APPLICATION
+                               join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                               join e in context.TBL_LOAN on b.LOANID equals e.TERMLOANID
+                               join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                               into cc
+                               from c in cc.DefaultIfEmpty()
+                               join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID
+                               into cg
+                               from d in cg.DefaultIfEmpty()
+                               join g in context.TBL_CURRENCY on e.CURRENCYID equals g.CURRENCYID
+                               where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
+                               && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                               select new CamProcessedLoanViewModel()
+                               {
+                                   productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == e.PRODUCTID).PRODUCTNAME,
+                                   tenor = b.APPROVEDTENOR,//(int)(e.MATURITYDATE - e.EFFECTIVEDATE).TotalDays,
+                                   interestRate = e.INTERESTRATE,
+                                   purpose = b.REVIEWDETAILS,
+                                   applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                                   approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT + " % p.a ",
+                                   //approvedAmount = b.APPROVEDAMOUNT
+
+                               }).ToList();
+
+            return loanDetails;
+
+
+        }
+
+        private List<OfferLetterConditionPrecidentViewModel> Lmsr_ConditionPrecedents(string applicationRefNumber)
+        {
+            var conditionPrecedents = (from a in context.TBL_LMSR_APPLICATION
+                                       join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                       join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                       where a.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == false
+                                       select new OfferLetterConditionPrecidentViewModel()
+                                       {
+                                           conditionPrecident = b.CONDITION,
+                                           loanApplicationId = b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                           isExternal = b.ISEXTERNAL,
+                                           productName = c.TBL_PRODUCT.PRODUCTNAME
+                                       }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+
+            return conditionPrecedents;
+        }
+
+        public List<OfferLetterConditionPrecidentViewModel> Lmsr_Internal_ConditionPrecedents(string applicationRefNumber)
+        {
+            var ConditionsPrecedents = Lmsr_ConditionPrecedents(applicationRefNumber);
+            return ConditionsPrecedents.Where(x => x.isExternal == false).ToList();
+        }
+        public List<OfferLetterConditionPrecidentViewModel> Lmsr_External_ConditionPrecedents(string applicationRefNumber)
+        {
+            var ConditionsPrecedents = Lmsr_ConditionPrecedents(applicationRefNumber);
+            return ConditionsPrecedents.Where(x => x.isExternal == true).ToList();
+        }
+        public List<OfferLetterConditionPrecidentViewModel> Lmsr_External_ConditionSubsequents(string applicationRefNumber)
+        {
+            var conditionSubsequents = Lmsr_ConditionSubsequents(applicationRefNumber);
+            return conditionSubsequents.Where(x => x.isExternal == true).ToList();
+        }
+        public List<OfferLetterConditionPrecidentViewModel> Lmsr_Internal_ConditionSubsequents(string applicationRefNumber)
+        {
+            var conditionSubsequents = Lmsr_ConditionSubsequents(applicationRefNumber);
+               return conditionSubsequents.Where(x => x.isExternal == false).ToList();
+        }
+        private List<OfferLetterConditionPrecidentViewModel> Lmsr_ConditionSubsequents(string applicationRefNumber)
+        {
+            var conditionSubsequents = (from a in context.TBL_LMSR_APPLICATION
+                                        join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                        join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                        where a.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == true
+                                        select new OfferLetterConditionPrecidentViewModel()
+                                        {
+                                            conditionPrecident = b.CONDITION,
+                                            loanApplicationId = b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                            isExternal = b.ISEXTERNAL,
+                                            productName = c.TBL_PRODUCT.PRODUCTNAME
+                                        }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+            return conditionSubsequents;
+        }
+
+
+         public List<TransactionDynamicsViewModel> Lmsr_ConditionDynamics(string applicationRefNumber)
+        {
+            var transactionDynamicsDetails = (from a in context.TBL_LMSR_TRANSACTION_DYNAMICS
+                                              join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
+                                              //join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
+                                              //from c in cc.DefaultIfEmpty()
+                                              //join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
+                                              //from d in cg.DefaultIfEmpty()
+                                              where b.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                              select new TransactionDynamicsViewModel()
+                                              {
+                                                  dynamics = a.DYNAMICS,
+                                              }).Distinct().ToList();
+
+
+            return transactionDynamicsDetails;
+        }
+
+        public List<MonitoringTriggersViewModel> Lmsr_loanMonitoringTriggers(string applicationRefNumber)
+        {
+            var loanMonitoringTriggers = (from x in context.TBL_LMSR_APPLICATN_DETL_MTRIG
+                                          join y in context.TBL_LMSR_APPLICATION_DETAIL on x.LOANREVIEWAPPLICATIONID equals y.LOANREVIEWAPPLICATIONID
+                                          where y.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                          select new MonitoringTriggersViewModel()
+                                          {
+                                              monitoringTrigger = x.MONITORING_TRIGGER,
+                                          }).Distinct().ToList();
+
+            return loanMonitoringTriggers;
+        }
+
+        public List<LoanApplicationCollateralViewModel> Lmsr_Collateral(string applicationRefNumber)
+        {
+            var loanCollaterals = (from x in context.TBL_LOAN_APPLICATION_COLLATRL2
+                                   join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                                   where y.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                   && y.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                   && y.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                   select new LoanApplicationCollateralViewModel()
+                                   {
+                                       collateralDetail = x.COLLATERALDETAIL,
+                                       collateralValue = x.COLLATERALVALUE,
+                                       stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
+                                       facilityAmount = y.APPROVEDAMOUNT
+                                   }).ToList();
+
+            return loanCollaterals;
+        }
+        public List<LoanApplicationCommentViewModel> Lmsr_LoanComments(string applicationRefNumber)
+        {
+            var loanComments = (from x in context.TBL_LOAN_APPLICATION_COMMENT
+                                join y in context.TBL_LOAN_APPLICATION on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                                where y.APPLICATIONREFERENCENUMBER == applicationRefNumber && x.OPERATIONID == (int)CommentsTypeEnum.LMS
+                                select new LoanApplicationCommentViewModel()
+                                {
+                                    comments = x.COMMENTS,
+                                }).ToList();
+
+            return loanComments;
+        }
+
+        public List<CusotmerInfoViewModel> Lmsr_Customer(string applicationRefNumber)
+        {
+            var loanComments = (from x in context.TBL_LMSR_APPLICATION
+                                join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
+                                join b in context.TBL_BRANCH on y.BRANCHID equals b.BRANCHID
+                                where x.APPLICATIONREFERENCENUMBER == applicationRefNumber 
+                                select new CusotmerInfoViewModel()
+                                {
+                                    customer = y.LASTNAME + " " + y.FIRSTNAME + " " + y.MIDDLENAME ,
+                                    date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                                    branch = b.BRANCHNAME
+                                }).ToList();
+
+            return loanComments;
+        }
+        #endregion
+
+    } 
 }

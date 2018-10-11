@@ -189,15 +189,20 @@ namespace FintrakBanking.Repositories.Credit
             var sections = this.context.TBL_DOC_TEMPLATE_DETAIL
                 .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
                 .OrderBy(x => x.POSITION)
+                .Join(context.TBL_DOC_TEMPLATE_SECTION, d => d.TEMPLATESECTIONID, s => s.TEMPLATESECTIONID, (d, s) => new { d, s })
+                .Join(context.TBL_DOC_TEMPLATE_SECTION_ROLE, ds => ds.s.TEMPLATESECTIONID, r => r.TEMPLATESECTIONID, (ds, r) => new { ds, r })
+                .Join(context.TBL_STAFF_ROLE, dsr => dsr.r.STAFFROLEID, sr => sr.STAFFROLEID, (dsr, sr) => new { dsr, sr, o = dsr.ds.d })
                 .Select(x => new LoadedDocumentSectionViewModel
                 {
-                    position = x.POSITION,
-                    sectionId = x.DOCUMENTDETAILID,
-                    title = x.TITLE,
-                    description = x.DESCRIPTION,
-                    canEdit = x.CANEDIT, // system
-                    editable = sectionIds.Contains(x.TEMPLATESECTIONID),
-                    templateSectionId = x.TEMPLATESECTIONID,
+                    position = x.o.POSITION,
+                    sectionId = x.o.DOCUMENTDETAILID,
+                    title = x.o.TITLE,
+                    //title = x.sr.STAFFROLENAME + " :: " + x.o.TITLE,
+                    description = x.o.DESCRIPTION,
+                    canEdit = x.o.CANEDIT, // system
+                    editable = sectionIds.Contains(x.o.TEMPLATESECTIONID),
+                    templateSectionId = x.o.TEMPLATESECTIONID,
+                    staffRoleName = x.sr.STAFFROLENAME 
                     // templateDocument = x.TEMPLATEDOCUMENT,
                 })
                 .ToList();
@@ -446,7 +451,10 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddDocumentTemplateSection(DocumentTemplateSectionViewModel model)
         {
             //if (String.IsNullOrEmpty(model.templateDocument)) { throw new SecureException("Document is blank. Cannot create a blank document!"); }
-
+            if (string.IsNullOrEmpty(model.templateDocument))
+            {
+                model.templateDocument = "<p> </p>";
+            }
             var data = new TBL_DOC_TEMPLATE_SECTION
             {
                 TEMPLATEID = model.templateId,
@@ -486,6 +494,10 @@ namespace FintrakBanking.Repositories.Credit
             if (data == null)
             {
                 return false;
+            }
+            if(string.IsNullOrEmpty(model.templateDocument))
+            {
+                model.templateDocument = "<p> </p>";
             }
             data.TEMPLATEID = model.templateId;
             data.TITLE = model.title;
