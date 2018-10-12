@@ -79,6 +79,7 @@ namespace FintrakBanking.Repositories.Credit
                 currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
                 lastComment = x.trail == null ? "" : x.trail.COMMENT,
                 toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
+                requestStaffId = x.trail == null ? 0 : x.trail.REQUESTSTAFFID,
 
                 applicationDate = x.application.APPLICATIONDATE,
                 approvalStatus = x.application.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
@@ -198,6 +199,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = model.customerId,
                 BRANCHID = model.branchId,
                 OPERATIONID = camOperationId,
+                CAPREGIONID = model.regionId,
                 // CUSTOMERGROUPID = null,
                 DISPUTED = false,
                 REQUIRECOLLATERAL = false,
@@ -593,17 +595,26 @@ namespace FintrakBanking.Repositories.Credit
 
             var levels = levels1.Union(levels2).Union(levels3).Distinct();
 
-            var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
-                                .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
-                                .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
-                                .Select(x => new {
-                                    BRANCHID = x.b.BRANCHID
-                                })
-                                .Select(x => x.BRANCHID)
-                                .ToList();
+            //var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+            //                    .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
+            //                    .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
+            //                    .Select(x => new {
+            //                        BRANCHID = x.b.BRANCHID
+            //                    })
+            //                    .Select(x => x.BRANCHID)
+            //                    .ToList();
+
+            var regions = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+                            .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
+                            .Select(x => new
+                            {
+                                REGIONID = x.r.REGIONID
+                            })
+                            .Select(x => x.REGIONID)
+                            .ToList();
 
             var applications = context.TBL_LMSR_APPLICATION.Where(x =>
-                    branches.Contains(x.BRANCHID)
+                    regions.Contains((int)x.CAPREGIONID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                 )

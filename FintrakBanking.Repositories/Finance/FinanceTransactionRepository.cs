@@ -304,13 +304,17 @@ namespace FintrakBanking.Repositories.Finance
             //api call
             if (USE_TWO_FACTOR_AUTHENTICATION && isBulkPosting == false)
             {
-                if (twoFADetails == null)
+                if (twoFADetails == null )
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException(authenticated.message);
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException(authenticated.message);
+                }                
+                
             }
 
             if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)

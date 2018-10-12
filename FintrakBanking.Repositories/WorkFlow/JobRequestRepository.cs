@@ -915,7 +915,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             foreach (var item in jobRequestDetail)
             {
-                model.totalChargeAmount = item.AMOUNT.Value;
+                model.totalChargeAmount = model.totalChargeAmount  + item.AMOUNT.Value;
                 item.ACCREDITEDCONSULTANTPAID = !model.isInitiation ? true : false;
                 item.ACCOUNTNUMBER = model.isInitiation ? accountNumber : null;
             }
