@@ -583,7 +583,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 count++;
                 if ((decimal)item.pastDueInterestAmount != 0)
                 {
-                    addStagingPastDueInterest.AMOUNT = (decimal)item.pastDueInterestAmount;
+                    addStagingPastDueInterest.AMOUNT = (decimal) Math.Abs(item.pastDueInterestAmount);
                     addStagingPastDueInterest.FLOWTYPE = "BIF";
                     addStagingPastDueInterest.FORCEDEBITACCOUNT = "N";
                     addStagingPastDueInterest.VALUEDATENUMBER = 1;
@@ -622,7 +622,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 count++;
                 if ((decimal)item.pastDuePrincipalAmount != 0)
                 {
-                    addStagingPastDuePrincipal.AMOUNT = (decimal)item.pastDuePrincipalAmount;
+                    addStagingPastDuePrincipal.AMOUNT = (decimal)Math.Abs(item.pastDuePrincipalAmount);
                     addStagingPastDuePrincipal.FLOWTYPE = "BPP";
                     addStagingPastDuePrincipal.FORCEDEBITACCOUNT = "N";
                     addStagingPastDuePrincipal.VALUEDATENUMBER = 1;
@@ -660,7 +660,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 count++;
                 if ((decimal)item.periodInterestAmount != 0)
                 {
-                    addStagingInterest.AMOUNT = (decimal)item.periodInterestAmount;
+                    addStagingInterest.AMOUNT = (decimal) Math.Abs(item.periodInterestAmount);
                     addStagingInterest.FLOWTYPE = "BIF";
                     addStagingInterest.FORCEDEBITACCOUNT = "N";
                     addStagingInterest.VALUEDATENUMBER = 1;
@@ -699,7 +699,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 count++;
                 if ((decimal)item.periodPrincipalAmount != 0)
                 {
-                    addStagingPrincipal.AMOUNT = (decimal)item.periodPrincipalAmount;
+                    addStagingPrincipal.AMOUNT = (decimal)Math.Abs(item.periodPrincipalAmount);
                     addStagingPrincipal.FLOWTYPE = "BPP";
                     addStagingPrincipal.FORCEDEBITACCOUNT = "N";
                     addStagingPrincipal.VALUEDATENUMBER = 1;
