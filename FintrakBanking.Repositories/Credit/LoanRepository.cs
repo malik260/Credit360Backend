@@ -518,6 +518,9 @@ namespace FintrakBanking.Repositories.Credit
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
+            if (entity.effectiveDate == entity.maturityDate)
+                throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
+
             if (entity.effectiveDate > entity.maturityDate)
                 throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
@@ -693,6 +696,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+            if (entity.effectiveDate == entity.maturityDate)
+                throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
 
             if (entity.effectiveDate > entity.maturityDate)
                 throw new ConditionNotMetException("The effective cannot be greater than maturity date");
@@ -942,6 +948,9 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                 throw new ConditionNotMetException("Specify the recieving account.");
 
+            if (entity.effectiveDate == entity.maturityDate)
+                throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
+
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
@@ -1155,7 +1164,10 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.effectiveDate > systemDate)
                 throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
-            if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
+            if (entity.effectiveDate == entity.maturityDate)
+                throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
+
+                if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
                 throw new ConditionNotMetException($"FX revolving loan maturity date should not exceed the line expiry date [{Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}]. ");
             
 
