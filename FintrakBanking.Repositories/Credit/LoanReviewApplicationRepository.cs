@@ -114,6 +114,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedTenor = d.APPROVEDTENOR,
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
+                    customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
 
                 })
                 
@@ -182,9 +183,6 @@ namespace FintrakBanking.Repositories.Credit
             return list;
         }
 
-
-
-
         public string SubmitLoanReviewApplication(LoanReviewApplicationViewModel model)
         {
             int staffId = model.createdBy;
@@ -239,6 +237,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
+                    CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
+
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
             }
