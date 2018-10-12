@@ -1215,6 +1215,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GetRepaymentFromStaging()
         {
+
+            var currentDateInfo = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
+
+            if (currentDateInfo.REFRESHSTATUS == true)
+            {
+                throw new ConditionNotMetException("Refresh status for " + currentDateInfo.CURRENTDATE + " has already been run.");
+
+            }
+
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             bool output = false;
             byte transType = 0;
@@ -1427,6 +1436,8 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                 }
+
+                currentDateInfo.REFRESHSTATUS = true;
 
                 output = stagingContext.SaveChanges() > 0;
 
