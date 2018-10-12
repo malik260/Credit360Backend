@@ -335,6 +335,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string currencyCode { get; set; }
+
         public string revolvingTypeName { get; set; }
 
         public string casaAccountDetails { get; set; }
@@ -445,6 +447,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public string currencyCode { get; set; }
         public string casaAccountDetails { get; set; }
 
         public decimal disbursableAmount { get; set; }

@@ -300,10 +300,10 @@ namespace FintrakBanking.Repositories.Credit
         //    ).Any();
         //}
 
-        private bool PendingBondsAndGuaranteeJobRequest(int applicationDetailId)
+        private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
         {
-            return context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId
-                && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+            return context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationId
+                && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
                 && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
             ).Any();
@@ -537,7 +537,7 @@ namespace FintrakBanking.Repositories.Credit
             
             if(application.PRODUCTCLASSID == (short) ProductClassEnum.BondAndGuarantees)
             {
-                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationDetailId))
+                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationId))
                     throw new ConditionNotMetException("There are pending bonds and gaurantees that must be attended to");
             }
 
@@ -1724,7 +1724,7 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                                
+                                currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -1880,7 +1880,7 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-
+                                currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -2015,7 +2015,7 @@ namespace FintrakBanking.Repositories.Credit
                             casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                             loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                             loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
                             branchId = ln.BRANCHID,
                             loanReferenceNumber = ln.LOANREFERENCENUMBER,
                             applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
