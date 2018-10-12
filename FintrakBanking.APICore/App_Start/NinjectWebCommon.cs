@@ -228,6 +228,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ICrmsRegulatoryRepository>().To<CrmsRegulatoryRepository>();
             kernel.Bind<IDashboardRepository>().To<DashboardRepository>();
             kernel.Bind<ICRMSCodeBookRepository>().To<CRMSCodeBookRepository>();
+            kernel.Bind<IAPIErrorLog>().To<APIErrorLog>();
         }
 
     }

@@ -77,6 +77,7 @@ namespace FintrakBanking.Repositories.Finance
 
             var financeCurrentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
             financeCurrentDate.CURRENTDATE = nextWorkDay;
+            financeCurrentDate.REFRESHSTATUS = false;
 
             var audit = new TBL_AUDIT
             {

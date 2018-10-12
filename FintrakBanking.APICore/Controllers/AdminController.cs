@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -26,19 +27,22 @@ namespace FintrakBanking.APICore.Controllers
         private readonly IErrorLogRepository errorLogger;
         private readonly ICanAuthorizationRepository canAuthorization;
         private readonly IAuditTrailRepository audit;
+        private readonly IAPIErrorLog _log;
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public AdminController(IAdminRepository _repo,
                                 IErrorLogRepository _errorLogger,
                                 ICanAuthorizationRepository _canAuthorization,
-                                IAuditTrailRepository _audit, IProfileSetupRepository _profileSetup)
+                                IAuditTrailRepository _audit, IProfileSetupRepository _profileSetup,
+                                IAPIErrorLog log)
         {
             this.repo = _repo;
             this.errorLogger = _errorLogger;
             this.audit = _audit;
             this.profileSetup = _profileSetup;
             this.canAuthorization = _canAuthorization;
+            _log = log;
 
         }
 
@@ -713,5 +717,29 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
+
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("api-log")]
+        //public IHttpActionResult GetAPILog([FromBody] DateRange range)
+        //{
+        //    try
+        //    {
+        //        if (entity != null)
+        //        {
+        //            string message = string.Empty;
+        //            var data = _log.GetAPILog(range);
+        //            if (data)
+        //                return Ok(new { success = data, result = data, message = message == string.Empty ? $"Account is cleared" : message });
+        //        }
+
+        //        return Ok(new { success = false, message = $"Account not fund" });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Ok(new { success = false, message = $"Action Failed" });
+        //    }
+
+        //}
     }
 }

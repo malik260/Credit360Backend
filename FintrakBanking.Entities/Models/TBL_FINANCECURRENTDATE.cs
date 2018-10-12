@@ -16,6 +16,9 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime CURRENTDATE { get; set; }
 
+        public bool REFRESHSTATUS { get; set; }
+
         public virtual TBL_COMPANY TBL_COMPANY { get; set; }
+        
     }
 }

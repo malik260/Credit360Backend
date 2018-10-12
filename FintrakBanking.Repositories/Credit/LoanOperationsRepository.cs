@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.Credit
                                        //let daysInYear = (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)a.SCHEDULEDAYCOUNTCONVENTIONID)
                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                                         (f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
-                                       && a.MATURITYDATE <= DbFunctions.TruncateTime(applicationDate)
+                                       && DbFunctions.TruncateTime(applicationDate) <= a.MATURITYDATE 
 
 
                                        select new DailyInterestAccrualViewModel()
@@ -1215,6 +1215,15 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool GetRepaymentFromStaging()
         {
+
+            var currentDateInfo = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
+
+            if (currentDateInfo.REFRESHSTATUS == true)
+            {
+                throw new ConditionNotMetException("Refresh status for " + currentDateInfo.CURRENTDATE + " has already been run.");
+
+            }
+
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             bool output = false;
             byte transType = 0;
@@ -1240,6 +1249,7 @@ namespace FintrakBanking.Repositories.Credit
                             amountCollected = (decimal)a.AMT_COLLECTED,
                             bankId = a.BANK_ID,
                             sourceReferenceNumber = a.LOAN_ACCT,
+
 
                         }).ToList();
 
@@ -1269,7 +1279,8 @@ namespace FintrakBanking.Repositories.Credit
                 //item.amountCollected != source.AMOUNTCOLLECTED &&
 
                 model.amount = item.amount;
-                model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+                //model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+                model.actualAmount = item.amount - item.amountCollected;
                 model.operationId = source.OPERATIONID;
                 model.description = source.DESCRIPTION;
                 model.valueDate = source.VALUEDATE;
@@ -1289,19 +1300,21 @@ namespace FintrakBanking.Repositories.Credit
                 model.loanId = source.LOANID;
                 model.flowType = source.FLOWTYPE;
 
-                if (item.amountCollected > 0)
+                if (model.actualAmount  > 0) //item.amountCollected
                 {
                     postingResult = financeTransaction.BulkIntegrationPosting(model);
 
-                    if (model.flowType == "BIF")
-                    {
-                        updateloanTableInterest((int)model.loanId, model.actualAmount);
-                    }
-                    else if (model.flowType == "BPP")
-                    {
-                        updateloanTablePrincipal((int)model.loanId, model.actualAmount);
-                    }
+                    //if (model.flowType == "BIF")
+                    //{
+                    //    updateloanTableInterest((int)model.loanId, model.actualAmount);
+                    //}
+                    //else if (model.flowType == "BPP")
+                    //{
+                    //    updateloanTablePrincipal((int)model.loanId, model.actualAmount);
+                    //}
                 }
+
+              
 
                 if (operationType == OperationsEnum.InterestLoanRepayment || operationType == OperationsEnum.PrincipalLoanRepayment && item.amountCollected <= item.amount)
                 {
@@ -1321,74 +1334,82 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (model.flowType == "BIF")
                     {
+                        
+                        updateloanTableInterest((int)model.loanId, model.amount);
 
-                        transType = (byte)LoanTransactionTypeEnum.Interest;
-                        //lienType = (short)LienTypeEnum.InterestRepayment;
-
-                        var pastDueCount = pastDueExist.Where(x => x.TRANSACTIONTYPEID == transType).Count();
-                        if (pastDueCount > 0)
-                            continue;
-
-
-                        updateloanTableInterest((int)model.loanId, model.actualAmount);
-
-                        var pastDue = new TBL_LOAN_PAST_DUE
+                        if (item.amountCollected < item.amount) //past due block
                         {
-                            LOANID = (int)model.loanId,
-                            PASTDUECODE = PastDueCode,
-                            CREDITAMOUNT = 0,
-                            DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
-                            DEBITAMOUNT = Math.Abs(model.actualAmount),
-                            DATE = model.transactionDate,
-                            TRANSACTIONTYPEID = transType,
-                            PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
-                            PRODUCTTYPEID = product.PRODUCTTYPEID,
-                        };
+                            transType = (byte)LoanTransactionTypeEnum.Interest;
+                            //lienType = (short)LienTypeEnum.InterestRepayment;
 
-                        transPastDue.Add(pastDue);
+                            var pastDueCount = pastDueExist.Where(x => x.TRANSACTIONTYPEID == transType).Count();
+                            if (pastDueCount > 0)
+                                continue;
 
-                        context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
+                            var pastDue = new TBL_LOAN_PAST_DUE
+                            {
+                                LOANID = (int)model.loanId,
+                                PASTDUECODE = PastDueCode,
+                                CREDITAMOUNT = 0,
+                                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+                                DEBITAMOUNT = Math.Abs(model.actualAmount),
+                                DATE = model.transactionDate,
+                                TRANSACTIONTYPEID = transType,
+                                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                                PRODUCTTYPEID = product.PRODUCTTYPEID,
+                            };
 
-                        updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT * -1);
+                            transPastDue.Add(pastDue);
+
+                            context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
+
+                            updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT);
+                        }
                     }
                     else if (model.flowType == "BPP")
                     {
-                        transType = (byte)LoanTransactionTypeEnum.Principal;
-                        //lienType = (short)LienTypeEnum.PrincipalRepayment;
+                        updateloanTablePrincipal((int)model.loanId, model.amount);
 
-                        var pastDueCount = pastDueExist.Where(x => x.TRANSACTIONTYPEID == transType).Count();
-                        if (pastDueCount > 0)
-                            continue;
-
-                        updateloanTablePrincipal((int)model.loanId, model.actualAmount);
-
-                        var pastDue = new TBL_LOAN_PAST_DUE
+                        if (item.amountCollected < item.amount) //past due block
                         {
-                            LOANID = (int)model.loanId,
-                            PASTDUECODE = PastDueCode,
-                            CREDITAMOUNT = 0,
-                            DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
-                            DEBITAMOUNT = Math.Abs(model.actualAmount),
-                            DATE = model.transactionDate,
-                            TRANSACTIONTYPEID = transType,
-                            PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
-                            PRODUCTTYPEID = product.PRODUCTTYPEID,
-                        };
+                            transType = (byte)LoanTransactionTypeEnum.Principal;
+                            //lienType = (short)LienTypeEnum.PrincipalRepayment;
 
-                        transPastDue.Add(pastDue);
+                            var pastDueCount = pastDueExist.Where(x => x.TRANSACTIONTYPEID == transType).Count();
+                            if (pastDueCount > 0)
+                                continue;
 
-                        context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
+                            var pastDue = new TBL_LOAN_PAST_DUE
+                            {
+                                LOANID = (int)model.loanId,
+                                PASTDUECODE = PastDueCode,
+                                CREDITAMOUNT = 0,
+                                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+                                DEBITAMOUNT = Math.Abs(model.actualAmount),
+                                DATE = model.transactionDate,
+                                TRANSACTIONTYPEID = transType,
+                                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                                PRODUCTTYPEID = product.PRODUCTTYPEID,
+                            };
 
-                        updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT * -1);
+                            transPastDue.Add(pastDue);
+
+                            context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
+
+                            updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+                        }
                     }
 
-                    updateloanPastDueDate((int)model.loanId, item.transactionDate);
+                    if (item.amountCollected < item.amount) //past due block
+                    {
+                        updateloanPastDueDate((int)model.loanId, item.transactionDate);
+                    }
                 }
 
 
                 source.AMOUNTCOLLECTED = item.amountCollected;
 
-                
+
 
                 context.SaveChanges();
 
@@ -1415,6 +1436,8 @@ namespace FintrakBanking.Repositories.Credit
                     }
 
                 }
+
+                currentDateInfo.REFRESHSTATUS = true;
 
                 output = stagingContext.SaveChanges() > 0;
 
@@ -7925,7 +7948,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId)
+        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth , DateTime applicationDate, int staffId)
         {
             bool output = false;
             bool result = false;
@@ -8154,6 +8177,9 @@ namespace FintrakBanking.Repositories.Credit
                                    amount = b.PERIODINTERESTAMOUNT
                                }).ToList();
 
+
+
+
             List<PastDueOnPastDueViewModel1> currentPastDuesInterst = new List<PastDueOnPastDueViewModel1>();
 
 
@@ -8221,20 +8247,36 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (countRepayments < 1 && effectiveDate <= currentDate)
             {
-
-                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId)); //change later));
-
+                if (accruedDailyInterestDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId)); //change later));
+                }
+                
                 //result = financeTransaction.PostTransaction(inputTransactions);
             }
             else
             {
-                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal", loanInput.operationId));
+                if (accruedDailyInterestDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId));
+                }
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal", loanInput.operationId));
+                if (periodicInterestDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, periodicInterestDiff, product.PRINCIPALBALANCEGL.Value, "Interest Reversal", loanInput.operationId));
+                }
 
-                inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, pastDueInterestDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Interest Reversal", loanInput.operationId));
+                if (periodicPrincipalDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, periodicPrincipalDiff, product.PRINCIPALBALANCEGL.Value, "Principal Reversal", loanInput.operationId));
+                }
+
+                if (pastDueInterestDiff != 0)
+                {
+                    inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, pastDueInterestDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Interest Reversal", loanInput.operationId));
+                }
+                
 
                 if (pastDuePrincipalDiff > 0)
                 {
@@ -9660,9 +9702,15 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 var result = context.SaveChanges() > 0;
+
+                TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
+
                 if (result)
                 {
+                    LoanReversal(loanId, loanInput, twoFactorAuth, applicationDate, staffId);
+                    
                     output = true;
+
                 }
             }
             catch (Exception ex)
@@ -12502,7 +12550,6 @@ namespace FintrakBanking.Repositories.Credit
                                  {
                                      loanId = b.REVOLVINGLOANID,
                                      principalAmount = (double)b.OVERDRAFTLIMIT,
-
                                      interestRate = b.INTERESTRATE,
                                      effectiveDate = a.EFFECTIVEDATE,
                                      maturityDate = b.MATURITYDATE,
@@ -12521,7 +12568,6 @@ namespace FintrakBanking.Repositories.Credit
                                      createdBy = staffId,
                                      customerId = b.CUSTOMERID,
                                      productId = b.PRODUCTID,
-
                                  }).FirstOrDefault();
                     string appDate = model.newEffectiveDate.ToString(@"yyyy-MM-dd");
                     var applicationDate = Convert.ToDateTime(appDate);
