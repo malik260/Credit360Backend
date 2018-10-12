@@ -40,6 +40,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal stapedToCoverAmount { get; set; }
 
         public decimal facilityAmount { get; set; }
+        public double SN { get; set; }
     }
 
 
@@ -77,7 +78,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationId { get; set; }
 
         public string comments { get; set; }
-
+        public double SN { get; set; }
     }
 
     public class CusotmerInfoViewModel

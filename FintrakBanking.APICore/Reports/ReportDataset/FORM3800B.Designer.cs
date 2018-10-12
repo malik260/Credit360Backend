@@ -28,11 +28,11 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         private SecurityDetailsDataTable tableSecurityDetails;
         
-        private ConditionsPrecedentDataTable tableConditionsPrecedent;
+        private InternalConditionsPrecedentDataTable tableInternalConditionsPrecedent;
         
         private FeeDetailsDataTable tableFeeDetails;
         
-        private ConditionSubsquentDataTable tableConditionSubsquent;
+        private InternalConditionSubsquentDataTable tableInternalConditionSubsquent;
         
         private TransactionDynamicsDataTable tableTransactionDynamics;
         
@@ -41,6 +41,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         private CustomerDetailsDataTable tableCustomerDetails;
         
         private CommentsDataTable tableComments;
+        
+        private ExternalConditionSubsquentDataTable tableExternalConditionSubsquent;
+        
+        private ExternalConditionsPrecedentDataTable tableExternalConditionsPrecedent;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -76,14 +80,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["SecurityDetails"] != null)) {
                     base.Tables.Add(new SecurityDetailsDataTable(ds.Tables["SecurityDetails"]));
                 }
-                if ((ds.Tables["ConditionsPrecedent"] != null)) {
-                    base.Tables.Add(new ConditionsPrecedentDataTable(ds.Tables["ConditionsPrecedent"]));
+                if ((ds.Tables["InternalConditionsPrecedent"] != null)) {
+                    base.Tables.Add(new InternalConditionsPrecedentDataTable(ds.Tables["InternalConditionsPrecedent"]));
                 }
                 if ((ds.Tables["FeeDetails"] != null)) {
                     base.Tables.Add(new FeeDetailsDataTable(ds.Tables["FeeDetails"]));
                 }
-                if ((ds.Tables["ConditionSubsquent"] != null)) {
-                    base.Tables.Add(new ConditionSubsquentDataTable(ds.Tables["ConditionSubsquent"]));
+                if ((ds.Tables["InternalConditionSubsquent"] != null)) {
+                    base.Tables.Add(new InternalConditionSubsquentDataTable(ds.Tables["InternalConditionSubsquent"]));
                 }
                 if ((ds.Tables["TransactionDynamics"] != null)) {
                     base.Tables.Add(new TransactionDynamicsDataTable(ds.Tables["TransactionDynamics"]));
@@ -96,6 +100,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["Comments"] != null)) {
                     base.Tables.Add(new CommentsDataTable(ds.Tables["Comments"]));
+                }
+                if ((ds.Tables["ExternalConditionSubsquent"] != null)) {
+                    base.Tables.Add(new ExternalConditionSubsquentDataTable(ds.Tables["ExternalConditionSubsquent"]));
+                }
+                if ((ds.Tables["ExternalConditionsPrecedent"] != null)) {
+                    base.Tables.Add(new ExternalConditionsPrecedentDataTable(ds.Tables["ExternalConditionsPrecedent"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -139,9 +149,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public ConditionsPrecedentDataTable ConditionsPrecedent {
+        public InternalConditionsPrecedentDataTable InternalConditionsPrecedent {
             get {
-                return this.tableConditionsPrecedent;
+                return this.tableInternalConditionsPrecedent;
             }
         }
         
@@ -159,9 +169,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public ConditionSubsquentDataTable ConditionSubsquent {
+        public InternalConditionSubsquentDataTable InternalConditionSubsquent {
             get {
-                return this.tableConditionSubsquent;
+                return this.tableInternalConditionSubsquent;
             }
         }
         
@@ -202,6 +212,26 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public CommentsDataTable Comments {
             get {
                 return this.tableComments;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public ExternalConditionSubsquentDataTable ExternalConditionSubsquent {
+            get {
+                return this.tableExternalConditionSubsquent;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public ExternalConditionsPrecedentDataTable ExternalConditionsPrecedent {
+            get {
+                return this.tableExternalConditionsPrecedent;
             }
         }
         
@@ -278,14 +308,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["SecurityDetails"] != null)) {
                     base.Tables.Add(new SecurityDetailsDataTable(ds.Tables["SecurityDetails"]));
                 }
-                if ((ds.Tables["ConditionsPrecedent"] != null)) {
-                    base.Tables.Add(new ConditionsPrecedentDataTable(ds.Tables["ConditionsPrecedent"]));
+                if ((ds.Tables["InternalConditionsPrecedent"] != null)) {
+                    base.Tables.Add(new InternalConditionsPrecedentDataTable(ds.Tables["InternalConditionsPrecedent"]));
                 }
                 if ((ds.Tables["FeeDetails"] != null)) {
                     base.Tables.Add(new FeeDetailsDataTable(ds.Tables["FeeDetails"]));
                 }
-                if ((ds.Tables["ConditionSubsquent"] != null)) {
-                    base.Tables.Add(new ConditionSubsquentDataTable(ds.Tables["ConditionSubsquent"]));
+                if ((ds.Tables["InternalConditionSubsquent"] != null)) {
+                    base.Tables.Add(new InternalConditionSubsquentDataTable(ds.Tables["InternalConditionSubsquent"]));
                 }
                 if ((ds.Tables["TransactionDynamics"] != null)) {
                     base.Tables.Add(new TransactionDynamicsDataTable(ds.Tables["TransactionDynamics"]));
@@ -298,6 +328,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["Comments"] != null)) {
                     base.Tables.Add(new CommentsDataTable(ds.Tables["Comments"]));
+                }
+                if ((ds.Tables["ExternalConditionSubsquent"] != null)) {
+                    base.Tables.Add(new ExternalConditionSubsquentDataTable(ds.Tables["ExternalConditionSubsquent"]));
+                }
+                if ((ds.Tables["ExternalConditionsPrecedent"] != null)) {
+                    base.Tables.Add(new ExternalConditionsPrecedentDataTable(ds.Tables["ExternalConditionsPrecedent"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -344,10 +380,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableSecurityDetails.InitVars();
                 }
             }
-            this.tableConditionsPrecedent = ((ConditionsPrecedentDataTable)(base.Tables["ConditionsPrecedent"]));
+            this.tableInternalConditionsPrecedent = ((InternalConditionsPrecedentDataTable)(base.Tables["InternalConditionsPrecedent"]));
             if ((initTable == true)) {
-                if ((this.tableConditionsPrecedent != null)) {
-                    this.tableConditionsPrecedent.InitVars();
+                if ((this.tableInternalConditionsPrecedent != null)) {
+                    this.tableInternalConditionsPrecedent.InitVars();
                 }
             }
             this.tableFeeDetails = ((FeeDetailsDataTable)(base.Tables["FeeDetails"]));
@@ -356,10 +392,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableFeeDetails.InitVars();
                 }
             }
-            this.tableConditionSubsquent = ((ConditionSubsquentDataTable)(base.Tables["ConditionSubsquent"]));
+            this.tableInternalConditionSubsquent = ((InternalConditionSubsquentDataTable)(base.Tables["InternalConditionSubsquent"]));
             if ((initTable == true)) {
-                if ((this.tableConditionSubsquent != null)) {
-                    this.tableConditionSubsquent.InitVars();
+                if ((this.tableInternalConditionSubsquent != null)) {
+                    this.tableInternalConditionSubsquent.InitVars();
                 }
             }
             this.tableTransactionDynamics = ((TransactionDynamicsDataTable)(base.Tables["TransactionDynamics"]));
@@ -386,6 +422,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableComments.InitVars();
                 }
             }
+            this.tableExternalConditionSubsquent = ((ExternalConditionSubsquentDataTable)(base.Tables["ExternalConditionSubsquent"]));
+            if ((initTable == true)) {
+                if ((this.tableExternalConditionSubsquent != null)) {
+                    this.tableExternalConditionSubsquent.InitVars();
+                }
+            }
+            this.tableExternalConditionsPrecedent = ((ExternalConditionsPrecedentDataTable)(base.Tables["ExternalConditionsPrecedent"]));
+            if ((initTable == true)) {
+                if ((this.tableExternalConditionsPrecedent != null)) {
+                    this.tableExternalConditionsPrecedent.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -400,12 +448,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableFacility);
             this.tableSecurityDetails = new SecurityDetailsDataTable();
             base.Tables.Add(this.tableSecurityDetails);
-            this.tableConditionsPrecedent = new ConditionsPrecedentDataTable();
-            base.Tables.Add(this.tableConditionsPrecedent);
+            this.tableInternalConditionsPrecedent = new InternalConditionsPrecedentDataTable();
+            base.Tables.Add(this.tableInternalConditionsPrecedent);
             this.tableFeeDetails = new FeeDetailsDataTable();
             base.Tables.Add(this.tableFeeDetails);
-            this.tableConditionSubsquent = new ConditionSubsquentDataTable();
-            base.Tables.Add(this.tableConditionSubsquent);
+            this.tableInternalConditionSubsquent = new InternalConditionSubsquentDataTable();
+            base.Tables.Add(this.tableInternalConditionSubsquent);
             this.tableTransactionDynamics = new TransactionDynamicsDataTable();
             base.Tables.Add(this.tableTransactionDynamics);
             this.tableMonitoringTrggers = new MonitoringTrggersDataTable();
@@ -414,6 +462,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableCustomerDetails);
             this.tableComments = new CommentsDataTable();
             base.Tables.Add(this.tableComments);
+            this.tableExternalConditionSubsquent = new ExternalConditionSubsquentDataTable();
+            base.Tables.Add(this.tableExternalConditionSubsquent);
+            this.tableExternalConditionsPrecedent = new ExternalConditionsPrecedentDataTable();
+            base.Tables.Add(this.tableExternalConditionsPrecedent);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -430,7 +482,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        private bool ShouldSerializeConditionsPrecedent() {
+        private bool ShouldSerializeInternalConditionsPrecedent() {
             return false;
         }
         
@@ -442,7 +494,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        private bool ShouldSerializeConditionSubsquent() {
+        private bool ShouldSerializeInternalConditionSubsquent() {
             return false;
         }
         
@@ -467,6 +519,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         private bool ShouldSerializeComments() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        private bool ShouldSerializeExternalConditionSubsquent() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        private bool ShouldSerializeExternalConditionsPrecedent() {
             return false;
         }
         
@@ -532,13 +596,13 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public delegate void SecurityDetailsRowChangeEventHandler(object sender, SecurityDetailsRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public delegate void ConditionsPrecedentRowChangeEventHandler(object sender, ConditionsPrecedentRowChangeEvent e);
+        public delegate void InternalConditionsPrecedentRowChangeEventHandler(object sender, InternalConditionsPrecedentRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         public delegate void FeeDetailsRowChangeEventHandler(object sender, FeeDetailsRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public delegate void ConditionSubsquentRowChangeEventHandler(object sender, ConditionSubsquentRowChangeEvent e);
+        public delegate void InternalConditionSubsquentRowChangeEventHandler(object sender, InternalConditionSubsquentRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         public delegate void TransactionDynamicsRowChangeEventHandler(object sender, TransactionDynamicsRowChangeEvent e);
@@ -551,6 +615,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
         public delegate void CommentsRowChangeEventHandler(object sender, CommentsRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public delegate void ExternalConditionSubsquentRowChangeEventHandler(object sender, ExternalConditionSubsquentRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public delegate void ExternalConditionsPrecedentRowChangeEventHandler(object sender, ExternalConditionsPrecedentRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -1177,7 +1247,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class ConditionsPrecedentDataTable : global::System.Data.TypedTableBase<ConditionsPrecedentRow> {
+        public partial class InternalConditionsPrecedentDataTable : global::System.Data.TypedTableBase<InternalConditionsPrecedentRow> {
             
             private global::System.Data.DataColumn columnconditionPrecident;
             
@@ -1189,10 +1259,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnSN;
             
+            private global::System.Data.DataColumn columnisExternal;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionsPrecedentDataTable() {
-                this.TableName = "ConditionsPrecedent";
+            public InternalConditionsPrecedentDataTable() {
+                this.TableName = "InternalConditionsPrecedent";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -1200,7 +1272,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal ConditionsPrecedentDataTable(global::System.Data.DataTable table) {
+            internal InternalConditionsPrecedentDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -1217,7 +1289,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            protected ConditionsPrecedentDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected InternalConditionsPrecedentDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -1264,6 +1336,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn isExternalColumn {
+                get {
+                    return this.columnisExternal;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1273,49 +1353,50 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionsPrecedentRow this[int index] {
+            public InternalConditionsPrecedentRow this[int index] {
                 get {
-                    return ((ConditionsPrecedentRow)(this.Rows[index]));
+                    return ((InternalConditionsPrecedentRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event ConditionsPrecedentRowChangeEventHandler ConditionsPrecedentRowChanging;
+            public event InternalConditionsPrecedentRowChangeEventHandler InternalConditionsPrecedentRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event ConditionsPrecedentRowChangeEventHandler ConditionsPrecedentRowChanged;
+            public event InternalConditionsPrecedentRowChangeEventHandler InternalConditionsPrecedentRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event ConditionsPrecedentRowChangeEventHandler ConditionsPrecedentRowDeleting;
+            public event InternalConditionsPrecedentRowChangeEventHandler InternalConditionsPrecedentRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event ConditionsPrecedentRowChangeEventHandler ConditionsPrecedentRowDeleted;
+            public event InternalConditionsPrecedentRowChangeEventHandler InternalConditionsPrecedentRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void AddConditionsPrecedentRow(ConditionsPrecedentRow row) {
+            public void AddInternalConditionsPrecedentRow(InternalConditionsPrecedentRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionsPrecedentRow AddConditionsPrecedentRow(string conditionPrecident, string productName, string creditVerificationOfficers, string locationOfDocument, string SN) {
-                ConditionsPrecedentRow rowConditionsPrecedentRow = ((ConditionsPrecedentRow)(this.NewRow()));
+            public InternalConditionsPrecedentRow AddInternalConditionsPrecedentRow(string conditionPrecident, string productName, string creditVerificationOfficers, string locationOfDocument, string SN, string isExternal) {
+                InternalConditionsPrecedentRow rowInternalConditionsPrecedentRow = ((InternalConditionsPrecedentRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         conditionPrecident,
                         productName,
                         creditVerificationOfficers,
                         locationOfDocument,
-                        SN};
-                rowConditionsPrecedentRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowConditionsPrecedentRow);
-                return rowConditionsPrecedentRow;
+                        SN,
+                        isExternal};
+                rowInternalConditionsPrecedentRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowInternalConditionsPrecedentRow);
+                return rowInternalConditionsPrecedentRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                ConditionsPrecedentDataTable cln = ((ConditionsPrecedentDataTable)(base.Clone()));
+                InternalConditionsPrecedentDataTable cln = ((InternalConditionsPrecedentDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -1323,7 +1404,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new ConditionsPrecedentDataTable();
+                return new InternalConditionsPrecedentDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1334,6 +1415,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columncreditVerificationOfficers = base.Columns["creditVerificationOfficers"];
                 this.columnlocationOfDocument = base.Columns["locationOfDocument"];
                 this.columnSN = base.Columns["SN"];
+                this.columnisExternal = base.Columns["isExternal"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1349,32 +1431,34 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnlocationOfDocument);
                 this.columnSN = new global::System.Data.DataColumn("SN", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnSN);
+                this.columnisExternal = new global::System.Data.DataColumn("isExternal", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnisExternal);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionsPrecedentRow NewConditionsPrecedentRow() {
-                return ((ConditionsPrecedentRow)(this.NewRow()));
+            public InternalConditionsPrecedentRow NewInternalConditionsPrecedentRow() {
+                return ((InternalConditionsPrecedentRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new ConditionsPrecedentRow(builder);
+                return new InternalConditionsPrecedentRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(ConditionsPrecedentRow);
+                return typeof(InternalConditionsPrecedentRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.ConditionsPrecedentRowChanged != null)) {
-                    this.ConditionsPrecedentRowChanged(this, new ConditionsPrecedentRowChangeEvent(((ConditionsPrecedentRow)(e.Row)), e.Action));
+                if ((this.InternalConditionsPrecedentRowChanged != null)) {
+                    this.InternalConditionsPrecedentRowChanged(this, new InternalConditionsPrecedentRowChangeEvent(((InternalConditionsPrecedentRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1382,8 +1466,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.ConditionsPrecedentRowChanging != null)) {
-                    this.ConditionsPrecedentRowChanging(this, new ConditionsPrecedentRowChangeEvent(((ConditionsPrecedentRow)(e.Row)), e.Action));
+                if ((this.InternalConditionsPrecedentRowChanging != null)) {
+                    this.InternalConditionsPrecedentRowChanging(this, new InternalConditionsPrecedentRowChangeEvent(((InternalConditionsPrecedentRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1391,8 +1475,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.ConditionsPrecedentRowDeleted != null)) {
-                    this.ConditionsPrecedentRowDeleted(this, new ConditionsPrecedentRowChangeEvent(((ConditionsPrecedentRow)(e.Row)), e.Action));
+                if ((this.InternalConditionsPrecedentRowDeleted != null)) {
+                    this.InternalConditionsPrecedentRowDeleted(this, new InternalConditionsPrecedentRowChangeEvent(((InternalConditionsPrecedentRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1400,14 +1484,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.ConditionsPrecedentRowDeleting != null)) {
-                    this.ConditionsPrecedentRowDeleting(this, new ConditionsPrecedentRowChangeEvent(((ConditionsPrecedentRow)(e.Row)), e.Action));
+                if ((this.InternalConditionsPrecedentRowDeleting != null)) {
+                    this.InternalConditionsPrecedentRowDeleting(this, new InternalConditionsPrecedentRowChangeEvent(((InternalConditionsPrecedentRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void RemoveConditionsPrecedentRow(ConditionsPrecedentRow row) {
+            public void RemoveInternalConditionsPrecedentRow(InternalConditionsPrecedentRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -1434,7 +1518,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "ConditionsPrecedentDataTable";
+                attribute2.FixedValue = "InternalConditionsPrecedentDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -1755,7 +1839,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class ConditionSubsquentDataTable : global::System.Data.TypedTableBase<ConditionSubsquentRow> {
+        public partial class InternalConditionSubsquentDataTable : global::System.Data.TypedTableBase<InternalConditionSubsquentRow> {
             
             private global::System.Data.DataColumn columnSN;
             
@@ -1767,10 +1851,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnproductName;
             
+            private global::System.Data.DataColumn columnisExternal;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionSubsquentDataTable() {
-                this.TableName = "ConditionSubsquent";
+            public InternalConditionSubsquentDataTable() {
+                this.TableName = "InternalConditionSubsquent";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -1778,7 +1864,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal ConditionSubsquentDataTable(global::System.Data.DataTable table) {
+            internal InternalConditionSubsquentDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -1795,7 +1881,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            protected ConditionSubsquentDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected InternalConditionSubsquentDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -1842,6 +1928,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn isExternalColumn {
+                get {
+                    return this.columnisExternal;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1851,49 +1945,50 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionSubsquentRow this[int index] {
+            public InternalConditionSubsquentRow this[int index] {
                 get {
-                    return ((ConditionSubsquentRow)(this.Rows[index]));
+                    return ((InternalConditionSubsquentRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event ConditionSubsquentRowChangeEventHandler ConditionSubsquentRowChanging;
+            public event InternalConditionSubsquentRowChangeEventHandler InternalConditionSubsquentRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event ConditionSubsquentRowChangeEventHandler ConditionSubsquentRowChanged;
+            public event InternalConditionSubsquentRowChangeEventHandler InternalConditionSubsquentRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event ConditionSubsquentRowChangeEventHandler ConditionSubsquentRowDeleting;
+            public event InternalConditionSubsquentRowChangeEventHandler InternalConditionSubsquentRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public event ConditionSubsquentRowChangeEventHandler ConditionSubsquentRowDeleted;
+            public event InternalConditionSubsquentRowChangeEventHandler InternalConditionSubsquentRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void AddConditionSubsquentRow(ConditionSubsquentRow row) {
+            public void AddInternalConditionSubsquentRow(InternalConditionSubsquentRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionSubsquentRow AddConditionSubsquentRow(string SN, string conditionPrecident, string timeline, string creditMonitoring, string productName) {
-                ConditionSubsquentRow rowConditionSubsquentRow = ((ConditionSubsquentRow)(this.NewRow()));
+            public InternalConditionSubsquentRow AddInternalConditionSubsquentRow(string SN, string conditionPrecident, string timeline, string creditMonitoring, string productName, string isExternal) {
+                InternalConditionSubsquentRow rowInternalConditionSubsquentRow = ((InternalConditionSubsquentRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SN,
                         conditionPrecident,
                         timeline,
                         creditMonitoring,
-                        productName};
-                rowConditionSubsquentRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowConditionSubsquentRow);
-                return rowConditionSubsquentRow;
+                        productName,
+                        isExternal};
+                rowInternalConditionSubsquentRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowInternalConditionSubsquentRow);
+                return rowInternalConditionSubsquentRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                ConditionSubsquentDataTable cln = ((ConditionSubsquentDataTable)(base.Clone()));
+                InternalConditionSubsquentDataTable cln = ((InternalConditionSubsquentDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -1901,7 +1996,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new ConditionSubsquentDataTable();
+                return new InternalConditionSubsquentDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1912,6 +2007,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columntimeline = base.Columns["timeline"];
                 this.columncreditMonitoring = base.Columns["creditMonitoring"];
                 this.columnproductName = base.Columns["productName"];
+                this.columnisExternal = base.Columns["isExternal"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1927,32 +2023,34 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columncreditMonitoring);
                 this.columnproductName = new global::System.Data.DataColumn("productName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnproductName);
+                this.columnisExternal = new global::System.Data.DataColumn("isExternal", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnisExternal);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionSubsquentRow NewConditionSubsquentRow() {
-                return ((ConditionSubsquentRow)(this.NewRow()));
+            public InternalConditionSubsquentRow NewInternalConditionSubsquentRow() {
+                return ((InternalConditionSubsquentRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new ConditionSubsquentRow(builder);
+                return new InternalConditionSubsquentRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(ConditionSubsquentRow);
+                return typeof(InternalConditionSubsquentRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.ConditionSubsquentRowChanged != null)) {
-                    this.ConditionSubsquentRowChanged(this, new ConditionSubsquentRowChangeEvent(((ConditionSubsquentRow)(e.Row)), e.Action));
+                if ((this.InternalConditionSubsquentRowChanged != null)) {
+                    this.InternalConditionSubsquentRowChanged(this, new InternalConditionSubsquentRowChangeEvent(((InternalConditionSubsquentRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1960,8 +2058,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.ConditionSubsquentRowChanging != null)) {
-                    this.ConditionSubsquentRowChanging(this, new ConditionSubsquentRowChangeEvent(((ConditionSubsquentRow)(e.Row)), e.Action));
+                if ((this.InternalConditionSubsquentRowChanging != null)) {
+                    this.InternalConditionSubsquentRowChanging(this, new InternalConditionSubsquentRowChangeEvent(((InternalConditionSubsquentRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1969,8 +2067,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.ConditionSubsquentRowDeleted != null)) {
-                    this.ConditionSubsquentRowDeleted(this, new ConditionSubsquentRowChangeEvent(((ConditionSubsquentRow)(e.Row)), e.Action));
+                if ((this.InternalConditionSubsquentRowDeleted != null)) {
+                    this.InternalConditionSubsquentRowDeleted(this, new InternalConditionSubsquentRowChangeEvent(((InternalConditionSubsquentRow)(e.Row)), e.Action));
                 }
             }
             
@@ -1978,14 +2076,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.ConditionSubsquentRowDeleting != null)) {
-                    this.ConditionSubsquentRowDeleting(this, new ConditionSubsquentRowChangeEvent(((ConditionSubsquentRow)(e.Row)), e.Action));
+                if ((this.InternalConditionSubsquentRowDeleting != null)) {
+                    this.InternalConditionSubsquentRowDeleting(this, new InternalConditionSubsquentRowChangeEvent(((InternalConditionSubsquentRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public void RemoveConditionSubsquentRow(ConditionSubsquentRow row) {
+            public void RemoveInternalConditionSubsquentRow(InternalConditionSubsquentRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -2012,7 +2110,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "ConditionSubsquentDataTable";
+                attribute2.FixedValue = "InternalConditionSubsquentDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -3126,6 +3224,640 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class ExternalConditionSubsquentDataTable : global::System.Data.TypedTableBase<ExternalConditionSubsquentRow> {
+            
+            private global::System.Data.DataColumn columnSN;
+            
+            private global::System.Data.DataColumn columnconditionPrecident;
+            
+            private global::System.Data.DataColumn columntimeline;
+            
+            private global::System.Data.DataColumn columncreditMonitoring;
+            
+            private global::System.Data.DataColumn columnproductName;
+            
+            private global::System.Data.DataColumn columnisExternal;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionSubsquentDataTable() {
+                this.TableName = "ExternalConditionSubsquent";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal ExternalConditionSubsquentDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected ExternalConditionSubsquentDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn SNColumn {
+                get {
+                    return this.columnSN;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn conditionPrecidentColumn {
+                get {
+                    return this.columnconditionPrecident;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn timelineColumn {
+                get {
+                    return this.columntimeline;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn creditMonitoringColumn {
+                get {
+                    return this.columncreditMonitoring;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn productNameColumn {
+                get {
+                    return this.columnproductName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn isExternalColumn {
+                get {
+                    return this.columnisExternal;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionSubsquentRow this[int index] {
+                get {
+                    return ((ExternalConditionSubsquentRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event ExternalConditionSubsquentRowChangeEventHandler ExternalConditionSubsquentRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event ExternalConditionSubsquentRowChangeEventHandler ExternalConditionSubsquentRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event ExternalConditionSubsquentRowChangeEventHandler ExternalConditionSubsquentRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event ExternalConditionSubsquentRowChangeEventHandler ExternalConditionSubsquentRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void AddExternalConditionSubsquentRow(ExternalConditionSubsquentRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionSubsquentRow AddExternalConditionSubsquentRow(string SN, string conditionPrecident, string timeline, string creditMonitoring, string productName, string isExternal) {
+                ExternalConditionSubsquentRow rowExternalConditionSubsquentRow = ((ExternalConditionSubsquentRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        SN,
+                        conditionPrecident,
+                        timeline,
+                        creditMonitoring,
+                        productName,
+                        isExternal};
+                rowExternalConditionSubsquentRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowExternalConditionSubsquentRow);
+                return rowExternalConditionSubsquentRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                ExternalConditionSubsquentDataTable cln = ((ExternalConditionSubsquentDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new ExternalConditionSubsquentDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal void InitVars() {
+                this.columnSN = base.Columns["SN"];
+                this.columnconditionPrecident = base.Columns["conditionPrecident"];
+                this.columntimeline = base.Columns["timeline"];
+                this.columncreditMonitoring = base.Columns["creditMonitoring"];
+                this.columnproductName = base.Columns["productName"];
+                this.columnisExternal = base.Columns["isExternal"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            private void InitClass() {
+                this.columnSN = new global::System.Data.DataColumn("SN", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSN);
+                this.columnconditionPrecident = new global::System.Data.DataColumn("conditionPrecident", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnconditionPrecident);
+                this.columntimeline = new global::System.Data.DataColumn("timeline", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntimeline);
+                this.columncreditMonitoring = new global::System.Data.DataColumn("creditMonitoring", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncreditMonitoring);
+                this.columnproductName = new global::System.Data.DataColumn("productName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnproductName);
+                this.columnisExternal = new global::System.Data.DataColumn("isExternal", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnisExternal);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionSubsquentRow NewExternalConditionSubsquentRow() {
+                return ((ExternalConditionSubsquentRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new ExternalConditionSubsquentRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(ExternalConditionSubsquentRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.ExternalConditionSubsquentRowChanged != null)) {
+                    this.ExternalConditionSubsquentRowChanged(this, new ExternalConditionSubsquentRowChangeEvent(((ExternalConditionSubsquentRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.ExternalConditionSubsquentRowChanging != null)) {
+                    this.ExternalConditionSubsquentRowChanging(this, new ExternalConditionSubsquentRowChangeEvent(((ExternalConditionSubsquentRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.ExternalConditionSubsquentRowDeleted != null)) {
+                    this.ExternalConditionSubsquentRowDeleted(this, new ExternalConditionSubsquentRowChangeEvent(((ExternalConditionSubsquentRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.ExternalConditionSubsquentRowDeleting != null)) {
+                    this.ExternalConditionSubsquentRowDeleting(this, new ExternalConditionSubsquentRowChangeEvent(((ExternalConditionSubsquentRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void RemoveExternalConditionSubsquentRow(ExternalConditionSubsquentRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                FORM3800B ds = new FORM3800B();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "ExternalConditionSubsquentDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class ExternalConditionsPrecedentDataTable : global::System.Data.TypedTableBase<ExternalConditionsPrecedentRow> {
+            
+            private global::System.Data.DataColumn columnconditionPrecident;
+            
+            private global::System.Data.DataColumn columnproductName;
+            
+            private global::System.Data.DataColumn columncreditVerificationOfficers;
+            
+            private global::System.Data.DataColumn columnlocationOfDocument;
+            
+            private global::System.Data.DataColumn columnSN;
+            
+            private global::System.Data.DataColumn columnisExternal;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionsPrecedentDataTable() {
+                this.TableName = "ExternalConditionsPrecedent";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal ExternalConditionsPrecedentDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected ExternalConditionsPrecedentDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn conditionPrecidentColumn {
+                get {
+                    return this.columnconditionPrecident;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn productNameColumn {
+                get {
+                    return this.columnproductName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn creditVerificationOfficersColumn {
+                get {
+                    return this.columncreditVerificationOfficers;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn locationOfDocumentColumn {
+                get {
+                    return this.columnlocationOfDocument;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn SNColumn {
+                get {
+                    return this.columnSN;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn isExternalColumn {
+                get {
+                    return this.columnisExternal;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionsPrecedentRow this[int index] {
+                get {
+                    return ((ExternalConditionsPrecedentRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event ExternalConditionsPrecedentRowChangeEventHandler ExternalConditionsPrecedentRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event ExternalConditionsPrecedentRowChangeEventHandler ExternalConditionsPrecedentRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event ExternalConditionsPrecedentRowChangeEventHandler ExternalConditionsPrecedentRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public event ExternalConditionsPrecedentRowChangeEventHandler ExternalConditionsPrecedentRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void AddExternalConditionsPrecedentRow(ExternalConditionsPrecedentRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionsPrecedentRow AddExternalConditionsPrecedentRow(string conditionPrecident, string productName, string creditVerificationOfficers, string locationOfDocument, string SN, string isExternal) {
+                ExternalConditionsPrecedentRow rowExternalConditionsPrecedentRow = ((ExternalConditionsPrecedentRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        conditionPrecident,
+                        productName,
+                        creditVerificationOfficers,
+                        locationOfDocument,
+                        SN,
+                        isExternal};
+                rowExternalConditionsPrecedentRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowExternalConditionsPrecedentRow);
+                return rowExternalConditionsPrecedentRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                ExternalConditionsPrecedentDataTable cln = ((ExternalConditionsPrecedentDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new ExternalConditionsPrecedentDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal void InitVars() {
+                this.columnconditionPrecident = base.Columns["conditionPrecident"];
+                this.columnproductName = base.Columns["productName"];
+                this.columncreditVerificationOfficers = base.Columns["creditVerificationOfficers"];
+                this.columnlocationOfDocument = base.Columns["locationOfDocument"];
+                this.columnSN = base.Columns["SN"];
+                this.columnisExternal = base.Columns["isExternal"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            private void InitClass() {
+                this.columnconditionPrecident = new global::System.Data.DataColumn("conditionPrecident", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnconditionPrecident);
+                this.columnproductName = new global::System.Data.DataColumn("productName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnproductName);
+                this.columncreditVerificationOfficers = new global::System.Data.DataColumn("creditVerificationOfficers", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncreditVerificationOfficers);
+                this.columnlocationOfDocument = new global::System.Data.DataColumn("locationOfDocument", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnlocationOfDocument);
+                this.columnSN = new global::System.Data.DataColumn("SN", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnSN);
+                this.columnisExternal = new global::System.Data.DataColumn("isExternal", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnisExternal);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionsPrecedentRow NewExternalConditionsPrecedentRow() {
+                return ((ExternalConditionsPrecedentRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new ExternalConditionsPrecedentRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(ExternalConditionsPrecedentRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.ExternalConditionsPrecedentRowChanged != null)) {
+                    this.ExternalConditionsPrecedentRowChanged(this, new ExternalConditionsPrecedentRowChangeEvent(((ExternalConditionsPrecedentRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.ExternalConditionsPrecedentRowChanging != null)) {
+                    this.ExternalConditionsPrecedentRowChanging(this, new ExternalConditionsPrecedentRowChangeEvent(((ExternalConditionsPrecedentRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.ExternalConditionsPrecedentRowDeleted != null)) {
+                    this.ExternalConditionsPrecedentRowDeleted(this, new ExternalConditionsPrecedentRowChangeEvent(((ExternalConditionsPrecedentRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.ExternalConditionsPrecedentRowDeleting != null)) {
+                    this.ExternalConditionsPrecedentRowDeleting(this, new ExternalConditionsPrecedentRowChangeEvent(((ExternalConditionsPrecedentRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void RemoveExternalConditionsPrecedentRow(ExternalConditionsPrecedentRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                FORM3800B ds = new FORM3800B();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "ExternalConditionsPrecedentDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class FacilityRow : global::System.Data.DataRow {
@@ -3466,15 +4198,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class ConditionsPrecedentRow : global::System.Data.DataRow {
+        public partial class InternalConditionsPrecedentRow : global::System.Data.DataRow {
             
-            private ConditionsPrecedentDataTable tableConditionsPrecedent;
+            private InternalConditionsPrecedentDataTable tableInternalConditionsPrecedent;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal ConditionsPrecedentRow(global::System.Data.DataRowBuilder rb) : 
+            internal InternalConditionsPrecedentRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableConditionsPrecedent = ((ConditionsPrecedentDataTable)(this.Table));
+                this.tableInternalConditionsPrecedent = ((InternalConditionsPrecedentDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3482,15 +4214,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string conditionPrecident {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionsPrecedent.conditionPrecidentColumn]));
+                        return ((string)(this[this.tableInternalConditionsPrecedent.conditionPrecidentColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'conditionPrecident\' in table \'ConditionsPrecedent\' is DBNul" +
-                                "l.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'conditionPrecident\' in table \'InternalConditionsPrecedent\' " +
+                                "is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionsPrecedent.conditionPrecidentColumn] = value;
+                    this[this.tableInternalConditionsPrecedent.conditionPrecidentColumn] = value;
                 }
             }
             
@@ -3499,14 +4231,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string productName {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionsPrecedent.productNameColumn]));
+                        return ((string)(this[this.tableInternalConditionsPrecedent.productNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'ConditionsPrecedent\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'InternalConditionsPrecedent\' is DBNu" +
+                                "ll.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionsPrecedent.productNameColumn] = value;
+                    this[this.tableInternalConditionsPrecedent.productNameColumn] = value;
                 }
             }
             
@@ -3515,15 +4248,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string creditVerificationOfficers {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionsPrecedent.creditVerificationOfficersColumn]));
+                        return ((string)(this[this.tableInternalConditionsPrecedent.creditVerificationOfficersColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'creditVerificationOfficers\' in table \'ConditionsPrecedent\' " +
-                                "is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'creditVerificationOfficers\' in table \'InternalConditionsPre" +
+                                "cedent\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionsPrecedent.creditVerificationOfficersColumn] = value;
+                    this[this.tableInternalConditionsPrecedent.creditVerificationOfficersColumn] = value;
                 }
             }
             
@@ -3532,15 +4265,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string locationOfDocument {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionsPrecedent.locationOfDocumentColumn]));
+                        return ((string)(this[this.tableInternalConditionsPrecedent.locationOfDocumentColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'locationOfDocument\' in table \'ConditionsPrecedent\' is DBNul" +
-                                "l.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'locationOfDocument\' in table \'InternalConditionsPrecedent\' " +
+                                "is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionsPrecedent.locationOfDocumentColumn] = value;
+                    this[this.tableInternalConditionsPrecedent.locationOfDocumentColumn] = value;
                 }
             }
             
@@ -3549,75 +4282,104 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string SN {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionsPrecedent.SNColumn]));
+                        return ((string)(this[this.tableInternalConditionsPrecedent.SNColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'SN\' in table \'ConditionsPrecedent\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SN\' in table \'InternalConditionsPrecedent\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionsPrecedent.SNColumn] = value;
+                    this[this.tableInternalConditionsPrecedent.SNColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string isExternal {
+                get {
+                    try {
+                        return ((string)(this[this.tableInternalConditionsPrecedent.isExternalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'isExternal\' in table \'InternalConditionsPrecedent\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableInternalConditionsPrecedent.isExternalColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsconditionPrecidentNull() {
-                return this.IsNull(this.tableConditionsPrecedent.conditionPrecidentColumn);
+                return this.IsNull(this.tableInternalConditionsPrecedent.conditionPrecidentColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetconditionPrecidentNull() {
-                this[this.tableConditionsPrecedent.conditionPrecidentColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionsPrecedent.conditionPrecidentColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsproductNameNull() {
-                return this.IsNull(this.tableConditionsPrecedent.productNameColumn);
+                return this.IsNull(this.tableInternalConditionsPrecedent.productNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetproductNameNull() {
-                this[this.tableConditionsPrecedent.productNameColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionsPrecedent.productNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscreditVerificationOfficersNull() {
-                return this.IsNull(this.tableConditionsPrecedent.creditVerificationOfficersColumn);
+                return this.IsNull(this.tableInternalConditionsPrecedent.creditVerificationOfficersColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcreditVerificationOfficersNull() {
-                this[this.tableConditionsPrecedent.creditVerificationOfficersColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionsPrecedent.creditVerificationOfficersColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IslocationOfDocumentNull() {
-                return this.IsNull(this.tableConditionsPrecedent.locationOfDocumentColumn);
+                return this.IsNull(this.tableInternalConditionsPrecedent.locationOfDocumentColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetlocationOfDocumentNull() {
-                this[this.tableConditionsPrecedent.locationOfDocumentColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionsPrecedent.locationOfDocumentColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsSNNull() {
-                return this.IsNull(this.tableConditionsPrecedent.SNColumn);
+                return this.IsNull(this.tableInternalConditionsPrecedent.SNColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetSNNull() {
-                this[this.tableConditionsPrecedent.SNColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionsPrecedent.SNColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsisExternalNull() {
+                return this.IsNull(this.tableInternalConditionsPrecedent.isExternalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetisExternalNull() {
+                this[this.tableInternalConditionsPrecedent.isExternalColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -3723,15 +4485,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class ConditionSubsquentRow : global::System.Data.DataRow {
+        public partial class InternalConditionSubsquentRow : global::System.Data.DataRow {
             
-            private ConditionSubsquentDataTable tableConditionSubsquent;
+            private InternalConditionSubsquentDataTable tableInternalConditionSubsquent;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            internal ConditionSubsquentRow(global::System.Data.DataRowBuilder rb) : 
+            internal InternalConditionSubsquentRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableConditionSubsquent = ((ConditionSubsquentDataTable)(this.Table));
+                this.tableInternalConditionSubsquent = ((InternalConditionSubsquentDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3739,14 +4501,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string SN {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionSubsquent.SNColumn]));
+                        return ((string)(this[this.tableInternalConditionSubsquent.SNColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'SN\' in table \'ConditionSubsquent\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'SN\' in table \'InternalConditionSubsquent\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionSubsquent.SNColumn] = value;
+                    this[this.tableInternalConditionSubsquent.SNColumn] = value;
                 }
             }
             
@@ -3755,15 +4517,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string conditionPrecident {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionSubsquent.conditionPrecidentColumn]));
+                        return ((string)(this[this.tableInternalConditionSubsquent.conditionPrecidentColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'conditionPrecident\' in table \'ConditionSubsquent\' is DBNull" +
-                                ".", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'conditionPrecident\' in table \'InternalConditionSubsquent\' i" +
+                                "s DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionSubsquent.conditionPrecidentColumn] = value;
+                    this[this.tableInternalConditionSubsquent.conditionPrecidentColumn] = value;
                 }
             }
             
@@ -3772,14 +4534,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string timeline {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionSubsquent.timelineColumn]));
+                        return ((string)(this[this.tableInternalConditionSubsquent.timelineColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'timeline\' in table \'ConditionSubsquent\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'timeline\' in table \'InternalConditionSubsquent\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionSubsquent.timelineColumn] = value;
+                    this[this.tableInternalConditionSubsquent.timelineColumn] = value;
                 }
             }
             
@@ -3788,14 +4550,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string creditMonitoring {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionSubsquent.creditMonitoringColumn]));
+                        return ((string)(this[this.tableInternalConditionSubsquent.creditMonitoringColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'creditMonitoring\' in table \'ConditionSubsquent\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'creditMonitoring\' in table \'InternalConditionSubsquent\' is " +
+                                "DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionSubsquent.creditMonitoringColumn] = value;
+                    this[this.tableInternalConditionSubsquent.creditMonitoringColumn] = value;
                 }
             }
             
@@ -3804,75 +4567,105 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string productName {
                 get {
                     try {
-                        return ((string)(this[this.tableConditionSubsquent.productNameColumn]));
+                        return ((string)(this[this.tableInternalConditionSubsquent.productNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'ConditionSubsquent\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'InternalConditionSubsquent\' is DBNul" +
+                                "l.", e);
                     }
                 }
                 set {
-                    this[this.tableConditionSubsquent.productNameColumn] = value;
+                    this[this.tableInternalConditionSubsquent.productNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string isExternal {
+                get {
+                    try {
+                        return ((string)(this[this.tableInternalConditionSubsquent.isExternalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'isExternal\' in table \'InternalConditionSubsquent\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableInternalConditionSubsquent.isExternalColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsSNNull() {
-                return this.IsNull(this.tableConditionSubsquent.SNColumn);
+                return this.IsNull(this.tableInternalConditionSubsquent.SNColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetSNNull() {
-                this[this.tableConditionSubsquent.SNColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionSubsquent.SNColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsconditionPrecidentNull() {
-                return this.IsNull(this.tableConditionSubsquent.conditionPrecidentColumn);
+                return this.IsNull(this.tableInternalConditionSubsquent.conditionPrecidentColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetconditionPrecidentNull() {
-                this[this.tableConditionSubsquent.conditionPrecidentColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionSubsquent.conditionPrecidentColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IstimelineNull() {
-                return this.IsNull(this.tableConditionSubsquent.timelineColumn);
+                return this.IsNull(this.tableInternalConditionSubsquent.timelineColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SettimelineNull() {
-                this[this.tableConditionSubsquent.timelineColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionSubsquent.timelineColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscreditMonitoringNull() {
-                return this.IsNull(this.tableConditionSubsquent.creditMonitoringColumn);
+                return this.IsNull(this.tableInternalConditionSubsquent.creditMonitoringColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcreditMonitoringNull() {
-                this[this.tableConditionSubsquent.creditMonitoringColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionSubsquent.creditMonitoringColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsproductNameNull() {
-                return this.IsNull(this.tableConditionSubsquent.productNameColumn);
+                return this.IsNull(this.tableInternalConditionSubsquent.productNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetproductNameNull() {
-                this[this.tableConditionSubsquent.productNameColumn] = global::System.Convert.DBNull;
+                this[this.tableInternalConditionSubsquent.productNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsisExternalNull() {
+                return this.IsNull(this.tableInternalConditionSubsquent.isExternalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetisExternalNull() {
+                this[this.tableInternalConditionSubsquent.isExternalColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -4218,6 +5011,381 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class ExternalConditionSubsquentRow : global::System.Data.DataRow {
+            
+            private ExternalConditionSubsquentDataTable tableExternalConditionSubsquent;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal ExternalConditionSubsquentRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableExternalConditionSubsquent = ((ExternalConditionSubsquentDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string SN {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionSubsquent.SNColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'SN\' in table \'ExternalConditionSubsquent\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionSubsquent.SNColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string conditionPrecident {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionSubsquent.conditionPrecidentColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'conditionPrecident\' in table \'ExternalConditionSubsquent\' i" +
+                                "s DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionSubsquent.conditionPrecidentColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string timeline {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionSubsquent.timelineColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'timeline\' in table \'ExternalConditionSubsquent\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionSubsquent.timelineColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string creditMonitoring {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionSubsquent.creditMonitoringColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'creditMonitoring\' in table \'ExternalConditionSubsquent\' is " +
+                                "DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionSubsquent.creditMonitoringColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string productName {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionSubsquent.productNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'ExternalConditionSubsquent\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionSubsquent.productNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string isExternal {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionSubsquent.isExternalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'isExternal\' in table \'ExternalConditionSubsquent\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionSubsquent.isExternalColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsSNNull() {
+                return this.IsNull(this.tableExternalConditionSubsquent.SNColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetSNNull() {
+                this[this.tableExternalConditionSubsquent.SNColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsconditionPrecidentNull() {
+                return this.IsNull(this.tableExternalConditionSubsquent.conditionPrecidentColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetconditionPrecidentNull() {
+                this[this.tableExternalConditionSubsquent.conditionPrecidentColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IstimelineNull() {
+                return this.IsNull(this.tableExternalConditionSubsquent.timelineColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SettimelineNull() {
+                this[this.tableExternalConditionSubsquent.timelineColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscreditMonitoringNull() {
+                return this.IsNull(this.tableExternalConditionSubsquent.creditMonitoringColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcreditMonitoringNull() {
+                this[this.tableExternalConditionSubsquent.creditMonitoringColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsproductNameNull() {
+                return this.IsNull(this.tableExternalConditionSubsquent.productNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetproductNameNull() {
+                this[this.tableExternalConditionSubsquent.productNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsisExternalNull() {
+                return this.IsNull(this.tableExternalConditionSubsquent.isExternalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetisExternalNull() {
+                this[this.tableExternalConditionSubsquent.isExternalColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class ExternalConditionsPrecedentRow : global::System.Data.DataRow {
+            
+            private ExternalConditionsPrecedentDataTable tableExternalConditionsPrecedent;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            internal ExternalConditionsPrecedentRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableExternalConditionsPrecedent = ((ExternalConditionsPrecedentDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string conditionPrecident {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionsPrecedent.conditionPrecidentColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'conditionPrecident\' in table \'ExternalConditionsPrecedent\' " +
+                                "is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionsPrecedent.conditionPrecidentColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string productName {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionsPrecedent.productNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'ExternalConditionsPrecedent\' is DBNu" +
+                                "ll.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionsPrecedent.productNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string creditVerificationOfficers {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionsPrecedent.creditVerificationOfficersColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'creditVerificationOfficers\' in table \'ExternalConditionsPre" +
+                                "cedent\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionsPrecedent.creditVerificationOfficersColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string locationOfDocument {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionsPrecedent.locationOfDocumentColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'locationOfDocument\' in table \'ExternalConditionsPrecedent\' " +
+                                "is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionsPrecedent.locationOfDocumentColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string SN {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionsPrecedent.SNColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'SN\' in table \'ExternalConditionsPrecedent\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionsPrecedent.SNColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string isExternal {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionsPrecedent.isExternalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'isExternal\' in table \'ExternalConditionsPrecedent\' is DBNul" +
+                                "l.", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionsPrecedent.isExternalColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsconditionPrecidentNull() {
+                return this.IsNull(this.tableExternalConditionsPrecedent.conditionPrecidentColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetconditionPrecidentNull() {
+                this[this.tableExternalConditionsPrecedent.conditionPrecidentColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsproductNameNull() {
+                return this.IsNull(this.tableExternalConditionsPrecedent.productNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetproductNameNull() {
+                this[this.tableExternalConditionsPrecedent.productNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IscreditVerificationOfficersNull() {
+                return this.IsNull(this.tableExternalConditionsPrecedent.creditVerificationOfficersColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetcreditVerificationOfficersNull() {
+                this[this.tableExternalConditionsPrecedent.creditVerificationOfficersColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IslocationOfDocumentNull() {
+                return this.IsNull(this.tableExternalConditionsPrecedent.locationOfDocumentColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetlocationOfDocumentNull() {
+                this[this.tableExternalConditionsPrecedent.locationOfDocumentColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsSNNull() {
+                return this.IsNull(this.tableExternalConditionsPrecedent.SNColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetSNNull() {
+                this[this.tableExternalConditionsPrecedent.SNColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsisExternalNull() {
+                return this.IsNull(this.tableExternalConditionsPrecedent.isExternalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetisExternalNull() {
+                this[this.tableExternalConditionsPrecedent.isExternalColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
@@ -4289,22 +5457,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public class ConditionsPrecedentRowChangeEvent : global::System.EventArgs {
+        public class InternalConditionsPrecedentRowChangeEvent : global::System.EventArgs {
             
-            private ConditionsPrecedentRow eventRow;
+            private InternalConditionsPrecedentRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionsPrecedentRowChangeEvent(ConditionsPrecedentRow row, global::System.Data.DataRowAction action) {
+            public InternalConditionsPrecedentRowChangeEvent(InternalConditionsPrecedentRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionsPrecedentRow Row {
+            public InternalConditionsPrecedentRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -4357,22 +5525,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-        public class ConditionSubsquentRowChangeEvent : global::System.EventArgs {
+        public class InternalConditionSubsquentRowChangeEvent : global::System.EventArgs {
             
-            private ConditionSubsquentRow eventRow;
+            private InternalConditionSubsquentRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionSubsquentRowChangeEvent(ConditionSubsquentRow row, global::System.Data.DataRowAction action) {
+            public InternalConditionSubsquentRowChangeEvent(InternalConditionSubsquentRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ConditionSubsquentRow Row {
+            public InternalConditionSubsquentRow Row {
                 get {
                     return this.eventRow;
                 }
@@ -4509,6 +5677,74 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public CommentsRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public class ExternalConditionSubsquentRowChangeEvent : global::System.EventArgs {
+            
+            private ExternalConditionSubsquentRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionSubsquentRowChangeEvent(ExternalConditionSubsquentRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionSubsquentRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+        public class ExternalConditionsPrecedentRowChangeEvent : global::System.EventArgs {
+            
+            private ExternalConditionsPrecedentRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionsPrecedentRowChangeEvent(ExternalConditionsPrecedentRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public ExternalConditionsPrecedentRow Row {
                 get {
                     return this.eventRow;
                 }
