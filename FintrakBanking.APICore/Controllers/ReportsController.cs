@@ -253,7 +253,28 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("form3800b-los")]
+        public HttpResponseMessage GetGeneratedForm3800bLos(string applicationRefNumber)
+        {
+            try
+            {
+                var data = repo.GetGeneratedFORM3800BLOS(applicationRefNumber);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

@@ -239,6 +239,23 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             }
         }
 
+        public string GetGeneratedFORM3800BLOS(string applicationRefNumber)
+        {
+            try
+            {
+                HashProperty hashValue = GetHashedDateValue(dateInfor);
+
+                string path = string.Empty;
+                path = reportPath + "Credit/OfferLetterGeneration/FORM3800B_LOS.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+                          return path;
+
+            }
+            catch (Exception ex)
+            { 
+                throw ex;
+            }
+        }
+
         public string GetGeneratedOfferLetterLMS(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();

@@ -288,6 +288,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string monitoringTrigger { get; set; }
         public int? monitoringTriggerId { get; set; }
         public string productCustomerName { get; set; }
+        public double SN { get; set; }
     }
 
     public class RepaymentScheduleTermsViewModel
