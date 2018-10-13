@@ -133,7 +133,7 @@
                 if(request.dateOfBirth != null)
                 {
                     request.dateOfBirth = Convert.ToDateTime(request.dateOfBirth).ToString("dd-MMM-YYYY");
-                     request.dateOfBirth = "03-Jun-1998";  
+                     //request.dateOfBirth = "03-Jun-1998";  
                 }
 
                 try
