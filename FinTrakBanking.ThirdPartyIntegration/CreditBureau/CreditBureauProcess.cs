@@ -260,8 +260,6 @@
             }
 
             private string DoXDSIndividualSearch(CreditBureauSearchViewModel searchInfo)
-
-
             {
                 string result = string.Empty;
                 XDSService xds = new XDSService();
