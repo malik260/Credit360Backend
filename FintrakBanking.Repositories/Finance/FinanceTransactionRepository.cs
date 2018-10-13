@@ -2596,7 +2596,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.glAccountId = model.debitGlAccountId;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
             debit.sourceReferenceNumber = model.sourceReferenceNumber;//product.PRODUCTCODE;
             debit.casaAccountId = model.debitCasaAccountId;
-            debit.debitAmount = model.actualAmount;
+            debit.debitAmount = model.actualAmountCollected;
             debit.creditAmount = 0;
             debit.sourceBranchId = model.sourceBranchId;
             debit.destinationBranchId = model.destinationBranchId;
@@ -2621,7 +2621,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.sourceReferenceNumber = model.sourceReferenceNumber;
             credit.casaAccountId = model.creditCasaAccountId;
             credit.debitAmount = 0;
-            credit.creditAmount = model.actualAmount;
+            credit.creditAmount = model.actualAmountCollected;
             credit.sourceBranchId = model.sourceBranchId;
             credit.destinationBranchId = model.destinationBranchId;
             credit.batchId = model.batchId;
