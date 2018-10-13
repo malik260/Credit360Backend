@@ -79,6 +79,7 @@ namespace FintrakBanking.Repositories.Credit
                                    where a.ISDISBURSED == true
                                    select new LoanViewModel
                                    {
+                                       loanSystemTypeId=a.LOANSYSTEMTYPEID,
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
                                        customerName = h.FIRSTNAME + " " + h.LASTNAME,//a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,

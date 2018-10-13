@@ -44,6 +44,36 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("save-collateral-type-crms")]
+        public HttpResponseMessage UpdateApprovalRelief([FromBody] ApprovedLoanDetailViewModel model)
+        {
+            try
+            {
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                int applicationId = model.loanApplicationDetailId;
+                var data = repo.UpdateLoadDetails(applicationId, model);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                     new { success = true, result = data, message = "The record has been updated successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"There was an error updating this record {e.Message}" });
+            }
+
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

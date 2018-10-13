@@ -96,7 +96,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 entity.createdBy =  token.GetStaffId;
                 entity.companyId =  token.GetCompanyId;
-                entity.branchId =  (short)token.GetBranchId;
+                entity.branchId = (short)token.GetBranchId;
                 string response = repo.SubmitLoanReviewApplication(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
             }
@@ -105,14 +105,29 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
             }
         }
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-review-application/validatecustomer/{loanApplicationDetailId}/{customerId}")]
+        public HttpResponseMessage validateCustomer(int loanApplicationDetailId,int customerId)
+        {
+            try
+            {
+                
+                bool response = repo.validateCustomer(loanApplicationDetailId, customerId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
+            }
+        }
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/loan-search")]
         public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)
         {
             var searchString = search.searchString.Trim();
             //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.performanceTypeId, search.loanSystemTypeId, searchString);
+            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 

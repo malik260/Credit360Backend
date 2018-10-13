@@ -306,7 +306,27 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
-       
+        public int performanceTypeId
+        {
+            get
+            {
+                if (writtenOff) return 3;
+                if (!isPerforming) return 2;
+                return 1;
+            }
+        }
+
+        public string performanceType
+        {
+            get
+            {
+                if (writtenOff) return "Written Off";
+                if (!isPerforming) return "Non Performing";
+                return "Performing";
+            }
+        }
+
+
 
 
 
@@ -315,6 +335,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string currencyCode { get; set; }
+
         public string revolvingTypeName { get; set; }
 
         public string casaAccountDetails { get; set; }
@@ -425,6 +447,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public string currencyCode { get; set; }
         public string casaAccountDetails { get; set; }
 
         public decimal disbursableAmount { get; set; }
@@ -534,6 +557,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public string productPriceDescription;
+
         public int requestStaffId { get; set; }
 
         public string approvalStatusName { get; set; }
@@ -800,6 +825,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string monitoringTrigger { get; set; }
         public string monitoringTriggerSetupName { get; set; }
     }
+
 
     public class DailyInterestAccrualViewModel : GeneralEntity
 

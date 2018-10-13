@@ -231,6 +231,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string cancelUndisbursedLoan { get; set; }
         public string lmsLoanReferenceNumber { get; set; }
         public DateTime? newMaturityDate { get; set; }
+        public int? loanSystemTypeId { get; set; }
     }
 
 
@@ -293,6 +294,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int requestStaffId { get; set; }
         public int? toApprovalLevelId { get; set; }
         public bool atInitiator { get; set; }
+        public int? regionId { get; set; }
     }
 
     public class applicationDetails
@@ -317,6 +319,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int approvedTenor { get; set; }
         public double approvedRate { get; set; }
         public decimal approvedAmount { get; set; }
+        public decimal? customerProposedAmount { get; set; }
 
         public string proposedTenorString
         {
@@ -340,6 +343,7 @@ public int? newInterestFrequencyTypeId { get; set; }
                 return months.ToString() + " " + units;
             }
         }
+
     }
 
     public class SelectListViewModel

@@ -20,7 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
 
-        private List<int> camOperationIds = new List<int> { 46, 71, 79 };
+        private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
 
         private readonly int classifiedAssetManagementRoleId = 46;
 
@@ -79,6 +79,7 @@ namespace FintrakBanking.Repositories.Credit
                 currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
                 lastComment = x.trail == null ? "" : x.trail.COMMENT,
                 toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
+                requestStaffId = x.trail == null ? 0 : x.trail.REQUESTSTAFFID,
 
                 applicationDate = x.application.APPLICATIONDATE,
                 approvalStatus = x.application.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
@@ -113,6 +114,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedTenor = d.APPROVEDTENOR,
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
+                    customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
 
                 })
                 
@@ -195,6 +197,7 @@ namespace FintrakBanking.Repositories.Credit
                 CUSTOMERID = model.customerId,
                 BRANCHID = model.branchId,
                 OPERATIONID = camOperationId,
+                CAPREGIONID = model.regionId,
                 // CUSTOMERGROUPID = null,
                 DISPUTED = false,
                 REQUIRECOLLATERAL = false,
@@ -234,6 +237,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDINTERESTRATE = loan.interestRate,
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
+                    CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
+
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
             }
@@ -262,8 +267,50 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
             throw new SecureException("An error occured while saving the data!");
         }
+        public bool validateCustomer(int loanApplicationDetailId, int customerId)
+        {
 
-        private int GetCamOperation(int performanceTypeId)
+            if (loanApplicationDetailId != 0)
+            {
+                var loanData = (from a in context.TBL_LOAN
+                                join b in context.TBL_PRODUCT
+                                on a.PRODUCTID equals b.PRODUCTID
+                                where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                && b.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan
+                                && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                select a).ToList();
+                if (loanData.Count < 2 || loanData == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                var loanData = (from a in context.TBL_LOAN_REVOLVING
+                                where a.CUSTOMERID == customerId
+                                && a.MATURITYDATE < context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
+                                && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                select a).ToList();
+                //var test = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+
+                if (loanData.Count < 2 || loanData == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+
+           
+        }
+            private int GetCamOperation(int performanceTypeId)
         {
             switch (performanceTypeId)
             {
@@ -548,17 +595,26 @@ namespace FintrakBanking.Repositories.Credit
 
             var levels = levels1.Union(levels2).Union(levels3).Distinct();
 
-            var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
-                                .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
-                                .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
-                                .Select(x => new {
-                                    BRANCHID = x.b.BRANCHID
-                                })
-                                .Select(x => x.BRANCHID)
-                                .ToList();
+            //var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+            //                    .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
+            //                    .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
+            //                    .Select(x => new {
+            //                        BRANCHID = x.b.BRANCHID
+            //                    })
+            //                    .Select(x => x.BRANCHID)
+            //                    .ToList();
+
+            var regions = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+                            .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
+                            .Select(x => new
+                            {
+                                REGIONID = x.r.REGIONID
+                            })
+                            .Select(x => x.REGIONID)
+                            .ToList();
 
             var applications = context.TBL_LMSR_APPLICATION.Where(x =>
-                    branches.Contains(x.BRANCHID)
+                    regions.Contains((int)x.CAPREGIONID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                 )

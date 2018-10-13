@@ -57,5 +57,6 @@ namespace FintrakBanking.Interfaces.Reports
         string AccountWithLein(ReportSearchEntity searchEntity);
         IEnumerable<AuditViewModel> AuditType(string searchValue);
         List<GLAccountSearchViewModel> GLAccount(string searchValue);
+        string GetGeneratedFORM3800BLOS(string applicationRefNumber);
     }
 }

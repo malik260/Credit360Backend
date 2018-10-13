@@ -581,9 +581,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 }
 
                 count++;
-                if ((decimal)item.pastDueInterestAmount != 0)
+                if ((decimal)item.pastDueInterestAmount > 0)
                 {
-                    addStagingPastDueInterest.AMOUNT = (decimal)item.pastDueInterestAmount;
+                    addStagingPastDueInterest.AMOUNT = (decimal) Math.Abs(item.pastDueInterestAmount);
                     addStagingPastDueInterest.FLOWTYPE = "BIF";
                     addStagingPastDueInterest.FORCEDEBITACCOUNT = "N";
                     addStagingPastDueInterest.VALUEDATENUMBER = 1;
@@ -598,7 +598,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDueInterest.DESCRIPTION = "Past Due Interest Repayment";
                     addStagingPastDueInterest.DESTINATIONBRANCHID = item.branchId;
                     addStagingPastDueInterest.ISPOSTED = false;
-                    addStagingPastDueInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;
+                    addStagingPastDueInterest.OPERATIONID = (int)OperationsEnum.InterestPastDueLoanRepayment;
                     addStagingPastDueInterest.POSTEDBY = "SYSTEM";
                     addStagingPastDueInterest.POSTEDDATE = DateTime.Now.Date;;
                     addStagingPastDueInterest.SOURCEBRANCHID = item.branchId;
@@ -620,9 +620,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
 
                 count++;
-                if ((decimal)item.pastDuePrincipalAmount != 0)
+                if ((decimal)item.pastDuePrincipalAmount > 0)
                 {
-                    addStagingPastDuePrincipal.AMOUNT = (decimal)item.pastDuePrincipalAmount;
+                    addStagingPastDuePrincipal.AMOUNT = (decimal)Math.Abs(item.pastDuePrincipalAmount);
                     addStagingPastDuePrincipal.FLOWTYPE = "BPP";
                     addStagingPastDuePrincipal.FORCEDEBITACCOUNT = "N";
                     addStagingPastDuePrincipal.VALUEDATENUMBER = 1;
@@ -637,7 +637,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDuePrincipal.DESCRIPTION = "Past Due Principal Repayment";
                     addStagingPastDuePrincipal.DESTINATIONBRANCHID = item.branchId;
                     addStagingPastDuePrincipal.ISPOSTED = false;
-                    addStagingPastDuePrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
+                    addStagingPastDuePrincipal.OPERATIONID = (int)OperationsEnum.PrincipalPastDueLoanRepayment;//change to periodPrincipalAmount
                     addStagingPastDuePrincipal.POSTEDBY = "SYSTEM";
                     addStagingPastDuePrincipal.POSTEDDATE = DateTime.Now.Date; 
                     addStagingPastDuePrincipal.SOURCEBRANCHID = item.branchId;
@@ -658,9 +658,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 }
 
                 count++;
-                if ((decimal)item.periodInterestAmount != 0)
+                if ((decimal)item.periodInterestAmount > 0)
                 {
-                    addStagingInterest.AMOUNT = (decimal)item.periodInterestAmount;
+                    addStagingInterest.AMOUNT = (decimal) Math.Abs(item.periodInterestAmount);
                     addStagingInterest.FLOWTYPE = "BIF";
                     addStagingInterest.FORCEDEBITACCOUNT = "N";
                     addStagingInterest.VALUEDATENUMBER = 1;
@@ -697,9 +697,9 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
 
                 count++;
-                if ((decimal)item.periodPrincipalAmount != 0)
+                if ((decimal)item.periodPrincipalAmount > 0)
                 {
-                    addStagingPrincipal.AMOUNT = (decimal)item.periodPrincipalAmount;
+                    addStagingPrincipal.AMOUNT = (decimal)Math.Abs(item.periodPrincipalAmount);
                     addStagingPrincipal.FLOWTYPE = "BPP";
                     addStagingPrincipal.FORCEDEBITACCOUNT = "N";
                     addStagingPrincipal.VALUEDATENUMBER = 1;
@@ -879,10 +879,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
                 TBL_CASA casa;
 
-                var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == item.loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate));
-                var interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
+                //var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == item.loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate));
+                //var interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
 
-                item.periodInterestAmount = interestAmount;
+                
+
+                //item.periodInterestAmount = interestAmount; ///TODO will not work for CP since its unscheduled 
 
 
                 if (product.PRODUCTCLASSID != (short)ProductClassEnum.InvoiceDiscountingFacility)

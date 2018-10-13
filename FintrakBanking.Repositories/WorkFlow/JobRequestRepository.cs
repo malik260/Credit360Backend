@@ -915,7 +915,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             foreach (var item in jobRequestDetail)
             {
-                model.totalChargeAmount = item.AMOUNT.Value;
+                model.totalChargeAmount = model.totalChargeAmount  + item.AMOUNT.Value;
                 item.ACCREDITEDCONSULTANTPAID = !model.isInitiation ? true : false;
                 item.ACCOUNTNUMBER = model.isInitiation ? accountNumber : null;
             }
@@ -1258,7 +1258,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeId = x.JOBTYPEID,
                 jobTypeName = x.JOBTYPENAME,
                 inUse = x.INUSE
-            });
+            }).Where(c=>c.inUse == true);
         }
 
         public IEnumerable<JobTypeViewModel> GetJobSubType(short jobId)

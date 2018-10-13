@@ -72,6 +72,7 @@
     <Compile Include="Admin\AuditViewModel.cs" />
     <Compile Include="Admin\CanGroupViewModel.cs" />
     <Compile Include="Admin\CurrencyRateViewModel.cs" />
+    <Compile Include="Admin\IAPIErrorLogViewModel.cs" />
     <Compile Include="Admin\ProfileSettingViewModel.cs" />
     <Compile Include="Admin\UserActions.cs" />
     <Compile Include="AlertMonitoring\SLANotificationViewModel.cs" />

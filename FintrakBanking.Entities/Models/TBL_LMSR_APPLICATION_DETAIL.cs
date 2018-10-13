@@ -58,6 +58,8 @@
         [StringLength(2000)]
         public string MANAGEMENTPOSITION { get; set; }
 
+        public decimal? CUSTOMERPROPOSEDAMOUNT { get; set; }
+
         // public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
         //public virtual TBL_CASA TBL_CASA { get; set; }

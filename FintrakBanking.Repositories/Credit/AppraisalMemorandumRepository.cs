@@ -1281,18 +1281,28 @@ namespace FintrakBanking.Repositories.Credit
 
             List<int> levels = general.GetRouteLevels(operationId, 1);
 
-            var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+            //var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+            //                .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
+            //                .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
+            //                .Select(x => new {
+            //                    BRANCHID = x.b.BRANCHID
+            //                })
+            //                .Select(x => x.BRANCHID)
+            //                .ToList();
+
+            var regions = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
                             .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
-                            .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
-                            .Select(x => new {
-                                BRANCHID = x.b.BRANCHID
+                            .Select(x => new
+                            {
+                                REGIONID = x.r.REGIONID
                             })
-                            .Select(x => x.BRANCHID)
+                            .Select(x => x.REGIONID)
                             .ToList();
 
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                    && branches.Contains(x.BRANCHID)
+                    && regions.Contains((int)x.CAPREGIONID)
+                    // && branches.Contains(x.BRANCHID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                     && x.SUBMITTEDFORAPPRAISAL == true
@@ -1458,56 +1468,6 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             return limits;
-        }
-        public async Task<bool> UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model)
-        {
-            bool output = false;
-            var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
-            LoanDetails.SECUREDBYCOLLATERAL = model.securedByCollateral;
-            LoanDetails.CRMSCOLLATERALTYPEID = model.crmsCollateralTypeId;
-            LoanDetails.ISSPECIALISED = model.isSpecialised;
-
-            var auditRec = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.StaffReliefUpdated,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Record Added For CRMS Collateral On Loan Detail '{model.applicationId}'",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now,
-                TARGETID = model.applicationId
-            };
-
-            using (var trans = context.Database.BeginTransaction())
-            {
-                try
-                {
-
-
-                    this.audit.AddAuditTrail(auditRec);
-                    //end of Audit section -------------------------------
-
-
-                    output = await context.SaveChangesAsync() > 0;
-
-                 
-                    if (output)
-                    {
-                        trans.Commit();
-
-                        return output;
-                    }
-
-                    return false;
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new SecureException(ex.Message);
-                }
-            }
         }
 
         public List<RecommendedCollateralViewModel> GetRecommendedCollateral(int applicationId)
