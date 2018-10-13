@@ -581,7 +581,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 }
 
                 count++;
-                if ((decimal)item.pastDueInterestAmount != 0)
+                if ((decimal)item.pastDueInterestAmount > 0)
                 {
                     addStagingPastDueInterest.AMOUNT = (decimal) Math.Abs(item.pastDueInterestAmount);
                     addStagingPastDueInterest.FLOWTYPE = "BIF";
@@ -598,7 +598,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDueInterest.DESCRIPTION = "Past Due Interest Repayment";
                     addStagingPastDueInterest.DESTINATIONBRANCHID = item.branchId;
                     addStagingPastDueInterest.ISPOSTED = false;
-                    addStagingPastDueInterest.OPERATIONID = (int)OperationsEnum.InterestLoanRepayment;
+                    addStagingPastDueInterest.OPERATIONID = (int)OperationsEnum.InterestPastDueLoanRepayment;
                     addStagingPastDueInterest.POSTEDBY = "SYSTEM";
                     addStagingPastDueInterest.POSTEDDATE = DateTime.Now.Date;;
                     addStagingPastDueInterest.SOURCEBRANCHID = item.branchId;
@@ -620,7 +620,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
 
                 count++;
-                if ((decimal)item.pastDuePrincipalAmount != 0)
+                if ((decimal)item.pastDuePrincipalAmount > 0)
                 {
                     addStagingPastDuePrincipal.AMOUNT = (decimal)Math.Abs(item.pastDuePrincipalAmount);
                     addStagingPastDuePrincipal.FLOWTYPE = "BPP";
@@ -637,7 +637,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     addStagingPastDuePrincipal.DESCRIPTION = "Past Due Principal Repayment";
                     addStagingPastDuePrincipal.DESTINATIONBRANCHID = item.branchId;
                     addStagingPastDuePrincipal.ISPOSTED = false;
-                    addStagingPastDuePrincipal.OPERATIONID = (int)OperationsEnum.PrincipalLoanRepayment;//change to periodPrincipalAmount
+                    addStagingPastDuePrincipal.OPERATIONID = (int)OperationsEnum.PrincipalPastDueLoanRepayment;//change to periodPrincipalAmount
                     addStagingPastDuePrincipal.POSTEDBY = "SYSTEM";
                     addStagingPastDuePrincipal.POSTEDDATE = DateTime.Now.Date; 
                     addStagingPastDuePrincipal.SOURCEBRANCHID = item.branchId;
@@ -658,7 +658,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 }
 
                 count++;
-                if ((decimal)item.periodInterestAmount != 0)
+                if ((decimal)item.periodInterestAmount > 0)
                 {
                     addStagingInterest.AMOUNT = (decimal) Math.Abs(item.periodInterestAmount);
                     addStagingInterest.FLOWTYPE = "BIF";
@@ -697,7 +697,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
 
                 count++;
-                if ((decimal)item.periodPrincipalAmount != 0)
+                if ((decimal)item.periodPrincipalAmount > 0)
                 {
                     addStagingPrincipal.AMOUNT = (decimal)Math.Abs(item.periodPrincipalAmount);
                     addStagingPrincipal.FLOWTYPE = "BPP";

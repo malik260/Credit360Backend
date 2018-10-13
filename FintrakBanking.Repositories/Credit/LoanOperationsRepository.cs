@@ -1279,8 +1279,8 @@ namespace FintrakBanking.Repositories.Credit
                 //item.amountCollected != source.AMOUNTCOLLECTED &&
 
                 model.amount = item.amount;
-                //model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
-                model.actualAmount = item.amount - item.amountCollected;
+                model.actualAmountCollected = Math.Abs(item.amountCollected - source.AMOUNTCOLLECTED);
+                model.amountDue = item.amount - item.amountCollected; //10 - 2
                 model.operationId = source.OPERATIONID;
                 model.description = source.DESCRIPTION;
                 model.valueDate = source.VALUEDATE;
@@ -1300,32 +1300,73 @@ namespace FintrakBanking.Repositories.Credit
                 model.loanId = source.LOANID;
                 model.flowType = source.FLOWTYPE;
 
-                if (model.actualAmount  > 0) //item.amountCollected
+                if (model.amountDue >= 0 && model.actualAmountCollected > 0) //item.amountCollected
                 {
+                    
                     postingResult = financeTransaction.BulkIntegrationPosting(model);
 
-                    //if (model.flowType == "BIF")
-                    //{
-                    //    updateloanTableInterest((int)model.loanId, model.actualAmount);
-                    //}
-                    //else if (model.flowType == "BPP")
-                    //{
-                    //    updateloanTablePrincipal((int)model.loanId, model.actualAmount);
-                    //}
+                    if (operationType == OperationsEnum.InterestPastDueLoanRepayment)
+                    {
+                        transType = (byte)LoanTransactionTypeEnum.Interest;
+                        var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
+                        var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
+                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
+
+                        var pastDue = new TBL_LOAN_PAST_DUE
+                        {
+                            LOANID = (int)model.loanId,
+                            PASTDUECODE = PastDueCode,
+                            CREDITAMOUNT = model.actualAmountCollected,
+                            DESCRIPTION = "Past Due Payment on " + model.description + " as a result of Account funded",
+                            DEBITAMOUNT = 0,
+                            DATE = model.transactionDate,
+                            TRANSACTIONTYPEID = transType,
+                            PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                            PRODUCTTYPEID = product.PRODUCTTYPEID,
+                        };
+
+                        context.TBL_LOAN_PAST_DUE.Add(pastDue);
+
+                        updateloanTablePastDueInterest(model.loanId.Value, model.actualAmountCollected * -1);
+                    }
+
+                    if (operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
+                    {
+                        transType = (byte)LoanTransactionTypeEnum.Principal;
+                        var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
+                        var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
+                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
+
+                        var pastDue = new TBL_LOAN_PAST_DUE
+                        {
+                            LOANID = (int)model.loanId,
+                            PASTDUECODE = PastDueCode,
+                            CREDITAMOUNT = model.actualAmountCollected,
+                            DESCRIPTION = "Past Due Payment on " + model.description + " as a result of Account funded",
+                            DEBITAMOUNT = 0,
+                            DATE = model.transactionDate,
+                            TRANSACTIONTYPEID = transType,
+                            PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                            PRODUCTTYPEID = product.PRODUCTTYPEID,
+                        };
+
+                        context.TBL_LOAN_PAST_DUE.Add(pastDue);
+
+                        updateloanTablePastDuePrincipal(model.loanId.Value, model.actualAmountCollected * -1);
+                    }
                 }
 
-              
-
                 if (operationType == OperationsEnum.InterestLoanRepayment || operationType == OperationsEnum.PrincipalLoanRepayment && item.amountCollected <= item.amount)
-                {
+                  {
 
-                    var pastDueExist = context.TBL_LOAN_PAST_DUE.Where(x => x.LOANID == model.loanId && x.DATE == model.transactionDate).ToList();
+                    var pastDueExist = context.TBL_LOAN_PAST_DUE.Where(x => x.LOANID == model.loanId && x.DATE == model.transactionDate && x.DEBITAMOUNT > 0).ToList();
 
-                    if (model.actualAmount <= 0)
-                        model.actualAmount = model.amount;
+                    if (model.amountDue <= 0)
+                        model.amountDue = model.amount;
 
-                    List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
+                    //List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
                     //TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
+
                     var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
                     var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
                     var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
@@ -1333,9 +1374,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                     if (model.flowType == "BIF")
-                    {
-                        
-                        updateloanTableInterest((int)model.loanId, model.amount);
+                    {                                                
 
                         if (item.amountCollected < item.amount) //past due block
                         {
@@ -1351,25 +1390,22 @@ namespace FintrakBanking.Repositories.Credit
                                 LOANID = (int)model.loanId,
                                 PASTDUECODE = PastDueCode,
                                 CREDITAMOUNT = 0,
-                                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
-                                DEBITAMOUNT = Math.Abs(model.actualAmount),
+                                DESCRIPTION = "Past Due Entries on " + model.description + " as a result of Account not funded",
+                                DEBITAMOUNT = Math.Abs(model.amountDue),
                                 DATE = model.transactionDate,
                                 TRANSACTIONTYPEID = transType,
                                 PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
                                 PRODUCTTYPEID = product.PRODUCTTYPEID,
                             };
-
-                            transPastDue.Add(pastDue);
-
-                            context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
+                            
+                            context.TBL_LOAN_PAST_DUE.Add(pastDue);
 
                             updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT);
                         }
                     }
                     else if (model.flowType == "BPP")
                     {
-                        updateloanTablePrincipal((int)model.loanId, model.amount);
-
+                        
                         if (item.amountCollected < item.amount) //past due block
                         {
                             transType = (byte)LoanTransactionTypeEnum.Principal;
@@ -1384,17 +1420,15 @@ namespace FintrakBanking.Repositories.Credit
                                 LOANID = (int)model.loanId,
                                 PASTDUECODE = PastDueCode,
                                 CREDITAMOUNT = 0,
-                                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
-                                DEBITAMOUNT = Math.Abs(model.actualAmount),
+                                DESCRIPTION = "Past Due Entries on " + model.description + " as a result of Account not funded",
+                                DEBITAMOUNT = Math.Abs(model.amountDue),
                                 DATE = model.transactionDate,
                                 TRANSACTIONTYPEID = transType,
                                 PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
                                 PRODUCTTYPEID = product.PRODUCTTYPEID,
                             };
-
-                            transPastDue.Add(pastDue);
-
-                            context.TBL_LOAN_PAST_DUE.AddRange(transPastDue);
+                           
+                            context.TBL_LOAN_PAST_DUE.Add(pastDue);
 
                             updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
                         }
@@ -1737,350 +1771,350 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        public bool GetRepaymentFromStagingOld()
-        {
-            var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
-            bool output = false;
-            decimal fullAmount = 0;
-            decimal partailAmount = 0;
-            byte transType = 0;
-            short lienType = 0;
-            TBL_CUSTOM_TRANSACTION_BULK source = new TBL_CUSTOM_TRANSACTION_BULK();
-            bool postingResult = false;
+        //public bool GetRepaymentFromStagingOld()
+        //{
+        //    var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+        //    bool output = false;
+        //    decimal fullAmount = 0;
+        //    decimal partailAmount = 0;
+        //    byte transType = 0;
+        //    short lienType = 0;
+        //    TBL_CUSTOM_TRANSACTION_BULK source = new TBL_CUSTOM_TRANSACTION_BULK();
+        //    bool postingResult = false;
 
-            var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
-                        where a.AMT_COLLECTED <= a.AMT && a.FINTRAK_FLG != "Y"  //|| a.PSTD_FLG == "P"
-                        select new FinanceTransactionStagingViewModel()
-                        {
-                            batchId = a.BATCH_ID,
-                            batchRefId = (int)a.BATCH_REF_ID,
-                            transType = a.TRAN_TYPE,
-                            flowType = a.FLOW_TYPE,
-                            amount = (decimal)a.AMT,
-                            debitGlAccount = a.DR_ACCT,
-                            creditGlAccount = a.CR_ACCT,
-                            currencyRate = (double)a.RATE,
-                            currencyRateCode = a.RATE_CODE,
-                            description = a.NARRATION,
-                            amountCollected = (decimal)a.AMT_COLLECTED,
-                            bankId = a.BANK_ID,
-                            sourceReferenceNumber = a.LOAN_ACCT,
+        //    var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+        //                where a.AMT_COLLECTED <= a.AMT && a.FINTRAK_FLG != "Y"  //|| a.PSTD_FLG == "P"
+        //                select new FinanceTransactionStagingViewModel()
+        //                {
+        //                    batchId = a.BATCH_ID,
+        //                    batchRefId = (int)a.BATCH_REF_ID,
+        //                    transType = a.TRAN_TYPE,
+        //                    flowType = a.FLOW_TYPE,
+        //                    amount = (decimal)a.AMT,
+        //                    debitGlAccount = a.DR_ACCT,
+        //                    creditGlAccount = a.CR_ACCT,
+        //                    currencyRate = (double)a.RATE,
+        //                    currencyRateCode = a.RATE_CODE,
+        //                    description = a.NARRATION,
+        //                    amountCollected = (decimal)a.AMT_COLLECTED,
+        //                    bankId = a.BANK_ID,
+        //                    sourceReferenceNumber = a.LOAN_ACCT,
 
-                        }).ToList();
+        //                }).ToList();
 
-            //int counter = 0;
+        //    //int counter = 0;
 
-            foreach (var item in data)
-            {
-                //counter += 1;
+        //    foreach (var item in data)
+        //    {
+        //        //counter += 1;
 
-                //var test = item;
+        //        //var test = item;
 
-                source = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
-                          where p.BATCHID == item.batchId && p.BATCHREFID
-                                                  == item.batchRefId
-                          select p).SingleOrDefault();
-
-
-                if (source == null)
-                    continue;
+        //        source = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
+        //                  where p.BATCHID == item.batchId && p.BATCHREFID
+        //                                          == item.batchRefId
+        //                  select p).SingleOrDefault();
 
 
-
-                var operationType = (OperationsEnum)source.OPERATIONID;
-
-                if (item.amountCollected != 0)
-                {
-                    fullAmount = item.amountCollected - source.AMOUNT;
-                    partailAmount = source.AMOUNT - item.amountCollected;
-                }
-                else
-                {
-                    partailAmount = source.AMOUNT - item.amountCollected;
-                }
-
-                FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
-                if (item.amountCollected != 0 && fullAmount == 0)
-                {
-                    model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
-                    model.operationId = source.OPERATIONID;
-                    model.description = source.DESCRIPTION;
-                    model.valueDate = source.VALUEDATE;
-                    model.transactionDate = source.VALUEDATE;
-                    model.currencyId = source.CURRENCYID;
-                    model.currencyRate = source.CURRENCYRATE;
-                    model.companyId = source.COMPANYID;
-                    model.debitGlAccountId = source.DEBITGLACCOUNTID;
-                    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
-                    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
-                    model.sourceBranchId = (short)source.SOURCEBRANCHID;
-                    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
-                    model.creditGlAccountId = source.CREDITGLACCOUNTID;
-                    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
-                    model.batchId = source.BATCHID;
-                    model.batchRefId = source.BATCHREFID;
-                    model.loanId = source.LOANID;
-                    model.flowType = source.FLOWTYPE;
-
-                    postingResult = financeTransaction.BulkIntegrationPosting(model);
-
-                    if (model.flowType == "BIF")
-                    {
-                        updateloanTableInterest((int)model.loanId, model.actualAmount);
-                    }
-                    else if (model.flowType == "BPP")
-                    {
-                        updateloanTablePrincipal((int)model.loanId, model.actualAmount);
-                    }
-
-                    source.AMOUNTCOLLECTED = item.amountCollected;
-
-                    context.SaveChanges();
-                    if (model.operationId == (int)OperationsEnum.CommercialLoanRollOver)
-                    {
-                        var loan = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == model.sourceReferenceNumber);
-                        var instruction = context.TBL_LOAN_MATURITY_INSTRUCTION.FirstOrDefault(x => x.LOANID == loan.TERMLOANID);
-
-                        ArchiveLoan(loan.TERMLOANID, model.operationId, archiveBatchCode);//change to method that will disburs new loan
-
-                    }
-                    if (postingResult == true)
-                    {
-                        if (source.AMOUNT == item.amountCollected)
-                        {
-                            source.ISPOSTED = true;
-
-                            FINTRAK_TRAN_PROC_DETAILS bulk = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
-                                                              where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
-                                                                == model.batchRefId
-                                                              select a).SingleOrDefault();
-                            bulk.FINTRAK_FLG = "Y";
-                        }
-
-                    }
-                    output = stagingContext.SaveChanges() > 0;
-                }
-                else if (item.amountCollected != 0 && fullAmount != 0)
-                {
-                    model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
-                    model.operationId = source.OPERATIONID;
-                    model.description = source.DESCRIPTION;
-                    model.valueDate = source.VALUEDATE;
-                    model.transactionDate = source.VALUEDATE;
-                    model.currencyId = source.CURRENCYID;
-                    model.currencyRate = source.CURRENCYRATE;
-                    model.companyId = source.COMPANYID;
-                    model.debitGlAccountId = source.DEBITGLACCOUNTID;
-                    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
-                    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
-                    model.sourceBranchId = (short)source.SOURCEBRANCHID;
-                    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
-                    model.creditGlAccountId = source.CREDITGLACCOUNTID;
-                    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
-                    model.batchId = source.BATCHID;
-                    model.batchRefId = source.BATCHREFID;
-                    model.loanId = source.LOANID;
-                    model.flowType = source.FLOWTYPE;
-
-                    if (model.actualAmount > 0)
-                    {
-                        postingResult = financeTransaction.BulkIntegrationPosting(model);
-
-                        if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
-                        {
-
-                            List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
-                            //TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
-                            var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
-                            var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
-                            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
-                            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
-
-
-                            if (model.flowType == "BIF")
-                            {
-
-                                transType = (byte)LoanTransactionTypeEnum.Principal;
-                                lienType = (short)LienTypeEnum.PrincipalRepayment;
-                                updateloanTableInterest((int)model.loanId, model.actualAmount);
-
-                                var pastDue = new TBL_LOAN_PAST_DUE
-                                {
-                                    LOANID = (int)model.loanId,
-                                    PASTDUECODE = PastDueCode,
-                                    CREDITAMOUNT = 0,
-                                    DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
-                                    DEBITAMOUNT = Math.Abs(partailAmount),
-                                    DATE = model.transactionDate,
-                                    TRANSACTIONTYPEID = transType,
-                                    PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
-                                    PRODUCTTYPEID = product.PRODUCTTYPEID,
-                                };
-
-                                transPastDue.Add(pastDue);
-                                updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT);
-                            }
-                            else if (model.flowType == "BPP")
-                            {
-                                transType = (byte)LoanTransactionTypeEnum.Principal;
-                                lienType = (short)LienTypeEnum.PrincipalRepayment;
-                                updateloanTablePrincipal((int)model.loanId, model.actualAmount);
-                                var pastDue = new TBL_LOAN_PAST_DUE
-                                {
-                                    LOANID = (int)model.loanId,
-                                    PASTDUECODE = PastDueCode,
-                                    CREDITAMOUNT = 0,
-                                    DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
-                                    DEBITAMOUNT = Math.Abs(partailAmount),
-                                    DATE = model.transactionDate,
-                                    TRANSACTIONTYPEID = transType,
-                                    PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
-                                    PRODUCTTYPEID = product.PRODUCTTYPEID,
-                                };
-
-                                transPastDue.Add(pastDue);
-                                updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
-                            }
-
-                            updateloanPastDueDate((int)model.loanId, item.transactionDate);
-                        }
-                        //pastDue.LOANID = (int)item.loanId;
-                        //pastDue.PARENT_PASTDUECODE = PastDueCode;
-                        //pastDue.CREDITAMOUNT = 0;
-                        //pastDue.DESCRIPTION = "Past Due Entries on " + source.DESCRIPTION + "as a result of Account not funded";
-                        //pastDue.DEBITAMOUNT = Math.Abs(partailAmount);
-                        //pastDue.DATE = item.transactionDate;
-                        //pastDue.TRANSACTIONTYPEID = transType;
-                        //pastDue.PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER;
-                        //pastDue.PRODUCTTYPEID = product.PRODUCTTYPEID;
-
-                        //transPastDue.Add(pastDue);
-                        //updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+        //        if (source == null)
+        //            continue;
 
 
 
-                        //CasaLienViewModel lien = new CasaLienViewModel();
+        //        var operationType = (OperationsEnum)source.OPERATIONID;
 
-                        //lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
-                        //lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
-                        //lien.lienAmount = pastDue.DEBITAMOUNT;
-                        //lien.branchId = item.branchId;
-                        //lien.companyId = item.companyId;
-                        //lien.lienTypeId = lienType;
-                        //lien.createdBy = (int)SystemStaff.System;
-                        //lien.description = "lien placed due to Account not funded at Anniversary Date";
+        //        if (item.amountCollected != 0)
+        //        {
+        //            fullAmount = item.amountCollected - source.AMOUNT;
+        //            partailAmount = source.AMOUNT - item.amountCollected;
+        //        }
+        //        else
+        //        {
+        //            partailAmount = source.AMOUNT - item.amountCollected;
+        //        }
 
-                        //casaLien.PlaceLien(lien);
+        //        FinanceTransactionStagingViewModel model = new FinanceTransactionStagingViewModel();
+        //        if (item.amountCollected != 0 && fullAmount == 0)
+        //        {
+        //            model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+        //            model.operationId = source.OPERATIONID;
+        //            model.description = source.DESCRIPTION;
+        //            model.valueDate = source.VALUEDATE;
+        //            model.transactionDate = source.VALUEDATE;
+        //            model.currencyId = source.CURRENCYID;
+        //            model.currencyRate = source.CURRENCYRATE;
+        //            model.companyId = source.COMPANYID;
+        //            model.debitGlAccountId = source.DEBITGLACCOUNTID;
+        //            model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+        //            model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+        //            model.sourceBranchId = (short)source.SOURCEBRANCHID;
+        //            model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+        //            model.creditGlAccountId = source.CREDITGLACCOUNTID;
+        //            model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+        //            model.batchId = source.BATCHID;
+        //            model.batchRefId = source.BATCHREFID;
+        //            model.loanId = source.LOANID;
+        //            model.flowType = source.FLOWTYPE;
 
-                        source.AMOUNTCOLLECTED = item.amountCollected;
-                        context.SaveChanges();
-                    }
+        //            postingResult = financeTransaction.BulkIntegrationPosting(model);
 
+        //            if (model.flowType == "BIF")
+        //            {
+        //                updateloanTableInterest((int)model.loanId, model.actualAmount);
+        //            }
+        //            else if (model.flowType == "BPP")
+        //            {
+        //                updateloanTablePrincipal((int)model.loanId, model.actualAmount);
+        //            }
 
-                }
-                else if (item.amountCollected == 0)
-                {
+        //            source.AMOUNTCOLLECTED = item.amountCollected;
 
-                    model.actualAmount = 0;
-                    model.operationId = source.OPERATIONID;
-                    model.description = source.DESCRIPTION;
-                    model.valueDate = source.VALUEDATE;
-                    model.transactionDate = source.VALUEDATE;
-                    model.currencyId = source.CURRENCYID;
-                    model.currencyRate = source.CURRENCYRATE;
-                    model.companyId = source.COMPANYID;
-                    model.debitGlAccountId = source.DEBITGLACCOUNTID;
-                    model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
-                    model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
-                    model.sourceBranchId = (short)source.SOURCEBRANCHID;
-                    model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
-                    model.creditGlAccountId = source.CREDITGLACCOUNTID;
-                    model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
-                    model.batchId = source.BATCHID;
-                    model.batchRefId = source.BATCHREFID;
-                    model.loanId = source.LOANID;
-                    model.flowType = source.FLOWTYPE;
+        //            context.SaveChanges();
+        //            if (model.operationId == (int)OperationsEnum.CommercialLoanRollOver)
+        //            {
+        //                var loan = context.TBL_LOAN.FirstOrDefault(x => x.LOANREFERENCENUMBER == model.sourceReferenceNumber);
+        //                var instruction = context.TBL_LOAN_MATURITY_INSTRUCTION.FirstOrDefault(x => x.LOANID == loan.TERMLOANID);
 
-                    if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
-                    {
-                        List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
-                        //TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
-                        var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
-                        var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
-                        var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
-                        var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
+        //                ArchiveLoan(loan.TERMLOANID, model.operationId, archiveBatchCode);//change to method that will disburs new loan
 
+        //            }
+        //            if (postingResult == true)
+        //            {
+        //                if (source.AMOUNT == item.amountCollected)
+        //                {
+        //                    source.ISPOSTED = true;
 
-                        if (model.flowType == "BIF")
-                        {
-                            transType = (byte)LoanTransactionTypeEnum.Interest;
-                            lienType = (short)LienTypeEnum.InterestRepayment;
-                            var pastDue = new TBL_LOAN_PAST_DUE
-                            {
-                                LOANID = (int)model.loanId,
-                                PASTDUECODE = PastDueCode,
-                                CREDITAMOUNT = 0,
-                                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
-                                DEBITAMOUNT = Math.Abs(partailAmount),
-                                DATE = model.transactionDate,
-                                TRANSACTIONTYPEID = transType,
-                                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
-                                PRODUCTTYPEID = product.PRODUCTTYPEID,
-                            };
-                            transPastDue.Add(pastDue);
-                            context.SaveChanges();
-                            updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT);
-                        }
-                        else if (model.flowType == "BPP")
-                        {
-                            transType = (byte)LoanTransactionTypeEnum.Principal;
-                            lienType = (short)LienTypeEnum.PrincipalRepayment;
+        //                    FINTRAK_TRAN_PROC_DETAILS bulk = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
+        //                                                      where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
+        //                                                        == model.batchRefId
+        //                                                      select a).SingleOrDefault();
+        //                    bulk.FINTRAK_FLG = "Y";
+        //                }
 
-                            var pastDue = new TBL_LOAN_PAST_DUE
-                            {
-                                LOANID = (int)model.loanId,
-                                PASTDUECODE = PastDueCode,
-                                CREDITAMOUNT = 0,
-                                DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
-                                DEBITAMOUNT = Math.Abs(partailAmount),
-                                DATE = model.transactionDate,
-                                TRANSACTIONTYPEID = transType,
-                                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
-                                PRODUCTTYPEID = product.PRODUCTTYPEID,
-                            };
+        //            }
+        //            output = stagingContext.SaveChanges() > 0;
+        //        }
+        //        else if (item.amountCollected != 0 && fullAmount != 0)
+        //        {
+        //            model.actualAmount = item.amountCollected - source.AMOUNTCOLLECTED;
+        //            model.operationId = source.OPERATIONID;
+        //            model.description = source.DESCRIPTION;
+        //            model.valueDate = source.VALUEDATE;
+        //            model.transactionDate = source.VALUEDATE;
+        //            model.currencyId = source.CURRENCYID;
+        //            model.currencyRate = source.CURRENCYRATE;
+        //            model.companyId = source.COMPANYID;
+        //            model.debitGlAccountId = source.DEBITGLACCOUNTID;
+        //            model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+        //            model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+        //            model.sourceBranchId = (short)source.SOURCEBRANCHID;
+        //            model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+        //            model.creditGlAccountId = source.CREDITGLACCOUNTID;
+        //            model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+        //            model.batchId = source.BATCHID;
+        //            model.batchRefId = source.BATCHREFID;
+        //            model.loanId = source.LOANID;
+        //            model.flowType = source.FLOWTYPE;
 
-                            transPastDue.Add(pastDue);
-                            context.SaveChanges();
-                            updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
-                        }
+        //            if (model.actualAmount > 0)
+        //            {
+        //                postingResult = financeTransaction.BulkIntegrationPosting(model);
 
+        //                if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
+        //                {
 
-
-                        updateloanPastDueDate((int)model.loanId, model.transactionDate);
-                    }
-                    //CasaLienViewModel lien = new CasaLienViewModel();
-                    //lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
-                    //lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
-                    //lien.lienAmount = pastDue.DEBITAMOUNT;
-                    //lien.branchId = item.branchId;
-                    //lien.companyId = item.companyId;
-                    //lien.lienTypeId = lienType;
-                    //lien.createdBy = (int)SystemStaff.System;
-                    //lien.description = "lien placed due to Account not funded at Anniversary Date";
-
-                    //casaLien.PlaceLien(lien);
-                    //source.AMOUNTCOLLECTED = item.amountCollected;
-                    context.SaveChanges();
-                }
+        //                    List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
+        //                    //TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
+        //                    var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
+        //                    var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
+        //                    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
+        //                    var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
 
 
-                //}
+        //                    if (model.flowType == "BIF")
+        //                    {
+
+        //                        transType = (byte)LoanTransactionTypeEnum.Principal;
+        //                        lienType = (short)LienTypeEnum.PrincipalRepayment;
+        //                        updateloanTableInterest((int)model.loanId, model.actualAmount);
+
+        //                        var pastDue = new TBL_LOAN_PAST_DUE
+        //                        {
+        //                            LOANID = (int)model.loanId,
+        //                            PASTDUECODE = PastDueCode,
+        //                            CREDITAMOUNT = 0,
+        //                            DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+        //                            DEBITAMOUNT = Math.Abs(partailAmount),
+        //                            DATE = model.transactionDate,
+        //                            TRANSACTIONTYPEID = transType,
+        //                            PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+        //                            PRODUCTTYPEID = product.PRODUCTTYPEID,
+        //                        };
+
+        //                        transPastDue.Add(pastDue);
+        //                        updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT);
+        //                    }
+        //                    else if (model.flowType == "BPP")
+        //                    {
+        //                        transType = (byte)LoanTransactionTypeEnum.Principal;
+        //                        lienType = (short)LienTypeEnum.PrincipalRepayment;
+        //                        updateloanTablePrincipal((int)model.loanId, model.actualAmount);
+        //                        var pastDue = new TBL_LOAN_PAST_DUE
+        //                        {
+        //                            LOANID = (int)model.loanId,
+        //                            PASTDUECODE = PastDueCode,
+        //                            CREDITAMOUNT = 0,
+        //                            DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+        //                            DEBITAMOUNT = Math.Abs(partailAmount),
+        //                            DATE = model.transactionDate,
+        //                            TRANSACTIONTYPEID = transType,
+        //                            PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+        //                            PRODUCTTYPEID = product.PRODUCTTYPEID,
+        //                        };
+
+        //                        transPastDue.Add(pastDue);
+        //                        updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+        //                    }
+
+        //                    updateloanPastDueDate((int)model.loanId, item.transactionDate);
+        //                }
+        //                //pastDue.LOANID = (int)item.loanId;
+        //                //pastDue.PARENT_PASTDUECODE = PastDueCode;
+        //                //pastDue.CREDITAMOUNT = 0;
+        //                //pastDue.DESCRIPTION = "Past Due Entries on " + source.DESCRIPTION + "as a result of Account not funded";
+        //                //pastDue.DEBITAMOUNT = Math.Abs(partailAmount);
+        //                //pastDue.DATE = item.transactionDate;
+        //                //pastDue.TRANSACTIONTYPEID = transType;
+        //                //pastDue.PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER;
+        //                //pastDue.PRODUCTTYPEID = product.PRODUCTTYPEID;
+
+        //                //transPastDue.Add(pastDue);
+        //                //updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
 
 
-            }
 
-            return true;
-        }
+        //                //CasaLienViewModel lien = new CasaLienViewModel();
+
+        //                //lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+        //                //lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
+        //                //lien.lienAmount = pastDue.DEBITAMOUNT;
+        //                //lien.branchId = item.branchId;
+        //                //lien.companyId = item.companyId;
+        //                //lien.lienTypeId = lienType;
+        //                //lien.createdBy = (int)SystemStaff.System;
+        //                //lien.description = "lien placed due to Account not funded at Anniversary Date";
+
+        //                //casaLien.PlaceLien(lien);
+
+        //                source.AMOUNTCOLLECTED = item.amountCollected;
+        //                context.SaveChanges();
+        //            }
+
+
+        //        }
+        //        else if (item.amountCollected == 0)
+        //        {
+
+        //            model.actualAmount = 0;
+        //            model.operationId = source.OPERATIONID;
+        //            model.description = source.DESCRIPTION;
+        //            model.valueDate = source.VALUEDATE;
+        //            model.transactionDate = source.VALUEDATE;
+        //            model.currencyId = source.CURRENCYID;
+        //            model.currencyRate = source.CURRENCYRATE;
+        //            model.companyId = source.COMPANYID;
+        //            model.debitGlAccountId = source.DEBITGLACCOUNTID;
+        //            model.sourceReferenceNumber = source.SOURCEREFERENCENUMBER;
+        //            model.debitCasaAccountId = source.DEBITCASAACCOUNTID;
+        //            model.sourceBranchId = (short)source.SOURCEBRANCHID;
+        //            model.destinationBranchId = (short)source.DESTINATIONBRANCHID;
+        //            model.creditGlAccountId = source.CREDITGLACCOUNTID;
+        //            model.creditCasaAccountId = source.CREDITCASAACCOUNTID;
+        //            model.batchId = source.BATCHID;
+        //            model.batchRefId = source.BATCHREFID;
+        //            model.loanId = source.LOANID;
+        //            model.flowType = source.FLOWTYPE;
+
+        //            if (operationType == OperationsEnum.InterestPastDueLoanRepayment || operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
+        //            {
+        //                List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
+        //                //TBL_LOAN_PAST_DUE pastDue = new TBL_LOAN_PAST_DUE();
+        //                var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
+        //                var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
+        //                var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
+        //                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == model.companyId);
+
+
+        //                if (model.flowType == "BIF")
+        //                {
+        //                    transType = (byte)LoanTransactionTypeEnum.Interest;
+        //                    lienType = (short)LienTypeEnum.InterestRepayment;
+        //                    var pastDue = new TBL_LOAN_PAST_DUE
+        //                    {
+        //                        LOANID = (int)model.loanId,
+        //                        PASTDUECODE = PastDueCode,
+        //                        CREDITAMOUNT = 0,
+        //                        DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+        //                        DEBITAMOUNT = Math.Abs(partailAmount),
+        //                        DATE = model.transactionDate,
+        //                        TRANSACTIONTYPEID = transType,
+        //                        PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+        //                        PRODUCTTYPEID = product.PRODUCTTYPEID,
+        //                    };
+        //                    transPastDue.Add(pastDue);
+        //                    context.SaveChanges();
+        //                    updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT);
+        //                }
+        //                else if (model.flowType == "BPP")
+        //                {
+        //                    transType = (byte)LoanTransactionTypeEnum.Principal;
+        //                    lienType = (short)LienTypeEnum.PrincipalRepayment;
+
+        //                    var pastDue = new TBL_LOAN_PAST_DUE
+        //                    {
+        //                        LOANID = (int)model.loanId,
+        //                        PASTDUECODE = PastDueCode,
+        //                        CREDITAMOUNT = 0,
+        //                        DESCRIPTION = "Past Due Entries on " + model.description + "as a result of Account not funded",
+        //                        DEBITAMOUNT = Math.Abs(partailAmount),
+        //                        DATE = model.transactionDate,
+        //                        TRANSACTIONTYPEID = transType,
+        //                        PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+        //                        PRODUCTTYPEID = product.PRODUCTTYPEID,
+        //                    };
+
+        //                    transPastDue.Add(pastDue);
+        //                    context.SaveChanges();
+        //                    updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
+        //                }
+
+
+
+        //                updateloanPastDueDate((int)model.loanId, model.transactionDate);
+        //            }
+        //            //CasaLienViewModel lien = new CasaLienViewModel();
+        //            //lien.productAccountNumber = casa.PRODUCTACCOUNTNUMBER;
+        //            //lien.sourceReferenceNumber = pastDue.PARENT_PASTDUECODE;
+        //            //lien.lienAmount = pastDue.DEBITAMOUNT;
+        //            //lien.branchId = item.branchId;
+        //            //lien.companyId = item.companyId;
+        //            //lien.lienTypeId = lienType;
+        //            //lien.createdBy = (int)SystemStaff.System;
+        //            //lien.description = "lien placed due to Account not funded at Anniversary Date";
+
+        //            //casaLien.PlaceLien(lien);
+        //            //source.AMOUNTCOLLECTED = item.amountCollected;
+        //            context.SaveChanges();
+        //        }
+
+
+        //        //}
+
+
+        //    }
+
+        //    return true;
+        //}
 
 
         #endregion
@@ -2230,6 +2264,15 @@ namespace FintrakBanking.Repositories.Credit
                               }).ToList();
 
                 model = scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
+
+                foreach (var item in model)
+                {
+                    if (item.periodPrincipalAmount > 0)
+                        updateloanTablePrincipal((int)item.loanId, item.periodPrincipalAmount);
+
+                    if (item.periodInterestAmount > 0)
+                        updateloanTableInterest((int)item.loanId, item.periodInterestAmount);
+                }
 
                 List<TBL_LOAN_FORCE_DEBIT> transForceDebit = new List<TBL_LOAN_FORCE_DEBIT>();
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -2600,6 +2643,14 @@ namespace FintrakBanking.Repositories.Credit
 
                 List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
 
+                foreach (var item in model)
+                {
+                    if (item.periodPrincipalAmount > 0)
+                        updateloanTablePrincipal((int)item.loanId, item.periodPrincipalAmount); 
+
+                    if (item.periodInterestAmount > 0)
+                        updateloanTableInterest((int)item.loanId, item.periodInterestAmount);
+                }
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
