@@ -217,6 +217,7 @@
     <None Include="Connected Services\XDSWebService\FinTrakBanking.ThirdPartyIntegration.XDSWebService.LoginResponse.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
+    <None Include="Connected Services\XDSWebService\XDSNigeriaWebService.asmx.wsdl" />
     <None Include="Connected Services\XDSWebService\XDSNigeriaWebService.wsdl" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -282,6 +283,9 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Connected Services\XDSWebService\XDSNigeriaWebService.asmx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
