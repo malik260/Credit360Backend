@@ -1714,43 +1714,29 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<ActiveCustomerCollateralViewModel> GetLoanCollateral(int loanId, int productTypeId)
         {
-            //var l = context.TBL_LOAN.Find(loanId);
+            // var l = context.TBL_LOAN.Find(loanId);
 
-            var collaterals = context.TBL_CUSTOMER
-                .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
-                .Join(context.TBL_LOAN_APPLICATION, cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
-                .Select(x => new ActiveCustomerCollateralViewModel
-                {
-                    //customerId = x.LoanCollateral.Customer.CUSTOMERID,
-                    collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
-                    //loanTypeId = x.Mapping.PRODUCTTYPEID, //
-                    loanSystemTypeId = x.Mapping.LOANSYSTEMTYPEID,
-                    loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
-                    loanApplicationId = x.Mapping.LOANID,
-                    isReleased = x.Mapping.ISRELEASED,
-                    //releaseApprovalStatusId = x.Mapping.RELEASEAPPROVALSTATUSID,
-                    //customerCode = x.LoanCollateral.Customer.CUSTOMERCODE,
-                    //firstName = x.LoanCollateral.Customer.FIRSTNAME,
-                    //middleName = x.LoanCollateral.Customer.MIDDLENAME,
-                    //lastName = x.LoanCollateral.Customer.LASTNAME,
-                    collateralCode = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                    collateralValue = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                    allowSharing = x.Mapping.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                    isLocationBased = (bool)x.Mapping.TBL_COLLATERAL_CUSTOMER.ISLOCATIONBASED,
-                    valuationCycle = x.Mapping.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                    hairCut = x.Mapping.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                    collateralTypeId = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
-                    //applicationReferenceNumber = x.CollateralApplication.Application.APPLICATIONREFERENCENUMBER,
-                    //applicationDate = x.CollateralApplication.Application.APPLICATIONDATE,
-                    //interestRate = x.CollateralApplication.Application.INTERESTRATE,
-                    //loanInformation = x.CollateralApplication.Application.LOANINFORMATION,
-                    exchangeRate = x.Mapping.TBL_COLLATERAL_CUSTOMER.EXCHANGERATE,
-                   
-
-                })
-                .Where(x => x.isReleased == false)
-                .Distinct();
+            var collaterals = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
+                               join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                               join ct in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                               join cs in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals cs.COLLATERALSUBTYPEID
+                               where x.LOANID == loanId
+                               select new ActiveCustomerCollateralViewModel
+                               {
+                                   collateralCustomerId = x.COLLATERALCUSTOMERID,
+                                   loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                                   loanCollateralMappingId = x.LOANCOLLATERALMAPPINGID,
+                                   loanApplicationId = x.LOANID,
+                                   isReleased = x.ISRELEASED,
+                                   collateralCode = c.COLLATERALCODE,
+                                   collateralValue = c.COLLATERALVALUE,
+                                   allowSharing = c.ALLOWSHARING,
+                                   isLocationBased = (bool)c.ISLOCATIONBASED,
+                                   valuationCycle = c.VALUATIONCYCLE,
+                                   hairCut = c.HAIRCUT,
+                                   collateralTypeId = c.COLLATERALTYPEID,
+                                   exchangeRate = c.EXCHANGERATE,
+                               }).ToList();
 
             var test = collaterals.ToList();
 
