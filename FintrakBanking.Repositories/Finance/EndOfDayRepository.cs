@@ -54,7 +54,8 @@ namespace FintrakBanking.Repositories.Finance
 
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);
 
-            if (applicationDate.AddDays(1) == nextWorkDay) { 
+            if (applicationDate.AddDays(1) == nextWorkDay)
+            { 
                   ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
             }
             else
@@ -77,6 +78,7 @@ namespace FintrakBanking.Repositories.Finance
 
             var financeCurrentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
             financeCurrentDate.CURRENTDATE = nextWorkDay;
+            financeCurrentDate.REFRESHSTATUS = false;
 
             var audit = new TBL_AUDIT
             {
