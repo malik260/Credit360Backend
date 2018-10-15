@@ -164,7 +164,8 @@ namespace FintrakBanking.ViewModels.Finance
         public int sid { get; set; }
         public int productId { get; set; }
         public int currencyId { get; set; }
-        public decimal actualAmount { get; set; }
+        public decimal amountDue { get; set; }
+        public decimal actualAmountCollected { get; set; }
         public int creditGlAccountId { get; set; }
         public int debitGlAccountId { get; set; }
         public int? creditCasaAccountId { get; set; }

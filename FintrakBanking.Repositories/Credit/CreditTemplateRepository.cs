@@ -205,6 +205,38 @@ namespace FintrakBanking.Repositories.Credit
 
             return sections;
         }
+        /*
+         
+accepted
+var qry = Foo.GroupJoin(
+          Bar, 
+          foo => foo.Foo_Id,
+          bar => bar.Foo_Id,
+          (x,y) => new { Foo = x, Bars = y })
+    .SelectMany(
+          x => x.Bars.DefaultIfEmpty(),
+          (x,y) => new { Foo=x.Foo, Bar=y});
+
+             
+             db.Categories    
+  .GroupJoin(
+      db.Products,
+      Category => Category.CategoryId,
+      Product => Product.CategoryId,
+      (x, y) => new { Category = x, Products = y })
+  .SelectMany(
+      xy => xy.Products.DefaultIfEmpty(),
+      (x, y) => new { Category = x.Category, Product = y })
+  .Select(s => new
+  {
+      CategoryName = s.Category.Name,     
+      ProductName = s.Product.Name   
+  })	
+
+
+
+             
+             */
 
         public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId)
         {
