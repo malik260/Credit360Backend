@@ -8758,15 +8758,29 @@ namespace FintrakBanking.Repositories.Credit
                 decimal pastDue = decimal.Round((loan.PASTDUEINTEREST + loan.INTERESTONPASTDUEINTEREST + loan.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
                 decimal totalamount = (principalOutStandingBalance + pastDue);
 
-                var sllp = 27;////Get SLLP GL
+                //var _otherOperation = context.TBL_OTHER_OPERATION.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.WriteOffLoanFacilities).FirstOrDefault();
+
+                var _otherOperationAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.WriteOffLoanFacilities).FirstOrDefault();
+
+                //if (_otherOperationEnum == null)
+
+
+                //var sllp = 27;////Get SLLP GL
+
+                var sllp = _otherOperationAccount.GLACCOUNTID;
 
                 //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
+                if (principalOutStandingBalance > 0) {
+                    financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
+                }
 
-                financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off", twoFactorAuth);
+               if (pastDue > 0)
+                {
+                    financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off", twoFactorAuth);
+                }
 
-
+                
                 TBL_LOAN results = (from p in context.TBL_LOAN
                                     where p.TERMLOANID == loanId
                                     select p).SingleOrDefault();
