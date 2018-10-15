@@ -9,7 +9,7 @@ namespace FintrakBanking.Interfaces.Admin
 {
     public interface IAPIErrorLog
     {
-        Task<List<ErroLogViewModel>> GetErrorLog(DateTime startDate, DateTime endDate);
-        Task<List<APILogViewModel>> GetAPILog(DateTime startDate, DateTime endDate);
+        List<ErroLogViewModel> GetErrorLog(DateTime startDate, DateTime endDate);
+        List<APILogViewModel> GetAPILog(DateTime startDate, DateTime endDate,string searchInfo);
     }
 }
