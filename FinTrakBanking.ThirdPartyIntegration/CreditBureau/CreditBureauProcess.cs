@@ -130,6 +130,12 @@
 
             public CRCSearchResult CRCCreditBureauSearch(CRCRequestViewModel request)
             {
+                if(request.dateOfBirth != null)
+                {
+                    request.dateOfBirth = Convert.ToDateTime(request.dateOfBirth).ToString("dd-MMM-YYYY");
+                     //request.dateOfBirth = "03-Jun-1998";  
+                }
+
                 try
                 {
                     CRCService crc = new CRCService();
@@ -149,6 +155,7 @@
 
             public CRCSearchResult CRCCreditBureauMerge(MultiHitRequestViewModel request)
             {
+                
                 try
                 {
                     CRCService crc = new CRCService();
@@ -253,8 +260,6 @@
             }
 
             private string DoXDSIndividualSearch(CreditBureauSearchViewModel searchInfo)
-
-
             {
                 string result = string.Empty;
                 XDSService xds = new XDSService();

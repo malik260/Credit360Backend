@@ -455,10 +455,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (twoFADetails != null)
             {
-                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                //var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                     throw new TwoFactorAuthenticationException(authenticated.message);
+                //if (authenticated.authenticated == false)
+                //     throw new TwoFactorAuthenticationException(authenticated.message);
             }
 
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
@@ -564,13 +564,13 @@ namespace FintrakBanking.Repositories.Credit
                 passcode = searchInfo.passCode
             };
 
-            if (twoFADetails != null)
-            {
-                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+            //if (twoFADetails != null)
+            //{
+            //    var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException(authenticated.message);
-            }
+            //    if (authenticated.authenticated == false)
+            //        throw new TwoFactorAuthenticationException(authenticated.message);
+            //}
 
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
             searchInfo.userName = creditBureau.USERNAME;
@@ -618,8 +618,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (chargeAmount > accountBalance)
             {
-                if (!searchInfo.debitBusiness)
-                    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                //if (!searchInfo.debitBusiness)
+                //    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -679,7 +679,7 @@ namespace FintrakBanking.Repositories.Credit
                                 throw new ConditionNotMetException("Search could not save the result file");
                             }
 
-                            DebitCustomer(chargeModel);
+                            //DebitCustomer(chargeModel);
 
                             context.SaveChanges();
                             trans.Commit();
@@ -958,8 +958,8 @@ namespace FintrakBanking.Repositories.Credit
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
 
 
-            if (chargeAmount > accountBalance)
-                throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
+            //if (chargeAmount > accountBalance)
+            //    throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             chargeModel.referenceNumber = referenceNumber;

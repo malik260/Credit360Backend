@@ -300,10 +300,10 @@ namespace FintrakBanking.Repositories.Credit
         //    ).Any();
         //}
 
-        private bool PendingBondsAndGuaranteeJobRequest(int applicationDetailId)
+        private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
         {
-            return context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId
-                && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+            return context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationId
+                && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
                 && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
             ).Any();
@@ -518,6 +518,9 @@ namespace FintrakBanking.Repositories.Credit
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
+            if (entity.effectiveDate == entity.maturityDate)
+                throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
+
             if (entity.effectiveDate > entity.maturityDate)
                 throw new ConditionNotMetException("The effective cannot be greater than maturity date");
 
@@ -537,7 +540,7 @@ namespace FintrakBanking.Repositories.Credit
             
             if(application.PRODUCTCLASSID == (short) ProductClassEnum.BondAndGuarantees)
             {
-                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationDetailId))
+                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationId))
                     throw new ConditionNotMetException("There are pending bonds and gaurantees that must be attended to");
             }
 
@@ -693,6 +696,9 @@ namespace FintrakBanking.Repositories.Credit
 
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+            if (entity.effectiveDate == entity.maturityDate)
+                throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
 
             if (entity.effectiveDate > entity.maturityDate)
                 throw new ConditionNotMetException("The effective cannot be greater than maturity date");
@@ -942,6 +948,9 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                 throw new ConditionNotMetException("Specify the recieving account.");
 
+            if (entity.effectiveDate == entity.maturityDate)
+                throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
+
             if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                 throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
 
@@ -1155,7 +1164,10 @@ namespace FintrakBanking.Repositories.Credit
             if (entity.effectiveDate > systemDate)
                 throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
-            if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
+            if (entity.effectiveDate == entity.maturityDate)
+                throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
+
+                if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
                 throw new ConditionNotMetException($"FX revolving loan maturity date should not exceed the line expiry date [{Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}]. ");
             
 
@@ -1724,7 +1736,7 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                                
+                                currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -1880,7 +1892,7 @@ namespace FintrakBanking.Repositories.Credit
                                 casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                                 loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                                 loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-
+                                currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -2015,7 +2027,7 @@ namespace FintrakBanking.Repositories.Credit
                             casaAccountDetails = ln.TBL_CASA.PRODUCTACCOUNTNUMBER + " (" + ln.TBL_CASA.PRODUCTACCOUNTNAME + ") ",
                             loanApplicationDetailId = (int)ln.LOANAPPLICATIONDETAILID,
                             loanApplicationId = ln.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-
+                            currencyCode = ln.TBL_CURRENCY.CURRENCYCODE,
                             branchId = ln.BRANCHID,
                             loanReferenceNumber = ln.LOANREFERENCENUMBER,
                             applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -2516,7 +2528,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (loanRecord.EFFECTIVEDATE < systemDate)
                 {
-                    ProcessBackDatedTeamLoansInterestAccrual(loanRecord.EFFECTIVEDATE, loanRecord.TERMLOANID);
+                    //ProcessBackDatedTeamLoansInterestAccrual(loanRecord.EFFECTIVEDATE, loanRecord.TERMLOANID);
                 }
 
                 loanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
