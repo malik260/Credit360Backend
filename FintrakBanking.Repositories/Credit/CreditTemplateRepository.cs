@@ -186,25 +186,20 @@ namespace FintrakBanking.Repositories.Credit
                     .ToList();
             }
 
-            var sections = this.context.TBL_DOC_TEMPLATE_DETAIL
-                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
-                .OrderBy(x => x.POSITION)
-                .Join(context.TBL_DOC_TEMPLATE_SECTION, d => d.TEMPLATESECTIONID, s => s.TEMPLATESECTIONID, (d, s) => new { d, s })
-                .GroupJoin(context.TBL_DOC_TEMPLATE_SECTION_ROLE, ds => ds.s.TEMPLATESECTIONID, r => r.TEMPLATESECTIONID, (ds, r) => new { o=ds.d, r })
-                //.Join(context.TBL_STAFF_ROLE, dsr => dsr.r.STAFFROLEID, sr => sr.STAFFROLEID, (dsr, sr) => new { dsr, sr, o = dsr.ds.d })
-                .SelectMany(x => x.r.DefaultIfEmpty(), 
-                (x,r) => new LoadedDocumentSectionViewModel
+            var sections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId).OrderBy(x => x.POSITION)
+                .Join(context.TBL_STAFF, d => d.CREATEDBY, s => s.STAFFID, (d, s) => new { d, s })
+                .Join(context.TBL_STAFF_ROLE, ds => ds.s.STAFFROLEID, r => r.STAFFROLEID, (ds, r) => new { t = ds.d, r })
+                .Select(x => new LoadedDocumentSectionViewModel
                 {
-                    position = x.o.POSITION,
-                    sectionId = x.o.DOCUMENTDETAILID,
-                    title = x.o.TITLE,
-                    //title = x.sr.STAFFROLENAME + " :: " + x.o.TITLE,
-                    description = x.o.DESCRIPTION,
-                    canEdit = x.o.CANEDIT, // system
-                    editable = sectionIds.Contains(x.o.TEMPLATESECTIONID),
-                    templateSectionId = x.o.TEMPLATESECTIONID,
-                    //staffRoleName = context.TBL_STAFF_ROLE.FirstOrDefault(sr => sr.STAFFROLEID == x.r.STAFFROLEID).STAFFROLENAME//.STAFFROLENAME 
-                    // templateDocument = x.TEMPLATEDOCUMENT,
+                    position = x.t.POSITION,
+                    sectionId = x.t.DOCUMENTDETAILID,
+                    title = x.t.TITLE,
+                    description = x.t.DESCRIPTION,
+                    canEdit = x.t.CANEDIT, // system
+                    editable = sectionIds.Contains(x.t.TEMPLATESECTIONID),
+                    templateSectionId = x.t.TEMPLATESECTIONID,
+                    staffRoleName = x.r.STAFFROLENAME
                 })
                 .ToList();
 
