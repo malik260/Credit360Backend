@@ -2049,6 +2049,70 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //}
         #endregion
 
+        #region
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("completed-loan")]
+        public HttpResponseMessage GetCompletedLoan()
+        {
+            try
+            {
+                var data = repo.GetCompletedLoans();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("completed-loan/search/{value}")]
+        public HttpResponseMessage GetCompletedLoan(string value)
+        {
+            try
+            {
+                var data = repo.GetCompletedLoan(value);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("completed-loan-status")]
+        public HttpResponseMessage GetChangeLoanStatusOfACompletedLoan([FromBody]int loanid)
+        {
+            try
+            {
+                var data = repo.GetChangeLoanStatusOfACompletedLoan(loanid);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        #endregion
+
         //    [HttpPost]
         //    [ClaimsAuthorization]
         //    [Route("two-factor-auth-enabled-fee-override")]

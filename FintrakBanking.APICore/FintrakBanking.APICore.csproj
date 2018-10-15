@@ -349,6 +349,7 @@
     <Compile Include="Controllers\AccountTypeController.cs" />
     <Compile Include="Controllers\AccreditedConsultantsController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\APILogController.cs" />
     <Compile Include="Controllers\AppraisalMemorandumController.cs" />
     <Compile Include="Controllers\ApprovalGroupController.cs" />
     <Compile Include="Controllers\ApprovalLevelController.cs" />

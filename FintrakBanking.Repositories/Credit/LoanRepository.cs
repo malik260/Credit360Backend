@@ -8482,6 +8482,117 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public List<LoanViewModel> GetCompletedLoans()
+        {
+            try
+            {
+                var applicationDate = generalSetup.GetApplicationDate();
+                var allFilteredLoan = (from a in context.TBL_LOAN
+                                       join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                       join e in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                                       join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                       //join d in context.TBL_LOAN_SCHEDULE_DAILY on a.TERMLOANID equals d.LOANID
+                                       where a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                       && a.OUTSTANDINGPRINCIPAL <=0 
+                                       && a.OUTSTANDINGINTEREST <=0
+                                       && a.PASTDUEPRINCIPAL <=0
+                                       && a.PASTDUEINTEREST <=0
+                                       && a.INTERESTONPASTDUEINTEREST<=0
+                                       && a.INTERESTONPASTDUEPRINCIPAL<=0
+                                       && applicationDate  >= a.MATURITYDATE
+                                       select new LoanViewModel
+                                       {
+                                           loanId = a.TERMLOANID,
+                                           customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                           branchName = a.TBL_BRANCH.BRANCHNAME,
+                                           loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                           applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                           productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                           productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                           relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                                           relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
+                                           effectiveDate = a.EFFECTIVEDATE,
+                                           maturityDate = a.MATURITYDATE,
+                                           outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                           outstandingInterest = a.OUTSTANDINGINTEREST,
+                                           interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                           interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                           pastDueInterest = a.PASTDUEINTEREST,
+                                           pastDuePrincipal  =a.PASTDUEPRINCIPAL,
+                                           loanStatus = context.TBL_LOAN_STATUS.Where(o=>o.LOANSTATUSID==a.LOANSTATUSID).Select(o=>o.ACCOUNTSTATUS).FirstOrDefault()
+                                          
+                                       }).ToList();
+
+                return allFilteredLoan;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public List<LoanViewModel> GetCompletedLoan(string searchValue)
+        {
+            try
+            {
+                var applicationDate = generalSetup.GetApplicationDate();
+                var allFilteredLoan = (from a in context.TBL_LOAN
+                                       join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                       join e in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                                       join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                       where a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                                       && a.OUTSTANDINGPRINCIPAL <= 0
+                                       && a.OUTSTANDINGINTEREST <= 0
+                                       && a.PASTDUEPRINCIPAL <= 0
+                                       && a.PASTDUEINTEREST <= 0
+                                       && a.INTERESTONPASTDUEINTEREST <= 0
+                                       && a.INTERESTONPASTDUEPRINCIPAL <= 0
+                                       && applicationDate >= a.MATURITYDATE
+                                       && (e.APPLICATIONREFERENCENUMBER.Contains(searchValue) || a.LOANREFERENCENUMBER.Contains(searchValue) 
+                                       || c.FIRSTNAME.ToLower().StartsWith(searchValue.ToLower()) || c.LASTNAME.ToLower().StartsWith(searchValue.ToLower()))
+
+                                       select new LoanViewModel
+                                       {
+                                           customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                           branchName = a.TBL_BRANCH.BRANCHNAME,
+                                           loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                           applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                           productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                           productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                           relationshipOfficerName = a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.MIDDLENAME + " " + a.TBL_STAFF.LASTNAME,
+                                           relationshipManagerName = a.TBL_STAFF1.FIRSTNAME + " " + a.TBL_STAFF1.MIDDLENAME + " " + a.TBL_STAFF1.LASTNAME,
+                                           effectiveDate = a.EFFECTIVEDATE,
+                                           maturityDate = a.MATURITYDATE,
+                                           outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                                           outstandingInterest = a.OUTSTANDINGINTEREST,
+                                           interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                                           interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                                           pastDueInterest = a.PASTDUEINTEREST,
+                                           pastDuePrincipal = a.PASTDUEPRINCIPAL,
+
+                                       }).ToList();
+
+                return allFilteredLoan;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool GetChangeLoanStatusOfACompletedLoan(int loanId)
+        {
+            var loan = (from x in context.TBL_LOAN
+                        where x.TERMLOANID == loanId
+                        select x).FirstOrDefault();
+            if (loan == null) return false;
+
+            loan.LOANSTATUSID = (int)LoanStatusEnum.Completed;
+            if (context.SaveChanges() > 0) return true;
+
+            return false; 
+
+        }
         #endregion Commercial loan Operations
     }
 }

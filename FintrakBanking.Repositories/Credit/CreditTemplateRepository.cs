@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Credit
                     canEdit = x.t.CANEDIT, // system
                     editable = sectionIds.Contains(x.t.TEMPLATESECTIONID),
                     templateSectionId = x.t.TEMPLATESECTIONID,
-                    staffRoleName = x.r.STAFFROLENAME
+                    staffRoleName = x.r.STAFFROLENAME 
                 })
                 .ToList();
 

@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.APICore.JWTAuth;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -18,6 +19,9 @@ namespace FintrakBanking.APICore.Controllers
         private IGeneralSetupRepository repo;
         private ICollateralTypeRepository collateralRepo;
         private IStaffRepository staffRepo;
+
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         public GeneralSetupController(IGeneralSetupRepository _repo, ICollateralTypeRepository _collateralRepo, IStaffRepository _staffRepo)
         {
             this.repo = _repo;

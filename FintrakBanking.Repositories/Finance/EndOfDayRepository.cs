@@ -130,7 +130,7 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessReleaseLien(date);
 
-            loanOperation.ProcessDailyTeamLoansInterestAccrual(date);
+            loanOperation.ProcessDailyTermLoansInterestAccrual(date);
 
             //loanOperation.ProcessDailyUnauthorisedOverdraftInterestAccrual(date);
 

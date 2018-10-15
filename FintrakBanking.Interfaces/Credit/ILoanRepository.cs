@@ -195,5 +195,9 @@ namespace FintrakBanking.Interfaces.Credit
         decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate);
         List<LookupViewModel> GetLoanRepricingModes();
 
+        List<LoanViewModel> GetCompletedLoans();
+        List<LoanViewModel> GetCompletedLoan(string searchValue);
+        bool GetChangeLoanStatusOfACompletedLoan(int loanId);
+
     }
 }
