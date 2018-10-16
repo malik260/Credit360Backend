@@ -1219,11 +1219,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var currentDateInfo = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
 
-            if (currentDateInfo.REFRESHSTATUS == true)
-            {
-                throw new ConditionNotMetException("Refresh status for " + currentDateInfo.CURRENTDATE + " has already been run.");
+            //if (currentDateInfo.REFRESHSTATUS == true)
+            //{
+            //    throw new ConditionNotMetException("Refresh status for " + currentDateInfo.CURRENTDATE + " has already been run.");
 
-            }
+            //}
 
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
             bool output = false;
@@ -1307,7 +1307,7 @@ namespace FintrakBanking.Repositories.Credit
                     
                     postingResult = financeTransaction.BulkIntegrationPosting(model);
 
-                    if (operationType == OperationsEnum.InterestPastDueLoanRepayment)
+                    if (operationType == OperationsEnum.InterestLoanRepayment)
                     {
                         transType = (byte)LoanTransactionTypeEnum.Interest;
                         var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -1332,7 +1332,7 @@ namespace FintrakBanking.Repositories.Credit
                         updateloanTablePastDueInterest(model.loanId.Value, model.actualAmountCollected * -1);
                     }
 
-                    if (operationType == OperationsEnum.PrincipalPastDueLoanRepayment)
+                    if (operationType == OperationsEnum.PrincipalLoanRepayment)
                     {
                         transType = (byte)LoanTransactionTypeEnum.Principal;
                         var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
