@@ -15,5 +15,6 @@ namespace FintrakBanking.Common.Enum
         CommercialLoan = 7,
         FXRevolvingLoan = 8,
         Fee = 9,
+        Tax = 10,
     }
 }
