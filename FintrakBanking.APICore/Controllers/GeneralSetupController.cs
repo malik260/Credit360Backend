@@ -430,7 +430,6 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
-
         [HttpGet] [ClaimsAuthorization]  
         [Route("subsector/{subSectorId}/sectors")]
         public HttpResponseMessage GetAllSectorsBySubSectorId(short subSectorId)

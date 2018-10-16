@@ -1213,6 +1213,7 @@ namespace FintrakBanking.Repositories.Credit
             return noofdays;
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool GetRepaymentFromStaging()
         {
 
@@ -1234,6 +1235,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
                         where a.AMT_COLLECTED <= a.AMT && a.FINTRAK_FLG != "Y"  //|| a.PSTD_FLG == "P"
+                        orderby a.SID ascending
                         select new FinanceTransactionStagingViewModel()
                         {
                             batchId = a.BATCH_ID,
@@ -1264,7 +1266,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 source = (from p in context.TBL_CUSTOM_TRANSACTION_BULK
                           where p.BATCHID == item.batchId && p.BATCHREFID == item.batchRefId
-                          select p).SingleOrDefault();
+                          select p).FirstOrDefault();
 
                 if (source == null)
                     continue;
@@ -1469,9 +1471,7 @@ namespace FintrakBanking.Repositories.Credit
                         bulk.FINTRAK_FLG = "Y";
                     }
 
-                }
-
-                currentDateInfo.REFRESHSTATUS = true;
+                }                
 
                 output = stagingContext.SaveChanges() > 0;
 
@@ -1767,6 +1767,10 @@ namespace FintrakBanking.Repositories.Credit
 
 
             }
+
+            currentDateInfo.REFRESHSTATUS = true;
+
+            context.SaveChanges();
 
             return true;
         }
