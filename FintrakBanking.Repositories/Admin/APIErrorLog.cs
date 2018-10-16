@@ -17,10 +17,15 @@ namespace FintrakBanking.Repositories.Admin
         {
             _context = context;
         }
-        public async Task<List<APILogViewModel>> GetAPILog(DateTime startDate, DateTime endDate)
+        public List<APILogViewModel> GetAPILog(DateTime startDate, DateTime endDate, string searchInfo)
         {
             var  apiLogList = from x in _context.TBL_CUSTOM_API_LOGS
-                             where x.REQUESTDATETIME >= startDate && x.REQUESTDATETIME <= endDate
+                             where DbFunctions.TruncateTime(x.REQUESTDATETIME) >= DbFunctions.TruncateTime(startDate) 
+                             && DbFunctions.TruncateTime(x.REQUESTDATETIME) <= DbFunctions.TruncateTime(endDate)
+                             && (x.APIURL.ToLower().Contains(searchInfo.ToLower()) || x.REFERENCENUMBER.ToLower().Contains(searchInfo.ToLower())
+                             || x.REQUESTMESSAGE.ToLower().Contains(searchInfo.ToLower())
+                             || x.RESPONSEMESSAGE.ToLower().Contains(searchInfo.ToLower())
+                             || searchInfo == "" || searchInfo == null)
                              select new APILogViewModel
                              {
                                  apiUrl = x.APIURL,
@@ -28,16 +33,18 @@ namespace FintrakBanking.Repositories.Admin
                                  requestDateTime = x.REQUESTDATETIME,
                                  requestMessage = x.RESPONSEMESSAGE,
                                  responseDateTime = x.RESPONSEDATETIME,
-                                 responseMessage = x.RESPONSEMESSAGE
+                                 responseMessage = x.RESPONSEMESSAGE,
+
 
                              };
-            return await apiLogList.ToListAsync();
+            return  apiLogList.ToList();
         }
 
-        public async Task<List<ErroLogViewModel>> GetErrorLog(DateTime startDate, DateTime endDate)
+        public List<ErroLogViewModel> GetErrorLog(DateTime startDate, DateTime endDate)
         {
             var errorLog = from x in _context.TBL_ERRORLOG
-                           where x.TIMEUTC >= startDate && x.TIMEUTC <= endDate
+                           where DbFunctions.TruncateTime( x.TIMEUTC) >= DbFunctions.TruncateTime(startDate) 
+                           && DbFunctions.TruncateTime(x.TIMEUTC) <= DbFunctions.TruncateTime(endDate)
                            select new ErroLogViewModel
                            {
                                allXml = x.ALLXML,
@@ -47,9 +54,10 @@ namespace FintrakBanking.Repositories.Admin
                                errorSource = x.ERRORSOURCE,
                                errorType = x.ERRORTYPE,
                                statusCode =x.STATUSCODE,
-                               username = x.USERNAME
+                               username = x.USERNAME,
+                               utc  = x.TIMEUTC
                            };
-            return await errorLog.ToListAsync();
+            return errorLog.ToList();
         }
     }
 }

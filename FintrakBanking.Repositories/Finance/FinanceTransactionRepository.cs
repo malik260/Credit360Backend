@@ -16,6 +16,7 @@ using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.Common.CustomException;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -314,17 +315,18 @@ namespace FintrakBanking.Repositories.Finance
                     if (authenticated.authenticated == false)
                         throw new TwoFactorAuthenticationException(authenticated.message);
                 }                
-                
             }
 
+            string referenceCode = batchCode;
             if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
             {
-                bool data;
+                PostingResult response;
+                response = integration.PostTransactions(inputTransactions);
 
-                data = integration.PostTransactions(inputTransactions);
 
-                if (data)
+                if (response.posted == true) // successful
                 {
+                    referenceCode = response.responseCode;
                     PostTransactionSub(batchCode, inputTransactions, transactions);
                     UpdateCustomTransactions(batchCode);
                 }
@@ -334,12 +336,14 @@ namespace FintrakBanking.Repositories.Finance
                 }
             }
             else
+            {
                 PostTransactionSub(batchCode, inputTransactions, transactions);
+            }
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
             var result = context.SaveChanges() > 0;
 
-            return batchCode;
+            return referenceCode;
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]

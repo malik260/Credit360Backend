@@ -326,6 +326,8 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public string casaAccountNumber2 { get; set; }
+
 
 
 
