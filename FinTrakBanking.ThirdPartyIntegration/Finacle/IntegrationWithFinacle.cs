@@ -412,7 +412,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return module;
         }
 
-        public bool PostTransactions(List<FinanceTransactionViewModel> model)
+        public PostingResult PostTransactions(List<FinanceTransactionViewModel> model)
         {
             ResponseMessage result = null;
             
@@ -434,7 +434,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (result.APIResponse.responseCode == "0")
                 {
                     AddCustomTransactions(transactionList);
-                    return true;
+
+                    string str = result.APIResponse.webRequestStatus;
+                    str = str.Replace(":", "");
+                    str = str.Replace("FAILURE", "");
+                    str = str.Replace("SUCCESS+", "");
+
+                    return new PostingResult {posted = true, responseCode = str.Trim() };
                 }
                 //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
                 //{

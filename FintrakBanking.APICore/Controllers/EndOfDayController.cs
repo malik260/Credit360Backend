@@ -29,8 +29,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("end-of-day")]
         public HttpResponseMessage GetFinanceEndofday()
         {
-            try
-            {
+           
                 var data = repoEOD.GetFinanceEndofday(token.GetCompanyId);
                 if (data != null)
                 {
@@ -39,21 +38,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "An unknown error has occured" });
-
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
-            }
+                   new { success = false, message = "An unknown error has occured" });          
 
         }
 
@@ -63,8 +48,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("end-of-day")]
         public HttpResponseMessage RunEndOfDay([FromBody] EndOfDayViewModel model)
         {
-            try
-            {
+           
                 model.companyId = token.GetCompanyId;
                 model.createdBy = token.GetStaffId;
                 model.userBranchId = (short)token.GetBranchId;
@@ -77,19 +61,7 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
                                new { success = false, message = "End of day transaction failed" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
-            }
+           
         }
 
 
@@ -99,8 +71,8 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage ProcessRepaymentFromStaging()
         {
 
-            try
-            {
+            //try
+            //{
                 // model.companyId = token.GetCompanyId;
                 //model.createdBy = token.GetStaffId;
                 //model.userBranchId = (short)token.GetBranchId;
@@ -113,19 +85,19 @@ namespace FintrakBanking.APICore.Controllers
                 else
                     return Request.CreateResponse(HttpStatusCode.OK,
                                new { success = false, message = "Refresh Finacle Bulk Posting Transaction Failed" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
-            }
+            //}
+            //catch (ConditionNotMetException ce)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
+            //}
+            //catch (BadLogicException be)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
+            //}
         }
 
 
