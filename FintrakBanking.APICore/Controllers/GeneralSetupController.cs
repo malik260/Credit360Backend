@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.APICore.JWTAuth;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -18,6 +19,9 @@ namespace FintrakBanking.APICore.Controllers
         private IGeneralSetupRepository repo;
         private ICollateralTypeRepository collateralRepo;
         private IStaffRepository staffRepo;
+
+        TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         public GeneralSetupController(IGeneralSetupRepository _repo, ICollateralTypeRepository _collateralRepo, IStaffRepository _staffRepo)
         {
             this.repo = _repo;
@@ -416,7 +420,17 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("region/type/{regionTypeId}")]
+        public HttpResponseMessage RegionByType(int regionTypeId)
+        {
+            //if (token.GetRoleId == 11111) regionTypeId = 2;
+            var data = repo.GetRegionByType(regionTypeId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("subsector/{subSectorId}/sectors")]
         public HttpResponseMessage GetAllSectorsBySubSectorId(short subSectorId)
         {

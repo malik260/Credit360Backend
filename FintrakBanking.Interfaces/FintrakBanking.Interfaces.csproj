@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\IAdminRepository.cs" />
+    <Compile Include="Admin\IAPIErrorLog.cs" />
     <Compile Include="Admin\IAuditTrailRepository.cs" />
     <Compile Include="Admin\ICanAuthorizationRepository.cs" />
     <Compile Include="Admin\ICompanyInformationRepository.cs" />

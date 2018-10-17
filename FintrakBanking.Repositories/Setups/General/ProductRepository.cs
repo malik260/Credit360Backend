@@ -1435,6 +1435,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var existingProduct = productToUpdate;
                     if (productModel != null)
                     {
+                        productModel.APPROVALSTATUSID = approvalStatusId;
                         existingProduct.PRODUCTCLASSID = productModel.PRODUCTCLASSID;
                         //existingProduct.PRODUCTCODE = productModel.PRODUCTCODE;
                         existingProduct.PRODUCTNAME = productModel.PRODUCTNAME;
@@ -1495,11 +1496,13 @@ namespace FintrakBanking.Repositories.Setups.General
                             existingProductBehaviour.COLLATERAL_LCY_LIMIT = productBehaviourModel.COLLATERAL_LCY_LIMIT;
                             existingProductBehaviour.ISINVOICEBASED = productBehaviourModel.ISINVOICEBASED;
                             existingProductBehaviour.ALLOWFUNDUSAGE = productBehaviourModel.ALLOWFUNDUSAGE;
+                            productBehaviourModel.APPROVALSTATUSID = approvalStatusId;
+
                         }
 
                     }
-                    productModel.APPROVALSTATUSID = approvalStatusId;
-                    productBehaviourModel.APPROVALSTATUSID = approvalStatusId;
+
+                    //context.Entry(existingProduct).State = System.Data.Entity.EntityState.Modified;
                 }
                 else
                 {
@@ -1591,6 +1594,9 @@ namespace FintrakBanking.Repositories.Setups.General
                             DELETED = false,
                             APPROVEDBY = productModel.CREATEDBY
                         };
+                        productModel.APPROVALSTATUSID = approvalStatusId;
+                        productModel.ISCURRENT = false;
+                        context.TBL_PRODUCT.Add(product);
 
                         if (productBehaviourModel != null)
                         {
@@ -1609,7 +1615,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                 REQUIRECASAACCOUNT = productBehaviourModel.REQUIRECASAACCOUNT
                             };
                             //context.TBL_PRODUCT_BEHAVIOUR.Add(productBehaviour);
-
+                            productBehaviourModel.APPROVALSTATUSID = approvalStatusId;
+                            productBehaviourModel.ISCURRENT = false;
                             product.TBL_PRODUCT_BEHAVIOUR.Add(productBehaviour);
 
                         }
@@ -1631,11 +1638,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                             productFees.Add(feeList);
                         }
-                        productModel.APPROVALSTATUSID = approvalStatusId;
-                        productBehaviourModel.APPROVALSTATUSID = approvalStatusId;
-                        productModel.ISCURRENT = false;
-                        productBehaviourModel.ISCURRENT = false;
-                        context.TBL_PRODUCT.Add(product);
+
                     }
                 }
                 return true;
@@ -2096,9 +2099,11 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
                 context.TBL_TEMP_PRODUCT.Add(tempProductToUpdate);
                 context.SaveChanges();
-                tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
-                context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
-
+                if (existingTempProductBehaviour != null)
+                {
+                    tempProductBehaviour.TEMP_PRODUCTID = tempProductToUpdate.TEMP_PRODUCTID;
+                    context.TBL_TEMP_PRODUCT_BEHAVIOUR.Add(tempProductBehaviour);
+                }
 
             }
             else

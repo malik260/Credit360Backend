@@ -293,6 +293,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_OVERRIDE_DETAIL> TBL_OVERRIDE_DETAIL { get; set; }
         public virtual DbSet<TBL_OVERRIDE_ITEM> TBL_OVERRIDE_ITEM { get; set; }
         public virtual DbSet<TBL_POSTING_TYPE> TBL_POSTING_TYPE { get; set; }
+        public virtual DbSet<TBL_OTHER_OPERATION> TBL_OTHER_OPERATION { get; set; }
+        public virtual DbSet<TBL_OTHER_OPERATION_ACCOUNT> TBL_OTHER_OPERATION_ACCOUNT { get; set; }
         public virtual DbSet<TBL_PRODUCT> TBL_PRODUCT { get; set; }
         public virtual DbSet<TBL_PRODUCT_BEHAVIOUR> TBL_PRODUCT_BEHAVIOUR { get; set; }
         public virtual DbSet<TBL_PRODUCT_CATEGORY> TBL_PRODUCT_CATEGORY { get; set; }
@@ -418,9 +420,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_CRMS_TYPE> TBL_CRMS_TYPE { get; set; }
         public virtual DbSet<TBL_TEMP_STAFF_RELIEF> TBL_TEMP_STAFF_RELIEF { get; set; }
         public virtual DbSet<TBL_TEMP_CUSTOMER_COMP_BENEFIC> TBL_TEMP_CUSTOMER_COMP_BENEFIC { get; set; }
-      public virtual DbSet<TBL_LOAN_APPLICATION_DETL_SYN> TBL_LOAN_APPLICATION_DETL_SYN { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_DETL_SYN> TBL_LOAN_APPLICATION_DETL_SYN { get; set; }
         public virtual DbSet<TBL_LOAN_SYNDICATION_PARTY_TYP> TBL_LOAN_SYNDICATION_PARTY_TYP { get; set; }
-        
+
+        public virtual DbSet<TBL_LOAN_REPRICING_MODE> TBL_LOAN_REPRICING_MODE { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             var databaseUsername =

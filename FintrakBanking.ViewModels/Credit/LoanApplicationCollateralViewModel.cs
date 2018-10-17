@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -39,6 +40,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal stapedToCoverAmount { get; set; }
 
         public decimal facilityAmount { get; set; }
+        public double SN { get; set; }
     }
 
 
@@ -76,7 +78,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationId { get; set; }
 
         public string comments { get; set; }
-
+        public double SN { get; set; }
     }
 
+    public class CusotmerInfoViewModel
+    {
+        public string customer { get; set; }
+
+        public string branch { get; set; }
+
+        public DateTime date { get; set; }
+
+    }
 }

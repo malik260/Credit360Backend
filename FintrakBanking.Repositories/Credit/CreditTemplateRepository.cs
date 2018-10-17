@@ -186,24 +186,57 @@ namespace FintrakBanking.Repositories.Credit
                     .ToList();
             }
 
-            var sections = this.context.TBL_DOC_TEMPLATE_DETAIL
-                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
-                .OrderBy(x => x.POSITION)
+            var sections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId).OrderBy(x => x.POSITION)
+                .Join(context.TBL_STAFF, d => d.CREATEDBY, s => s.STAFFID, (d, s) => new { d, s })
+                .Join(context.TBL_STAFF_ROLE, ds => ds.s.STAFFROLEID, r => r.STAFFROLEID, (ds, r) => new { t = ds.d, r })
                 .Select(x => new LoadedDocumentSectionViewModel
                 {
-                    position = x.POSITION,
-                    sectionId = x.DOCUMENTDETAILID,
-                    title = x.TITLE,
-                    description = x.DESCRIPTION,
-                    canEdit = x.CANEDIT, // system
-                    editable = sectionIds.Contains(x.TEMPLATESECTIONID),
-                    templateSectionId = x.TEMPLATESECTIONID,
-                    // templateDocument = x.TEMPLATEDOCUMENT,
+                    position = x.t.POSITION,
+                    sectionId = x.t.DOCUMENTDETAILID,
+                    title = x.t.TITLE,
+                    description = x.t.DESCRIPTION,
+                    canEdit = x.t.CANEDIT, // system
+                    editable = sectionIds.Contains(x.t.TEMPLATESECTIONID),
+                    templateSectionId = x.t.TEMPLATESECTIONID,
+                    staffRoleName = x.r.STAFFROLENAME 
                 })
                 .ToList();
 
             return sections;
         }
+        /*
+         
+accepted
+var qry = Foo.GroupJoin(
+          Bar, 
+          foo => foo.Foo_Id,
+          bar => bar.Foo_Id,
+          (x,y) => new { Foo = x, Bars = y })
+    .SelectMany(
+          x => x.Bars.DefaultIfEmpty(),
+          (x,y) => new { Foo=x.Foo, Bar=y});
+
+             
+             db.Categories    
+  .GroupJoin(
+      db.Products,
+      Category => Category.CategoryId,
+      Product => Product.CategoryId,
+      (x, y) => new { Category = x, Products = y })
+  .SelectMany(
+      xy => xy.Products.DefaultIfEmpty(),
+      (x, y) => new { Category = x.Category, Product = y })
+  .Select(s => new
+  {
+      CategoryName = s.Category.Name,     
+      ProductName = s.Product.Name   
+  })	
+
+
+
+             
+             */
 
         public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId)
         {
@@ -446,7 +479,10 @@ namespace FintrakBanking.Repositories.Credit
         public bool AddDocumentTemplateSection(DocumentTemplateSectionViewModel model)
         {
             //if (String.IsNullOrEmpty(model.templateDocument)) { throw new SecureException("Document is blank. Cannot create a blank document!"); }
-
+            if (string.IsNullOrEmpty(model.templateDocument))
+            {
+                model.templateDocument = "<p> </p>";
+            }
             var data = new TBL_DOC_TEMPLATE_SECTION
             {
                 TEMPLATEID = model.templateId,
@@ -486,6 +522,10 @@ namespace FintrakBanking.Repositories.Credit
             if (data == null)
             {
                 return false;
+            }
+            if(string.IsNullOrEmpty(model.templateDocument))
+            {
+                model.templateDocument = "<p> </p>";
             }
             data.TEMPLATEID = model.templateId;
             data.TITLE = model.title;

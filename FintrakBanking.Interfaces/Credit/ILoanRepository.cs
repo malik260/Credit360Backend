@@ -63,7 +63,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
-        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId, string searchValue = null);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId);
 
@@ -110,11 +110,15 @@ namespace FintrakBanking.Interfaces.Credit
         //  List<loanApplicationColateralViewModel> GetLoanApplicationCollateralsByApplicationId(int loanApplicationId);
 
         List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggerByLoanApplicationDetailId(int loanApplicationDetailId);
-
         List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId);
         // decimal GetCustomerLoanAvailableBalance(int loanAplicationDetailId);
 
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId);
+        List<LoanChargeFeeViewModel> GetLoanChargeFee(int loanId, int loanType);
+        // decimal GetCustomerLoanAvailableBalance(int loanAplicationDetailId);
+
+        List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId, int loanType);
+        List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType);
 
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
         List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
@@ -188,7 +192,12 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
         IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
 
-        bool TwoFactorAuthenticationEnabledWithoutFeeOverride(LoanViewModel model);
+        decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate);
+        List<LookupViewModel> GetLoanRepricingModes();
+
+        List<LoanViewModel> GetCompletedLoans();
+        List<LoanViewModel> GetCompletedLoan(string searchValue);
+        bool GetChangeLoanStatusOfACompletedLoan(int loanId);
 
     }
 }

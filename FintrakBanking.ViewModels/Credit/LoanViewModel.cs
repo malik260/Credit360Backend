@@ -326,6 +326,8 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public string casaAccountNumber2 { get; set; }
+
 
 
 
@@ -335,6 +337,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string currencyCode { get; set; }
+
         public string revolvingTypeName { get; set; }
 
         public string casaAccountDetails { get; set; }
@@ -445,6 +449,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ContingentLoanViewModel : GeneralEntity
     {
+        public string currencyCode { get; set; }
         public string casaAccountDetails { get; set; }
 
         public decimal disbursableAmount { get; set; }
@@ -554,6 +559,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public string productPriceDescription;
+
         public int requestStaffId { get; set; }
 
         public string approvalStatusName { get; set; }
@@ -821,13 +828,20 @@ namespace FintrakBanking.ViewModels.Credit
         public string monitoringTriggerSetupName { get; set; }
     }
 
+
     public class DailyInterestAccrualViewModel : GeneralEntity
 
     {
         public string referenceNumber { get; set; }
 
+        public int? chargedFeeId { get; set; }
+
         public string baseReferenceNumber { get; set; }
 
+        public DateTime maturityDate { get; set; }
+
+        public DateTime effectiveDate { get; set; }
+        
         public short categoryId { get; set; }
 
         public byte transactionTypeId { get; set; }
@@ -855,6 +869,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal availableBalance { get; set; }
 
         public int daysInAYear { get; set; }
+
+        public int loanChargedFeeId { get; set; }
 
     }
 

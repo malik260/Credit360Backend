@@ -23,6 +23,7 @@ using Newtonsoft.Json.Linq;
 using FintrakBanking.Interfaces.Setups.Finance;
 using System.Text.RegularExpressions;
 using FintrakBanking.Interfaces.CASA;
+using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -36,6 +37,7 @@ namespace FintrakBanking.Repositories.Credit
         private IntegrationWithFinacle integration;
         private CreditBureauProcess _creditBureau;
         private IChartOfAccountRepository chartOfAccount;
+        private ITwoFactorAuthIntegrationService twoFactoeAuth;
 
 
         public CustomerCreditBureauRepository(
@@ -44,7 +46,8 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingDocumentsContext _docContext,
             FinTrakBankingContext _context,
             IFinanceTransactionRepository _financials, IntegrationWithFinacle integration,
-            CreditBureauProcess creditBureau, IChartOfAccountRepository _chartOfAccount)
+            CreditBureauProcess creditBureau, IChartOfAccountRepository _chartOfAccount,
+            ITwoFactorAuthIntegrationService _twoFactoeAuth)
         {
             this.context = _context;
             docContext = _docContext;
@@ -54,6 +57,7 @@ namespace FintrakBanking.Repositories.Credit
             this.integration = integration;
             _creditBureau = creditBureau;
             chartOfAccount = _chartOfAccount;
+            this.twoFactoeAuth = _twoFactoeAuth;
         }
 
         #region Credit Bureau 
@@ -443,6 +447,20 @@ namespace FintrakBanking.Repositories.Credit
                 searchInfoList.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
             }
 
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = searchInfoList.username,
+                passcode = searchInfoList.passCode
+            };
+
+            if (twoFADetails != null)
+            {
+                //var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                //if (authenticated.authenticated == false)
+                //     throw new TwoFactorAuthenticationException(authenticated.message);
+            }
+
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
             if (creditBureau != null)
             {
@@ -540,6 +558,20 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.username = searchInfo.username;
             chargeModel.passCode = searchInfo.passCode;
 
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = searchInfo.username,
+                passcode = searchInfo.passCode
+            };
+
+            //if (twoFADetails != null)
+            //{
+            //    var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+            //    if (authenticated.authenticated == false)
+            //        throw new TwoFactorAuthenticationException(authenticated.message);
+            //}
+
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
             searchInfo.userName = creditBureau.USERNAME;
             searchInfo.password = creditBureau.PASSWORD;
@@ -586,8 +618,8 @@ namespace FintrakBanking.Repositories.Credit
 
             if (chargeAmount > accountBalance)
             {
-                if (!searchInfo.debitBusiness)
-                    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                //if (!searchInfo.debitBusiness)
+                //    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
@@ -611,7 +643,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
 
-                    if (task.Wait(TimeSpan.FromSeconds(2000)))
+                    if (task.Wait(TimeSpan.FromSeconds(3500)))
                     {
                         if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                         {
@@ -647,7 +679,7 @@ namespace FintrakBanking.Repositories.Credit
                                 throw new ConditionNotMetException("Search could not save the result file");
                             }
 
-                            DebitCustomer(chargeModel);
+                            //DebitCustomer(chargeModel);
 
                             context.SaveChanges();
                             trans.Commit();
@@ -761,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
                 try
                 {
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauMerge(request));
-                    if (task.Wait(TimeSpan.FromSeconds(2000)))
+                    if (task.Wait(TimeSpan.FromSeconds(3500)))
                     {
                         JObject json = JObject.Parse(searchResponse.SearchResult);
                         if (json.Count >= 1)
@@ -926,8 +958,8 @@ namespace FintrakBanking.Repositories.Credit
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
 
 
-            if (chargeAmount > accountBalance)
-                throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
+            //if (chargeAmount > accountBalance)
+            //    throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             chargeModel.referenceNumber = referenceNumber;
@@ -1061,6 +1093,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var twoFADetails = new TwoFactorAutheticationViewModel
             {
+                skipAuthentication = true,
                 username = entity.username,
                 passcode = entity.passCode
             };

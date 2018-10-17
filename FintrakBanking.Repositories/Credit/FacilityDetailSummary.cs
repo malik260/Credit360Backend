@@ -529,6 +529,8 @@ namespace FintrakBanking.Repositories.Credit
                                    subSectorName = a.TBL_SUB_SECTOR.NAME,
                                    sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                    casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                                  // casaAccountNumber1 =context.TBL_CASA.Where(o=>o.CASAACCOUNTID== a.CASAACCOUNTID).Select(o=>o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                   casaAccountNumber2= context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                    productAccountName = c.PRODUCTACCOUNTNAME,
                                    customerGroupId = e.CUSTOMERGROUPID,
                                    loanTypeId = e.LOANAPPLICATIONTYPEID,
@@ -770,14 +772,18 @@ namespace FintrakBanking.Repositories.Credit
         }
         private List<LoanViewModel> SearchTermLoan(string searchQuery)
         {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToUpper();
+            }
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                   b.LASTNAME.ToLower().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
+                                   b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
+                                   b.LASTNAME.ToUpper().Contains(searchQuery) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery))
                                    
                                    select new LoanViewModel
                                    {
@@ -809,7 +815,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join l in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals l.LOANID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery.ToUpper()) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||

@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Extensions;
+using FintrakBanking.Interfaces.Setups.General;
 
 namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\FintrakBankingAPIFW\FintrakBankingAPI462\FintrakBanking.APICore\Controllers\LoanController.cs
 {
@@ -27,8 +28,10 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         private ICustomerCollateralRepository repoCollateral;
         private ICustomerRepository repoCustomer;
         private ILoanScheduleRepository scheduleRepo;
+        private IProductRepository productRepo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ExportDataTableToExcel export = new ExportDataTableToExcel();
+
 
         //private IHostingEnvironment _hostingEnvironment;
         //private IHostingEnvironment _hostingEnvironment;
@@ -36,12 +39,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         public LoanController(ILoanRepository _repo,
                               ICustomerCollateralRepository _repoCollateral,
                               ICustomerRepository _repoCustomer,
-                               ILoanScheduleRepository _scheduleRepo)
+                               ILoanScheduleRepository _scheduleRepo,
+                               IProductRepository _productRepo)
         {
             this.repo = _repo;
             this.repoCollateral = _repoCollateral;
             this.repoCustomer = _repoCustomer;
             this.scheduleRepo = _scheduleRepo;
+            this.productRepo = _productRepo;
 
             //this._hostingEnvironment = hostingEnvironment;
         }
@@ -1644,6 +1649,35 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [Route("loan-application/availment-completed/{searchValue}")]
+        public HttpResponseMessage GetLoanForTrancheFacilityUtilization(string searchValue)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetAvailedLoanApplicationsDueForInitiateBooking(token.GetCompanyId, token.GetStaffId, token.GetBranchId, searchValue);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
         [Route("loan-application-details/{applicationDetailId}")]
         public HttpResponseMessage GetLoanApplicationDetails(int applicationDetailId)
         {
@@ -1971,6 +2005,40 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-interest-rate-amount")]
+        public HttpResponseMessage getDiscountedCPInterestAmount([FromBody] LoanViewModel entity)
+        {
+            var loanProductInfo = productRepo.GetProductById(entity.productId);
+            var isDicounted = false;
+                if(loanProductInfo != null) isDicounted = loanProductInfo.dealTypeId == (short)DealTypeEnum.Upfront ? true : false;
+
+            var data = repo.getLoanInterestRateAmount(entity.principalAmount, entity.interestRate, entity.effectiveDate, entity.maturityDate);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" , result = data, isDicounted = isDicounted });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-repricing-mode")]
+        public HttpResponseMessage GetLoanRepricingModes()
+        {
+            try
+            {
+                var data = repo.GetLoanRepricingModes();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
         //[HttpPost]
         //[ClaimsAuthorization]
         //[Route("loan-disbursement")]
@@ -2010,18 +2078,98 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //}
         #endregion
 
+        #region
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("completed-loan")]
+        public HttpResponseMessage GetCompletedLoan()
+        {
+            try
+            {
+                var data = repo.GetCompletedLoans();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("completed-loan/search/{value}")]
+        public HttpResponseMessage GetCompletedLoan(string value)
+        {
+            try
+            {
+                var data = repo.GetCompletedLoan(value);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("two-factor-auth-enabled-fee-override")]
-        public HttpResponseMessage TwoFactorAuthenticationEnabledWithoutFeeOverride([FromBody]LoanViewModel entity)
+        [Route("completed-loan-status")]
+        public HttpResponseMessage GetChangeLoanStatusOfACompletedLoan([FromBody]int loanid)
         {
-            entity.userBranchId = (short)token.GetBranchId;
-            entity.applicationUrl = HttpContext.Current.Request.Path;
-            entity.createdBy = token.GetStaffId;
-            entity.companyId = token.GetCompanyId;
-            var enabled = repo.TwoFactorAuthenticationEnabledWithoutFeeOverride(entity);
-            if (enabled == false) return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = enabled, message = "" });
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = enabled });
+            try
+            {
+                var data = repo.GetChangeLoanStatusOfACompletedLoan(loanid);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
         }
+        #endregion
+
+        //    [HttpPost]
+        //    [ClaimsAuthorization]
+        //    [Route("two-factor-auth-enabled-fee-override")]
+        //    public HttpResponseMessage TwoFactorAuthenticationEnabledWithoutFeeOverride([FromBody]LoanViewModel entity)
+        //    {
+        //        try
+        //        {
+        //            TokenDecryptionHelper token = new TokenDecryptionHelper();
+
+        //            entity.userBranchId = (short)token.GetBranchId;
+        //            entity.applicationUrl = HttpContext.Current.Request.Path;
+        //            entity.createdBy = token.GetStaffId;
+        //            entity.companyId = token.GetCompanyId;
+
+        //            var data = repo.TwoFactorAuthenticationEnabledWithoutFeeOverride(entity);
+        //            if (!data)
+        //            {
+        //                return Request.CreateResponse(HttpStatusCode.OK,
+        //                   new { success = false, result = data, message = "" });
+        //            }
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                   new { success = true, result = data });
+        //        }
+        //        catch (System.Exception ex)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                  new { success = false, message = ex.Message });
+        //        }
+        //    }
     }
 }
