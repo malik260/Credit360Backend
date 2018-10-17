@@ -2136,6 +2136,8 @@ namespace FintrakBanking.Repositories.Finance
         {
             var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
 
+            model.date = generalSetup.GetApplicationDate();
+
             //FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
 
