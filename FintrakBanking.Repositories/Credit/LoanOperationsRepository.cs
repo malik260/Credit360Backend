@@ -1476,22 +1476,25 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
                         var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
 
-                        var pastDue = new TBL_LOAN_PAST_DUE
+                        if (loan.PASTDUEINTEREST > 0)
                         {
-                            LOANID = (int)model.loanId,
-                            PASTDUECODE = PastDueCode,
-                            CREDITAMOUNT = model.actualAmountCollected,
-                            DESCRIPTION = "Past Due Payment on " + model.description + " as a result of Account funded",
-                            DEBITAMOUNT = 0,
-                            DATE = model.transactionDate,
-                            TRANSACTIONTYPEID = transType,
-                            PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
-                            PRODUCTTYPEID = product.PRODUCTTYPEID,
-                        };
+                            var pastDue = new TBL_LOAN_PAST_DUE
+                            {
+                                LOANID = (int)model.loanId,
+                                PASTDUECODE = PastDueCode,
+                                CREDITAMOUNT = model.actualAmountCollected,
+                                DESCRIPTION = "Past Due Payment on " + model.description + " as a result of Account funded",
+                                DEBITAMOUNT = 0,
+                                DATE = model.transactionDate,
+                                TRANSACTIONTYPEID = transType,
+                                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                                PRODUCTTYPEID = product.PRODUCTTYPEID,
+                            };
 
-                        context.TBL_LOAN_PAST_DUE.Add(pastDue);
+                            context.TBL_LOAN_PAST_DUE.Add(pastDue);
 
-                        updateloanTablePastDueInterest(model.loanId.Value, model.actualAmountCollected * -1);
+                            updateloanTablePastDueInterest(model.loanId.Value, model.actualAmountCollected * -1);
+                        }
                     }
 
                     if (operationType == OperationsEnum.PrincipalLoanRepayment)
@@ -1501,22 +1504,25 @@ namespace FintrakBanking.Repositories.Credit
                         var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
                         var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
 
-                        var pastDue = new TBL_LOAN_PAST_DUE
+                        if (loan.PASTDUEPRINCIPAL > 0)
                         {
-                            LOANID = (int)model.loanId,
-                            PASTDUECODE = PastDueCode,
-                            CREDITAMOUNT = model.actualAmountCollected,
-                            DESCRIPTION = "Past Due Payment on " + model.description + " as a result of Account funded",
-                            DEBITAMOUNT = 0,
-                            DATE = model.transactionDate,
-                            TRANSACTIONTYPEID = transType,
-                            PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
-                            PRODUCTTYPEID = product.PRODUCTTYPEID,
-                        };
+                            var pastDue = new TBL_LOAN_PAST_DUE
+                            {
+                                LOANID = (int)model.loanId,
+                                PASTDUECODE = PastDueCode,
+                                CREDITAMOUNT = model.actualAmountCollected,
+                                DESCRIPTION = "Past Due Payment on " + model.description + " as a result of Account funded",
+                                DEBITAMOUNT = 0,
+                                DATE = model.transactionDate,
+                                TRANSACTIONTYPEID = transType,
+                                PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
+                                PRODUCTTYPEID = product.PRODUCTTYPEID,
+                            };
 
-                        context.TBL_LOAN_PAST_DUE.Add(pastDue);
+                            context.TBL_LOAN_PAST_DUE.Add(pastDue);
 
-                        updateloanTablePastDuePrincipal(model.loanId.Value, model.actualAmountCollected * -1);
+                            updateloanTablePastDuePrincipal(model.loanId.Value, model.actualAmountCollected * -1);
+                        }
                     }
                 }
 
@@ -2335,7 +2341,13 @@ namespace FintrakBanking.Repositories.Credit
                                where p.TERMLOANID == loanId
                                select p).SingleOrDefault();
 
-            result.PASTDUEPRINCIPAL = result.PASTDUEPRINCIPAL + amoumt;
+            var pastDue = result.PASTDUEPRINCIPAL + amoumt;
+            if (pastDue < 0)
+            {
+                pastDue = 0;
+            }
+
+            result.PASTDUEPRINCIPAL = pastDue;
 
             context.SaveChanges();
         }
@@ -2346,7 +2358,13 @@ namespace FintrakBanking.Repositories.Credit
                                where p.TERMLOANID == loanId
                                select p).SingleOrDefault();
 
-            result.PASTDUEINTEREST = result.PASTDUEINTEREST + amoumt;
+            var pastDue = result.PASTDUEINTEREST + amoumt;
+            if (pastDue < 0)
+            {
+                pastDue = 0;
+            }
+
+            result.PASTDUEINTEREST = pastDue;
 
             context.SaveChanges();
         }
