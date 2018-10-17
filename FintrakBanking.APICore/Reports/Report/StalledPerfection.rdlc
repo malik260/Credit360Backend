@@ -11,8 +11,9 @@
               <TextRun>
                 <Value>STALLED PERFECTION FOR COLLATERAL</Value>
                 <Style>
-                  <FontFamily>Arial Rounded MT Bold</FontFamily>
+                  <FontFamily>Arial Black</FontFamily>
                   <FontSize>14pt</FontSize>
+                  <Color>Indigo</Color>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -22,9 +23,9 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>0.06944in</Top>
+        <Top>0.05556in</Top>
         <Left>0.11667in</Left>
-        <Height>0.25in</Height>
+        <Height>0.33333in</Height>
         <Width>9.86668in</Width>
         <Style>
           <Border>
@@ -747,7 +748,7 @@
         <Top>0.51333in</Top>
         <Left>0.11667in</Left>
         <Height>0.75in</Height>
-        <Width>9.86668in</Width>
+        <Width>9.86669in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
