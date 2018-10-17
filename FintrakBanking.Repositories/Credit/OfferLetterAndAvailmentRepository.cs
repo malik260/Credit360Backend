@@ -2075,13 +2075,23 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
+        //private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
+        //{
+        //    var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
+        //        .Select(x => x.LOANAPPLICATIONDETAILID)
+        //        .ToList();
+        //    return context.TBL_JOB_REQUEST.Where(x => detailids.Contains(x.TARGETID)
+        //        && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+        //        && x.JOBTYPEID == (short)JobTypeEnum.legal
+        //        && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
+        //    ).Any();
+        //}
+
         private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
         {
-            var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
-                .Select(x => x.LOANAPPLICATIONDETAILID)
-                .ToList();
-            return context.TBL_JOB_REQUEST.Where(x => detailids.Contains(x.TARGETID)
-                && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+            
+            return context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationId
+                && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
                 && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
             ).Any();

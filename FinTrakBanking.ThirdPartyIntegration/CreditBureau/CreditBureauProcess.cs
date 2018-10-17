@@ -132,7 +132,7 @@
             {
                 if(request.dateOfBirth != null)
                 {
-                    request.dateOfBirth = Convert.ToDateTime(request.dateOfBirth).ToString("dd-MMM-YYYY");
+                    request.dateOfBirth = Convert.ToDateTime(request.dateOfBirth).ToString("dd-MMM-yyyy");
                      //request.dateOfBirth = "03-Jun-1998";  
                 }
 
@@ -155,7 +155,6 @@
 
             public CRCSearchResult CRCCreditBureauMerge(MultiHitRequestViewModel request)
             {
-                
                 try
                 {
                     CRCService crc = new CRCService();
@@ -164,7 +163,15 @@
                 }
                 catch (TimeoutException ex)
                 {
-                    throw ex;
+                    throw new ConditionNotMetException( ex.ToString());
+                }
+                catch (ConditionNotMetException ex)
+                {
+                    throw new ConditionNotMetException(ex.ToString());
+                }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.ToString());
                 }
                 catch (Exception ex)
                 {
