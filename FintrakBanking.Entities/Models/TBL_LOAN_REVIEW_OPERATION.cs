@@ -19,6 +19,7 @@ namespace FintrakBanking.Entities.Models
         public int LOANREVIEWOPERATIONID { get; set; }
 
         public int? LOANREVIEWAPPLICATIONID { get; set; }
+        public short? MATURITYINSTRUCTIONTYPEID { get; set; }
 
         public int LOANID { get; set; }
 

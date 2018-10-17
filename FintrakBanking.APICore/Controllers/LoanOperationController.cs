@@ -13,6 +13,7 @@ using FintrakBanking.Repositories.Credit;
 using System.Collections.Generic;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -200,10 +201,13 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.addMaturityInstruction(entity);
+
+                //var data = repo.addMaturityInstruction(entity);
+
+                var data = repo.addMaturityInstructionApprove(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New Maturity Instruction Successfully Added " });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New Maturity Instruction Successfully Sent For Approval " });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
@@ -235,8 +239,9 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
+                var data = repo.addNonTermLoanLoanRateChangeApprove(entity);
 
-                var data = repo.addNonTermLoanLoanRateChange(entity);
+                //var data = repo.addNonTermLoanLoanRateChange(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was Successful " });
@@ -272,10 +277,12 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.addApplicationLineRateChange(entity);
+                //var data = repo.addApplicationLineRateChange(entity);
+                var data = repo.addApplicationLineRateChangeApproval(entity);
+
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was Successful " });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was successfully sent for Approval." });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
@@ -307,11 +314,12 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
+                var data = repo.addApplicationLineAmountApproval(entity);
 
-                var data = repo.changeApplicationLineAmount(entity);
+                //var data = repo.changeApplicationLineAmount(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Facility amount change was Successful " });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Facility amount change was successfully sent for Approval. " });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
@@ -383,12 +391,14 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.ProcessCommercialPaperManualRollOver(entity, null);
+                var data = repo.ProcessCommercialPaperManualRollOverApproval(entity, null);
+
+                //var data = repo.ProcessCommercialPaperManualRollOver(entity, null);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan Rollover process was Successfully." });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan Rollover process was Sent For Approval." });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an processing rollover for this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing rollover for this record" });
             }
             catch (ConditionNotMetException ce)
             {
@@ -403,7 +413,53 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("application-go-for-approval")]
+        public HttpResponseMessage CPFXApplicationGoForApproval([FromBody] ApprovalViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.BranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
 
+                // var data = repo.addApplicationLineTenorChangeApproval(entity);
+
+                var data = repo.addApplicationGoForApproval(entity);
+
+                if (data == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Approved Successfully." });
+                }
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation details has been disapproved." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office." });
+                }
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+
+        }
         [HttpPost]
         [ClaimsAuthorization]
         [Route("non-term-loan-tenor-extension")]
@@ -417,10 +473,12 @@ namespace FintrakBanking.APICore.Controllers
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
 
-                var data = repo.addNonTermLoanTenorReview(entity);
+                //var data = repo.addNonTermLoanTenorReview(entity);
+                var data = repo.addNonTermLoanTenorReviewApprove(entity);
+
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor successfully extended." });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor Change successfully sent for Approval" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing tenor extension for this record" });
             }
@@ -437,7 +495,21 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("line-operation-awaiting-approval")]
+        public HttpResponseMessage GetApplicationLineTenorChangeAwaitingApproval()
+        {
+            try
+            {
+                var data = repo.GetApplicationLineTenorChangeAwaitingApproval(token.GetStaffId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
         [HttpPost]
         [ClaimsAuthorization]
         [Route("application-line-tenor-extension")]
@@ -450,13 +522,16 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
+                var data = repo.addApplicationLineTenorChangeApproval(entity);
 
-                var data = repo.addApplicationLineTenorChange(entity);
+                //var data = repo.addApplicationLineTenorChange(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor successfully extended." });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor successfully sent for Approval." });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing tenor extension for this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Record is Still Being Processed For Approval." });
+
+                //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing tenor extension for this record" });
             }
             catch (ConditionNotMetException ce)
             {
@@ -472,7 +547,53 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("application-line-tenor-extension-approve")]
+        public HttpResponseMessage LineTenorChangeGoForApproval([FromBody] ApprovalViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.BranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
 
+                // var data = repo.addApplicationLineTenorChangeApproval(entity);
+
+                var data = repo.addApplicationLineTenorChange(entity);
+
+                if (data == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor Approved Successfully." });
+                }
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Tenor Change details has been disapproved." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office." });
+                }
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+
+        }
         [HttpPost]
         [ClaimsAuthorization]
         [Route("commercial-loan-sub-allocation")]

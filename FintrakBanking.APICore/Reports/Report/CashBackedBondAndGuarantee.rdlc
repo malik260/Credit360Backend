@@ -11,8 +11,10 @@
               <TextRun>
                 <Value>CASH BACKED BONDS AND GUARANTEE</Value>
                 <Style>
+                  <FontFamily>Arial Black</FontFamily>
                   <FontSize>14pt</FontSize>
                   <FontWeight>Bold</FontWeight>
+                  <Color>DarkBlue</Color>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -22,8 +24,9 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
+        <Top>0.04167in</Top>
         <Left>0.10833in</Left>
-        <Height>0.25in</Height>
+        <Height>0.33333in</Height>
         <Width>13.05833in</Width>
         <Style>
           <Border>
@@ -42,19 +45,19 @@
               <Width>0.71475in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.85641in</Width>
+              <Width>1.33141in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.94808in</Width>
+              <Width>1.04805in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>0.95641in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.06475in</Width>
+              <Width>1.30642in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.88975in</Width>
+              <Width>1.24615in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>0.85641in</Width>
@@ -80,7 +83,7 @@
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.61667in</Height>
+              <Height>0.35834in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -553,7 +556,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>0.30833in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -642,7 +645,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Left</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -677,7 +680,7 @@
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Left</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -778,6 +781,7 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -813,6 +817,7 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -918,6 +923,7 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
+                                <Format>d MMM yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -953,6 +959,7 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -1042,10 +1049,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>CashBackedBondAndGuarantee</DataSetName>
-        <Top>0.33333in</Top>
+        <Top>0.52778in</Top>
         <Left>0.10833in</Left>
-        <Height>0.86667in</Height>
-        <Width>13.05833in</Width>
+        <Height>0.66667in</Height>
+        <Width>14.23141in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -1054,13 +1061,13 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.31667in</Height>
+    <Height>1.36667in</Height>
     <Style />
   </Body>
-  <Width>13.41667in</Width>
+  <Width>14.33974in</Width>
   <Page>
     <PageHeader>
-      <Height>0.58333in</Height>
+      <Height>0.48333in</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <Style>
@@ -1070,7 +1077,7 @@
       </Style>
     </PageHeader>
     <PageFooter>
-      <Height>0.25833in</Height>
+      <Height>0.55833in</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <Style>

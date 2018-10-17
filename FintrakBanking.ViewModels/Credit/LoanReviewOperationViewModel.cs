@@ -435,5 +435,6 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int tenor { get; set; }
         public short loanSystemTypeId { get; set; }
         public short approvalStatusId { get; set; }
+
     }
 }
