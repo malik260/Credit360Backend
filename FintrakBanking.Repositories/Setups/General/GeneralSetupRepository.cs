@@ -54,6 +54,18 @@ namespace FintrakBanking.Repositories.Setups.General
                     });
         }
 
+        public IEnumerable<LookupViewModel> GetRegionByType(int regionTypeId)
+        {
+            var regions = (from data in context.TBL_BRANCH_REGION.Where(x => x.REGIONTYPEID == regionTypeId)
+                    select new LookupViewModel()
+                    {
+                        lookupId = (short)data.REGIONID,
+                        lookupName = data.REGION_NAME
+                    }).ToList();
+
+            return regions;
+        }
+
         public int  GetLoanApplicationRef()
         {
             return CommonHelpers.GetLoanReferanceNumber();

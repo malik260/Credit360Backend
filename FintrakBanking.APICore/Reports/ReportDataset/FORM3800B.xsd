@@ -35,7 +35,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="ConditionsPrecedent" msprop:Generator_TableClassName="ConditionsPrecedentDataTable" msprop:Generator_TableVarName="tableConditionsPrecedent" msprop:Generator_TablePropName="ConditionsPrecedent" msprop:Generator_RowDeletingName="ConditionsPrecedentRowDeleting" msprop:Generator_RowChangingName="ConditionsPrecedentRowChanging" msprop:Generator_RowEvHandlerName="ConditionsPrecedentRowChangeEventHandler" msprop:Generator_RowDeletedName="ConditionsPrecedentRowDeleted" msprop:Generator_UserTableName="ConditionsPrecedent" msprop:Generator_RowChangedName="ConditionsPrecedentRowChanged" msprop:Generator_RowEvArgName="ConditionsPrecedentRowChangeEvent" msprop:Generator_RowClassName="ConditionsPrecedentRow">
+        <xs:element name="InternalConditionsPrecedent" msprop:Generator_TableClassName="InternalConditionsPrecedentDataTable" msprop:Generator_TableVarName="tableInternalConditionsPrecedent" msprop:Generator_TablePropName="InternalConditionsPrecedent" msprop:Generator_RowDeletingName="InternalConditionsPrecedentRowDeleting" msprop:Generator_RowChangingName="InternalConditionsPrecedentRowChanging" msprop:Generator_RowEvHandlerName="InternalConditionsPrecedentRowChangeEventHandler" msprop:Generator_RowDeletedName="InternalConditionsPrecedentRowDeleted" msprop:Generator_UserTableName="InternalConditionsPrecedent" msprop:Generator_RowChangedName="InternalConditionsPrecedentRowChanged" msprop:Generator_RowEvArgName="InternalConditionsPrecedentRowChangeEvent" msprop:Generator_RowClassName="InternalConditionsPrecedentRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="conditionPrecident" msprop:Generator_ColumnVarNameInTable="columnconditionPrecident" msprop:Generator_ColumnPropNameInRow="conditionPrecident" msprop:Generator_ColumnPropNameInTable="conditionPrecidentColumn" msprop:Generator_UserColumnName="conditionPrecident" type="xs:string" minOccurs="0" />
@@ -43,6 +43,7 @@
               <xs:element name="creditVerificationOfficers" msprop:Generator_ColumnVarNameInTable="columncreditVerificationOfficers" msprop:Generator_ColumnPropNameInRow="creditVerificationOfficers" msprop:Generator_ColumnPropNameInTable="creditVerificationOfficersColumn" msprop:Generator_UserColumnName="creditVerificationOfficers" type="xs:string" minOccurs="0" />
               <xs:element name="locationOfDocument" msprop:Generator_ColumnVarNameInTable="columnlocationOfDocument" msprop:Generator_ColumnPropNameInRow="locationOfDocument" msprop:Generator_ColumnPropNameInTable="locationOfDocumentColumn" msprop:Generator_UserColumnName="locationOfDocument" type="xs:string" minOccurs="0" />
               <xs:element name="SN" msprop:Generator_ColumnVarNameInTable="columnSN" msprop:Generator_ColumnPropNameInRow="SN" msprop:Generator_ColumnPropNameInTable="SNColumn" msprop:Generator_UserColumnName="SN" type="xs:string" minOccurs="0" />
+              <xs:element name="isExternal" msprop:Generator_ColumnVarNameInTable="columnisExternal" msprop:Generator_ColumnPropNameInRow="isExternal" msprop:Generator_ColumnPropNameInTable="isExternalColumn" msprop:Generator_UserColumnName="isExternal" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -55,7 +56,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="ConditionSubsquent" msprop:Generator_TableClassName="ConditionSubsquentDataTable" msprop:Generator_TableVarName="tableConditionSubsquent" msprop:Generator_TablePropName="ConditionSubsquent" msprop:Generator_RowDeletingName="ConditionSubsquentRowDeleting" msprop:Generator_RowChangingName="ConditionSubsquentRowChanging" msprop:Generator_RowEvHandlerName="ConditionSubsquentRowChangeEventHandler" msprop:Generator_RowDeletedName="ConditionSubsquentRowDeleted" msprop:Generator_UserTableName="ConditionSubsquent" msprop:Generator_RowChangedName="ConditionSubsquentRowChanged" msprop:Generator_RowEvArgName="ConditionSubsquentRowChangeEvent" msprop:Generator_RowClassName="ConditionSubsquentRow">
+        <xs:element name="InternalConditionSubsquent" msprop:Generator_TableClassName="InternalConditionSubsquentDataTable" msprop:Generator_TableVarName="tableInternalConditionSubsquent" msprop:Generator_TablePropName="InternalConditionSubsquent" msprop:Generator_RowDeletingName="InternalConditionSubsquentRowDeleting" msprop:Generator_RowChangingName="InternalConditionSubsquentRowChanging" msprop:Generator_RowEvHandlerName="InternalConditionSubsquentRowChangeEventHandler" msprop:Generator_RowDeletedName="InternalConditionSubsquentRowDeleted" msprop:Generator_UserTableName="InternalConditionSubsquent" msprop:Generator_RowChangedName="InternalConditionSubsquentRowChanged" msprop:Generator_RowEvArgName="InternalConditionSubsquentRowChangeEvent" msprop:Generator_RowClassName="InternalConditionSubsquentRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="SN" msprop:Generator_ColumnVarNameInTable="columnSN" msprop:Generator_ColumnPropNameInRow="SN" msprop:Generator_ColumnPropNameInTable="SNColumn" msprop:Generator_UserColumnName="SN" type="xs:string" minOccurs="0" />
@@ -63,6 +64,7 @@
               <xs:element name="timeline" msprop:Generator_ColumnVarNameInTable="columntimeline" msprop:Generator_ColumnPropNameInRow="timeline" msprop:Generator_ColumnPropNameInTable="timelineColumn" msprop:Generator_UserColumnName="timeline" type="xs:string" minOccurs="0" />
               <xs:element name="creditMonitoring" msprop:Generator_ColumnVarNameInTable="columncreditMonitoring" msprop:Generator_ColumnPropNameInRow="creditMonitoring" msprop:Generator_ColumnPropNameInTable="creditMonitoringColumn" msprop:Generator_UserColumnName="creditMonitoring" type="xs:string" minOccurs="0" />
               <xs:element name="productName" msprop:Generator_ColumnVarNameInTable="columnproductName" msprop:Generator_ColumnPropNameInRow="productName" msprop:Generator_ColumnPropNameInTable="productNameColumn" msprop:Generator_UserColumnName="productName" type="xs:string" minOccurs="0" />
+              <xs:element name="isExternal" msprop:Generator_ColumnVarNameInTable="columnisExternal" msprop:Generator_ColumnPropNameInRow="isExternal" msprop:Generator_ColumnPropNameInTable="isExternalColumn" msprop:Generator_UserColumnName="isExternal" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -97,6 +99,30 @@
             <xs:sequence>
               <xs:element name="comments" msprop:Generator_ColumnVarNameInTable="columncomments" msprop:Generator_ColumnPropNameInRow="comments" msprop:Generator_ColumnPropNameInTable="commentsColumn" msprop:Generator_UserColumnName="comments" type="xs:string" minOccurs="0" />
               <xs:element name="SN" msprop:Generator_ColumnVarNameInTable="columnSN" msprop:Generator_ColumnPropNameInRow="SN" msprop:Generator_ColumnPropNameInTable="SNColumn" msprop:Generator_UserColumnName="SN" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ExternalConditionSubsquent" msprop:Generator_TableClassName="ExternalConditionSubsquentDataTable" msprop:Generator_TableVarName="tableExternalConditionSubsquent" msprop:Generator_RowChangedName="ExternalConditionSubsquentRowChanged" msprop:Generator_TablePropName="ExternalConditionSubsquent" msprop:Generator_RowDeletingName="ExternalConditionSubsquentRowDeleting" msprop:Generator_RowChangingName="ExternalConditionSubsquentRowChanging" msprop:Generator_RowEvHandlerName="ExternalConditionSubsquentRowChangeEventHandler" msprop:Generator_RowDeletedName="ExternalConditionSubsquentRowDeleted" msprop:Generator_RowClassName="ExternalConditionSubsquentRow" msprop:Generator_UserTableName="ExternalConditionSubsquent" msprop:Generator_RowEvArgName="ExternalConditionSubsquentRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="SN" msprop:Generator_ColumnVarNameInTable="columnSN" msprop:Generator_ColumnPropNameInRow="SN" msprop:Generator_ColumnPropNameInTable="SNColumn" msprop:Generator_UserColumnName="SN" type="xs:string" minOccurs="0" />
+              <xs:element name="conditionPrecident" msprop:Generator_ColumnVarNameInTable="columnconditionPrecident" msprop:Generator_ColumnPropNameInRow="conditionPrecident" msprop:Generator_ColumnPropNameInTable="conditionPrecidentColumn" msprop:Generator_UserColumnName="conditionPrecident" type="xs:string" minOccurs="0" />
+              <xs:element name="timeline" msprop:Generator_ColumnVarNameInTable="columntimeline" msprop:Generator_ColumnPropNameInRow="timeline" msprop:Generator_ColumnPropNameInTable="timelineColumn" msprop:Generator_UserColumnName="timeline" type="xs:string" minOccurs="0" />
+              <xs:element name="creditMonitoring" msprop:Generator_ColumnVarNameInTable="columncreditMonitoring" msprop:Generator_ColumnPropNameInRow="creditMonitoring" msprop:Generator_ColumnPropNameInTable="creditMonitoringColumn" msprop:Generator_UserColumnName="creditMonitoring" type="xs:string" minOccurs="0" />
+              <xs:element name="productName" msprop:Generator_ColumnVarNameInTable="columnproductName" msprop:Generator_ColumnPropNameInRow="productName" msprop:Generator_ColumnPropNameInTable="productNameColumn" msprop:Generator_UserColumnName="productName" type="xs:string" minOccurs="0" />
+              <xs:element name="isExternal" msprop:Generator_ColumnVarNameInTable="columnisExternal" msprop:Generator_ColumnPropNameInRow="isExternal" msprop:Generator_ColumnPropNameInTable="isExternalColumn" msprop:Generator_UserColumnName="isExternal" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ExternalConditionsPrecedent" msprop:Generator_TableClassName="ExternalConditionsPrecedentDataTable" msprop:Generator_TableVarName="tableExternalConditionsPrecedent" msprop:Generator_RowChangedName="ExternalConditionsPrecedentRowChanged" msprop:Generator_TablePropName="ExternalConditionsPrecedent" msprop:Generator_RowDeletingName="ExternalConditionsPrecedentRowDeleting" msprop:Generator_RowChangingName="ExternalConditionsPrecedentRowChanging" msprop:Generator_RowEvHandlerName="ExternalConditionsPrecedentRowChangeEventHandler" msprop:Generator_RowDeletedName="ExternalConditionsPrecedentRowDeleted" msprop:Generator_RowClassName="ExternalConditionsPrecedentRow" msprop:Generator_UserTableName="ExternalConditionsPrecedent" msprop:Generator_RowEvArgName="ExternalConditionsPrecedentRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="conditionPrecident" msprop:Generator_ColumnVarNameInTable="columnconditionPrecident" msprop:Generator_ColumnPropNameInRow="conditionPrecident" msprop:Generator_ColumnPropNameInTable="conditionPrecidentColumn" msprop:Generator_UserColumnName="conditionPrecident" type="xs:string" minOccurs="0" />
+              <xs:element name="productName" msprop:Generator_ColumnVarNameInTable="columnproductName" msprop:Generator_ColumnPropNameInRow="productName" msprop:Generator_ColumnPropNameInTable="productNameColumn" msprop:Generator_UserColumnName="productName" type="xs:string" minOccurs="0" />
+              <xs:element name="creditVerificationOfficers" msprop:Generator_ColumnVarNameInTable="columncreditVerificationOfficers" msprop:Generator_ColumnPropNameInRow="creditVerificationOfficers" msprop:Generator_ColumnPropNameInTable="creditVerificationOfficersColumn" msprop:Generator_UserColumnName="creditVerificationOfficers" type="xs:string" minOccurs="0" />
+              <xs:element name="locationOfDocument" msprop:Generator_ColumnVarNameInTable="columnlocationOfDocument" msprop:Generator_ColumnPropNameInRow="locationOfDocument" msprop:Generator_ColumnPropNameInTable="locationOfDocumentColumn" msprop:Generator_UserColumnName="locationOfDocument" type="xs:string" minOccurs="0" />
+              <xs:element name="SN" msprop:Generator_ColumnVarNameInTable="columnSN" msprop:Generator_ColumnPropNameInRow="SN" msprop:Generator_ColumnPropNameInTable="SNColumn" msprop:Generator_UserColumnName="SN" type="xs:string" minOccurs="0" />
+              <xs:element name="isExternal" msprop:Generator_ColumnVarNameInTable="columnisExternal" msprop:Generator_ColumnPropNameInRow="isExternal" msprop:Generator_ColumnPropNameInTable="isExternalColumn" msprop:Generator_UserColumnName="isExternal" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

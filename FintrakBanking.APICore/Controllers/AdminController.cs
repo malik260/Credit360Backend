@@ -15,6 +15,7 @@ using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces;
+using FintrakBanking.ViewModels.Reports;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -26,19 +27,22 @@ namespace FintrakBanking.APICore.Controllers
         private readonly IErrorLogRepository errorLogger;
         private readonly ICanAuthorizationRepository canAuthorization;
         private readonly IAuditTrailRepository audit;
+        private readonly IAPIErrorLog _log;
 
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
         public AdminController(IAdminRepository _repo,
                                 IErrorLogRepository _errorLogger,
                                 ICanAuthorizationRepository _canAuthorization,
-                                IAuditTrailRepository _audit, IProfileSetupRepository _profileSetup)
+                                IAuditTrailRepository _audit, IProfileSetupRepository _profileSetup,
+                                IAPIErrorLog log)
         {
             this.repo = _repo;
             this.errorLogger = _errorLogger;
             this.audit = _audit;
             this.profileSetup = _profileSetup;
             this.canAuthorization = _canAuthorization;
+            _log = log;
 
         }
 
@@ -713,5 +717,59 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("api-log")]
+        public HttpResponseMessage GetAPILog([FromBody] DateRange range)
+        {
+            try
+            {
+                if (range != null)
+                {
+                    string message = string.Empty;
+                    var data = _log.GetAPILog(range.startDate, range.endDate, range.loanRefNo);
+                    if (data!=null)
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = data, message = "" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                     new { success = true, result = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                     new { success = true, result = "No Record Found" });
+            }
+
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("error-log")]
+        public HttpResponseMessage GetErrorLog([FromBody] DateRange range)
+        {
+            try
+            {
+                if (range != null)
+                {
+                    string message = string.Empty;
+                    var data = _log.GetErrorLog(range.startDate, range.endDate);
+                    if (data != null)
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                              new { success = false, result = data, message = "" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                     new { success = true, result = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                     new { success = true, result = "No Record Found" });
+            }
+
+        }
     }
 }

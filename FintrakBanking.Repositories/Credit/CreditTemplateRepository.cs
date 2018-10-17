@@ -186,29 +186,57 @@ namespace FintrakBanking.Repositories.Credit
                     .ToList();
             }
 
-            var sections = this.context.TBL_DOC_TEMPLATE_DETAIL
-                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId)
-                .OrderBy(x => x.POSITION)
-                .Join(context.TBL_DOC_TEMPLATE_SECTION, d => d.TEMPLATESECTIONID, s => s.TEMPLATESECTIONID, (d, s) => new { d, s })
-                .Join(context.TBL_DOC_TEMPLATE_SECTION_ROLE, ds => ds.s.TEMPLATESECTIONID, r => r.TEMPLATESECTIONID, (ds, r) => new { ds, r })
-                .Join(context.TBL_STAFF_ROLE, dsr => dsr.r.STAFFROLEID, sr => sr.STAFFROLEID, (dsr, sr) => new { dsr, sr, o = dsr.ds.d })
+            var sections = context.TBL_DOC_TEMPLATE_DETAIL
+                .Where(x => x.DELETED == false && x.OPERATIONID == operationId && x.TARGETID == targetId).OrderBy(x => x.POSITION)
+                .Join(context.TBL_STAFF, d => d.CREATEDBY, s => s.STAFFID, (d, s) => new { d, s })
+                .Join(context.TBL_STAFF_ROLE, ds => ds.s.STAFFROLEID, r => r.STAFFROLEID, (ds, r) => new { t = ds.d, r })
                 .Select(x => new LoadedDocumentSectionViewModel
                 {
-                    position = x.o.POSITION,
-                    sectionId = x.o.DOCUMENTDETAILID,
-                    title = x.o.TITLE,
-                    //title = x.sr.STAFFROLENAME + " :: " + x.o.TITLE,
-                    description = x.o.DESCRIPTION,
-                    canEdit = x.o.CANEDIT, // system
-                    editable = sectionIds.Contains(x.o.TEMPLATESECTIONID),
-                    templateSectionId = x.o.TEMPLATESECTIONID,
-                    staffRoleName = x.sr.STAFFROLENAME 
-                    // templateDocument = x.TEMPLATEDOCUMENT,
+                    position = x.t.POSITION,
+                    sectionId = x.t.DOCUMENTDETAILID,
+                    title = x.t.TITLE,
+                    description = x.t.DESCRIPTION,
+                    canEdit = x.t.CANEDIT, // system
+                    editable = sectionIds.Contains(x.t.TEMPLATESECTIONID),
+                    templateSectionId = x.t.TEMPLATESECTIONID,
+                    staffRoleName = x.r.STAFFROLENAME 
                 })
                 .ToList();
 
             return sections;
         }
+        /*
+         
+accepted
+var qry = Foo.GroupJoin(
+          Bar, 
+          foo => foo.Foo_Id,
+          bar => bar.Foo_Id,
+          (x,y) => new { Foo = x, Bars = y })
+    .SelectMany(
+          x => x.Bars.DefaultIfEmpty(),
+          (x,y) => new { Foo=x.Foo, Bar=y});
+
+             
+             db.Categories    
+  .GroupJoin(
+      db.Products,
+      Category => Category.CategoryId,
+      Product => Product.CategoryId,
+      (x, y) => new { Category = x, Products = y })
+  .SelectMany(
+      xy => xy.Products.DefaultIfEmpty(),
+      (x, y) => new { Category = x.Category, Product = y })
+  .Select(s => new
+  {
+      CategoryName = s.Category.Name,     
+      ProductName = s.Product.Name   
+  })	
+
+
+
+             
+             */
 
         public List<LoadedDocumentSectionViewModel> GetLoadedDocumentation(int staffId, int operationId, int targetId)
         {

@@ -764,111 +764,69 @@ namespace FintrakBanking.Repositories.Credit
                 .ACCOUNTSTATUS;
         }
 
+        // PLEASE RENAME THIS METHOD NAME TO BE MORE DESCRIPTIVE like LoanApplicationChecklistValidation
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
-            LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
+            int targetId = 0;
             string str = string.Empty;
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanApplication).ToList();
-            int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
-            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
+            int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
+            LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
 
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
 
-
-            bool MiddleOfficeCertified = true;
-
-
-            if (dat != null)
+            if (loanApplicationDetails.Any())
             {
-                foreach (var d in dat)
+                var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanApplication).ToList();
+
+                foreach (var detail in loanApplicationDetails)
                 {
-
-                   
-                    //Replace hard-coding with a variable once defined
-                    //if(d.APPROVEDPRODUCTID == 36)
-                    //{
-                    //    if (context.TBL_JOB_REQUEST.Where(x => x.JOBTYPEID == (int)JobTypeEnum.middleOfficeVerification && x.TARGETID == d.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication).Any())
-                    //    {
-                    //        MiddleOfficeCertified = true;
-                    //    }
-                    //    else MiddleOfficeCertified = false;
-                    //}
-                    var types = from a in context.TBL_CHECKLIST_TYPE select a;
-                    foreach (var item in types)
+                    var checklistTypes = from a in context.TBL_CHECKLIST_TYPE select a;
+                    foreach (var checklistType in checklistTypes) // through checklist types
                     {
-
-                        int targetId = 0;
-                        if (item.ISPRODUCT_BASED)
-                        {
-                            targetId = d.LOANAPPLICATIONDETAILID;
-                        }
+                        if (checklistType.ISPRODUCT_BASED)
+                            targetId = detail.LOANAPPLICATIONDETAILID;
                         else
-                        {
                             targetId = applicationId;
-                        }
 
+                        var checklistDetails = from a in context.TBL_CHECKLIST_DEFINITION
+                                        join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
+                                        equals b.CHECKLISTDEFINITIONID where b.TARGETID == targetId 
+                                        && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ?  (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                        && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
+                                        select b;
 
-                        var detail = from a in context.TBL_CHECKLIST_DEFINITION
-                                     join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
-                                     equals b.CHECKLISTDEFINITIONID
-                                     where b.TARGETID == targetId 
-                                     && b.TARGETTYPEID == 
-                                     //(item.ISPRODUCT_BASED ? 
-                                     //(short)CheckListTargetTypeEnum.LoanApplicationProductChecklist 
-                                     //: 
-                                     (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist//)
-                                     && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                                     select b;
-                        var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
+                        var productId = checklistType.ISPRODUCT_BASED ? (short?)detail.APPROVEDPRODUCTID : null;
 
-                        //ids.Contains((int)a.APPROVALLEVELID) &&
-                        var definition = (from a in context.TBL_CHECKLIST_DEFINITION
+                        var checklistDefinitions = (from a in context.TBL_CHECKLIST_DEFINITION
                                           join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
-                                          where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
-                                          && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == PRODUCTID
+                                          where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID
+                                          && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == productId
                                           select a).AsQueryable();
 
-                        //var dd  = definition.Where(x=> x.APPROVALLEVELID.  ids.Contains((int)x.APPROVALLEVELID).
-                        int i, j;
-                        i = definition.Count(); j = detail.Count();
-
-                        if (definition.Count() != detail.Count())
+                        if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
                         {
                             isCheckListDone = false;
-                            str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                            str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
                             checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                         }
 
-                        var ab = detail.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
-                        if (ab.Any())
+                        var negativeChecklistDetails = checklistDetails.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
+                        if (negativeChecklistDetails.Any())
                         {
                             isCheckListDone = false;
-                            str = str + "One or more item(s) did not meet up with the condition." + Environment.NewLine
-                                + " Please check your response to confirm." + Environment.NewLine;
                             checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
+                            str = str + "One or more item(s) did not meet up with the condition." + Environment.NewLine
+                                        + " Please check your response to confirm." + Environment.NewLine;
                         }
 
-                        //if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.ESGMChecklist)
-                        //{
-                        //    var esg_checklist_definition = from a in context.TBL_ESG_CHECKLIST_DEFINITION select a;
-                        //    var esg_checklist_details = from b in context.TBL_ESG_CHECKLIST_DETAIL where b.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID select b;
-                        //    int x, k;
-                        //    x = esg_checklist_definition.Count(); k = esg_checklist_details.Count();
-
-                        //    if (esg_checklist_definition.Count() != esg_checklist_details.Count())
-                        //    {
-                        //        isCheckListDone = false;
-                        //        str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete";
-                        //        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                        //    }
-                        //}
-                    }
+                    } // foreach checklistTypes
 
                     var rmSuggestion = (from a in context.TBL_LOAN_APPLICATION_DETAIL
-                                       where a.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID && (d.CONDITIONPRECIDENT == null
-                                       || d.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
+                                       where a.LOANAPPLICATIONDETAILID == detail.LOANAPPLICATIONDETAILID && (detail.CONDITIONPRECIDENT == null
+                                       || detail.CONDITIONSUBSEQUENT == null || a.TRANSACTIONDYNAMICS == null)
                                        select a);
-                    
+
                     if (rmSuggestion.Any())
                     {
                         isCheckListDone = false;
@@ -876,27 +834,30 @@ namespace FintrakBanking.Repositories.Credit
                         checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                     }
 
-                }
-            }
-            //&& MiddleOfficeCertified 
+                    // if (isCheckListDone == false) break;
+
+                } // foreach loanApplicationDetails
+
+            } // loanApplicationDetails.Any()
+
+            // return results
+
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
                 return new LoanApplicationUpdateMessage
                 {
-                    isdone = isCheckListDone,
+                    isdone = isCheckListDone, // true
                     messageStr = str,
-                    checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, //okay
+                    checkListIndex = (int)ChecklistErrorEnum.GoodChecklist, // okay
                 };
             }
-            else
+            
+            return new LoanApplicationUpdateMessage
             {
-                return new LoanApplicationUpdateMessage
-                {
-                    isdone = isCheckListDone,
-                    messageStr = str,
-                    checkListIndex = checkListIndex,
-                };
-            }
+                isdone = isCheckListDone,
+                messageStr = str,
+                checkListIndex = checkListIndex,
+            };
 
         }
 
@@ -968,8 +929,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            try
-            {
 
                 if (loan.relationshipOfficerId != 0)
                 {
@@ -1043,11 +1002,6 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 return returndate;
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
 
 
@@ -1181,6 +1135,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.APPLICATIONAMOUNT = totalApplicationAmount;
             this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             this.loanData.COLLATERALDETAIL = loan.collateralDetail;
+            this.loanData.CAPREGIONID = loan.regionId;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -1823,12 +1778,11 @@ namespace FintrakBanking.Repositories.Credit
                                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                          join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                                          where a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery)
-                                           //|| c.FIRSTNAME.ToLower().Contains(searchQuery)
-                                           //|| c.CUSTOMERCODE.ToLower().Contains(searchQuery)
-                                         //|| c.MIDDLENAME.ToLower().Contains(searchQuery)
-                                         //|| c.LASTNAME.ToLower().Contains(searchQuery)
-                                         //|| c.CUSTOMERCODE.ToLower().Contains(searchQuery)
-                                         //|| a.TBL_CASA.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
+                                         //  || c.FIRSTNAME.ToLower().StartsWith(searchQuery)
+                                         //  || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                                         //|| c.MIDDLENAME.ToLower().StartsWith(searchQuery)
+                                         //|| c.LASTNAME.ToLower().StartsWith(searchQuery)
+                                         //|| a.TBL_CASA.PRODUCTACCOUNTNUMBER==searchQuery
                                          select new LoanApplicationDetailViewModel
                                          {
                                              loanApplicationId = d.LOANAPPLICATIONID,
@@ -1842,7 +1796,7 @@ namespace FintrakBanking.Repositories.Credit
                                              approvedProductId = d.APPROVEDPRODUCTID,
                                              productName = d.TBL_PRODUCT.PRODUCTNAME,
                                              approvedTenor = d.APPROVEDTENOR,
-                                             approvedAmount = d.APPROVEDAMOUNT,
+                                             approvedAmount = d.APPROVEDAMOUNT,//
                                              approvedInterestRate = d.APPROVEDINTERESTRATE,
                                              productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                              productClassId = (short?)a.PRODUCTCLASSID,
@@ -1866,8 +1820,8 @@ namespace FintrakBanking.Repositories.Credit
                                              proposedInterestRate = d.PROPOSEDINTERESTRATE,
                                              proposedProductId = d.PROPOSEDPRODUCTID,
                                              proposedProductName = d.TBL_PRODUCT.PRODUCTNAME,
-                                         });
-            return allApplicationDetails.ToList();
+                                         }).ToList();
+            return allApplicationDetails;
 
         }
 

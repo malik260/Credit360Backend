@@ -1,7 +1,9 @@
 ﻿using FintrakBanking.Common.Enum;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -164,7 +166,8 @@ namespace FintrakBanking.ViewModels.Finance
         public int sid { get; set; }
         public int productId { get; set; }
         public int currencyId { get; set; }
-        public decimal actualAmount { get; set; }
+        public decimal amountDue { get; set; }
+        public decimal actualAmountCollected { get; set; }
         public int creditGlAccountId { get; set; }
         public int debitGlAccountId { get; set; }
         public int? creditCasaAccountId { get; set; }
@@ -193,4 +196,5 @@ namespace FintrakBanking.ViewModels.Finance
         public string message { get; set; }
         public string APIUrl { get; set; }
     }
+    
 }

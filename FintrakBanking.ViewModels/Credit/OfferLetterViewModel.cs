@@ -60,6 +60,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string conditionPrecident { get; set; }
         public bool isExternal { get; set; }
         public string productName { get; set; }
+        public int SN { get; set; }
     }
 
     public class OfferLetterTemplateViewModel: GeneralEntity

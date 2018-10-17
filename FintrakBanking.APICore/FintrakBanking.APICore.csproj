@@ -321,6 +321,7 @@
     <Compile Include="Controllers\AccountTypeController.cs" />
     <Compile Include="Controllers\AccreditedConsultantsController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\APILogController.cs" />
     <Compile Include="Controllers\AppraisalMemorandumController.cs" />
     <Compile Include="Controllers\ApprovalGroupController.cs" />
     <Compile Include="Controllers\ApprovalLevelController.cs" />
@@ -431,6 +432,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TransactionDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.cs">
+      <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.designer.cs">
+      <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -452,12 +460,33 @@
     <Compile Include="Reports\ReportViews\BondAndGuarantee.aspx.designer.cs">
       <DependentUpon>BondAndGuarantee.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CashBacked.aspx.cs">
+      <DependentUpon>CashBacked.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashBacked.aspx.designer.cs">
+      <DependentUpon>CashBacked.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx.cs">
+      <DependentUpon>CashBackedBondAndGuarantee.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx.designer.cs">
+      <DependentUpon>CashBackedBondAndGuarantee.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralInsurance.aspx.cs">
       <DependentUpon>CollateralInsurance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\CollateralInsurance.aspx.designer.cs">
       <DependentUpon>CollateralInsurance.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx.cs">
+      <DependentUpon>CollateralPerfectionYetToCommence.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx.designer.cs">
+      <DependentUpon>CollateralPerfectionYetToCommence.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
@@ -515,6 +544,13 @@
     <Compile Include="Reports\ReportViews\FinancialTransactions.aspx.designer.cs">
       <DependentUpon>FinancialTransactions.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx.cs">
+      <DependentUpon>FORM3800B_LOS.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx.designer.cs">
+      <DependentUpon>FORM3800B_LOS.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\Lein.aspx.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -549,6 +585,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\PostedTransactions.aspx.designer.cs">
       <DependentUpon>PostedTransactions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ReceivableInterest.aspx.cs">
+      <DependentUpon>ReceivableInterest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ReceivableInterest.aspx.designer.cs">
+      <DependentUpon>ReceivableInterest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Repayment.aspx.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
@@ -727,12 +770,26 @@
     <Compile Include="Reports\ReportViews\SLAReport.aspx.designer.cs">
       <DependentUpon>SLAReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\StalledPerfection.aspx.cs">
+      <DependentUpon>StalledPerfection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\StalledPerfection.aspx.designer.cs">
+      <DependentUpon>StalledPerfection.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.cs">
       <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.designer.cs">
       <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\UnearnedLoanInterest.aspx.cs">
+      <DependentUpon>UnearnedLoanInterest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\UnearnedLoanInterest.aspx.designer.cs">
+      <DependentUpon>UnearnedLoanInterest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Workflow.aspx.cs">
       <DependentUpon>Workflow.aspx</DependentUpon>
@@ -786,12 +843,16 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
+    <Content Include="Reports\ReportViews\AllCommercialLoanReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
     <Content Include="Reports\ReportViews\Blacklist.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
+    <Content Include="Reports\ReportViews\CashBacked.aspx" />
+    <Content Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
+    <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
@@ -800,12 +861,14 @@
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
+    <Content Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
+    <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
@@ -821,7 +884,9 @@
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\SLAReport.aspx" />
+    <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
+    <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="ApplicationInsights.config">
@@ -1029,7 +1094,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS - Copy %282%29.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS - Copy.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS11.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterCAMBase.rdlc" />
@@ -1037,7 +1106,11 @@
     <Content Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <Content Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralPerfectionYetToCommence.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
@@ -1046,7 +1119,6 @@
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
-    <EmbeddedResource Include="Reports\Report\FORM3800B_LOS.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
@@ -1070,14 +1142,17 @@
     <Content Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\SLAMonitoringReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
+    <EmbeddedResource Include="Reports\Report\StalledPerfection.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
+    <EmbeddedResource Include="Reports\Report\UnearnedLoanInterest.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
   <ItemGroup>

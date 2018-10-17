@@ -529,6 +529,8 @@ namespace FintrakBanking.Repositories.Credit
                                    subSectorName = a.TBL_SUB_SECTOR.NAME,
                                    sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                    casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                                  // casaAccountNumber1 =context.TBL_CASA.Where(o=>o.CASAACCOUNTID== a.CASAACCOUNTID).Select(o=>o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                   casaAccountNumber2= context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                    productAccountName = c.PRODUCTACCOUNTNAME,
                                    customerGroupId = e.CUSTOMERGROUPID,
                                    loanTypeId = e.LOANAPPLICATIONTYPEID,

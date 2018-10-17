@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.ThridPartyIntegration; 
 using FinTrakBanking.ThirdPartyIntegration.CRCWebService;
@@ -54,14 +55,29 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
 
         public CRCSearchResult CRCMergeReport(MultiHitRequestViewModel request)
         {
-            CRCSearchResult result =null;
-            XElement xml = CRCMergeRequestXML(request);
-            if (xml != null)
+            try
             {
-                result = SearchOutput(request.userName, request.password, xml);                  
-            }
+                CRCSearchResult result = null;
+                XElement xml = CRCMergeRequestXML(request);
+                if (xml != null)
+                {
+                    result = SearchOutput(request.userName, request.password, xml);
+                }
 
-            return result;
+                return result;
+            }
+            catch (ConditionNotMetException ex)
+            {
+                throw new ConditionNotMetException(ex.ToString());
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
@@ -116,8 +132,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
                 new XElement("INQUIRY_REASON", new XAttribute("CODE", request.enquiryReason)),
                 new XElement("APPLICATION", new XAttribute("CURRENCY", request.currencyCode),
                 new XAttribute("AMOUNT", request.amount), new XAttribute("NUMBER", request.number),
-                new XAttribute("PRODUCT", request.productCode)),
-                //new XElement("REQUEST_REFERENCE", new XAttribute("REFERENCE-NO", request.productCode),
+                new XAttribute("PRODUCT", "017")), //request.productCode
+                                              //new XElement("REQUEST_REFERENCE", new XAttribute("REFERENCE-NO", request.productCode),
                 new XElement("REQUEST_REFERENCE", new XAttribute("REFERENCE-NO", request.referenceNo)),
                 new XElement("MERGE_REPORT", new XAttribute("PRIMARY-BUREAU-ID", request.bureauID.FirstOrDefault()),
                 from i in request.bureauID select new XElement("BUREAU_ID", i))));

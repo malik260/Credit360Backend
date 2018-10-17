@@ -16,6 +16,7 @@ using FinTrakBanking.ThirdPartyIntegration.Finacle;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.Common.CustomException;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Finance
 
@@ -314,17 +315,18 @@ namespace FintrakBanking.Repositories.Finance
                     if (authenticated.authenticated == false)
                         throw new TwoFactorAuthenticationException(authenticated.message);
                 }                
-                
             }
 
+            string referenceCode = batchCode;
             if (USE_THIRD_PARTY_INTEGRATION && isBulkPosting == false)
             {
-                bool data;
+                PostingResult response;
+                response = integration.PostTransactions(inputTransactions);
 
-                data = integration.PostTransactions(inputTransactions);
 
-                if (data)
+                if (response.posted == true) // successful
                 {
+                    referenceCode = response.responseCode;
                     PostTransactionSub(batchCode, inputTransactions, transactions);
                     UpdateCustomTransactions(batchCode);
                 }
@@ -334,12 +336,14 @@ namespace FintrakBanking.Repositories.Finance
                 }
             }
             else
+            {
                 PostTransactionSub(batchCode, inputTransactions, transactions);
+            }
 
             this.context.TBL_FINANCE_TRANSACTION.AddRange(transactions);
             var result = context.SaveChanges() > 0;
 
-            return batchCode;
+            return referenceCode;
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
@@ -2132,6 +2136,8 @@ namespace FintrakBanking.Repositories.Finance
         {
             var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
 
+            model.date = generalSetup.GetApplicationDate();
+
             //FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
 
@@ -2596,7 +2602,7 @@ namespace FintrakBanking.Repositories.Finance
             debit.glAccountId = model.debitGlAccountId;//product.INTERESTRECEIVABLEPAYABLEGL.Value;
             debit.sourceReferenceNumber = model.sourceReferenceNumber;//product.PRODUCTCODE;
             debit.casaAccountId = model.debitCasaAccountId;
-            debit.debitAmount = model.actualAmount;
+            debit.debitAmount = model.actualAmountCollected;
             debit.creditAmount = 0;
             debit.sourceBranchId = model.sourceBranchId;
             debit.destinationBranchId = model.destinationBranchId;
@@ -2621,7 +2627,7 @@ namespace FintrakBanking.Repositories.Finance
             credit.sourceReferenceNumber = model.sourceReferenceNumber;
             credit.casaAccountId = model.creditCasaAccountId;
             credit.debitAmount = 0;
-            credit.creditAmount = model.actualAmount;
+            credit.creditAmount = model.actualAmountCollected;
             credit.sourceBranchId = model.sourceBranchId;
             credit.destinationBranchId = model.destinationBranchId;
             credit.batchId = model.batchId;

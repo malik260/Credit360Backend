@@ -130,6 +130,12 @@
 
             public CRCSearchResult CRCCreditBureauSearch(CRCRequestViewModel request)
             {
+                if(request.dateOfBirth != null)
+                {
+                    request.dateOfBirth = Convert.ToDateTime(request.dateOfBirth).ToString("dd-MMM-yyyy");
+                     //request.dateOfBirth = "03-Jun-1998";  
+                }
+
                 try
                 {
                     CRCService crc = new CRCService();
@@ -157,7 +163,15 @@
                 }
                 catch (TimeoutException ex)
                 {
-                    throw ex;
+                    throw new ConditionNotMetException( ex.ToString());
+                }
+                catch (ConditionNotMetException ex)
+                {
+                    throw new ConditionNotMetException(ex.ToString());
+                }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.ToString());
                 }
                 catch (Exception ex)
                 {
@@ -253,8 +267,6 @@
             }
 
             private string DoXDSIndividualSearch(CreditBureauSearchViewModel searchInfo)
-
-
             {
                 string result = string.Empty;
                 XDSService xds = new XDSService();

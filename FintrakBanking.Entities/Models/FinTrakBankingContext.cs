@@ -293,6 +293,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_OVERRIDE_DETAIL> TBL_OVERRIDE_DETAIL { get; set; }
         public virtual DbSet<TBL_OVERRIDE_ITEM> TBL_OVERRIDE_ITEM { get; set; }
         public virtual DbSet<TBL_POSTING_TYPE> TBL_POSTING_TYPE { get; set; }
+        public virtual DbSet<TBL_OTHER_OPERATION> TBL_OTHER_OPERATION { get; set; }
+        public virtual DbSet<TBL_OTHER_OPERATION_ACCOUNT> TBL_OTHER_OPERATION_ACCOUNT { get; set; }
         public virtual DbSet<TBL_PRODUCT> TBL_PRODUCT { get; set; }
         public virtual DbSet<TBL_PRODUCT_BEHAVIOUR> TBL_PRODUCT_BEHAVIOUR { get; set; }
         public virtual DbSet<TBL_PRODUCT_CATEGORY> TBL_PRODUCT_CATEGORY { get; set; }

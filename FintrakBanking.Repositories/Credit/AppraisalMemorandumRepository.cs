@@ -1281,18 +1281,28 @@ namespace FintrakBanking.Repositories.Credit
 
             List<int> levels = general.GetRouteLevels(operationId, 1);
 
-            var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+            //var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
+            //                .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
+            //                .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
+            //                .Select(x => new {
+            //                    BRANCHID = x.b.BRANCHID
+            //                })
+            //                .Select(x => x.BRANCHID)
+            //                .ToList();
+
+            var regions = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
                             .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
-                            .Join(context.TBL_BRANCH, sr => sr.r.REGIONID, b => b.REGIONID, (sr, b) => new { sr, b })
-                            .Select(x => new {
-                                BRANCHID = x.b.BRANCHID
+                            .Select(x => new
+                            {
+                                REGIONID = x.r.REGIONID
                             })
-                            .Select(x => x.BRANCHID)
+                            .Select(x => x.REGIONID)
                             .ToList();
 
             var applications = context.TBL_LOAN_APPLICATION
                 .Where(x => x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress && x.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                    && branches.Contains(x.BRANCHID)
+                    && regions.Contains((int)x.CAPREGIONID)
+                    // && branches.Contains(x.BRANCHID)
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                     && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved
                     && x.SUBMITTEDFORAPPRAISAL == true
