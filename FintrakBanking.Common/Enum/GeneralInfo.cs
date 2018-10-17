@@ -267,8 +267,8 @@ namespace FintrakBanking.Common.Enum
        RegionDeleted = 245,
         ContingentLiabilityRenewal = 245,
         ContingentLiabilityTermination = 246,
-        facilityBookingReferedBack = 247
-
+        facilityBookingReferedBack = 247,
+        CreditOperationApproval= 248
     };
    public enum RegulatoryTypeEnum
     {
