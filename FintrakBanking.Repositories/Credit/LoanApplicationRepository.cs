@@ -1778,12 +1778,11 @@ namespace FintrakBanking.Repositories.Credit
                                          join a in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                                          join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                                          where a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchQuery)
-                                           //|| c.FIRSTNAME.ToLower().Contains(searchQuery)
-                                           //|| c.CUSTOMERCODE.ToLower().Contains(searchQuery)
-                                         //|| c.MIDDLENAME.ToLower().Contains(searchQuery)
-                                         //|| c.LASTNAME.ToLower().Contains(searchQuery)
-                                         //|| c.CUSTOMERCODE.ToLower().Contains(searchQuery)
-                                         //|| a.TBL_CASA.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
+                                         //  || c.FIRSTNAME.ToLower().StartsWith(searchQuery)
+                                         //  || c.CUSTOMERCODE.ToLower().Contains(searchQuery)
+                                         //|| c.MIDDLENAME.ToLower().StartsWith(searchQuery)
+                                         //|| c.LASTNAME.ToLower().StartsWith(searchQuery)
+                                         //|| a.TBL_CASA.PRODUCTACCOUNTNUMBER==searchQuery
                                          select new LoanApplicationDetailViewModel
                                          {
                                              loanApplicationId = d.LOANAPPLICATIONID,
@@ -1797,7 +1796,7 @@ namespace FintrakBanking.Repositories.Credit
                                              approvedProductId = d.APPROVEDPRODUCTID,
                                              productName = d.TBL_PRODUCT.PRODUCTNAME,
                                              approvedTenor = d.APPROVEDTENOR,
-                                             approvedAmount = d.APPROVEDAMOUNT,
+                                             approvedAmount = d.APPROVEDAMOUNT,//
                                              approvedInterestRate = d.APPROVEDINTERESTRATE,
                                              productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                              productClassId = (short?)a.PRODUCTCLASSID,
@@ -1821,8 +1820,8 @@ namespace FintrakBanking.Repositories.Credit
                                              proposedInterestRate = d.PROPOSEDINTERESTRATE,
                                              proposedProductId = d.PROPOSEDPRODUCTID,
                                              proposedProductName = d.TBL_PRODUCT.PRODUCTNAME,
-                                         });
-            return allApplicationDetails.ToList();
+                                         }).ToList();
+            return allApplicationDetails;
 
         }
 

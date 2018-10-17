@@ -267,6 +267,7 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
             throw new SecureException("An error occured while saving the data!");
         }
+
         public bool validateCustomer(int loanApplicationDetailId, int customerId)
         {
 
@@ -310,7 +311,8 @@ namespace FintrakBanking.Repositories.Credit
 
            
         }
-            private int GetCamOperation(int performanceTypeId)
+
+        private int GetCamOperation(int performanceTypeId)
         {
             switch (performanceTypeId)
             {
@@ -333,6 +335,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
         {
+            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter && ChecklistCompleted(model.applicationId) == false) throw new SecureException("Checklist not complleted!");
+
             int nextProcessId = model.operationId + 1;
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
@@ -882,5 +886,21 @@ namespace FintrakBanking.Repositories.Credit
             position.applicationDetailId = detailId;
             return position;
         }
+
+        public bool ChecklistCompleted(int applicationId)
+        {
+            var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                             where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                             && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
+                             select c).ToList();
+
+            var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                          where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                          && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
+                          select c).ToList();
+
+            return condition.Count == status.Count;
+        }
+
     }
 }

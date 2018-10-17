@@ -63,7 +63,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> LoanSearch(int companyId, LoanSearchViewModel searchModel);
 
-        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId, string searchValue = null);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId);
 
@@ -194,6 +194,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate);
         List<LookupViewModel> GetLoanRepricingModes();
+
+        List<LoanViewModel> GetCompletedLoans();
+        List<LoanViewModel> GetCompletedLoan(string searchValue);
+        bool GetChangeLoanStatusOfACompletedLoan(int loanId);
 
     }
 }

@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Entities.StagingModels;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Report;
@@ -870,6 +871,479 @@ namespace FintrakBanking.ReportObjects
             }
       
         }
+
+        private string LoanCollateralPerfectionReasons(int loanId, LoanSystemTypeEnum loanSystemTypeId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var perfectionReasons = (from f in context.TBL_COLLATERAL_IMMOVE_PROPERTY
+                                           join m in context.TBL_LOAN_COLLATERAL_MAPPING on f.COLLATERALCUSTOMERID equals m.COLLATERALCUSTOMERID
+                                           where m.LOANID == loanId && m.LOANSYSTEMTYPEID == (short)loanSystemTypeId
+                                           select f.PERFECTIONSTATUSREASON).ToList();
+
+                string output = "";
+
+                foreach (var item in perfectionReasons)
+                    output = output + ", " + item;
+
+                return output;
+            }
+        }
+
+
+
+        private string LoanCollateralType(int loanId, LoanSystemTypeEnum loanSystemTypeId)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var loancollateralType = (from c in context.TBL_COLLATERAL_CUSTOMER
+                                          join st in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals st.COLLATERALTYPEID
+                                          join l in context.TBL_LOAN on c.CUSTOMERID equals l.CUSTOMERID
+                                          where l.TERMLOANID == loanId && l.LOANSYSTEMTYPEID == (short)loanSystemTypeId
+                                          select st.COLLATERALTYPENAME).ToList();
+
+                string output = "";
+
+                foreach (var item in loancollateralType)
+                    output = output + ", " + item;
+
+                return output;
+            }
+        }
+
+
+        public List<StalledPerfectionViewModel> StalledPerfectionForCollateral(DateTime startDate, DateTime endDate, int companyid)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+
+                var loansWithCollateral = (from f in context.TBL_COLLATERAL_IMMOVE_PROPERTY
+                                  join m in context.TBL_LOAN_COLLATERAL_MAPPING on f.COLLATERALCUSTOMERID equals m.COLLATERALCUSTOMERID
+                                  where f.PERFECTIONSTATUSID == (int)(CollateralPerfectionStatusEnum.Stalled) 
+                                  select m.LOANID );
+
+                var reportData = (
+                                  from  l in context.TBL_LOAN 
+                                  join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                  where  (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                  && l.COMPANYID == 1 && loansWithCollateral.Contains(l.TERMLOANID) && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                  select new StalledPerfectionViewModel
+                                  {
+                                      loanId = l.TERMLOANID,
+                                      customerName = c.LASTNAME + " " + c.LASTNAME,
+                                      outstandingBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
+                                      startDate = startDate,
+                                      endDate = endDate,
+                                      loanRefno = l.LOANREFERENCENUMBER,
+                                      outstandingInterest = l.OUTSTANDINGINTEREST + l.PASTDUEINTEREST
+                                  }).ToList().Select(x =>
+                                  {
+                                      x.reasonsforStalledPerfection = LoanCollateralPerfectionReasons(x.loanId, LoanSystemTypeEnum.TermDisbursedFacility);
+                                      return x;
+                                  }).ToList();
+
+                                 return reportData;
+            }
+
+
+           
+
+        }
+
+        public List<CollateralPerfectionyettoCommenceViewModel> CollateralPerfectionYetToCommence(DateTime startDate, DateTime endDate, int companyid)
+        {
+            List<SubHead> subList = new List<SubHead>();
+
+            using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
+            {
+                 subList = (from sl in stagecontext.STG_STAFFMIS
+                               select new SubHead { subHead = sl.GROUP_HUB, staffCode = sl.STAFFCODE }).ToList();
+            }
+
+
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+
+
+                var staffRecords = (from s in context.TBL_STAFF join
+                                          su in subList on s.STAFFCODE equals su.staffCode
+                                    select new { s.STAFFID, s.STAFFCODE, su.subHead });
+
+                var loansWithCollateral = (from f in context.TBL_COLLATERAL_IMMOVE_PROPERTY
+                                           join m in context.TBL_LOAN_COLLATERAL_MAPPING on f.COLLATERALCUSTOMERID equals m.COLLATERALCUSTOMERID
+                                           where f.PERFECTIONSTATUSID == (int)(CollateralPerfectionStatusEnum.NotPerfected)
+                                           select m.LOANID);
+
+                var reportData = (
+                                  from l in context.TBL_LOAN
+                                  join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                  join sub in staffRecords on l.RELATIONSHIPOFFICERID equals sub.STAFFID
+                                  where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                  && l.COMPANYID == companyid && loansWithCollateral.Contains(l.TERMLOANID) && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                  select new CollateralPerfectionyettoCommenceViewModel
+                                  {
+                                      loanId = l.TERMLOANID,
+                                      customername = c.LASTNAME + " " + c.LASTNAME,
+                                      outstandingBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
+                                       outstandingInterest = l.OUTSTANDINGINTEREST + l.PASTDUEINTEREST,
+                                      startDate = startDate,
+                                      endDate = endDate,
+                                      facilityGrantDate = l.EFFECTIVEDATE,
+                                      // loanSystemTypeId = l.LOANSYSTEMTYPEID,
+                                      subHead = sub.subHead
+
+
+                                  }).ToList().Select(x =>
+                                  {
+                                      x.collateralType = LoanCollateralType(x.loanId, LoanSystemTypeEnum.TermDisbursedFacility);
+                                      return x;
+                                  }).ToList();
+
+                return reportData;
+            }
+        }
+
+        public List<CommercialLoanReport> AllCommercialLoanReport(DateTime startDate, DateTime endDate, int companyid)
+        {
+
+            List<SubHead> subList = new List<SubHead>();
+
+            using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
+            {
+                subList = (from sl in stagecontext.STG_STAFFMIS
+                           select new SubHead { subHead = sl.GROUP_HUB, staffCode = sl.STAFFCODE }).ToList();
+            }
+
+
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var staffRecords = (from s in context.TBL_STAFF
+                                    join
+                             su in subList on s.STAFFCODE equals su.staffCode
+                                    select new { s.STAFFID, s.STAFFCODE, su.subHead });
+                var reportData = (from l in context.TBL_LOAN join
+                                       c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID join
+                                       cu in context.TBL_CURRENCY on l.CURRENCYID equals cu.CURRENCYID join
+                                       st in context.TBL_LOAN_STATUS on l.LOANSTATUSID equals st.LOANSTATUSID join
+                                       cas in context.TBL_CASA on l.CASAACCOUNTID equals cas.CASAACCOUNTID join
+                                        cas2 in context.TBL_CASA on l.CASAACCOUNTID2 equals cas2.CASAACCOUNTID join
+                                       sub in staffRecords on l.RELATIONSHIPOFFICERID equals sub.STAFFID join 
+                                       prod in context.TBL_PRODUCT on l.PRODUCTID equals prod.PRODUCTID join
+                                       pc in context.TBL_PRODUCT_CLASS on prod.PRODUCTCLASSID equals pc.PRODUCTCLASSID
+                                  where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                  DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                  && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active && pc.PRODUCTCLASSID == (short)ProductClassEnum.Commercial
+                                  select new CommercialLoanReport
+                                  {
+                                      accountPayTo = cas.PRODUCTACCOUNTNAME,
+                                      accountReceiveFrom = cas2.PRODUCTACCOUNTNAME,
+                                      businessGroup = sub.subHead,
+                                      capturesDate = l.DATETIMECREATED,
+                                      currency = cu.CURRENCYNAME,
+                                      customerName = c.LASTNAME + " " + c.FIRSTNAME,
+                                      dealDate = (DateTime)l.DATEAPPROVED,
+                                      endDate = l.MATURITYDATE,
+                                      startDate = l.EFFECTIVEDATE,
+                                      interestRate = (decimal)l.INTERESTRATE,
+                                      interestRateChange = 0,
+                                      interestToDate = 0,
+                                      interestType = "",
+                                      loanReferenceNo = l.LOANREFERENCENUMBER,
+                                      narration = "",
+                                      principalAmount = l.PRINCIPALAMOUNT,
+                                      status = st.ACCOUNTSTATUS,
+                                      tenor = Convert.ToInt32 ((l.MATURITYDATE - l.EFFECTIVEDATE).Days),
+                                      tenorToDate = Convert.ToInt32((l.MATURITYDATE - DateTime.Now).Days)
+
+                                  }).ToList();
+
+                return reportData;
+            }
+
+
+        }
+
+        public List<UnearnedLoanInterestReport> UnearnedLoanInterest(DateTime startDate, DateTime endDate, int companyid)
+        {
+
+            List<SubHead> subList = new List<SubHead>();
+
+            using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
+            {
+                subList = (from sl in stagecontext.STG_STAFFMIS
+                           select new SubHead { subHead = sl.GROUP_HUB, staffCode = sl.STAFFCODE }).ToList();
+            }
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+
+                var accruedInterest = (from accr in context.TBL_DAILY_ACCRUAL join
+                                       loan in context.TBL_LOAN on accr.REFERENCENUMBER equals loan.LOANREFERENCENUMBER
+                                       select new { refnumber = loan.LOANREFERENCENUMBER, amount = accr.DAILYACCURALAMOUNT })
+                                     .GroupBy(x => x.refnumber).Select(f => new
+                                     {
+                                         loanReference = f.FirstOrDefault().refnumber,
+                                         accruedInterest = f.Sum(x => x.amount)
+                                     });
+
+                var staffRecords = (from s in context.TBL_STAFF join
+                             su in subList on s.STAFFCODE equals su.staffCode
+                                    select new { s.STAFFID, s.STAFFCODE, su.subHead });
+
+                var reportData = (from l in context.TBL_LOAN join
+                                c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID join
+                                cu in context.TBL_CURRENCY on l.CURRENCYID equals cu.CURRENCYID join
+                                st in context.TBL_LOAN_STATUS on l.LOANSTATUSID equals st.LOANSTATUSID join
+                                cas in context.TBL_CASA on l.CASAACCOUNTID equals cas.CASAACCOUNTID join
+                                cas2 in context.TBL_CASA on l.CASAACCOUNTID2 equals cas2.CASAACCOUNTID join
+                                sub in staffRecords on l.RELATIONSHIPOFFICERID equals sub.STAFFID join
+                                 acc in accruedInterest on l.LOANREFERENCENUMBER equals acc.loanReference
+                                  where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                  DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                  && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                  select new UnearnedLoanInterestReport
+                                  {
+                                      accountPayTo = cas.PRODUCTACCOUNTNAME,
+                                      accountReceiveFrom = cas.PRODUCTACCOUNTNAME,
+                                      businessGroup = sub.subHead,
+                                      customerName = c.LASTNAME + " " + c.FIRSTNAME,
+                                      endDate = l.MATURITYDATE,
+                                      startDate = l.EFFECTIVEDATE,
+                                      interestRate = (decimal)l.INTERESTRATE,
+                                      interestRateChange = 0,
+                                      interestToDate = 0,
+                                      interestType = "",
+                                      principalAmount = l.PRINCIPALAMOUNT,
+                                      tenor = Convert.ToInt32((l.MATURITYDATE - l.EFFECTIVEDATE).Days),
+                                      tenorToDate = Convert.ToInt32((DateTime.Now - l.MATURITYDATE).Days),
+                                      accruedInterestToDate =acc.accruedInterest,
+                                      tenorToMaturity = Convert.ToInt32((l.MATURITYDATE - DateTime.Now).Days),
+                                      unearnedInterestAsAtDate = 0,
+
+                                  }).ToList();
+
+                return reportData;
+            }
+
+        }
+
+        public List<ReceivableInterestReport> ReceivableLoanInterest(DateTime startDate, DateTime endDate, int companyid)
+        {
+            List<SubHead> subList = new List<SubHead>();
+
+            using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
+            {
+                subList = (from sl in stagecontext.STG_STAFFMIS
+                           select new SubHead { subHead = sl.GROUP_HUB, staffCode = sl.STAFFCODE }).ToList();
+            }
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var accruedInterest = (from accr in context.TBL_DAILY_ACCRUAL join
+                                        loan in context.TBL_LOAN on accr.REFERENCENUMBER equals loan.LOANREFERENCENUMBER
+                                       select new { refnumber = loan.LOANREFERENCENUMBER, amount = accr.DAILYACCURALAMOUNT })
+                                       .GroupBy(x => x.refnumber).Select(f => new
+                                       {
+                                           loanReference = f.FirstOrDefault().refnumber,
+                                           accruedInterest = f.Sum(x => x.amount)
+                                       });
+
+                var staffRecords = (from s in context.TBL_STAFF join
+                                su in subList on s.STAFFCODE equals su.staffCode
+                                    select new { s.STAFFID, s.STAFFCODE, su.subHead });
+
+                var reportData = (from l in context.TBL_LOAN join
+                                 c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID join
+                                 cu in context.TBL_CURRENCY on l.CURRENCYID equals cu.CURRENCYID join
+                                 st in context.TBL_LOAN_STATUS on l.LOANSTATUSID equals st.LOANSTATUSID join
+                                 cas in context.TBL_CASA on l.CASAACCOUNTID equals cas.CASAACCOUNTID join
+                                 cas2 in context.TBL_CASA on l.CASAACCOUNTID2 equals cas2.CASAACCOUNTID join
+                                 sub in staffRecords on l.RELATIONSHIPOFFICERID equals sub.STAFFID join
+                                  acc in accruedInterest on l.LOANREFERENCENUMBER equals acc.loanReference
+                                  where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                  DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                  && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                  select new ReceivableInterestReport
+                                  {
+                                      accountPayTo = cas.PRODUCTACCOUNTNAME,
+                                      accountReceiveFrom = cas.PRODUCTACCOUNTNAME,
+                                      businessGroup = sub.subHead,
+                                      customerName = c.LASTNAME + " " + c.FIRSTNAME,
+                                      endDate = l.MATURITYDATE,
+                                      startDate = l.EFFECTIVEDATE,
+                                      interestRate = (decimal)l.INTERESTRATE,
+                                      interestRateChange = 0,
+                                      interestToDate = 0,
+                                      interestType = "",
+                                      principalAmount = l.PRINCIPALAMOUNT,
+                                      tenor = Convert.ToInt32((l.MATURITYDATE - l.EFFECTIVEDATE).Days),
+                                      tenorToDate = Convert.ToInt32((DateTime.Now - l.MATURITYDATE).Days),
+                                      accruedInterestToDate = acc.accruedInterest,
+                                      tenorToMaturity = Convert.ToInt32((l.MATURITYDATE - DateTime.Now).Days)
+                                  }).ToList();
+
+                return reportData;
+            }
+
+        }
+
+        public List<CashBacked> CashBackedReport(DateTime startDate, DateTime endDate, int companyid)
+        {
+          
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var cashbackedData = (from l in context.TBL_LOAN
+                                      join
+                                        cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+                                      join
+                                        ca in context.TBL_CASA on l.CUSTOMERID equals ca.CUSTOMERID
+                                                                              join
+                                        cd in context.TBL_COLLATERAL_DEPOSIT on cm.COLLATERALCUSTOMERID equals cd.COLLATERALCUSTOMERID
+                                                                              join
+                                        cust in context.TBL_CUSTOMER on l.CUSTOMERID equals cust.CUSTOMERID
+                                                                              join
+                                        cus in context.TBL_COLLATERAL_CUSTOMER on l.CUSTOMERID equals cus.CUSTOMERID
+                                                                              join
+                                        ct in context.TBL_COLLATERAL_TYPE on cus.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                                                                              join
+                                        b in context.TBL_BRANCH on ca.BRANCHID equals b.BRANCHID
+                                                                              join
+                                        curr in context.TBL_CURRENCY on l.CURRENCYID equals curr.CURRENCYID
+                                      where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                      DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                      && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                      select new
+                                      {
+                                          accountName = cust.LASTNAME + " " + cust.FIRSTNAME,
+                                          accountNo = ca.PRODUCTACCOUNTNAME,
+                                          branch = b.BRANCHNAME,
+                                          currencyType = curr.CURRENCYNAME,
+                                          depositAccountNo = cd.ACCOUNTNUMBER,
+                                          loanBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
+                                          loanBalanceForeignCurrency = (l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL),
+                                          loanLimit = 0,
+                                          loanLimitForeignCurrency = 0,
+                                          securityInTheNameOf = cus.TBL_CUSTOMER.LASTNAME + " " + cus.TBL_CUSTOMER.FIRSTNAME,
+                                          securityType = ct.COLLATERALTYPENAME,
+                                          securityValue = cd.SECURITYVALUE,
+                                          exchangeRate = l.EXCHANGERATE
+                                      }).ToList().Select(x => new CashBacked
+                                      {
+                                          accountName = x.accountName,
+                                          accountNo = x.accountNo,
+                                          branch = x.branch,
+                                          currencyType = x.currencyType,
+                                          depositAccountNo = x.depositAccountNo,
+                                          loanBalance = x.loanBalance,
+                                          loanBalanceForeignCurrency = x.loanBalanceForeignCurrency * (decimal)x.exchangeRate,
+                                          loanLimit = 0,
+                                          loanLimitForeignCurrency = 0,
+                                          securityInTheNameOf = x.securityInTheNameOf,
+                                          securityType = x.securityType,
+                                          securityValue = x.securityValue
+                                      }).ToList();
+
+
+
+                return cashbackedData;
+
+            }
+
+
+        }
+
+        // CashBackedBondAndGuarantee
+
+        public List<CashBackedBondAndGuarantee> CashBackedBondAndGuarantee(DateTime startDate, DateTime endDate, int companyid, int productClassId)
+        {
+
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+
+                var reportData = (from p in context.TBL_PRODUCT
+                                  join
+                                    lc in context.TBL_LOAN_CONTINGENT on p.PRODUCTID equals lc.PRODUCTID
+                                                                      join
+                                    l in context.TBL_LOAN on lc.CUSTOMERID equals l.CUSTOMERID
+                                                                      join
+                                    cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
+                                                                      join
+                                    cc in context.TBL_COLLATERAL_CASA on cm.COLLATERALCUSTOMERID equals cc.COLLATERALCUSTOMERID
+                                                                      join
+                                    cus in context.TBL_CUSTOMER on l.CUSTOMERID equals cus.CUSTOMERID
+                                                                      join
+                                    b in context.TBL_CUSTOMER on cm.COLLATERALCUSTOMERID equals b.CUSTOMERID
+                                                                      join
+                                    co in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals co.COLLATERALCUSTOMERID
+                                                                      join
+                                    t in context.TBL_COLLATERAL_TYPE on co.COLLATERALTYPEID equals t.COLLATERALTYPEID
+                                                                      join
+                                    cur in context.TBL_CURRENCY on lc.CURRENCYID equals cur.CURRENCYID
+                                  where
+                                  (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                      DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                      && l.COMPANYID == companyid && p.PRODUCTCLASSID == productClassId
+
+                                  select new
+                                  {
+                                      accountNo = cc.ACCOUNTNUMBER,
+                                      beneficiary = b.LASTNAME + " " + b.FIRSTNAME,
+                                      bondAmount = lc.CONTINGENTAMOUNT,
+                                      bondGuaranteeType = p.PRODUCTNAME,
+                                      cashSecurityAccount = "",
+                                      currencyType = cur.CURRENCYNAME,
+                                      customerId = l.CUSTOMERID,
+                                      customerName = cus.LASTNAME + " " + cus.FIRSTNAME,
+                                      dateIssue = l.DATETIMECREATED,
+                                      nairaEqualvalentOfFCY = lc.CONTINGENTAMOUNT,
+                                      purpose = "",
+                                      serialNo = p.PRODUCTCODE,
+                                      typeofSecurity = t.COLLATERALTYPENAME,
+                                      exchangerate = l.EXCHANGERATE
+
+                                  }).ToList().Select(x => new CashBackedBondAndGuarantee
+                                  {
+                                      accountNo = x.accountNo,
+                                      beneficiary = x.beneficiary,
+                                      bondAmount = x.bondAmount,
+                                      bondGuaranteeType = x.bondGuaranteeType,
+                                      cashSecurityAccount = "",
+                                      currencyType = x.currencyType,
+                                      customerId = x.customerId,
+                                      customerName = x.customerName,
+                                      dateIssue = x.dateIssue,
+                                      nairaEqualvalentOfFCY = x.nairaEqualvalentOfFCY * (decimal)x.exchangerate,
+                                      purpose = "",
+                                      serialNo = x.serialNo,
+                                      typeofSecurity = x.typeofSecurity
+                                  }).ToList();
+
+                return reportData.ToList();
+            }
+
+
+        }
+
+
+        public static List<DropdownParam> GetProductClass()
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var allProductClass = (from f in context.TBL_PRODUCT_CLASS
+                                       select new DropdownParam
+                                       {
+                                           valueId = f.PRODUCTCLASSID,
+                                           valueName = f.PRODUCTCLASSNAME
+                                       }).ToList();
+
+                return allProductClass.ToList();
+            }
+
+
+        }
+
 
     }
 }

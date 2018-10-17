@@ -1,7 +1,9 @@
 ﻿using FintrakBanking.Common.Enum;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -194,4 +196,5 @@ namespace FintrakBanking.ViewModels.Finance
         public string message { get; set; }
         public string APIUrl { get; set; }
     }
+    
 }
