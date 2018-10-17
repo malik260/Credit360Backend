@@ -57,5 +57,12 @@ namespace FintrakBanking.Interfaces.Reports
         string AccountWithLein(ReportSearchEntity searchEntity);
         IEnumerable<AuditViewModel> AuditType(string searchValue);
         List<GLAccountSearchViewModel> GLAccount(string searchValue);
+        string GetStalledPerfection(DateRange dateRange);
+        string GetCollateralPerfectionYetToCommence(DateRange dateRange);
+        string GetAllCommercialLoanReport(DateRange dateRange);
+        string GetUnearnedLoanInterestReport(DateRange dateRange);
+        string GetReceivableInterestReport(DateRange dateRange);
+        string GetCashBackedReport(DateRange dateRange);
+        string GetCashBackedBondAndGuarantee(DateRange dateRange);
     }
 }

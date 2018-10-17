@@ -106,6 +106,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int approvalStatus { get; set; }
        public int operationId { get; set; }
         public int auditTypeId { get; set; }
+        public int companyId { get; set; }
     }
 
     public class ReportSearchEntity
