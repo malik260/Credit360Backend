@@ -10255,7 +10255,9 @@ namespace FintrakBanking.Repositories.Credit
             outStandingBalance = decimal.Round(outStandingBalance, 2, MidpointRounding.AwayFromZero);
 
             decimal pastDue = decimal.Round((data.PASTDUEINTEREST + data.INTERESTONPASTDUEINTEREST + data.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
-            decimal totalamount = (accruedInterest + outStandingBalance + pastDue);
+            decimal pastDuePrincipal = decimal.Round((data.PASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
+
+            decimal totalamount = (accruedInterest + outStandingBalance + pastDue + pastDuePrincipal);
 
 
             var runningLoan = (from l in context.TBL_LOAN
@@ -10292,6 +10294,7 @@ namespace FintrakBanking.Repositories.Credit
                                    principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
                                    interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
                                    pastDueTotal = pastDue,
+                                   pastDuePrincipal = pastDuePrincipal, //TODO
                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
                                    relationshipOfficerId = l.RELATIONSHIPOFFICERID,
                                    productTypeId = l.TBL_PRODUCT.PRODUCTTYPEID,
@@ -10583,15 +10586,9 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
-
             if ((int)OperationsEnum.Prepayment == model.operationTypeId)
-
             {
                 model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
-
-
-
-
             }
             else if (model.operationTypeId == (int)OperationsEnum.Fee_chargeChange)
             {
@@ -10599,7 +10596,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new ConditionNotMetException("The requested charge fee type already exist and going through approval");
                 }
-
             }
             else
             {
@@ -10612,8 +10608,6 @@ namespace FintrakBanking.Repositories.Credit
                 //{
                 //    throw new ConditionNotMetException ("Interest First Payment Date cannot be less than Effective date");
                 //}
-
-
             }
 
             if (DoesOperationExist(model.loanId, model.operationTypeId))
@@ -10640,36 +10634,33 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             int _operationTypeId = 0;
-
             if ((int)OperationsEnum.Prepayment == model.operationTypeId)
             {
                 _operationTypeId = 1;
             }
-
             else
             {
                 _operationTypeId = model.productTypeId;
             }
 
             _operationTypeId = 0;
-
             if ((int)OperationsEnum.Prepayment == model.operationTypeId)
             {
                 _operationTypeId = 1;
             }
-
             else
             {
                 _operationTypeId = model.productTypeId;
             }
 
-            var operationPerformed = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+            if (reviewApplicationDetail == null) throw new SecureException("Review application details not found!");
 
-            var data = new TBL_LOAN_REVIEW_OPERATION
+            var reviewOperation = new TBL_LOAN_REVIEW_OPERATION
             {
                 LOANID = model.loanId,
-                LOANREVIEWAPPLICATIONID = operationPerformed.LOANREVIEWAPPLICATIONID,
-                LOANSYSTEMTYPEID = operationPerformed.LOANSYSTEMTYPEID,
+                LOANREVIEWAPPLICATIONID = reviewApplicationDetail.LOANREVIEWAPPLICATIONID,
+                LOANSYSTEMTYPEID = reviewApplicationDetail.LOANSYSTEMTYPEID,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
@@ -10696,11 +10687,9 @@ namespace FintrakBanking.Repositories.Credit
             };
             // Audit Section ---------------------------
 
-
-
-            if (operationPerformed != null)
+            if (reviewApplicationDetail != null)
             {
-                operationPerformed.OPERATIONPERFORMED = true;
+                reviewApplicationDetail.OPERATIONPERFORMED = true;
             }
 
             var audit = new TBL_AUDIT
@@ -10708,7 +10697,7 @@ namespace FintrakBanking.Repositories.Credit
                 AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = model.userBranchId,
-                DETAIL = $"Added tbl_Loan_Review_Operation '{ data.LOANREVIEWOPERATIONID}' ",
+                DETAIL = $"Added tbl_Loan_Review_Operation '{ reviewOperation.LOANREVIEWOPERATIONID}' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
@@ -10721,7 +10710,7 @@ namespace FintrakBanking.Repositories.Credit
                 try
                 {
                     bool output = false;
-                    context.TBL_LOAN_REVIEW_OPERATION.Add(data);
+                    context.TBL_LOAN_REVIEW_OPERATION.Add(reviewOperation);
                     auditTrail.AddAuditTrail(audit);
                     int status = 0;
                     if ((int)OperationsEnum.Prepayment != model.operationTypeId)
