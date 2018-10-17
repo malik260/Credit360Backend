@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.ThridPartyIntegration; 
 using FinTrakBanking.ThirdPartyIntegration.CRCWebService;
@@ -54,14 +55,29 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
 
         public CRCSearchResult CRCMergeReport(MultiHitRequestViewModel request)
         {
-            CRCSearchResult result =null;
-            XElement xml = CRCMergeRequestXML(request);
-            if (xml != null)
+            try
             {
-                result = SearchOutput(request.userName, request.password, xml);                  
-            }
+                CRCSearchResult result = null;
+                XElement xml = CRCMergeRequestXML(request);
+                if (xml != null)
+                {
+                    result = SearchOutput(request.userName, request.password, xml);
+                }
 
-            return result;
+                return result;
+            }
+            catch (ConditionNotMetException ex)
+            {
+                throw new ConditionNotMetException(ex.ToString());
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
