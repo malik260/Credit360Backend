@@ -8989,15 +8989,20 @@ namespace FintrakBanking.Repositories.Credit
                 lien.createdBy = (int)SystemStaff.System;
                 lien.description = "lien placed due to Loan Write Off";
 
+                twoFactorAuth.skipAuthentication = true;
+
                 var lienReference = casaLien.PlaceLien(lien, twoFactorAuth);
 
 
 
-                var result = context.SaveChanges() > 0;
-                if (result)
-                {
+                //var result = context.SaveChanges() > 0;
+
+                context.SaveChanges();
+
+                //if (result)
+                //{
                     output = true;
-                }
+               // }
             }
             catch (Exception ex)
             {
