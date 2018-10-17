@@ -4769,10 +4769,11 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { throw; }
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId, string searchValue = null)
         {
             try
             {
+                
                 var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
                            && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
                            && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
@@ -4809,6 +4810,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
+                if (searchValue != null)
+                {
+                    data = data.Where(o => o.applicationReferenceNumber.Contains(searchValue) || o.customerName.ToLower().Contains(searchValue.ToLower()));
+                }
+                
                 return data;
             }
             catch (Exception ex) { throw ex; }

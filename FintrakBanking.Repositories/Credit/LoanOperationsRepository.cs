@@ -151,7 +151,7 @@ namespace FintrakBanking.Repositories.Credit
                                        //let daysInYear = (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)a.SCHEDULEDAYCOUNTCONVENTIONID)
                                        where a.LOANSTATUSID == (short)LoanStatusEnum.Active &&
                                         (f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
-                                       && DbFunctions.TruncateTime(applicationDate) <= a.MATURITYDATE 
+                                       && DbFunctions.TruncateTime(applicationDate) <= a.MATURITYDATE
 
 
                                        select new DailyInterestAccrualViewModel()
@@ -263,63 +263,111 @@ namespace FintrakBanking.Repositories.Credit
                 bool result = false;
                 var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
-                var data1 = (from a in context.TBL_LOAN_FEE
-                             join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                             join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
-                             where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
+                var termLoans = (from a in context.TBL_LOAN_FEE
+                                 join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                                 join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                                 where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
+                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
 
 
-                             select new DailyInterestAccrualViewModel()
-                             {
-                                 referenceNumber = b.LOANREFERENCENUMBER,
-                                 productId = b.PRODUCTID,
-                                 branchId = b.BRANCHID,
-                                 companyId = b.COMPANYID,
-                                 currencyId = b.CURRENCYID,
-                                 exchangeRate = b.EXCHANGERATE,
-                                 interestRate = b.INTERESTRATE,
-                                 date = applicationDate,
-                                 dailyAccuralAmount = (double)DailyAccruedInterest((DateTime)b.DATEAPPROVED, b.MATURITYDATE, a.FEEAMOUNT),
-                                 mainAmount = a.FEEAMOUNT,
-                                 categoryId = (short)a.CHARGEFEEID,
-                                 transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
-                                 baseReferenceNumber = null,
-                                 dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+                                 select new DailyInterestAccrualViewModel()
+                                 {
+                                     referenceNumber = b.LOANREFERENCENUMBER,
+                                     productId = b.PRODUCTID,
+                                     branchId = b.BRANCHID,
+                                     companyId = b.COMPANYID,
+                                     currencyId = b.CURRENCYID,
+                                     exchangeRate = b.EXCHANGERATE,
+                                     interestRate = b.INTERESTRATE,
+                                     date = applicationDate,
+                                     effectiveDate = b.EFFECTIVEDATE,
+                                     maturityDate = b.MATURITYDATE,
+                                     mainAmount = a.FEEAMOUNT,
+                                     categoryId = (short)DailyAccrualCategory.Fee,
+                                     transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
+                                     baseReferenceNumber = null,
+                                     //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+                                     chargedFeeId = a.CHARGEFEEID,
+                                     loanChargedFeeId = a.LOANCHARGEFEEID,
 
-                             }).ToList();
-
-
-                var data2 = (from a in context.TBL_LOAN_FEE
-                             join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
-                             where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
-
-
-                             select new DailyInterestAccrualViewModel()
-                             {
-                                 referenceNumber = b.LOANREFERENCENUMBER,
-                                 productId = b.PRODUCTID,
-                                 branchId = b.BRANCHID,
-                                 companyId = b.COMPANYID,
-                                 currencyId = b.CURRENCYID,
-                                 exchangeRate = b.EXCHANGERATE,
-                                 interestRate = 1,
-                                 date = applicationDate,
-                                 dailyAccuralAmount = (double)DailyAccruedInterest((DateTime)b.DATEAPPROVED, b.MATURITYDATE, a.FEEAMOUNT),
-                                 mainAmount = a.FEEAMOUNT,
-                                 categoryId = (short)a.CHARGEFEEID,
-                                 transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
-                                 baseReferenceNumber = null,
-                                 dayCountConventionId = 1,
-
-                             }).ToList();
+                                 }).ToList().Select(x =>
+                                 {
+                                     x.dailyAccuralAmount = (double)DailyAccruedInterest((DateTime)x.effectiveDate, x.maturityDate, x.mainAmount);
+                                     return x;
+                                 });
 
 
-                var data = data1.Union(data2).ToList();
+                var contingents = (from a in context.TBL_LOAN_FEE
+                                   join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
+                                   where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
+                                   && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+
+                                   select new DailyInterestAccrualViewModel()
+                                   {
+                                       referenceNumber = b.LOANREFERENCENUMBER,
+                                       productId = b.PRODUCTID,
+                                       branchId = b.BRANCHID,
+                                       companyId = b.COMPANYID,
+                                       currencyId = b.CURRENCYID,
+                                       exchangeRate = b.EXCHANGERATE,
+                                       interestRate = 1,
+                                       date = applicationDate,
+                                       effectiveDate = b.EFFECTIVEDATE,
+                                       maturityDate = b.MATURITYDATE,
+                                       mainAmount = a.FEEAMOUNT,
+                                       categoryId = (short)DailyAccrualCategory.Fee,
+                                       transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
+                                       baseReferenceNumber = null,
+                                      // dayCountConventionId = 1,
+                                       chargedFeeId = a.CHARGEFEEID,
+                                       loanChargedFeeId = a.LOANCHARGEFEEID,
+
+                                   }).ToList().Select(x =>
+                                   {
+                                       x.dailyAccuralAmount = (double)DailyAccruedInterest((DateTime)x.effectiveDate, x.maturityDate, x.mainAmount);
+                                       return x;
+                                   });
+
+
+                var revolving = (from a in context.TBL_LOAN_FEE
+                                 join b in context.TBL_LOAN_REVOLVING on a.LOANID equals b.REVOLVINGLOANID
+                                 where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
+                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+
+                                 select new DailyInterestAccrualViewModel()
+                                 {
+                                     referenceNumber = b.LOANREFERENCENUMBER,
+                                     productId = b.PRODUCTID,
+                                     branchId = b.BRANCHID,
+                                     companyId = b.COMPANYID,
+                                     currencyId = b.CURRENCYID,
+                                     exchangeRate = b.EXCHANGERATE,
+                                     effectiveDate = b.EFFECTIVEDATE,
+                                     maturityDate = b.MATURITYDATE,
+                                     interestRate = 1,
+                                     date = applicationDate,
+                                     mainAmount = a.FEEAMOUNT,
+                                     categoryId = (short)DailyAccrualCategory.Fee,
+                                     transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
+                                     baseReferenceNumber = null,
+                                     //dayCountConventionId = 1,
+                                     chargedFeeId = a.CHARGEFEEID,
+                                     loanChargedFeeId = a.LOANCHARGEFEEID,
+
+                                 }).ToList().Select(x =>
+                                 {
+                                     x.dailyAccuralAmount = (double)DailyAccruedInterest((DateTime)x.effectiveDate, x.maturityDate, x.mainAmount);
+                                     return x;
+                                 });
+
+
+
+                var allFacilities = termLoans.Union(contingents).Union(revolving).ToList();
 
                 List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
 
 
-                foreach (var item in data)
+                foreach (var item in allFacilities)
                 {
                     TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
 
@@ -334,23 +382,51 @@ namespace FintrakBanking.Repositories.Credit
                     dailyAccrual.MAINAMOUNT = item.mainAmount;
                     dailyAccrual.CATEGORYID = item.categoryId;
                     dailyAccrual.COMPANYID = item.companyId;
-                    dailyAccrual.DAYCOUNTCONVENTIONID = item.dayCountConventionId;
+                    dailyAccrual.DAYCOUNTCONVENTIONID = (short)DayCountConventionEnum.Actual_Actual;
                     dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
                     dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
+                    dailyAccrual.CHARGEFEEID = item.chargedFeeId;
 
 
                     transAccrual.Add(dailyAccrual);
 
                 }
                 this.context.TBL_DAILY_ACCRUAL.AddRange(transAccrual);
+
+
+
+                //List<TBL_LOAN_FEE> _loanFee = new List<TBL_LOAN_FEE>();
+
+                //foreach (var item in allFacilities)
+                //{
+                //    TBL_LOAN_FEE loanFee = new TBL_LOAN_FEE();
+
+                //    loanFee.LOANCHARGEFEEID = item.loanChargedFeeId;
+                //    loanFee.EARNEDFEEAMOUNT = (decimal)item.dailyAccuralAmount + context.TBL_LOAN_FEE.Where(x => x.LOANCHARGEFEEID == item.loanChargedFeeId).Select(x => x.EARNEDFEEAMOUNT).FirstOrDefault() ;
+                //    _loanFee.Add(loanFee);
+
+                //}
+
+                //context.TBL_LOAN_FEE.AddRange(_loanFee);
+
+
+                foreach (var item in allFacilities)
+                {
+                    var loanFee = context.TBL_LOAN_FEE.Where(x => x.LOANCHARGEFEEID == item.loanChargedFeeId).FirstOrDefault();
+                    loanFee.EARNEDFEEAMOUNT = loanFee.EARNEDFEEAMOUNT + (decimal)item.dailyAccuralAmount;
+                }
+
+
                 context.SaveChanges();
 
 
+
                 var model = (from a in context.TBL_DAILY_ACCRUAL
-                             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID } into groupedQ
+                             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.Fee
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, a.CHARGEFEEID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
+                                 chargedFeeId = groupedQ.Key.CHARGEFEEID,
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
@@ -398,28 +474,100 @@ namespace FintrakBanking.Repositories.Credit
                 bool result = false;
                 var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
-                var data = (from a in context.TBL_LOAN_FEE
-                            join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                            join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
-                            where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
+                var termLoans = (from a in context.TBL_LOAN_FEE
+                                 join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
+                                 //join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                                 where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
+                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+
+                                 select new DailyInterestAccrualViewModel()
+                                 {
+                                     referenceNumber = b.LOANREFERENCENUMBER,
+                                     mainAmount = a.TAXAMOUNT,
+                                     productId = b.PRODUCTID,
+                                     branchId = b.BRANCHID,
+                                     companyId = b.COMPANYID,
+                                     currencyId = b.CURRENCYID,
+                                     exchangeRate = b.EXCHANGERATE,
+                                     interestRate = b.INTERESTRATE,
+                                     date = applicationDate,
+                                     categoryId = (short)DailyAccrualCategory.Tax,
+                                     transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
+                                     baseReferenceNumber = null,
+                                     //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+                                     loanChargedFeeId = a.LOANCHARGEFEEID,
 
 
-                            select new DailyInterestAccrualViewModel()
-                            {
-                                referenceNumber = b.LOANREFERENCENUMBER,
-                                productId = b.PRODUCTID,
-                                branchId = b.BRANCHID,
-                                companyId = b.COMPANYID,
-                                currencyId = b.CURRENCYID,
-                                exchangeRate = b.EXCHANGERATE,
-                                interestRate = b.INTERESTRATE,
-                                date = applicationDate,
-                                categoryId = (short)a.CHARGEFEEID,
-                                transactionTypeId = (byte)LoanTransactionTypeEnum.Principal,
-                                baseReferenceNumber = null,
-                                dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+                                 }).ToList().Select(x =>
+                                 {
+                                     x.dailyAccuralAmount = (double)DailyAccruedInterest((DateTime)x.effectiveDate, x.maturityDate, x.mainAmount);
+                                     return x;
+                                 });
 
-                            }).ToList();
+
+                var revolving = (from a in context.TBL_LOAN_FEE
+                                 join b in context.TBL_LOAN_REVOLVING on a.LOANID equals b.REVOLVINGLOANID
+                                 //join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                                 where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
+                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+
+
+                                 select new DailyInterestAccrualViewModel()
+                                 {
+                                     referenceNumber = b.LOANREFERENCENUMBER,
+                                     mainAmount = a.TAXAMOUNT,
+                                     productId = b.PRODUCTID,
+                                     branchId = b.BRANCHID,
+                                     companyId = b.COMPANYID,
+                                     currencyId = b.CURRENCYID,
+                                     exchangeRate = b.EXCHANGERATE,
+                                     interestRate = b.INTERESTRATE,
+                                     date = applicationDate,
+                                     categoryId = (short)DailyAccrualCategory.Tax,
+                                     transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
+                                     baseReferenceNumber = null,
+                                     //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+                                     loanChargedFeeId = a.LOANCHARGEFEEID,
+
+
+                                 }).ToList().Select(x =>
+                                 {
+                                     x.dailyAccuralAmount = (double)DailyAccruedInterest((DateTime)x.effectiveDate, x.maturityDate, x.mainAmount);
+                                     return x;
+                                 });
+
+                var contingents = (from a in context.TBL_LOAN_FEE
+                                   join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
+                                   where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
+                                   && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+
+
+                                   select new DailyInterestAccrualViewModel()
+                                   {
+                                       referenceNumber = b.LOANREFERENCENUMBER,
+                                       mainAmount = a.TAXAMOUNT,
+                                       productId = b.PRODUCTID,
+                                       branchId = b.BRANCHID,
+                                       companyId = b.COMPANYID,
+                                       currencyId = b.CURRENCYID,
+                                       exchangeRate = b.EXCHANGERATE,
+                                       interestRate = 0,
+                                       date = applicationDate,
+                                       categoryId = (short)DailyAccrualCategory.Tax,
+                                       transactionTypeId = (byte)LoanTransactionTypeEnum.Fees,
+                                       baseReferenceNumber = null,
+                                       //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+                                       loanChargedFeeId = a.LOANCHARGEFEEID,
+
+
+                                   }).ToList().Select(x =>
+                                   {
+                                       x.dailyAccuralAmount = (double)DailyAccruedInterest((DateTime)x.effectiveDate, x.maturityDate, x.mainAmount);
+                                       return x;
+                                   });
+
+
+                var data = termLoans.Union(contingents).Union(revolving).ToList();
 
                 List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
 
@@ -437,9 +585,9 @@ namespace FintrakBanking.Repositories.Credit
                     dailyAccrual.DATE = item.date;
                     dailyAccrual.DAILYACCURALAMOUNT = (decimal)Math.Abs(item.dailyAccuralAmount);
                     dailyAccrual.MAINAMOUNT = item.mainAmount;
-                    dailyAccrual.CATEGORYID = item.categoryId;
+                    dailyAccrual.CATEGORYID = (short)DailyAccrualCategory.Tax;
                     dailyAccrual.COMPANYID = item.companyId;
-                    dailyAccrual.DAYCOUNTCONVENTIONID = item.dayCountConventionId;
+                    dailyAccrual.DAYCOUNTCONVENTIONID = (short)DayCountConventionEnum.Actual_Actual; // item.dayCountConventionId;
                     dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
                     dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
 
@@ -448,20 +596,34 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
                 this.context.TBL_DAILY_ACCRUAL.AddRange(transAccrual);
+
+
+
+                foreach (var item in data)
+                {
+                    var loanFee = context.TBL_LOAN_FEE.Where(x => x.LOANCHARGEFEEID == item.loanChargedFeeId).FirstOrDefault();
+                    loanFee.EARNEDTAXAMOUNT = loanFee.EARNEDTAXAMOUNT + (decimal)item.dailyAccuralAmount;
+                }
+
+
                 context.SaveChanges();
 
 
                 var model = (from a in context.TBL_DAILY_ACCRUAL
                              where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
-                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID } into groupedQ
+                             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID, a.CHARGEFEEID } into groupedQ
                              select new DailyInterestAccrualViewModel()
                              {
+                                 chargedFeeId = groupedQ.Key.CHARGEFEEID,
                                  productId = groupedQ.Key.PRODUCTID,
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
+
                              }).ToList();
+
+
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
                 {
@@ -1304,7 +1466,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (model.amountDue >= 0 && model.actualAmountCollected > 0) //item.amountCollected
                 {
-                    
+
                     postingResult = financeTransaction.BulkIntegrationPosting(model);
 
                     if (operationType == OperationsEnum.InterestPastDueLoanRepayment)
@@ -1359,7 +1521,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 if (operationType == OperationsEnum.InterestLoanRepayment || operationType == OperationsEnum.PrincipalLoanRepayment && item.amountCollected <= item.amount)
-                  {
+                {
 
                     var pastDueExist = context.TBL_LOAN_PAST_DUE.Where(x => x.LOANID == model.loanId && x.DATE == model.transactionDate && x.DEBITAMOUNT > 0).ToList();
 
@@ -1376,7 +1538,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                     if (model.flowType == "BIF")
-                    {                                                
+                    {
 
                         if (item.amountCollected < item.amount) //past due block
                         {
@@ -1399,7 +1561,7 @@ namespace FintrakBanking.Repositories.Credit
                                 PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
                                 PRODUCTTYPEID = product.PRODUCTTYPEID,
                             };
-                            
+
                             context.TBL_LOAN_PAST_DUE.Add(pastDue);
 
                             updateloanTablePastDueInterest(pastDue.LOANID, pastDue.DEBITAMOUNT);
@@ -1407,7 +1569,7 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if (model.flowType == "BPP")
                     {
-                        
+
                         if (item.amountCollected < item.amount) //past due block
                         {
                             transType = (byte)LoanTransactionTypeEnum.Principal;
@@ -1429,7 +1591,7 @@ namespace FintrakBanking.Repositories.Credit
                                 PARENT_PASTDUECODE = loan.LOANREFERENCENUMBER,
                                 PRODUCTTYPEID = product.PRODUCTTYPEID,
                             };
-                           
+
                             context.TBL_LOAN_PAST_DUE.Add(pastDue);
 
                             updateloanTablePastDuePrincipal(pastDue.LOANID, pastDue.DEBITAMOUNT);
@@ -2650,7 +2812,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var item in model)
                 {
                     if (item.periodPrincipalAmount > 0)
-                        updateloanTablePrincipal((int)item.loanId, item.periodPrincipalAmount); 
+                        updateloanTablePrincipal((int)item.loanId, item.periodPrincipalAmount);
 
                     if (item.periodInterestAmount > 0)
                         updateloanTableInterest((int)item.loanId, item.periodInterestAmount);
@@ -8003,7 +8165,7 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth , DateTime applicationDate, int staffId)
+        public bool LoanReversal(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, TwoFactorAutheticationViewModel twoFactorAuth, DateTime applicationDate, int staffId)
         {
             bool output = false;
             bool result = false;
@@ -8306,7 +8468,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, accruedDailyInterestDiff, product.INTERESTRECEIVABLEPAYABLEGL.Value, "Accrued Interest Reversal", loanInput.operationId)); //change later));
                 }
-                
+
                 //result = financeTransaction.PostTransaction(inputTransactions);
             }
             else
@@ -8331,7 +8493,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     inputTransactions.Add(financeTransaction.PostBuildLoanPositiveReversalPosting(loanInput, pastDueInterestDiff, product.PRINCIPALBALANCEGL.Value, "PastDue Interest Reversal", loanInput.operationId));
                 }
-                
+
 
                 if (pastDuePrincipalDiff > 0)
                 {
@@ -8762,13 +8924,28 @@ namespace FintrakBanking.Repositories.Credit
                 decimal pastDue = decimal.Round((loan.PASTDUEINTEREST + loan.INTERESTONPASTDUEINTEREST + loan.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
                 decimal totalamount = (principalOutStandingBalance + pastDue);
 
-                var sllp = 27;////Get SLLP GL
+                //var _otherOperation = context.TBL_OTHER_OPERATION.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.WriteOffLoanFacilities).FirstOrDefault();
+
+                var _otherOperationAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.WriteOffLoanFacilities).FirstOrDefault();
+
+                //if (_otherOperationEnum == null)
+
+
+                //var sllp = 27;////Get SLLP GL
+
+                var sllp = _otherOperationAccount.GLACCOUNTID;
 
                 //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
-                financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
+                if (principalOutStandingBalance > 0)
+                {
+                    financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
+                }
 
-                financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off", twoFactorAuth);
+                if (pastDue > 0)
+                {
+                    financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off", twoFactorAuth);
+                }
 
 
                 TBL_LOAN results = (from p in context.TBL_LOAN
@@ -9763,7 +9940,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (result)
                 {
                     LoanReversal(loanId, loanInput, twoFactorAuth, applicationDate, staffId);
-                    
+
                     output = true;
 
                 }
