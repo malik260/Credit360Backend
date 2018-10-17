@@ -2487,6 +2487,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationUrl = user.applicationUrl,
                         };
                         casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
+                        twoFactorAuthDetails.skipAuthentication = true;
                     }
 
                 }

@@ -795,24 +795,30 @@ namespace FintrakBanking.Repositories.Credit
                     var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauMerge(request));
                     if (task.Wait(TimeSpan.FromSeconds(3500)))
                     {
-                        JObject json = JObject.Parse(searchResponse.SearchResult);
-                        if (json.Count >= 1)
+                        var type = searchResponse.SearchResult.GetType().Name;
+                        byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult); 
+                        if (fileArray.GetType().Name != "Byte[]")
                         {
-                            if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
+                            JObject json = JObject.Parse(searchResponse.SearchResult);
+                            if (json.Count >= 1)
                             {
-                                string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
-                                errorCode.Replace("{", string.Empty);
-                                errorCode.Replace("}", string.Empty);
-                                var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
-                                if (errorLog.Any())
+                                if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
                                 {
-                                    throw new APIErrorException("Credit Bureau API Error - " + errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: " + errorCode);
+                                    string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
+                                    errorCode.Replace("{", string.Empty);
+                                    errorCode.Replace("}", string.Empty);
+                                    var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
+                                    if (errorLog.Any())
+                                    {
+                                        throw new APIErrorException("Credit Bureau API Error - " + errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: " + errorCode);
+                                    }
                                 }
                             }
                         }
 
+
                         //TODO: DO Transaction Posting Here
-                        byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
+                        //byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
 
                         var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
                         if (SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
@@ -977,7 +983,7 @@ namespace FintrakBanking.Repositories.Credit
                         throw new SecureException("File report not found. Please try again.");
 
                     var base64StringData = Convert.ToBase64String(binaryData);
-                    byte[] fileArray = Encoding.ASCII.GetBytes(base64StringData);
+                    byte[] fileArray = Encoding.ASCII.GetBytes(binaryData.ToString());
 
                     using (var docTrans = docContext.Database.BeginTransaction())
                     using (var trans = context.Database.BeginTransaction())
