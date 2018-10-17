@@ -11,4 +11,11 @@ namespace FintrakBanking.ViewModels.Report
         public int branchId { get; set; }
         public string param { get; set; }
     }
+
+    public class DropdownParam
+    {
+        public int valueId { get; set; }
+        public string valueName { get; set; }
+
+    }
 }
