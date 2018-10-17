@@ -1469,12 +1469,15 @@ namespace FintrakBanking.Repositories.Credit
 
                     postingResult = financeTransaction.BulkIntegrationPosting(model);
 
+                    
                     if (operationType == OperationsEnum.InterestPastDueLoanRepayment)
                     {
                         transType = (byte)LoanTransactionTypeEnum.Interest;
                         var PastDueCode = CommonHelpers.GenerateRandomDigitCode(10);
                         var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
                         var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID);
+
+                        //if(loan.past)
 
                         var pastDue = new TBL_LOAN_PAST_DUE
                         {
