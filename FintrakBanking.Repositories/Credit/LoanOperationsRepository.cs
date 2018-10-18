@@ -10633,6 +10633,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("The requested operation already exist and going through approval");
             }
 
+
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
             if (model.reviewIrregularSchedule.Count > 0)
@@ -10671,14 +10672,25 @@ namespace FintrakBanking.Repositories.Credit
                 _operationTypeId = model.productTypeId;
             }
 
-            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
-            if (reviewApplicationDetail == null) throw new SecureException("Review application details not found!");
+            var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
+            if (loan == null) throw new SecureException("An error occured. Please try again or contact admin.");
+            var loanReferenceNumber = loan.LOANREFERENCENUMBER;
+            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREFERENCENUMBER == loanReferenceNumber).FirstOrDefault();
+            // if (reviewApplicationDetail == null) throw new SecureException("Review application details not found!");
+
+            int loanSystemTypeId = 1;
+            int? loanReviewApplicationId = null;
+            if (reviewApplicationDetail != null)
+            {
+                loanReviewApplicationId = (int?)reviewApplicationDetail.LOANREVIEWAPPLICATIONID;
+                reviewApplicationDetail.OPERATIONPERFORMED = true;
+            }
 
             var reviewOperation = new TBL_LOAN_REVIEW_OPERATION
             {
                 LOANID = model.loanId,
-                LOANREVIEWAPPLICATIONID = reviewApplicationDetail.LOANREVIEWAPPLICATIONID,
-                LOANSYSTEMTYPEID = reviewApplicationDetail.LOANSYSTEMTYPEID,
+                LOANREVIEWAPPLICATIONID = loanReviewApplicationId,
+                LOANSYSTEMTYPEID = loanSystemTypeId,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
@@ -10705,10 +10717,6 @@ namespace FintrakBanking.Repositories.Credit
             };
             // Audit Section ---------------------------
 
-            if (reviewApplicationDetail != null)
-            {
-                reviewApplicationDetail.OPERATIONPERFORMED = true;
-            }
 
             var audit = new TBL_AUDIT
             {

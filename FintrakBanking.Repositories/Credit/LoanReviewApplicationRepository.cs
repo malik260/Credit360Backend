@@ -115,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
+                    loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
                 
@@ -238,6 +239,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
+                    LOANREFERENCENUMBER = loan.loanReferenceNumber
 
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
@@ -503,6 +505,7 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OUTSTANDINGPRINCIPAL,
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -515,7 +518,8 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OVERDRAFTLIMIT,
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -528,7 +532,8 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = 0,
                     outstandingPrincipal = loan.CONTINGENTAMOUNT,
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -541,7 +546,8 @@ namespace FintrakBanking.Repositories.Credit
                     tenorUsed = loan.APPROVEDTENOR,
                     interestRate = loan.APPROVEDINTERESTRATE,
                     outstandingPrincipal = loan.APPROVEDAMOUNT, // adapting!
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = String.Empty,
                 })
                 .FirstOrDefault();
             }

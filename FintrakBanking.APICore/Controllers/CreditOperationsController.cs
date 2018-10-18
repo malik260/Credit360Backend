@@ -274,6 +274,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("approved-loan-review")]

@@ -344,6 +344,7 @@ public int? newInterestFrequencyTypeId { get; set; }
             }
         }
 
+        public string loanReferenceNumber { get; set; }
     }
 
     public class SelectListViewModel
