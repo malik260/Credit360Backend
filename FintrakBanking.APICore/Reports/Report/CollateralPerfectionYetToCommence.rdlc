@@ -11,8 +11,10 @@
               <TextRun>
                 <Value>COLLATERAL PERFECTION YET TO COMMENCE</Value>
                 <Style>
+                  <FontFamily>Arial Black</FontFamily>
                   <FontSize>14pt</FontSize>
                   <FontWeight>Bold</FontWeight>
+                  <Color>MidnightBlue</Color>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -22,10 +24,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>0.06944in</Top>
+        <Top>0.05556in</Top>
         <Left>0.15333in</Left>
-        <Height>0.25in</Height>
-        <Width>6.255in</Width>
+        <Height>0.36667in</Height>
+        <Width>9.53in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -40,27 +42,27 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>0.86667in</Width>
+              <Width>1.4125in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.23333in</Width>
+              <Width>1.77916in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.99667in</Width>
+              <Width>1.5425in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.08333in</Width>
+              <Width>1.62916in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.825in</Width>
+              <Width>1.37083in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.25in</Width>
+              <Width>1.79583in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.375in</Height>
+              <Height>0.25in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -432,7 +434,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!outstandingBalance + Fields!outstandingInterest</Value>
+                              <Value>=(Fields!outstandingBalance) + (Fields!outstandingInterest)</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -518,10 +520,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>CollateralPerfectionYetToCommenceDataset</DataSetName>
-        <Top>0.455in</Top>
+        <Top>0.65833in</Top>
         <Left>0.15333in</Left>
-        <Height>0.625in</Height>
-        <Width>6.255in</Width>
+        <Height>0.5in</Height>
+        <Width>9.53in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -530,10 +532,10 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.28333in</Height>
+    <Height>1.3in</Height>
     <Style />
   </Body>
-  <Width>6.53833in</Width>
+  <Width>9.83833in</Width>
   <Page>
     <PageHeader>
       <Height>0.61667in</Height>
