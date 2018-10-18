@@ -337,12 +337,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
         {
-            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter && ChecklistCompleted(model.applicationId) == false) throw new SecureException("Checklist not complleted!");
-
             int nextProcessId = model.operationId + 1;
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
             int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+
+            if (appl.CREATEDBY == model.createdBy 
+                && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter 
+                && ChecklistCompleted(model.applicationId) == false)
+            {
+                throw new SecureException("Checklist not complleted!");
+            }
 
             // customization for CAM approvals
             //bool operationIsCam = (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
