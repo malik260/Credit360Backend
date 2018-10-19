@@ -11,11 +11,10 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class ReceivableInterest : System.Web.UI.Page
+    public partial class WeeklyRecoveryReportForFINCON : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (!IsPostBack)
             {
                 try
@@ -50,19 +49,19 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
-                    LoanReportObjects receivableInterest = new LoanReportObjects();
-                    var data = receivableInterest.ReceivableLoanInterest(startDate, endDate, companyId);
+                    LoanReportObjects weeklyrecoveryReportforFINCON = new LoanReportObjects();
+                    var data = weeklyrecoveryReportforFINCON.WeeklyRecoveryReportFINCON(startDate, endDate, companyId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "RecceivableInterestReport";
+                    reportDataSource.Name = "WeeklyRecoveryReportFINCONDataset";
 
                     ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ReceivableInterestReport.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/WeeklyRecoveryReportFINCON.rdlc");
                     //ReportViewer1.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
@@ -73,6 +72,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     return;
                 }
             }
+
         }
     }
 }

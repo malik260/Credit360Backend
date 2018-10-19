@@ -794,7 +794,8 @@ namespace FintrakBanking.Repositories.Credit
                                         equals b.CHECKLISTDEFINITIONID where b.TARGETID == targetId 
                                         && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ?  (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
                                         && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                                        select b;
+                                        && ids.Contains((int)a.APPROVALLEVELID)
+                                               select b;
 
                         var productId = checklistType.ISPRODUCT_BASED ? (short?)detail.APPROVEDPRODUCTID : null;
 
@@ -803,6 +804,9 @@ namespace FintrakBanking.Repositories.Credit
                                           where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID
                                           && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == productId
                                           select a).AsQueryable();
+
+                        var cc = checklistDefinitions.Count();
+                        var bb = checklistDetails.Count();
 
                         if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
                         {

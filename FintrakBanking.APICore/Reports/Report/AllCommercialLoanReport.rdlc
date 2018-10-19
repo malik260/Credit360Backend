@@ -24,10 +24,10 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox1</rd:DefaultName>
-        <Top>0.05556in</Top>
+        <Top>0.06944in</Top>
         <Left>0.29167in</Left>
         <Height>0.35833in</Height>
-        <Width>16.00833in</Width>
+        <Width>16.45in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -42,66 +42,66 @@
         <TablixBody>
           <TablixColumns>
             <TablixColumn>
-              <Width>0.97236in</Width>
+              <Width>0.70745in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.6057in</Width>
+              <Width>0.59912in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.86403in</Width>
+              <Width>0.67412in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.76403in</Width>
+              <Width>0.75745in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.72237in</Width>
+              <Width>0.62413in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.71403in</Width>
+              <Width>0.70745in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.0057in</Width>
+              <Width>1.12412in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.71403in</Width>
+              <Width>0.90745in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.8807in</Width>
+              <Width>0.98246in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.86403in</Width>
+              <Width>1.34912in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.8057in</Width>
+              <Width>0.84912in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.8057in</Width>
+              <Width>0.87412in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.73903in</Width>
+              <Width>0.96579in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.86403in</Width>
+              <Width>0.88247in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.82237in</Width>
+              <Width>0.90746in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.73903in</Width>
+              <Width>0.89079in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.79737in</Width>
+              <Width>0.94913in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.7307in</Width>
+              <Width>0.62412in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>0.7807in</Width>
+              <Width>1.21579in</Width>
             </TablixColumn>
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.54167in</Height>
+              <Height>0.46667in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -790,7 +790,7 @@
               </TablixCells>
             </TablixRow>
             <TablixRow>
-              <Height>0.30833in</Height>
+              <Height>0.25in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1159,6 +1159,7 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -1194,6 +1195,7 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -1229,6 +1231,7 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -1264,11 +1267,12 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
                           <Style>
-                            <TextAlign>Right</TextAlign>
+                            <TextAlign>Center</TextAlign>
                           </Style>
                         </Paragraph>
                       </Paragraphs>
@@ -1499,10 +1503,10 @@
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>CommercialLoanReport</DataSetName>
-        <Top>0.51333in</Top>
-        <Left>0.5in</Left>
-        <Height>0.85in</Height>
-        <Width>15.19165in</Width>
+        <Top>0.62167in</Top>
+        <Left>0.15in</Left>
+        <Height>0.71667in</Height>
+        <Width>16.59167in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
@@ -1511,13 +1515,13 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.48333in</Height>
+    <Height>1.45833in</Height>
     <Style />
   </Body>
-  <Width>16.3in</Width>
+  <Width>16.84167in</Width>
   <Page>
     <PageHeader>
-      <Height>0.475in</Height>
+      <Height>0.66667in</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <Style>
@@ -1527,7 +1531,7 @@
       </Style>
     </PageHeader>
     <PageFooter>
-      <Height>0.33333in</Height>
+      <Height>0.425in</Height>
       <PrintOnFirstPage>true</PrintOnFirstPage>
       <PrintOnLastPage>true</PrintOnLastPage>
       <Style>
@@ -1633,6 +1637,10 @@
         </Field>
         <Field Name="businessGroup">
           <DataField>businessGroup</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="staffcode">
+          <DataField>staffcode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

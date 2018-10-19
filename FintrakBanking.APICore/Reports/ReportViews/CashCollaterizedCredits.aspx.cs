@@ -11,11 +11,10 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class ReceivableInterest : System.Web.UI.Page
+    public partial class CashCollaterizedCredits : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (!IsPostBack)
             {
                 try
@@ -50,19 +49,19 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
-                    LoanReportObjects receivableInterest = new LoanReportObjects();
-                    var data = receivableInterest.ReceivableLoanInterest(startDate, endDate, companyId);
+                    LoanReportObjects CashCollaterizedCredit = new LoanReportObjects();
+                    var data = CashCollaterizedCredit.CashCollaterizedCredits(startDate, endDate, companyId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "RecceivableInterestReport";
+                    reportDataSource.Name = "CashCollaterizedCreditsDataSet";
 
                     ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ReceivableInterestReport.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/CashCollaterizedCredits.rdlc");
                     //ReportViewer1.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
@@ -73,6 +72,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     return;
                 }
             }
+
+
         }
     }
 }
