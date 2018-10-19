@@ -115,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
+                    loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
                 
@@ -238,6 +239,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
+                    LOANREFERENCENUMBER = loan.loanReferenceNumber
 
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
@@ -267,6 +269,7 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
             throw new SecureException("An error occured while saving the data!");
         }
+
         public bool validateCustomer(int loanApplicationDetailId, int customerId)
         {
 
@@ -310,7 +313,8 @@ namespace FintrakBanking.Repositories.Credit
 
            
         }
-            private int GetCamOperation(int performanceTypeId)
+
+        private int GetCamOperation(int performanceTypeId)
         {
             switch (performanceTypeId)
             {
@@ -337,6 +341,13 @@ namespace FintrakBanking.Repositories.Credit
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
             int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+
+            if (appl.CREATEDBY == model.createdBy 
+                && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter 
+                && ChecklistCompleted(model.applicationId) == false)
+            {
+                throw new SecureException("Checklist not complleted!");
+            }
 
             // customization for CAM approvals
             //bool operationIsCam = (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
@@ -499,6 +510,7 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OUTSTANDINGPRINCIPAL,
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -511,7 +523,8 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OVERDRAFTLIMIT,
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -524,7 +537,8 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = 0,
                     outstandingPrincipal = loan.CONTINGENTAMOUNT,
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -537,7 +551,8 @@ namespace FintrakBanking.Repositories.Credit
                     tenorUsed = loan.APPROVEDTENOR,
                     interestRate = loan.APPROVEDINTERESTRATE,
                     outstandingPrincipal = loan.APPROVEDAMOUNT, // adapting!
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = String.Empty,
                 })
                 .FirstOrDefault();
             }
@@ -882,5 +897,21 @@ namespace FintrakBanking.Repositories.Credit
             position.applicationDetailId = detailId;
             return position;
         }
+
+        public bool ChecklistCompleted(int applicationId)
+        {
+            var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                             where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                             && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
+                             select c).ToList();
+
+            var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
+                          where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
+                          && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
+                          select c).ToList();
+
+            return condition.Count == status.Count;
+        }
+
     }
 }

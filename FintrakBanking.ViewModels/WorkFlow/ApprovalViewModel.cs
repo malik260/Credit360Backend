@@ -27,5 +27,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
             }
         }
         public bool deferredExecution { get; set; }
+        public string rollOverType { get; set; }
+
     }
 }

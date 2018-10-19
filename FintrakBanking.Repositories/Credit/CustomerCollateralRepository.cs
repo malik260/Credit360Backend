@@ -532,12 +532,6 @@ namespace FintrakBanking.Repositories.Credit
                     x => x.m.DefaultIfEmpty(),
                     (c, m) => new CollateralViewModel
                     {
-                        //NOTE: customerId 61,67 & 60 has data
-
-                        //loanId = c.m, // m = m == null ? 0 : m.LOANID,
-                        // valueInUse = m.LOANSYSTEMTYPEID == 1 ? context.TBL_LOAN.Where(x => x.TERMLOANID == m.LOANID).Sum(l => l.PRINCIPALAMOUNT)
-                        //                                   : context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == m.LOANID).Sum(l => l.OVERDRAFTLIMIT), 
-
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
@@ -560,17 +554,19 @@ namespace FintrakBanking.Repositories.Credit
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE
                     })
-                //.GroupBy(x => x.collateralId)
-                ;
+                    .ToList()
+                    .GroupBy(x => x.collateralId).Select(g => g.First())
+                    ;
 
-            return collaterals.ToList();
+            //var count = collaterals.Count();
+            //var test = collaterals;
+
+            return collaterals;
         }
-
 
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
         {
             return GetCustomerCollateral(companyId).Where(x => x.collateralTypeId == collateralTypeId && (x.customerId == customerId || x.customerId == thirdpartyCustomerId));
-
         }
 
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId)
