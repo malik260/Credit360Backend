@@ -502,6 +502,13 @@
     <Compile Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx.designer.cs">
       <DependentUpon>CashBackedBondAndGuarantee.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CashCollaterizedCredits.aspx.cs">
+      <DependentUpon>CashCollaterizedCredits.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashCollaterizedCredits.aspx.designer.cs">
+      <DependentUpon>CashCollaterizedCredits.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralInsurance.aspx.cs">
       <DependentUpon>CollateralInsurance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -819,6 +826,13 @@
     <Compile Include="Reports\ReportViews\UnearnedLoanInterest.aspx.designer.cs">
       <DependentUpon>UnearnedLoanInterest.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx.cs">
+      <DependentUpon>WeeklyRecoveryReportForFINCON.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx.designer.cs">
+      <DependentUpon>WeeklyRecoveryReportForFINCON.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\Workflow.aspx.cs">
       <DependentUpon>Workflow.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -879,6 +893,7 @@
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
     <Content Include="Reports\ReportViews\CashBacked.aspx" />
     <Content Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx" />
+    <Content Include="Reports\ReportViews\CashCollaterizedCredits.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
@@ -916,6 +931,7 @@
     <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
+    <Content Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="ApplicationInsights.config">
@@ -1158,6 +1174,7 @@
     <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CashCollaterizedCredits.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPerfectionYetToCommence.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
@@ -1202,6 +1219,7 @@
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
     <EmbeddedResource Include="Reports\Report\UnearnedLoanInterest.rdlc" />
+    <EmbeddedResource Include="Reports\Report\WeeklyRecoveryReportFINCON.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
   <ItemGroup>

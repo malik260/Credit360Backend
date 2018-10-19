@@ -23,6 +23,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        public string staffCode { get; set; }
+        public decimal total { get; set; }
          
 
     }
@@ -32,5 +34,14 @@ namespace FintrakBanking.ViewModels.Credit
     {
        public string subHead { get; set; }
         public string staffCode { get; set; }
+    }
+
+
+
+    public class StaffMis
+    {
+        public int staffId { get; set; }
+        public string staffCode { get; set; }
+        public string subhead { get; set; }
     }
 }
