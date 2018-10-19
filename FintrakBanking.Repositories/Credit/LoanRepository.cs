@@ -5967,17 +5967,13 @@ namespace FintrakBanking.Repositories.Credit
 
             return exposures;
         }
-        /// <summary>
-        /// Searches for loan.
-        /// </summary>
-        /// <param name="searchQuery">The search query.</param>
-        /// <returns></returns>
+
         public IQueryable<LoanViewModel> SearchForLoan(string searchQuery)
         {
             var applicationDate = generalSetup.GetApplicationDate();
             IQueryable<LoanViewModel> allFilteredLoan = null;
 
-            // searchQuery = searchQuery.Trim();
+            searchQuery = searchQuery.Trim();
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
