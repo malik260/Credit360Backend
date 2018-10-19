@@ -4661,7 +4661,6 @@ namespace FintrakBanking.Repositories.Credit
                                 applicationStatusId = m.APPLICATIONSTATUSID,
                                 customerId = m.CUSTOMERID ?? 0,
                                 customerCode = cust.CUSTOMERCODE,
-
                                 customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                                 customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                                 customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -8600,5 +8599,8 @@ namespace FintrakBanking.Repositories.Credit
 
         }
         #endregion Commercial loan Operations
+
+
+       
     }
 }

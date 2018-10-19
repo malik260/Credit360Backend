@@ -668,6 +668,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string approvedAmountCurrency { get; set; }
         public bool atInitiator { get; set; }
+        public int loanId { get; set; }
 
 
 

@@ -579,5 +579,62 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+        [HttpGet]
+        [Route("loan-application/availment-completed/{searchValue}")]
+        public HttpResponseMessage GetLoanForTrancheFacilityUtilization(string searchValue)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetLoanFacilityUtilization(token.GetCompanyId, token.GetStaffId, token.GetBranchId, searchValue);
+                if (!response.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = response.Count() });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [Route("loan-detail/{applicationdetilId}")]
+        public HttpResponseMessage GetLoanFacilityId(int applicationdetilId)
+        {
+            TokenDecryptionHelper token = new TokenDecryptionHelper();
+            try
+            {
+                var response = repo.GetLoanFacilityDetail(applicationdetilId);
+                if (response==null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
+
 }
