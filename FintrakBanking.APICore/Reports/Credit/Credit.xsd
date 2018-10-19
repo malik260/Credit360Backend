@@ -380,6 +380,7 @@
               <xs:element name="comment" msprop:Generator_ColumnVarNameInTable="columncomment" msprop:Generator_ColumnPropNameInRow="comment" msprop:Generator_ColumnPropNameInTable="commentColumn" msprop:Generator_UserColumnName="comment" type="xs:string" minOccurs="0" />
               <xs:element name="approvalStatus" msprop:Generator_ColumnVarNameInTable="columnapprovalStatus" msprop:Generator_ColumnPropNameInRow="approvalStatus" msprop:Generator_ColumnPropNameInTable="approvalStatusColumn" msprop:Generator_UserColumnName="approvalStatus" type="xs:string" minOccurs="0" />
               <xs:element name="responseDefaultTime" msprop:Generator_ColumnVarNameInTable="columnresponseDefaultTime" msprop:Generator_ColumnPropNameInRow="responseDefaultTime" msprop:Generator_ColumnPropNameInTable="responseDefaultTimeColumn" msprop:Generator_UserColumnName="responseDefaultTime" type="xs:string" minOccurs="0" />
+              <xs:element name="ReferenceNumber" msprop:Generator_ColumnVarNameInTable="columnReferenceNumber" msprop:Generator_ColumnPropNameInRow="ReferenceNumber" msprop:Generator_ColumnPropNameInTable="ReferenceNumberColumn" msprop:Generator_UserColumnName="ReferenceNumber" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -506,13 +507,6 @@
               <xs:element name="lienTypeName" msprop:Generator_ColumnVarNameInTable="columnlienTypeName" msprop:Generator_ColumnPropNameInRow="lienTypeName" msprop:Generator_ColumnPropNameInTable="lienTypeNameColumn" msprop:Generator_UserColumnName="lienTypeName" type="xs:string" minOccurs="0" />
               <xs:element name="dateTimeCreated" msprop:Generator_ColumnVarNameInTable="columndateTimeCreated" msprop:Generator_ColumnPropNameInRow="dateTimeCreated" msprop:Generator_ColumnPropNameInTable="dateTimeCreatedColumn" msprop:Generator_UserColumnName="dateTimeCreated" type="xs:string" minOccurs="0" />
               <xs:element name="customerName" msprop:Generator_ColumnVarNameInTable="columncustomerName" msprop:Generator_ColumnPropNameInRow="customerName" msprop:Generator_ColumnPropNameInTable="customerNameColumn" msprop:Generator_UserColumnName="customerName" type="xs:string" minOccurs="0" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="WriteOff" msprop:Generator_TableClassName="WriteOffDataTable" msprop:Generator_TableVarName="tableWriteOff" msprop:Generator_TablePropName="WriteOff" msprop:Generator_RowDeletingName="WriteOffRowDeleting" msprop:Generator_RowChangingName="WriteOffRowChanging" msprop:Generator_RowEvHandlerName="WriteOffRowChangeEventHandler" msprop:Generator_RowDeletedName="WriteOffRowDeleted" msprop:Generator_UserTableName="WriteOff" msprop:Generator_RowChangedName="WriteOffRowChanged" msprop:Generator_RowEvArgName="WriteOffRowChangeEvent" msprop:Generator_RowClassName="WriteOffRow">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="managementPosition" msprop:Generator_ColumnVarNameInTable="columnmanagementPosition" msprop:Generator_ColumnPropNameInRow="managementPosition" msprop:Generator_ColumnPropNameInTable="managementPositionColumn" msprop:Generator_UserColumnName="managementPosition" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

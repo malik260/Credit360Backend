@@ -16,7 +16,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string interestType { get; set; }
         public string customerName { get; set; }
         public decimal principalAmount { get; set; }
-        public decimal interestRate { get; set; }
+        public double interestRate { get; set; }
         public decimal interestRateChange { get; set; }
         public decimal interestToDate { get; set; }
         public string accountPayTo { get; set; }
@@ -24,6 +24,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal unearnedInterestAsAtDate { get; set; }
         public decimal accruedInterestToDate { get; set; }
         public string businessGroup { get; set; }
+        public string staffcode { get; set; }
 
     }
 }

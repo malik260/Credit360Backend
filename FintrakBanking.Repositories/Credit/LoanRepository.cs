@@ -4662,7 +4662,6 @@ namespace FintrakBanking.Repositories.Credit
                                 applicationStatusId = m.APPLICATIONSTATUSID,
                                 customerId = m.CUSTOMERID ?? 0,
                                 customerCode = cust.CUSTOMERCODE,
-
                                 customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                                 customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                                 customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -5973,12 +5972,13 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
             IQueryable<LoanViewModel> allFilteredLoan = null;
 
+<<<<<<< HEAD
             searchQuery = searchQuery.Trim();
 
+=======
+>>>>>>> f1fd404b73904a32b4dd520e6af0a27973ec1258
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                searchQuery = searchQuery.ToLower();
-
                 var loans = (from a in context.TBL_LOAN
                              //join r in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals r.LOANID
                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -6060,11 +6060,11 @@ namespace FintrakBanking.Repositories.Credit
                                  //currency = a.TBL_CURRENCY.CURRENCYNAME
                              });
 
-                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery) || 
-                                   x.customerCode.ToLower().Contains(searchQuery) ||
-                                   x.firstName.ToLower().Contains(searchQuery) ||
-                                   x.lastName.ToLower().Contains(searchQuery) ||
-                                   x.productAccountName.ToLower().Contains(searchQuery))
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
+                                                   x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.productAccountName.ToLower().Contains(searchQuery.ToLower()))
                                    .Take(10).AsQueryable();
 
             }
@@ -7559,8 +7559,9 @@ namespace FintrakBanking.Repositories.Credit
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
                                        writtenOff = a.LOANSTATUSID == 7,
+                                       loanStatusId = a.LOANSTATUSID,
                                    });
-
+            var j = allFilteredLoan.ToList();
             return allFilteredLoan;
         }
 
@@ -7593,7 +7594,8 @@ namespace FintrakBanking.Repositories.Credit
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
-                                       writtenOff = a.LOANSTATUSID == 7
+                                       writtenOff = a.LOANSTATUSID == 7,
+                                       loanStatusId = a.LOANSTATUSID,
                                    });
             return allFilteredLoan;
         }
@@ -7626,7 +7628,9 @@ namespace FintrakBanking.Repositories.Credit
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
                                        // isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
-                                       writtenOff = a.LOANSTATUSID == 7
+                                       writtenOff = a.LOANSTATUSID == 7,
+                                       loanStatusId=a.LOANSTATUSID,
+                                       
                                    });
             return allFilteredLoan;
         }
@@ -7662,6 +7666,7 @@ namespace FintrakBanking.Repositories.Credit
                                        productTypeId = d.TBL_PRODUCT1.PRODUCTTYPEID, // 1
                                        productName = d.TBL_PRODUCT1.PRODUCTNAME, // 1
                                        //writtenOff = a.LOANSTATUSID == 7
+                                       
                                    });
             return allFilteredLoan;
         }
@@ -8168,6 +8173,13 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanViewModel> GetApprovedLoanReview()
         {
                 var applicationDate = generalSetup.GetApplicationDate();
+
+                List<short> productTypes = new List<short>();
+                productTypes.Add((short)LoanProductTypeEnum.CommercialLoan);
+                productTypes.Add((short)LoanProductTypeEnum.ForeignXRevolving);
+
+                //var productTypes = new {(short)LoanProductTypeEnum.CommercialLoan, (short)LoanProductTypeEnum.ForeignXRevolving };
+
                 var allFilteredLoan = (from a in context.TBL_LOAN
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
                                        join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
@@ -8176,6 +8188,7 @@ namespace FintrakBanking.Repositories.Credit
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
                                       && b.OPERATIONPERFORMED == false && b.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.TermDisbursedFacility
+                                      && !productTypes.Contains(a.TBL_PRODUCT.PRODUCTTYPEID )
                                       //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
@@ -8273,6 +8286,11 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 var applicationDate = generalSetup.GetApplicationDate();
+                List<short> productTypes = new List<short>();
+                productTypes.Add((short)LoanProductTypeEnum.CommercialLoan);
+                productTypes.Add((short)LoanProductTypeEnum.ForeignXRevolving);
+
+
                 var allFilteredLoan = (from a in context.TBL_LOAN
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
@@ -8280,6 +8298,8 @@ namespace FintrakBanking.Repositories.Credit
                                        && b.OPERATIONPERFORMED == false
                                        && a.OPERATIONID != (short)OperationsEnum.TermLoanBooking
                                        && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                                       && productTypes.Contains(a.TBL_PRODUCT.PRODUCTTYPEID)
+
                                        select new LoanViewModel
                                        {
                                            loanId = a.TERMLOANID,
@@ -8715,5 +8735,8 @@ namespace FintrakBanking.Repositories.Credit
 
         }
         #endregion Commercial loan Operations
+
+
+       
     }
 }

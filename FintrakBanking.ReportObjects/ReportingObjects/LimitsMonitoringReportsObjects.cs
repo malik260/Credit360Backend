@@ -522,12 +522,18 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<SLANotificationViewModel> SLAMonitoring(DateTime startDate, DateTime endDate, int approvalStatus,int operationId)
         {
+
+            int[] operations = { (int)OperationsEnum.OfferLetterApproval, (int)OperationsEnum.CAM, (int)OperationsEnum.ContigentLoanBooking ,
+           (int)OperationsEnum.ContingentLiabilityRenewal,(int)OperationsEnum.ContingentLiabilityUsage,(int)OperationsEnum.ContingentRequestBooking,
+            (int)OperationsEnum.CommercialLoanBooking};
+
             var list = new List<SLANotificationViewModel>();
             var notificationList = from a in context.TBL_APPROVAL_TRAIL
                                    join b in context.TBL_APPROVAL_LEVEL on a.TOAPPROVALLEVELID equals b.APPROVALLEVELID
                                    join s in context.TBL_STAFF on a.TOSTAFFID equals s.STAFFID
                                    join o in context.TBL_OPERATIONS on a.OPERATIONID equals o.OPERATIONID
-                                   where a.SYSTEMARRIVALDATETIME >= startDate && a.SYSTEMARRIVALDATETIME <= endDate && ( a.APPROVALSTATUSID == approvalStatus || approvalStatus == 0)
+                                   where a.SYSTEMARRIVALDATETIME >= startDate && a.SYSTEMARRIVALDATETIME <= endDate 
+                                   && ( a.APPROVALSTATUSID == approvalStatus || approvalStatus == 0)
                                    && (a.OPERATIONID == operationId || operationId ==0)
                                    
                                    //&& a.RESPONSESTAFFID == null
@@ -559,6 +565,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
             foreach (var x in notificationList)
             {
+                if (operations.Contains(x.operationId))
+                {
                     data = new SLANotificationViewModel
                     {
                         approvalTrailId = x.approvalTrailId,
@@ -577,16 +585,47 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         staffEmail = x.staffEmail,
                         operationName = x.operationName,
                         responseDefaultTime = x.systemResponseDate == null ? 0 : x.systemArrivalDate.AddHours(x.salInterval).Subtract(x.systemResponseDate.Value).TotalHours,
-                       // responseDefaultTime = x.salDateLine == null ? 0 : x.salDateLine.Value.Subtract(x.systemArrivalDate).TotalHours,
+                        // responseDefaultTime = x.salDateLine == null ? 0 : x.salDateLine.Value.Subtract(x.systemArrivalDate).TotalHours,
                         slaNotificationInterval = x.slaNotificationInterval,
                         requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
                         emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault(),
                         requestTo = context.TBL_STAFF.Where(s => s.STAFFID == x.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
-                        approvalStatus = context.TBL_APPROVAL_STATUS.Where(p=>p.APPROVALSTATUSID==x.approvalStatusId).Select(p=>p.APPROVALSTATUSNAME).FirstOrDefault()
+                        approvalStatus = context.TBL_APPROVAL_STATUS.Where(p => p.APPROVALSTATUSID == x.approvalStatusId).Select(p => p.APPROVALSTATUSNAME).FirstOrDefault(),
+                        referenceNumber = context.TBL_LOAN_APPLICATION.Where(o=>o.LOANAPPLICATIONID==x.targetId).Select(o=>o.RELATEDREFERENCENUMBER).FirstOrDefault()
                     };
                     list.Add(data);
+                }
+                else {
+                    data = new SLANotificationViewModel
+                    {
+                        approvalTrailId = x.approvalTrailId,
+                        arrivalDate = x.arrivalDate,
+                        fromApprovalLevelId = x.fromApprovalLevelId,
+                        operationId = x.operationId,
+                        requestStaffId = x.requestStaffId,
+                        salDateLine = x.systemArrivalDate.AddHours(x.salInterval),
+                        slaNotificationDate = x.systemArrivalDate.AddHours(x.slaNotificationInterval),
+                        salInterval = x.salInterval,
+                        systemArrivalDate = x.systemArrivalDate,
+                        systemResponseDate = x.systemResponseDate,
+                        targetId = x.targetId,
+                        toApprovalLevelId = x.toApprovalLevelId,
+                        toStaffId = x.toStaffId,
+                        staffEmail = x.staffEmail,
+                        operationName = x.operationName,
+                        responseDefaultTime = x.systemResponseDate == null ? 0 : x.systemArrivalDate.AddHours(x.salInterval).Subtract(x.systemResponseDate.Value).TotalHours,
+                        // responseDefaultTime = x.salDateLine == null ? 0 : x.salDateLine.Value.Subtract(x.systemArrivalDate).TotalHours,
+                        slaNotificationInterval = x.slaNotificationInterval,
+                        requestFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+                        emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault(),
+                        requestTo = context.TBL_STAFF.Where(s => s.STAFFID == x.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
+                        approvalStatus = context.TBL_APPROVAL_STATUS.Where(p => p.APPROVALSTATUSID == x.approvalStatusId).Select(p => p.APPROVALSTATUSNAME).FirstOrDefault()
+                    };
+                    list.Add(data);
+                }
+                    
             }
-            return list.ToList();
+            return list.ToList(); 
         }
 
         public List<Blacklist> Blacklist(DateTime startDate, DateTime endDate, string customercode)
