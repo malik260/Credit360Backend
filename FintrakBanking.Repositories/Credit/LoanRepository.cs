@@ -5976,12 +5976,8 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
             IQueryable<LoanViewModel> allFilteredLoan = null;
 
-            // searchQuery = searchQuery.Trim();
-
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                searchQuery = searchQuery.ToLower();
-
                 var loans = (from a in context.TBL_LOAN
                              //join r in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals r.LOANID
                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -6063,11 +6059,11 @@ namespace FintrakBanking.Repositories.Credit
                                  //currency = a.TBL_CURRENCY.CURRENCYNAME
                              });
 
-                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery) || 
-                                   x.customerCode.ToLower().Contains(searchQuery) ||
-                                   x.firstName.ToLower().Contains(searchQuery) ||
-                                   x.lastName.ToLower().Contains(searchQuery) ||
-                                   x.productAccountName.ToLower().Contains(searchQuery))
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
+                                                   x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.productAccountName.ToLower().Contains(searchQuery.ToLower()))
                                    .Take(10).AsQueryable();
 
             }
