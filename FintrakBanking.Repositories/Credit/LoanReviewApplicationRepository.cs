@@ -162,6 +162,74 @@ namespace FintrakBanking.Repositories.Credit
             return index == (position - 1);
         }
 
+
+        public List<LMSOperationListViewModel> GetApplicationOperations()
+        {
+
+            var operations = (from a in context.TBL_OPERATIONS
+                              select a).ToList();
+
+            List<LMSOperationListViewModel> output = new List<LMSOperationListViewModel>();
+
+            //LMSOperationListViewModel value = new LMSOperationListViewModel {operationId = (short)OperationsEnum.TenorChange, operationName = "Tenor Change", loanSystemTypeId = (short)LoanSystemTypeEnum.ContingentLiability };
+
+            // ----------------contingent liability --------------------------------------
+            output.Add( new LMSOperationListViewModel
+            {   operationId = (short)OperationsEnum.ContingentLiabilityRenewal,
+                operationName = operations.FirstOrDefault(x=>x.OPERATIONID== (short)OperationsEnum.ContingentLiabilityRenewal).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.ContingentLiability,
+                productTypeId = (short) LoanProductTypeEnum.ContingentLiability });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.ContingentLiabilityTermination,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.ContingentLiabilityTermination).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.ContingentLiability,
+                productTypeId = (short)LoanProductTypeEnum.ContingentLiability
+            });
+
+            //---------------------overdraft/revolving------------------------------------
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftInterestRate,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftInterestRate).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftRenewal,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftRenewal).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftSubAllocation,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftSubAllocation).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftTenorExtension,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftTenorExtension).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftTopup,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftTopup).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+
+
+
+
+            return output;
+        }
+
         public SelectListViewModel GetAllSelectList()
         {
             var list = new SelectListViewModel();

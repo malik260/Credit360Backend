@@ -14289,15 +14289,22 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("The new loan tenor exceeded the line tenor for this facility.");
             }
 
+            if (loanApp.EFFECTIVEDATE == null)
+            {
+                throw new ConditionNotMetException("Loan Application Effective Date For LoanApplicationDetailID:"+ loan.LOANAPPLICATIONDETAILID + " Can Not Be Null");
+            }
             if (loan.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking && loanApp.EXPIRYDATE != null)
             {
                 if (loanApp.EXPIRYDATE < loan.MATURITYDATE.AddDays(userModel.newTenor))
-                    throw new ConditionNotMetException("the resulting maturity date exceeded the line expiry date.");
+
+                throw new ConditionNotMetException("the resulting maturity date exceeded the line expiry date.");
             }
             else
             {
                 if (loanApp.EFFECTIVEDATE.Value.AddDays(loanApp.APPROVEDTENOR) < loan.EFFECTIVEDATE.AddDays(userModel.newTenor))
-                    throw new ConditionNotMetException("the resulting maturity date exceeded the line expiry date.");
+                    //throw new SecureException("the resulting maturity date exceeded the line expiry date.");
+
+                throw new ConditionNotMetException("the resulting maturity date exceeded the line expiry date.");
             }
 
 

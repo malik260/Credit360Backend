@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using FintrakBanking.APICore.Filters;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -127,7 +128,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             var searchString = search.searchString.Trim();
             //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString);
+            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString).Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
