@@ -48,6 +48,16 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+
+        //public int newtenor { get; set; }
+        public double? newinterestRate { get; set; }
+        public decimal? newLineAmount { get; set; }
+        public int? loanReviewOperationId { get; set; }
+        public string operationPerformed { get; set; }
+        public short? instructionTypeId { get; set; }
+        public string instructionTypeName { get; set; }
+
+
         public short productPriceIndexId { get; set; }
         public int tenorLeft { get; set; }
 
@@ -560,6 +570,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
         public string productPriceDescription;
+        public string reviewDetails;
+        public int? loanReviewOperationId { get; set; }
 
         public int requestStaffId { get; set; }
 
@@ -665,10 +677,21 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " " + units;
             }
         }
-
+        public string newTenorString
+        {
+            get
+            {
+                var units = tenor == 1 ? " day" : " days";
+                if (tenor < 15) return tenor.ToString() + units;
+                var months = Math.Ceiling((Math.Floor(tenor / 15.00)) / 2);
+                units = months == 1 ? " month" : " months";
+                return months.ToString() + " " + units;
+            }
+        }
         public string approvedAmountCurrency { get; set; }
         public bool atInitiator { get; set; }
-
+        public double? newinterestRate { get; set; }
+        public decimal? newLineAmount { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

@@ -564,11 +564,9 @@ namespace FintrakBanking.Repositories.Credit
             return collaterals;
         }
 
-
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
         {
             return GetCustomerCollateral(companyId).Where(x => x.collateralTypeId == collateralTypeId && (x.customerId == customerId || x.customerId == thirdpartyCustomerId));
-
         }
 
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId)
