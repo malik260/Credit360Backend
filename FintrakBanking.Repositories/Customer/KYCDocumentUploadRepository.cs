@@ -98,40 +98,80 @@ namespace FintrakBanking.Repositories.Customer
         {
             try
             {
-                var data = new Entities.DocumentModels.TBL_MEDIA_CHECKLIST_DOCUMENTS
+
+                var isDocumentUploaded = context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).Any();
+
+                if (isDocumentUploaded==true)
                 {
-                    FILEDATA = file,
-                    CHECKLISTDEFINITIONID = model.checkListDefinitionId,
-                    CHECKLISTSTATUSID = model.checkListStatusId,
-                    LOANAPPLICATIONID = model.loanApplicationId,
-                    LOANDETAILSID = model.loanDetailsId,
-                    FILENAME = model.fileName,
-                    FILEEXTENSION = model.fileExtension,
-                    SYSTEMDATETIME = DateTime.Now,
-                    PHYSICALFILENUMBER = model.physicalFileNumber,
-                    PHYSICALLOCATION = model.physicalLocation,
-                    CREATEDBY = (int)model.createdBy,
-                    DATECREATED = DateTime.Now
-                };
+                    var existingDocument = (context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Where(x => x.LOANAPPLICATIONID == model.loanApplicationId).Select(x => x)).FirstOrDefault();
 
-                context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Add(data);
+                    existingDocument.FILEDATA = file;
+                    existingDocument.CHECKLISTDEFINITIONID = model.checkListDefinitionId;
+                    existingDocument.CHECKLISTSTATUSID = model.checkListStatusId;
+                    existingDocument.LOANAPPLICATIONID = model.loanApplicationId;
+                    existingDocument.LOANDETAILSID = model.loanDetailsId;
+                    existingDocument.FILENAME = model.fileName;
+                    existingDocument.FILEEXTENSION = model.fileExtension;
+                    existingDocument.SYSTEMDATETIME = DateTime.Now;
+                    existingDocument.PHYSICALFILENUMBER = model.physicalFileNumber;
+                    existingDocument.PHYSICALLOCATION = model.physicalLocation;
+                    existingDocument.CREATEDBY = (int)model.createdBy;
+                    existingDocument.DATECREATED = DateTime.Now;
 
-                // Audit Section ---------------------------
-                var audit = new TBL_AUDIT
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"uploaded Checklist Document for item with ID: '{ model.checkListDefinitionId }' has been replaced ",
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
+                }
+                else
                 {
-                    AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
-                    STAFFID = model.createdBy,
-                    BRANCHID = (short)model.userBranchId,
-                    DETAIL = $"Added Checklist Document for item with ID: '{ model.checkListDefinitionId }' ",
-                    IPADDRESS = model.userIPAddress,
-                    URL = model.applicationUrl,
-                    APPLICATIONDATE = general.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
-                };
-                this.audit.AddAuditTrail(audit);
-                // End of Audit Section ---------------------
 
-                return context.SaveChanges() != 0;
+                    var data = new Entities.DocumentModels.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                    {
+                        FILEDATA = file,
+                        CHECKLISTDEFINITIONID = model.checkListDefinitionId,
+                        CHECKLISTSTATUSID = model.checkListStatusId,
+                        LOANAPPLICATIONID = model.loanApplicationId,
+                        LOANDETAILSID = model.loanDetailsId,
+                        FILENAME = model.fileName,
+                        FILEEXTENSION = model.fileExtension,
+                        SYSTEMDATETIME = DateTime.Now,
+                        PHYSICALFILENUMBER = model.physicalFileNumber,
+                        PHYSICALLOCATION = model.physicalLocation,
+                        CREATEDBY = (int)model.createdBy,
+                        DATECREATED = DateTime.Now
+                    };
+
+                    context.TBL_MEDIA_CHECKLIST_DOCUMENTS.Add(data);
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = $"Added Checklist Document for item with ID: '{ model.checkListDefinitionId }' ",
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
+                }
+
+                return (context.SaveChanges() != 0);
+                 
             }
             catch (Exception ex)
             {

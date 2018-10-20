@@ -115,6 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
+                    loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
                 
@@ -160,6 +161,74 @@ namespace FintrakBanking.Repositories.Credit
             int index = levels.FindIndex(x => x.levelId == staffRoleLevelId);
 
             return index == (position - 1);
+        }
+
+
+        public List<LMSOperationListViewModel> GetApplicationOperations()
+        {
+
+            var operations = (from a in context.TBL_OPERATIONS
+                              select a).ToList();
+
+            List<LMSOperationListViewModel> output = new List<LMSOperationListViewModel>();
+
+            //LMSOperationListViewModel value = new LMSOperationListViewModel {operationId = (short)OperationsEnum.TenorChange, operationName = "Tenor Change", loanSystemTypeId = (short)LoanSystemTypeEnum.ContingentLiability };
+
+            // ----------------contingent liability --------------------------------------
+            output.Add( new LMSOperationListViewModel
+            {   operationId = (short)OperationsEnum.ContingentLiabilityRenewal,
+                operationName = operations.FirstOrDefault(x=>x.OPERATIONID== (short)OperationsEnum.ContingentLiabilityRenewal).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.ContingentLiability,
+                productTypeId = (short) LoanProductTypeEnum.ContingentLiability });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.ContingentLiabilityTermination,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.ContingentLiabilityTermination).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.ContingentLiability,
+                productTypeId = (short)LoanProductTypeEnum.ContingentLiability
+            });
+
+            //---------------------overdraft/revolving------------------------------------
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftInterestRate,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftInterestRate).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftRenewal,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftRenewal).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftSubAllocation,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftSubAllocation).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftTenorExtension,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftTenorExtension).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.OverdraftTopup,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.OverdraftTopup).OPERATIONNAME,
+                loanSystemTypeId = (short)LoanSystemTypeEnum.OverdraftFacility,
+                productTypeId = (short)LoanProductTypeEnum.RevolvingLoan
+            });
+
+
+
+
+            return output;
         }
 
         public SelectListViewModel GetAllSelectList()
@@ -238,6 +307,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
+                    LOANREFERENCENUMBER = loan.loanReferenceNumber
 
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
@@ -335,12 +405,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public WorkflowResponse ForwardApplication(ForwardReviewViewModel model)
         {
-            if (model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter && ChecklistCompleted(model.applicationId) == false) throw new SecureException("Checklist not complleted!");
-
             int nextProcessId = model.operationId + 1;
             int operationId = model.operationId; // beware of nplappraisal!
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
             int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
+
+            if (appl.CREATEDBY == model.createdBy 
+                && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter 
+                && ChecklistCompleted(model.applicationId) == false)
+            {
+                throw new SecureException("Checklist not complleted!");
+            }
 
             // customization for CAM approvals
             //bool operationIsCam = (operationId == (int)OperationsEnum.LoanReviewApprovalAppraisal) || (operationId == (int)OperationsEnum.NPLoanReviewApprovalAppraisal);
@@ -503,6 +578,7 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OUTSTANDINGPRINCIPAL,
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -515,7 +591,8 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = loan.INTERESTRATE,
                     outstandingPrincipal = loan.OVERDRAFTLIMIT,
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -528,7 +605,8 @@ namespace FintrakBanking.Repositories.Credit
                     maturityDate = loan.MATURITYDATE,
                     interestRate = 0,
                     outstandingPrincipal = loan.CONTINGENTAMOUNT,
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = loan.LOANREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -541,7 +619,8 @@ namespace FintrakBanking.Repositories.Credit
                     tenorUsed = loan.APPROVEDTENOR,
                     interestRate = loan.APPROVEDINTERESTRATE,
                     outstandingPrincipal = loan.APPROVEDAMOUNT, // adapting!
-                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID
+                    loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
+                    loanReferenceNumber = String.Empty,
                 })
                 .FirstOrDefault();
             }

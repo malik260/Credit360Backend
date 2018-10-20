@@ -58,6 +58,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
             }
 
         }
+
         public interface ITwoFactorAuthIntegrationService
         {
             TwoFactorAutheticationOutputViewModel Authenticate(string staffCode, string passCode);

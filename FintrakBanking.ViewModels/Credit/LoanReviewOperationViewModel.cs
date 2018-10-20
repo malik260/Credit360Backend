@@ -344,6 +344,15 @@ public int? newInterestFrequencyTypeId { get; set; }
             }
         }
 
+        public string loanReferenceNumber { get; set; }
+    }
+
+    public class LMSOperationListViewModel
+    {
+        public short operationId { get; set; }
+        public string operationName { get; set; }
+        public short loanSystemTypeId { get; set; }
+        public short productTypeId { get; set; }
     }
 
     public class SelectListViewModel
@@ -435,5 +444,6 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int tenor { get; set; }
         public short loanSystemTypeId { get; set; }
         public short approvalStatusId { get; set; }
+
     }
 }
