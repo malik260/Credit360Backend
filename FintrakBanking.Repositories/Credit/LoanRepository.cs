@@ -5972,11 +5972,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
             IQueryable<LoanViewModel> allFilteredLoan = null;
 
-<<<<<<< HEAD
             searchQuery = searchQuery.Trim();
-
-=======
->>>>>>> f1fd404b73904a32b4dd520e6af0a27973ec1258
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 var loans = (from a in context.TBL_LOAN
