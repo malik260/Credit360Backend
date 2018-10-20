@@ -83,7 +83,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
 
-
+        bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);
 
         #region COMMERCIAL PAPER LOANS
         bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);
