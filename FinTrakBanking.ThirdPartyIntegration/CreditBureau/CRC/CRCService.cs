@@ -80,6 +80,33 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             }
         }
 
+        public string CRCMergeDirectReport(MultiHitRequestViewModel request)
+        {
+            try
+            {
+                string result = string.Empty;
+                XElement xml = CRCMergeRequestXML(request);
+                if (xml != null)
+                {
+                    result = SearchMergedOutput(request.userName, request.password, xml);
+                }
+
+                return result;
+            }
+            catch (ConditionNotMetException ex)
+            {
+                throw new ConditionNotMetException(ex.ToString());
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
 
         private CRCSearchResult SearchOutput(string userName, string password,   XElement xml)
         {
@@ -120,6 +147,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
                 };
             };
             return result;
+        }
+
+        private string SearchMergedOutput(string userName, string password, XElement xml)
+        {
+            LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
+
+            string dataPacket = crc.PostRequest(xml.ToString(), userName, password);
+
+            return dataPacket;
         }
 
 
