@@ -625,7 +625,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 }
                     
             }
-            return list.ToList();
+            return list.ToList(); 
         }
 
         public List<Blacklist> Blacklist(DateTime startDate, DateTime endDate, string customercode)

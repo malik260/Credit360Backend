@@ -121,6 +121,7 @@
 
 
             } 
+
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
                 HttpClient client = new HttpClient(handler);

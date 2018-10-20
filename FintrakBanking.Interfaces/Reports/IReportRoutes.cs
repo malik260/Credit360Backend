@@ -65,5 +65,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetReceivableInterestReport(DateRange dateRange);
         string GetCashBackedReport(DateRange dateRange);
         string GetCashBackedBondAndGuarantee(DateRange dateRange);
+        string GetweeklyRecoveryReportforFINCON(DateRange dateRange);
+        string GetCashCollaterizedCredits(DateRange dateRange);
     }
 }
