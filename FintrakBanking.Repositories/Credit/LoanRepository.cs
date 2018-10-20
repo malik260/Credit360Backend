@@ -5973,6 +5973,7 @@ namespace FintrakBanking.Repositories.Credit
             IQueryable<LoanViewModel> allFilteredLoan = null;
 
             searchQuery = searchQuery.Trim();
+
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 var loans = (from a in context.TBL_LOAN
