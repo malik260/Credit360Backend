@@ -384,9 +384,9 @@ namespace FintrakBanking.Repositories.Credit
                     dailyAccrual.COMPANYID = item.companyId;
                     dailyAccrual.DAYCOUNTCONVENTIONID = (short)DayCountConventionEnum.Actual_Actual;
                     dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
+
                     dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
                     dailyAccrual.CHARGEFEEID = item.chargedFeeId;
-
 
                     transAccrual.Add(dailyAccrual);
 
@@ -414,6 +414,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var loanFee = context.TBL_LOAN_FEE.Where(x => x.LOANCHARGEFEEID == item.loanChargedFeeId).FirstOrDefault();
                     loanFee.EARNEDFEEAMOUNT = loanFee.EARNEDFEEAMOUNT + (decimal)item.dailyAccuralAmount;
+                   
                 }
 
 
@@ -605,6 +606,7 @@ namespace FintrakBanking.Repositories.Credit
                     loanFee.EARNEDTAXAMOUNT = loanFee.EARNEDTAXAMOUNT + (decimal)item.dailyAccuralAmount;
                 }
 
+                
 
                 context.SaveChanges();
 
@@ -9692,14 +9694,14 @@ namespace FintrakBanking.Repositories.Credit
                 //loanInput.principalAmount = loanInput.payAmount;
                 //var sllp = 27;////Get SLLP GL
 
-                if (loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BulletPayment)
-                {
-                    installmentNo = 3;
-                }
-                else if (loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BallonPayment)
-                {
-                    installmentNo = 7;
-                }
+                //if (loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BulletPayment)
+                //{
+                //    installmentNo = 3;
+                //}
+                //else if (loanInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BallonPayment)
+                //{
+                //    installmentNo = 7;
+                //}
 
                 if (LoanExist(loanId) > 0)
                 {
@@ -9709,25 +9711,39 @@ namespace FintrakBanking.Repositories.Credit
                     ArchivePeriodicSchedule(loanId, archiveBatchCode);
                     ArchiveDailySchedule(loanId, archiveBatchCode);
 
-                    //---------------save irregular loan schedule input---------------------------
-                    List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
-                    LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
-                    if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                    List<IrregularLoanScheduleInputViewModel> irregularSchedule = new List<IrregularLoanScheduleInputViewModel>();
                     {
-                        var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
-                        foreach (var item in data)
-                        {
-                            TBL_LOAN_REVIEW_OPRATN_IREG_SC schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SC();
-                            schedule.LOANREVIEWOPERATIONID = loanId;
-                            schedule.PAYMENTDATE = item.paymentDate;
-                            schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
-                            schedule.CREATEDBY = staffId;
-                            schedule.DATETIMECREATED = applicationDate;
+                        var scheduleInput = context.TBL_LOAN_REVIEW_OPRATN_IREG_SC.Where(x => x.LOANREVIEWOPERATIONID == reviewData.LOANREVIEWOPERATIONID);
 
-                            tblIrregularSchedule.Add(schedule);
+                        foreach (var model2 in scheduleInput)
+                        {
+                            irregularSchedule.Add(new IrregularLoanScheduleInputViewModel { paymentAmount = (double)model2.PAYMENTAMOUNT, paymentDate = model2.PAYMENTDATE });
                         }
 
+                        loanInput.irregularPaymentSchedule = irregularSchedule.OrderBy(x => x.paymentDate).ToList();
                     }
+
+
+                    //---------------save irregular loan schedule input---------------------------
+                    //List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
+                    //LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
+
+                    //if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                    //{
+                    //    var data = loanInput.irregularPaymentSchedule.OrderBy(x => x.paymentDate);
+                    //    foreach (var item in data)
+                    //    {
+                    //        TBL_LOAN_REVIEW_OPRATN_IREG_SC schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SC();
+                    //        schedule.LOANREVIEWOPERATIONID = loanId;
+                    //        schedule.PAYMENTDATE = item.paymentDate;
+                    //        schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
+                    //        schedule.CREATEDBY = staffId;
+                    //        schedule.DATETIMECREATED = applicationDate;
+
+                    //        tblIrregularSchedule.Add(schedule);
+                    //    }
+
+                    //}
                     //----------------------------------------------
 
                     //----------generate and save periodic loan schedule -----------------------------------
@@ -13946,7 +13962,9 @@ namespace FintrakBanking.Repositories.Credit
                         model.interestRate = model.newInterest;
                         model.effectiveDate = model.newEffectiveDate;
                         model.scheduleMethodId = (short)LoanScheduleTypeEnum.IrregularSchedule;
+
                         result = LoanWorkOut(loanId, model, applicationDate, staffId);
+
                         if (result == true)
                         {
                             updateLoanReviewOperation(loanReviewOperationsId, loanId);
