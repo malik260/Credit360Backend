@@ -207,24 +207,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loan-application-list")]
         public HttpResponseMessage GetLoanApplicationByRelationshipOfficerId()
         {
-            try
-            {
                 var data = repo.GetLoanApplicationByRelationshipOfficerId(token.GetStaffId, token.GetCompanyId);
-
-                // var data = response.OrderByDescending(c => c.loanApplicationId)
-
-                // .ToList();
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
         }
 
       [HttpGet] [ClaimsAuthorization]  

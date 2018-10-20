@@ -650,9 +650,12 @@ namespace FintrakBanking.Repositories.Credit
                            approvalStatusId = a.APPROVALSTATUSID,
                            loanApplicationId = a.LOANAPPLICATIONID,
                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                           loanAmount = a.APPLICATIONAMOUNT,
+                           productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                            customerId = a.CUSTOMERID ?? 0,
+                           customerTypeId = a.TBL_CUSTOMER.CUSTOMERTYPEID,
+                           customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                            customerName = a.CUSTOMERID.HasValue ? a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME : "",
-                           loanInformation = a.LOANINFORMATION,
                            companyId = a.COMPANYID,
                            branchId = (short)a.BRANCHID,
                            branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -674,7 +677,11 @@ namespace FintrakBanking.Repositories.Credit
                            applicationDate = a.APPLICATIONDATE,
                            dateTimeCreated = a.DATETIMECREATED,
                            applicationTenor = Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0),
-                           applicationAmount = a.APPLICATIONAMOUNT
+                           applicationAmount = a.APPLICATIONAMOUNT,
+                           regionId = a.CAPREGIONID,
+                           preliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
+                           collateralDetail = a.COLLATERALDETAIL,
+                           loanInformation = a.LOANINFORMATION,
                        };
             return data.ToList();
         }
