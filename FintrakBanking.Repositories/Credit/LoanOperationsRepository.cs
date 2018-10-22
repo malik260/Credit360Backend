@@ -11198,9 +11198,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
+            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
+                       && !finalApprovals.Contains(a.APPROVALSTATUSID)
                        select a;
+
             if (data.Any())
             {
                 return true;
@@ -11210,10 +11214,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId)
         {
+            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId
                       && a.INTERESTFREQUENCYTYPEID == chargeFeeId && a.OPERATIONCOMPLETED == false
+                      && !finalApprovals.Contains(a.APPROVALSTATUSID)
                        select a;
+
             if (data.Any())
             {
                 return true;
