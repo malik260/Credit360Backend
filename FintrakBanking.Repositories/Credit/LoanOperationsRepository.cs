@@ -2939,7 +2939,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 List<LoanRepaymentViewModel> model = new List<LoanRepaymentViewModel>();
 
-                var scheduledLoan = (from b in context.TBL_LOAN
+                var loans = (from b in context.TBL_LOAN
                                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                                      && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
                                      //&& (b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
@@ -2959,10 +2959,6 @@ namespace FintrakBanking.Repositories.Credit
                                          casaAccountId = b.CASAACCOUNTID,
                                          loanRefNo = b.LOANREFERENCENUMBER,
                                          casaAccountId2 = b.CASAACCOUNTID2,
-                                     }).ToList().Select(x =>
-                                     {
-                                         x.periodInterestAmount = GetPeriodInterestAmount(x.loanId, x.paymentDate);
-                                         return x;
                                      }).ToList();
 
                 //var commercialLoan = (from b in context.TBL_LOAN
@@ -3009,7 +3005,7 @@ namespace FintrakBanking.Repositories.Credit
                 //                  casaAccountId2 = b.CASAACCOUNTID2,
                 //              }).ToList();
 
-                model = scheduledLoan.ToList(); // scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
+                model = loans.ToList(); // scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
 
                 foreach (var item in model)
                 {
@@ -3358,7 +3354,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //{
                 bool result = false;
-                var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
+                var scheduledLoan = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                              join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                              where a.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                              && b.ALLOWFORCEDEBITREPAYMENT == false && b.ISDISBURSED == true && (a.PERIODINTERESTAMOUNT + a.PERIODPRINCIPALAMOUNT) > 0
@@ -3387,7 +3383,37 @@ namespace FintrakBanking.Repositories.Credit
                              }).ToList();
 
 
-                List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
+                             var scheduledLoanIds = (from a in scheduledLoan select a.loanId).ToList();
+
+               var unscheduledloans = (from b in context.TBL_LOAN
+                                       where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                       && b.ALLOWFORCEDEBITREPAYMENT == false && b.ISDISBURSED == true && (b.OUTSTANDINGPRINCIPAL + b.OUTSTANDINGINTEREST) > 0 
+                                       && !scheduledLoanIds.Contains(b.TERMLOANID)
+                                       select new LoanRepaymentViewModel()
+                         {
+                             productId = b.PRODUCTID,
+                             branchId = b.BRANCHID,
+                             companyId = b.COMPANYID,
+                             currencyId = b.CURRENCYID,
+                             exchangeRate = b.EXCHANGERATE,
+                             periodInterestAmount = b.OUTSTANDINGINTEREST,
+                             periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
+                             interestRate = b.INTERESTRATE,
+                             paymentDate = applicationDate,
+                             loanId = b.TERMLOANID,
+                             totalAmount = b.OUTSTANDINGPRINCIPAL + b.OUTSTANDINGINTEREST,
+                             casaAccountId = b.CASAACCOUNTID,
+                             casaAccountId2 = b.CASAACCOUNTID2,
+                             loanRefNo = b.LOANREFERENCENUMBER,
+                             pastDueInterestAmount = b.PASTDUEINTEREST,
+                             pastDuePrincipalAmount = b.PASTDUEPRINCIPAL,
+                        }).ToList();
+
+
+            var model = scheduledLoan.Union(unscheduledloans).ToList();
+
+
+            List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
 
                 foreach (var item in model)
                 {
