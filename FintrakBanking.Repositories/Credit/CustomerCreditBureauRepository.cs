@@ -24,6 +24,8 @@ using FintrakBanking.Interfaces.Setups.Finance;
 using System.Text.RegularExpressions;
 using FintrakBanking.Interfaces.CASA;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+using System.IO;
+using System.Xml;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -447,19 +449,6 @@ namespace FintrakBanking.Repositories.Credit
                 searchInfoList.dateOfBirth = dateOfBirth.ToString("dd-MMM-yyyy", null);
             }
 
-            var twoFADetails = new TwoFactorAutheticationViewModel
-            {
-                username = searchInfoList.username,
-                passcode = searchInfoList.passCode
-            };
-
-            if (twoFADetails != null)
-            {
-                //var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
-
-                //if (authenticated.authenticated == false)
-                //     throw new TwoFactorAuthenticationException(authenticated.message);
-            }
 
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfoList.creditBureauId);
             if (creditBureau != null)
@@ -564,13 +553,13 @@ namespace FintrakBanking.Repositories.Credit
                 passcode = searchInfo.passCode
             };
 
-            //if (twoFADetails != null)
-            //{
-            //    var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+            if (twoFADetails != null)
+            {
+                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-            //    if (authenticated.authenticated == false)
-            //        throw new TwoFactorAuthenticationException(authenticated.message);
-            //}
+                if (authenticated.authenticated == false)
+                    throw new TwoFactorAuthenticationException(authenticated.message);
+            }
 
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
             searchInfo.userName = creditBureau.USERNAME;
@@ -618,14 +607,15 @@ namespace FintrakBanking.Repositories.Credit
 
             if (chargeAmount > accountBalance)
             {
-                //if (!searchInfo.debitBusiness)
-                //    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                if (!searchInfo.debitBusiness)
+                    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
             chargeModel.feeAmount = chargeAmount;
             chargeModel.referenceNumber = referenceNumber;
+            chargeModel.casaAccountId = casa.CASAACCOUNTID;
 
 
             CRCSearchResult searchResponse = null;
@@ -679,7 +669,7 @@ namespace FintrakBanking.Repositories.Credit
                                 throw new ConditionNotMetException("Search could not save the result file");
                             }
 
-                            //DebitCustomer(chargeModel);
+                            DebitCustomer(chargeModel);
 
                             context.SaveChanges();
                             trans.Commit();
@@ -702,6 +692,11 @@ namespace FintrakBanking.Repositories.Credit
                     throw new ConditionNotMetException(ex.Message);
 
                 }
+                catch (TimeoutException ex)
+                {
+                    trans.Rollback();
+                    throw new ConditionNotMetException(ex.ToString());
+                }
                 catch (APIErrorException ex)
                 {
                     trans.Rollback();
@@ -723,7 +718,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public byte[] GetCRCFullCreditMergeReport(MultiHitRequestViewModel request)
+        public string GetCRCFullCreditMergeReport(MultiHitRequestViewModel request)
         {
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(request.creditBureauId);
 
@@ -785,59 +780,60 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.userBranchId = request.userBranchId;
             chargeModel.companyId = request.companyId;
             chargeModel.referenceNumber = referenceNumber;
+            chargeModel.casaAccountId = casa.CASAACCOUNTID;
+
+            const string DATA_PACKET = "DATAPACKET";
+            const string ERROR = "ERROR_LIST";
 
             using (var docTrans = docContext.Database.BeginTransaction())
             using (var trans = context.Database.BeginTransaction())
             {
-                CRCSearchResult searchResponse = null;
+                string dataResponse = null;
+                byte[] fileArray = null;
                 try
                 {
-                    var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauMerge(request));
+                    var task = Task.Run(() => dataResponse = _creditBureau.CRCCreditBureauMerge(request));
                     if (task.Wait(TimeSpan.FromSeconds(3500)))
                     {
-                        var type = searchResponse.SearchResult.GetType().Name;
-                        byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult); 
-                        if (fileArray.GetType().Name != "Byte[]")
+                        XmlDocument xdoc = new XmlDocument();
+                        if (dataResponse.Contains(DATA_PACKET))
                         {
-                            JObject json = JObject.Parse(searchResponse.SearchResult);
-                            if (json.Count >= 1)
+                            if (!dataResponse.Contains(ERROR))
                             {
-                                if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
+                                xdoc.LoadXml(dataResponse);
+
+                                var SearchResult = new CreditBureauHelp().ConvertXmlToJson(xdoc);
+                                JObject json = JObject.Parse(SearchResult);
+                                if (json.Count >= 1)
                                 {
-                                    string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
-                                    errorCode.Replace("{", string.Empty);
-                                    errorCode.Replace("}", string.Empty);
-                                    var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
-                                    if (errorLog.Any())
+                                    if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
                                     {
-                                        throw new APIErrorException("Credit Bureau API Error - " + errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: " + errorCode);
+                                        string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
+                                        errorCode.Replace("{", string.Empty);
+                                        errorCode.Replace("}", string.Empty);
+                                        var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
+                                        if (errorLog.Any())
+                                        {
+                                            throw new APIErrorException("Credit Bureau API Error - " + errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: " + errorCode);
+                                        }
                                     }
                                 }
+                                else { throw new ConditionNotMetException("Fintrak Credit 360 Could not resolve the API response."); }
                             }
                         }
 
+                        DebitCustomer(chargeModel);
 
-                        //TODO: DO Transaction Posting Here
-                        //byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
-
+                        fileArray = Encoding.ASCII.GetBytes(dataResponse);
                         var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
                         if (SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
-                        {
-                            searchResponse.fileSaved = true;
-                            searchResponse.file = fileArray;
-                        }
-                        else
-                        {
-                            searchResponse.errorOccured = true;
-                            throw new ConditionNotMetException("Search could not save the result file");
-                        }
 
                         context.SaveChanges();
                         trans.Commit();
                         docTrans.Commit();
-                        return fileArray;
+                        return dataResponse;
                     }
-                    throw new Exception("Application failed to fetch merge file");
+                    else throw new Exception("Application failed to fetch merge file");
                     
                 }
                 catch (ConditionNotMetException ex)
@@ -916,22 +912,24 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (APIErrorException ex)
                 {
-                    throw new APIErrorException(ex.Message.ToString());
+                    throw new APIErrorException(ex.ToString());
                 }
                 catch (TimeoutException ex)
                 {
-                    throw new ConditionNotMetException(ex.Message.ToString());
+                    throw new ConditionNotMetException(ex.ToString());
                 }
                 catch (ConditionNotMetException ex)
                 {
-                    throw new ConditionNotMetException(ex.Message.ToString());
+                    throw new ConditionNotMetException(ex.ToString());
                 }
                 catch (Exception ex)
                 {
-                    throw new SecureException(ex.Message.ToString());
+                    throw new SecureException(ex.ToString());
                 }
             }
         }
+
+        
 
         public XDSSearchResult GetXDSFullSearchResultInPDF(SearchInput searchInput)
         {
@@ -945,6 +943,20 @@ namespace FintrakBanking.Repositories.Credit
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
+
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = searchInput.username,
+                passcode = searchInput.passCode
+            };
+
+            if (twoFADetails != null)
+            {
+                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated.authenticated == false)
+                    throw new TwoFactorAuthenticationException(authenticated.message);
+            }
 
             var chargeModel = new CreditBereauViewModel();
            
@@ -963,27 +975,26 @@ namespace FintrakBanking.Repositories.Credit
             var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
                 : creditBureau.CORPORATE_CHARGEAMOUNT;
 
-
-            //if (chargeAmount > accountBalance)
-            //    throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
+            var x = searchInput.mergeList.Distinct();
+            if (chargeAmount > accountBalance)
+                throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.feeAmount = chargeAmount;
+            chargeModel.casaAccountId = casa.CASAACCOUNTID;
 
             byte[] binaryData = null;
             var response = new XDSSearchResult();
             var creditBureauProcess = new CreditBureauProcess();
             try
             {
-                var task = Task.Run(() =>  binaryData = creditBureauProcess.GetXDSFullSearchResultInPDF(searchInput));
+                var task = Task.Run(() => binaryData = creditBureauProcess.GetXDSFullSearchResultInPDF(searchInput));
+
                 if (task.Wait(TimeSpan.FromSeconds(2500)))
                 {
                     if (binaryData == null)
                         throw new SecureException("File report not found. Please try again.");
-
-                    var base64StringData = Convert.ToBase64String(binaryData);
-                    byte[] fileArray = Encoding.ASCII.GetBytes(binaryData.ToString());
 
                     using (var docTrans = docContext.Database.BeginTransaction())
                     using (var trans = context.Database.BeginTransaction())
@@ -991,7 +1002,7 @@ namespace FintrakBanking.Repositories.Credit
                         try
                         {
                             var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
-                            if (!SaveCreditBureauReportFile(customerCreditBureauId, fileArray, searchInput))
+                            if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
                             {
                                 response.fileSaved = false;
                                 response.errorOccured = true;
@@ -1000,14 +1011,14 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             else
                             {
-                                response.file = fileArray;
-                                response.searchResult = base64StringData; // Convert.ToBase64String(fileArray); //Encoding.ASCII.GetString(binaryData);
+                                response.file = binaryData;
+                                response.searchResult = Encoding.ASCII.GetString(binaryData);  
                                 response.errorOccured = false;
                                 response.status = 0;
                                 response.fileSaved = true;
                             }
 
-                            //DebitCustomer(chargeModel);
+                            DebitCustomer(chargeModel);
                             context.SaveChanges();
                             trans.Commit();
                             docTrans.Commit();
@@ -1421,6 +1432,7 @@ namespace FintrakBanking.Repositories.Credit
             return inputTransactions;
         }
 
+       
         #endregion
     }
 }

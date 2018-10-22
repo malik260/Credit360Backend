@@ -91,11 +91,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+              
             }
 
             ResponseMessage result = null;
@@ -206,10 +210,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+
             }
 
             ResponseMessage result = null;
@@ -286,10 +294,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
-
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
             }
 
             model.APIUrl = @"api/TemporaryOverDraft/Single";
@@ -647,10 +657,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
             }
 
             model.APIUrl = @"api/InterestRateInquiry/PostInterestRate";
