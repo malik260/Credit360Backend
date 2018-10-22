@@ -2598,6 +2598,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
                             revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                            twoFactorAuthDetails.skipAuthentication = true;
                         }
                         else
                         {
@@ -2612,11 +2613,13 @@ namespace FintrakBanking.Repositories.Credit
                             };
 
                             var result  = finacle.ChangeOverDraftInterestRate(data, data.accountType, twoFactorAuthDetails);
+                            twoFactorAuthDetails.skipAuthentication = true;
                             if (result == true)
                             {
                                 twoFactorAuthDetails.skipAuthentication = true;
                                 ResponseMessageViewModel res = finacle.OverDraftNormal(model, twoFactorAuthDetails);
                                 revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                                twoFactorAuthDetails.skipAuthentication = true;
                             }
                             else
                             {
@@ -2636,6 +2639,7 @@ namespace FintrakBanking.Repositories.Credit
                             TemporaryOverDraftInterestRate = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
                         };
                         ResponseMessageViewModel res = finacle.TemporaryOverDraftNormal(model, twoFactorAuthDetails);
+                        twoFactorAuthDetails.skipAuthentication = true;
                         revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
                     }
                     if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.SingleLimitTemporaryOverdraft)
@@ -2651,6 +2655,7 @@ namespace FintrakBanking.Repositories.Credit
                         };
                         ResponseMessageViewModel res = finacle.TemporaryOverDraftSingle(model, twoFactorAuthDetails);
                         revolvingLoanRecord.SERIALNUMBER = res.serialNumber;
+                        twoFactorAuthDetails.skipAuthentication = true;
                     }
                 }
 
@@ -2659,6 +2664,12 @@ namespace FintrakBanking.Repositories.Credit
 
                 /* BUILD FEE MODEL & HANDLE FEE POSTING */
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
+                loanScheduleModel.operationId = revolvingLoanRecord.OPERATIONID;
+                loanScheduleModel.createdBy = revolvingLoanRecord.CREATEDBY;
+                loanScheduleModel.casaAccountId = revolvingLoanRecord.CASAACCOUNTID;
+                loanScheduleModel.companyId = revolvingLoanRecord.COMPANYID;
+                loanScheduleModel.loanReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER;
+                loanScheduleModel.branchId = revolvingLoanRecord.BRANCHID;
                 var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
 
                 if (feePostings.Count() > 0)
@@ -2715,6 +2726,7 @@ namespace FintrakBanking.Repositories.Credit
                         applicationUrl = user.applicationUrl,
                     };
                     casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
+                    twoFactorAuthDetails.skipAuthentication = true;
                 }
                 else if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && proBehaviour.Any() && proBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == false)
                 {   /* DEBIT B&G CUSTOMER WHERE PRODUCT DOES NOT ALLOW FUND USAGE */
@@ -2731,9 +2743,17 @@ namespace FintrakBanking.Repositories.Credit
                     };
 
                     DebitAccount((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, casa, contingentLoanRecord.CONTINGENTAMOUNT, null, basicPostInputs);
+                    twoFactorAuthDetails.skipAuthentication = true;
                 }
 
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
+                loanScheduleModel.operationId = contingentLoanRecord.OPERATIONID;
+                loanScheduleModel.createdBy = contingentLoanRecord.CREATEDBY;
+                loanScheduleModel.casaAccountId = contingentLoanRecord.CASAACCOUNTID;
+                loanScheduleModel.companyId = contingentLoanRecord.COMPANYID;
+                loanScheduleModel.loanReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER;
+                loanScheduleModel.branchId = contingentLoanRecord.BRANCHID;
+
                 var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
                 if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
 
