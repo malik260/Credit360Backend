@@ -15985,20 +15985,22 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model)
         {
+            if (model.amount <= 0) throw new ConditionNotMetException("The payable amount cannot be a zero value");
+
             var systemDate = generalSetup.GetApplicationDate();
 
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
-
+           
             TBL_LOAN loanRecord = (from p in context.TBL_LOAN where p.LOANREFERENCENUMBER == refNo select p).FirstOrDefault();
             ArchiveLoan(loanRecord.TERMLOANID, (short)OperationsEnum.CommercialLoanBooking, batchCode);
 
-            var loanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE.Subtract(TimeSpan.FromDays(1)));
+            var loanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE);
             var dailyInterestAmount = loanGenerate.getDailyInterest(loanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, loanDaysInYear);
 
             if (model.effectiveDate < systemDate)
             {
-                if (model.effectiveDate < loanRecord.EFFECTIVEDATE)
-                    throw new ConditionNotMetException("Effective date cannot be lesser than the loan effective date");
+                if (model.effectiveDate < loanRecord.EFFECTIVEDATE) 
+                    throw new ConditionNotMetException("Prepayment effective date cannot be less than loan effective date");
 
                 loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.OUTSTANDINGPRINCIPAL - model.amount;
 
@@ -16056,7 +16058,7 @@ namespace FintrakBanking.Repositories.Credit
                 responseModel.saveStatus = "saved";
             }
 
-            responseModel.interestToDate = dailyInterestAmount * (systemDate - model.effectiveDate).Days;
+           // responseModel.interestToDate = dailyInterestAmount * (systemDate - model.effectiveDate).Days;
             responseModel.newPrincipal = loanRecord.OUTSTANDINGPRINCIPAL;
             responseModel.InterestAtMaturity = loanRecord.OUTSTANDINGINTEREST;
             responseModel.newMaturityAmount = loanRecord.OUTSTANDINGPRINCIPAL + loanRecord.OUTSTANDINGINTEREST;
