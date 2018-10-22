@@ -288,6 +288,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-application-eligibility/loanApplicationDetailId/{id}")]
@@ -1487,5 +1488,15 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-application-details/reference/{reference}")]
+        public HttpResponseMessage GetLoanApplicationDetailsByReference(string reference)
+        {
+            var data = repo.GetLoanApplicationDetailsByReference(reference, token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        }
+
     }
 }

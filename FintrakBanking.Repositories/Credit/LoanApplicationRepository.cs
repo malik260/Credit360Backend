@@ -3191,6 +3191,41 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.PARTY_TYPENAME
             }).ToList();
         }
-        
+
+        public IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailsByReference(string reference, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == reference)
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        select new LoanApplicationDetailViewModel
+                        {
+                            currencyName = b.TBL_CURRENCY.CURRENCYNAME,
+                            exchangeRate = b.EXCHANGERATE,
+                            loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                            customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedTenor = b.PROPOSEDTENOR,
+                            proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+
+                            requireCollateral = a.REQUIRECOLLATERAL,
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = b.TBL_CUSTOMER.LASTNAME,
+                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            proposedProductId = b.PROPOSEDPRODUCTID,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
+                        });
+
+            return data.ToList();
+        }
     }
 }
