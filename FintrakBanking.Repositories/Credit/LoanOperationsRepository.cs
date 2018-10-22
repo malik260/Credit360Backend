@@ -2933,8 +2933,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate)
         {
-            try
-            {
+            //try
+            //{
                 bool result = false;
 
                 List<LoanRepaymentViewModel> model = new List<LoanRepaymentViewModel>();
@@ -2942,7 +2942,7 @@ namespace FintrakBanking.Repositories.Credit
                 var scheduledLoan = (from b in context.TBL_LOAN
                                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                                      && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
-                                     && (b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
+                                     //&& (b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
                                      select new LoanRepaymentViewModel()
                                      {
                                          productId = b.PRODUCTID,
@@ -2965,51 +2965,51 @@ namespace FintrakBanking.Repositories.Credit
                                          return x;
                                      }).ToList();
 
-                var commercialLoan = (from b in context.TBL_LOAN
-                                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                      && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
-                                      && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
-                                      select new LoanRepaymentViewModel()
-                                      {
-                                          productId = b.PRODUCTID,
-                                          branchId = b.BRANCHID,
-                                          companyId = b.COMPANYID,
-                                          currencyId = b.CURRENCYID,
-                                          exchangeRate = b.EXCHANGERATE,
-                                          periodInterestAmount = b.OUTSTANDINGINTEREST,
-                                          periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
-                                          interestRate = b.INTERESTRATE,
-                                          paymentDate = applicationDate,
-                                          loanId = b.TERMLOANID,
-                                          totalAmount = 0,
-                                          casaAccountId = b.CASAACCOUNTID,
-                                          loanRefNo = b.LOANREFERENCENUMBER,
-                                          casaAccountId2 = b.CASAACCOUNTID2,
-                                      }).ToList();
+                //var commercialLoan = (from b in context.TBL_LOAN
+                //                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                //                      && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
+                //                      && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                //                      select new LoanRepaymentViewModel()
+                //                      {
+                //                          productId = b.PRODUCTID,
+                //                          branchId = b.BRANCHID,
+                //                          companyId = b.COMPANYID,
+                //                          currencyId = b.CURRENCYID,
+                //                          exchangeRate = b.EXCHANGERATE,
+                //                          periodInterestAmount = b.OUTSTANDINGINTEREST,
+                //                          periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
+                //                          interestRate = b.INTERESTRATE,
+                //                          paymentDate = applicationDate,
+                //                          loanId = b.TERMLOANID,
+                //                          totalAmount = 0,
+                //                          casaAccountId = b.CASAACCOUNTID,
+                //                          loanRefNo = b.LOANREFERENCENUMBER,
+                //                          casaAccountId2 = b.CASAACCOUNTID2,
+                //                      }).ToList();
 
-                var fxLoan = (from b in context.TBL_LOAN
-                              where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
-                              && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
-                              && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
-                              select new LoanRepaymentViewModel()
-                              {
-                                  productId = b.PRODUCTID,
-                                  branchId = b.BRANCHID,
-                                  companyId = b.COMPANYID,
-                                  currencyId = b.CURRENCYID,
-                                  exchangeRate = b.EXCHANGERATE,
-                                  periodInterestAmount = b.OUTSTANDINGINTEREST,
-                                  periodPrincipalAmount = 0,
-                                  interestRate = b.INTERESTRATE,
-                                  paymentDate = applicationDate,
-                                  loanId = b.TERMLOANID,
-                                  totalAmount = 0,
-                                  casaAccountId = b.CASAACCOUNTID,
-                                  loanRefNo = b.LOANREFERENCENUMBER,
-                                  casaAccountId2 = b.CASAACCOUNTID2,
-                              }).ToList();
+                //var fxLoan = (from b in context.TBL_LOAN
+                //              where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                //              && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
+                //              && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                //              select new LoanRepaymentViewModel()
+                //              {
+                //                  productId = b.PRODUCTID,
+                //                  branchId = b.BRANCHID,
+                //                  companyId = b.COMPANYID,
+                //                  currencyId = b.CURRENCYID,
+                //                  exchangeRate = b.EXCHANGERATE,
+                //                  periodInterestAmount = b.OUTSTANDINGINTEREST,
+                //                  periodPrincipalAmount = 0,
+                //                  interestRate = b.INTERESTRATE,
+                //                  paymentDate = applicationDate,
+                //                  loanId = b.TERMLOANID,
+                //                  totalAmount = 0,
+                //                  casaAccountId = b.CASAACCOUNTID,
+                //                  loanRefNo = b.LOANREFERENCENUMBER,
+                //                  casaAccountId2 = b.CASAACCOUNTID2,
+                //              }).ToList();
 
-                model = scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
+                model = scheduledLoan.ToList(); // scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
 
                 foreach (var item in model)
                 {
@@ -3151,12 +3151,12 @@ namespace FintrakBanking.Repositories.Credit
                     return model;
                 }
                 return null;
-            }
-            catch (Exception ex)
-            {
+            //}
+            //catch (Exception ex)
+            //{
 
-                throw new SecureException(ex.Message);
-            }
+            //    throw new SecureException(ex.Message);
+            //}
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanDisbursmentRollOver(DateTime applicationDate)
@@ -3354,9 +3354,9 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
         {
 
-            try
+            //try
 
-            {
+            //{
                 bool result = false;
                 var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                              join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
@@ -3613,11 +3613,11 @@ namespace FintrakBanking.Repositories.Credit
                     return model;
                 }
                 return null;
-            }
-            catch (Exception ex)
-            {
-                throw new SecureException(ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new SecureException(ex.Message);
+            //}
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessAuthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate)
@@ -11198,9 +11198,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
+            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
+                       && !finalApprovals.Contains(a.APPROVALSTATUSID)
                        select a;
+
             if (data.Any())
             {
                 return true;
@@ -11210,10 +11214,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId)
         {
+            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId
                       && a.INTERESTFREQUENCYTYPEID == chargeFeeId && a.OPERATIONCOMPLETED == false
+                      && !finalApprovals.Contains(a.APPROVALSTATUSID)
                        select a;
+
             if (data.Any())
             {
                 return true;
