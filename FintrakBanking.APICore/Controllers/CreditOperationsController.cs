@@ -190,7 +190,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("running-commercial-loan-search/")]
+        [Route("running-commercial-and-fx-loan-search/")]
         public HttpResponseMessage SearchRunningCommercialAndFXLoans(string searchQuery)
         {
             try

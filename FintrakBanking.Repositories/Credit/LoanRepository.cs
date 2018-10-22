@@ -2576,7 +2576,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (USE_THIRD_PARTY_INTEGRATION)
                 {
-                    var reviewDate = revolvingLoanRecord.BOOKINGDATE.AddMonths(1);
+                    var reviewDate = revolvingLoanRecord.MATURITYDATE.AddDays(-1); //.BOOKINGDATE.AddMonths(1);
                     var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                     var acctType = "DR";
                     if (revolvingLoanRecord.REVOLVINGTYPEID == (short)LoanRevolvingTypeEnum.NormalOverdraft)
