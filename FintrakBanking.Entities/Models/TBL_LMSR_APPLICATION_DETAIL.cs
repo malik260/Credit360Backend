@@ -60,7 +60,6 @@
 
         public decimal? CUSTOMERPROPOSEDAMOUNT { get; set; }
 
-        [Required]
         [StringLength(200)]
         public string LOANREFERENCENUMBER { get; set; }
 

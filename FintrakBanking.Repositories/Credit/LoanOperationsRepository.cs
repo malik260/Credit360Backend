@@ -15642,12 +15642,12 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == model.loanId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
+            //var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == model.loanId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
 
-            if (validate != null)
-            {
-                return false;
-            }
+            //if (validate != null)
+            //{
+            //    return false;
+            //}
 
 
             TBL_LOAN_REVIEW_OPERATION op = new TBL_LOAN_REVIEW_OPERATION();
@@ -15666,9 +15666,9 @@ namespace FintrakBanking.Repositories.Credit
             op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
             op.ISMANAGEMENTINTERESTRATE = false;
             op.OPERATIONCOMPLETED = false;
-            op.CREATEDBY = model.staffId;
+            op.CREATEDBY = model.createdBy;
             op.DATECREATED = DateTime.Now;
-
+            
             context.TBL_LOAN_REVIEW_OPERATION.Add(op);
 
             var audit = new TBL_AUDIT
@@ -15722,7 +15722,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return output;
 
-          }
+        }
 
 
 
@@ -15959,6 +15959,12 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model)
         {
+            var twoFactorAuthDetails = new TwoFactorAutheticationViewModel
+            {
+                username = model.userName,
+                passcode = model.passCode
+            };
+
             if (model.amount <= 0) throw new ConditionNotMetException("The payable amount cannot be a zero value");
 
             var systemDate = generalSetup.GetApplicationDate();
@@ -15966,6 +15972,8 @@ namespace FintrakBanking.Repositories.Credit
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
            
             TBL_LOAN loanRecord = (from p in context.TBL_LOAN where p.LOANREFERENCENUMBER == refNo select p).FirstOrDefault();
+            model.loanId = loanRecord.TERMLOANID;
+
             ArchiveLoan(loanRecord.TERMLOANID, (short)OperationsEnum.CommercialLoanBooking, batchCode);
 
             var loanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE);
@@ -16037,8 +16045,109 @@ namespace FintrakBanking.Repositories.Credit
             responseModel.InterestAtMaturity = loanRecord.OUTSTANDINGINTEREST;
             responseModel.newMaturityAmount = loanRecord.OUTSTANDINGPRINCIPAL + loanRecord.OUTSTANDINGINTEREST;
 
-            return responseModel;
+            PostCPAndFXPrepayment(model, twoFactorAuthDetails);
+
+            if (context.SaveChanges() > 0)
+            {
+                return responseModel;
+            }
+            else throw new ConditionNotMetException("An error occured. Operation could not be completed.");
         }
+
+        private bool PostCPAndFXPrepayment(loanPrepaymentViewModel model, TwoFactorAutheticationViewModel twoFactorAuth)
+        {
+            try
+            {
+                List<FinanceTransactionViewModel> loanTransaction = new List<FinanceTransactionViewModel>();
+
+                var loan = context.TBL_LOAN.Find(model.loanId);
+                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loan.CASAACCOUNTID && x.COMPANYID == loan.COMPANYID);
+                var product = this.context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loan.PRODUCTID && x.COMPANYID == loan.COMPANYID);
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+                var description = string.Empty;
+
+                FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                debit.operationId = (int)loan.OPERATIONID;
+                debit.description = $"Loan prepayment";
+                debit.valueDate = generalSetup.GetApplicationDate();
+                debit.transactionDate = debit.valueDate;
+                debit.currencyId = casa.CURRENCYID;
+                debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, loan.COMPANYID).sellingRate;
+                debit.isApproved = true;
+                debit.postedBy = model.createdBy;
+                debit.approvedBy = model.createdBy;
+                debit.approvedDate = debit.transactionDate;
+                debit.approvedDateTime = DateTime.Now;
+                debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                debit.companyId = model.companyId;
+
+                //if (product.PRINCIPALBALANCEGL == null)
+                //    throw new BadLogicException($"No GL is currently mapped to this product code '{product.PRODUCTCODE}'.");
+
+                debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                debit.sourceReferenceNumber = model.loanReferenceNumber;
+                debit.batchCode = batchCode;
+                debit.casaAccountId = casa.CASAACCOUNTID;
+                debit.debitAmount = model.amount;
+                debit.creditAmount = 0;
+                debit.sourceBranchId = loan.BRANCHID;
+                debit.destinationBranchId = loan.BRANCHID;
+
+
+
+                FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                credit.operationId = (int)loan.OPERATIONID;
+                credit.description = "Loan prepayment";
+                credit.valueDate = debit.valueDate;
+                credit.transactionDate = debit.valueDate;
+                credit.currencyId = casa.CURRENCYID;
+                credit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                credit.isApproved = true;
+                credit.postedBy = model.createdBy;
+                credit.approvedBy = model.createdBy;
+                credit.approvedDate = debit.transactionDate;
+                credit.approvedDateTime = DateTime.Now;
+                credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                credit.companyId = model.companyId;
+
+                //if (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == product.PRODUCTID).PRINCIPALBALANCEGL == null)
+                //    throw new BadLogicException($"No GL is currently mapped to this product code '{product.PRODUCTCODE}'.");
+                //var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+
+                credit.glAccountId = product.PRINCIPALBALANCEGL.Value;
+                credit.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
+                credit.batchCode = batchCode;
+                credit.casaAccountId = null; // casa.CASAACCOUNTID;
+                credit.debitAmount = 0;
+                credit.creditAmount = model.amount;
+                credit.sourceBranchId = loan.BRANCHID;
+                credit.destinationBranchId = loan.BRANCHID;
+
+                loanTransaction.Add(debit);
+                loanTransaction.Add(credit);
+                financeTransaction.PostTransaction(loanTransaction,false, twoFactorAuth);
+
+                return true;
+
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.Message);
+            }
+            catch (TwoFactorAuthenticationException ex)
+            {
+                throw new TwoFactorAuthenticationException(ex.Message);
+            }
+            catch (ConditionNotMetException ex)
+            {
+                throw new ConditionNotMetException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.ToString());
+            }
+        }
+
 
         public int ReBookLoan(TBL_LOAN newLoan)
         {

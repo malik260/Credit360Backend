@@ -48,6 +48,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public string payingAccountNumber { get; set; }
 
         //public int newtenor { get; set; }
         public double? newinterestRate { get; set; }
@@ -337,7 +338,7 @@ namespace FintrakBanking.ViewModels.Credit
         }
 
         public string casaAccountNumber2 { get; set; }
-
+        public bool isInEditMode { get; set; }
 
 
 
