@@ -11223,6 +11223,21 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
+            if (model.operationTypeId == (int)OperationsEnum.Restructured)
+            {
+                if (model.interestFirstPaymentDate > model.maturityDate)
+                    throw new ConditionNotMetException("Interest First Payment Date must not be greater than maturity Date");
+
+                if (model.principalFirstPaymentDate > model.maturityDate)
+                    throw new ConditionNotMetException("Principal First Payment Date must not be greater than maturity Date");
+
+                if (model.interestFirstPaymentDate < model.principalFirstPaymentDate)
+                    throw new ConditionNotMetException("Interest First Payment Date must not be less than Principal First Payment Date");
+
+                if (model.maturityDate < model.proposedEffectiveDate)
+                    throw new ConditionNotMetException("Effective Date must not be greater than the Maturity Date");
+            }
+
             if ((int)OperationsEnum.Prepayment == model.operationTypeId)
             {
                 model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
