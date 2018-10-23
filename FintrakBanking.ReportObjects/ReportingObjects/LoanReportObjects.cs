@@ -1451,6 +1451,61 @@ namespace FintrakBanking.ReportObjects
 
         }
 
+        public List<ExceptionReportViewModel> ExceptionReportForTradeTransactions(DateTime startDate, DateTime endDate, int companyid)
+        {
+
+            List<SubHead> subList = new List<SubHead>();
+
+            using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
+            {
+                subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB }).ToList();
+
+                using (FinTrakBankingContext context = new FinTrakBankingContext())
+                {
+
+                    var accruedInterest = (from accr in context.TBL_DAILY_ACCRUAL
+                                           join loan in context.TBL_LOAN on accr.REFERENCENUMBER equals loan.LOANREFERENCENUMBER
+                                           select new { refnumber = loan.LOANREFERENCENUMBER, amount = accr.DAILYACCURALAMOUNT })
+                                         .GroupBy(x => x.refnumber).Select(f => new
+                                         {
+                                             loanReference = f.FirstOrDefault().refnumber,
+                                             accruedInterest = f.Sum(x => x.amount)
+                                         });
+
+
+                    var reportData = (from l in context.TBL_LOAN
+                                      join c in context.TBL_CUSTOMER on l.CUSTOMERID equals c.CUSTOMERID
+                                      join b in context.TBL_BRANCH on l.BRANCHID equals b.BRANCHID
+                                      join cu in context.TBL_CURRENCY on l.CURRENCYID equals cu.CURRENCYID
+                                      join st in context.TBL_LOAN_STATUS on l.LOANSTATUSID equals st.LOANSTATUSID
+                                      join cas in context.TBL_CASA on l.CASAACCOUNTID equals cas.CASAACCOUNTID
+                                      join cas2 in context.TBL_CASA on l.CASAACCOUNTID2 equals cas2.CASAACCOUNTID
+                                      join sub in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sub.STAFFID
+                                      join acc in accruedInterest on l.LOANREFERENCENUMBER equals acc.loanReference
+                                      where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
+                                      DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
+                                      && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                      select new ExceptionReportViewModel
+                                      {
+                                          branchCode = b.BRANCHCODE,
+                                          branchName = b.BRANCHNAME,
+                                          SBU = stagecontext.STG_STAFFMIS.Where(s => s.STAFFCODE == context.TBL_STAFF.Where(o => o.STAFFID == l.RELATIONSHIPMANAGERID).Select(o => o.STAFFCODE).FirstOrDefault()).Select(s => s.GROUP_HUB).FirstOrDefault(),
+                                          GRP = "",
+                                          team = "",
+                                          accountNumber=cas.PRODUCTACCOUNTNUMBER,
+                                          accountName=cas.PRODUCTACCOUNTNAME,
+                                          currencyCode=cu.CURRENCYCODE,
+
+                                      }).ToList();
+
+                    return reportData;
+                }
+
+            }
+
+            // businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
+
+        }
 
     }
 }

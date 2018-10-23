@@ -650,9 +650,12 @@ namespace FintrakBanking.Repositories.Credit
                            approvalStatusId = a.APPROVALSTATUSID,
                            loanApplicationId = a.LOANAPPLICATIONID,
                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                           loanAmount = a.APPLICATIONAMOUNT,
+                           productClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                            customerId = a.CUSTOMERID ?? 0,
+                           customerTypeId = a.TBL_CUSTOMER.CUSTOMERTYPEID,
+                           customerCode = a.TBL_CUSTOMER.CUSTOMERCODE,
                            customerName = a.CUSTOMERID.HasValue ? a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.MIDDLENAME + " " + a.TBL_CUSTOMER.LASTNAME : "",
-                           loanInformation = a.LOANINFORMATION,
                            companyId = a.COMPANYID,
                            branchId = (short)a.BRANCHID,
                            branchName = a.TBL_BRANCH.BRANCHNAME,
@@ -674,7 +677,11 @@ namespace FintrakBanking.Repositories.Credit
                            applicationDate = a.APPLICATIONDATE,
                            dateTimeCreated = a.DATETIMECREATED,
                            applicationTenor = Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0),
-                           applicationAmount = a.APPLICATIONAMOUNT
+                           applicationAmount = a.APPLICATIONAMOUNT,
+                           regionId = a.CAPREGIONID,
+                           preliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
+                           collateralDetail = a.COLLATERALDETAIL,
+                           loanInformation = a.LOANINFORMATION,
                        };
             return data.ToList();
         }
@@ -3191,6 +3198,41 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.PARTY_TYPENAME
             }).ToList();
         }
-        
+
+        public IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailsByReference(string reference, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == reference)
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        select new LoanApplicationDetailViewModel
+                        {
+                            currencyName = b.TBL_CURRENCY.CURRENCYNAME,
+                            exchangeRate = b.EXCHANGERATE,
+                            loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                            customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            proposedTenor = b.PROPOSEDTENOR,
+                            proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+
+                            requireCollateral = a.REQUIRECOLLATERAL,
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = b.TBL_CUSTOMER.LASTNAME,
+                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            proposedProductId = b.PROPOSEDPRODUCTID,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
+                        });
+
+            return data.ToList();
+        }
     }
 }
