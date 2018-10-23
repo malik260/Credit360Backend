@@ -11224,11 +11224,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
-            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+            //List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
 
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
-                       where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
-                       && !finalApprovals.Contains(a.APPROVALSTATUSID)
+                       where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false                       
                        select a;
 
             if (data.Any())
@@ -11240,12 +11239,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId)
         {
-            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+            //List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
 
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId
-                      && a.INTERESTFREQUENCYTYPEID == chargeFeeId && a.OPERATIONCOMPLETED == false
-                      && !finalApprovals.Contains(a.APPROVALSTATUSID)
+                      && a.INTERESTFREQUENCYTYPEID == chargeFeeId && a.OPERATIONCOMPLETED == false                      
                        select a;
 
             if (data.Any())
@@ -11325,13 +11323,10 @@ namespace FintrakBanking.Repositories.Credit
                 _operationTypeId = model.productTypeId;
             }
 
-            var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
-            if (loan == null) throw new SecureException("An error occured. Please try again or contact admin.");
-            var loanReferenceNumber = loan.LOANREFERENCENUMBER;
-            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREFERENCENUMBER == loanReferenceNumber).FirstOrDefault();
+            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
             // if (reviewApplicationDetail == null) throw new SecureException("Review application details not found!");
 
-            int loanSystemTypeId = 1;
+            
             int? loanReviewApplicationId = null;
             if (reviewApplicationDetail != null)
             {
@@ -11343,7 +11338,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 LOANID = model.loanId,
                 LOANREVIEWAPPLICATIONID = loanReviewApplicationId,
-                LOANSYSTEMTYPEID = loanSystemTypeId,
+                LOANSYSTEMTYPEID = model.loanSystemTypeId,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
@@ -11891,6 +11886,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                         {
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            reviewRecord.OPERATIONCOMPLETED = true;
                             context.SaveChanges();
                             trans.Commit();
                             return 2;
@@ -13435,7 +13431,7 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion
 
-        [OperationBehavior(TransactionScopeRequired = true)]
+        //[OperationBehavior(TransactionScopeRequired = true)]
         public bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, short loanReviewOperationsId, int loanId, int staffId, LoanSystemTypeEnum facilityType, [Optional] string approvalComment)
         {
             try
@@ -13812,7 +13808,9 @@ namespace FintrakBanking.Repositories.Credit
                         //model.tenor = model.newTenor;
                         //model.interestFrequency = (short)model.newInterestFrequency;
                         //model.principalFrequency = (short)model.newPrincipalFrequency;
+
                         result = CompleteWriteOff(loanId, model, twoFactorAuth, applicationDate, staffId);
+
                         if (result == true)
                         {
                             updateLoanReviewOperation(loanReviewOperationsId, loanId);

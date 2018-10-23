@@ -620,7 +620,7 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = loan.APPROVEDINTERESTRATE,
                     outstandingPrincipal = loan.APPROVEDAMOUNT, // adapting!
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
-                    loanReferenceNumber = String.Empty,
+                    loanReferenceNumber = loan.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
