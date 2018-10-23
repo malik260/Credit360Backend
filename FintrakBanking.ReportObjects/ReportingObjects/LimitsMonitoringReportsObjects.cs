@@ -591,7 +591,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         emailFrom = context.TBL_STAFF.Where(s => s.STAFFID == x.requestStaffId).Select(s => s.EMAIL).FirstOrDefault(),
                         requestTo = context.TBL_STAFF.Where(s => s.STAFFID == x.toStaffId).Select(s => s.FIRSTNAME + " " + s.LASTNAME + " " + s.MIDDLENAME).FirstOrDefault(),
                         approvalStatus = context.TBL_APPROVAL_STATUS.Where(p => p.APPROVALSTATUSID == x.approvalStatusId).Select(p => p.APPROVALSTATUSNAME).FirstOrDefault(),
-                        referenceNumber = context.TBL_LOAN_APPLICATION.Where(o=>o.LOANAPPLICATIONID==x.targetId).Select(o=>o.RELATEDREFERENCENUMBER).FirstOrDefault()
+                        ReferenceNumber = context.TBL_LOAN_APPLICATION.Where(o=>o.LOANAPPLICATIONID==x.targetId).Select(o=>o.APPLICATIONREFERENCENUMBER).FirstOrDefault()
                     };
                     list.Add(data);
                 }

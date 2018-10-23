@@ -5053,7 +5053,7 @@ namespace FintrakBanking.Repositories.Credit
             catch (Exception ex) { throw; }
         }
 
-        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId, string searchValue = null)
+        public IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId)
         {
             try
             {
@@ -5094,10 +5094,6 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
-                if (searchValue != null)
-                {
-                    data = data.Where(o => o.applicationReferenceNumber.Contains(searchValue) || o.customerName.ToLower().Contains(searchValue.ToLower()));
-                }
                 
                 return data;
             }
@@ -7269,6 +7265,7 @@ namespace FintrakBanking.Repositories.Credit
                                    subSectorName = a.TBL_SUB_SECTOR.NAME,
                                    sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                    casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
+                                   casaAccountNumber2 = context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                    productAccountName = c.PRODUCTACCOUNTNAME,
                                    customerGroupId = e.CUSTOMERGROUPID,
                                    loanTypeId = e.LOANAPPLICATIONTYPEID,
@@ -8545,6 +8542,7 @@ namespace FintrakBanking.Repositories.Credit
                                        where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                       && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
                                       && b.OPERATIONPERFORMED == false && b.LOANSYSTEMTYPEID == (short) LoanSystemTypeEnum.TermDisbursedFacility
+                                      && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                       && !productTypes.Contains(a.TBL_PRODUCT.PRODUCTTYPEID )
                                       //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                        //orderby b.DATECREATED descending

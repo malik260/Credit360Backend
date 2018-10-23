@@ -32,6 +32,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
             }
+
             public async Task<GLAccountDetailsViewModel> APIOfficeAccountGetGeneralLedgerAccountRecord(string glNumber)
             {
                 HttpClient client = new HttpClient(handler);
