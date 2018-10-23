@@ -1920,7 +1920,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         #endregion (Loan Application Date) Pre - Loan booking
 
-
         #region Workflow Tracker
 
         [HttpGet]

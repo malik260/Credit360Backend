@@ -144,7 +144,7 @@
                 }
                 catch(TimeoutException ex)
                 {
-                    throw  new ConditionNotMetException("Connection timed out!");
+                    throw  new TimeoutException("Connection timed out!");
                 }
                 catch (Exception ex)
                 {
@@ -153,13 +153,13 @@
                 }
             }
 
-            public CRCSearchResult CRCCreditBureauMerge(MultiHitRequestViewModel request)
+            public string CRCCreditBureauMerge(MultiHitRequestViewModel request)
             {
                 try
                 {
                     CRCService crc = new CRCService();
 
-                    return crc.CRCMergeReport(request);
+                    return crc.CRCMergeDirectReport(request);
                 }
                 catch (TimeoutException ex)
                 {
@@ -179,6 +179,8 @@
                     throw new SecureException(ex.Message);
                 }
             }
+
+
 
 
 
@@ -301,7 +303,7 @@
                     var data = new SearchFullResultViewModel
                     {
                         ConsumerID = searchInput.consumerID,
-                        MergeList = mergeLst,
+                        MergeList = mergeLst.TrimEnd(','),
                         DataTicket = string.Empty,
                         EnquiryID = searchInput.enquiryID,
                         SubscriberEnquiryEngineID = searchInput.subscriberEnquiryEngineID
@@ -325,7 +327,7 @@
                     var data = new SearchFullResultViewModel
                     {
                         ConsumerID = searchInput.consumerID,
-                        MergeList = mergeLst,
+                        MergeList = mergeLst.TrimEnd(','),
                         DataTicket = string.Empty,
                         EnquiryID = searchInput.enquiryID,
                         SubscriberEnquiryEngineID = searchInput.subscriberEnquiryEngineID

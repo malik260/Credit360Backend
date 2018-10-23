@@ -2933,16 +2933,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate)
         {
-            try
-            {
+            //try
+            //{
                 bool result = false;
 
                 List<LoanRepaymentViewModel> model = new List<LoanRepaymentViewModel>();
 
-                var scheduledLoan = (from b in context.TBL_LOAN
+                var loans = (from b in context.TBL_LOAN
                                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                                      && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
-                                     && (b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
+                                     //&& (b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
                                      select new LoanRepaymentViewModel()
                                      {
                                          productId = b.PRODUCTID,
@@ -2959,57 +2959,53 @@ namespace FintrakBanking.Repositories.Credit
                                          casaAccountId = b.CASAACCOUNTID,
                                          loanRefNo = b.LOANREFERENCENUMBER,
                                          casaAccountId2 = b.CASAACCOUNTID2,
-                                     }).ToList().Select(x =>
-                                     {
-                                         x.periodInterestAmount = GetPeriodInterestAmount(x.loanId, x.paymentDate);
-                                         return x;
                                      }).ToList();
 
-                var commercialLoan = (from b in context.TBL_LOAN
-                                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                      && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
-                                      && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
-                                      select new LoanRepaymentViewModel()
-                                      {
-                                          productId = b.PRODUCTID,
-                                          branchId = b.BRANCHID,
-                                          companyId = b.COMPANYID,
-                                          currencyId = b.CURRENCYID,
-                                          exchangeRate = b.EXCHANGERATE,
-                                          periodInterestAmount = b.OUTSTANDINGINTEREST,
-                                          periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
-                                          interestRate = b.INTERESTRATE,
-                                          paymentDate = applicationDate,
-                                          loanId = b.TERMLOANID,
-                                          totalAmount = 0,
-                                          casaAccountId = b.CASAACCOUNTID,
-                                          loanRefNo = b.LOANREFERENCENUMBER,
-                                          casaAccountId2 = b.CASAACCOUNTID2,
-                                      }).ToList();
+                //var commercialLoan = (from b in context.TBL_LOAN
+                //                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                //                      && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
+                //                      && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
+                //                      select new LoanRepaymentViewModel()
+                //                      {
+                //                          productId = b.PRODUCTID,
+                //                          branchId = b.BRANCHID,
+                //                          companyId = b.COMPANYID,
+                //                          currencyId = b.CURRENCYID,
+                //                          exchangeRate = b.EXCHANGERATE,
+                //                          periodInterestAmount = b.OUTSTANDINGINTEREST,
+                //                          periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
+                //                          interestRate = b.INTERESTRATE,
+                //                          paymentDate = applicationDate,
+                //                          loanId = b.TERMLOANID,
+                //                          totalAmount = 0,
+                //                          casaAccountId = b.CASAACCOUNTID,
+                //                          loanRefNo = b.LOANREFERENCENUMBER,
+                //                          casaAccountId2 = b.CASAACCOUNTID2,
+                //                      }).ToList();
 
-                var fxLoan = (from b in context.TBL_LOAN
-                              where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
-                              && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
-                              && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
-                              select new LoanRepaymentViewModel()
-                              {
-                                  productId = b.PRODUCTID,
-                                  branchId = b.BRANCHID,
-                                  companyId = b.COMPANYID,
-                                  currencyId = b.CURRENCYID,
-                                  exchangeRate = b.EXCHANGERATE,
-                                  periodInterestAmount = b.OUTSTANDINGINTEREST,
-                                  periodPrincipalAmount = 0,
-                                  interestRate = b.INTERESTRATE,
-                                  paymentDate = applicationDate,
-                                  loanId = b.TERMLOANID,
-                                  totalAmount = 0,
-                                  casaAccountId = b.CASAACCOUNTID,
-                                  loanRefNo = b.LOANREFERENCENUMBER,
-                                  casaAccountId2 = b.CASAACCOUNTID2,
-                              }).ToList();
+                //var fxLoan = (from b in context.TBL_LOAN
+                //              where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                //              && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
+                //              && (b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                //              select new LoanRepaymentViewModel()
+                //              {
+                //                  productId = b.PRODUCTID,
+                //                  branchId = b.BRANCHID,
+                //                  companyId = b.COMPANYID,
+                //                  currencyId = b.CURRENCYID,
+                //                  exchangeRate = b.EXCHANGERATE,
+                //                  periodInterestAmount = b.OUTSTANDINGINTEREST,
+                //                  periodPrincipalAmount = 0,
+                //                  interestRate = b.INTERESTRATE,
+                //                  paymentDate = applicationDate,
+                //                  loanId = b.TERMLOANID,
+                //                  totalAmount = 0,
+                //                  casaAccountId = b.CASAACCOUNTID,
+                //                  loanRefNo = b.LOANREFERENCENUMBER,
+                //                  casaAccountId2 = b.CASAACCOUNTID2,
+                //              }).ToList();
 
-                model = scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
+                model = loans.ToList(); // scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
 
                 foreach (var item in model)
                 {
@@ -3151,12 +3147,12 @@ namespace FintrakBanking.Repositories.Credit
                     return model;
                 }
                 return null;
-            }
-            catch (Exception ex)
-            {
+            //}
+            //catch (Exception ex)
+            //{
 
-                throw new SecureException(ex.Message);
-            }
+            //    throw new SecureException(ex.Message);
+            //}
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanDisbursmentRollOver(DateTime applicationDate)
@@ -3354,11 +3350,11 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
         {
 
-            try
+            //try
 
-            {
+            //{
                 bool result = false;
-                var model = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
+                var scheduledLoan = (from a in context.TBL_LOAN_SCHEDULE_PERIODIC
                              join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                              where a.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                              && b.ALLOWFORCEDEBITREPAYMENT == false && b.ISDISBURSED == true && (a.PERIODINTERESTAMOUNT + a.PERIODPRINCIPALAMOUNT) > 0
@@ -3387,7 +3383,37 @@ namespace FintrakBanking.Repositories.Credit
                              }).ToList();
 
 
-                List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
+                             var scheduledLoanIds = (from a in scheduledLoan select a.loanId).ToList();
+
+               var unscheduledloans = (from b in context.TBL_LOAN
+                                       where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                       && b.ALLOWFORCEDEBITREPAYMENT == false && b.ISDISBURSED == true && (b.OUTSTANDINGPRINCIPAL + b.OUTSTANDINGINTEREST) > 0 
+                                       && !scheduledLoanIds.Contains(b.TERMLOANID)
+                                       select new LoanRepaymentViewModel()
+                         {
+                             productId = b.PRODUCTID,
+                             branchId = b.BRANCHID,
+                             companyId = b.COMPANYID,
+                             currencyId = b.CURRENCYID,
+                             exchangeRate = b.EXCHANGERATE,
+                             periodInterestAmount = b.OUTSTANDINGINTEREST,
+                             periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
+                             interestRate = b.INTERESTRATE,
+                             paymentDate = applicationDate,
+                             loanId = b.TERMLOANID,
+                             totalAmount = b.OUTSTANDINGPRINCIPAL + b.OUTSTANDINGINTEREST,
+                             casaAccountId = b.CASAACCOUNTID,
+                             casaAccountId2 = b.CASAACCOUNTID2,
+                             loanRefNo = b.LOANREFERENCENUMBER,
+                             pastDueInterestAmount = b.PASTDUEINTEREST,
+                             pastDuePrincipalAmount = b.PASTDUEPRINCIPAL,
+                        }).ToList();
+
+
+            var model = scheduledLoan.Union(unscheduledloans).ToList();
+
+
+            List<TBL_LOAN_PAST_DUE> transPastDue = new List<TBL_LOAN_PAST_DUE>();
 
                 foreach (var item in model)
                 {
@@ -3613,11 +3639,11 @@ namespace FintrakBanking.Repositories.Credit
                     return model;
                 }
                 return null;
-            }
-            catch (Exception ex)
-            {
-                throw new SecureException(ex.Message);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw new SecureException(ex.Message);
+            //}
         }
 
         public IEnumerable<LoanRepaymentViewModel> ProcessAuthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate)
@@ -11198,9 +11224,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
+            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
+                       && !finalApprovals.Contains(a.APPROVALSTATUSID)
                        select a;
+
             if (data.Any())
             {
                 return true;
@@ -11210,10 +11240,14 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId)
         {
+            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId
                       && a.INTERESTFREQUENCYTYPEID == chargeFeeId && a.OPERATIONCOMPLETED == false
+                      && !finalApprovals.Contains(a.APPROVALSTATUSID)
                        select a;
+
             if (data.Any())
             {
                 return true;
@@ -15966,20 +16000,22 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model)
         {
+            if (model.amount <= 0) throw new ConditionNotMetException("The payable amount cannot be a zero value");
+
             var systemDate = generalSetup.GetApplicationDate();
 
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
-
+           
             TBL_LOAN loanRecord = (from p in context.TBL_LOAN where p.LOANREFERENCENUMBER == refNo select p).FirstOrDefault();
             ArchiveLoan(loanRecord.TERMLOANID, (short)OperationsEnum.CommercialLoanBooking, batchCode);
 
-            var loanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE.Subtract(TimeSpan.FromDays(1)));
+            var loanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE);
             var dailyInterestAmount = loanGenerate.getDailyInterest(loanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, loanDaysInYear);
 
             if (model.effectiveDate < systemDate)
             {
-                if (model.effectiveDate < loanRecord.EFFECTIVEDATE)
-                    throw new ConditionNotMetException("Effective date cannot be lesser than the loan effective date");
+                if (model.effectiveDate < loanRecord.EFFECTIVEDATE) 
+                    throw new ConditionNotMetException("Prepayment effective date cannot be less than loan effective date");
 
                 loanRecord.OUTSTANDINGPRINCIPAL = loanRecord.OUTSTANDINGPRINCIPAL - model.amount;
 
@@ -16037,7 +16073,7 @@ namespace FintrakBanking.Repositories.Credit
                 responseModel.saveStatus = "saved";
             }
 
-            responseModel.interestToDate = dailyInterestAmount * (systemDate - model.effectiveDate).Days;
+           // responseModel.interestToDate = dailyInterestAmount * (systemDate - model.effectiveDate).Days;
             responseModel.newPrincipal = loanRecord.OUTSTANDINGPRINCIPAL;
             responseModel.InterestAtMaturity = loanRecord.OUTSTANDINGINTEREST;
             responseModel.newMaturityAmount = loanRecord.OUTSTANDINGPRINCIPAL + loanRecord.OUTSTANDINGINTEREST;
