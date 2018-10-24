@@ -1900,6 +1900,7 @@ namespace FintrakBanking.Repositories.Credit
                         || x.lastName.ToLower().Contains(searchString)
                         || x.middleName.ToLower().Contains(searchString)
                         || x.customerCode.ToLower().Contains(searchString)
+                        || x.createdBy == context.TBL_STAFF.Where(o=>o.STAFFCODE== searchString.ToUpper()).Select(o=>o.STAFFID).FirstOrDefault()
                         )
                     ;
 
@@ -3233,6 +3234,28 @@ namespace FintrakBanking.Repositories.Credit
                         });
 
             return data.ToList();
+        }
+        public List<LoanApplicationDetailViewModel> GetLMSOperation(int loanApplicationId)
+        {
+            return (from b in context.TBL_LMSR_APPLICATION 
+                    join l in context.TBL_LMSR_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
+                    join x in context.TBL_LOAN_REVIEW_OPERATION on l.LOANREVIEWAPPLICATIONID equals x.LOANREVIEWAPPLICATIONID
+                    join a in context.TBL_LOAN on x.LOANID equals a.TERMLOANID
+                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                    where x.LOANREVIEWAPPLICATIONID == loanApplicationId
+                   select new LoanApplicationDetailViewModel
+            {
+                       applicationReferenceNumber = l.LOANREFERENCENUMBER,
+                       approvedAmount = l.APPROVEDAMOUNT,
+                       proposedAmount=l.PROPOSEDAMOUNT,
+                       proposedTenor = l.PROPOSEDTENOR,
+                       approvedTenor = l.APPROVEDTENOR,
+                       proposedInterestRate = l.PROPOSEDINTERESTRATE,
+                       approvedInterestRate = l.APPROVEDINTERESTRATE,
+                       loanreViewApplicationId = x.LOANREVIEWAPPLICATIONID
+
+            }).ToList();
+           
         }
     }
 }

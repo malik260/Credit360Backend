@@ -1482,5 +1482,25 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lms-operation")]
+        public HttpResponseMessage GetlmsOperation(int reviewApplicationId)
+        {
+            try
+            {
+                var data = repo.GetLMSOperation(reviewApplicationId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
