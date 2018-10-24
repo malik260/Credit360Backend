@@ -1901,8 +1901,12 @@ namespace FintrakBanking.Repositories.Credit
                 var systemdate = genSetup.GetApplicationDate();
                 record.EFFECTIVEDATE = systemdate;
                 record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
-
                 ctx.SaveChanges();
+
+<<<<<<< HEAD
+                ctx.SaveChanges();
+=======
+>>>>>>> 7ce57389477a18b9bc3431a387690f33dd0bad4c
                 //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                 //{
                 //    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
@@ -1940,30 +1944,30 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        public void LogBookingApproval(LoanAvailmentApprovalViewModel entity, TBL_LOAN_APPLICATION_DETAIL appDetail, int targetId)
-        {
-            var operationId = 0;
-            if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
-                operationId = (short)OperationsEnum.RevolvingLoanBooking;
-            if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-                operationId = (short)OperationsEnum.ContigentLoanBooking;
-            if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-                operationId = (short)OperationsEnum.TermLoanBooking;
+        //public void LogBookingApproval(LoanAvailmentApprovalViewModel entity, TBL_LOAN_APPLICATION_DETAIL appDetail, int targetId)
+        //{
+        //    var operationId = 0;
+        //    if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
+        //        operationId = (short)OperationsEnum.RevolvingLoanBooking;
+        //    if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+        //        operationId = (short)OperationsEnum.ContigentLoanBooking;
+        //    if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+        //        operationId = (short)OperationsEnum.TermLoanBooking;
 
-            if (operationId > 0)
-            {
-                workflow.StaffId = entity.createdBy;
-                workflow.OperationId = operationId;
-                workflow.TargetId = targetId;
-                workflow.CompanyId = entity.companyId;
-                workflow.Comment = "Loan Ready for Booking";
-                workflow.ExternalInitialization = true;
-                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-                workflow.Amount = entity.amount;
-                workflow.DeferredExecution = true;
-                workflow.LogActivity();
-            }
-        }
+        //    if (operationId > 0)
+        //    {
+        //        workflow.StaffId = entity.createdBy;
+        //        workflow.OperationId = operationId;
+        //        workflow.TargetId = targetId;
+        //        workflow.CompanyId = entity.companyId;
+        //        workflow.Comment = "Loan Ready for Booking";
+        //        workflow.ExternalInitialization = true;
+        //        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+        //        workflow.Amount = entity.amount;
+        //        workflow.DeferredExecution = true;
+        //        workflow.LogActivity();
+        //    }
+        //}
 
         private void PendingJobRequestCheck(IQueryable<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails)
         {

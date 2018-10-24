@@ -60,9 +60,14 @@
 
         public decimal? CUSTOMERPROPOSEDAMOUNT { get; set; }
 
+<<<<<<< HEAD
         //[Required]
         //[StringLength(200)]
         //public string LOANREFERENCENUMBER { get; set; }
+=======
+        [StringLength(200)]
+        public string LOANREFERENCENUMBER { get; set; }
+>>>>>>> 7ce57389477a18b9bc3431a387690f33dd0bad4c
 
         // public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
