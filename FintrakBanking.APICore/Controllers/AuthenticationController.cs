@@ -355,8 +355,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("passwordchange")]
         public IHttpActionResult PasswordChange(PasswordChangeViewModel pwdChange)
         {
-            //try
-            //{
+
                 if (!_repo.ValidateOldPassword(pwdChange.username, StaticHelpers.EncryptSha512(pwdChange.currentPassword, StaticHelpers.EncryptionKey)))
                 {
                     return this.Ok(new { success = false, message = "Invalid current password." });
@@ -374,16 +373,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var res = _repo.PasswordChange(password);
                 return this.Ok(new { success = true, message = "Password Change was successful" });
-            //}
-            //catch (SecureException ex)
-            //{
-
-            //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-
-            //    return this.Ok(new { success = false, message = ex.Message });
-            //}
-
-
+           
         }
 
         private IAuthenticationManager Authentication => Request.GetOwinContext().Authentication;
