@@ -3303,6 +3303,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return result;
         }
+
         public List<LoanApplicationDetailViewModel> GetLMSOperation(int loanApplicationId)
         {
             return (from b in context.TBL_LMSR_APPLICATION
@@ -3313,7 +3314,7 @@ namespace FintrakBanking.Repositories.Credit
                     where x.LOANREVIEWAPPLICATIONID == loanApplicationId
                     select new LoanApplicationDetailViewModel
                     {
-                        applicationReferenceNumber = l.LOANREFERENCENUMBER,
+                      //  applicationReferenceNumber = l.LOANREFERENCENUMBER,
                         approvedAmount = l.APPROVEDAMOUNT,
                         proposedAmount = l.PROPOSEDAMOUNT,
                         proposedTenor = l.PROPOSEDTENOR,
