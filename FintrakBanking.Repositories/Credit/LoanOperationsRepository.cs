@@ -11260,16 +11260,22 @@ namespace FintrakBanking.Repositories.Credit
             if (model.operationTypeId == (int)OperationsEnum.Restructured)
             {
                 if (model.interestFirstPaymentDate > model.maturityDate)
-                    throw new ConditionNotMetException("Interest First Payment Date must not be greater than maturity Date");
+                    throw new ConditionNotMetException("Interest First Payment Date must be less than the maturity Date");
 
                 if (model.principalFirstPaymentDate > model.maturityDate)
-                    throw new ConditionNotMetException("Principal First Payment Date must not be greater than maturity Date");
+                    throw new ConditionNotMetException("Principal First Payment Date must be less than the maturity Date");
 
-                if (model.interestFirstPaymentDate < model.principalFirstPaymentDate)
-                    throw new ConditionNotMetException("Interest First Payment Date must not be less than Principal First Payment Date");
+                if (model.interestFirstPaymentDate > model.principalFirstPaymentDate)
+                    throw new ConditionNotMetException("Interest First Payment Date must be less than Principal First Payment Date");
 
                 if (model.maturityDate < model.proposedEffectiveDate)
-                    throw new ConditionNotMetException("Effective Date must not be greater than the Maturity Date");
+                    throw new ConditionNotMetException("Effective Date must be less than the Maturity Date");
+
+                if (model.interestFirstPaymentDate < model.proposedEffectiveDate)
+                    throw new ConditionNotMetException("Interest First Payment Date must be greater than efffective date");
+
+                if (model.principalFirstPaymentDate < model.proposedEffectiveDate)
+                    throw new ConditionNotMetException("Principal First Payment Date must be greater than efffective date");
             }
 
             if ((int)OperationsEnum.Prepayment == model.operationTypeId)
