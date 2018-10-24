@@ -15658,8 +15658,6 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-
-
         public bool addMaturityInstruction(MaturityIntructionViewModel model)
         {
             var systemDate = generalSetup.GetApplicationDate();
@@ -15680,7 +15678,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
         }
-  public bool addMaturityInstructionApprove(MaturityIntructionViewModel model)
+        public bool addMaturityInstructionApprove(MaturityIntructionViewModel model)
         {
             var systemDate = generalSetup.GetApplicationDate();
 
@@ -15770,8 +15768,6 @@ namespace FintrakBanking.Repositories.Credit
             return output;
 
         }
-
-
 
 
         [OperationBehavior(TransactionScopeRequired = true)]
