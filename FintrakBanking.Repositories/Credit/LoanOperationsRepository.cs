@@ -11396,7 +11396,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 LOANID = model.loanId,
                 LOANREVIEWAPPLICATIONID = loanReviewApplicationId,
-                LOANSYSTEMTYPEID = model.loanSystemTypeId,
+                LOANSYSTEMTYPEID = reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
@@ -11487,13 +11487,12 @@ namespace FintrakBanking.Repositories.Credit
 
                     return output;
 
-
                 }
 
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    throw ex; //new SecureException(ex.Message);
                 }
             }
 

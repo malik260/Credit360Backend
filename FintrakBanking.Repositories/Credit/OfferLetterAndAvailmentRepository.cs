@@ -1902,41 +1902,41 @@ namespace FintrakBanking.Repositories.Credit
                 record.EFFECTIVEDATE = systemdate;
                 record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
 
-                
-                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
-                {
-                    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
-                    {
-                        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                        DATETIMECREATED = DateTime.Now,
-                        ISUSED = false,
-                        CREATEDBY = entity.staffId,
-                    });
+                ctx.SaveChanges();
+                //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
+                //{
+                //    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
+                //    {
+                //        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                //        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                //        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                //        DATETIMECREATED = DateTime.Now,
+                //        ISUSED = false,
+                //        CREATEDBY = entity.staffId,
+                //    });
 
-                    ctx.SaveChanges();
-                    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
-                    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
-                }
+                //    ctx.SaveChanges();
+                //    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
+                //    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+                //}
 
-                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-                && (productClassId != 0 && productClassId != null)
-                   && (processId == (short)ProductClassProcessEnum.ProductBased))
-                {
-                    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
-                    {
-                        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                        DATETIMECREATED = DateTime.Now,
-                        ISUSED = false,
-                        CREATEDBY = entity.staffId,
-                    });
-                    ctx.SaveChanges();
-                    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
-                    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
-                }
+                //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                //&& (productClassId != 0 && productClassId != null)
+                //   && (processId == (short)ProductClassProcessEnum.ProductBased))
+                //{
+                //    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
+                //    {
+                //        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                //        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                //        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                //        DATETIMECREATED = DateTime.Now,
+                //        ISUSED = false,
+                //        CREATEDBY = entity.staffId,
+                //    });
+                //    ctx.SaveChanges();
+                //    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
+                //    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+                //}
             };
         }
 

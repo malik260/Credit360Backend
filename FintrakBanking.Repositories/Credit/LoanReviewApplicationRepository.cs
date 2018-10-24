@@ -115,7 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
-                    loanReferenceNumber = d.LOANREFERENCENUMBER,
+                    //loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
                 
@@ -307,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
-                    LOANREFERENCENUMBER = loan.loanReferenceNumber
+                    //LOANREFERENCENUMBER = loan.loanReferenceNumber
 
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });

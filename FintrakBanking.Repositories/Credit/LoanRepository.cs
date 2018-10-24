@@ -4793,11 +4793,12 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                
-                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
-                           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
-                           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
 
+                //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
+                //           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
+                //           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
+
+                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId);
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
                 foreach (var item in data)
@@ -6378,8 +6379,8 @@ namespace FintrakBanking.Repositories.Credit
                                            currency = a.TBL_CURRENCY.CURRENCYNAME,
                                        }).Take(10).AsQueryable();
                 }
-               // return allFilteredLoan;
-                return allFilteredLoan.Where(x => x.operationId == (short)OperationsEnum.CommercialLoanBooking);
+                return allFilteredLoan;
+               
             }
             catch (System.Exception ex)
             {
