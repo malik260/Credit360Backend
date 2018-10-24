@@ -775,18 +775,23 @@ namespace FintrakBanking.Repositories.Credit
         {
             searchString = searchString.Trim().ToLower();
 
-            var applications = from a in context.TBL_LMSR_APPLICATION
+            var applications = (from a in context.TBL_LMSR_APPLICATION
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.APPLICATIONSTATUSID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
                                join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID
                                join o in context.TBL_CASA on l.CASAACCOUNTID equals o.CASAACCOUNTID
                                join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals  y.TARGETID
-                               where a.APPLICATIONREFERENCENUMBER == searchString
-                       // || g.FIRSTNAME.ToLower().StartsWith(searchString)
-                       // || g.LASTNAME.ToLower().StartsWith(searchString)
-                        //|| g.MIDDLENAME.ToLower().StartsWith(searchString)
-                        //|| g.CUSTOMERCODE.ToLower().StartsWith(searchString)
-                               select new LoanApplicationViewModel
+                               where
+
+                               a.APPLICATIONREFERENCENUMBER == searchString
+                        || g.FIRSTNAME.ToLower().StartsWith(searchString)
+                        || g.LASTNAME.ToLower().StartsWith(searchString)
+                        || g.MIDDLENAME.ToLower().StartsWith(searchString)
+                        || g.CUSTOMERCODE.ToLower().StartsWith(searchString)
+
+                                //a.APPLICATIONREFERENCENUMBER.StartsWith(searchString) || g.FIRSTNAME.ToLower().Contains(searchString.ToLower())
+                                //    || g.LASTNAME.ToLower().Contains(searchString.ToLower()) || g.MIDDLENAME.ToLower().Contains(searchString.ToLower())
+                                select new LoanApplicationViewModel
                                {
                                    firstName = g.FIRSTNAME,
                                    middleName = g.MIDDLENAME,
@@ -831,7 +836,7 @@ namespace FintrakBanking.Repositories.Credit
                                    operationId = a.OPERATIONID,
                                    accountNumber = o.PRODUCTACCOUNTNUMBER,
                                    isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
-                               };
+                               }).ToList();
 
             return applications;
         }
