@@ -376,7 +376,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = pen.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = pen.TAXIDENTIFICATIONNUMBER,
                             registrationNumber = pen.REGISTRATIONNUMBER,
-                            operationId = atrail.OPERATIONID,
+                            operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
                             dateTimeCreated = pen.DATETIMECREATED,
                             customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == pen.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                             {
@@ -861,6 +861,7 @@ namespace FintrakBanking.Repositories.Credit
                             marketDemand = p.MARKETDEMAND,
                             ownershipStructure = p.OWNERSHIPSTRUCTURE,
                             portfolioStrategicAlignment = p.PORTFOLIOSTRATEGICALIGNMENT,
+                            operationId = (short)OperationsEnum.LoanPreliminaryEvaluation,
                             projectDescription = p.PROJECTDESCRIPTION,
                             projectFinancingPlan = p.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = p.PROPOSEDTERMSANDCONDITIONS,

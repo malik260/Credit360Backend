@@ -202,6 +202,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
 
 
+
                 //var data = repo.addMaturityInstruction(entity);
 
                 var data = repo.addMaturityInstructionApprove(entity);
@@ -220,7 +221,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
@@ -367,6 +368,14 @@ namespace FintrakBanking.APICore.Controllers
             catch (ConditionNotMetException ce)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (APIErrorException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+            catch (TwoFactorAuthenticationException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
             catch (SecureException e)
             {

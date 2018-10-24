@@ -341,6 +341,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " " + units;
             }
         }
+
+        public int? loanreViewApplicationId { get; set; }
     }
 
     public class ProductFeesViewModel// : GeneralEntity

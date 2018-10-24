@@ -671,8 +671,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("add-loan-review")]
         public HttpResponseMessage AddOperationReview([FromBody] LoanReviewOperationViewModel model)
         {
-            try
-            {
+            //try
+            //{
                 model.userBranchId = (short)token.GetBranchId;
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.createdBy = token.GetStaffId;
@@ -743,17 +743,20 @@ namespace FintrakBanking.APICore.Controllers
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
-            }
-            catch (ConditionNotMetException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
-            }
+            //}
+            //catch (ConditionNotMetException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            //}
 
         }
+
+
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("operation-approval")]

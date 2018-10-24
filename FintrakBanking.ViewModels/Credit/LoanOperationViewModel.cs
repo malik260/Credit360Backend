@@ -72,7 +72,9 @@ namespace FintrakBanking.ViewModels.Credit
     public class loanPrepaymentViewModel : GeneralEntity
     {
         public string saveStatus;
+        public string userName;
 
+        public int loanId { get; set; }
         public string loanReferenceNumber { get; set; }
         public decimal amount { get; set; }
         public DateTime effectiveDate { get; set; }
