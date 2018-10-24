@@ -1903,10 +1903,6 @@ namespace FintrakBanking.Repositories.Credit
                 record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
                 ctx.SaveChanges();
 
-<<<<<<< HEAD
-                ctx.SaveChanges();
-=======
->>>>>>> 7ce57389477a18b9bc3431a387690f33dd0bad4c
                 //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
                 //{
                 //    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST

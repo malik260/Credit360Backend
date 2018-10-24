@@ -5423,18 +5423,11 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-<<<<<<< HEAD
 
                 //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
                 //           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
                 //           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
 
-=======
-                //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
-                //           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
-                //           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
-
->>>>>>> 7ce57389477a18b9bc3431a387690f33dd0bad4c
                 var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId);
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -7013,10 +7006,7 @@ namespace FintrakBanking.Repositories.Credit
                                            currency = a.TBL_CURRENCY.CURRENCYNAME,
                                        }).Take(10).AsQueryable();
                 }
-<<<<<<< HEAD
-                return allFilteredLoan;
-               
-=======
+
                 foreach(var i in allFilteredLoan)
                 {
                    var casa2 =  context.TBL_CASA.Find(i.casaAccountId2);
@@ -7026,7 +7016,6 @@ namespace FintrakBanking.Repositories.Credit
                 
                  return allFilteredLoan;
               //  return allFilteredLoan.Where(x => x.operationId == (short)OperationsEnum.CommercialLoanBooking);
->>>>>>> 7ce57389477a18b9bc3431a387690f33dd0bad4c
             }
             catch (System.Exception ex)
             {
