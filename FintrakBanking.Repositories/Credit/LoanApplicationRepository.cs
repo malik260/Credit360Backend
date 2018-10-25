@@ -3282,25 +3282,28 @@ namespace FintrakBanking.Repositories.Credit
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
                             proposedAmount = b.PROPOSEDAMOUNT,
 
-                            requireCollateral = a.REQUIRECOLLATERAL,
-                            loanApplicationId = b.LOANAPPLICATIONID,
-                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                            customerId = b.CUSTOMERID,
-                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
-                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
-                            lastName = b.TBL_CUSTOMER.LASTNAME,
-                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
-                            proposedProductId = b.PROPOSEDPRODUCTID,
-                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
-                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
-                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                            branchName = a.TBL_BRANCH.BRANCHNAME,
-                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                            customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
+                            //requireCollateral = a.REQUIRECOLLATERAL,
+                            //loanApplicationId = b.LOANAPPLICATIONID,
+                            //applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            //customerId = b.CUSTOMERID,
+                            //firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            //middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            //lastName = b.TBL_CUSTOMER.LASTNAME,
+                            //customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            //proposedProductId = b.PROPOSEDPRODUCTID,
+                            //productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            //productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            //customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            //branchName = a.TBL_BRANCH.BRANCHNAME,
+                            //customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
+            var result = data.ToList();
+            var test = result.Count();
 
-            return data.ToList();
+            return result;
         }
+
         public List<LoanApplicationDetailViewModel> GetLMSOperation(int loanApplicationId)
         {
             return (from b in context.TBL_LMSR_APPLICATION
@@ -3311,7 +3314,7 @@ namespace FintrakBanking.Repositories.Credit
                     where x.LOANREVIEWAPPLICATIONID == loanApplicationId
                     select new LoanApplicationDetailViewModel
                     {
-                        applicationReferenceNumber = l.LOANREFERENCENUMBER,
+                      //  applicationReferenceNumber = l.LOANREFERENCENUMBER,
                         approvedAmount = l.APPROVEDAMOUNT,
                         proposedAmount = l.PROPOSEDAMOUNT,
                         proposedTenor = l.PROPOSEDTENOR,
