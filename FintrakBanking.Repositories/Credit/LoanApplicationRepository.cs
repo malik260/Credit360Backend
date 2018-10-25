@@ -3282,21 +3282,22 @@ namespace FintrakBanking.Repositories.Credit
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
                             proposedAmount = b.PROPOSEDAMOUNT,
 
-                            //requireCollateral = a.REQUIRECOLLATERAL,
-                            //loanApplicationId = b.LOANAPPLICATIONID,
-                            //applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                            //customerId = b.CUSTOMERID,
-                            //firstName = b.TBL_CUSTOMER.FIRSTNAME,
-                            //middleName = b.TBL_CUSTOMER.MIDDLENAME,
-                            //lastName = b.TBL_CUSTOMER.LASTNAME,
-                            //customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
-                            //proposedProductId = b.PROPOSEDPRODUCTID,
-                            //productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
-                            //productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
-                            //customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                            //branchName = a.TBL_BRANCH.BRANCHNAME,
+                            requireCollateral = a.REQUIRECOLLATERAL,
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = b.TBL_CUSTOMER.LASTNAME,
+                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            proposedProductId = b.PROPOSEDPRODUCTID,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            customerGroupId = (int)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             //customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                            //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
+                            customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
             var test = result.Count();
