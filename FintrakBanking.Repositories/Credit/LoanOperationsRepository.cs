@@ -133,7 +133,7 @@ namespace FintrakBanking.Repositories.Credit
                                          branchId = b.BRANCHID,
                                          companyId = b.COMPANYID,
                                          currencyId = b.CURRENCYID,
-                                         exchangeRate = b.EXCHANGERATE,
+                                         //exchangeRate = b.EXCHANGERATE,
                                          interestRate = a.INTERESTRATE,
                                          date = applicationDate,
                                          dailyAccuralAmount = (double)a.DAILYINTERESTAMOUNT,
@@ -143,7 +143,12 @@ namespace FintrakBanking.Repositories.Credit
                                          baseReferenceNumber = null,
                                          dayCountConventionId = d.DAYCOUNTCONVENTIONID,
 
-                                     }).ToList();
+                                     }).ToList().Select(x =>
+                                     {
+                                         x.exchangeRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, x.companyId).sellingRate;                                         
+                                         return x;
+                                     });
+
 
                 var unscheduledLoan = (from a in context.TBL_LOAN
                                        join e in context.TBL_PRODUCT on a.PRODUCTID equals e.PRODUCTID
@@ -161,12 +166,12 @@ namespace FintrakBanking.Repositories.Credit
                                            branchId = a.BRANCHID,
                                            companyId = a.COMPANYID,
                                            currencyId = a.CURRENCYID,
-                                           exchangeRate = a.EXCHANGERATE,
+                                           //exchangeRate = a.EXCHANGERATE,
                                            interestRate = a.INTERESTRATE,
                                            date = applicationDate,
                                            // dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.OUTSTANDINGPRINCIPAL * 1 / daysInYear,   //loanGenerate.getDaysInLoanPeriod(a.EFFECTIVEDATE, a.MATURITYDATE)),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
                                            mainAmount = a.OUTSTANDINGPRINCIPAL,
-                                           categoryId = (short)DailyAccrualCategory.CommercialLoan,/// change to commercial paper 
+                                           categoryId = (short)DailyAccrualCategory.TermLoan,/// change to commercial paper 
                                            availableBalance = a.OUTSTANDINGPRINCIPAL,
                                            transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                                            baseReferenceNumber = null,
@@ -175,9 +180,11 @@ namespace FintrakBanking.Repositories.Credit
 
                                        }).ToList().Select(x =>
                                        {
+                                           x.exchangeRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, x.companyId).sellingRate;
                                            x.dailyAccuralAmount = ((x.interestRate / 100) * (double)x.availableBalance * 1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId));
                                            return x;
                                        });
+
 
                 var allLoans = scheduledLoan.Union(unscheduledLoan).ToList();
 
@@ -219,7 +226,7 @@ namespace FintrakBanking.Repositories.Credit
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
-                                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
+                                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT * (decimal)i.EXCHANGERATE),
                              }).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -11262,11 +11269,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesOperationExist(int loanId, int operationTypeId)
         {
-            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+            //List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
 
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
-                       where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false
-                       && !finalApprovals.Contains(a.APPROVALSTATUSID)
+                       where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId && a.OPERATIONCOMPLETED == false                       
                        select a;
 
             if (data.Any())
@@ -11278,12 +11284,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId)
         {
-            List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
+            //List<int> finalApprovals = new List<int> { (int)ApprovalStatusEnum.Approved, (int)ApprovalStatusEnum.Disapproved };
 
             var data = from a in context.TBL_LOAN_REVIEW_OPERATION
                        where a.LOANID == loanId && a.OPERATIONTYPEID == operationTypeId
-                      && a.INTERESTFREQUENCYTYPEID == chargeFeeId && a.OPERATIONCOMPLETED == false
-                      && !finalApprovals.Contains(a.APPROVALSTATUSID)
+                      && a.INTERESTFREQUENCYTYPEID == chargeFeeId && a.OPERATIONCOMPLETED == false                      
                        select a;
 
             if (data.Any())
@@ -11354,7 +11359,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var irregularPlan = new TBL_LOAN_REVIEW_OPRATN_IREG_SC
                     {
-
                         PAYMENTAMOUNT = item.PaymentAmount,
                         PAYMENTDATE = item.PaymentDate,
                         CREATEDBY = model.createdBy,
@@ -11384,13 +11388,10 @@ namespace FintrakBanking.Repositories.Credit
                 _operationTypeId = model.productTypeId;
             }
 
-            var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId);
-            if (loan == null) throw new SecureException("An error occured. Please try again or contact admin.");
-            var loanReferenceNumber = loan.LOANREFERENCENUMBER;
-            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREFERENCENUMBER == loanReferenceNumber).FirstOrDefault();
+            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
             // if (reviewApplicationDetail == null) throw new SecureException("Review application details not found!");
 
-            int loanSystemTypeId = 1;
+            
             int? loanReviewApplicationId = null;
             if (reviewApplicationDetail != null)
             {
@@ -11402,7 +11403,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 LOANID = model.loanId,
                 LOANREVIEWAPPLICATIONID = loanReviewApplicationId,
-                LOANSYSTEMTYPEID = loanSystemTypeId,
+                LOANSYSTEMTYPEID = reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
                 OPERATIONTYPEID = model.operationTypeId,
                 EFFECTIVEDATE = model.proposedEffectiveDate,
                 REVIEWDETAILS = model.reviewDetails,
@@ -11493,13 +11494,12 @@ namespace FintrakBanking.Repositories.Credit
 
                     return output;
 
-
                 }
 
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    throw ex; //new SecureException(ex.Message);
                 }
             }
 
@@ -11950,6 +11950,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                         {
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            reviewRecord.OPERATIONCOMPLETED = true;
                             context.SaveChanges();
                             trans.Commit();
                             return 2;
@@ -13871,7 +13872,9 @@ namespace FintrakBanking.Repositories.Credit
                         //model.tenor = model.newTenor;
                         //model.interestFrequency = (short)model.newInterestFrequency;
                         //model.principalFrequency = (short)model.newPrincipalFrequency;
+
                         result = CompleteWriteOff(loanId, model, twoFactorAuth, applicationDate, staffId);
+
                         if (result == true)
                         {
                             updateLoanReviewOperation(loanReviewOperationsId, loanId);

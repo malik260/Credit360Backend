@@ -77,7 +77,7 @@ namespace FintrakBanking.APICore.Controllers
             catch (SecureException e)
             {
 
-                this.errorLogger.LogError(e, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(e, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"There was an error creating this group {e.Message}" });
             }

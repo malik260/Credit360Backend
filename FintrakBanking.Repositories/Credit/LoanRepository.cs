@@ -5423,6 +5423,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
+
                 //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased
                 //           && x.productTypeId != (short)LoanProductTypeEnum.RevolvingLoan
                 //           && x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
@@ -6692,7 +6693,7 @@ namespace FintrakBanking.Repositories.Credit
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 var loans = (from a in context.TBL_LOAN
-                             //join r in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals r.LOANID
+                             join r in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals r.LOANID
                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                              join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                              where a.ISDISBURSED == true && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (int)LoanStatusEnum.Active
@@ -6708,7 +6709,7 @@ namespace FintrakBanking.Repositories.Credit
                                  loanReferenceNumber = a.LOANREFERENCENUMBER,
                                  principalAmount = a.PRINCIPALAMOUNT,
                                  loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                 //lmsApplicationDetailId = r.LOANREVIEWAPPLICATIONID
+                                 lmsApplicationDetailId = r.LOANREVIEWAPPLICATIONID
                                  //applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                  //principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                  //pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,

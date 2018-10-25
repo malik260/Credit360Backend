@@ -302,7 +302,8 @@ namespace FintrakBanking.APICore.Controllers
                     items = (from x in items
                              where x.applicationReferenceNumber.ToLower().StartsWith(searchString)
                              || x.applicantName.ToLower().StartsWith(searchString)
-                              //|| x.customerGroupName.ToLower().StartsWith(searchString)
+                             || x.applicationAmount.ToString() == searchString
+                             //|| x.customerGroupName.ToLower().StartsWith(searchString)
                              select x);
 
                     items = items.Take(itemsPerPage);

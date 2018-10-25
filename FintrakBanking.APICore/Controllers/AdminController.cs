@@ -235,7 +235,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
             }
@@ -380,7 +380,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
             }
@@ -403,7 +403,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+               // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
             }
@@ -425,7 +425,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
             }
@@ -457,7 +457,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = false, message = $"An unhandled error occured {ex.Message}" });
             }

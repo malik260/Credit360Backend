@@ -115,7 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
-                    loanReferenceNumber = d.LOANREFERENCENUMBER,
+                    //loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
                 
@@ -307,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
-                    LOANREFERENCENUMBER = loan.loanReferenceNumber
+                    //LOANREFERENCENUMBER = loan.loanReferenceNumber
 
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
@@ -620,7 +620,7 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = loan.APPROVEDINTERESTRATE,
                     outstandingPrincipal = loan.APPROVEDAMOUNT, // adapting!
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
-                    loanReferenceNumber = String.Empty,
+                    loanReferenceNumber = loan.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -782,7 +782,6 @@ namespace FintrakBanking.Repositories.Credit
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.APPLICATIONSTATUSID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
                                join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID
-                            //   join o in context.TBL_CASA on l.CASAACCOUNTID equals o.CASAACCOUNTID
                                join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals  y.TARGETID
                                 where y.RESPONSESTAFFID == null
                                   && operations.Contains(y.OPERATIONID)
