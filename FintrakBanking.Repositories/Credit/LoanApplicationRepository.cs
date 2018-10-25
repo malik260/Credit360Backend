@@ -1002,8 +1002,14 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
-            response = context.SaveChanges();
-
+            try
+            {
+                response = context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                //
+            }
 
 
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
