@@ -732,21 +732,22 @@ namespace FintrakBanking.Repositories.Setups.Approval
                               responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
                               systemArrivalDate = a.SYSTEMARRIVALDATETIME,
                               systemResponseDate = a.SYSTEMRESPONSEDATETIME,
-                              responseStaffName = !a.RESPONSESTAFFID.HasValue ? "Awaiting Action" : j.FIRSTNAME + " " + j.LASTNAME,
+                              //responseStaffName = !a.RESPONSESTAFFID.HasValue ? "Awaiting Action" : j.FIRSTNAME + " " + j.LASTNAME,
                               comment = a.COMMENT,
-                              requestStaffName = i.FIRSTNAME + " " + i.LASTNAME,
+                              // = i.FIRSTNAME + " " + i.LASTNAME,
                               requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : b.LEVELNAME,
                               TargetId = a.TARGETID,
                               operationId = e.OPERATIONID,
                               operationName = e.OPERATIONNAME,
                               approvalStatus = k.APPROVALSTATUSNAME
                           });
+            var vr = result.ToList();
             return result;
         }
 
         public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId)
         {
-            var result = await GetApprovalTrail(companyId).Where(c => c.TargetId == targetId && c.operationId == operationId).OrderByDescending(c => c.systemArrivalDate).ToListAsync();
+            var result = await GetApprovalTrail(companyId).Where(c=>c.TargetId==targetId && c.operationId==operationId).OrderByDescending(c => c.systemArrivalDate).ToListAsync();
             return result;
         }
 
