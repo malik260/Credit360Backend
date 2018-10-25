@@ -28,7 +28,7 @@ namespace FintrakBanking.APICore.core
     {
         public override void OnException(HttpActionExecutedContext context)
         {
-            Log.Error(context.Exception,"OOps");
+            //Log.Error(context.Exception,"OOps");
         }
     }
 }

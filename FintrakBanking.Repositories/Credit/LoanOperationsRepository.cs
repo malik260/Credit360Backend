@@ -133,7 +133,7 @@ namespace FintrakBanking.Repositories.Credit
                                          branchId = b.BRANCHID,
                                          companyId = b.COMPANYID,
                                          currencyId = b.CURRENCYID,
-                                         exchangeRate = b.EXCHANGERATE,
+                                         //exchangeRate = b.EXCHANGERATE,
                                          interestRate = a.INTERESTRATE,
                                          date = applicationDate,
                                          dailyAccuralAmount = (double)a.DAILYINTERESTAMOUNT,
@@ -143,7 +143,12 @@ namespace FintrakBanking.Repositories.Credit
                                          baseReferenceNumber = null,
                                          dayCountConventionId = d.DAYCOUNTCONVENTIONID,
 
-                                     }).ToList();
+                                     }).ToList().Select(x =>
+                                     {
+                                         x.exchangeRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, x.companyId).sellingRate;                                         
+                                         return x;
+                                     });
+
 
                 var unscheduledLoan = (from a in context.TBL_LOAN
                                        join e in context.TBL_PRODUCT on a.PRODUCTID equals e.PRODUCTID
@@ -161,12 +166,12 @@ namespace FintrakBanking.Repositories.Credit
                                            branchId = a.BRANCHID,
                                            companyId = a.COMPANYID,
                                            currencyId = a.CURRENCYID,
-                                           exchangeRate = a.EXCHANGERATE,
+                                           //exchangeRate = a.EXCHANGERATE,
                                            interestRate = a.INTERESTRATE,
                                            date = applicationDate,
                                            // dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.OUTSTANDINGPRINCIPAL * 1 / daysInYear,   //loanGenerate.getDaysInLoanPeriod(a.EFFECTIVEDATE, a.MATURITYDATE)),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
                                            mainAmount = a.OUTSTANDINGPRINCIPAL,
-                                           categoryId = (short)DailyAccrualCategory.CommercialLoan,/// change to commercial paper 
+                                           categoryId = (short)DailyAccrualCategory.TermLoan,/// change to commercial paper 
                                            availableBalance = a.OUTSTANDINGPRINCIPAL,
                                            transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                                            baseReferenceNumber = null,
@@ -175,9 +180,11 @@ namespace FintrakBanking.Repositories.Credit
 
                                        }).ToList().Select(x =>
                                        {
+                                           x.exchangeRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, x.companyId).sellingRate;
                                            x.dailyAccuralAmount = ((x.interestRate / 100) * (double)x.availableBalance * 1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId));
                                            return x;
                                        });
+
 
                 var allLoans = scheduledLoan.Union(unscheduledLoan).ToList();
 
@@ -219,7 +226,7 @@ namespace FintrakBanking.Repositories.Credit
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
-                                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
+                                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT * (decimal)i.EXCHANGERATE),
                              }).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
