@@ -1215,6 +1215,38 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpDelete]
+        [ClaimsAuthorization]
+        [Route("loanApplication/{id}")]
+        public HttpResponseMessage DeleteLoanApplication(int id)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+
+                UserInfo user = new UserInfo()
+                {
+                    BranchId = token.GetBranchId,
+                    companyId = token.GetCompanyId,
+                    staffId = token.GetStaffId,
+                    applicationUrl = HttpContext.Current.Request.Path,
+                    userIPAddress = HttpContext.Current.Request.UserHostAddress
+                };
+                var result = repo.DeleteLoanApplication(id);
+                // if(result)
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = result, message = "loan Application was removed successfully" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
         [HttpDelete] [ClaimsAuthorization]
         [Route("loanApplicationDetail/{id}")]
         public HttpResponseMessage DeleteLoanApplicationDetail(int id)

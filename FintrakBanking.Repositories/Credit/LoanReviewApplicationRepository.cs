@@ -782,7 +782,6 @@ namespace FintrakBanking.Repositories.Credit
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.APPLICATIONSTATUSID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
                                join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID
-                            //   join o in context.TBL_CASA on l.CASAACCOUNTID equals o.CASAACCOUNTID
                                join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals  y.TARGETID
                                 where y.RESPONSESTAFFID == null
                                   && operations.Contains(y.OPERATIONID)
