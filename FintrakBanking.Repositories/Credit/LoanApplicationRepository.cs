@@ -683,6 +683,7 @@ namespace FintrakBanking.Repositories.Credit
                            preliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
                            collateralDetail = a.COLLATERALDETAIL,
                            loanInformation = a.LOANINFORMATION,
+                           productClassId = a.PRODUCTCLASSID,
                        };
             return data.ToList();
         }
@@ -1002,8 +1003,14 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
-            response = context.SaveChanges();
-
+            try
+            {
+                response = context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                //
+            }
 
 
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
@@ -3423,7 +3430,8 @@ namespace FintrakBanking.Repositories.Credit
                             //productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
                             //customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             //branchName = a.TBL_BRANCH.BRANCHNAME,
-                            //customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            //customerGroupId = (int)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            ////customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
