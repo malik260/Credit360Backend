@@ -682,6 +682,7 @@ namespace FintrakBanking.Repositories.Credit
                            preliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
                            collateralDetail = a.COLLATERALDETAIL,
                            loanInformation = a.LOANINFORMATION,
+                           productClassId = a.PRODUCTCLASSID,
                        };
             return data.ToList();
         }

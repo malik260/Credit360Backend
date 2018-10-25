@@ -128,6 +128,17 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public string timeLapse
+        {
+            get
+            {
+                var count = Math.Round((DateTime.Now - timeIn.Value).TotalDays);
+                var units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - timeIn.Value).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
+            }
+        }
+
         public int tempApplicationCancellationId { get; set; }
         public IQueryable<string> staffName { get; set; }
         public string comment { get; set; }
