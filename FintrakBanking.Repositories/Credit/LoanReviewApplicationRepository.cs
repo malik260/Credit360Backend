@@ -115,7 +115,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
-                    loanReferenceNumber = d.LOANREFERENCENUMBER,
+                    //loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
                 
@@ -307,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
-                    LOANREFERENCENUMBER = loan.loanReferenceNumber
+                    //LOANREFERENCENUMBER = loan.loanReferenceNumber
 
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
@@ -620,7 +620,7 @@ namespace FintrakBanking.Repositories.Credit
                     interestRate = loan.APPROVEDINTERESTRATE,
                     outstandingPrincipal = loan.APPROVEDAMOUNT, // adapting!
                     loanApplicationDetailId = loan.LOANAPPLICATIONDETAILID,
-                    loanReferenceNumber = loan.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER, // 
+                    loanReferenceNumber = loan.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                 })
                 .FirstOrDefault();
             }
@@ -775,18 +775,24 @@ namespace FintrakBanking.Repositories.Credit
         {
             searchString = searchString.Trim().ToLower();
 
-            var applications = from a in context.TBL_LMSR_APPLICATION
+            int[] operations = { (int)OperationsEnum.LoanReviewApprovalAppraisal, (int)OperationsEnum.LoanReviewApprovalOfferLetter, (int)OperationsEnum.LoanReviewApprovalAvailment ,
+           (int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
+
+            var applications = (from a in context.TBL_LMSR_APPLICATION
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.APPLICATIONSTATUSID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
                                join l in context.TBL_LOAN on d.LOANID equals l.TERMLOANID
-                               join o in context.TBL_CASA on l.CASAACCOUNTID equals o.CASAACCOUNTID
                                join y in context.TBL_APPROVAL_TRAIL on a.LOANAPPLICATIONID equals  y.TARGETID
-                               where a.APPLICATIONREFERENCENUMBER == searchString
-                       // || g.FIRSTNAME.ToLower().StartsWith(searchString)
-                       // || g.LASTNAME.ToLower().StartsWith(searchString)
-                        //|| g.MIDDLENAME.ToLower().StartsWith(searchString)
-                        //|| g.CUSTOMERCODE.ToLower().StartsWith(searchString)
-                               select new LoanApplicationViewModel
+                                where y.RESPONSESTAFFID == null
+                                  && operations.Contains(y.OPERATIONID)
+                                  && y.APPROVALSTATEID != (int)ApprovalState.Ended
+                             && (a.APPLICATIONREFERENCENUMBER == searchString
+                          || g.FIRSTNAME.ToLower().Contains(searchString)
+                          || g.LASTNAME.ToLower().Contains(searchString)
+                          || g.MIDDLENAME.ToLower().Contains(searchString)
+                          || a.CREATEDBY == context.TBL_STAFF.Where(o => o.STAFFCODE == searchString.ToUpper()).Select(o => o.STAFFID).FirstOrDefault())
+
+                                select new LoanApplicationViewModel
                                {
                                    firstName = g.FIRSTNAME,
                                    middleName = g.MIDDLENAME,
@@ -829,9 +835,9 @@ namespace FintrakBanking.Repositories.Credit
                                    createdBy = a.CREATEDBY,
                                    //  loanPreliminaryEvaluationId = x.q.o.g.a.LOANPRELIMINARYEVALUATIONID,
                                    operationId = a.OPERATIONID,
-                                   accountNumber = o.PRODUCTACCOUNTNUMBER,
+                                 //  accountNumber = o.PRODUCTACCOUNTNUMBER,
                                    isOfferLetterAvailable = context.TBL_OFFERLETTER.Where(ol => ol.APPLICATIONREFERENCENUMBER == a.APPLICATIONREFERENCENUMBER).Any()
-                               };
+                               }).ToList();
 
             return applications;
         }

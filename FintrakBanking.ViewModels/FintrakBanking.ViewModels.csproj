@@ -162,6 +162,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Report\ApprovalWorkflowTrackerViewModel.cs" />
     <Compile Include="Report\CollateralInformation.cs" />
+    <Compile Include="Report\ExceptionReportViewModel.cs" />
     <Compile Include="Report\LimitAndMonitoringViewModel.cs" />
     <Compile Include="Report\LoanInformation.cs" />
     <Compile Include="Report\LoanScheduleViewModel.cs" />
