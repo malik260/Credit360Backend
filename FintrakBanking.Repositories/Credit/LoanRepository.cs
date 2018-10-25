@@ -8032,7 +8032,7 @@ namespace FintrakBanking.Repositories.Credit
             var response = result.ToList();
             return result;
         }
-
+         
         public async Task<IEnumerable<WorkflowTrackerViewModel>> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId)
         {
             var result = await GetApprovalTrail(companyId, staffId, targetId, operationId).ToListAsync();
