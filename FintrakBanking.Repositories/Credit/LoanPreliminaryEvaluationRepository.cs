@@ -750,6 +750,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = p.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = p.TAXIDENTIFICATIONNUMBER,
                             registrationNumber = p.REGISTRATIONNUMBER,
+                            operationId = (short)OperationsEnum.LoanPreliminaryEvaluation,
                             customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == p.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                             {
                                 bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
