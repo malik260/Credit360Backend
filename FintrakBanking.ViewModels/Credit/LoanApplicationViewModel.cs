@@ -232,6 +232,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
 
         public int customerId { get; set; }
+        public int customerGroupId { get; set; }
 
         public string customerName { get; set; }
 
