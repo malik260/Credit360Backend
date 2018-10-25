@@ -342,6 +342,7 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.RESPONSESTAFFID == null
                             && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation 
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            orderby pen.LOANPRELIMINARYEVALUATIONID descending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.COMPANYID,
@@ -465,6 +466,7 @@ namespace FintrakBanking.Repositories.Credit
                         && atrail.RESPONSESTAFFID == null
                         && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation 
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                        orderby pen.LOANPRELIMINARYEVALUATIONID descending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.COMPANYID,
@@ -712,7 +714,8 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
                         where //p.ISCURRENT == false //&& p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
-                        p.SENTFORLOANAPPLICATION == false 
+                        p.SENTFORLOANAPPLICATION == false
+                        orderby p.LOANPRELIMINARYEVALUATIONID descending
                         //|| p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
@@ -838,7 +841,8 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
                         where p.ISCURRENT == false 
                         && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup 
-                        && p.SENTFORLOANAPPLICATION == false 
+                        && p.SENTFORLOANAPPLICATION == false
+                        orderby p.LOANPRELIMINARYEVALUATIONID descending
                         //|| p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {

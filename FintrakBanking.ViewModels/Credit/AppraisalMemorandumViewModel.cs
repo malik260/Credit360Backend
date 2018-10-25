@@ -66,7 +66,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string priceIndexName { get; set; }
         public int? priceIndexId { get; set; }
         public double priceIndexRate { get; set; }
-        public string liborInfo { get { return priceIndexId == null ? "" : "("+ priceIndexName + ")"; } }
+        public string liborInfo { get { return priceIndexId == null ? "" : "(" + priceIndexName + ")"; } }
         //public int productId { get; set; }
 
         public decimal approvedAmount { get; set; }
@@ -192,7 +192,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalLevelId { get; set; }
         public string approvalLevelName { get; set; }
         public int numberOfApprovals { get; set; }
-        public int groupRoleId  { get; set; }
+        public int groupRoleId { get; set; }
         public string approvalGroupName { get; set; }
         public int staffId { get; set; }
         public string staffName { get; set; }
@@ -289,6 +289,19 @@ namespace FintrakBanking.ViewModels.Credit
         public int? monitoringTriggerId { get; set; }
         public string productCustomerName { get; set; }
         public double SN { get; set; }
+    }
+
+    public class CustomerTurnoverViewModel
+    {
+        public int accountId { get; set; }
+        public string schemeType { get; set; }
+        public string period { get; set; }
+        public decimal minimumDebitBalance { get; set; }
+        public decimal maximumDebitBalance { get; set; }
+        public decimal minimumCreitBalance { get; set; }
+        public decimal maximumCreditBalance { get; set; }
+        public decimal debitTurnover { get; set; }
+        public decimal creditTurnover { get; set; }
     }
 
     public class RepaymentScheduleTermsViewModel

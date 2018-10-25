@@ -92,7 +92,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
         public int? casaAccountId2 { get; set; }
-        public short crmsRepaymentAgreementTypeId { get; set; }
+        public short? crmsRepaymentAgreementTypeId { get; set; }
         public int loanApplicationId { get; set; }
         public int loanApplicationDetailId { get; set; }
        
@@ -271,6 +271,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string isDisbursedState { get; set; }
         public string productPriceIndexName { get; set; }
         public string revolvingType { get; set; }
+        public short revolvingTypeId { get; set; }
         public string istenored { get; set; }
         public string isbankFormat { get; set; }
         public int loadArchiveId { get; set; }

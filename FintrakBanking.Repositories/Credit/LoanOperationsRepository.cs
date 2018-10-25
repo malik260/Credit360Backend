@@ -16129,17 +16129,12 @@ namespace FintrakBanking.Repositories.Credit
             if (response)
             {
                 responseModel.saveStatus = "saved";
-            }
+                responseModel.newPrincipal = loanRecord.OUTSTANDINGPRINCIPAL;
+                responseModel.InterestAtMaturity = loanRecord.OUTSTANDINGINTEREST;
+                responseModel.newMaturityAmount = loanRecord.OUTSTANDINGPRINCIPAL + loanRecord.OUTSTANDINGINTEREST;
 
-            // responseModel.interestToDate = dailyInterestAmount * (systemDate - model.effectiveDate).Days;
-            responseModel.newPrincipal = loanRecord.OUTSTANDINGPRINCIPAL;
-            responseModel.InterestAtMaturity = loanRecord.OUTSTANDINGINTEREST;
-            responseModel.newMaturityAmount = loanRecord.OUTSTANDINGPRINCIPAL + loanRecord.OUTSTANDINGINTEREST;
+                PostCPAndFXPrepayment(model, twoFactorAuthDetails);
 
-            PostCPAndFXPrepayment(model, twoFactorAuthDetails);
-
-            if (context.SaveChanges() > 0)
-            {
                 return responseModel;
             }
             else throw new ConditionNotMetException("An error occured. Operation could not be completed.");
