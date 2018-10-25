@@ -63,7 +63,7 @@ namespace FintrakBanking.Repositories.Credit
         private readonly string amountPaidSoFarHolder = "@{{AmountPaidSoFar}}";
         private readonly string amountProposedHolder = "@{{AmountProposed}}";
 
-
+        private readonly string customerTurnoverHolder = "@{{CustomerTurnover}}";
 
         // properties to have getter methods for interfacing
         private string customerName;
@@ -94,6 +94,7 @@ namespace FintrakBanking.Repositories.Credit
         private string amountDisbursed;
         private string amountPaidSoFar;
         private string amountProposed;
+        private string customerTurnover;
 
 
         // init
@@ -169,6 +170,7 @@ namespace FintrakBanking.Repositories.Credit
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
             this.monitoringTriggers = MonitoringTriggersMarkup();
+            this.customerTurnover = CustomerTurnoverMarkup();
 
             return true;
         }
@@ -232,6 +234,7 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(proposedConditionsHolder, proposedConditions);
             content = content.Replace(monitoringTriggersHolder, monitoringTriggers);
             content = content.Replace(environmentalSocialRiskHolder, environmentalSocialRisk);
+            content = content.Replace(customerTurnoverHolder, customerTurnover);
 
             // lms cam only
             content = content.Replace(securityTypeHolder, securityType);
@@ -249,7 +252,6 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(amountDisbursedHolder, amountDisbursed);
             content = content.Replace(amountPaidSoFarHolder, amountPaidSoFar);
             content = content.Replace(amountProposedHolder, amountProposed);
-
 
             return content;
         }
@@ -601,6 +603,57 @@ namespace FintrakBanking.Repositories.Credit
             return cam;
         }
 
+        // customer turnover
+        public IEnumerable<CustomerTurnoverViewModel> GetCustomerTurnover()
+        {
+            List<CustomerTurnoverViewModel> turnover = new List<CustomerTurnoverViewModel>();
+            //if (operationId == (int)OperationsEnum.CAM) return memo.GetApplicationCustomerTurnover(targetId);
+            //return memo.GetApplicationCustomerTurnoverLms(targetId);
+
+            // CHECK IF PLACEHOLDER EXIST
+            // CALL API
+            return turnover;
+        }
+
+        private string CustomerTurnoverMarkup()
+        {
+            var result = String.Empty;
+            var turnover = GetCustomerTurnover();
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Account ID</th>
+                        <th>Scheme Type</th>
+                        <th>Min Debit Balance</th>
+                        <th>Max Debit Balance</th>
+                        <th>Min Creit Balance</th>
+                        <th>Max Credit Balance</th>
+                        <th>Debit Turnover</th>
+                        <th>Credit Turnover</th>
+                    </tr>
+                 ";
+            foreach (var t in turnover)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{t.accountId}</td>
+                        <td>{t.schemeType}</td>
+                        <td>{t.minimumDebitBalance}</td>
+                        <td>{t.maximumDebitBalance}</td>
+                        <td>{t.minimumCreitBalance}</td>
+                        <td>{t.maximumCreditBalance}</td>
+                        <td>{t.debitTurnover}</td>
+                        <td>{t.creditTurnover}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+        }
     }
 }
 
