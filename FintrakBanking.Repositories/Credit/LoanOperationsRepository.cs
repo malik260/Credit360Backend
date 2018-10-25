@@ -5316,7 +5316,9 @@ namespace FintrakBanking.Repositories.Credit
                         var data = new OverDraftTopUpAndRenewViewModel
                         {
                             sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                            sanctionReferenceNumber = loan.serialNumber,
+                            applicationDate = systemDate.ToString("dd-MMM-yyyy", null),
+                            //sanctionReferenceNumber = loan.serialNumber,
+                            sanctionReferenceNumber = loan.loanReferenceNumber,
                             accountNumber = loan.productAccountNumber,
                             expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                             reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -5918,7 +5920,7 @@ namespace FintrakBanking.Repositories.Credit
                                  effectiveDate = b.EFFECTIVEDATE,
                                  maturityDate = (DateTime)b.MATURITYDATE,
                                  bookingDate = DateTime.Today,
-                                 overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
+                                 overdraftLimit = (decimal?)b.OVERDRAFTTOPUP ?? 0,
                                  pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                  pastDueInterest = a.PASTDUEINTEREST,
                                  interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
