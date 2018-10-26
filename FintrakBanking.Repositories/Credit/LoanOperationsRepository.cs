@@ -226,7 +226,7 @@ namespace FintrakBanking.Repositories.Credit
                                  branchId = groupedQ.Key.BRANCHID,
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
-                                 dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT * (decimal)i.EXCHANGERATE),
+                                 dailyAccuralAmount = (double)groupedQ.Sum(i => (double)i.DAILYACCURALAMOUNT * i.EXCHANGERATE),
                              }).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -5316,7 +5316,9 @@ namespace FintrakBanking.Repositories.Credit
                         var data = new OverDraftTopUpAndRenewViewModel
                         {
                             sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                            sanctionReferenceNumber = loan.serialNumber,
+                            applicationDate = systemDate.ToString("dd-MMM-yyyy", null),
+                            //sanctionReferenceNumber = loan.serialNumber,
+                            sanctionReferenceNumber = loan.loanReferenceNumber,
                             accountNumber = loan.productAccountNumber,
                             expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                             reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -5626,7 +5628,7 @@ namespace FintrakBanking.Repositories.Credit
                     var data = new OverDraftExtendViewModel
                     {
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.serialNumber,
+                        sanctionReferenceNumber = loan.loanReferenceNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -5918,7 +5920,7 @@ namespace FintrakBanking.Repositories.Credit
                                  effectiveDate = b.EFFECTIVEDATE,
                                  maturityDate = (DateTime)b.MATURITYDATE,
                                  bookingDate = DateTime.Today,
-                                 overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
+                                 overdraftLimit = (decimal?)b.OVERDRAFTTOPUP ?? 0,
                                  pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                  pastDueInterest = a.PASTDUEINTEREST,
                                  interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
@@ -16131,17 +16133,12 @@ namespace FintrakBanking.Repositories.Credit
             if (response)
             {
                 responseModel.saveStatus = "saved";
-            }
+                responseModel.newPrincipal = loanRecord.OUTSTANDINGPRINCIPAL;
+                responseModel.InterestAtMaturity = loanRecord.OUTSTANDINGINTEREST;
+                responseModel.newMaturityAmount = loanRecord.OUTSTANDINGPRINCIPAL + loanRecord.OUTSTANDINGINTEREST;
 
-            // responseModel.interestToDate = dailyInterestAmount * (systemDate - model.effectiveDate).Days;
-            responseModel.newPrincipal = loanRecord.OUTSTANDINGPRINCIPAL;
-            responseModel.InterestAtMaturity = loanRecord.OUTSTANDINGINTEREST;
-            responseModel.newMaturityAmount = loanRecord.OUTSTANDINGPRINCIPAL + loanRecord.OUTSTANDINGINTEREST;
+                PostCPAndFXPrepayment(model, twoFactorAuthDetails);
 
-            PostCPAndFXPrepayment(model, twoFactorAuthDetails);
-
-            if (context.SaveChanges() > 0)
-            {
                 return responseModel;
             }
             else throw new ConditionNotMetException("An error occured. Operation could not be completed.");
