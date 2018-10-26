@@ -232,26 +232,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("loan-application/{id}")]
-        public HttpResponseMessage GetLoanAppById(int id)
-        {
-            try
-            { 
-                var data = repo.GetLoanAppById(id, token.GetCompanyId);
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("loan-application/{id}")]
+      //  public HttpResponseMessage GetLoanAppById(int id)
+      //  {
+      //      try
+      //      { 
+      //          var data = repo.GetLoanAppById(id, token.GetCompanyId);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
+      //          if (data == null)
+      //          {
+      //              return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+      //          }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+      //      }
+      //      catch (SecureException e)
+      //      {
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+      //      }
+      //  }
         
       [HttpGet] [ClaimsAuthorization]  
         [Route("loan-application-eligibility/loanApplicationId/{id}")]
@@ -1390,7 +1390,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan/condition-precident/{loanApplicationId}")]
+        [Route("loan/lms-condition-precident/{loanApplicationId}")]
         public HttpResponseMessage GetLMSConditionPrecidents(int loanApplicationId)
         {
             try
@@ -1514,25 +1514,6 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("lms-operation")]
-        public HttpResponseMessage GetlmsOperation(int reviewApplicationId)
-        {
-            try
-            {
-                var data = repo.GetLMSOperation(reviewApplicationId);
-
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        
     }
 }
