@@ -5316,7 +5316,9 @@ namespace FintrakBanking.Repositories.Credit
                         var data = new OverDraftTopUpAndRenewViewModel
                         {
                             sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                            sanctionReferenceNumber = loan.serialNumber,
+                            applicationDate = systemDate.ToString("dd-MMM-yyyy", null),
+                            //sanctionReferenceNumber = loan.serialNumber,
+                            sanctionReferenceNumber = loan.loanReferenceNumber,
                             accountNumber = loan.productAccountNumber,
                             expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                             reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -5626,7 +5628,7 @@ namespace FintrakBanking.Repositories.Credit
                     var data = new OverDraftExtendViewModel
                     {
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.serialNumber,
+                        sanctionReferenceNumber = loan.loanReferenceNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -5918,7 +5920,7 @@ namespace FintrakBanking.Repositories.Credit
                                  effectiveDate = b.EFFECTIVEDATE,
                                  maturityDate = (DateTime)b.MATURITYDATE,
                                  bookingDate = DateTime.Today,
-                                 overdraftLimit = (decimal)b.OVERDRAFTTOPUP,
+                                 overdraftLimit = (decimal?)b.OVERDRAFTTOPUP ?? 0,
                                  pastDuePrincipal = a.PASTDUEPRINCIPAL,
                                  pastDueInterest = a.PASTDUEINTEREST,
                                  interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
@@ -11450,6 +11452,9 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     bool output = false;
                     context.TBL_LOAN_REVIEW_OPERATION.Add(reviewOperation);
+
+                    context.SaveChanges();
+
                     auditTrail.AddAuditTrail(audit);
                     int status = 0;
                     if ((int)OperationsEnum.Prepayment != model.operationTypeId)
@@ -11460,10 +11465,11 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         status = (int)ApprovalStatusEnum.Pending;
                     }
+
                     workFlow.StaffId = model.createdBy;
                     workFlow.CompanyId = model.companyId;
                     workFlow.StatusId = status;//(int)ApprovalStatusEnum.Pending;
-                    workFlow.TargetId = model.loanId;
+                    workFlow.TargetId = reviewOperation.LOANREVIEWOPERATIONID; // model.loanReviewOperationsId;
                     workFlow.Comment = "Initiation";
                     workFlow.OperationId = model.operationTypeId;
                     workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
@@ -11514,7 +11520,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
                             join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
-                            join atrail in context.TBL_APPROVAL_TRAIL on op.LOANID equals atrail.TARGETID
+                            join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                             join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                             join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID

@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
 using System.Configuration;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -1002,8 +1003,14 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
-            response = context.SaveChanges();
-
+            try
+            {
+                response = context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                //
+            }
 
 
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
@@ -2940,16 +2947,72 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+        private IQueryable<WorkflowTrackerViewModel> GetApprovalTrail(int companyId, int staffId, int targetId, int operationId)
+        {
+            var loggedsStaff = context.TBL_STAFF.Find(staffId);
+            var result = (from a in context.TBL_APPROVAL_TRAIL
+                              // join b in context.TBL_APPROVAL_LEVEL on a.FROMAPPROVALLEVELID equals b.APPROVALLEVELID
+                              //  join c in context.TBL_APPROVAL_GROUP on b.GROUPID equals c.GROUPID
+                              // join d in context.TBL_APPROVAL_GROUP_MAPPING on c.GROUPID equals d.GROUPID
+                              // join e in context.TBL_OPERATIONS on d.OPERATIONID equals e.OPERATIONID
+
+                              // join i in context.TBL_STAFF on a.REQUESTSTAFFID equals i.STAFFID
+                              //join j in context.TBL_STAFF on a.RESPONSESTAFFID equals j.STAFFID into apprStaff
+                              // from j in apprStaff.DefaultIfEmpty()
+                              // join k in context.TBL_APPROVAL_STATUS on a.APPROVALSTATUSID equals k.APPROVALSTATUSID
+                          where a.COMPANYID == companyId
+                          where a.TARGETID == targetId && a.OPERATIONID == operationId
+                          select new WorkflowTrackerViewModel
+                          {
+                              arrivalDate = a.ARRIVALDATE,
+                              responseApprovalLevel = a.TOAPPROVALLEVELID.HasValue ? a.TBL_APPROVAL_LEVEL1.LEVELNAME : "N/A",
+                              responseDate = a.SYSTEMRESPONSEDATETIME ?? DateTime.Now,
+                              systemArrivalDate = a.SYSTEMARRIVALDATETIME,
+                              systemResponseDate = a.SYSTEMRESPONSEDATETIME,
+                              requestStaffId = a.REQUESTSTAFFID,
+                              responseStaffName = !a.TOAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL1.LEVELNAME,
+                              comment = a.COMMENT,                             
+                              requestStaffName = a.TBL_STAFF.FIRSTNAME != null ? a.TBL_STAFF.FIRSTNAME + " " + a.TBL_STAFF.LASTNAME : null,
+                              requestApprovalLevel = !a.FROMAPPROVALLEVELID.HasValue ? "Initiation" : a.TBL_APPROVAL_LEVEL.LEVELNAME,
+                              TargetId = a.TARGETID,
+                              // operationId = e.OPERATIONID,
+                              // operationName = e.OPERATIONNAME,
+                              //approvalStatus = context.TBL_APPROVAL_STATUS.Where(x=>x.APPROVALSTATUSID == a.APPROVALSTATUSID).FirstOrDefault().APPROVALSTATUSNAME
+                              approvalStatus = a.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME
+                          }).Distinct();
+
+
+            var response = result.ToList();
+            return result;
+        }
+
+        public IEnumerable<WorkflowTrackerViewModel> GetApprovalTrailByOperationIdAndTargetId(int operationId, int targetId, int companyId, int staffId)
+        {
+            var result = GetApprovalTrail(companyId, staffId, targetId, operationId).ToList();
+            return result.Distinct();
+        }
 
         public bool SaveCancelledApplcation(LoanApplicationViewModel data)
         {
+            var ApprovalTrail = GetApprovalTrailByOperationIdAndTargetId((int)OperationsEnum.CAM, data.loanApplicationId, data.companyId, data.createdBy);
+          var ApprovalStaffCount =  ApprovalTrail.Where(a=>a.requestStaffId != data.createdBy).Count();
+            if (ApprovalStaffCount == 0 )
+            {
+                LaonApplcationCancelllationCompelted(data);
+
+                if (context.SaveChanges() > 0)
+                {
+                    return true;
+                }
+                return false;
+            }
             var isCancellatuionInProgress = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationInProgress).Any();
             if (isCancellatuionInProgress == true)
                 throw new ConditionNotMetException(" This Loan is currently under going cancellation process");
 
             var isCancellatuionCompleted = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId && x.APPLICATIONSTATUSID == (int)LoanApplicationStatusEnum.CancellationCompleted).Any();
             if (isCancellatuionCompleted == true)
-                throw new ConditionNotMetException(" This Loan already been cancelled");
+                throw new ConditionNotMetException(" This Loan has already been cancelled");
 
             var application = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == data.loanApplicationId).Select(x => x).FirstOrDefault();
             if (application != null)
@@ -3355,20 +3418,20 @@ namespace FintrakBanking.Repositories.Credit
                             proposedAmount = b.PROPOSEDAMOUNT,
 
                             //requireCollateral = a.REQUIRECOLLATERAL,
-                            //loanApplicationId = b.LOANAPPLICATIONID,
-                            //applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                            //customerId = b.CUSTOMERID,
-                            //firstName = b.TBL_CUSTOMER.FIRSTNAME,
-                            //middleName = b.TBL_CUSTOMER.MIDDLENAME,
-                            //lastName = b.TBL_CUSTOMER.LASTNAME,
-                            //customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
-                            //proposedProductId = b.PROPOSEDPRODUCTID,
-                            //productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
-                            //productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
-                            //customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
-                            //branchName = a.TBL_BRANCH.BRANCHNAME,
-                            //customerGroupId = (int)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                            ////customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = b.TBL_CUSTOMER.LASTNAME,
+                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            proposedProductId = b.PROPOSEDPRODUCTID,
+                            productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
+                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            customerGroupId = (int)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            //customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
@@ -3377,27 +3440,6 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public List<LoanApplicationDetailViewModel> GetLMSOperation(int loanApplicationId)
-        {
-            return (from b in context.TBL_LMSR_APPLICATION
-                    join l in context.TBL_LMSR_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
-                    join x in context.TBL_LOAN_REVIEW_OPERATION on l.LOANREVIEWAPPLICATIONID equals x.LOANREVIEWAPPLICATIONID
-                    join a in context.TBL_LOAN on x.LOANID equals a.TERMLOANID
-                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                    where x.LOANREVIEWAPPLICATIONID == loanApplicationId
-                    select new LoanApplicationDetailViewModel
-                    {
-                      //  applicationReferenceNumber = l.LOANREFERENCENUMBER,
-                        approvedAmount = l.APPROVEDAMOUNT,
-                        proposedAmount = l.PROPOSEDAMOUNT,
-                        proposedTenor = l.PROPOSEDTENOR,
-                        approvedTenor = l.APPROVEDTENOR,
-                        proposedInterestRate = l.PROPOSEDINTERESTRATE,
-                        approvedInterestRate = l.APPROVEDINTERESTRATE,
-                        loanreViewApplicationId = x.LOANREVIEWAPPLICATIONID
-
-                    }).ToList();
-
-        }
+        
     }
 }

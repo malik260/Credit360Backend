@@ -132,9 +132,10 @@ namespace FintrakBanking.ViewModels.Credit
         {
             get
             {
-                var count = Math.Round((DateTime.Now - timeIn.Value).TotalDays);
-                var units = count == 1 ? " day" : " days";
-                if ((DateTime.Now - timeIn.Value).TotalHours < 24) return timeIn.ToString();
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
                 return count.ToString() + units;
             }
         }

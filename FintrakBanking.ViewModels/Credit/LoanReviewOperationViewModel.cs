@@ -65,6 +65,10 @@ namespace FintrakBanking.ViewModels.Credit
 
         public List<LoanReviewIrregularScheduleViewModel> reviewIrregularSchedule { get; set; }
         public int loanSystemTypeId { get; set; }
+        public string operationName { get; set; }
+        public string approvalStatus { get; set; }
+        public int loanApplicationId { get; set; }
+        public int operationId { get; set; }
     }
 
     public class LoanReviewIrregularScheduleViewModel

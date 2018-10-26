@@ -360,21 +360,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("loan-application/search/{searchCriteria}")]
-        public HttpResponseMessage FindLoan(string searchCriteria)
-        {
-            try
-            {
-                var response = repo.FindLoanApplication(searchCriteria, token.GetCompanyId);
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("loan-application/search/{searchCriteria}")]
+      //  public HttpResponseMessage FindLoan(string searchCriteria)
+      //  {
+      //      try
+      //      {
+      //          var response = repo.FindLoanApplication(searchCriteria, token.GetCompanyId);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+      //      }
+      //      catch (SecureException e)
+      //      {
+      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+      //      }
+      //  }
 
 
         [HttpPost] [ClaimsAuthorization]
@@ -485,13 +485,11 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        //[ClaimsAuthorization]
         [Route("loan/application")]
         public HttpResponseMessage AddLoanApplication([FromBody] LoanApplicationViewModel entity)
         {
-
-            try
-            {
 
                 var loanDetail = entity.LoanApplicationDetail;
                 string msg = "";
@@ -526,11 +524,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The loan application completed successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
-            }
+
         }
 
 
@@ -1095,21 +1089,21 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         
-         [HttpPost] [ClaimsAuthorization]
-        [Route("loan-application/search")]
-        public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
-        {
-            try
-            {
-                var response = repo.Search(model.searchString);
+        // [HttpPost] [ClaimsAuthorization]
+        //[Route("loan-application/search")]
+        //public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
+        //{
+        //    try
+        //    {
+        //        var response = repo.Search(model.searchString);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+        //    }
+        //    catch (SecureException e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //}
 
         [HttpPost][ClaimsAuthorization]
         [Route("loan-application-details/search")]
@@ -1390,7 +1384,7 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan/condition-precident/{loanApplicationId}")]
+        [Route("loan/lms-condition-precident/{loanApplicationId}")]
         public HttpResponseMessage GetLMSConditionPrecidents(int loanApplicationId)
         {
             try
@@ -1514,25 +1508,6 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("lms-operation")]
-        public HttpResponseMessage GetlmsOperation(int reviewApplicationId)
-        {
-            try
-            {
-                var data = repo.GetLMSOperation(reviewApplicationId);
-
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        
     }
 }
