@@ -10996,7 +10996,7 @@ namespace FintrakBanking.Repositories.Credit
                                    scheduleTypeId = l.SCHEDULETYPEID,
                                    scheduleTypeCategoryId = l.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
                                    teno = days,
-                                   newtenor = 0,
+                                   newTenor = 0,
                                    accrualedAmount = accruedInterest,
                                    totalAmount = totalamount,
                                    firstPrincipalPaymentDate = nextPaymentDate,
@@ -11049,7 +11049,7 @@ namespace FintrakBanking.Repositories.Credit
                                    maturityDate = l.MATURITYDATE,
                                    scheduleTypeId = l.SCHEDULETYPEID,
                                    scheduleTypeCategoryId = l.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
-                                   newtenor = 0,
+                                   newTenor = 0,
                                    principalFrequencyTypeId = l.PRINCIPALFREQUENCYTYPEID,
                                    interestFrequencyTypeId = l.INTERESTFREQUENCYTYPEID,
                                    relationshipManagerId = l.RELATIONSHIPMANAGERID,
@@ -15455,7 +15455,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             loanView.newTenor = (int)op.TENOR;
                             loanView.loanId = op.LOANID;
-                            response = addNonTermLoanTenorReviewApprove(loanView);
+                            response = addNonTermLoanTenorReview(loanView);
                         }
                         else if (userModel.operationId == (int)OperationsEnum.ContractualInterestRateChange)
                         {

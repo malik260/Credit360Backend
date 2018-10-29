@@ -48,10 +48,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+
+        public int approvedTenor { get; set; }
+
         public string payingAccountNumber { get; set; }
 
         //public int newtenor { get; set; }
-        public double? newinterestRate { get; set; }
+        public double? newInterestRate { get; set; }
         public decimal? newLineAmount { get; set; }
         public int? loanReviewOperationId { get; set; }
         public string operationPerformed { get; set; }
@@ -250,7 +253,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal overdraftLimit { get; set; }
         public bool maintainTenor { get; set; }
         public decimal? accrualedAmount { get; set; }       
-        public int newtenor { get; set; }
+        public int newTenor { get; set; }
         public short scheduleTypeCategoryId { get; set; }
         public DateTime previousEffectiveDate { get; set; }
         public decimal pastDueTotal { get; set; }
