@@ -13,6 +13,7 @@ using FintrakBanking.APICore.core;
 using System.Web;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.WorkFlow;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -402,6 +403,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record {ex.Message}" });
             }
         }
+
+
+        [HttpPost]
+        [Route("generic-approval-trail")]
+        public HttpResponseMessage GenericApprovalTrail([FromBody] ApprovalTrailRequestViewModel entity)
+        {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+            IEnumerable<ApprovalTrailViewModel> data = repo.GenericApprovalTrail(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+
+        }
+
+
         #endregion
 
 
