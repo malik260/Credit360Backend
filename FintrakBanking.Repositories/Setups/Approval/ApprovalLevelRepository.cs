@@ -1063,5 +1063,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 context.Entry(appl).State = System.Data.Entity.EntityState.Modified;
             }
         }
+
+        public IEnumerable<ApprovalTrailViewModel> GenericApprovalTrail(ApprovalTrailRequestViewModel entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

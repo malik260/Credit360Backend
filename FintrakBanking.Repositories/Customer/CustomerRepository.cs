@@ -3630,15 +3630,16 @@ namespace FintrakBanking.Repositories.Customer
                     customerType = c.TBL_CUSTOMER_TYPE.NAME
                 }).ToList();
 
-            foreach (var item in data)
-            {
-                if (bureau.VerifyCustomerValidCreditBureau(item.customerId))
-                {
-                    lstCustomer.Add(item);
-                }
-            }
+            return data;
+            //foreach (var item in data)
+            //{
+            //    if (bureau.VerifyCustomerValidCreditBureau(item.customerId))
+            //    {
+            //        lstCustomer.Add(item);
+            //    }
+            //}
 
-            return lstCustomer;
+            // return lstCustomer;
         }
 
         #endregion

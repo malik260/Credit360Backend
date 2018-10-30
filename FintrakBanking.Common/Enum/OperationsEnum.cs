@@ -99,7 +99,6 @@ namespace FintrakBanking.Common.Enum
         AccreditedConsultantCreated = 88,
         WrittenOffLoanReviewApprovalAppraisal = 79,
         CollateralSearchCompletion = 90,
-        CreditOperations = 92
-
+        MaturityInstruction = 95
     }
 }

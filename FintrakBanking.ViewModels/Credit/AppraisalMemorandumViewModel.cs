@@ -265,6 +265,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int? productId { get; set; }
         public int? levelId { get; set; }
     }
+    public class ApprovalTrailRequestViewModel : GeneralEntity
+    {
+        public int targetId { get; set; }
+        public int? operationId { get; set; }
+        public int[] operationIds { get; set; }
+        public bool all { get; set; }
+    }
 
     public class LoanDetailsFeeViewModel
     {

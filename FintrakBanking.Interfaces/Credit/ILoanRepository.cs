@@ -172,7 +172,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview();
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId);
 
-        IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
+       // IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
        // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
 
         List<LoanViewModel> GetLoanApplicationExistingLoans(int applicationId);
