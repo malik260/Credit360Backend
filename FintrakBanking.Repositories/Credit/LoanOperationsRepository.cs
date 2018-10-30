@@ -11639,7 +11639,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
-                                     join atrail in context.TBL_APPROVAL_TRAIL on op.LOANID equals atrail.TARGETID
+                                     join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
                                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on ln.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                      join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
@@ -14638,11 +14638,15 @@ namespace FintrakBanking.Repositories.Credit
             if (userModel.valueDate > systemDate)
                 throw new ConditionNotMetException("post dated interest rate change not allowed.");
 
-            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
+
+            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+               && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).FirstOrDefault();
+
 
             if (validate != null)
             {
-                return false;
+                //return false;
+                throw new ConditionNotMetException("The requested operation already exist and going through approval");
             }
 
             TBL_LOAN_REVIEW_OPERATION op = new TBL_LOAN_REVIEW_OPERATION();
@@ -15187,7 +15191,8 @@ namespace FintrakBanking.Repositories.Credit
             if (allRequestAmount > userModel.newAmount)
                 throw new ConditionNotMetException("Input amount cannot be less than the active total loan request amount running");
 
-            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
+            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                    && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).FirstOrDefault();
 
             if (validate != null)
             {
@@ -15253,6 +15258,7 @@ namespace FintrakBanking.Repositories.Credit
                         BranchId = userModel.userBranchId,
                         externalInitialization = true
                     };
+
                     var response = workFlow.LogForApproval(entity);
 
                     if (response)
@@ -15314,7 +15320,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
-                        join ln in context.TBL_LOAN_REVIEW_OPERATION on l.LOANID equals ln.LOANID
+                        join ln in context.TBL_LOAN_REVIEW_OPERATION on l.LOANREVIEWAPPLICATIONID equals ln.LOANREVIEWAPPLICATIONID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.LOANREVIEWOPERATIONID equals atrail.TARGETID
                         join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
@@ -15514,11 +15520,13 @@ namespace FintrakBanking.Repositories.Credit
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool addApplicationLineTenorChangeApproval(LoanReviewViewModel userModel)
         {
-            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
+            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == userModel.loanApplicationDetailId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                      && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility).FirstOrDefault();
 
             if (validate != null)
             {
-                return false;
+                //return false;
+                throw new ConditionNotMetException("The requested operation already exist and going through approval");
             }
 
             TBL_LOAN_REVIEW_OPERATION op = new TBL_LOAN_REVIEW_OPERATION();
@@ -16938,22 +16946,6 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_LOAN_REVIEW_OPERATION.Add(data);
                     auditTrail.AddAuditTrail(audit);
                     int status = 0;
-
-                    status = (int)ApprovalStatusEnum.Pending;
-
-                    workFlow.StaffId = model.createdBy;
-                    workFlow.CompanyId = model.companyId;
-                    workFlow.StatusId = status;//(int)ApprovalStatusEnum.Pending;
-                    workFlow.TargetId = model.loanId;
-                    workFlow.Comment = "Initiation";
-                    workFlow.OperationId = model.operationTypeId;
-                    workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                    workFlow.ExternalInitialization = true;
-                    //if ((int)OperationsEnum.Prepayment != model.operationTypeId)
-                    //{
-                    var response = workFlow.LogActivity();
-                    //}
-
                     try
                     {
                         output = context.SaveChanges() > 0;
@@ -16965,7 +16957,25 @@ namespace FintrakBanking.Repositories.Credit
                         throw new DbEntityValidationException(errorMessages);
                     }
 
+
+                    status = (int)ApprovalStatusEnum.Pending;
+
+                    workFlow.StaffId = model.createdBy;
+                    workFlow.CompanyId = model.companyId;
+                    workFlow.StatusId = status;//(int)ApprovalStatusEnum.Pending;
+                    workFlow.TargetId = data.LOANREVIEWOPERATIONID;
+                    workFlow.Comment = "Initiation";
+                    workFlow.OperationId = model.operationTypeId;
+                    workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workFlow.ExternalInitialization = true;
+                    //if ((int)OperationsEnum.Prepayment != model.operationTypeId)
+                    //{
+                    var response = workFlow.LogActivity();
+                    //}
+
+                    output = context.SaveChanges() > 0;
                     trans.Commit();
+
 
                     //if ((int)OperationsEnum.Prepayment == model.operationTypeId)
                     //{

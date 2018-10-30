@@ -9059,7 +9059,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
-                                   join ln in context.TBL_LOAN_REVIEW_OPERATION on b.LOANID equals ln.LOANID
+                                   join ln in context.TBL_LOAN_REVIEW_OPERATION on b.LOANREVIEWAPPLICATIONID equals ln.LOANREVIEWAPPLICATIONID //on b.LOANID equals ln.LOANID
                                    join atrail in context.TBL_APPROVAL_TRAIL on ln.LOANREVIEWOPERATIONID equals atrail.TARGETID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                    where a.ISDISBURSED == true && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved

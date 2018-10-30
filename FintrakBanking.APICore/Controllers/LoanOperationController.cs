@@ -269,8 +269,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("application-line-interest-rate-change")]
         public HttpResponseMessage ApplicationLineRateChange([FromBody] LoanReviewViewModel entity)
         {
-            try
-            {
+            //try
+            //{
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.userBranchId = (short)token.GetBranchId;
@@ -286,20 +286,20 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Interest Rate Change was successfully sent for Approval." });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
+                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
+            //}
+            //catch (ConditionNotMetException ce)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            //}
+            //catch (Exception)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            //}
         }
 
         [HttpPost]
@@ -307,8 +307,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("application-line-facility-amount-change")]
         public HttpResponseMessage changeApplicationLineAmount([FromBody] LoanReviewViewModel entity)
         {
-            try
-            {
+            //try
+            //{
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
 
                 entity.userBranchId = (short)token.GetBranchId;
@@ -324,19 +324,19 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
+            //}
+            //catch (ConditionNotMetException ce)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            //}
+            //catch (Exception)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            //}
         }
 
         [HttpPost]
@@ -524,8 +524,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("application-line-tenor-extension")]
         public HttpResponseMessage addApplicationLineTenorChange([FromBody] LoanReviewViewModel entity )
         {
-            try
-            {
+            ////try
+            ////{
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -538,22 +538,23 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Tenor successfully sent for Approval." });
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Record is Still Being Processed For Approval." });
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Record is Still Being Processed For Approval." });
 
                 //return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing tenor extension for this record" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
+            //}
+            //catch (ConditionNotMetException ce)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+            //}
+            //catch (Exception ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            //}
 
         }
         [HttpPost]
