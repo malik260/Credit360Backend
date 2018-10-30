@@ -1306,6 +1306,53 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId)
+        {
+            var fields = new LoanApplicationDetailViewModel();
+
+            var d = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == detailId);
+
+            fields = new LoanApplicationDetailViewModel
+            {
+                proposedAmount = d.PROPOSEDAMOUNT,
+                proposedInterestRate = d.PROPOSEDINTERESTRATE,
+                proposedProductId = d.PROPOSEDPRODUCTID,
+                proposedTenor = d.PROPOSEDTENOR,
+
+                exchangeRate = d.EXCHANGERATE,
+                currencyId = d.CURRENCYID,
+                /*customerId,
+                LOANAPPLICATIONID = loanId,
+                STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
+
+                equityCasaAccountId,
+                equityAmount,
+
+                proposedAmount,
+                proposedInterestRate,
+                proposedProductId,
+                proposedTenor / 12) * (decimal)365))),
+                DELETED = false,
+                subSectorId,
+                CREATEDBY = createdBy,
+                DATETIMECREATED = DateTime.Now,
+                loanPurpose,
+                casaAccountId,
+                repaymentTerm,
+                crmsFundingSourceId,
+                crmsPaymentSourceId,
+                crmsFundingSourceCategory,
+                crms_ECCI_Number,
+                fieldOne,
+                fieldTwo,
+                fieldThree,
+                productPriceIndexId,
+                productPriceIndexRate*/
+            };
+
+            return fields;
+        }
+
         private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
         {
             var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
@@ -3430,8 +3477,8 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
-                            customerGroupId = (int)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                            //customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
