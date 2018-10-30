@@ -385,11 +385,11 @@ namespace FintrakBanking.Repositories.Credit
                     dailyAccrual.CURRENCYID = item.currencyId;
                     dailyAccrual.INTERESTRATE = item.interestRate;
                     dailyAccrual.DATE = item.date;
-                    dailyAccrual.DAILYACCURALAMOUNT = (decimal)Math.Abs(item.dailyAccuralAmount);
+                    dailyAccrual.DAILYACCURALAMOUNT = (decimal?)Math.Abs(item.dailyAccuralAmount) ?? 0;
                     dailyAccrual.MAINAMOUNT = item.mainAmount;
                     dailyAccrual.CATEGORYID = item.categoryId;
                     dailyAccrual.COMPANYID = item.companyId;
-                    dailyAccrual.DAYCOUNTCONVENTIONID = (short)DayCountConventionEnum.Actual_Actual;
+                    dailyAccrual.DAYCOUNTCONVENTIONID = (short?)DayCountConventionEnum.Actual_Actual ?? 0;
                     dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
 
                     dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
@@ -398,10 +398,9 @@ namespace FintrakBanking.Repositories.Credit
                     transAccrual.Add(dailyAccrual);
 
                 }
-                this.context.TBL_DAILY_ACCRUAL.AddRange(transAccrual);
+                context.TBL_DAILY_ACCRUAL.AddRange(transAccrual);
 
-
-
+                
                 //List<TBL_LOAN_FEE> _loanFee = new List<TBL_LOAN_FEE>();
 
                 //foreach (var item in allFacilities)
@@ -5312,17 +5311,23 @@ namespace FintrakBanking.Repositories.Credit
                             throw new SecureException("The tenor for the top-up amount is not expected to exceed the expiry date of the current limit");
                         }
                         var loan = model;
-                        var reviewDate = data1.BOOKINGDATE.AddMonths(1);
+                        var reviewDate = loan.maturityDate.AddDays(-1);
                         var data = new OverDraftTopUpAndRenewViewModel
                         {
+                            //sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
+                            //sanctionReferenceNumber = loan.loanReferenceNumber,
+                            //accountNumber = loan.productAccountNumber,
+                            //expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
+                            //reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
+                            //createdDate = systemDate,
+
                             sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                            applicationDate = systemDate.ToString("dd-MMM-yyyy", null),
-                            //sanctionReferenceNumber = loan.serialNumber,
                             sanctionReferenceNumber = loan.loanReferenceNumber,
                             accountNumber = loan.productAccountNumber,
                             expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                             reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
                             createdDate = systemDate,
+
                         };
                         topResult = finacle.OverDraftTopUp(data, twoFactorAuth);
 
@@ -5476,7 +5481,8 @@ namespace FintrakBanking.Repositories.Credit
                     var data = new OverDraftTopUpAndRenewViewModel
                     {
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.serialNumber,
+                        //sanctionReferenceNumber = loan.serialNumber,
+                        sanctionReferenceNumber = loan.loanReferenceNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
