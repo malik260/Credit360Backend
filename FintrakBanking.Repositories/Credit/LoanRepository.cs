@@ -5306,8 +5306,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-
-                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId);
+                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x=>x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
                 foreach (var item in data)
@@ -5827,10 +5826,12 @@ namespace FintrakBanking.Repositories.Credit
                             productName = d.TBL_PRODUCT.PRODUCTNAME,
                             productClassId = p.PRODUCTCLASSID,
                             productClassProcessId = p.TBL_PRODUCT_CLASS.PRODUCT_CLASS_PROCESSID,
-
+                            productScheduleTypeId =  p.SCHEDULETYPEID,
+                            productDealTypeId = p.DEALTYPEID,
+                            productDayCountConventionId = p.DAYCOUNTCONVENTIONID,
                             misCode = m.MISCODE,
                             teamMisCode = m.TEAMMISCODE,
-
+                            
                             interestRate = d.APPROVEDINTERESTRATE,
                             submittedForAppraisal = m.SUBMITTEDFORAPPRAISAL,
                             approvedAmount = d.APPROVEDAMOUNT,
