@@ -8211,11 +8211,11 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
-                                   (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
-                                   b.LASTNAME.ToUpper().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery))
+                                   (a.LOANREFERENCENUMBER.Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim()))
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -8243,15 +8243,20 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
         {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToUpper();
+            }
+
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
-                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                   b.LASTNAME.ToLower().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim()))
                                    select new LoanViewModel
                                    {
                                        loanId = a.REVOLVINGLOANID,
@@ -8282,11 +8287,11 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 && 
-                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                   b.LASTNAME.ToLower().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,
@@ -8320,10 +8325,10 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    where a.APPROVALSTATUSID == 2 && d.STATUSID == 2
                                    && (
-                                       a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
-                                       b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
-                                       b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
-                                       b.LASTNAME.ToUpper().Contains(searchQuery)
+                                       a.APPLICATIONREFERENCENUMBER.Contains(searchQuery.Trim()) ||
+                                       b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.LASTNAME.ToUpper().Contains(searchQuery.Trim())
                                    )
                                    select new LoanViewModel
                                    {
