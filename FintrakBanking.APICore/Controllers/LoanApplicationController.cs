@@ -1508,6 +1508,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
-        
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("application-detail-fields/{id}")]
+        public HttpResponseMessage GetLoanApplicationDetailFields(int id)
+        {
+            var data = repo.GetLoanApplicationDetailFields(id);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        }
+
+
     }
 }
