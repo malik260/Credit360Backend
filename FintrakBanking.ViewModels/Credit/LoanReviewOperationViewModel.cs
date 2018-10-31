@@ -300,6 +300,17 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int? toApprovalLevelId { get; set; }
         public bool atInitiator { get; set; }
         public int? regionId { get; set; }
+        public string timeLapse
+        {
+            get
+            {
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
+            }
+        }
     }
 
     public class applicationDetails

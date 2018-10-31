@@ -143,9 +143,9 @@ namespace FintrakBanking.Repositories.Finance
 
 
 
-            //loanOperation.ProcessDailyFeeAccrual(date);//TODO use batch posting and ensure the right accounting entries are passed
+            loanOperation.ProcessDailyFeeAccrual(date);//TODO use batch posting and ensure the right accounting entries are passed
 
-            //loanOperation.ProcessDailyTaxAccrual(date); //TODO use batch posting and ensure the right accounting entries are passed
+            loanOperation.ProcessDailyTaxAccrual(date); //TODO use batch posting and ensure the right accounting entries are passed
 
 
 

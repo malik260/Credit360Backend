@@ -289,7 +289,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                reliefId = a.TEMPRELIEFID,
                                relievedStaffId = a.STAFFID,
                                reliefStaffId = a.RELIEFSTAFFID,
-                               staffName = context.TBL_STAFF.Where(s => s.STAFFID == a.STAFFID)
+                               staffName =  context.TBL_STAFF.Where(s => s.STAFFID == a.STAFFID)
                                                  .Select(s => new { name = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME + " - " + s.STAFFCODE })
                                                  .FirstOrDefault().name ?? "",
                                reliefStaffName = context.TBL_STAFF.Where(s => s.STAFFID == a.RELIEFSTAFFID)
@@ -301,6 +301,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                                isActive = a.ISACTIVE,
                            }).ToList();
 
+   
     //        var charge = context.TBL_TEMP_STAFF_RELIEF
     //.Join(context.TBL_APPROVAL_TRAIL,
     //    temp => temp.TEMPRELIEFID,

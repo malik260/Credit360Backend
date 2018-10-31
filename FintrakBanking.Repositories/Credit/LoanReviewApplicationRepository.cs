@@ -986,23 +986,22 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LoanReviewOperationViewModel> GetLMSOperation(int loanId, short loansystemTypeId)
         {
-            var data = (from b in context.TBL_LMSR_APPLICATION
-                    join l in context.TBL_LMSR_APPLICATION_DETAIL on b.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
-                    join x in context.TBL_LOAN_REVIEW_OPERATION on l.LOANREVIEWAPPLICATIONID equals x.LOANREVIEWAPPLICATIONID into cc
-                   from result in cc.DefaultIfEmpty()
-                    where result.LOANID == loanId && result.LOANSYSTEMTYPEID == loansystemTypeId
-                     select new LoanReviewOperationViewModel
-                     {
-                       operationName =context.TBL_OPERATIONS.Where(o=>o.OPERATIONID== result.OPERATIONTYPEID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
-                       reviewDetails = result.REVIEWDETAILS,
-                       proposedEffectiveDate = result.EFFECTIVEDATE,
-                       approvalStatus = context.TBL_APPROVAL_STATUS.Where(o=>o.APPROVALSTATUSID==result.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
-                       operationCompleted=result.OPERATIONCOMPLETED,
-                         loanApplicationId = l.LOANREVIEWAPPLICATIONID,
-                         operationId = l.OPERATIONID
-                     });
+            var ops = (from op in context.TBL_LOAN_REVIEW_OPERATION
+                       join at in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals at.TARGETID
+                       where op.LOANID == loanId && op.LOANSYSTEMTYPEID == loansystemTypeId
+                       select new LoanReviewOperationViewModel
+                       {
+                           operationName = context.TBL_OPERATIONS.Where(o => o.OPERATIONID == op.OPERATIONTYPEID).Select(o => o.OPERATIONNAME).FirstOrDefault(),
+                           reviewDetails = op.REVIEWDETAILS,
+                           proposedEffectiveDate = op.EFFECTIVEDATE,
+                           approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == op.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                           operationCompleted = op.OPERATIONCOMPLETED,
+                           loanApplicationId = 0,
+                           operationId = at.OPERATIONID,
+                           loanReviewOperationsId = op.LOANREVIEWOPERATIONID
+                       });
 
-            return data.ToList();
+            return ops.ToList();
         }
 
     }

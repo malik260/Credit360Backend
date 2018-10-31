@@ -1306,6 +1306,37 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId)
+        {
+            var fields = new LoanApplicationDetailViewModel();
+
+            var d = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == detailId);
+
+            fields = new LoanApplicationDetailViewModel
+            {
+                proposedAmount = d.PROPOSEDAMOUNT,
+                proposedInterestRate = d.PROPOSEDINTERESTRATE,
+                proposedProductId = d.PROPOSEDPRODUCTID,
+                proposedTenor = d.PROPOSEDTENOR,
+                exchangeRate = d.EXCHANGERATE,
+                currencyId = d.CURRENCYID,
+                customerId = d.CUSTOMERID,
+                equityCasaAccountId = d.EQUITYCASAACCOUNTID,
+                equityAmount = d.EQUITYAMOUNT,
+                subSectorId = d.SUBSECTORID,
+                loanPurpose = d.LOANPURPOSE,
+                casaAccountId = d.CASAACCOUNTID,
+                repaymentTerm = d.REPAYMENTSCHEDULE,
+                crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
+                crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
+                crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
+                productPriceIndexId = d.PRODUCTPRICEINDEXID,
+                productPriceIndexRate = d.PRODUCTPRICEINDEXRATE
+            };
+
+            return fields;
+        }
+
         private void ProductFees(List<ProductFeesViewModel> fees, int loanApplicationId, int createdBy)
         {
             var data = fees.Select(c => new TBL_LOAN_APPLICATION_DETL_FEE()
@@ -3430,8 +3461,8 @@ namespace FintrakBanking.Repositories.Credit
                             productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
-                            customerGroupId = (int)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
-                            //customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
