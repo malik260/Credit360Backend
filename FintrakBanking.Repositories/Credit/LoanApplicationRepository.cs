@@ -1318,36 +1318,20 @@ namespace FintrakBanking.Repositories.Credit
                 proposedInterestRate = d.PROPOSEDINTERESTRATE,
                 proposedProductId = d.PROPOSEDPRODUCTID,
                 proposedTenor = d.PROPOSEDTENOR,
-
                 exchangeRate = d.EXCHANGERATE,
                 currencyId = d.CURRENCYID,
-                /*customerId,
-                LOANAPPLICATIONID = loanId,
-                STATUSID = (short)LoanApplicationDetailsStatusEnum.Pending,
-
-                equityCasaAccountId,
-                equityAmount,
-
-                proposedAmount,
-                proposedInterestRate,
-                proposedProductId,
-                proposedTenor / 12) * (decimal)365))),
-                DELETED = false,
-                subSectorId,
-                CREATEDBY = createdBy,
-                DATETIMECREATED = DateTime.Now,
-                loanPurpose,
-                casaAccountId,
-                repaymentTerm,
-                crmsFundingSourceId,
-                crmsPaymentSourceId,
-                crmsFundingSourceCategory,
-                crms_ECCI_Number,
-                fieldOne,
-                fieldTwo,
-                fieldThree,
-                productPriceIndexId,
-                productPriceIndexRate*/
+                customerId = d.CUSTOMERID,
+                equityCasaAccountId = d.EQUITYCASAACCOUNTID,
+                equityAmount = d.EQUITYAMOUNT,
+                subSectorId = d.SUBSECTORID,
+                loanPurpose = d.LOANPURPOSE,
+                casaAccountId = d.CASAACCOUNTID,
+                repaymentTerm = d.REPAYMENTSCHEDULE,
+                crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
+                crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
+                crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
+                productPriceIndexId = d.PRODUCTPRICEINDEXID,
+                productPriceIndexRate = d.PRODUCTPRICEINDEXRATE
             };
 
             return fields;

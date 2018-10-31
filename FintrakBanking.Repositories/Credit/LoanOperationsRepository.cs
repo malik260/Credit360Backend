@@ -11399,7 +11399,6 @@ namespace FintrakBanking.Repositories.Credit
             var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
             // if (reviewApplicationDetail == null) throw new SecureException("Review application details not found!");
 
-
             int? loanReviewApplicationId = null;
             if (reviewApplicationDetail != null)
             {
@@ -11407,7 +11406,7 @@ namespace FintrakBanking.Repositories.Credit
                 reviewApplicationDetail.OPERATIONPERFORMED = true;
             }
 
-            var reviewOperation = new TBL_LOAN_REVIEW_OPERATION
+            var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Add(new TBL_LOAN_REVIEW_OPERATION
             {
                 LOANID = model.loanId,
                 LOANREVIEWAPPLICATIONID = loanReviewApplicationId,
@@ -11435,11 +11434,11 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = model.createdBy,
                 DATECREATED = DateTime.Now,
                 TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
-            };
-            // Audit Section ---------------------------
+            });
 
+            if (context.SaveChanges() == 0) throw new SecureException("Error saving operation!");
 
-            var audit = new TBL_AUDIT
+            auditTrail.AddAuditTrail(new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
                 STAFFID = model.createdBy,
@@ -11449,73 +11448,19 @@ namespace FintrakBanking.Repositories.Credit
                 URL = model.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
-            };
+            });
+            
+            workFlow.StaffId = model.createdBy;
+            workFlow.CompanyId = model.companyId;
+            workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+            workFlow.TargetId = reviewOperation.LOANREVIEWOPERATIONID; // model.loanReviewOperationsId;
+            workFlow.Comment = "flow_test1";
+            workFlow.OperationId = model.operationTypeId;
+            workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+            workFlow.ExternalInitialization = true;
+            var response = workFlow.LogActivity();
 
-            //end of Audit section -----------------------
-            using (var trans = context.Database.BeginTransaction())
-            {
-                try
-                {
-                    bool output = false;
-                    context.TBL_LOAN_REVIEW_OPERATION.Add(reviewOperation);
-
-                    context.SaveChanges();
-
-                    auditTrail.AddAuditTrail(audit);
-                    int status = 0;
-                    if ((int)OperationsEnum.Prepayment != model.operationTypeId)
-                    {
-                        status = (int)ApprovalStatusEnum.Pending;
-                    }
-                    else
-                    {
-                        status = (int)ApprovalStatusEnum.Pending;
-                    }
-
-                    workFlow.StaffId = model.createdBy;
-                    workFlow.CompanyId = model.companyId;
-                    workFlow.StatusId = status;//(int)ApprovalStatusEnum.Pending;
-                    workFlow.TargetId = reviewOperation.LOANREVIEWOPERATIONID; // model.loanReviewOperationsId;
-                    workFlow.Comment = "Initiation";
-                    workFlow.OperationId = model.operationTypeId;
-                    workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
-                    workFlow.ExternalInitialization = true;
-                    //if ((int)OperationsEnum.Prepayment != model.operationTypeId)
-                    //{
-                    var response = workFlow.LogActivity();
-                    //}
-
-                    try
-                    {
-                        output = context.SaveChanges() > 0;
-                    }
-                    catch (DbEntityValidationException ex)
-                    {
-
-                        string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
-                        throw new DbEntityValidationException(errorMessages);
-                    }
-
-                    trans.Commit();
-
-                    //if ((int)OperationsEnum.Prepayment == model.operationTypeId)
-                    //{
-                    //    int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
-                    //    LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.createdBy);
-                    //}
-
-                    return output;
-
-                }
-
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw ex; //new SecureException(ex.Message);
-                }
-            }
-
-
+            return context.SaveChanges() > 0;
 
         }
 
