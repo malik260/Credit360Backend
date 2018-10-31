@@ -11454,7 +11454,7 @@ namespace FintrakBanking.Repositories.Credit
             workFlow.CompanyId = model.companyId;
             workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
             workFlow.TargetId = reviewOperation.LOANREVIEWOPERATIONID; // model.loanReviewOperationsId;
-            workFlow.Comment = "flow_test1";
+            workFlow.Comment = "Review operation";
             workFlow.OperationId = model.operationTypeId;
             workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
             workFlow.ExternalInitialization = true;
