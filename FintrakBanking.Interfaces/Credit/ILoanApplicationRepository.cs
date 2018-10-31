@@ -130,7 +130,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailsByReference(string reference, int companyId);
 
-        
+        LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId);
 
     }
 }
