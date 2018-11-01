@@ -360,21 +360,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      //[HttpGet] [ClaimsAuthorization]  
-      //  [Route("loan-application/search/{searchCriteria}")]
-      //  public HttpResponseMessage FindLoan(string searchCriteria)
-      //  {
-      //      try
-      //      {
-      //          var response = repo.FindLoanApplication(searchCriteria, token.GetCompanyId);
+        //[HttpGet] [ClaimsAuthorization]  
+        //  [Route("loan-application/search/{searchCriteria}")]
+        //  public HttpResponseMessage FindLoan(string searchCriteria)
+        //  {
+        //      try
+        //      {
+        //          var response = repo.FindLoanApplication(searchCriteria, token.GetCompanyId);
 
-      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-      //      }
-      //      catch (SecureException e)
-      //      {
-      //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-      //      }
-      //  }
+        //          return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        //      }
+        //      catch (SecureException e)
+        //      {
+        //          return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //      }
+        //  }
 
 
         [HttpPost] [ClaimsAuthorization]
@@ -1088,22 +1088,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        
-        // [HttpPost] [ClaimsAuthorization]
-        //[Route("loan-application/search")]
-        //public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
-        //{
-        //    try
-        //    {
-        //        var response = repo.Search(model.searchString);
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
-        //    }
-        //    catch (SecureException e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-application-detail-search")]
+        public HttpResponseMessage LoanApplicationSearch([FromBody] SearchViewModel model)
+        {
+            try
+            {
+                var response = repo.Search(model.searchString);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + model.searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
         [HttpPost][ClaimsAuthorization]
         [Route("loan-application-details/search")]
@@ -1160,20 +1161,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        //[HttpGet] [ClaimsAuthorization]  
-        //[Route("loan-application/search")]
-        //public HttpResponseMessage SearchLoanApplication(string searchString)
-        //{
-        //    try
-        //    {
-        //        var response = repo.SearchForLoan(searchString);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
-        //    }
-        //    catch (SecureException e)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-        //    }
-        //}
+        [HttpGet] [ClaimsAuthorization]  
+        [Route("loan-application/search")]
+        public HttpResponseMessage SearchLoanApplication(string searchString)
+        {
+            try
+            {
+                var response = repo.SearchForLoan(searchString);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Search result for " + searchString, result = response });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
 
 
         [HttpGet]

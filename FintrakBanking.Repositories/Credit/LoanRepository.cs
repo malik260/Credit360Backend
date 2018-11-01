@@ -2856,15 +2856,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod)
         {
-            return decimal.Round(((decimal)(interestRate / 100) * principal * 1) / interestDaysPeriod, 4);
+            return decimal.Round(((decimal)(principal * (decimal)interestRate / 100) * (1/365)) , 4);
         }
 
         public decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod)
         {
-            Decimal dailyInterest = decimal.Round(((decimal)(interestRate / 100) * principal * 1) / interestDaysPeriod, 4);
-            Decimal totalInterest = (decimal)(dailyInterest * (decimal)interestDaysPeriod);
-
-            return totalInterest;
+            Decimal dailyInterest = decimal.Round(((decimal)((principal * (decimal)interestRate )/100) * interestDaysPeriod)/365, 4);
+            return dailyInterest;
         }
 
         public decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate)
@@ -8217,7 +8215,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
                                    b.LASTNAME.ToUpper().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery))
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim()))
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -8245,15 +8243,20 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
         {
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToUpper();
+            }
+
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
-                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToLower().Contains(searchQuery)
-                                   //b.LASTNAME.ToLower().Contains(searchQuery) 
-                                   //c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery)
+                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())
                                    )
                                    select new LoanViewModel
                                    {
@@ -8288,11 +8291,11 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 && 
-                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToLower().Contains(searchQuery) ||
-                                   b.LASTNAME.ToLower().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery))
+                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,
@@ -8326,10 +8329,10 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    where a.APPROVALSTATUSID == 2 && d.STATUSID == 2
                                    && (
-                                       a.APPLICATIONREFERENCENUMBER.Contains(searchQuery) ||
-                                       b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
-                                       b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
-                                       b.LASTNAME.ToUpper().Contains(searchQuery)
+                                       a.APPLICATIONREFERENCENUMBER.Contains(searchQuery.Trim()) ||
+                                       b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.LASTNAME.ToUpper().Contains(searchQuery.Trim())
                                    )
                                    select new LoanViewModel
                                    {
@@ -9148,6 +9151,7 @@ namespace FintrakBanking.Repositories.Credit
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = a.OPERATIONID,
                                        operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                       operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ln.OPERATIONTYPEID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                        casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
