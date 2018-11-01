@@ -33,6 +33,7 @@ namespace FintrakBanking.ViewModels.Credit
         //Other references
         public int customerCreditBureauId { get; set; }
         public bool isPrimaryDocument { get; set; }
+        public bool overwrite { get; set; }
     }
 
 }
