@@ -8211,7 +8211,7 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
-        public void updateLoanReviewOperation(short loanReviewOperationsId, int loanId)
+        public void updateLoanReviewOperation(int loanReviewOperationsId, int loanId)
         {
             TBL_LOAN_REVIEW_OPERATION result = (from p in context.TBL_LOAN_REVIEW_OPERATION
                                                 where p.LOANID == loanId && p.LOANREVIEWOPERATIONID == loanReviewOperationsId
@@ -11897,7 +11897,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                         var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
-                                            where s.LOANID == entity.targetId && s.OPERATIONTYPEID == entity.operationId
+                                            where s.LOANREVIEWOPERATIONID == entity.targetId && s.OPERATIONTYPEID == entity.operationId
                                            && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                             && s.OPERATIONCOMPLETED == false
                                             select s).FirstOrDefault();
@@ -11923,7 +11923,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else if (workFlow.NewState == (int)ApprovalState.Ended)
                         {
-                            result = LoanRephasementProcess(twoFactorAuth, (short)reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
+                            result = LoanRephasementProcess(twoFactorAuth, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
                             if (result == true)
                             {
                                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
@@ -13453,7 +13453,7 @@ namespace FintrakBanking.Repositories.Credit
         #endregion
 
         //[OperationBehavior(TransactionScopeRequired = true)]
-        public bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, short loanReviewOperationsId, int loanId, int staffId, LoanSystemTypeEnum facilityType, [Optional] string approvalComment)
+        public bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, int loanReviewOperationsId, int loanId, int staffId, LoanSystemTypeEnum facilityType, [Optional] string approvalComment)
         {
             try
             {
