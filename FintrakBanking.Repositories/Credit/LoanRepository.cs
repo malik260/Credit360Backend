@@ -8213,11 +8213,11 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
-                                   (a.LOANREFERENCENUMBER.Contains(searchQuery.Trim()) ||
-                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
-                                   b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                   b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim()))
+                                   (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
+                                   b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
+                                   b.LASTNAME.ToUpper().Contains(searchQuery) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery))
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
