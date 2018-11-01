@@ -205,7 +205,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("loan-review-application/search")]
+        [Route("loan-review-application-detail-search")]
         public HttpResponseMessage LoanReviewApplicationSearch([FromBody] SearchViewModel model)
         {
             try
