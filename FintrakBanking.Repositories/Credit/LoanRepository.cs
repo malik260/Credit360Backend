@@ -2856,15 +2856,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod)
         {
-            return decimal.Round(((decimal)(interestRate / 100) * principal * 1) / interestDaysPeriod, 4);
+            return decimal.Round(((decimal)(principal * (decimal)interestRate / 100) * (1/365)) , 4);
         }
 
         public decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod)
         {
-            Decimal dailyInterest = decimal.Round(((decimal)(interestRate / 100) * principal * 1) / interestDaysPeriod, 4);
-            Decimal totalInterest = (decimal)(dailyInterest * (decimal)interestDaysPeriod);
-
-            return totalInterest;
+            Decimal dailyInterest = decimal.Round(((decimal)((principal * (decimal)interestRate )/100) * interestDaysPeriod)/365, 4);
+            return dailyInterest;
         }
 
         public decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate)
@@ -9148,6 +9146,7 @@ namespace FintrakBanking.Repositories.Credit
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = a.OPERATIONID,
                                        operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                       operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ln.OPERATIONTYPEID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                        casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,

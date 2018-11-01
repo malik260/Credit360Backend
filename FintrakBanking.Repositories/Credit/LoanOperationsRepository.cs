@@ -14972,7 +14972,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loanApp.EFFECTIVEDATE == null)
             {
-                throw new ConditionNotMetException("Loan Application Effective Date For LoanApplicationDetailID:" + loan.LOANAPPLICATIONDETAILID + " Can Not Be Null");
+                throw new ConditionNotMetException("Loan Application Effective Date Can Not Be Null");
             }
             if (loan.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking && loanApp.EXPIRYDATE != null)
             {
