@@ -769,6 +769,8 @@ namespace FintrakBanking.Repositories.Credit
                         syndicationName = x.d.FIELD2,
                         syndicationRefNo = x.d.FIELD1,
                         syndicationAmount = x.d.FIELD3,
+                        conditionPrecedent = x.d.CONDITIONPRECIDENT,
+                        conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
 
                     }).ToList();
 
@@ -862,7 +864,9 @@ namespace FintrakBanking.Repositories.Credit
                     syndicationName = x.d.FIELD2,
                     syndicationRefNo = x.d.FIELD1,
                     syndicationAmount = x.d.FIELD3,
-                    
+                    conditionPrecedent = x.d.CONDITIONPRECIDENT,
+                    conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
+
                 }).ToList();
             //var syndicated = context.TBL_LOAN_APPLICATION_DETAIL//.Where(x => x.LOANAPPLICATIONID == applicationId)
             //    .Join(context.TBL_LOAN_APPLICATION_DETL_SYN.Where(x => x.LOANAPPLICATIONDETAILID == detailId),
@@ -951,6 +955,8 @@ namespace FintrakBanking.Repositories.Credit
                                                 fieldOne = c.FIELD1,
                                                 fieldTwo = c.FIELD2,
                                                 fieldThree = c.FIELD3,
+                                                conditionPrecedent = c.CONDITIONPRECIDENT,
+                                                conditionSubsequent = c.CONDITIONSUBSEQUENT,
                                             }).ToList()
             }).FirstOrDefault();
             return application;

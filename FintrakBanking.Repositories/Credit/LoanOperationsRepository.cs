@@ -1373,7 +1373,22 @@ namespace FintrakBanking.Repositories.Credit
 
         public decimal DailyAccruedInterest(DateTime startDate, DateTime endDate, decimal Amount)
         {
-            decimal dailyAmount = (Amount / ((int)(endDate - startDate).TotalDays));
+
+            decimal dailyAmount = 0;
+
+            int daysDif = ((int)(endDate - startDate).TotalDays);
+
+            if (Amount == 0 || daysDif == 0)
+            {
+                dailyAmount = 0;
+            }
+            else {
+
+                dailyAmount = (Amount / ((int)(endDate - startDate).TotalDays));
+
+            }
+           
+
             return dailyAmount;
         }
 
@@ -5634,7 +5649,7 @@ namespace FintrakBanking.Repositories.Credit
                     var data = new OverDraftExtendViewModel
                     {
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
+                        sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
