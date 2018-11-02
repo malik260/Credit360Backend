@@ -2856,15 +2856,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod)
         {
-            return decimal.Round(((decimal)(interestRate / 100) * principal * 1) / interestDaysPeriod, 4);
+            return decimal.Round(((decimal)(principal * (decimal)interestRate / 100) * (1/365)) , 4);
         }
 
         public decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod)
         {
-            Decimal dailyInterest = decimal.Round(((decimal)(interestRate / 100) * principal * 1) / interestDaysPeriod, 4);
-            Decimal totalInterest = (decimal)(dailyInterest * (decimal)interestDaysPeriod);
-
-            return totalInterest;
+            Decimal dailyInterest = decimal.Round(((decimal)((principal * (decimal)interestRate )/100) * interestDaysPeriod)/365, 4);
+            return dailyInterest;
         }
 
         public decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate)
@@ -8213,7 +8211,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
-                                   (a.LOANREFERENCENUMBER.Contains(searchQuery.Trim()) ||
+                                   (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
@@ -8254,11 +8252,12 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
-                                   (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
-                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
-                                   b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                   b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim()))
+                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())
+                                   )
                                    select new LoanViewModel
                                    {
                                        loanId = a.REVOLVINGLOANID,
@@ -9152,6 +9151,7 @@ namespace FintrakBanking.Repositories.Credit
                                        //approvedAmount = a.ApprovedAmount,
                                        operationId = a.OPERATIONID,
                                        operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                       operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ln.OPERATIONTYPEID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                        casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
