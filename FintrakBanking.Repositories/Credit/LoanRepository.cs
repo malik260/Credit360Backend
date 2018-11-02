@@ -8215,7 +8215,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim()))
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -8256,8 +8256,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())
-                                   )
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
                                    select new LoanViewModel
                                    {
                                        loanId = a.REVOLVINGLOANID,
@@ -8295,7 +8294,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,
