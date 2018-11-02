@@ -32,6 +32,7 @@ namespace FintrakBanking.ViewModels.Customer
         public DateTime systemDateTime { get; set; }
         public string physicalFileNumber { get; set; }
         public string physicalLocation { get; set; }
+        public bool overwrite { get; set; }
     }
     public class ConditionsPrecedentUploadViewModel : GeneralEntity
     {
