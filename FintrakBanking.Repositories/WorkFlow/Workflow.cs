@@ -147,6 +147,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
+            if (next.LevelTypeId == 5) SkipResolvedLevel();
+
             if (this.useOrganogram == true)
             {
                 bool route = OrganogramRouting();
@@ -206,6 +208,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.saved) return true;
 
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
+        }
+
+        private void SkipResolvedLevel()
+        {
+            throw new SecureException("Skipping Level");
         }
 
         private int? ResolveReroute(int? toStaffId)
@@ -798,7 +805,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                ApprovalLevelId = x.Level.APPROVALLEVELID,
                                RouteViaStaffOrganogram = x.Level.ROUTEVIASTAFFORGANOGRAM,
                                DefaultRoleId = x.Level.STAFFROLEID,
-                               SlaInterval = x.Level.SLAINTERVAL
+                               SlaInterval = x.Level.SLAINTERVAL,
+                               LevelTypeId = x.Level.LEVELTYPEID
                            })
                            .OrderBy(x => x.GroupPosition)
                            .ThenBy(x => x.LevelPosition);
@@ -1016,6 +1024,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public TBL_APPROVAL_GROUP_MAPPING Mapping { get; set; }
 
         public IEnumerable<TBL_APPROVAL_LEVEL_STAFF> Staff { get; set; }
+        public int? LevelTypeId { get; internal set; }
     }
 }
 

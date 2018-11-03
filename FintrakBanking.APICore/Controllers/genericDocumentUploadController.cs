@@ -146,6 +146,7 @@ namespace FintrakBanking.APICore.Controllers
                 customerCode = provider.FormData["customerCode"],
                 customerId = Convert.ToInt32(provider.FormData["customerId"]),
                 staffCode = provider.FormData["staffCode"],
+                overwrite = provider.FormData["overwrite"] == "true",
             };
             return entity;
         }
