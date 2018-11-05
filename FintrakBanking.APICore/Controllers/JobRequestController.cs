@@ -662,6 +662,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
                 await Request.Content.ReadAsMultipartAsync(provider);
+                //if(documentList)
 
                 int uploadType;
                 if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))

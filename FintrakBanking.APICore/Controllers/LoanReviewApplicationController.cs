@@ -128,7 +128,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             var searchString = search.searchString.Trim();
             //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
-            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString).Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
+            var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
 
@@ -205,7 +205,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("loan-review-application/search")]
+        [Route("loan-review-application-detail-search")]
         public HttpResponseMessage LoanReviewApplicationSearch([FromBody] SearchViewModel model)
         {
             try

@@ -10,6 +10,7 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.Common.Enum;
 using System.Linq;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -28,62 +29,56 @@ namespace FintrakBanking.Repositories.Credit
 
         #region TBL_MEDIA_LOAN_DOCUMENTS
 
-        public bool AddLoanDocument(LoanDocumentViewModel model, byte[] file)
+        public int AddLoanDocument(LoanDocumentViewModel model, byte[] file)
         {
-            try
+            var existing = context.TBL_MEDIA_LOAN_DOCUMENTS
+                .Where(x => x.FILENAME == model.fileName
+                    && x.FILEEXTENSION == model.fileExtension
+                    && x.LOANREFERENCENUMBER == model.loanReferenceNumber
+                    );
+
+            if (existing.Count() > 0 && model.overwrite == false) return 3;
+
+            if (existing.Count() > 0 && model.overwrite == true)
             {
-                //var record = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x=>x.LOANAPPLICATIONNUMBER == model.loanApplicationNumber).FirstOrDefault();
-                //if (record != null)
-                //{
-                //    return this.UpdateLoanDocument(model, record.DOCUMENTID, file);
-                //}
-                //else
-                //{
-                    var data = new Entities.DocumentModels.TBL_MEDIA_LOAN_DOCUMENTS
-                    {
-                        FILEDATA = file,
-                        LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
-                        LOANREFERENCENUMBER = model.loanReferenceNumber,
-                        DOCUMENTTITLE = model.documentTitle,
-                        DOCUMENTTYPEID = model.documentTypeId,
-                        LOAN_BOOKING_REQUESTID = model.SourceId,
-                        FILENAME = model.fileName,
-                        FILEEXTENSION = model.fileExtension,
-                        SYSTEMDATETIME = DateTime.Now,
-                        PHYSICALFILENUMBER = model.physicalFileNumber,
-                        PHYSICALLOCATION = model.physicalLocation,
-                        ISPRIMARYDOCUMENT = model.isPrimaryDocument,
-                        CREATEDBY = (int)model.createdBy,
-
-
-                    };
-
-                    context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
-
-                    // Audit Section ---------------------------
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
-                        STAFFID = model.createdBy,
-                        BRANCHID = (short)model.userBranchId,
-                        DETAIL = $"Added Loan Document with title : '{ model.documentTitle }' ",
-                        IPADDRESS = model.userIPAddress,
-                        URL = model.applicationUrl,
-                        APPLICATIONDATE = general.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.audit.AddAuditTrail(audit);
-                    // End of Audit Section ---------------------
-
-                    return context.SaveChanges() != 0;
-          //      }
-
+                context.TBL_MEDIA_LOAN_DOCUMENTS.RemoveRange(existing);
             }
-            catch (Exception ex)
+
+            var data = new TBL_MEDIA_LOAN_DOCUMENTS
             {
+                FILEDATA = file,
+                LOANAPPLICATIONNUMBER = model.loanApplicationNumber,
+                LOANREFERENCENUMBER = model.loanReferenceNumber,
+                DOCUMENTTITLE = model.documentTitle,
+                DOCUMENTTYPEID = model.documentTypeId,
+                LOAN_BOOKING_REQUESTID = model.SourceId,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                SYSTEMDATETIME = DateTime.Now,
+                PHYSICALFILENUMBER = model.physicalFileNumber,
+                PHYSICALLOCATION = model.physicalLocation,
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+                CREATEDBY = (int)model.createdBy,
+            };
 
-                throw ex;
-            }
+            context.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Loan Document with title : '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() == 0 ? 1 : 2;
         }
 
         public bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId, byte[] file)
@@ -1863,28 +1858,22 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion
 
-
-
-        public bool uploadDocument(LoanDocumentViewModel model, byte[] file)
+        public int uploadDocument(LoanDocumentViewModel model, byte[] file)
         {
-            //Check for file size here
             switch (model.databaseTable)
             {
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: AddLoanDocument(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: AddCommitteeDocument(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU: AddCreditBureauReportDocument(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS: AddConditionDocument(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS: AddMediaCheckListDocument(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS: AddMediaCollateralDocument(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT: AddMediaJobRequestDocument(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS: AddMediaKYCDocument(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_PICTURE: AddMediaStaffPicture(model, file); return true;
-                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_SIGNATURE: AddMediaStaffSignature(model, file); return true;
-                default:
-
-                    return false;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: return AddLoanDocument(model, file);
+                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: AddCommitteeDocument(model, file); return 2;
+                case (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU: AddCreditBureauReportDocument(model, file); return 2;
+                case (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS: AddConditionDocument(model, file); return 2;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS: AddMediaCheckListDocument(model, file); return 2;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS: AddMediaCollateralDocument(model, file); return 2;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT: AddMediaJobRequestDocument(model, file); return 2;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS: AddMediaKYCDocument(model, file); return 2;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_PICTURE: AddMediaStaffPicture(model, file); return 2;
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_STAFF_SIGNATURE: AddMediaStaffSignature(model, file); return 2;
+                default: return 1;
             }
-
         }
 
         public LoanDocumentViewModel getUploadedDocument(LoanDocumentViewModel model)

@@ -120,7 +120,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string syndicationName { get; set; }
         public string syndicationRefNo { get; set; }
         public decimal? syndicationAmount { get; set; }
-
+        public string conditionPrecedent { get; set; }
+        public string conditionSubsequent { get; set; }
     }
 
     public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL

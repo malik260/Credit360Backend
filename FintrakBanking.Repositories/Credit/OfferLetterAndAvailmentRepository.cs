@@ -395,6 +395,7 @@ namespace FintrakBanking.Repositories.Credit
                                        where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                       && (b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived || b.CHECKLISTSTATUSID == null)
                                        && b.ISSUBSEQUENT == false
                                        select new OfferLetterConditionPrecidentViewModel()
                                        {
@@ -992,6 +993,8 @@ namespace FintrakBanking.Repositories.Credit
                                        join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                        join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                        where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == false
+                                        && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                          //&& b.CHECKLISTSTATUSID == null
                                        select new OfferLetterConditionPrecidentViewModel()
                                        {
                                            conditionPrecident = b.CONDITION,
@@ -1903,22 +1906,22 @@ namespace FintrakBanking.Repositories.Credit
                 record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
                 ctx.SaveChanges();
 
-                //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
-                //{
-                //    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
-                //    {
-                //        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                //        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                //        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                //        DATETIMECREATED = DateTime.Now,
-                //        ISUSED = false,
-                //        CREATEDBY = entity.staffId,
-                //    });
+                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability))
+                {
+                    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
+                    {
+                        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                        DATETIMECREATED = DateTime.Now,
+                        ISUSED = false,
+                        CREATEDBY = entity.staffId,
+                    });
 
-                //    ctx.SaveChanges();
-                //    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
-                //    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
-                //}
+                    ctx.SaveChanges();
+                    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
+                    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+                }
 
                 //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                 //&& (productClassId != 0 && productClassId != null)
@@ -1940,30 +1943,30 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        //public void LogBookingApproval(LoanAvailmentApprovalViewModel entity, TBL_LOAN_APPLICATION_DETAIL appDetail, int targetId)
-        //{
-        //    var operationId = 0;
-        //    if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
-        //        operationId = (short)OperationsEnum.RevolvingLoanBooking;
-        //    if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
-        //        operationId = (short)OperationsEnum.ContigentLoanBooking;
-        //    if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-        //        operationId = (short)OperationsEnum.TermLoanBooking;
+        public void LogBookingApproval(LoanAvailmentApprovalViewModel entity, TBL_LOAN_APPLICATION_DETAIL appDetail, int targetId)
+        {
+            var operationId = 0;
+            if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan)
+                operationId = (short)OperationsEnum.RevolvingLoanBooking;
+            if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)
+                operationId = (short)OperationsEnum.ContigentLoanBooking;
+            if (appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || appDetail.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                operationId = (short)OperationsEnum.TermLoanBooking;
 
-        //    if (operationId > 0)
-        //    {
-        //        workflow.StaffId = entity.createdBy;
-        //        workflow.OperationId = operationId;
-        //        workflow.TargetId = targetId;
-        //        workflow.CompanyId = entity.companyId;
-        //        workflow.Comment = "Loan Ready for Booking";
-        //        workflow.ExternalInitialization = true;
-        //        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
-        //        workflow.Amount = entity.amount;
-        //        workflow.DeferredExecution = true;
-        //        workflow.LogActivity();
-        //    }
-        //}
+            if (operationId > 0)
+            {
+                workflow.StaffId = entity.createdBy;
+                workflow.OperationId = operationId;
+                workflow.TargetId = targetId;
+                workflow.CompanyId = entity.companyId;
+                workflow.Comment = "Loan Ready for Booking";
+                workflow.ExternalInitialization = true;
+                workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                workflow.Amount = entity.amount;
+                workflow.DeferredExecution = true;
+                workflow.LogActivity();
+            }
+        }
 
         private void PendingJobRequestCheck(IQueryable<TBL_LOAN_APPLICATION_DETAIL> loanApplicationDetails)
         {

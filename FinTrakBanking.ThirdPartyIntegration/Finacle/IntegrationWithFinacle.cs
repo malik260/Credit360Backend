@@ -460,13 +460,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 else
                 {
                     var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-                    throw new ConditionNotMetException(message); //result.APIResponse.webRequestStatus
+
+                    throw new ConditionNotMetException("Core Banking API error - " + message); //result.APIResponse.webRequestStatus
                 }
             }
             else
             {
                 var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{","").Replace("}", "").Replace(@"""", "");
-                throw new APIErrorException("Core Banking API Error - " + message); // .Message.ReasonPhrase);
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
             }
 
             //return result.APIStatus;
