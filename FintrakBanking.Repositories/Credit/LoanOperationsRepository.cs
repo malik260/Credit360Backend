@@ -274,7 +274,7 @@ namespace FintrakBanking.Repositories.Credit
                                  join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                                  join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
                                  where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
-                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && a.FEEAMOUNT > 0
 
 
                                  select new DailyInterestAccrualViewModel()
@@ -307,7 +307,7 @@ namespace FintrakBanking.Repositories.Credit
                 var contingents = (from a in context.TBL_LOAN_FEE
                                    join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
                                    where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
-                                   && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+                                   && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && a.FEEAMOUNT > 0
 
                                    select new DailyInterestAccrualViewModel()
                                    {
@@ -339,7 +339,7 @@ namespace FintrakBanking.Repositories.Credit
                 var revolving = (from a in context.TBL_LOAN_FEE
                                  join b in context.TBL_LOAN_REVOLVING on a.LOANID equals b.REVOLVINGLOANID
                                  where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
-                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && a.FEEAMOUNT > 0
 
                                  select new DailyInterestAccrualViewModel()
                                  {
@@ -485,7 +485,7 @@ namespace FintrakBanking.Repositories.Credit
                                  join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
                                  //join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
                                  where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
-                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && a.TAXAMOUNT > 0
 
                                  select new DailyInterestAccrualViewModel()
                                  {
@@ -503,6 +503,8 @@ namespace FintrakBanking.Repositories.Credit
                                      baseReferenceNumber = null,
                                      //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
                                      loanChargedFeeId = a.LOANCHARGEFEEID,
+                                     effectiveDate = b.EFFECTIVEDATE,
+                                     maturityDate = b.MATURITYDATE,
 
 
                                  }).ToList().Select(x =>
@@ -516,7 +518,7 @@ namespace FintrakBanking.Repositories.Credit
                                  join b in context.TBL_LOAN_REVOLVING on a.LOANID equals b.REVOLVINGLOANID
                                  //join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
                                  where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
-                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+                                 && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && a.TAXAMOUNT > 0
 
 
                                  select new DailyInterestAccrualViewModel()
@@ -535,7 +537,8 @@ namespace FintrakBanking.Repositories.Credit
                                      baseReferenceNumber = null,
                                      //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
                                      loanChargedFeeId = a.LOANCHARGEFEEID,
-
+                                     effectiveDate = b.EFFECTIVEDATE,
+                                     maturityDate = b.MATURITYDATE,
 
                                  }).ToList().Select(x =>
                                  {
@@ -546,7 +549,7 @@ namespace FintrakBanking.Repositories.Credit
                 var contingents = (from a in context.TBL_LOAN_FEE
                                    join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
                                    where b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.MATURITYDATE <= applicationDate
-                                   && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID
+                                   && b.LOANSYSTEMTYPEID == a.LOANSYSTEMTYPEID && a.TAXAMOUNT > 0
 
 
                                    select new DailyInterestAccrualViewModel()
@@ -565,7 +568,8 @@ namespace FintrakBanking.Repositories.Credit
                                        baseReferenceNumber = null,
                                        //dayCountConventionId = d.DAYCOUNTCONVENTIONID,
                                        loanChargedFeeId = a.LOANCHARGEFEEID,
-
+                                       effectiveDate = b.EFFECTIVEDATE,
+                                       maturityDate = b.MATURITYDATE,
 
                                    }).ToList().Select(x =>
                                    {
@@ -1373,7 +1377,22 @@ namespace FintrakBanking.Repositories.Credit
 
         public decimal DailyAccruedInterest(DateTime startDate, DateTime endDate, decimal Amount)
         {
-            decimal dailyAmount = (Amount / ((int)(endDate - startDate).TotalDays));
+
+            decimal dailyAmount = 0;
+
+            int daysDif = ((int)(endDate - startDate).TotalDays);
+
+            if (Amount == 0 || daysDif == 0)
+            {
+                dailyAmount = 0;
+            }
+            else {
+
+                dailyAmount = (Amount / ((int)(endDate - startDate).TotalDays));
+
+            }
+           
+
             return dailyAmount;
         }
 
@@ -5482,7 +5501,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
                         //sanctionReferenceNumber = loan.serialNumber,
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
+                        sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -5634,7 +5653,7 @@ namespace FintrakBanking.Repositories.Credit
                     var data = new OverDraftExtendViewModel
                     {
                         sanctionLimit = String.Format("{0:0.00}", loan.overdraftLimit),
-                        sanctionReferenceNumber = loan.loanReferenceNumber,
+                        sanctionReferenceNumber = loan.serialNumber,
                         accountNumber = loan.productAccountNumber,
                         expiryDate = loan.maturityDate.ToString("dd-MMM-yyyy", null),
                         reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),

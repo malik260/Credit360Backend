@@ -28,8 +28,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("upload-document")]
         public async Task<HttpResponseMessage> UploadDocument()
         {
-            try
-            {
+            //try
+            //{
                 if (!Request.Content.IsMimeMultipartContent())
                 {
                     return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
@@ -66,19 +66,14 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Exceed File Size. 3MB Maximum size is allowed");
                 }
 
-                var data = repo.uploadDocument(entity, buffer);
+                int response = repo.uploadDocument(entity, buffer);
 
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
-            }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response != 1, result = response });
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            //}
         }
 
          [HttpPost] [ClaimsAuthorization]
@@ -151,6 +146,7 @@ namespace FintrakBanking.APICore.Controllers
                 customerCode = provider.FormData["customerCode"],
                 customerId = Convert.ToInt32(provider.FormData["customerId"]),
                 staffCode = provider.FormData["staffCode"],
+                overwrite = provider.FormData["overwrite"] == "true",
             };
             return entity;
         }

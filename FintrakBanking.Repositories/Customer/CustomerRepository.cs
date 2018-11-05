@@ -2865,11 +2865,11 @@ namespace FintrakBanking.Repositories.Customer
         public IEnumerable<CustomerViewModels> SearchRandomCustomerBySearchQuery(string searchQuery)
         {
             var customers = (from x in GetCustomersLite()
-                             where x.firstName.ToLower().Contains(searchQuery.ToLower())
-                                   || x.lastName.ToLower().Contains(searchQuery.ToLower())
-                                   || x.middleName.ToLower().Contains(searchQuery.ToLower())
-                                   || x.customerCode.Contains(searchQuery)
-                                   || x.branchName.Contains(searchQuery)
+                             where x.firstName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.lastName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.middleName.ToLower().StartsWith(searchQuery.ToLower())
+                                   || x.customerCode.StartsWith(searchQuery)
+                                   || x.branchName.StartsWith(searchQuery)
                              select x);
 
             var customerInfo = customers.ToList();

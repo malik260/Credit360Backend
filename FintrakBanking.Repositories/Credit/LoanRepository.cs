@@ -6346,8 +6346,10 @@ namespace FintrakBanking.Repositories.Credit
                            {
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                existingLimit = a.PRINCIPALAMOUNT,
-                               proposedLimit = a.OUTSTANDINGPRINCIPAL,
-                               recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                               //proposedLimit = a.OUTSTANDINGPRINCIPAL,
+                               proposedLimit = 0,
+                               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                               recommendedLimit=0,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                reviewDate = DateTime.Now,
@@ -6364,8 +6366,10 @@ namespace FintrakBanking.Repositories.Credit
                            {
                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
                                existingLimit = a.OVERDRAFTLIMIT,
-                               proposedLimit = a.OVERDRAFTLIMIT,
-                               recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                               //proposedLimit = a.OVERDRAFTLIMIT,
+                               proposedLimit = 0,
+                               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                               recommendedLimit = 0,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                reviewDate = DateTime.Now,
@@ -6396,19 +6400,20 @@ namespace FintrakBanking.Repositories.Credit
 
 
                 var staggingLoan = from a in stgCon.STG_LOAN_MART
-                                   where a.CUST_ID == customCode
-                                   select new CurrentCustomerExposure
-                                   {
-                                       facilityType = a.SCHM_TYPE,
-                                       existingLimit = a.FAC_GRANT_AMT,
-                                       proposedLimit = a.FINAL_BALANCE,
-                                       recommendedLimit = 0,
-                                       PastDueObligationsInterest = a.INT_DUE,
-                                       PastDueObligationsPrincipal = 0,
-                                       reviewDate = DateTime.Now,
-                                       prudentialGuideline = a.USER_CLASSIFICATION == "1" ? "Performing" : "Non-Performing",
-                                       loanStatus = "Running"
-                                   };
+                           where a.CUST_ID == customCode
+                           select new CurrentCustomerExposure
+                           {
+                               facilityType = a.SCHM_TYPE,
+                               existingLimit = a.FAC_GRANT_AMT,
+                               //proposedLimit = a.FINAL_BALANCE,
+                               proposedLimit = 0,
+                               recommendedLimit = 0,
+                               PastDueObligationsInterest = a.INT_DUE,
+                               PastDueObligationsPrincipal = 0,
+                               reviewDate = DateTime.Now,
+                               prudentialGuideline = a.USER_CLASSIFICATION == "1" ? "Performing" : "Non-Performing",
+                               loanStatus = "Running"
+                           };
 
                 exposures.Union(staggingLoan);
 
@@ -8173,11 +8178,11 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
-                                   (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
-                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery) ||
-                                   b.FIRSTNAME.ToUpper().Contains(searchQuery) ||
-                                   b.LASTNAME.ToUpper().Contains(searchQuery) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim()))
+                                   (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -8218,8 +8223,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())
-                                   )
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
                                    select new LoanViewModel
                                    {
                                        loanId = a.REVOLVINGLOANID,
@@ -8257,7 +8261,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,

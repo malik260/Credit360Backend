@@ -1035,6 +1035,7 @@ namespace FintrakBanking.Repositories.Credit
                             checkListItemId = a.CHECKLISTITEMID,
                             checkListItemName = a.CHECKLISTITEMNAME,
                             responseTypeName = a.TBL_CHECKLIST_RESPONSE_TYPE.RESPONSE_TYPE_NAME,
+                            responseTypeId = a.RESPONSE_TYPEID,
                             requireUpload = a.REQUIREUPLOAD,
                             dateTimeCreated = a.DATETIMECREATED,
                             createdBy = (int)a.CREATEDBY

@@ -127,8 +127,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("checklist-document-upload")]
         public async Task<HttpResponseMessage> CheckListDocumentUpload()
         {
-            try
-            {
                 if (!Request.Content.IsMimeMultipartContent())
                 {
                     return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
@@ -145,15 +143,17 @@ namespace FintrakBanking.APICore.Controllers
 
                 var entity = new CheckListDocumentUploadViewModel
                 {
-                   
-                   checkListDefinitionId = Convert.ToInt32(provider.FormData["checkListDefinitionId"]),
-                   checkListStatusId = Convert.ToInt32(provider.FormData["checkListStatusId"]),
-                   loanApplicationId = Convert.ToInt32(provider.FormData["loanApplicationId"]),
-                  loanDetailsId = Convert.ToInt32(provider.FormData["loanDetailsId"]),
+
+                    checkListDefinitionId = Convert.ToInt32(provider.FormData["checkListDefinitionId"]),
+                    checkListStatusId = Convert.ToInt32(provider.FormData["checkListStatusId"]),
+                    loanApplicationId = Convert.ToInt32(provider.FormData["loanApplicationId"]),
+                    loanDetailsId = Convert.ToInt32(provider.FormData["loanDetailsId"]),
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
                     physicalFileNumber = provider.FormData["physicalFileNumber"],
                     physicalLocation = provider.FormData["physicalLocation"],
+                    overwrite = provider.FormData["overwrite"] == "true",
+
                 };
 
                 if (!provider.FileStreams.Any())
@@ -168,20 +168,13 @@ namespace FintrakBanking.APICore.Controllers
 
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();
-                var data = repo.CheckListDocumentUpload(entity, buffer);
+                int response = repo.CheckListDocumentUpload(entity, buffer);
 
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
-                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = response != 1, result = response });
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
-            }
         }
+
+
         [HttpDelete] [ClaimsAuthorization]
         [Route("checklist-upload-delete/definitionId/{definitionId}/statusId/{statusId}/detailId/{detailId}/isProductBased/{isProductBased}")]
         public HttpResponseMessage RemoveChecklistDocument(int definitionId, int statusId, int detailId, bool isProductBased)
