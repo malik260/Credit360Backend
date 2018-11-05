@@ -3505,8 +3505,8 @@ namespace FintrakBanking.Repositories.Credit
             var loanFeeData = context.TBL_LOAN_FEE.Where(x => x.LOANID == targetId && x.ISINTEGRALFEE == true);
             double integraFeeAmount = 0;
 
-            var effectiveDate = loanScheduleData.EFFECTIVEDATE;
-            var maturityDate = effectiveDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+            //var effectiveDate = loanScheduleData.EFFECTIVEDATE;
+            //var maturityDate = effectiveDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
             foreach (var record in loanFeeData)
             {
@@ -3514,28 +3514,37 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var scheduleModel = new LoanPaymentScheduleInputViewModel();
+            if (loanScheduleData.SCHEDULETYPEID == (short)LoanScheduleTypeEnum.BulletPayment)
+            {
+                loanScheduleData.PRINCIPALFREQUENCYTYPEID = null;
+                loanScheduleData.INTERESTFREQUENCYTYPEID = null;
+
+            }
+
+            if (loanScheduleData.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking || loanScheduleData.OPERATIONID == (short)OperationsEnum.ForeignExchangeLoanBooking)
+            {
+                if (loanScheduleData.SCHEDULETYPEID == 0)
+                    loanScheduleData.SCHEDULETYPEID = (short)LoanScheduleTypeEnum.BulletPayment;
+                if (loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID == 0)
+                    loanScheduleData.SCHEDULETYPEID = (short)DayCountConventionEnum.Actual_Actual;
+                
+            }
+
             if (loanScheduleData.OPERATIONID != (short)OperationsEnum.CommercialLoanBooking && loanScheduleData.OPERATIONID != (short)OperationsEnum.ForeignExchangeLoanBooking)
             {
-                if (loanScheduleData.SCHEDULETYPEID == (short)LoanScheduleTypeEnum.BulletPayment)
-                {
-                    loanScheduleData.PRINCIPALFREQUENCYTYPEID = null;
-                    loanScheduleData.INTERESTFREQUENCYTYPEID = null;
-
-                }
-
                 scheduleModel = new LoanPaymentScheduleInputViewModel
                 {
                     scheduleMethodId = loanScheduleData.SCHEDULETYPEID,
 
                     principalAmount = (double)loanScheduleData.PRINCIPALAMOUNT,
-                    effectiveDate = effectiveDate,
+                    effectiveDate = loanScheduleData.EFFECTIVEDATE,
                     interestRate = loanScheduleData.INTERESTRATE,
                     principalFrequency = loanScheduleData.PRINCIPALFREQUENCYTYPEID,
                     interestFrequency = loanScheduleData.INTERESTFREQUENCYTYPEID,
-                    tenor = (loanScheduleData.MATURITYDATE - loanScheduleData.EFFECTIVEDATE).Days,
+                    tenor = (loanScheduleData.MATURITYDATE.Date - loanScheduleData.EFFECTIVEDATE.Date).Days,
                     principalFirstpaymentDate = (DateTime)loanScheduleData.FIRSTPRINCIPALPAYMENTDATE,
                     interestFirstpaymentDate = (DateTime)loanScheduleData.FIRSTINTERESTPAYMENTDATE,
-                    maturityDate = maturityDate,
+                    maturityDate = loanScheduleData.MATURITYDATE,
                     accrualBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
                     integralFeeAmount = integraFeeAmount,
                     shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
@@ -3544,7 +3553,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 };
             }
-
+             
 
             return scheduleModel;
         }
@@ -9115,8 +9124,9 @@ namespace FintrakBanking.Repositories.Credit
                                        disburseDate = a.DISBURSEDATE,
                                        currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
                                        //approvedAmount = a.ApprovedAmount,
-                                       operationId = a.OPERATIONID,
-                                       operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                       operationId = ln.OPERATIONTYPEID,
+                                       operationName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ln.OPERATIONTYPEID).OPERATIONNAME,
+                                       operationTypeId = ln.OPERATIONTYPEID,
                                        operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ln.OPERATIONTYPEID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
