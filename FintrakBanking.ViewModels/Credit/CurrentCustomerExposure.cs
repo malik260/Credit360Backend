@@ -7,7 +7,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string facilityType { get; set; }
         public decimal existingLimit { get; set; }
         public decimal proposedLimit { get; set; }
-        public decimal change { get { return (existingLimit - proposedLimit); } }
+        public decimal change { get { return (recommendedLimit - proposedLimit); } }
         public decimal outstandings { get { return proposedLimit; } }
 
         public decimal PastDueObligationsPrincipal { get; set; }
