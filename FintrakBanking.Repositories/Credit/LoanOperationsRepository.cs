@@ -14893,10 +14893,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan)
                     {
-                        int daysDiff = loanGenerate.getDaysInLoanPeriod(userModel.valueDate, systemDate);
+                        int daysDiff = (userModel.valueDate - systemDate).Days;
 
-                        double previousAmount = (((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE)) * daysDiff);
-                        double currentAmount = (((userModel.newRate / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE)) * daysDiff);
+                        double previousAmount = (((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / (loanRecord.EFFECTIVEDATE - loanRecord.MATURITYDATE).Days) * daysDiff);
+                        double currentAmount = (((userModel.newRate / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / (loanRecord.EFFECTIVEDATE - loanRecord.MATURITYDATE).Days) * daysDiff);
                         double diff = previousAmount - currentAmount;
 
                         if (diff > 0)
@@ -14911,10 +14911,10 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (loanRecord.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
                     {
-                        int daysDiff = loanGenerate.getDaysInLoanPeriod(userModel.valueDate, systemDate);
+                        int daysDiff = (userModel.valueDate - systemDate).Days;
 
-                        double previousAmount = (((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE)) * daysDiff);
-                        double currentAmount = (((userModel.newRate / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE)) * daysDiff);
+                        double previousAmount = (((loanRecord.INTERESTRATE / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / (loanRecord.EFFECTIVEDATE -  loanRecord.MATURITYDATE).Days) * daysDiff);
+                        double currentAmount = (((userModel.newRate / 100) * (double)loanRecord.PRINCIPALAMOUNT * 1 / (loanRecord.EFFECTIVEDATE - loanRecord.MATURITYDATE).Days) * daysDiff);
                         double diff = previousAmount - currentAmount;
                         if (diff > 0)
                         {
@@ -15910,7 +15910,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.instructionTypeId == (short)MaturityInstructionTypeEnum.RolloverInterstAndPrincipal)
                 newPrincipal = result.PRINCIPALAMOUNT + result.OUTSTANDINGINTEREST;
 
-            var numberOfDaysInYear = loanGenerate.getDaysInLoanPeriod(result.EFFECTIVEDATE, result.MATURITYDATE);
+            var numberOfDaysInYear = (result.EFFECTIVEDATE.Date - result.MATURITYDATE.Date).Days;
             var dailyInterest = loanGenerate.getDailyInterest(newPrincipal, result.INTERESTRATE, numberOfDaysInYear);
             newInterest = dailyInterest * numberOfDaysInYear;
 
@@ -16030,7 +16030,7 @@ namespace FintrakBanking.Repositories.Credit
 
             ArchiveLoan(loanRecord.TERMLOANID, (short)OperationsEnum.CommercialLoanBooking, batchCode);
 
-            var loanDaysInYear = loanGenerate.getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE);
+            var loanDaysInYear = (loanRecord.EFFECTIVEDATE.Date - loanRecord.MATURITYDATE.Date).Days;
             var dailyInterestAmount = loanGenerate.getDailyInterest(loanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, loanDaysInYear);
 
             if (model.effectiveDate < systemDate)
@@ -16045,7 +16045,8 @@ namespace FintrakBanking.Repositories.Credit
                 //*** Accrued interest to date ***
                 var interestToDate = dailyInterestAmount * pastDays;
                 // Number of remaining days in loan period
-                var DaysLeftInYear = loanGenerate.getDaysInLoanPeriod(model.effectiveDate, loanRecord.MATURITYDATE.Subtract(TimeSpan.FromDays(1)));
+                //var DaysLeftInYear = (model.effectiveDate.Date -  loanRecord.MATURITYDATE.Date.Subtract(TimeSpan.FromDays(1))).Days;
+                var DaysLeftInYear = (model.effectiveDate.Date - loanRecord.MATURITYDATE.Date).Days;
 
                 var reCalculatedDailyInterestAmount = loanGenerate.getDailyInterest(loanRecord.OUTSTANDINGPRINCIPAL, loanRecord.INTERESTRATE, DaysLeftInYear);
 

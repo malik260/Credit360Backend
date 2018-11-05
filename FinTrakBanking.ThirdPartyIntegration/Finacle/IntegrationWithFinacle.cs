@@ -823,8 +823,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
 
-
-
         private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model )
         {
             List<TransactionPostingViewModel> transactionLst = new List<TransactionPostingViewModel>();
