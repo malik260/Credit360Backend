@@ -1324,14 +1324,16 @@ namespace FintrakBanking.Repositories.Credit
                 equityCasaAccountId = d.EQUITYCASAACCOUNTID,
                 equityAmount = d.EQUITYAMOUNT,
                 subSectorId = d.SUBSECTORID,
+                sectorId = (short)d.TBL_SUB_SECTOR.SECTORID,
                 loanPurpose = d.LOANPURPOSE,
                 casaAccountId = d.CASAACCOUNTID,
-                repaymentTerm = d.REPAYMENTSCHEDULE,
+                repaymentTerm = d.REPAYMENTTERMS,
                 crmsFundingSourceId = d.CRMSFUNDINGSOURCEID,
                 crmsPaymentSourceId = d.CRMSREPAYMENTSOURCEID,
                 crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
                 productPriceIndexId = d.PRODUCTPRICEINDEXID,
-                productPriceIndexRate = d.PRODUCTPRICEINDEXRATE
+                productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
+                tenorModeId = 1,
             };
 
             return fields;
