@@ -958,8 +958,9 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-
             loanData = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
+
+            if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
 
             if (loan.isNewApplication)
             {
@@ -1023,7 +1024,6 @@ namespace FintrakBanking.Repositories.Credit
             return returndate;
 
         }
-
 
         private void AddloanApplicationSub(LoanApplicationViewModel loan)
         {
@@ -1127,9 +1127,33 @@ namespace FintrakBanking.Repositories.Credit
             this.auditTrail.AddAuditTrail(audit);
         }
 
+        private bool UpdateLoanApplicationDetail(LoanApplicationViewModel loan)
+        {
+            //UpdateLoanApplication(loan); // update main
+
+            var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+            var update = loan.LoanApplicationDetail.SingleOrDefault();
+            if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
+
+            // LEFT TO RIGHT MAPPING
+            detail.SUBSECTORID = update.subSectorId;
+            detail.PROPOSEDAMOUNT = update.proposedAmount;
+            detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
+            detail.PROPOSEDPRODUCTID = update.proposedProductId;
+            detail.PROPOSEDTENOR = update.proposedTenor;
+            detail.REPAYMENTTERMS = update.repaymentTerm;
+            detail.LOANPURPOSE = update.loanPurpose;
+            detail.PRODUCTPRICEINDEXID = update.productPriceIndexId;
+            detail.PRODUCTPRICEINDEXRATE = update.productPriceIndexRate;
+
+
+            if (context.SaveChanges() == 0) throw new SecureException("Nothing was updated!");
+
+            return true;
+        }
+
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
         {
-
             var application = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId).ToList();
 
             decimal totalAmount = GetCustomerTotalOutstandingBalance((int)loan.customerId) + application.Sum(a => a.PROPOSEDAMOUNT);
