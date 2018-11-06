@@ -40,6 +40,7 @@ namespace FintrakBanking.Repositories.Credit
         private CreditBureauProcess _creditBureau;
         private IChartOfAccountRepository chartOfAccount;
         private ITwoFactorAuthIntegrationService twoFactoeAuth;
+        private IAdminRepository admin;
 
 
         public CustomerCreditBureauRepository(
@@ -49,7 +50,8 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             IFinanceTransactionRepository _financials, IntegrationWithFinacle integration,
             CreditBureauProcess creditBureau, IChartOfAccountRepository _chartOfAccount,
-            ITwoFactorAuthIntegrationService _twoFactoeAuth)
+            ITwoFactorAuthIntegrationService _twoFactoeAuth,
+            IAdminRepository _admin)
         {
             this.context = _context;
             docContext = _docContext;
@@ -60,6 +62,7 @@ namespace FintrakBanking.Repositories.Credit
             _creditBureau = creditBureau;
             chartOfAccount = _chartOfAccount;
             this.twoFactoeAuth = _twoFactoeAuth;
+            this.admin = _admin;
         }
 
         #region Credit Bureau 
@@ -553,7 +556,7 @@ namespace FintrakBanking.Repositories.Credit
                 passcode = searchInfo.passCode
             };
 
-            if (twoFADetails != null)
+            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
             {
                 var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
@@ -587,7 +590,6 @@ namespace FintrakBanking.Repositories.Credit
                     usedIntegration = true,
                     dateCompleted = DateTime.Now
                 }
-
             };
 
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -669,7 +671,7 @@ namespace FintrakBanking.Repositories.Credit
                                 throw new ConditionNotMetException("Search could not save the result file");
                             }
 
-                            DebitCustomer(chargeModel);
+                            if (!searchInfo.debitBusiness) { DebitCustomer(chargeModel); }
 
                             context.SaveChanges();
                             trans.Commit();
@@ -822,7 +824,7 @@ namespace FintrakBanking.Repositories.Credit
                             }
                         }
 
-                        DebitCustomer(chargeModel);
+                        if (!request.debitBusiness) { DebitCustomer(chargeModel); }
 
                         fileArray = Encoding.ASCII.GetBytes(dataResponse);
                         var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
@@ -950,7 +952,7 @@ namespace FintrakBanking.Repositories.Credit
                 passcode = searchInput.passCode
             };
 
-            if (twoFADetails != null)
+            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
             {
                 var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
@@ -1018,7 +1020,8 @@ namespace FintrakBanking.Repositories.Credit
                                 response.fileSaved = true;
                             }
 
-                            DebitCustomer(chargeModel);
+                            if (!searchInput.chargeBusiness) { DebitCustomer(chargeModel); }
+                                
                             context.SaveChanges();
                             trans.Commit();
                             docTrans.Commit();

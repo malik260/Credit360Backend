@@ -25,6 +25,7 @@ using System.Linq;
 using System.ServiceModel;
 using FintrakBanking.Common.CustomException;
 using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
+using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -44,12 +45,15 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingStagingContext stagingContext;
         private IIntegrationWithFinacle finacle;
         bool USE_THIRD_PARTY_INTEGRATION = false;
+        private ITwoFactorAuthIntegrationService twoFactoeAuth;
+        private IAdminRepository admin;
 
 
         public LoanOperationsRepository(
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
-            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stagingContext)
+            , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stagingContext,
+             ITwoFactorAuthIntegrationService _twoFactoeAuth, IAdminRepository _admin)
         {
 
             this.context = _context;
@@ -63,6 +67,8 @@ namespace FintrakBanking.Repositories.Credit
             this.loanGenerate = _loan;
             this.finacle = finacle;
             this.stagingContext = _stagingContext;
+            this.twoFactoeAuth = _twoFactoeAuth;
+            this.admin = _admin;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -11945,11 +11951,12 @@ namespace FintrakBanking.Repositories.Credit
 
             entity.applicationDate = generalSetup.GetApplicationDate();
 
-            var twoFactorAuth = new TwoFactorAutheticationViewModel
+            var twoFADetails = new TwoFactorAutheticationViewModel
             {
                 passcode = entity.passCode,
                 username = entity.userName
             };
+
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -12049,7 +12056,17 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else if (workFlow.NewState == (int)ApprovalState.Ended)
                         {
-                            result = LoanRephasementProcess(twoFactorAuth, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
+                            //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
+                            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                            {
+                                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                                if (authenticated.authenticated == false)
+                                    throw new TwoFactorAuthenticationException(authenticated.message);
+                            }
+                            twoFADetails.skipAuthentication = true;
+
+                            result = LoanRephasementProcess(twoFADetails, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
                             if (result == true)
                             {
                                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
