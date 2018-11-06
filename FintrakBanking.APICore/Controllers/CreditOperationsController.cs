@@ -769,6 +769,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.staffId = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.userIPAddress = Request.RequestUri.Host;
+                entity.createdBy = token.GetStaffId;
                 var data = repo.GoForApproval(entity);
 
                 if (data == 1)
@@ -785,6 +786,11 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+                else if (data == 4)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation Has Been Refered Back" });
                 }
                 else
                 {
@@ -908,7 +914,7 @@ namespace FintrakBanking.APICore.Controllers
 
                     model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
 
-                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
                     {
                         return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
                     }

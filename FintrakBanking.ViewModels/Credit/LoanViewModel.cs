@@ -344,7 +344,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string casaAccountNumber2 { get; set; }
         public bool isInEditMode { get; set; }
-
+        public LoanReviewOperationApprovalViewModel operationReview { get; set; }
 
 
 
