@@ -21,13 +21,13 @@ namespace FintrakBanking.Interfaces.Credit
         bool SendBackToBookingModifier(LoanViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
-        decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod);
+        decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
 
         CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
 
-        decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod);
+        decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod, DayCountConventionEnum dayCountConventionId);
 
-        int getDaysInLoanPeriod(DateTime startDate, DateTime endDate);
+        //int getDaysInLoanPeriod(DateTime startDate, DateTime endDate);
 
         IEnumerable<LookupViewModel> GetLoanApplicationTypes();
 
@@ -193,7 +193,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
         IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
 
-        decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate);
+        decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate, DayCountConventionEnum dayCountConventionId);
         List<LookupViewModel> GetLoanRepricingModes();
 
         List<LoanViewModel> GetCompletedLoans();

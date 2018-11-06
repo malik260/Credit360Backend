@@ -96,7 +96,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal maturityAmount { get; set; }
         public string relatedReferenceNumber { get; set; }
         public decimal interestAmount { get; set; }
-
+        public int? currentApprovalLevelId { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
