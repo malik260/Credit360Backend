@@ -11554,14 +11554,15 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                            where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                             && atrail.OPERATIONID == op.OPERATIONTYPEID
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                            && atrail.RESPONSESTAFFID == null && (op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred)
+                            && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == false && mp.OPERATIONPERFORMED == true
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
+                                currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
                                 loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -11673,10 +11674,10 @@ namespace FintrakBanking.Repositories.Credit
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                     where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == op.OPERATIONTYPEID
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                                     && atrail.RESPONSESTAFFID == null && (op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved || op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Referred)
+                                     && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved 
                                      && op.OPERATIONCOMPLETED == false && mp.OPERATIONPERFORMED == true
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
@@ -11962,43 +11963,43 @@ namespace FintrakBanking.Repositories.Credit
                     if (entity.approvalStatusId == (short)ApprovalStatusEnum.Referred)
                     {
 
-                        //int staffId = entity.staffId;
+                        int staffId = entity.staffId;
 
 
-                        //var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+                        var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
-                        //var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == entity.operationId)
-                        //     .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
-                        //     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
-                        //         mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
-                        //         {
-                        //             groupPosition = mg.m.POSITION,
-                        //             levelPosition = l.POSITION,
-                        //             levelId = l.APPROVALLEVELID,
-                        //             levelName = l.LEVELNAME,
-                        //             staffRoleId = l.STAFFROLEID,
-                        //         })
-                        //         .OrderBy(x => x.groupPosition)
-                        //         .ThenBy(x => x.levelPosition)
-                        //         .ToList();
+                        var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == entity.operationId)
+                             .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                             .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                                 mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                                 {
+                                     groupPosition = mg.m.POSITION,
+                                     levelPosition = l.POSITION,
+                                     levelId = l.APPROVALLEVELID,
+                                     levelName = l.LEVELNAME,
+                                     staffRoleId = l.STAFFROLEID,
+                                 })
+                                 .OrderBy(x => x.groupPosition)
+                                 .ThenBy(x => x.levelPosition)
+                                 .ToList();
 
-                        //var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
-                        //var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
-                        //var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+                        var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+                        var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+                        var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
-                        //workFlow.StaffId = entity.createdBy;
-                        //workFlow.OperationId = entity.operationId;
-                        //workFlow.TargetId = entity.targetId;
-                        //workFlow.CompanyId = entity.companyId;
-                        //workFlow.ProductClassId = null;
-                        //workFlow.ProductId = null;
-                        //workFlow.NextLevelId = staffRoleLevelId;
-                        //workFlow.ToStaffId = staffId;
-                        //workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
-                        //workFlow.Comment = entity.comment;
-                        //workFlow.DeferredExecution = true;
+                        workFlow.StaffId = entity.createdBy;
+                        workFlow.OperationId = entity.operationId;
+                        workFlow.TargetId = entity.targetId;
+                        workFlow.CompanyId = entity.companyId;
+                        workFlow.ProductClassId = null;
+                        workFlow.ProductId = null;
+                        workFlow.NextLevelId = entity.approvalLevelId;
+                        workFlow.ToStaffId = staffId;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
+                        workFlow.Comment = entity.comment;
+                        workFlow.DeferredExecution = true;
 
-                        //workFlow.LogActivity();
+                        workFlow.LogActivity();
 
                         var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
                         lmsrRecord.OPERATIONPERFORMED = false;
