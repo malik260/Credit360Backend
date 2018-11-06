@@ -1130,7 +1130,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool UpdateLoanApplicationDetail(LoanApplicationViewModel loan)
         {
-            //UpdateLoanApplication(loan); // update main
+            UpdateLoanApplication(loan); // update main
 
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
             var update = loan.LoanApplicationDetail.SingleOrDefault();
