@@ -12007,18 +12007,7 @@ namespace FintrakBanking.Repositories.Credit
                         bool output = false;
                         bool result = false;
                         int data = 0;                      
-
-
-
-                        var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
-                                            where s.LOANREVIEWOPERATIONID == entity.targetId && s.OPERATIONTYPEID == entity.operationId
-                                           && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                            && s.OPERATIONCOMPLETED == false
-                                            select s).FirstOrDefault();
-
-
-
-
+                        
                         if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                         {
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
