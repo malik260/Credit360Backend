@@ -139,6 +139,7 @@
     <Compile Include="Enum\LienTypeEnum.cs" />
     <Compile Include="Enum\CommentsTypeEnum.cs" />
     <Compile Include="Enum\OperationTypeEnum.cs" />
+    <Compile Include="Enum\OverrideItem.cs" />
     <Compile Include="Enum\PenEvaluationStatusEnum.cs" />
     <Compile Include="Enum\LoanProductTypeEnum.cs" />
     <Compile Include="Enum\ProductBehaviourEnum.cs" />

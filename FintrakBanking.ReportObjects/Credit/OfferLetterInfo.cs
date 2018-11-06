@@ -150,6 +150,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                   //&& b.STATUSID == (int)ApprovalStatusEnum.Approved && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                   && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                             && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                             && b.STATUSID == (int)ApprovalStatusEnum.Approved
                             select new ProductFeeViewModel()
                             {
                                 feeName = c.CHARGEFEENAME,
@@ -582,6 +583,7 @@ namespace FintrakBanking.ReportObjects.Credit
                         where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                        && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new ProductFeeViewModel()
                         {
                             SN = +count,

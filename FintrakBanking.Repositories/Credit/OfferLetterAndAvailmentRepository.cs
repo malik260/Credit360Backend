@@ -441,6 +441,7 @@ namespace FintrakBanking.Repositories.Credit
                         where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                         && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new ProductFeeViewModel()
                         {
                             feeName = c.CHARGEFEENAME,

@@ -147,7 +147,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
-            if (next.LevelTypeId == 5) SkipResolvedLevel();
+            if (next != null && next.LevelTypeId == 5) SkipResolvedLevel();
 
             if (this.useOrganogram == true)
             {
