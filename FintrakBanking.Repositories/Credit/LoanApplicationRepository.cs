@@ -959,10 +959,11 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             loanData = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
+            var loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);
 
             if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
 
-            if (loan.isNewApplication)
+            if (loanDetail.Count() == 0 || loan.isNewApplication)
             {
                 if (loanData == null)
                 {
