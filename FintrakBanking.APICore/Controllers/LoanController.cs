@@ -1986,7 +1986,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             var isDicounted = false;
                 if(loanProductInfo != null) isDicounted = loanProductInfo.dealTypeId == (short)DealTypeEnum.Upfront ? true : false;
 
-            var data = repo.getLoanInterestRateAmount(entity.principalAmount, entity.interestRate, entity.effectiveDate, entity.maturityDate);
+            var data = repo.getLoanInterestRateAmount(entity.principalAmount, entity.interestRate, entity.effectiveDate, entity.maturityDate,(DayCountConventionEnum)entity.scheduleDayCountConventionId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" , result = data, isDicounted = isDicounted });
         }

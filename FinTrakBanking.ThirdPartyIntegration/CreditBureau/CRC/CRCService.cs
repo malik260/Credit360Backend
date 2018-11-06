@@ -161,10 +161,14 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
 
         private XElement CRCMergeRequestXML(MultiHitRequestViewModel request)
         {
+            var subjectType = 0;
+            if (request.reportID == (int)CRCSearchTypeEnum.ConsumerSearch)
+                subjectType = 1;
+
             return new XElement("REQUEST", new XAttribute("REQUEST_ID", 1),
                 new XElement("REQUEST_PARAMETERS",
                 new XElement("REPORT_PARAMETERS", new XAttribute("RESPONSE_TYPE", request.responseType),
-                new XAttribute("SUBJECT_TYPE", 1), new XAttribute("REPORT_ID", request.reportID)),
+                new XAttribute("SUBJECT_TYPE", subjectType), new XAttribute("REPORT_ID", request.reportID)),
                 new XElement("INQUIRY_REASON", new XAttribute("CODE", request.enquiryReason)),
                 new XElement("APPLICATION", new XAttribute("CURRENCY", request.currencyCode),
                 new XAttribute("AMOUNT", request.amount), new XAttribute("NUMBER", request.number),

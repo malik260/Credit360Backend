@@ -1568,11 +1568,13 @@ namespace FintrakBanking.Repositories.Credit
 
                 EFFECTIVEDATE = entity.effectiveDate, //(DateTime)applicationDetail.EFFECTIVEDATE,
                 MATURITYDATE = entity.maturityDate, //(DateTime)applicationDetail.EXPIRYDATE,
+                FIRSTPRINCIPALPAYMENTDATE = entity.maturityDate,
+                FIRSTINTERESTPAYMENTDATE = entity.maturityDate,
+                SCHEDULEDAYINTERESTTYPEID = 0,
                 BOOKINGDATE = generalSetup.GetApplicationDate(),
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
             };
-
 
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1881,6 +1883,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 EFFECTIVEDATE = (DateTime)entity.effectiveDate,
                 MATURITYDATE = (DateTime)entity.maturityDate,
+                FIRSTPRINCIPALPAYMENTDATE = entity.maturityDate,
+                FIRSTINTERESTPAYMENTDATE = entity.maturityDate,
+                SCHEDULEDAYINTERESTTYPEID = 0,
                 BOOKINGDATE = generalSetup.GetApplicationDate(),
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
@@ -2828,64 +2833,28 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public int getDaysInLoanPeriod(DateTime startDate, DateTime endDate)
+        public decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear)
         {
-            int totalDays = 0;
-            if (endDate.Year > startDate.Year)
-            {
-                for (int year = startDate.Year; year <= endDate.Year; year++)
-                {
-                    DateTime newDate = startDate;
-                    bool isLastdate = false;
-
-                    if (new DateTime(year, 12, 31) >= endDate)
-                        isLastdate = true;
-
-                    DateTime lastDate = !isLastdate ? new DateTime(year, 12, 31) : endDate;
-
-                    var days = (int)(lastDate - newDate).TotalDays;
-                    totalDays = +days;
-                }
-            }
-            else
-            {
-                totalDays = (int)(endDate - startDate).TotalDays;
-            }
-            return totalDays;
+            return decimal.Round(((decimal)(principal * (decimal)interestRate / 100) * (1/ daysInAYear)) , 4);
         }
 
-        public decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod)
+        public decimal getTotalInterest(decimal principal, double interestRate, int tenorDays, DayCountConventionEnum dayCountConventionId)
         {
-            return decimal.Round(((decimal)(principal * (decimal)interestRate / 100) * (1/365)) , 4);
-        }
-
-        public decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod)
-        {
-            Decimal dailyInterest = decimal.Round(((decimal)((principal * (decimal)interestRate )/100) * interestDaysPeriod)/365, 4);
+            var daysInAYear = GetDaysInAYear(dayCountConventionId);
+            Decimal dailyInterest = decimal.Round(((decimal)((principal * (decimal)interestRate )/100) * tenorDays) / daysInAYear, 4);
             return dailyInterest;
         }
 
-        public decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate)
+        public decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate, DayCountConventionEnum dayCountConventionId)
         {
-            int interestDaysPeriod = getDaysInLoanPeriod(startDate, endDate) - 1;
-            var totalInterest = getTotalInterest(principal, interestRate, interestDaysPeriod);
+            if (endDate.Date < startDate.Date)
+                throw new ConditionNotMetException("Maturity cannot be less than effective date");
+
+            var totalInterest = getTotalInterest(principal, interestRate, (endDate.Date - startDate.Date).Days, dayCountConventionId);
 
             return totalInterest;
         }
-        /// <summary>
-        /// Approves the loan booking.
-        /// </summary>
-        /// <param name="loanId">The loan identifier.</param>
-        /// <param name="approvalStatusId">The approval status identifier.</param>
-        /// <param name="user">The user.</param>
-        /// <returns></returns>
 
-        /// <summary>
-        /// Gets the revolving loan booking awaiting approval.
-        /// </summary>
-        /// <param name="staffId">The staff identifier.</param>
-        /// <param name="companyId">The company identifier.</param>
-        /// <returns></returns>
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId)
         {
             using (var trans = context.Database.BeginTransaction())
@@ -3117,8 +3086,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (user.operationId == (int)OperationsEnum.CommercialLoanBooking)
                 {
-                    int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE);
-                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
+                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.EFFECTIVEDATE.Date - loanRecord.MATURITYDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
 
                     loanRecord.OUTSTANDINGINTEREST = totalInterest;
 
@@ -3134,9 +3102,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking)
                 {
-
-                    int interestDaysPeriod = getDaysInLoanPeriod(loanRecord.EFFECTIVEDATE, loanRecord.MATURITYDATE);
-                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, interestDaysPeriod);
+                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.EFFECTIVEDATE.Date - loanRecord.MATURITYDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
 
                     loanRecord.OUTSTANDINGINTEREST = totalInterest;
 
@@ -3169,8 +3135,8 @@ namespace FintrakBanking.Repositories.Credit
                 /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
                 var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
 
-                if (user.operationId == (int)OperationsEnum.TermLoanBooking)
-                    this.loanSchedule.AddLoanSchedule(loanId, loanScheduleModel, user.createdBy);
+                //if (user.operationId == (int)OperationsEnum.TermLoanBooking)
+                this.loanSchedule.AddLoanSchedule(loanId, loanScheduleModel, user.createdBy);
 
                 /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                 var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
@@ -3544,8 +3510,8 @@ namespace FintrakBanking.Repositories.Credit
             var loanFeeData = context.TBL_LOAN_FEE.Where(x => x.LOANID == targetId && x.ISINTEGRALFEE == true);
             double integraFeeAmount = 0;
 
-            var effectiveDate = loanScheduleData.EFFECTIVEDATE;
-            var maturityDate = effectiveDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
+            //var effectiveDate = loanScheduleData.EFFECTIVEDATE;
+            //var maturityDate = effectiveDate.AddDays(loanScheduleData.TBL_LOAN_APPLICATION_DETAIL.APPROVEDTENOR);
 
             foreach (var record in loanFeeData)
             {
@@ -3553,36 +3519,45 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var scheduleModel = new LoanPaymentScheduleInputViewModel();
-            if (loanScheduleData.OPERATIONID != (short)OperationsEnum.CommercialLoanBooking && loanScheduleData.OPERATIONID != (short)OperationsEnum.ForeignExchangeLoanBooking)
+            if (loanScheduleData.SCHEDULETYPEID == (short)LoanScheduleTypeEnum.BulletPayment)
             {
-                if (loanScheduleData.SCHEDULETYPEID == (short)LoanScheduleTypeEnum.BulletPayment)
-                {
-                    loanScheduleData.PRINCIPALFREQUENCYTYPEID = null;
-                    loanScheduleData.INTERESTFREQUENCYTYPEID = null;
+                loanScheduleData.PRINCIPALFREQUENCYTYPEID = null;
+                loanScheduleData.INTERESTFREQUENCYTYPEID = null;
 
-                }
-
-                scheduleModel = new LoanPaymentScheduleInputViewModel
-                {
-                    scheduleMethodId = loanScheduleData.SCHEDULETYPEID,
-
-                    principalAmount = (double)loanScheduleData.PRINCIPALAMOUNT,
-                    effectiveDate = effectiveDate,
-                    interestRate = loanScheduleData.INTERESTRATE,
-                    principalFrequency = loanScheduleData.PRINCIPALFREQUENCYTYPEID,
-                    interestFrequency = loanScheduleData.INTERESTFREQUENCYTYPEID,
-                    tenor = (loanScheduleData.MATURITYDATE - loanScheduleData.EFFECTIVEDATE).Days,
-                    principalFirstpaymentDate = (DateTime)loanScheduleData.FIRSTPRINCIPALPAYMENTDATE,
-                    interestFirstpaymentDate = (DateTime)loanScheduleData.FIRSTINTERESTPAYMENTDATE,
-                    maturityDate = maturityDate,
-                    accrualBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
-                    integralFeeAmount = integraFeeAmount,
-                    shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
-                    firstDayType = loanScheduleData.SCHEDULEDAYINTERESTTYPEID,
-                    irregularPaymentSchedule = irregularPaymentScheduleList,
-
-                };
             }
+
+            if (loanScheduleData.OPERATIONID == (short)OperationsEnum.CommercialLoanBooking || loanScheduleData.OPERATIONID == (short)OperationsEnum.ForeignExchangeLoanBooking)
+            {
+                if (loanScheduleData.SCHEDULETYPEID == 0)
+                    loanScheduleData.SCHEDULETYPEID = (short)LoanScheduleTypeEnum.BulletPayment;
+                if (loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID == 0)
+                    loanScheduleData.SCHEDULETYPEID = (short)DayCountConventionEnum.Actual_Actual;
+                if (loanScheduleData.FIRSTPRINCIPALPAYMENTDATE == null)
+                    loanScheduleData.FIRSTPRINCIPALPAYMENTDATE = loanScheduleData.MATURITYDATE;
+                if (loanScheduleData.FIRSTPRINCIPALPAYMENTDATE == null)
+                    loanScheduleData.FIRSTINTERESTPAYMENTDATE = loanScheduleData.MATURITYDATE;
+            }
+
+            scheduleModel = new LoanPaymentScheduleInputViewModel
+            {
+                scheduleMethodId = loanScheduleData.SCHEDULETYPEID,
+
+                principalAmount = (double)loanScheduleData.PRINCIPALAMOUNT,
+                effectiveDate = loanScheduleData.EFFECTIVEDATE,
+                interestRate = loanScheduleData.INTERESTRATE,
+                principalFrequency = loanScheduleData.PRINCIPALFREQUENCYTYPEID,
+                interestFrequency = loanScheduleData.INTERESTFREQUENCYTYPEID,
+                tenor = (loanScheduleData.MATURITYDATE.Date - loanScheduleData.EFFECTIVEDATE.Date).Days,
+                principalFirstpaymentDate = (DateTime)loanScheduleData.FIRSTPRINCIPALPAYMENTDATE,
+                interestFirstpaymentDate = (DateTime)loanScheduleData.FIRSTINTERESTPAYMENTDATE,
+                maturityDate = loanScheduleData.MATURITYDATE,
+                accrualBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
+                integralFeeAmount = integraFeeAmount,
+                shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
+                firstDayType = loanScheduleData.SCHEDULEDAYINTERESTTYPEID,
+                irregularPaymentSchedule = irregularPaymentScheduleList,
+
+            };
 
 
             return scheduleModel;
@@ -4758,7 +4733,7 @@ namespace FintrakBanking.Repositories.Credit
                 var currentDate = DateTime.Now;
                 var firstDate = new DateTime(currentDate.Year, 1, 1); //  DateTime.ParseExact(user, "MM-dd-yyyy", System.Globalization.CultureInfo.InvariantCulture);
                 var lastdate = new DateTime(currentDate.Year, 12, 31);
-                var difference = (lastdate - firstDate).TotalDays;
+                var difference = (lastdate - firstDate).TotalDays + 1;
 
                 return Convert.ToInt32(difference);
             }
@@ -4767,6 +4742,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return value;
         }
+
         public List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType)
         {
             var data = (from a in context.TBL_LOAN_COLLATERAL_MAPPING
@@ -9182,8 +9158,9 @@ namespace FintrakBanking.Repositories.Credit
                                        disburseDate = a.DISBURSEDATE,
                                        currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
                                        //approvedAmount = a.ApprovedAmount,
-                                       operationId = a.OPERATIONID,
-                                       operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
+                                       operationId = ln.OPERATIONTYPEID,
+                                       operationName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ln.OPERATIONTYPEID).OPERATIONNAME,
+                                       operationTypeId = ln.OPERATIONTYPEID,
                                        operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == ln.OPERATIONTYPEID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
