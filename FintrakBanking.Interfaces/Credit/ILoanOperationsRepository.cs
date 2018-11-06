@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ILoanOperationsRepository
     {
         bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
-        bool DoesOperationExist(int loanId, int operationTypeId);
+        bool DoesOperationExist(int loanId, int operationTypeId, short loanSystemTypeId);
         int GoForApproval(ApprovalViewModel entity);
         bool AddCollateralSearchLien(CasaLienViewModel model);
         decimal GetCollateralSearchChargeAmount(int stateId);
