@@ -1568,11 +1568,13 @@ namespace FintrakBanking.Repositories.Credit
 
                 EFFECTIVEDATE = entity.effectiveDate, //(DateTime)applicationDetail.EFFECTIVEDATE,
                 MATURITYDATE = entity.maturityDate, //(DateTime)applicationDetail.EXPIRYDATE,
+                FIRSTPRINCIPALPAYMENTDATE = entity.maturityDate,
+                FIRSTINTERESTPAYMENTDATE = entity.maturityDate,
+                SCHEDULEDAYINTERESTTYPEID = 0,
                 BOOKINGDATE = generalSetup.GetApplicationDate(),
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
             };
-
 
             //Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1881,6 +1883,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 EFFECTIVEDATE = (DateTime)entity.effectiveDate,
                 MATURITYDATE = (DateTime)entity.maturityDate,
+                FIRSTPRINCIPALPAYMENTDATE = entity.maturityDate,
+                FIRSTINTERESTPAYMENTDATE = entity.maturityDate,
+                SCHEDULEDAYINTERESTTYPEID = 0,
                 BOOKINGDATE = generalSetup.GetApplicationDate(),
                 CREATEDBY = entity.createdBy,
                 DATETIMECREATED = DateTime.Now,
@@ -3130,8 +3135,8 @@ namespace FintrakBanking.Repositories.Credit
                 /* BUILD SCHEDULE MODEL & CALL GENERATE SCHEDULE METHOD */
                 var loanScheduleModel = BuildScheduleModel(loanId, user.createdBy);
 
-                if (user.operationId == (int)OperationsEnum.TermLoanBooking)
-                    this.loanSchedule.AddLoanSchedule(loanId, loanScheduleModel, user.createdBy);
+                //if (user.operationId == (int)OperationsEnum.TermLoanBooking)
+                this.loanSchedule.AddLoanSchedule(loanId, loanScheduleModel, user.createdBy);
 
                 /* BUILD DISBURSEMENT MODEL & CALL LOAN DISBURSEMENT METHOD */
                 var loanDisbursementModel = BuildDisbursementModel(loanId, loanScheduleModel, user.createdBy);
@@ -3527,33 +3532,33 @@ namespace FintrakBanking.Repositories.Credit
                     loanScheduleData.SCHEDULETYPEID = (short)LoanScheduleTypeEnum.BulletPayment;
                 if (loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID == 0)
                     loanScheduleData.SCHEDULETYPEID = (short)DayCountConventionEnum.Actual_Actual;
-                
+                if (loanScheduleData.FIRSTPRINCIPALPAYMENTDATE == null)
+                    loanScheduleData.FIRSTPRINCIPALPAYMENTDATE = loanScheduleData.MATURITYDATE;
+                if (loanScheduleData.FIRSTPRINCIPALPAYMENTDATE == null)
+                    loanScheduleData.FIRSTINTERESTPAYMENTDATE = loanScheduleData.MATURITYDATE;
             }
 
-            if (loanScheduleData.OPERATIONID != (short)OperationsEnum.CommercialLoanBooking && loanScheduleData.OPERATIONID != (short)OperationsEnum.ForeignExchangeLoanBooking)
+            scheduleModel = new LoanPaymentScheduleInputViewModel
             {
-                scheduleModel = new LoanPaymentScheduleInputViewModel
-                {
-                    scheduleMethodId = loanScheduleData.SCHEDULETYPEID,
+                scheduleMethodId = loanScheduleData.SCHEDULETYPEID,
 
-                    principalAmount = (double)loanScheduleData.PRINCIPALAMOUNT,
-                    effectiveDate = loanScheduleData.EFFECTIVEDATE,
-                    interestRate = loanScheduleData.INTERESTRATE,
-                    principalFrequency = loanScheduleData.PRINCIPALFREQUENCYTYPEID,
-                    interestFrequency = loanScheduleData.INTERESTFREQUENCYTYPEID,
-                    tenor = (loanScheduleData.MATURITYDATE.Date - loanScheduleData.EFFECTIVEDATE.Date).Days,
-                    principalFirstpaymentDate = (DateTime)loanScheduleData.FIRSTPRINCIPALPAYMENTDATE,
-                    interestFirstpaymentDate = (DateTime)loanScheduleData.FIRSTINTERESTPAYMENTDATE,
-                    maturityDate = loanScheduleData.MATURITYDATE,
-                    accrualBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
-                    integralFeeAmount = integraFeeAmount,
-                    shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
-                    firstDayType = loanScheduleData.SCHEDULEDAYINTERESTTYPEID,
-                    irregularPaymentSchedule = irregularPaymentScheduleList,
+                principalAmount = (double)loanScheduleData.PRINCIPALAMOUNT,
+                effectiveDate = loanScheduleData.EFFECTIVEDATE,
+                interestRate = loanScheduleData.INTERESTRATE,
+                principalFrequency = loanScheduleData.PRINCIPALFREQUENCYTYPEID,
+                interestFrequency = loanScheduleData.INTERESTFREQUENCYTYPEID,
+                tenor = (loanScheduleData.MATURITYDATE.Date - loanScheduleData.EFFECTIVEDATE.Date).Days,
+                principalFirstpaymentDate = (DateTime)loanScheduleData.FIRSTPRINCIPALPAYMENTDATE,
+                interestFirstpaymentDate = (DateTime)loanScheduleData.FIRSTINTERESTPAYMENTDATE,
+                maturityDate = loanScheduleData.MATURITYDATE,
+                accrualBasis = loanScheduleData.SCHEDULEDAYCOUNTCONVENTIONID,
+                integralFeeAmount = integraFeeAmount,
+                shouldDisburse = loanScheduleData.SHOULD_DISBURSE,
+                firstDayType = loanScheduleData.SCHEDULEDAYINTERESTTYPEID,
+                irregularPaymentSchedule = irregularPaymentScheduleList,
 
-                };
-            }
-             
+            };
+
 
             return scheduleModel;
         }
