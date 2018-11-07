@@ -576,6 +576,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public int? loanId { get; set; }
         public string productPriceDescription { get; set; }
         public string reviewDetails { get; set; }
         public short? productScheduleTypeId { get; set; }

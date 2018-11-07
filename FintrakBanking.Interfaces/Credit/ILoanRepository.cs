@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
         bool SendBackToBookingModifier(ApprovalViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);

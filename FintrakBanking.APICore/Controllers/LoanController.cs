@@ -1596,6 +1596,24 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("referred-booked-facility-record")]
+        public HttpResponseMessage GetReferedBookingFacilityRecordsById([FromBody] CamProcessedLoanViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.GetReferedBookingFacilityRecordsById(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        }
+
+
         #endregion Loan
 
         #region Frequency Type
