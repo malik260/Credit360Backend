@@ -8191,7 +8191,7 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && //a.LOANSTATUSID != 7 &&
+                                   where a.ISDISBURSED == true &&  // a.MATURITYDATE >=      &&  //a.LOANSTATUSID != 7 &&
                                    (a.LOANREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
