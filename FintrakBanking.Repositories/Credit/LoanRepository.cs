@@ -4532,9 +4532,9 @@ namespace FintrakBanking.Repositories.Credit
                         productId = data.PRODUCTID,
                         companyId = data.COMPANYID,
                         casaAccountId = data.CASAACCOUNTID,
+                        casaAccountId2 = data.CASAACCOUNTID2,
                         branchId = data.BRANCHID,
                         loanReferenceNumber = data.LOANREFERENCENUMBER,
-                        //tenor = (data.MaturityDate - data.EffectiveDate).Days,
                         principalFrequencyTypeId = (short)data.PRINCIPALFREQUENCYTYPEID,
                         interestFrequencyTypeId = (short)data.INTERESTFREQUENCYTYPEID,
 
@@ -4561,6 +4561,10 @@ namespace FintrakBanking.Repositories.Credit
                         disbursedBy = data.DISBURSEDBY,
                         disburserComment = data.DISBURSERCOMMENT,
                         disburseDate = data.DISBURSEDATE,
+                        nostroAccountId = data.NOSTROACCOUNTID,
+                        nostroRateAmount =  data.NOSTRORATEAMOUNT,
+                        nostroRateCodeId = data.NOSTRORATECODEID,
+                        
 
                         approvedAmount = data.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
 
@@ -5471,7 +5475,7 @@ namespace FintrakBanking.Repositories.Credit
                      join p in context.TBL_PRODUCT on d.APPROVEDPRODUCTID equals p.PRODUCTID
                      join pt in context.TBL_PRODUCT_TYPE on p.PRODUCTTYPEID equals pt.PRODUCTTYPEID
                      where m.COMPANYID == companyId
-                     && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Referred))
+                     && ((atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing) || (atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending) )
                      && s.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved && s.ISUSED == false && s.DELETED == false
                      && ((cpldStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (bAndGStaffRoleLevelIds.Contains((int)atrail.TOAPPROVALLEVELID)) || (atrail.REQUESTSTAFFID == staffId))
                      && operationIds.Contains(atrail.OPERATIONID)
@@ -5589,17 +5593,48 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in data)
             {
-                item.isBooked = context.TBL_LOAN.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId).Any();
+                var loanRecord = context.TBL_LOAN.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId);
+                item.isBooked = loanRecord.Any();
 
                 int operationId = 0;
                 if (item.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                {
                     operationId = (short)OperationsEnum.ContigentLoanBooking;
+                    if (item.isInEditMode)
+                    {
+                        var contingentRecord = context.TBL_LOAN_CONTINGENT.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId);
+                        item.loanId = contingentRecord.FirstOrDefault()?.CONTINGENTLOANID ;
+                    }
+                }
+
+                if (item.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                {
+                    operationId = (short)OperationsEnum.RevolvingLoanBooking;
+                    if (item.isInEditMode)
+                    {
+                        var revolvingRecord = context.TBL_LOAN_REVOLVING.Where(x => x.LOAN_BOOKING_REQUESTID == item.loanBookingRequestId);
+                        item.loanId = revolvingRecord.FirstOrDefault()?.REVOLVINGLOANID ;
+                    }
+                }
+
+
                 if (item.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+                {
                     operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+                    item.loanId = loanRecord.FirstOrDefault()?.TERMLOANID;
+                }
+                    
                 if (item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
+                {
                     operationId = (short)OperationsEnum.CommercialLoanBooking;
+                    item.loanId = loanRecord.FirstOrDefault()?.TERMLOANID;
+                }
+                    
                 if (item.productTypeId == (short)LoanProductTypeEnum.TermLoan || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating || item.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                {
                     operationId = (short)OperationsEnum.TermLoanBooking;
+                    item.loanId = loanRecord.FirstOrDefault()?.TERMLOANID;
+                }
 
                 var trailInfo = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == item.loanBookingRequestId);
                 if (trailInfo.Any())
@@ -5974,6 +6009,26 @@ namespace FintrakBanking.Repositories.Credit
                 //}
             }
             return data.ToList();
+        }
+
+        public LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model)
+        {
+            var loanId = model.loanId ?? 0;
+            LoanViewModel data = new LoanViewModel();
+            if(model.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                data = GetContingentByLoanId(loanId);
+
+            if (model.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                data = GetOverdraftDetailsByLoanId(loanId);
+
+            if (model.productTypeId == (short)LoanProductTypeEnum.TermLoan
+                || model.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating
+                || model.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan
+                || model.productTypeId == (short)LoanProductTypeEnum.CommercialLoan
+                || model.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+            { data = GetLoan(loanId); }
+
+            return data;
         }
 
         public IEnumerable<CustomerCompanyInfomationViewModels> getLoanCustomerCompanyInformation(int customerId)
@@ -8595,14 +8650,15 @@ namespace FintrakBanking.Repositories.Credit
             return frequencyTypes;
         }
 
-        public bool SendBackToBookingModifier(LoanViewModel model)
+        public bool SendBackToBookingModifier(ApprovalViewModel model)
         {
+            
             int staffId = model.staffId;
 
 
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId.Value)
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
                  .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                  .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
                      mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
@@ -8621,14 +8677,15 @@ namespace FintrakBanking.Repositories.Credit
             var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
             var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
+            
             workflow.StaffId = model.createdBy;
-            workflow.OperationId = model.operationId.Value;
-            workflow.TargetId = model.loanBookingRequestId;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = null;
             workflow.ProductId = null;
-            workflow.NextLevelId = staffRoleLevelId;
-            workflow.ToStaffId = staffId; 
+            workflow.NextLevelId = model.approvalLevelId;
+            //workflow.ToStaffId = staffId; 
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;
@@ -8640,8 +8697,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
                 STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"facility booking with booking account number {model.loanReferenceNumber} refered back to modifier.",
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"facility booking with booking account number  refered back to modifier.",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),
