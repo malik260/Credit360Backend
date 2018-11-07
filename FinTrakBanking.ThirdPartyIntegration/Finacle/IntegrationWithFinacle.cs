@@ -638,14 +638,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
-            var nostroAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+            var nonBranchSpecificAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
                                join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE                               
                                where gla.GLACCOUNTID == glAccountId
-                               select new { gl.ACCOUNTID, gl.ISNOSTROACCOUNT }).FirstOrDefault();
+                               select new { gl.ACCOUNTID, gl.ISBRANCHSPECIFIC }).FirstOrDefault();
 
-            if (nostroAccount.ISNOSTROACCOUNT == true)
+            if (nonBranchSpecificAccount.ISBRANCHSPECIFIC == false)
             {
-                return nostroAccount.ACCOUNTID;
+                return nonBranchSpecificAccount.ACCOUNTID;
             }
             else
             {

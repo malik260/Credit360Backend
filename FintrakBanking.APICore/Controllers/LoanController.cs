@@ -1582,9 +1582,9 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("booking/modification/back-to-business")]
-        public HttpResponseMessage SendBackToBusinessAvailment([FromBody] LoanViewModel entity)
+        public HttpResponseMessage SendBackToBusinessAvailment([FromBody] ApprovalViewModel entity)
         {
-            entity.userBranchId = (short)token.GetBranchId;
+            entity.BranchId = (short)token.GetBranchId;
             entity.companyId = token.GetCompanyId;
             entity.staffId = token.GetStaffId;
             entity.applicationUrl = HttpContext.Current.Request.Path;

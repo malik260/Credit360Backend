@@ -8595,14 +8595,15 @@ namespace FintrakBanking.Repositories.Credit
             return frequencyTypes;
         }
 
-        public bool SendBackToBookingModifier(LoanViewModel model)
+        public bool SendBackToBookingModifier(ApprovalViewModel model)
         {
+            
             int staffId = model.staffId;
 
 
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
-            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId.Value)
+            var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == model.operationId)
                  .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                  .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
                      mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
@@ -8621,14 +8622,15 @@ namespace FintrakBanking.Repositories.Credit
             var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
             var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
 
+            
             workflow.StaffId = model.createdBy;
-            workflow.OperationId = model.operationId.Value;
-            workflow.TargetId = model.loanBookingRequestId;
+            workflow.OperationId = model.operationId;
+            workflow.TargetId = model.targetId;
             workflow.CompanyId = model.companyId;
             workflow.ProductClassId = null;
             workflow.ProductId = null;
-            workflow.NextLevelId = staffRoleLevelId;
-            workflow.ToStaffId = staffId; 
+            workflow.NextLevelId = model?.approvalLevelId;
+            //workflow.ToStaffId = staffId; 
             workflow.StatusId = (int)ApprovalStatusEnum.Referred;
             workflow.Comment = model.comment;
             workflow.DeferredExecution = true;
@@ -8640,8 +8642,8 @@ namespace FintrakBanking.Repositories.Credit
             {
                 AUDITTYPEID = (short)AuditTypeEnum.facilityBookingReferedBack,
                 STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"facility booking with booking account number {model.loanReferenceNumber} refered back to modifier.",
+                BRANCHID = (short)model.BranchId,
+                DETAIL = $"facility booking with booking account number  refered back to modifier.",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = generalSetup.GetApplicationDate(),

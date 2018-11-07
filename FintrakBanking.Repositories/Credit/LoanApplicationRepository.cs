@@ -783,7 +783,7 @@ namespace FintrakBanking.Repositories.Credit
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
 
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
-
+            bool isCamsolJobRequestSent = false;
             if (loanApplicationDetails.Any())
             {
                 var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanApplication).ToList();
@@ -814,6 +814,13 @@ namespace FintrakBanking.Repositories.Credit
                                                     where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID
                                                     && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == productId
                                                     select a).AsQueryable();
+
+                        var camsolJobRequests = (from r in context.TBL_JOB_REQUEST join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
+                                                 where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && targetId == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.camsolCheck
+                                                 select r).ToList();
+
+                        if (camsolJobRequests.Count > 0)
+                            isCamsolJobRequestSent = true;
 
                         var cc = checklistDefinitions.Count();
                         var bb = checklistDetails.Count();
@@ -854,7 +861,8 @@ namespace FintrakBanking.Repositories.Credit
 
             } // loanApplicationDetails.Any()
 
-            // return results
+            if (!isCamsolJobRequestSent)
+                throw new ConditionNotMetException("Job Request must be sent to CAMSOL before you can proceed.");
 
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {

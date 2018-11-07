@@ -48,6 +48,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+
         public string operationTypeName { get; set; }
 
         public int approvedTenor { get; set; }

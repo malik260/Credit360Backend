@@ -32,9 +32,11 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
         public class ProductViewModel : GeneralEntity
     {
-        public int? principalBalanceGl2;
-        public string principalBalanceGl2Code;
-        public bool? requireCasaAccount;
+        public int? principalBalanceGl2 { get; set; }
+        public string principalBalanceGl2Code { get; set; }
+        public bool? requireCasaAccount { get; set; }
+        public bool usedByLos { get; set; }
+
         public string operation { get; set; }
 
         public int productId { get; set; }
