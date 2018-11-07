@@ -698,7 +698,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (TimeoutException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message);
+                    throw new CustomTimeoutException(ex.Message);
                 }
                 catch (APIErrorException ex)
                 {
