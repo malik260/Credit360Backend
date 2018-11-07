@@ -967,10 +967,11 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             loanData = context.TBL_LOAN_APPLICATION.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId).FirstOrDefault();
+            var loanDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == loan.loanApplicationId);
 
             if (loan.editMode == true && UpdateLoanApplicationDetail(loan)) return loan;
 
-            if (loan.isNewApplication)
+            if (loanDetail.Count() == 0 || loan.isNewApplication)
             {
                 if (loanData == null)
                 {
@@ -1137,7 +1138,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool UpdateLoanApplicationDetail(LoanApplicationViewModel loan)
         {
-            //UpdateLoanApplication(loan); // update main
+            UpdateLoanApplication(loan); // update main
 
             var detail = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
             var update = loan.LoanApplicationDetail.SingleOrDefault();

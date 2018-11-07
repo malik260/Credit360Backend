@@ -96,6 +96,8 @@ namespace FintrakBanking.ViewModels.Setups.Credit
     }
     public class ChecklistDefinitionAndDetailViewModel
     {
+        public int? customerId;
+
         public ChecklistDefinitionAndDetailViewModel()
         {
             responseTypes = new List<CheckListStatusViewModel>();

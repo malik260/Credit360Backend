@@ -129,7 +129,7 @@ namespace FintrakBanking.Repositories.CASA
 
         public IEnumerable<OverrideItemVeiwModel> GetAllOverRideItems()
         {
-            var data = _context.TBL_OVERRIDE_ITEM.Select(c => new OverrideItemVeiwModel
+            var data = _context.TBL_OVERRIDE_ITEM.Where(c=>c.OVERRIDE_ITEMID != (int)OverrideItem.BlackbookOverride && c.OVERRIDE_ITEMID!=(int)OverrideItem.CAMSOL_Override).Select(c => new OverrideItemVeiwModel
             {
                itemId = c.OVERRIDE_ITEMID ,
                 itemName = c.OVERIDE_ITEMNAME 
