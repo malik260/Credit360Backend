@@ -526,15 +526,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new ConditionNotMetException(ex.Message);
             }
-            catch (BadLogicException ex)
-            {
-                throw new BadLogicException(ex.Message);
-            }
             catch (APIErrorException ex)
-            {
-                throw new APIErrorException(ex.Message);
-            }
-            catch (LinkException ex)
             {
                 throw new APIErrorException(ex.Message);
             }

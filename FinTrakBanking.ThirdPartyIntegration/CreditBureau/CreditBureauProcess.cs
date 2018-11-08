@@ -62,7 +62,7 @@
                     if (ex.InnerException != null)
                         innerExceptionMessage = ex.InnerException.Message;
 
-                    throw new LinkException($"Core Banking Credit Bureau API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
+                    throw new APIErrorException($"Core Banking Credit Bureau API Error - {ex.Message} - inner exception - {innerExceptionMessage}");
                 }
             }
 
