@@ -534,6 +534,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new APIErrorException(ex.Message);
             }
+            catch (LinkException ex)
+            {
+                throw new APIErrorException(ex.Message);
+            }
             catch (Exception ex)
             {
                 throw ex;
