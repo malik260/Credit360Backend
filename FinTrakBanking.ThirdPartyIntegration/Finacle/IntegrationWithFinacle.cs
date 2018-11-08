@@ -435,7 +435,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
         public PostingResult PostTransactions(List<FinanceTransactionViewModel> model)
-        {
+        { 
             ResponseMessage result = null;
             
             List<TransactionPostingViewModel> transactionList = TransactionData(model);
@@ -473,13 +473,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 {
                     var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
 
-                    throw new ConditionNotMetException("Core Banking API error - " + message); //result.APIResponse.webRequestStatus
+                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
                 }
             }
             else
             {
                 var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{","").Replace("}", "").Replace(@"""", "");
-                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
+                //throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
 
             //return result.APIStatus;
