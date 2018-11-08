@@ -144,7 +144,7 @@
                 }
                 catch(TimeoutException ex)
                 {
-                    throw  new TimeoutException("Connection timed out!");
+                    throw  new CustomTimeoutException("Connection timed out!");
                 }
                 catch (Exception ex)
                 {
@@ -163,15 +163,15 @@
                 }
                 catch (TimeoutException ex)
                 {
-                    throw new ConditionNotMetException( ex.ToString());
+                    throw new TimeoutException( ex.Message);
                 }
                 catch (ConditionNotMetException ex)
                 {
-                    throw new ConditionNotMetException(ex.ToString());
+                    throw new ConditionNotMetException(ex.Message);
                 }
                 catch (APIErrorException ex)
                 {
-                    throw new APIErrorException(ex.ToString());
+                    throw new APIErrorException(ex.Message);
                 }
                 catch (Exception ex)
                 {

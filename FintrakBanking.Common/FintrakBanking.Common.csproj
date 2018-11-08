@@ -83,7 +83,7 @@
     <Compile Include="CommonHelpers.cs" />
     <Compile Include="CreditBureauHelp.cs" />
     <Compile Include="Crypto\Protection.cs" />
-    <Compile Include="CustomException\LinkException.cs" />
+    <Compile Include="CustomException\CustomTimeOutException.cs" />
     <Compile Include="CustomException\APIErrorException.cs" />
     <Compile Include="CustomException\BadLogicException.cs" />
     <Compile Include="CustomException\ConditionNotMetException.cs" />
