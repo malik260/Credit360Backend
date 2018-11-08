@@ -94,12 +94,13 @@ namespace FintrakBanking.Common.Enum
         LoanAndOverdraftRequestBooking = 82,
         ContingentLiabilityTermination = 86,
         ContingentLiabilityRenewal = 85,
+        FacilityLineAmountChange= 87,
         InterestRepricing = 89,
         //Added by Yemi
         StaffReliefCreation = 84,
         AccreditedConsultantCreated = 88,
         WrittenOffLoanReviewApprovalAppraisal = 79,
-        CollateralSearchCompletion = 90
-
+        CollateralSearchCompletion = 90,
+        MaturityInstruction = 95
     }
 }

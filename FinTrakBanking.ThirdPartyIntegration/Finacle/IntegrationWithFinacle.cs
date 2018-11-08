@@ -91,11 +91,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+              
             }
 
             ResponseMessage result = null;
@@ -130,10 +134,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+               
             }
 
             ResponseMessage result = null;
@@ -168,17 +176,21 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+                    
             }
 
             ResponseMessage result = null;
 
             model.apiUrl = @"api/OverDraft/Renew ";
 
-                Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await overDraft.APIOverDraftRenew(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -206,10 +218,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+
             }
 
             ResponseMessage result = null;
@@ -243,10 +259,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
+                   
             }
             model.APIUrl = @"api/TemporaryOverDraft/Running";
             ResponseMessage result = null;
@@ -286,10 +306,12 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
-
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
             }
 
             model.APIUrl = @"api/TemporaryOverDraft/Single";
@@ -412,8 +434,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return module;
         }
 
-        public bool PostTransactions(List<FinanceTransactionViewModel> model)
-        {
+        public PostingResult PostTransactions(List<FinanceTransactionViewModel> model)
+        { 
             ResponseMessage result = null;
             
             List<TransactionPostingViewModel> transactionList = TransactionData(model);
@@ -434,7 +456,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (result.APIResponse.responseCode == "0")
                 {
                     AddCustomTransactions(transactionList);
-                    return true;
+
+                    string str = result.APIResponse.webRequestStatus;
+                    str = str.Replace(":", "");
+                    str = str.Replace("FAILURE", "");
+                    str = str.Replace("SUCCESS+", "");
+
+                    return new PostingResult {posted = true, responseCode = str.Trim() };
                 }
                 //if (result.APIResponse.webRequestStatus == "SUCCESS+      M18")
                 //{
@@ -444,13 +472,15 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 else
                 {
                     var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
-                    throw new ConditionNotMetException(message); //result.APIResponse.webRequestStatus
+
+                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
                 }
             }
             else
             {
                 var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{","").Replace("}", "").Replace(@"""", "");
-                throw new APIErrorException("Core Banking API Error - " + message); // .Message.ReasonPhrase);
+                //throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
 
             //return result.APIStatus;
@@ -609,14 +639,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
-            var nostroAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+            var nonBranchSpecificAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
                                join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE                               
                                where gla.GLACCOUNTID == glAccountId
-                               select new { gl.ACCOUNTID, gl.ISNOSTROACCOUNT }).FirstOrDefault();
+                               select new { gl.ACCOUNTID, gl.ISBRANCHSPECIFIC }).FirstOrDefault();
 
-            if (nostroAccount.ISNOSTROACCOUNT == true)
+            if (nonBranchSpecificAccount.ISBRANCHSPECIFIC == false)
             {
-                return nostroAccount.ACCOUNTID;
+                return nonBranchSpecificAccount.ACCOUNTID;
             }
             else
             {
@@ -641,10 +671,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                if (twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
             }
 
             model.APIUrl = @"api/InterestRateInquiry/PostInterestRate";
@@ -801,8 +834,6 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             return result;
         }
-
-
 
 
         private List<TransactionPostingViewModel> TransactionData(List<FinanceTransactionViewModel> model )

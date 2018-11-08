@@ -37,6 +37,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> DailyInterestAccrual(DateTime startDate, DateTime endDate,  string loanReferenceNumber);
         List<LoanViewModel> LMSLoanSearch(int loanSystemTypeId, string searchQuery);
         List<LoanCovenantDetailViewModel> LMSLoanCovenantDetail(int loanId);
-
+        IEnumerable<CamProcessedLoanViewModel> GetLoanFacilityUtilization(int companyId, int staffId, int branchId, string searchValue = null);
+        List<LoanViewModel> GetLoanFacilityDetail(int loanApplicationDetilId);
     }
 }

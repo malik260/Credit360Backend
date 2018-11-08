@@ -25,6 +25,8 @@ namespace FintrakBanking.Entities.Models
 
         public short PRODUCTID { get; set; }
 
+        public int? CHARGEFEEID { get; set; }
+
         public int COMPANYID { get; set; }
 
         public short BRANCHID { get; set; }

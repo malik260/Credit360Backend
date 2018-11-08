@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ILoanOperationsRepository
     {
         bool DoesChargeFeeExist(int loanId, int operationTypeId, int chargeFeeId);
-        bool DoesOperationExist(int loanId, int operationTypeId);
+        bool DoesOperationExist(int loanId, int operationTypeId, short loanSystemTypeId);
         int GoForApproval(ApprovalViewModel entity);
         bool AddCollateralSearchLien(CasaLienViewModel model);
         decimal GetCollateralSearchChargeAmount(int stateId);
@@ -61,7 +61,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode);
         IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode);
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> MergePeriodicSchedule(int loanId, DateTime applicationDate);
-        bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, short loanReviewOperationsId, int loanId, int staffId, LoanSystemTypeEnum facilityType, [Optional] string approvalComment);
+        bool LoanRephasementProcess(TwoFactorAutheticationViewModel twoFactorAuth, int loanReviewOperationsId, int loanId, int staffId, LoanSystemTypeEnum facilityType, [Optional] string approvalComment);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForInterestReview(DateTime applicationDate, int loanId);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDueForBulkInterestReview(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessAuthorisedOverdraftRepaymentPostingForceDebit(DateTime applicationDate);
@@ -83,17 +83,23 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
 
-
+        bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);
 
         #region COMMERCIAL PAPER LOANS
         bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);
         IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
+        bool addMaturityInstructionApprove(MaturityIntructionViewModel model);
         bool addMaturityInstruction(MaturityIntructionViewModel model);
         IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
+        bool ProcessCommercialPaperManualRollOverApproval(MaturityIntructionViewModel model, string refNo);
         bool ProcessCommercialPaperManualRollOver(MaturityIntructionViewModel model, string refNo);
-        //void CommercialPaperManualRollOver(DateTime applicationDate);
+        //void CommercialPaperManualRollOver(DateTime applicationDate);        
+        int addApplicationGoForApproval(ApprovalViewModel userModel);
+
+        bool addNonTermLoanTenorReviewApprove(LoanReviewViewModel userModel);
         bool addNonTermLoanTenorReview(LoanReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
+        bool addApplicationLineRateChangeApproval(LoanReviewViewModel userModel);
         bool addApplicationLineRateChange(LoanReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetCommercialLoansLines(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoans(int companyId);
@@ -103,8 +109,14 @@ namespace FintrakBanking.Interfaces.Credit
         bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
         loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
-        bool addApplicationLineTenorChange(LoanReviewViewModel userModel);
+        int addApplicationLineTenorChange(ApprovalViewModel userModel);
+        bool addApplicationLineTenorChangeApproval(LoanReviewViewModel userModel);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId);
+        bool addNonTermLoanLoanRateChangeApprove(LoanReviewViewModel userModel);
+
         bool addNonTermLoanLoanRateChange(LoanReviewViewModel userModel);
+        bool addApplicationLineAmountApproval(LoanReviewViewModel userModel);
+
         bool changeApplicationLineAmount(LoanReviewViewModel userModel);
         bool GetRepaymentFromStaging();
 

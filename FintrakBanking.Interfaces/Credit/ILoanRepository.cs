@@ -18,16 +18,17 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
-        bool SendBackToBookingModifier(LoanViewModel model);
+        LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
+        bool SendBackToBookingModifier(ApprovalViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
-        decimal getDailyInterest(decimal principal, double interestRate, int interestDaysPeriod);
+        decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
 
         CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
 
-        decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod);
+        decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod, DayCountConventionEnum dayCountConventionId);
 
-        int getDaysInLoanPeriod(DateTime startDate, DateTime endDate);
+        //int getDaysInLoanPeriod(DateTime startDate, DateTime endDate);
 
         IEnumerable<LookupViewModel> GetLoanApplicationTypes();
 
@@ -170,8 +171,9 @@ namespace FintrakBanking.Interfaces.Credit
         int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
         IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview();
+        IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId);
 
-        IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
+       // IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
        // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
 
         List<LoanViewModel> GetLoanApplicationExistingLoans(int applicationId);
@@ -192,8 +194,12 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetLoanHistoryByLoanAccountNumber(string loanReferenceNumber);
         IEnumerable<LoanBookingRequestViewModel> GetLoanRequestsByApplicationDetailId(int loanApplicationDetailId);
 
-        decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate);
+        decimal getLoanInterestRateAmount(decimal principal, double interestRate, DateTime startDate, DateTime endDate, DayCountConventionEnum dayCountConventionId);
         List<LookupViewModel> GetLoanRepricingModes();
+
+        List<LoanViewModel> GetCompletedLoans();
+        List<LoanViewModel> GetCompletedLoan(string searchValue);
+        bool GetChangeLoanStatusOfACompletedLoan(int loanId);
 
     }
 }

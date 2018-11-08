@@ -422,6 +422,11 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                     new { success = false, message = $"Error: {ex.Message}" });
             }
+            catch (TimeoutException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
+            }
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK,
@@ -468,6 +473,11 @@ namespace FintrakBanking.APICore.Controllers
             catch (BadLogicException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{ex.Message}" });
+            }
+            catch (TimeoutException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, message = $"Error: {ex.Message}" });
             }
             catch (APIErrorException ex)
             {
@@ -530,6 +540,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+       
         #endregion
 
     }

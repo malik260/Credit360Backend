@@ -395,6 +395,7 @@ namespace FintrakBanking.Repositories.Credit
                                        where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                       && (b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived || b.CHECKLISTSTATUSID == null)
                                        && b.ISSUBSEQUENT == false
                                        select new OfferLetterConditionPrecidentViewModel()
                                        {
@@ -440,6 +441,7 @@ namespace FintrakBanking.Repositories.Credit
                         where d.APPLICATIONREFERENCENUMBER == applicationRefNumber
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                         && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new ProductFeeViewModel()
                         {
                             feeName = c.CHARGEFEENAME,
@@ -992,6 +994,8 @@ namespace FintrakBanking.Repositories.Credit
                                        join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                        join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                        where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == false
+                                        && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                          //&& b.CHECKLISTSTATUSID == null
                                        select new OfferLetterConditionPrecidentViewModel()
                                        {
                                            conditionPrecident = b.CONDITION,
@@ -1901,9 +1905,9 @@ namespace FintrakBanking.Repositories.Credit
                 var systemdate = genSetup.GetApplicationDate();
                 record.EFFECTIVEDATE = systemdate;
                 record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
+                ctx.SaveChanges();
 
-                
-                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability)) //&& (record.STATUSID == (short)ApprovalStatusEnum.Approved)
+                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability))
                 {
                     var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
                     {
@@ -1920,23 +1924,23 @@ namespace FintrakBanking.Repositories.Credit
                     record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
                 }
 
-                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-                && (productClassId != 0 && productClassId != null)
-                   && (processId == (short)ProductClassProcessEnum.ProductBased))
-                {
-                    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
-                    {
-                        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                        DATETIMECREATED = DateTime.Now,
-                        ISUSED = false,
-                        CREATEDBY = entity.staffId,
-                    });
-                    ctx.SaveChanges();
-                    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
-                    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
-                }
+                //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                //&& (productClassId != 0 && productClassId != null)
+                //   && (processId == (short)ProductClassProcessEnum.ProductBased))
+                //{
+                //    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
+                //    {
+                //        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                //        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                //        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                //        DATETIMECREATED = DateTime.Now,
+                //        ISUSED = false,
+                //        CREATEDBY = entity.staffId,
+                //    });
+                //    ctx.SaveChanges();
+                //    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
+                //    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+                //}
             };
         }
 
@@ -2077,14 +2081,16 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
         {
-            var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
-                .Select(x => x.LOANAPPLICATIONDETAILID)
-                .ToList();
-            return context.TBL_JOB_REQUEST.Where(x => detailids.Contains(x.TARGETID)
-                && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+            var requests = context.TBL_JOB_REQUEST
+                .Where(x => x.TARGETID == applicationId
+                && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
                 && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
-            ).Any();
+            ).ToList();
+
+            var test = requests;
+
+            return requests.Count() > 0;
         }
 
         private bool OfferLetterChecklistValidation(int id, int type)

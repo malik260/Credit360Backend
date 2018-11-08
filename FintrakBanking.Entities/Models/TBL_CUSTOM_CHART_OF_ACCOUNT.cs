@@ -22,5 +22,7 @@
 
         public bool ISNOSTROACCOUNT { get; set; }
 
+        public bool ISBRANCHSPECIFIC { get; set; }
+
     }
 }

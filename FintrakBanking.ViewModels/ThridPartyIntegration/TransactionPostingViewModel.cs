@@ -267,6 +267,15 @@ public class LienProcessViewModel //: GeneralEntity
         public string responseMessage { get; set; }
     }
 
+    public class PostingResult
+    {
+        
+        public bool posted { get; set; }
+        
+        public string responseMessage { get; set; }
+        public string responseCode { get; set; }
+    }
+
     public class AccountCreationRespones
     {
        public AccountCreationResponseMessageViewModel APIResponse { get; set; }

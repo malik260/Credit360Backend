@@ -1582,9 +1582,9 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         [HttpPost]
         [ClaimsAuthorization]
         [Route("booking/modification/back-to-business")]
-        public HttpResponseMessage SendBackToBusinessAvailment([FromBody] LoanViewModel entity)
+        public HttpResponseMessage SendBackToBusinessAvailment([FromBody] ApprovalViewModel entity)
         {
-            entity.userBranchId = (short)token.GetBranchId;
+            entity.BranchId = (short)token.GetBranchId;
             entity.companyId = token.GetCompanyId;
             entity.staffId = token.GetStaffId;
             entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -1595,6 +1595,24 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("referred-booked-facility-record")]
+        public HttpResponseMessage GetReferedBookingFacilityRecordsById([FromBody] CamProcessedLoanViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.GetReferedBookingFacilityRecordsById(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        }
+
 
         #endregion Loan
 
@@ -1647,6 +1665,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
         }
+
+        
 
         [HttpGet]
         [Route("loan-application-details/{applicationDetailId}")]
@@ -1918,7 +1938,6 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         #endregion (Loan Application Date) Pre - Loan booking
 
-
         #region Workflow Tracker
 
         [HttpGet]
@@ -1985,7 +2004,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             var isDicounted = false;
                 if(loanProductInfo != null) isDicounted = loanProductInfo.dealTypeId == (short)DealTypeEnum.Upfront ? true : false;
 
-            var data = repo.getLoanInterestRateAmount(entity.principalAmount, entity.interestRate, entity.effectiveDate, entity.maturityDate);
+            var data = repo.getLoanInterestRateAmount(entity.principalAmount, entity.interestRate, entity.effectiveDate, entity.maturityDate,(DayCountConventionEnum)entity.scheduleDayCountConventionId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" , result = data, isDicounted = isDicounted });
         }
@@ -2047,6 +2066,70 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //           new { success = false, message = $"There was an error creating this record {e.Message}" });
         //    }
         //}
+        #endregion
+
+        #region
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("completed-loan")]
+        public HttpResponseMessage GetCompletedLoan()
+        {
+            try
+            {
+                var data = repo.GetCompletedLoans();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("completed-loan/search/{value}")]
+        public HttpResponseMessage GetCompletedLoan(string value)
+        {
+            try
+            {
+                var data = repo.GetCompletedLoan(value);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("completed-loan-status")]
+        public HttpResponseMessage GetChangeLoanStatusOfACompletedLoan([FromBody]int loanid)
+        {
+            try
+            {
+                var data = repo.GetChangeLoanStatusOfACompletedLoan(loanid);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
         #endregion
 
         //    [HttpPost]

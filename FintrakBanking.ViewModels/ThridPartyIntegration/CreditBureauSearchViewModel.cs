@@ -205,7 +205,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         /// response type is the formate you want your result to be. CRC - 1 --> XML , 2 --> PDF 
         /// </summary>
         public int responseType { get; set; }
-        public object reportID { get; set; }
+        public int reportID { get; set; }
         public bool debitBusiness { get; set; }
     }
 

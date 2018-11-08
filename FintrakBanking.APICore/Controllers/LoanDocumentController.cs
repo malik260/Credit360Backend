@@ -103,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
 
          [HttpPost] [ClaimsAuthorization]
         [Route("loan-document")]
-        public async Task<HttpResponseMessage> AddLoanDocument()
+        public async Task<HttpResponseMessage> AddLoanDocument() // DEPRECATED
         {
             try
             {
@@ -149,7 +149,7 @@ namespace FintrakBanking.APICore.Controllers
                 var buffer = await file.ReadAsByteArrayAsync();
                 var data = repo.AddLoanDocument(entity, buffer);
 
-                if (data)
+                if (data == 2)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
                 }

@@ -128,6 +128,18 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public string timeLapse
+        {
+            get
+            {
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
+            }
+        }
+
         public int tempApplicationCancellationId { get; set; }
         public IQueryable<string> staffName { get; set; }
         public string comment { get; set; }
@@ -135,6 +147,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? currentApprovalLevelTypeId { get; set; }
         public short? tranchLevelId { get; set; }
         public int? regionId { get; set; }
+        public bool editMode { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -221,6 +234,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string applicationReferenceNumber { get; set; }
 
         public int customerId { get; set; }
+        public int? customerGroupId { get; set; }
 
         public string customerName { get; set; }
 
@@ -341,6 +355,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return months.ToString() + " " + units;
             }
         }
+
+        public int? loanreViewApplicationId { get; set; }
     }
 
     public class ProductFeesViewModel// : GeneralEntity
@@ -505,7 +521,20 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerGroupName { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public int? currentApprovalLevelTypeId { get; set; }
+        public string timeLapse
+        {
+            get
+            {
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
+            }
+        }
+
     }
+
     public class InvoiceDetailViewModel
     {
         public int invoiceId { get; set; }

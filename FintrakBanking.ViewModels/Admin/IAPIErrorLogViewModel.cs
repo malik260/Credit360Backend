@@ -16,6 +16,7 @@ namespace FintrakBanking.ViewModels.Admin
         public string errorPath { get; set; }
         public int? statusCode { get; set; }
         public string allXml { get; set; }
+        public DateTime utc { get; set; }
     }
     public class APILogViewModel
     {
@@ -26,5 +27,6 @@ namespace FintrakBanking.ViewModels.Admin
         public string requestMessage { get; set; }
         public string responseMessage { get; set; }
         public string referenceNumber { get; set; }
+        public int companyId { get; set; }
     }
 }

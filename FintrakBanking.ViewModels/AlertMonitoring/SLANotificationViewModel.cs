@@ -33,6 +33,7 @@ namespace FintrakBanking.ViewModels.AlertMonitoring
         public string approvalStatus { get; set; }
         public double responseDefaultTime { get; set; }
         public DateTime? ressponseTime { get; set; }
+        public string ReferenceNumber { get; set; }
         //set {
 
         //    if (systemResponseDate!=null)

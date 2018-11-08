@@ -55,8 +55,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("user")]
         public HttpResponseMessage GetAllUsers()
         {
-            try
-            {
+
                 if (_repo != null)
                 {
                     var users = _repo.GetAllUsers();
@@ -68,12 +67,7 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"No user found" });
-            }
-            catch (SecureException ex)
-            {
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an internal error : { ex.Message}" });
-            }
+          
         }
 
         [HttpPost]
@@ -81,8 +75,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("user")]
         public async Task<HttpResponseMessage> AddUser([FromBody] UserViewModel user)
         {
-            try
-            {
+
                 if (_repo.IsUserExisting(user.username.ToLower()))
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "A user with this username already exit" });
@@ -98,13 +91,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = user, message = "User has been created successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-            }
-            catch (SecureException ex)
-            {
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+         
         }
 
         [HttpDelete]
@@ -112,20 +99,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("user/{userId}")]
         public async Task<HttpResponseMessage> DeleteUser(int userId)
         {
-            try
-            {
+
                 var response = await _repo.DeleteUser(userId);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation was successful" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-            }
-            catch (SecureException ex)
-            {
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+         
         }
 
         [HttpPut]
@@ -133,21 +114,21 @@ namespace FintrakBanking.APICore.Controllers
         [Route("user/{userId}")]
         public async Task<HttpResponseMessage> UpdateUser(int userId, [FromBody] UserViewModel user)
         {
-            try
-            {
+            //try
+            //{
                 var response = await _repo.UpdateUser(userId, user);
                 if (response)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "User has been successfully updated" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error occured while updating user" });
-            }
-            catch (SecureException ex)
-            {
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+            //}
+            //catch (SecureException ex)
+            //{
+            //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
         }
 
         //Group
@@ -157,8 +138,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("group")]
         public HttpResponseMessage GetGroups()
         {
-            try
-            {
+            //try
+            //{
                 if (_repo != null)
                 {
                     var groups = _repo.GetAllGroups().Select(x => new
@@ -175,13 +156,13 @@ namespace FintrakBanking.APICore.Controllers
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-            }
-            catch (SecureException ex)
-            {
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+            //}
+            //catch (SecureException ex)
+            //{
+            //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            //}
         }
         //public string GetIpAddress(HttpRequestMessage request)
         //{
@@ -194,8 +175,8 @@ namespace FintrakBanking.APICore.Controllers
         [Route("token")]
         public async Task<HttpResponseMessage> GetTokenAsync([FromBody] TokenVM user)
         {
-            try
-            {
+            //try
+            //{
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
                 string ipAddressStr = null;
                 if (token.LoginCode == null)
@@ -276,25 +257,25 @@ namespace FintrakBanking.APICore.Controllers
                     }
                 });
 
-            }
-            catch (SecureException ex)
-            {
-                string str = string.Empty;
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
-                {
-                    str = ex.Message.Replace("1001", "");
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = str });
-            }
+            //}
+            //catch (SecureException ex)
+            //{
+            //    string str = string.Empty;
+            //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+            //    if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
+            //    {
+            //        str = ex.Message.Replace("1001", "");
+            //    }
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = str });
+            //}
         }
 
         [HttpPost] //[ClaimsAuthorization]
         [Route("endpendingsession")]
         public IHttpActionResult SignOutUser([FromBody] TokenVM user)
         {
-            try
-            {
+            //try
+            //{
 
                 //var audit = new TBL_AUDIT()
                 //{
@@ -315,21 +296,21 @@ namespace FintrakBanking.APICore.Controllers
                 Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
                 return this.Ok(new { success = true, message = "Session Ended. Login To Continue" });
 
-            }
-            catch (SecureException ex)
-            {
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+            //}
+            //catch (SecureException ex)
+            //{
+            //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
 
-                return this.Ok(new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
-            }
+            //    return this.Ok(new { success = false, message = $"An unknown error occured while generate token {ex.Message}" });
+            //}
         }
 
         [HttpPost] //[ClaimsAuthorization]
         [Route("logOut")]
         public IHttpActionResult LogOut()
         {
-            try
-            {
+            //try
+            //{
                 _repo.ClearLoginToken(token.GetUsername);
                 var staffDetails = _repo.GetSingleUserByUserName(token.GetUsername);
 
@@ -361,12 +342,12 @@ namespace FintrakBanking.APICore.Controllers
 
                 return this.Ok(new { success = true, message = "User Logged Off" });
 
-            }
-            catch (SecureException ex)
-            {
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-                return this.Ok(new { success = false, message = $"An unknown error occured {ex.Message}" });
-            }
+            //}
+            //catch (SecureException ex)
+            //{
+            //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+            //    return this.Ok(new { success = false, message = $"An unknown error occured {ex.Message}" });
+            //}
 
         }
 
@@ -374,8 +355,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("passwordchange")]
         public IHttpActionResult PasswordChange(PasswordChangeViewModel pwdChange)
         {
-            try
-            {
+
                 if (!_repo.ValidateOldPassword(pwdChange.username, StaticHelpers.EncryptSha512(pwdChange.currentPassword, StaticHelpers.EncryptionKey)))
                 {
                     return this.Ok(new { success = false, message = "Invalid current password." });
@@ -393,16 +373,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var res = _repo.PasswordChange(password);
                 return this.Ok(new { success = true, message = "Password Change was successful" });
-            }
-            catch (SecureException ex)
-            {
-
-                _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
-
-                return this.Ok(new { success = false, message = ex.Message });
-            }
-
-
+           
         }
 
         private IAuthenticationManager Authentication => Request.GetOwinContext().Authentication;

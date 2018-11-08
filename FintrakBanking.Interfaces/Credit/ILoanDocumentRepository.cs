@@ -10,9 +10,10 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanDocumentViewModel> GetAllLoanDocument();
 
-        bool AddLoanDocument(LoanDocumentViewModel model, byte[] file);
+        int AddLoanDocument(LoanDocumentViewModel model, byte[] file);
 
         bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId);
+
         bool UpdateLoanDocument(LoanDocumentViewModel model, int documentId, byte[] file);
 
         bool DeleteLoanDocument(string invoiceNo, string applicationNumber);
@@ -53,7 +54,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddMediaStaffSignature(LoanDocumentViewModel model, byte[] file);
         bool UpdateMediaStaffSignature(LoanDocumentViewModel model);
         LoanDocumentViewModel GetMediaStaffSignature(LoanDocumentViewModel model);
-        bool uploadDocument(LoanDocumentViewModel model, byte[] file);
+        int uploadDocument(LoanDocumentViewModel model, byte[] file);
 
         LoanDocumentViewModel getUploadedDocument(LoanDocumentViewModel model);
 

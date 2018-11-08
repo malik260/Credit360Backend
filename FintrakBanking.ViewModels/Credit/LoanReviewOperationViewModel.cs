@@ -64,6 +64,11 @@ namespace FintrakBanking.ViewModels.Credit
         
 
         public List<LoanReviewIrregularScheduleViewModel> reviewIrregularSchedule { get; set; }
+        public int loanSystemTypeId { get; set; }
+        public string operationName { get; set; }
+        public string approvalStatus { get; set; }
+        public int loanApplicationId { get; set; }
+        public int operationId { get; set; }
     }
 
     public class LoanReviewIrregularScheduleViewModel
@@ -91,7 +96,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal maturityAmount { get; set; }
         public string relatedReferenceNumber { get; set; }
         public decimal interestAmount { get; set; }
-
+        public int? currentApprovalLevelId { get; set; }
         public int loanId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
@@ -232,6 +237,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string lmsLoanReferenceNumber { get; set; }
         public DateTime? newMaturityDate { get; set; }
         public int? loanSystemTypeId { get; set; }
+        public int? maturityInstructionTypeId { get; set; }
     }
 
 
@@ -295,6 +301,17 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int? toApprovalLevelId { get; set; }
         public bool atInitiator { get; set; }
         public int? regionId { get; set; }
+        public string timeLapse
+        {
+            get
+            {
+                if (timeIn == null) return "n/a";
+                int count = (int)Math.Round((DateTime.Now - (DateTime)timeIn).TotalDays);
+                string units = count == 1 ? " day" : " days";
+                if ((DateTime.Now - (DateTime)timeIn).TotalHours < 24) return timeIn.ToString();
+                return count.ToString() + units;
+            }
+        }
     }
 
     public class applicationDetails
@@ -344,6 +361,15 @@ public int? newInterestFrequencyTypeId { get; set; }
             }
         }
 
+        public string loanReferenceNumber { get; set; }
+    }
+
+    public class LMSOperationListViewModel
+    {
+        public short operationId { get; set; }
+        public string operationName { get; set; }
+        public short loanSystemTypeId { get; set; }
+        public short productTypeId { get; set; }
     }
 
     public class SelectListViewModel
@@ -435,5 +461,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int tenor { get; set; }
         public short loanSystemTypeId { get; set; }
         public short approvalStatusId { get; set; }
+        public int? loanReviewOperationsId { get; set; }
+
     }
 }

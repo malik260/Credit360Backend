@@ -101,7 +101,9 @@ namespace FintrakBanking.Repositories.Credit
                        where 
                                       atrail.RESPONSESTAFFID == null
                                      && atrail.OPERATIONID == (int)OperationsEnum.CamsolBackbookModification
+                                        && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+
                        orderby camsol.TEMPLOAN_CAMSOLID descending
                        select new LoanCAMSOLViewModel
                        {
@@ -128,6 +130,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanCAMSOLViewModel> GetCamSolByCustomerCode(string customerCode)
         {
             var data = from camsol in context.TBL_LOAN_CAMSOL
+                       join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
                        where camsol.CUSTOMERCODE == customerCode
                        select new LoanCAMSOLViewModel
                        {
@@ -139,6 +142,8 @@ namespace FintrakBanking.Repositories.Credit
                            customercode = camsol.CUSTOMERCODE,
                            customername = camsol.CUSTOMERNAME,
                            date = camsol.DATE,
+                           camsolType = c.CAMSOLTYPENAME,
+                           loansystemtype = context.TBL_LOAN_SYSTEM_TYPE.Where(x => x.LOANSYSTEMTYPEID == camsol.LOANSYSTEMTYPEID).Select(x => x.LOANSYSTEMTYPENAME).FirstOrDefault(),
                            interestinsuspense = camsol.INTERESTINSUSPENSE,
                            loancamsolid = camsol.LOAN_CAMSOLID,
                            loanid = camsol.LOANID,
@@ -246,23 +251,19 @@ namespace FintrakBanking.Repositories.Credit
         public string ApproveCamsol(LoanCAMSOLViewModel option)
         {
            
-            var data = from camsol in context.TBL_LOAN_CAMSOL
-                       where camsol.CUSTOMERCODE == option.customercode
-                       select camsol;
+            var data = (from camsol in context.TBL_LOAN_CAMSOL
+                       where camsol.CUSTOMERCODE == option.customercode 
+                       select camsol).ToList();
+
             if (data != null)
             {
                 string listOfExistingCamsols = string.Empty;
                 foreach (var x in data)
                 {
-                    var iSCamsolExit = context.TBL_TEMP_LOAN_CAMSOL.Any(a => a.LOAN_CAMSOLID == x.LOAN_CAMSOLID);
+                    var iSCamsolExit = context.TBL_TEMP_LOAN_CAMSOL.Any(a => a.LOAN_CAMSOLID == x.LOAN_CAMSOLID && a.APPROVALSTATUSID!=(int)ApprovalStatusEnum.Approved);
 
-                    bool cantakeLoanStatus = false;
+                    bool cantakeLoanStatus  = option.updateOption;
 
-                    if (x.CANTAKELOAN==true)
-                    {
-                        cantakeLoanStatus = false;
-                    }
-                    else { cantakeLoanStatus = true; }
                     if (!iSCamsolExit)
                     {
                         var temp = new TBL_TEMP_LOAN_CAMSOL
@@ -312,8 +313,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     return " The following Customer code is currently undergoing approval : " + listOfExistingCamsols;
                 }
-                else
-                    return " CAMSOL approval initiated successfully! ";
+              
             }
             return " Record not found ";
         }
@@ -321,20 +321,29 @@ namespace FintrakBanking.Repositories.Credit
         private bool finalCamsolApproval(LoanCAMSOLViewModel data, short StatusId)
         {
             var loanamSolId = (from x in context.TBL_TEMP_LOAN_CAMSOL
-                             where x.TEMPLOAN_CAMSOLID == data.tempLoancamsolid
-                             select new { x.LOAN_CAMSOLID, x.CANTAKELOAN }).FirstOrDefault();
+                             where x.CUSTOMERCODE == data.customercode
+                             select new { x.LOAN_CAMSOLID, x.CANTAKELOAN,x.APPROVALSTATUSID }).FirstOrDefault();
 
             if (loanamSolId != null)
             {
                 var values = (from camsol in context.TBL_LOAN_CAMSOL
                            where camsol.LOAN_CAMSOLID == loanamSolId.LOAN_CAMSOLID
-                              select camsol).FirstOrDefault();
+                              select camsol).ToList();
                 if (values != null)
                 {
-                    values.CANTAKELOAN = loanamSolId.CANTAKELOAN;
-                   return loanamSolId.CANTAKELOAN;
+                    foreach (var ca in values)
+                    { ca.CANTAKELOAN = loanamSolId.CANTAKELOAN; }
+
+                    var temp=   context.TBL_TEMP_LOAN_CAMSOL.Where(o => o.CUSTOMERCODE == data.customercode).Select(o => o).ToList();
+
+                    foreach(var t in temp)
+                    { t.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved; }
+
+                    if(context.SaveChanges() > 0)
+                        return true;
+
                 }
-                return false;
+             
             }
             return false;
         }

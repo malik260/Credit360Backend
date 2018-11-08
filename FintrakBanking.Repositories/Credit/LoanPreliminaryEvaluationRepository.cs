@@ -342,6 +342,7 @@ namespace FintrakBanking.Repositories.Credit
                             && atrail.RESPONSESTAFFID == null
                             && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation 
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                            orderby pen.LOANPRELIMINARYEVALUATIONID descending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.COMPANYID,
@@ -376,7 +377,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = pen.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = pen.TAXIDENTIFICATIONNUMBER,
                             registrationNumber = pen.REGISTRATIONNUMBER,
-                            operationId = atrail.OPERATIONID,
+                            operationId = (int)OperationsEnum.LoanPreliminaryEvaluation,
                             dateTimeCreated = pen.DATETIMECREATED,
                             customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == pen.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                             {
@@ -465,6 +466,7 @@ namespace FintrakBanking.Repositories.Credit
                         && atrail.RESPONSESTAFFID == null
                         && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation 
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                        orderby pen.LOANPRELIMINARYEVALUATIONID descending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
                             companyId = pen.COMPANYID,
@@ -712,7 +714,8 @@ namespace FintrakBanking.Repositories.Credit
                         join coy in context.TBL_COMPANY on p.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
                         where //p.ISCURRENT == false //&& p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.Single 
-                        p.SENTFORLOANAPPLICATION == false 
+                        p.SENTFORLOANAPPLICATION == false
+                        orderby p.LOANPRELIMINARYEVALUATIONID descending
                         //|| p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
@@ -750,6 +753,7 @@ namespace FintrakBanking.Repositories.Credit
                             relationshipOfficerId = p.RELATIONSHIPOFFICERID,
                             taxIdentificationNumber = p.TAXIDENTIFICATIONNUMBER,
                             registrationNumber = p.REGISTRATIONNUMBER,
+                            operationId = (short)OperationsEnum.LoanPreliminaryEvaluation,
                             customerBvnInformation = context.TBL_CUSTOMER_BVN.Where(b => b.CUSTOMERID == p.CUSTOMERID).Select(b => new CustomerBvnViewModels()
                             {
                                 bankVerificationNumber = b.BANKVERIFICATIONNUMBER,
@@ -837,7 +841,8 @@ namespace FintrakBanking.Repositories.Credit
                         join br in context.TBL_BRANCH on p.BRANCHID equals br.BRANCHID
                         where p.ISCURRENT == false 
                         && p.LOANAPPLICATIONTYPEID == (short)LoanTypeEnum.CustomerGroup 
-                        && p.SENTFORLOANAPPLICATION == false 
+                        && p.SENTFORLOANAPPLICATION == false
+                        orderby p.LOANPRELIMINARYEVALUATIONID descending
                         //|| p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending || p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
                         select new LoanPreliminaryEvaluationViewModel()
                         {
@@ -861,6 +866,7 @@ namespace FintrakBanking.Repositories.Credit
                             marketDemand = p.MARKETDEMAND,
                             ownershipStructure = p.OWNERSHIPSTRUCTURE,
                             portfolioStrategicAlignment = p.PORTFOLIOSTRATEGICALIGNMENT,
+                            operationId = (short)OperationsEnum.LoanPreliminaryEvaluation,
                             projectDescription = p.PROJECTDESCRIPTION,
                             projectFinancingPlan = p.PROJECTFINANCINGPLAN,
                             proposedTermsAndConditions = p.PROPOSEDTERMSANDCONDITIONS,

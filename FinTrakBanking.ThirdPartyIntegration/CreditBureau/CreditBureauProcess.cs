@@ -132,7 +132,7 @@
             {
                 if(request.dateOfBirth != null)
                 {
-                    request.dateOfBirth = Convert.ToDateTime(request.dateOfBirth).ToString("dd-MMM-YYYY");
+                    request.dateOfBirth = Convert.ToDateTime(request.dateOfBirth).ToString("dd-MMM-yyyy");
                      //request.dateOfBirth = "03-Jun-1998";  
                 }
 
@@ -144,7 +144,7 @@
                 }
                 catch(TimeoutException ex)
                 {
-                    throw  new ConditionNotMetException("Connection timed out!");
+                    throw  new CustomTimeoutException("Connection timed out!");
                 }
                 catch (Exception ex)
                 {
@@ -153,18 +153,25 @@
                 }
             }
 
-            public CRCSearchResult CRCCreditBureauMerge(MultiHitRequestViewModel request)
+            public string CRCCreditBureauMerge(MultiHitRequestViewModel request)
             {
-                
                 try
                 {
                     CRCService crc = new CRCService();
 
-                    return crc.CRCMergeReport(request);
+                    return crc.CRCMergeDirectReport(request);
                 }
                 catch (TimeoutException ex)
                 {
-                    throw ex;
+                    throw new TimeoutException( ex.Message);
+                }
+                catch (ConditionNotMetException ex)
+                {
+                    throw new ConditionNotMetException(ex.Message);
+                }
+                catch (APIErrorException ex)
+                {
+                    throw new APIErrorException(ex.Message);
                 }
                 catch (Exception ex)
                 {
@@ -172,6 +179,8 @@
                     throw new SecureException(ex.Message);
                 }
             }
+
+
 
 
 
@@ -294,7 +303,7 @@
                     var data = new SearchFullResultViewModel
                     {
                         ConsumerID = searchInput.consumerID,
-                        MergeList = mergeLst,
+                        MergeList = mergeLst.TrimEnd(','),
                         DataTicket = string.Empty,
                         EnquiryID = searchInput.enquiryID,
                         SubscriberEnquiryEngineID = searchInput.subscriberEnquiryEngineID
@@ -318,7 +327,7 @@
                     var data = new SearchFullResultViewModel
                     {
                         ConsumerID = searchInput.consumerID,
-                        MergeList = mergeLst,
+                        MergeList = mergeLst.TrimEnd(','),
                         DataTicket = string.Empty,
                         EnquiryID = searchInput.enquiryID,
                         SubscriberEnquiryEngineID = searchInput.subscriberEnquiryEngineID

@@ -235,7 +235,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured {ex.Message}" });
             }
@@ -380,7 +380,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
             }
@@ -403,7 +403,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+               // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                   new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
             }
@@ -425,7 +425,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
             }
@@ -457,7 +457,7 @@ namespace FintrakBanking.APICore.Controllers
             }
             catch (SecureException ex)
             {
-                this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                //this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
                 return Request.CreateResponse(HttpStatusCode.OK,
                 new { success = false, message = $"An unhandled error occured {ex.Message}" });
             }
@@ -718,28 +718,58 @@ namespace FintrakBanking.APICore.Controllers
         }
         #endregion
 
-        //[HttpPost]
-        //[ClaimsAuthorization]
-        //[Route("api-log")]
-        //public IHttpActionResult GetAPILog([FromBody] DateRange range)
-        //{
-        //    try
-        //    {
-        //        if (entity != null)
-        //        {
-        //            string message = string.Empty;
-        //            var data = _log.GetAPILog(range);
-        //            if (data)
-        //                return Ok(new { success = data, result = data, message = message == string.Empty ? $"Account is cleared" : message });
-        //        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("api-log")]
+        public HttpResponseMessage GetAPILog([FromBody] DateRange range)
+        {
+            try
+            {
+                if (range != null)
+                {
+                    string message = string.Empty;
+                    var data = _log.GetAPILog(range.startDate, range.endDate, range.loanRefNo);
+                    if (data!=null)
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = data, message = "" });
+                }
 
-        //        return Ok(new { success = false, message = $"Account not fund" });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Ok(new { success = false, message = $"Action Failed" });
-        //    }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                     new { success = true, result = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                     new { success = true, result = "No Record Found" });
+            }
 
-        //}
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("error-log")]
+        public HttpResponseMessage GetErrorLog([FromBody] DateRange range)
+        {
+            try
+            {
+                if (range != null)
+                {
+                    string message = string.Empty;
+                    var data = _log.GetErrorLog(range.startDate, range.endDate);
+                    if (data != null)
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                                              new { success = false, result = data, message = "" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                     new { success = true, result = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                                     new { success = true, result = "No Record Found" });
+            }
+
+        }
     }
 }

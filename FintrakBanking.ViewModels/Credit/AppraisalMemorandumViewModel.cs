@@ -66,7 +66,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string priceIndexName { get; set; }
         public int? priceIndexId { get; set; }
         public double priceIndexRate { get; set; }
-        public string liborInfo { get { return priceIndexId == null ? "" : "("+ priceIndexName + ")"; } }
+        public string liborInfo { get { return priceIndexId == null ? "" : "(" + priceIndexName + ")"; } }
         //public int productId { get; set; }
 
         public decimal approvedAmount { get; set; }
@@ -120,7 +120,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string syndicationName { get; set; }
         public string syndicationRefNo { get; set; }
         public decimal? syndicationAmount { get; set; }
-
+        public string conditionPrecedent { get; set; }
+        public string conditionSubsequent { get; set; }
     }
 
     public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL
@@ -192,7 +193,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int approvalLevelId { get; set; }
         public string approvalLevelName { get; set; }
         public int numberOfApprovals { get; set; }
-        public int groupRoleId  { get; set; }
+        public int groupRoleId { get; set; }
         public string approvalGroupName { get; set; }
         public int staffId { get; set; }
         public string staffName { get; set; }
@@ -265,6 +266,13 @@ namespace FintrakBanking.ViewModels.Credit
         public int? productId { get; set; }
         public int? levelId { get; set; }
     }
+    public class ApprovalTrailRequestViewModel : GeneralEntity
+    {
+        public int targetId { get; set; }
+        public int? operationId { get; set; }
+        public int[] operationIds { get; set; }
+        public bool all { get; set; }
+    }
 
     public class LoanDetailsFeeViewModel
     {
@@ -289,6 +297,19 @@ namespace FintrakBanking.ViewModels.Credit
         public int? monitoringTriggerId { get; set; }
         public string productCustomerName { get; set; }
         public double SN { get; set; }
+    }
+
+    public class CustomerTurnoverViewModel
+    {
+        public int accountId { get; set; }
+        public string schemeType { get; set; }
+        public string period { get; set; }
+        public decimal minimumDebitBalance { get; set; }
+        public decimal maximumDebitBalance { get; set; }
+        public decimal minimumCreitBalance { get; set; }
+        public decimal maximumCreditBalance { get; set; }
+        public decimal debitTurnover { get; set; }
+        public decimal creditTurnover { get; set; }
     }
 
     public class RepaymentScheduleTermsViewModel

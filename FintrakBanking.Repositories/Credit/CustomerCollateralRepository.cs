@@ -43,6 +43,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository lien;
         private ICasaRepository casa;
         private IIntegrationWithFinacle finacle;
+
         public CustomerCollateralRepository(
             FinTrakBankingContext _context,
             FinTrakBankingContext _delContext,
@@ -531,12 +532,6 @@ namespace FintrakBanking.Repositories.Credit
                     x => x.m.DefaultIfEmpty(),
                     (c, m) => new CollateralViewModel
                     {
-                        //NOTE: customerId 61,67 & 60 has data
-
-                        //loanId = c.m, // m = m == null ? 0 : m.LOANID,
-                        // valueInUse = m.LOANSYSTEMTYPEID == 1 ? context.TBL_LOAN.Where(x => x.TERMLOANID == m.LOANID).Sum(l => l.PRINCIPALAMOUNT)
-                        //                                   : context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == m.LOANID).Sum(l => l.OVERDRAFTLIMIT), 
-
                         collateralId = c.c.COLLATERALCUSTOMERID,
                         collateralTypeId = c.c.COLLATERALTYPEID,
                         collateralSubTypeId = c.c.COLLATERALSUBTYPEID,
@@ -559,17 +554,19 @@ namespace FintrakBanking.Repositories.Credit
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE
                     })
-                //.GroupBy(x => x.collateralId)
-                ;
+                    .ToList()
+                    .GroupBy(x => x.collateralId).Select(g => g.First())
+                    ;
 
-            return collaterals.ToList();
+            //var count = collaterals.Count();
+            //var test = collaterals;
+
+            return collaterals;
         }
-
 
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
         {
             return GetCustomerCollateral(companyId).Where(x => x.collateralTypeId == collateralTypeId && (x.customerId == customerId || x.customerId == thirdpartyCustomerId));
-
         }
 
         public IEnumerable<CollateralViewModel> GetCustomerCollateral(int companyId)
@@ -1720,7 +1717,7 @@ namespace FintrakBanking.Repositories.Credit
                                join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                                join ct in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals ct.COLLATERALTYPEID
                                join cs in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals cs.COLLATERALSUBTYPEID
-                               where x.LOANID == loanId
+                               where x.LOANID == loanId && x.ISRELEASED != true
                                select new ActiveCustomerCollateralViewModel
                                {
                                    collateralCustomerId = x.COLLATERALCUSTOMERID,
@@ -1736,6 +1733,7 @@ namespace FintrakBanking.Repositories.Credit
                                    hairCut = c.HAIRCUT,
                                    collateralTypeId = c.COLLATERALTYPEID,
                                    exchangeRate = c.EXCHANGERATE,
+                                   releaseApprovalStatusId = (short)x.RELEASEAPPROVALSTATUSID
                                }).ToList();
 
             var test = collaterals.ToList();
@@ -1746,8 +1744,9 @@ namespace FintrakBanking.Repositories.Credit
         public bool ReleaseCollateral(int collateralMappingId, int staffId, GeneralEntity model)
         {
             var mapping = context.TBL_LOAN_COLLATERAL_MAPPING.Find(collateralMappingId);
+            mapping.RELEASEAPPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
             context.Entry(mapping).State = EntityState.Modified;
-            mapping.RELEASEAPPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+            context.SaveChanges();
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1818,80 +1817,81 @@ namespace FintrakBanking.Repositories.Credit
                         if (collateral != null) securityValue = collateral.SECURITYVALUE;
                     }
 
-                    CasaLienViewModel model = new CasaLienViewModel
+                    if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit ||
+                        mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
                     {
-                        productAccountNumber = mainCollateral.COLLATERALCODE,
-                        lienAmount = securityValue,
-                        description = description,
-                        lienTypeId = (int)LienTypeEnum.CollateralCreation,
-                        sourceReferenceNumber = mainCollateral.COLLATERALCODE,
-                        dateTimeCreated = DateTime.Now,
-                        createdBy = user.createdBy,
-                        companyId = user.companyId,
-                        branchId = (short)user.userBranchId
-                    };
-
-                    lien.ReleaseLien(model);
+                        lien.ReleaseLien(new CasaLienViewModel
+                        {
+                            productAccountNumber = mainCollateral.COLLATERALCODE,
+                            lienAmount = securityValue,
+                            description = description,
+                            lienTypeId = (int)LienTypeEnum.CollateralCreation,
+                            sourceReferenceNumber = mainCollateral.COLLATERALCODE,
+                            dateTimeCreated = DateTime.Now,
+                            createdBy = user.createdBy,
+                            companyId = user.companyId,
+                            branchId = (short)user.userBranchId
+                        });
+                    }
 
                     mapping.RELEASEAPPROVALSTATUSID = (short)entity.approvalStatusId;
                     mapping.ISRELEASED = true;
                     context.Entry(mapping).State = EntityState.Modified;
 
-                    // Audit Section ---------------------------
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.CollateralReleaseApproval,
-                        STAFFID = user.createdBy,
-                        BRANCHID = (short)user.userBranchId,
-                        DETAIL = $"Collateral Release Approval '{ mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE }' ",
-                        IPADDRESS = user.userIPAddress,
-                        URL = user.applicationUrl,
-                        APPLICATIONDATE = genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now
-                    };
-                    this.auditTrail.AddAuditTrail(audit);
-                    // End of Audit Section ---------------------
+                   // Audit Section ---------------------------
+                   this.auditTrail.AddAuditTrail(new TBL_AUDIT
+                   {
+                       AUDITTYPEID = (short)AuditTypeEnum.CollateralReleaseApproval,
+                       STAFFID = user.createdBy,
+                       BRANCHID = (short)user.userBranchId,
+                       DETAIL = $"Collateral Release Approval '{ mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE }' ",
+                       IPADDRESS = user.userIPAddress,
+                       URL = user.applicationUrl,
+                       APPLICATIONDATE = genSetup.GetApplicationDate(),
+                       SYSTEMDATETIME = DateTime.Now
+                   });
+                   // End of Audit Section ---------------------
                 }
             }
 
             return context.SaveChanges() > 0;
         }
 
-        public IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease()
+        public IEnumerable<ActiveCustomerCollateralViewModel> GetPendingCustomerCollateralRelease(int staffId)
         {
-            var pending = context.TBL_CUSTOMER//.Where(x => x.CustomerId == customerId)
-                .Join(context.TBL_COLLATERAL_CUSTOMER, c => c.CUSTOMERID, o => o.CUSTOMERID, (c, o) => new { Customer = c, Collateral = o })
-                .Join(context.TBL_LOAN_APPLICATION, cc => cc.Collateral.CUSTOMERID, a => a.CUSTOMERID, (cc, a) => new { CustomerCollateral = cc, Application = a })
-                .Join(context.TBL_LOAN_COLLATERAL_MAPPING, ca => ca.Application.LOANAPPLICATIONID, m => m.LOANID, (ca, m) => new { CollateralApplication = ca, Mapping = m })
-                .Select(x => new ActiveCustomerCollateralViewModel
-                {
-                    customerId = x.CollateralApplication.Application.CUSTOMERID,
-                    collateralCustomerId = x.Mapping.COLLATERALCUSTOMERID,
-                    loanTypeId = x.CollateralApplication.Application.LOANAPPLICATIONTYPEID,
-                    loanCollateralMappingId = x.Mapping.LOANCOLLATERALMAPPINGID,
-                    loanApplicationId = x.Mapping.LOANID,
-                    isReleased = x.Mapping.ISRELEASED,
-                    releaseApprovalStatusId = (short)x.Mapping.RELEASEAPPROVALSTATUSID,
-                    customerCode = x.CollateralApplication.CustomerCollateral.Customer.CUSTOMERCODE,
-                    firstName = x.CollateralApplication.CustomerCollateral.Customer.FIRSTNAME,
-                    middleName = x.CollateralApplication.CustomerCollateral.Customer.MIDDLENAME,
-                    lastName = x.CollateralApplication.CustomerCollateral.Customer.LASTNAME,
-                    collateralCode = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALCODE,
-                    collateralValue = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALVALUE,
-                    allowSharing = x.Mapping.TBL_COLLATERAL_CUSTOMER.ALLOWSHARING,
-                    isLocationBased = (bool)x.Mapping.TBL_COLLATERAL_CUSTOMER.ISLOCATIONBASED,
-                    valuationCycle = x.Mapping.TBL_COLLATERAL_CUSTOMER.VALUATIONCYCLE,
-                    hairCut = x.Mapping.TBL_COLLATERAL_CUSTOMER.HAIRCUT,
-                    collateralTypeId = x.Mapping.TBL_COLLATERAL_CUSTOMER.COLLATERALTYPEID,
-                    applicationReferenceNumber = x.CollateralApplication.Application.APPLICATIONREFERENCENUMBER,
-                    applicationDate = x.CollateralApplication.Application.APPLICATIONDATE,
-                    interestRate = x.CollateralApplication.Application.INTERESTRATE,
-                    loanInformation = ""//x.CollateralApplication.Application.LOANINFORMATION,
-                })
-                .Where(x => x.isReleased == false && x.releaseApprovalStatusId == (int)ApprovalStatusEnum.Processing)
-                .Distinct();
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
-            var test = pending.ToList();
+            var pending = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
+                           join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
+                           join cu in context.TBL_CUSTOMER on c.CUSTOMERID equals cu.CUSTOMERID
+                           join ct in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals ct.COLLATERALTYPEID
+                           join cs in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals cs.COLLATERALSUBTYPEID
+                           join t in context.TBL_APPROVAL_TRAIL on x.LOANCOLLATERALMAPPINGID equals t.TARGETID
+                           where t.OPERATIONID == (int)OperationsEnum.CollateralRelease
+                            && ids.Contains((int)t.TOAPPROVALLEVELID)
+                            && x.ISRELEASED == false && x.RELEASEAPPROVALSTATUSID == (short)ApprovalStatusEnum.Processing
+                           select new ActiveCustomerCollateralViewModel
+                           {
+                               collateralCustomerId = x.COLLATERALCUSTOMERID,
+                               loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                               loanCollateralMappingId = x.LOANCOLLATERALMAPPINGID,
+                               loanApplicationId = x.LOANID,
+                               isReleased = x.ISRELEASED,
+                               collateralCode = c.COLLATERALCODE,
+                               collateralValue = c.COLLATERALVALUE,
+                               allowSharing = c.ALLOWSHARING,
+                               isLocationBased = (bool)c.ISLOCATIONBASED,
+                               valuationCycle = c.VALUATIONCYCLE,
+                               hairCut = c.HAIRCUT,
+                               collateralTypeId = c.COLLATERALTYPEID,
+                               exchangeRate = c.EXCHANGERATE,
+                               releaseApprovalStatusId = (short)x.RELEASEAPPROVALSTATUSID,
+                               customerCode = cu.CUSTOMERCODE,
+                               firstName = cu.FIRSTNAME,
+                               middleName = cu.MIDDLENAME,
+                               lastName = cu.LASTNAME,
+                           }).ToList();
+
 
             return pending.ToList();
         }
@@ -3783,6 +3783,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+
         public IEnumerable<CollateralViewModel> GetTempCustomerCollateralForApproval(int companyId, int staffId)
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CollateralApproval).ToList();
@@ -3826,6 +3827,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return collaterals;
         }
+
         public IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId)
         {
             var collaterals = (from x in context.TBL_COLLATERAL_CUSTOMER

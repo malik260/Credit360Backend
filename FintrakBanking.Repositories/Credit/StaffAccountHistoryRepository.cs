@@ -413,7 +413,7 @@ namespace FintrakBanking.Repositories.Credit
                 scheduleTypeId = loan.SCHEDULETYPEID,
                 scheduleTypeCategoryId = loan.TBL_LOAN_SCHEDULE_TYPE.SCHEDULECATEGORYID,
                 teno = days,
-                newtenor = 0,
+                newTenor = 0,
                 accrualedAmount = accruedInterest,
                 totalAmount = totalamount,
                 firstPrincipalPaymentDate = nextPaymentDate,
@@ -519,7 +519,7 @@ namespace FintrakBanking.Repositories.Credit
                 maintainTenor = true,
                 maturityDate = loan.MATURITYDATE,
                 disbursableAmount = amountDisburst,
-                newtenor = 0,
+                newTenor = 0,
                 accrualedAmount = 0,
 
                 relationshipManagerId = loan.RELATIONSHIPMANAGERID,

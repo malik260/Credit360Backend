@@ -493,5 +493,17 @@ namespace FintrakBanking.Common
             return result.ToString();
 
         }
+
+        public static string ConvertArrayToString(List<string> arrayList)
+        {
+            string ArrayListString = string.Empty;
+
+            foreach(string record in arrayList)
+            {
+                ArrayListString += record + "  ";
+            }
+
+            return ArrayListString.ToString();
+        }
     }
 }

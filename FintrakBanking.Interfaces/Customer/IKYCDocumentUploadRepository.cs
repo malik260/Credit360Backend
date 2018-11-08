@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool KYCDocumentUpload(CustomerDocumentUploadViewModel model, byte[] file);
 
         CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId, bool isProductBased);
-        bool CheckListDocumentUpload(CheckListDocumentUploadViewModel model, byte[] file);
+        int CheckListDocumentUpload(CheckListDocumentUploadViewModel model, byte[] file);
         bool RemoveCheckListDocument(int definitionId, int statusId, int detailId, bool isProductBased);
 
         ConditionsPrecedentUploadViewModel GetLoanConditionDocumentBydocumentId(int documentId);

@@ -86,6 +86,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationViewModel> SearchForLoan(string searchString);
 
         bool DeleteLoanApplicationDetail(int loanApplicationDetailId);
+        bool DeleteLoanApplication(int loanApplicationId);
 
         IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId);
 
@@ -126,5 +127,10 @@ namespace FintrakBanking.Interfaces.Credit
         List<ConditionPrecedentViewModel> GetLMSConditionPrecidents(int loanApplicationId);
 
         IEnumerable<LookupViewModel> GetAllSyndicationType();
+
+        IEnumerable<LoanApplicationDetailViewModel> GetLoanApplicationDetailsByReference(string reference, int companyId);
+
+        LoanApplicationDetailViewModel GetLoanApplicationDetailFields(int detailId);
+
     }
 }

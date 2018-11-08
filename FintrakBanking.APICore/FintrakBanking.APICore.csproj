@@ -315,40 +315,13 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\SwaggerConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\HelpPage\ApiDescriptionExtensions.cs" />
-    <Compile Include="Areas\HelpPage\App_Start\HelpPageConfig.cs" />
-    <Compile Include="Areas\HelpPage\Controllers\HelpController.cs" />
-    <Compile Include="Areas\HelpPage\HelpPageAreaRegistration.cs" />
-    <Compile Include="Areas\HelpPage\HelpPageConfigurationExtensions.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\CollectionModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ComplexTypeModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\DictionaryModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumTypeModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\EnumValueDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\IModelDocumentationProvider.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\KeyValuePairModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelDescriptionGenerator.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameAttribute.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ModelNameHelper.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterAnnotation.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\ParameterDescription.cs" />
-    <Compile Include="Areas\HelpPage\ModelDescriptions\SimpleTypeModelDescription.cs" />
-    <Compile Include="Areas\HelpPage\Models\HelpPageApiModel.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleGenerator.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\HelpPageSampleKey.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\ImageSample.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\InvalidSample.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\ObjectGenerator.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
-    <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
-    <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AccountCategoryController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AccountSensitivityController.cs" />
     <Compile Include="Controllers\AccountTypeController.cs" />
     <Compile Include="Controllers\AccreditedConsultantsController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\APILogController.cs" />
     <Compile Include="Controllers\AppraisalMemorandumController.cs" />
     <Compile Include="Controllers\ApprovalGroupController.cs" />
     <Compile Include="Controllers\ApprovalLevelController.cs" />
@@ -459,6 +432,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TransactionDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.cs">
+      <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.designer.cs">
+      <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx.cs">
       <DependentUpon>ApprovalTrailWith_SLA.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -480,12 +460,40 @@
     <Compile Include="Reports\ReportViews\BondAndGuarantee.aspx.designer.cs">
       <DependentUpon>BondAndGuarantee.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CashBacked.aspx.cs">
+      <DependentUpon>CashBacked.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashBacked.aspx.designer.cs">
+      <DependentUpon>CashBacked.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx.cs">
+      <DependentUpon>CashBackedBondAndGuarantee.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx.designer.cs">
+      <DependentUpon>CashBackedBondAndGuarantee.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashCollaterizedCredits.aspx.cs">
+      <DependentUpon>CashCollaterizedCredits.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CashCollaterizedCredits.aspx.designer.cs">
+      <DependentUpon>CashCollaterizedCredits.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralInsurance.aspx.cs">
       <DependentUpon>CollateralInsurance.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\CollateralInsurance.aspx.designer.cs">
       <DependentUpon>CollateralInsurance.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx.cs">
+      <DependentUpon>CollateralPerfectionYetToCommence.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx.designer.cs">
+      <DependentUpon>CollateralPerfectionYetToCommence.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
@@ -584,6 +592,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\PostedTransactions.aspx.designer.cs">
       <DependentUpon>PostedTransactions.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ReceivableInterest.aspx.cs">
+      <DependentUpon>ReceivableInterest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ReceivableInterest.aspx.designer.cs">
+      <DependentUpon>ReceivableInterest.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Repayment.aspx.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
@@ -762,12 +777,33 @@
     <Compile Include="Reports\ReportViews\SLAReport.aspx.designer.cs">
       <DependentUpon>SLAReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\StalledPerfection.aspx.cs">
+      <DependentUpon>StalledPerfection.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\StalledPerfection.aspx.designer.cs">
+      <DependentUpon>StalledPerfection.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.cs">
       <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\TurnOverConvenant.aspx.designer.cs">
       <DependentUpon>TurnOverConvenant.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\UnearnedLoanInterest.aspx.cs">
+      <DependentUpon>UnearnedLoanInterest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\UnearnedLoanInterest.aspx.designer.cs">
+      <DependentUpon>UnearnedLoanInterest.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx.cs">
+      <DependentUpon>WeeklyRecoveryReportForFINCON.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx.designer.cs">
+      <DependentUpon>WeeklyRecoveryReportForFINCON.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Workflow.aspx.cs">
       <DependentUpon>Workflow.aspx</DependentUpon>
@@ -787,7 +823,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-reboot.css" />
@@ -822,12 +857,17 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
+    <Content Include="Reports\ReportViews\AllCommercialLoanReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
     <Content Include="Reports\ReportViews\Blacklist.aspx" />
     <Content Include="Reports\ReportViews\BondAndGuarantee.aspx" />
+    <Content Include="Reports\ReportViews\CashBacked.aspx" />
+    <Content Include="Reports\ReportViews\CashBackedBondAndGuarantee.aspx" />
+    <Content Include="Reports\ReportViews\CashCollaterizedCredits.aspx" />
     <Content Include="Reports\ReportViews\CollateralEstimated.aspx" />
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
+    <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
@@ -843,6 +883,7 @@
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
+    <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
     <Content Include="Reports\ReportViews\DisbursedLoans.aspx" />
@@ -858,7 +899,10 @@
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\SLAReport.aspx" />
+    <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
+    <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
+    <Content Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
     <Content Include="ApplicationInsights.config">
@@ -870,32 +914,12 @@
     <Content Include="Reports\ReportDataset\CollateralDataSet.xsc">
       <DependentUpon>CollateralDataSet.xsd</DependentUpon>
     </Content>
-    <Content Include="Areas\HelpPage\Views\Web.config" />
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-reboot.min.css.map" />
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\ResourceModel.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\Index.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\TextSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\SimpleTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Samples.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\Parameters.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ModelDescriptionLink.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\KeyValuePairModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\InvalidSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ImageSample.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\HelpPageApiModel.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\EnumTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\DictionaryModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ComplexTypeModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
-    <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
     <Content Include="Reports\Credit\Credit.xss">
       <DependentUpon>Credit.xsd</DependentUpon>
     </Content>
@@ -1098,7 +1122,12 @@
     <Content Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <Content Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CashCollaterizedCredits.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralPerfectionYetToCommence.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
@@ -1130,14 +1159,18 @@
     <Content Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\SLAMonitoringReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
+    <EmbeddedResource Include="Reports\Report\StalledPerfection.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
+    <EmbeddedResource Include="Reports\Report\UnearnedLoanInterest.rdlc" />
+    <EmbeddedResource Include="Reports\Report\WeeklyRecoveryReportFINCON.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
   <ItemGroup>
@@ -1148,6 +1181,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Areas\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

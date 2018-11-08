@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.Common;
+using FintrakBanking.Common.CustomException;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.ViewModels.ThridPartyIntegration; 
 using FinTrakBanking.ThirdPartyIntegration.CRCWebService;
@@ -54,14 +55,56 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
 
         public CRCSearchResult CRCMergeReport(MultiHitRequestViewModel request)
         {
-            CRCSearchResult result =null;
-            XElement xml = CRCMergeRequestXML(request);
-            if (xml != null)
+            try
             {
-                result = SearchOutput(request.userName, request.password, xml);                  
-            }
+                CRCSearchResult result = null;
+                XElement xml = CRCMergeRequestXML(request);
+                if (xml != null)
+                {
+                    result = SearchOutput(request.userName, request.password, xml);
+                }
 
-            return result;
+                return result;
+            }
+            catch (ConditionNotMetException ex)
+            {
+                throw new ConditionNotMetException(ex.ToString());
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string CRCMergeDirectReport(MultiHitRequestViewModel request)
+        {
+            try
+            {
+                string result = string.Empty;
+                XElement xml = CRCMergeRequestXML(request);
+                if (xml != null)
+                {
+                    result = SearchMergedOutput(request.userName, request.password, xml);
+                }
+
+                return result;
+            }
+            catch (ConditionNotMetException ex)
+            {
+                throw new ConditionNotMetException(ex.ToString());
+            }
+            catch (APIErrorException ex)
+            {
+                throw new APIErrorException(ex.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
 
@@ -106,13 +149,26 @@ namespace FinTrakBanking.ThirdPartyIntegration.CreditBureau.CRC
             return result;
         }
 
+        private string SearchMergedOutput(string userName, string password, XElement xml)
+        {
+            LiveRequestInvokerSoapClient crc = new LiveRequestInvokerSoapClient();
+
+            string dataPacket = crc.PostRequest(xml.ToString(), userName, password);
+
+            return dataPacket;
+        }
+
 
         private XElement CRCMergeRequestXML(MultiHitRequestViewModel request)
         {
+            var subjectType = 0;
+            if (request.reportID == (int)CRCSearchTypeEnum.ConsumerSearch)
+                subjectType = 1;
+
             return new XElement("REQUEST", new XAttribute("REQUEST_ID", 1),
                 new XElement("REQUEST_PARAMETERS",
                 new XElement("REPORT_PARAMETERS", new XAttribute("RESPONSE_TYPE", request.responseType),
-                new XAttribute("SUBJECT_TYPE", 1), new XAttribute("REPORT_ID", request.reportID)),
+                new XAttribute("SUBJECT_TYPE", subjectType), new XAttribute("REPORT_ID", request.reportID)),
                 new XElement("INQUIRY_REASON", new XAttribute("CODE", request.enquiryReason)),
                 new XElement("APPLICATION", new XAttribute("CURRENCY", request.currencyCode),
                 new XAttribute("AMOUNT", request.amount), new XAttribute("NUMBER", request.number),
