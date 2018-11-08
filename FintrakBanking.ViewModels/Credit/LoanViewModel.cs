@@ -105,6 +105,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string RelatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
+        public string lmsApplicationReferenceNumber { get; set; }
+
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
         public int tenorUsed { get; set; }
         public short ? principalFrequencyTypeId { get; set; }

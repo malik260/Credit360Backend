@@ -8962,6 +8962,7 @@ namespace FintrakBanking.Repositories.Credit
                                        branchId = a.BRANCHID,
                                        branchName = a.TBL_BRANCH.BRANCHNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                        pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
@@ -9081,6 +9082,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var allFilteredLoan = (from a in context.TBL_LOAN
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
+                                       join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                        join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                        where a.ISDISBURSED == true && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                        && b.OPERATIONPERFORMED == false
@@ -9100,6 +9102,7 @@ namespace FintrakBanking.Repositories.Credit
                                            branchId = a.BRANCHID,
                                            branchName = a.TBL_BRANCH.BRANCHNAME,
                                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                           lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                            principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                            pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
@@ -9301,6 +9304,32 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var i in allFilteredLoan)
             {
                 i.tenorUsed = (applicationDate - i.effectiveDate).Days;
+                if (i.operationPerformed == "TenorChange")
+                {
+                    i.operationId = (int)OperationsEnum.TenorChange;
+                    i.operationName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == i.operationId).OPERATIONNAME;
+                }
+                if (i.operationPerformed == "InterestRateChange")
+                {
+                    i.operationId = (int)OperationsEnum.ContractualInterestRateChange;
+                    i.operationName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == i.operationId).OPERATIONNAME;
+                }
+
+                if (i.operationPerformed == "AmountChange")
+                {
+                    i.operationId = (int)OperationsEnum.FacilityLineAmountChange;
+                    i.operationName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == i.operationId).OPERATIONNAME;
+                }
+                if (i.operationPerformed == "CommercialLoanSubAllocation")
+                {
+                    i.operationId = (int)OperationsEnum.CommercialLoanSubAllocation;
+                    i.operationName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == i.operationId).OPERATIONNAME;
+                }
+                if (i.operationPerformed == "RollOver")
+                {
+                    i.operationId = (int)OperationsEnum.CommercialLoanRollOver;
+                    i.operationName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == i.operationId).OPERATIONNAME;
+                }
             };
 
 
