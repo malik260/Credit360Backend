@@ -190,7 +190,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             model.apiUrl = @"api/OverDraft/Renew ";
 
-                Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await overDraft.APIOverDraftRenew(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
