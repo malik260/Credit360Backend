@@ -446,6 +446,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             XDSSearchResult resultData; // = new XDSSearchResult();
 
+
             if (searchInfoList.dateOfBirth != string.Empty && searchInfoList.dateOfBirth != null)
             {
                 var dateOfBirth = Convert.ToDateTime(searchInfoList.dateOfBirth);
@@ -525,6 +526,10 @@ namespace FintrakBanking.Repositories.Credit
             catch (ConditionNotMetException ex)
             {
                 throw new ConditionNotMetException(ex.Message);
+            }
+            catch (BadLogicException ex)
+            {
+                throw new BadLogicException(ex.Message);
             }
             catch (APIErrorException ex)
             {

@@ -21,6 +21,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string tenorMode { get; set; }
         public int numberOfPayments { get; set; }
         public int scheduleList { get; set; }
+        public short repricingModeId { get; set; }
+        public int repricingDuration { get; set; }
 
         //public int tenor { get { return  }  }
         private int _tenor;

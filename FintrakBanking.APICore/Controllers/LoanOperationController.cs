@@ -449,6 +449,11 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation details has been disapproved." });
                 }
+                else if (data == 4)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation has been Refered Back" });
+                }
                 else
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

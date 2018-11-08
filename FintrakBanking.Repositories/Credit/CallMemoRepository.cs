@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
@@ -55,6 +56,11 @@ namespace FintrakBanking.Repositories.Credit
                                                loanReferenceNo = a.APPLICATIONREFERENCENUMBER,
                                                principalAmount = a.APPLICATIONAMOUNT
                                            }).Take(10).AsQueryable();
+                    }
+                    else
+                    {
+                        var jobName = _context.TBL_STAFF_JOBTITLE.Where(x => x.JOBTITLEID == JobRole).FirstOrDefault();
+                        throw new ConditionNotMetException("Kindly Setup Call Memo Limit For Job Title : '" + jobName.JOBTITLENAME + "' For This Staff");
                     }
                 }
             }
