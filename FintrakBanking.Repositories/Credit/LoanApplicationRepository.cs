@@ -1170,6 +1170,13 @@ namespace FintrakBanking.Repositories.Credit
                 inv.INVOICE_AMOUNT = upd.invoiceAmount;
                 inv.CONTRACT_STARTDATE = upd.contractStartDate;
                 inv.CONTRACT_ENDDATE = upd.contractEndDate;
+
+                inv.CONTRACTNO = upd.contractNo;
+                inv.PURCHASEORDERNUMBER = upd.purchaseOrderNumber;
+                inv.CERTIFICATENO = upd.certificateNumber;
+                inv.INVOICENO = upd.invoiceNo;
+                inv.INVOICE_DATE = upd.invoiceDate;
+                inv.INVOICE_AMOUNT = upd.invoiceAmount;
             }
 
             if (productClassId == (int)ProductClassEnum.BondAndGuarantees)
@@ -1179,17 +1186,17 @@ namespace FintrakBanking.Repositories.Credit
 
             if (productClassId == (int)ProductClassEnum.FirstTrader)
             {
-                throw new SecureException("BondAndGuarantees!");
+                throw new SecureException("FirstTrader!");
             }
 
             if (productClassId == (int)ProductClassEnum.ImportFinance)
             {
-                throw new SecureException("BondAndGuarantees!");
+                throw new SecureException("ImportFinance!");
             }
 
             if (productClassId == (int)ProductClassEnum.FirstEdu)
             {
-                throw new SecureException("BondAndGuarantees!");
+                throw new SecureException("FirstEdu!");
             }
 
             if (context.SaveChanges() == 0) throw new SecureException("Nothing was updated!");
