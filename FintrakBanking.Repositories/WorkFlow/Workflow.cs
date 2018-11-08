@@ -182,7 +182,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             SetResponseInformation();
 
             if (this.comment == "flow_test") { throw new SecureException("status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
-                   
+
             var trail = new TBL_APPROVAL_TRAIL
             {
                 FROMAPPROVALLEVELID = this.fromLevelId,
@@ -219,7 +219,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             if (levelId == null) levelId = this.nextLevelId;
             bool found = false;
-            foreach(var level in approvalGrid)
+            foreach (var level in approvalGrid)
             {
                 if (found == true)
                 {
@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.slaInterval = level.SlaInterval;
             this.useOrganogram = level.RouteViaStaffOrganogram;
         }
-        
+
         private int? ResolveReroute(int? toStaffId)
         {
             if (toStaffId == this.toStaffId) throw new SecureException("Already with staff!");
@@ -288,13 +288,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         public void NextProcess(
-            int companyId, 
-            int staffId, 
-            int operationId, 
-            int targetId, 
-            int? productClassId, 
-            string comment, 
-            bool external, 
+            int companyId,
+            int staffId,
+            int operationId,
+            int targetId,
+            int? productClassId,
+            string comment,
+            bool external,
             bool deferred,
             bool sameDesk
             )
@@ -303,7 +303,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.staffId = staffId;
             this.companyId = companyId;
             this.operationId = operationId;
-            this.targetId = targetId; 
+            this.targetId = targetId;
             this.productClassId = productClassId;
             this.comment = comment;
             this.statusId = (int)ApprovalStatusEnum.Pending;
@@ -841,7 +841,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.workflowSetup = approvalLevels.ToList();
 
             int n = 1;
-            foreach(var wf in workflowSetup) { wf.Sn = n++; }
+            foreach (var wf in workflowSetup) { wf.Sn = n++; }
 
             return this.workflowSetup;
         }

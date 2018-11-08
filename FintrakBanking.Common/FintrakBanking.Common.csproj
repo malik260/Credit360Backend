@@ -83,6 +83,7 @@
     <Compile Include="CommonHelpers.cs" />
     <Compile Include="CreditBureauHelp.cs" />
     <Compile Include="Crypto\Protection.cs" />
+    <Compile Include="CustomException\CustomTimeOutException.cs" />
     <Compile Include="CustomException\APIErrorException.cs" />
     <Compile Include="CustomException\BadLogicException.cs" />
     <Compile Include="CustomException\ConditionNotMetException.cs" />
@@ -140,6 +141,7 @@
     <Compile Include="Enum\LienTypeEnum.cs" />
     <Compile Include="Enum\CommentsTypeEnum.cs" />
     <Compile Include="Enum\OperationTypeEnum.cs" />
+    <Compile Include="Enum\OverrideItem.cs" />
     <Compile Include="Enum\PenEvaluationStatusEnum.cs" />
     <Compile Include="Enum\LoanProductTypeEnum.cs" />
     <Compile Include="Enum\ProductBehaviourEnum.cs" />

@@ -526,10 +526,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 throw new ConditionNotMetException(ex.Message);
             }
-            catch (BadLogicException ex)
-            {
-                throw new BadLogicException(ex.Message);
-            }
             catch (APIErrorException ex)
             {
                 throw new APIErrorException(ex.Message);
@@ -614,6 +610,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
 
             chargeModel.feeAmount = chargeAmount;
             chargeModel.referenceNumber = referenceNumber;
@@ -697,7 +694,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (TimeoutException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message);
+                    throw new CustomTimeoutException(ex.Message);
                 }
                 catch (APIErrorException ex)
                 {
@@ -775,6 +772,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
 
             var chargeModel = new CreditBereauViewModel();
             chargeModel.feeAmount = chargeAmount;
@@ -914,19 +912,19 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (APIErrorException ex)
                 {
-                    throw new APIErrorException(ex.ToString());
+                    throw new APIErrorException(ex.Message);
                 }
                 catch (TimeoutException ex)
                 {
-                    throw new ConditionNotMetException(ex.ToString());
+                    throw new TimeoutException(ex.Message);
                 }
                 catch (ConditionNotMetException ex)
                 {
-                    throw new ConditionNotMetException(ex.ToString());
+                    throw new ConditionNotMetException(ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    throw new SecureException(ex.ToString());
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -982,6 +980,8 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
+
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.feeAmount = chargeAmount;
             chargeModel.casaAccountId = casa.CASAACCOUNTID;
