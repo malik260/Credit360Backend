@@ -147,7 +147,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (ResolveLevelConfigurations() == false) { throw new SecureException("Could not resolve approval level configurations!"); }
 
-            if (next != null && next.LevelTypeId == 5) SkipResolvedLevel();
+            if (next != null && next.LevelTypeId == (int)ApprovalLevelType.SkipLevelByAmount) SkipLevelByAmount();
 
             if (this.useOrganogram == true)
             {
@@ -182,7 +182,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             SetResponseInformation();
 
             if (this.comment == "flow_test") { throw new SecureException("status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
-                   
+
             var trail = new TBL_APPROVAL_TRAIL
             {
                 FROMAPPROVALLEVELID = this.fromLevelId,
@@ -210,9 +210,35 @@ namespace FintrakBanking.Repositories.WorkFlow
             throw new SecureException("Unknown Process Flow Error! Unable to save workflow records!");
         }
 
-        private void SkipResolvedLevel()
+        private void SkipLevelByAmount()
         {
-            throw new SecureException("Skipping Level");
+            if (next.MaximumAmount < amount) SkipToNextApprovalLevel();
+        }
+
+        private void SkipToNextApprovalLevel(int? levelId = null) // WORK AROUND
+        {
+            if (levelId == null) levelId = this.nextLevelId;
+            bool found = false;
+            foreach (var level in approvalGrid)
+            {
+                if (found == true)
+                {
+                    this.nextLevelId = level.ApprovalLevelId;
+                    next = level;
+                    SetNextLevelConfigurations(level);
+                    break;
+                }
+                if (level.ApprovalLevelId == levelId) found = true;
+            }
+        }
+
+        private void SetNextLevelConfigurations(WorkflowSetup level)
+        {
+            this.smsNotification = level.CanRecieveSMS;
+            this.emailNotification = level.CanRecieveEmail;
+            this.nextLevelId = level.ApprovalLevelId;
+            this.slaInterval = level.SlaInterval;
+            this.useOrganogram = level.RouteViaStaffOrganogram;
         }
 
         private int? ResolveReroute(int? toStaffId)
@@ -262,13 +288,13 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         public void NextProcess(
-            int companyId, 
-            int staffId, 
-            int operationId, 
-            int targetId, 
-            int? productClassId, 
-            string comment, 
-            bool external, 
+            int companyId,
+            int staffId,
+            int operationId,
+            int targetId,
+            int? productClassId,
+            string comment,
+            bool external,
             bool deferred,
             bool sameDesk
             )
@@ -277,7 +303,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.staffId = staffId;
             this.companyId = companyId;
             this.operationId = operationId;
-            this.targetId = targetId; 
+            this.targetId = targetId;
             this.productClassId = productClassId;
             this.comment = comment;
             this.statusId = (int)ApprovalStatusEnum.Pending;
@@ -787,6 +813,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                            .Where(x => x.Level.ISACTIVE == true && x.Level.DELETED == false)
                            .Select(x => new WorkflowSetup
                            {
+                               // Sn = index + 1,
                                GroupPosition = x.Mapping.POSITION,
                                LevelPosition = x.Level.POSITION,
                                Staff = x.Level.TBL_APPROVAL_LEVEL_STAFF,
@@ -812,6 +839,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                            .ThenBy(x => x.LevelPosition);
 
             this.workflowSetup = approvalLevels.ToList();
+
+            int n = 1;
+            foreach (var wf in workflowSetup) { wf.Sn = n++; }
 
             return this.workflowSetup;
         }
@@ -983,7 +1013,9 @@ namespace FintrakBanking.Repositories.WorkFlow
 
     public class WorkflowSetup
     {
-        internal int SlaInterval;
+        public int Sn;
+
+        public int SlaInterval;
 
         public int GroupPosition { get; set; }
 
