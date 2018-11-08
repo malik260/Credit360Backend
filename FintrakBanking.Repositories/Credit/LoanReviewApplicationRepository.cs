@@ -338,7 +338,7 @@ namespace FintrakBanking.Repositories.Credit
             throw new SecureException("An error occured while saving the data!");
         }
 
-        public bool validateCustomer(int loanApplicationDetailId, int customerId)
+        public bool ValidateSubAllocationOperation(int loanApplicationDetailId, int customerId)
         {
 
             if (loanApplicationDetailId != 0)
@@ -352,7 +352,7 @@ namespace FintrakBanking.Repositories.Credit
                                 select a).ToList();
                 if (loanData.Count < 2 || loanData == null)
                 {
-                    return false;
+                    return false; // throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");  
                 }
                 else
                 {
@@ -361,8 +361,10 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
+                var appplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(x => x.LOANAPPLICATIONID).FirstOrDefault();
+
                 var loanData = (from a in context.TBL_LOAN_REVOLVING
-                                where a.CUSTOMERID == customerId
+                                where a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == appplicationId // .CUSTOMERID == customerId
                                 && a.MATURITYDATE < context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
                                 && a.LOANSTATUSID == (short)LoanStatusEnum.Active
                                 select a).ToList();
@@ -381,6 +383,56 @@ namespace FintrakBanking.Repositories.Credit
 
            
         }
+
+
+        public bool ValidateNewSubAllocationOperation(int loanApplicationDetailId, int customerId, int loanSystemTypeId)
+        {
+
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility )
+            {
+                var loanData = (from a in context.TBL_LOAN
+                                join b in context.TBL_PRODUCT
+                                on a.PRODUCTID equals b.PRODUCTID
+                                where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
+                                && b.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan
+                                && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                select a).ToList();
+                if (loanData.Count < 2 || loanData == null)
+                {
+                    return false; // throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");  
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            else 
+            {
+                var appplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(x => x.LOANAPPLICATIONID).FirstOrDefault();
+
+                var loanData = (from a in context.TBL_LOAN_REVOLVING
+                                join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                where b.LOANAPPLICATIONID == appplicationId
+                                && a.MATURITYDATE >= context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
+                                && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                                select a).ToList();
+                //var test = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
+
+                if (loanData.Count < 2 || loanData == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+
+
+        }
+
+
 
         private int GetCamOperation(int performanceTypeId)
         {
