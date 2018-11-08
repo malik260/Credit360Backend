@@ -68,8 +68,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var cityEntity = context.TBL_CITY.Find(id);
             {
-                cityEntity.CITYNAME = entity.cityName;
-                cityEntity.TBL_LOCALGOVERNMENT.STATEID = entity.stateId;
+                cityEntity.CITYNAME = entity.cityName;                
                 cityEntity.CITYCLASSID = entity.cityClassId;
                 cityEntity.ALLOWEDFORCOLLATERAL = entity.allowedForCollateral;
                 cityEntity.LOCALGOVERNMENTID = entity.localGovernmentId;

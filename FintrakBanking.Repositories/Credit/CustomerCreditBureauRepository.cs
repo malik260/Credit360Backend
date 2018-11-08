@@ -446,7 +446,6 @@ namespace FintrakBanking.Repositories.Credit
         {
             XDSSearchResult resultData; // = new XDSSearchResult();
 
-            searchInfoList.accountOrRegistrationNumber = "";
 
             if (searchInfoList.dateOfBirth != string.Empty && searchInfoList.dateOfBirth != null)
             {

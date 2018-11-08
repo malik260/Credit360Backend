@@ -40,6 +40,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewViewModel : GeneralEntity
     {
+        public int loanReviewOperationsId { get; set; }
         public int loanId { get; set; }
         //public int?  loanReviewOperationId {get; set;}
         public int loanApplicationDetailId { get; set; }
