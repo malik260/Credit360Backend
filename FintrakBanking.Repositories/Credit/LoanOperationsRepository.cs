@@ -15141,72 +15141,103 @@ namespace FintrakBanking.Repositories.Credit
 
             if (loan.MATURITYDATE <= loan.MATURITYDATE.AddDays(userModel.newTenor))
             {
-                var lmsApprovalRefRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == loan.TERMLOANID).FirstOrDefault();
-                lmsApprovalRefRecord.OPERATIONPERFORMED = true;
-
-                op.LOANID = lmsApprovalRefRecord.LOANID;
-                op.LOANSYSTEMTYPEID = lmsApprovalRefRecord.LOANSYSTEMTYPEID;
-                op.OPERATIONTYPEID = lmsApprovalRefRecord.OPERATIONID;
-                op.REVIEWDETAILS = "TenorChange";
-                op.TENOR = userModel.newTenor;
-                op.LOANREVIEWAPPLICATIONID = lmsApprovalRefRecord.LOANREVIEWAPPLICATIONID;
-                op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
-                op.ISMANAGEMENTINTERESTRATE = false;
-                op.OPERATIONCOMPLETED = false;
-                op.CREATEDBY = userModel.createdBy;
-                op.DATECREATED = DateTime.Now;
-
-                context.TBL_LOAN_REVIEW_OPERATION.Add(op);
-                var audit = new TBL_AUDIT
-                {
-                    AUDITTYPEID = (short)AuditTypeEnum.LoanTenorExtended,
-                    STAFFID = userModel.createdBy,
-                    BRANCHID = (short)userModel.userBranchId,
-                    DETAIL = $"Extended loan tenor with reference number: {loan.LOANREFERENCENUMBER} with {userModel.newTenor} extra",
-                    IPADDRESS = userModel.userIPAddress,
-                    URL = userModel.applicationUrl,
-                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                    SYSTEMDATETIME = DateTime.Now
-                };
-
                 bool output = false;
-                using (var trans = context.Database.BeginTransaction())
+                if(userModel.loanReviewOperationsId == 0)
                 {
-                    try
+                    var lmsApprovalRefRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == loan.TERMLOANID).FirstOrDefault();
+                    lmsApprovalRefRecord.OPERATIONPERFORMED = true;
+
+                    op.LOANID = lmsApprovalRefRecord.LOANID;
+                    op.LOANSYSTEMTYPEID = lmsApprovalRefRecord.LOANSYSTEMTYPEID;
+                    op.OPERATIONTYPEID = lmsApprovalRefRecord.OPERATIONID;
+                    op.REVIEWDETAILS = "TenorChange";
+                    op.TENOR = userModel.newTenor;
+                    op.LOANREVIEWAPPLICATIONID = lmsApprovalRefRecord.LOANREVIEWAPPLICATIONID;
+                    op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                    op.ISMANAGEMENTINTERESTRATE = false;
+                    op.OPERATIONCOMPLETED = false;
+                    op.CREATEDBY = userModel.createdBy;
+                    op.DATECREATED = DateTime.Now;
+
+                    context.TBL_LOAN_REVIEW_OPERATION.Add(op);
+                    var audit = new TBL_AUDIT
                     {
-                        context.TBL_AUDIT.Add(audit);
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanTenorExtended,
+                        STAFFID = userModel.createdBy,
+                        BRANCHID = (short)userModel.userBranchId,
+                        DETAIL = $"Extended loan tenor with reference number: {loan.LOANREFERENCENUMBER} with {userModel.newTenor} extra",
+                        IPADDRESS = userModel.userIPAddress,
+                        URL = userModel.applicationUrl,
+                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
 
-                        output = context.SaveChanges() > 0;
-
-                        //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
-
-
-                        var entity = new ApprovalViewModel
+                    using (var trans = context.Database.BeginTransaction())
+                    {
+                        try
                         {
-                            staffId = userModel.createdBy,
-                            companyId = userModel.companyId,
-                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                            comment = "Please approve this CX/FX Operation",
-                            targetId = op.LOANREVIEWOPERATIONID,
-                            operationId = (int)OperationsEnum.TenorChange,
-                            BranchId = userModel.userBranchId,
-                            externalInitialization = true
-                        };
-                        var response = workFlow.LogForApproval(entity);
+                            context.TBL_AUDIT.Add(audit);
 
-                        if (response)
+                            output = context.SaveChanges() > 0;
+
+                            //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
+
+
+                            var entity = new ApprovalViewModel
+                            {
+                                staffId = userModel.createdBy,
+                                companyId = userModel.companyId,
+                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                                comment = "Please approve this CX/FX Operation",
+                                targetId = op.LOANREVIEWOPERATIONID,
+                                operationId = (int)OperationsEnum.TenorChange,
+                                BranchId = userModel.userBranchId,
+                                externalInitialization = true
+                            };
+                            var response = workFlow.LogForApproval(entity);
+
+                            if (response)
+                            {
+                                trans.Commit();
+                                return output;
+                            }
+                        }
+                        catch (Exception ex)
                         {
-                            trans.Commit();
-                            return output;
+                            trans.Rollback();
+                            throw new SecureException(ex.Message);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        trans.Rollback();
-                        throw new SecureException(ex.Message);
-                    }
+                    return output;
                 }
-                return output;
+                else
+                {
+                    var lmsApprovalRefRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == loan.TERMLOANID).FirstOrDefault();
+                    lmsApprovalRefRecord.OPERATIONPERFORMED = true;
+
+                  var  reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == userModel.loanReviewOperationsId).FirstOrDefault();
+
+                    reviewOperation.TENOR = userModel.newTenor;
+                    reviewOperation.OPERATIONCOMPLETED = false;
+
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoanTenorExtended,
+                        STAFFID = userModel.createdBy,
+                        BRANCHID = (short)userModel.userBranchId,
+                        DETAIL = $"Extended loan tenor with reference number: {loan.LOANREFERENCENUMBER} with {userModel.newTenor} extra",
+                        IPADDRESS = userModel.userIPAddress,
+                        URL = userModel.applicationUrl,
+                        APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+
+                    context.TBL_AUDIT.Add(audit);
+
+                    output = context.SaveChanges() > 0;
+                    return output;
+
+                }
             }
             else
             {
@@ -15507,6 +15538,67 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
+                    var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
+                                        where s.LOANREVIEWOPERATIONID == userModel.targetId && s.OPERATIONTYPEID == userModel.operationId
+                                       && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                        && s.OPERATIONCOMPLETED == false
+                                        select s).FirstOrDefault();
+
+                    if (userModel.approvalStatusId == (short)ApprovalStatusEnum.Referred)
+                    {
+
+                        int staffId = userModel.staffId;
+
+
+                        var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
+
+                        var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == userModel.operationId)
+                             .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                             .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true),
+                                 mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new
+                                 {
+                                     groupPosition = mg.m.POSITION,
+                                     levelPosition = l.POSITION,
+                                     levelId = l.APPROVALLEVELID,
+                                     levelName = l.LEVELNAME,
+                                     staffRoleId = l.STAFFROLEID,
+                                 })
+                                 .OrderBy(x => x.groupPosition)
+                                 .ThenBy(x => x.levelPosition)
+                                 .ToList();
+
+                        var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
+                        var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
+                        var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+                        workFlow.StaffId = userModel.createdBy;
+                        workFlow.OperationId = userModel.operationId;
+                        workFlow.TargetId = userModel.targetId;
+                        workFlow.CompanyId = userModel.companyId;
+                        workFlow.ProductClassId = null;
+                        workFlow.ProductId = null;
+                        workFlow.NextLevelId = userModel.approvalLevelId;
+                        workFlow.ToStaffId = staffId;
+                        workFlow.StatusId = (int)ApprovalStatusEnum.Referred;
+                        workFlow.Comment = userModel.comment;
+                        workFlow.DeferredExecution = true;
+
+                        workFlow.LogActivity();
+
+                        var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
+                        lmsrRecord.OPERATIONPERFORMED = false;
+
+
+                        reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
+                        reviewRecord.OPERATIONCOMPLETED = false;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 4;
+                    }
+
+
+
+
                     // workFlow.LogForApproval(entity);
                     // var b = workFlow.NextLevelId ?? 0;
 
@@ -15850,76 +15942,114 @@ namespace FintrakBanking.Repositories.Credit
 
 
             TBL_LOAN_REVIEW_OPERATION op = new TBL_LOAN_REVIEW_OPERATION();
-
-            var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == model.loanId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).FirstOrDefault();
-            lmsApprovalRecord.OPERATIONPERFORMED = true;
-
-
-            op.LOANID = lmsApprovalRecord.LOANID;
-            op.LOANSYSTEMTYPEID = lmsApprovalRecord.LOANSYSTEMTYPEID;
-            op.OPERATIONTYPEID = lmsApprovalRecord.OPERATIONID;
-            op.REVIEWDETAILS = "RollOver";
-            op.TENOR = model.newTenor;
-            op.MATURITYINSTRUCTIONTYPEID = (short)model.maturityInstructionId;
-            op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
-            op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
-            op.ISMANAGEMENTINTERESTRATE = false;
-            op.OPERATIONCOMPLETED = false;
-            op.CREATEDBY = model.createdBy;
-            op.DATECREATED = DateTime.Now;
-
-            context.TBL_LOAN_REVIEW_OPERATION.Add(op);
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.maturityInstruction,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Rolled over loan with loanid '{lmsApprovalRecord.LOANID}'",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = generalSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-
             bool output = false;
-            using (var trans = context.Database.BeginTransaction())
+
+            if (model.loanReviewOperationsId == 0)
             {
-                try
+                var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == model.loanId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).FirstOrDefault();
+                lmsApprovalRecord.OPERATIONPERFORMED = true;
+
+
+                op.LOANID = lmsApprovalRecord.LOANID;
+                op.LOANSYSTEMTYPEID = lmsApprovalRecord.LOANSYSTEMTYPEID;
+                op.OPERATIONTYPEID = lmsApprovalRecord.OPERATIONID;
+                op.REVIEWDETAILS = "RollOver";
+                op.TENOR = model.newTenor;
+                op.MATURITYINSTRUCTIONTYPEID = (short)model.maturityInstructionId;
+                op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
+                op.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+                op.ISMANAGEMENTINTERESTRATE = false;
+                op.OPERATIONCOMPLETED = false;
+                op.CREATEDBY = model.createdBy;
+                op.DATECREATED = DateTime.Now;
+
+                context.TBL_LOAN_REVIEW_OPERATION.Add(op);
+
+                var audit = new TBL_AUDIT
                 {
-                    context.TBL_AUDIT.Add(audit);
+                    AUDITTYPEID = (short)AuditTypeEnum.maturityInstruction,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Rolled over loan with loanid '{lmsApprovalRecord.LOANID}'",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
 
-                    output = context.SaveChanges() > 0;
-
-                    //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
-
-
-                    var entity = new ApprovalViewModel
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
                     {
-                        staffId = model.createdBy,
-                        companyId = model.companyId,
-                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
-                        comment = "Please approve this Roll-Over Operation",
-                        targetId = op.LOANREVIEWOPERATIONID,
-                        operationId = (int)OperationsEnum.MaturityInstruction,
-                        BranchId = model.userBranchId,
-                        externalInitialization = true
-                    };
-                    var response = workFlow.LogForApproval(entity);
+                        context.TBL_AUDIT.Add(audit);
 
-                    if (response)
+                        output = context.SaveChanges() > 0;
+
+                        //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
+
+
+                        var entity = new ApprovalViewModel
+                        {
+                            staffId = model.createdBy,
+                            companyId = model.companyId,
+                            approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                            comment = "Please approve this Roll-Over Operation",
+                            targetId = op.LOANREVIEWOPERATIONID,
+                            operationId = (int)OperationsEnum.MaturityInstruction,
+                            BranchId = model.userBranchId,
+                            externalInitialization = true
+                        };
+                        var response = workFlow.LogForApproval(entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                            return output;
+                        }
+                    }
+                    catch (Exception ex)
                     {
-                        trans.Commit();
-                        return output;
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
                     }
                 }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new SecureException(ex.Message);
-                }
+                return output;
             }
-            return output;
+            else
+            {
+                var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == model.loanId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).FirstOrDefault();
+                lmsApprovalRecord.OPERATIONPERFORMED = true;
+
+               var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
+
+
+
+
+                reviewOperation.REVIEWDETAILS = "RollOver";
+                reviewOperation.TENOR = model.newTenor;
+                reviewOperation.OPERATIONCOMPLETED = false;
+                reviewOperation.MATURITYINSTRUCTIONTYPEID = (short)model.maturityInstructionId;
+
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.maturityInstruction,
+                    STAFFID = model.createdBy,
+                    BRANCHID = (short)model.userBranchId,
+                    DETAIL = $"Rolled over loan with loanid '{lmsApprovalRecord.LOANID}'",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                context.TBL_AUDIT.Add(audit);
+
+                output = context.SaveChanges() > 0;
+
+                return output;
+
+            }
 
         }
 

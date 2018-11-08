@@ -49,7 +49,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanViewModel : GeneralEntity
     {
         public string operationTypeName { get; set; }
-
+        public int? currentApprovalLevelId { get; set; }
         public int approvedTenor { get; set; }
 
         public string payingAccountNumber { get; set; }
@@ -228,8 +228,11 @@ namespace FintrakBanking.ViewModels.Credit
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
         public int lmsApplicationDetailId  { get; set; }
-        
 
+        public decimal availableBalance { get; set; }
+
+        public decimal overdraftDrawnAmount{ get; set; }
+        public decimal overdraftUndrawnAmount { get; set; }
 
         public List<ApprovalLevelStaffViewModel> loanOperationApprovers { get; set; }
 
