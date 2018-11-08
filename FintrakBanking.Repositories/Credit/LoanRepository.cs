@@ -1249,6 +1249,8 @@ namespace FintrakBanking.Repositories.Credit
                 EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
+                REPRICINGMODEID = entity.loanScheduleInput.repricingModeId,
+                REPRICINGDURATION = entity.loanScheduleInput.repricingDuration
 
             };
 
@@ -3295,14 +3297,14 @@ namespace FintrakBanking.Repositories.Credit
                 contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
                 var loanProductInfo = context.TBL_PRODUCT.Find(contingentLoanRecord.PRODUCTID);
-                var proBehaviour = loanProductInfo.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID);
-                if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && proBehaviour.Any() && proBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == true)
+                var productBehaviour = loanProductInfo.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID);
+                if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && productBehaviour.Any() && productBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == true)
                 {   /* LIENABLE BOND AND GAURANTEE SPECIFIC TRANSACTION ENTRIES WHERE PRODUCT ALLOW FUND USAGE */
-                    var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID && x.CUSTOMERID == contingentLoanRecord.CUSTOMERID).FirstOrDefault();
+                    var casa1 = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID && x.CUSTOMERID == contingentLoanRecord.CUSTOMERID).FirstOrDefault();
 
                     var lienModel = new CasaLienViewModel
                     {
-                        productAccountNumber = casa.PRODUCTACCOUNTNUMBER,
+                        productAccountNumber = casa1.PRODUCTACCOUNTNUMBER,
                         sourceReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER,
                         userBranchId = (short)user.BranchId,
                         branchId = (short)user.BranchId,
@@ -3317,23 +3319,23 @@ namespace FintrakBanking.Repositories.Credit
                     casaLien.PlaceLien(lienModel, twoFactorAuthDetails);
                     twoFactorAuthDetails.skipAuthentication = true;
                 }
-                else if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && proBehaviour.Any() && proBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == false)
-                {   /* DEBIT B&G CUSTOMER WHERE PRODUCT DOES NOT ALLOW FUND USAGE */
-                    var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID).FirstOrDefault();
-                    var basicPostInputs = new BasicTrasactionSourceInputModel
-                    {
-                        sourceApplicationId = (short)contingentLoanRecord.CONTINGENTLOANID,
-                        applicationUrl = user.applicationUrl,
-                        description = "APG Transaction Booking",
-                        companyId = user.companyId,
-                        createdBy = user.createdBy,
-                        userBranchId = (short)user.BranchId,
-                        userIPAddress = user.userIPAddress
-                    };
 
-                    DebitAccount((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, casa, contingentLoanRecord.CONTINGENTAMOUNT, null, basicPostInputs);
-                    twoFactorAuthDetails.skipAuthentication = true;
-                }
+                /* DEBIT B&G CUSTOMER WHERE PRODUCT DOES NOT ALLOW FUND USAGE */
+                var casa = context.TBL_CASA.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID).FirstOrDefault();
+                var basicPostInputs = new BasicTrasactionSourceInputModel
+                {
+                    sourceApplicationId = (short)contingentLoanRecord.CONTINGENTLOANID,
+                    applicationUrl = user.applicationUrl,
+                    description = "APG Transaction Booking",
+                    companyId = user.companyId,
+                    createdBy = user.createdBy,
+                    userBranchId = (short)user.BranchId,
+                    userIPAddress = user.userIPAddress
+                };
+
+                PostContingentLiabilityPrincipalEntry((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, contingentLoanRecord, contingentLoanRecord.CONTINGENTAMOUNT, basicPostInputs);
+                twoFactorAuthDetails.skipAuthentication = true;
+
 
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
                 loanScheduleModel.operationId = contingentLoanRecord.OPERATIONID;
@@ -4523,7 +4525,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanViewModel GetLoan(int loanId)
         {
-            return (from data in context.TBL_LOAN
+            var dataRecord = (from data in context.TBL_LOAN
                     where data.TERMLOANID == loanId
                     select new LoanViewModel()
                     {
@@ -4564,8 +4566,8 @@ namespace FintrakBanking.Repositories.Credit
                         nostroAccountId = data.NOSTROACCOUNTID,
                         nostroRateAmount =  data.NOSTRORATEAMOUNT,
                         nostroRateCodeId = data.NOSTRORATECODEID,
+                        crmsRepaymentAgreementTypeId = data.CRMSREPAYMENTAGREEMENTID,
                         
-
                         approvedAmount = data.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
 
                         operationId = data.OPERATIONID,
@@ -4581,10 +4583,15 @@ namespace FintrakBanking.Repositories.Credit
                         profileLoan = data.PROFILELOAN,
                         dischargeLetter = data.DISCHARGELETTER,
                         suspendInterest = data.SUSPENDINTEREST,
-                        //customerSensitivityLevelId = data.CUSTOMERSENSITIVITYLEVELID,
                         createdBy = data.CREATEDBY,
                         dateTimeCreated = data.DATETIMECREATED
                     }).FirstOrDefault();
+
+            if(dataRecord.operationId == (short)OperationsEnum.ForeignExchangeLoanBooking)
+            {
+                dataRecord.casaAccountId2 = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == dataRecord.nostroAccountId).FirstOrDefault()?.CUSTOMACCOUNTID;
+            }
+            return dataRecord;
         }
 
         public IEnumerable<LoanViewModel> FindLoan(string referenceNumberOrName, int companyId)
@@ -8124,7 +8131,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private void DebitAccount(int debitGLId, int creditGLId, TBL_CASA casa, decimal chargeAmount, int? debitAccountId, BasicTrasactionSourceInputModel basicInput)
+        private void PostContingentLiabilityPrincipalEntry(int debitGLId, int creditGLId, TBL_LOAN_CONTINGENT loan, decimal chargeAmount, BasicTrasactionSourceInputModel basicInput)
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
@@ -8133,7 +8140,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.description = basicInput.description;
             debit.valueDate = generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
-            debit.currencyId = casa.CURRENCYID;
+            debit.currencyId = loan.CURRENCYID;
             debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, basicInput.companyId).sellingRate;
             debit.isApproved = true;
             debit.postedBy = basicInput.createdBy;
@@ -8145,18 +8152,18 @@ namespace FintrakBanking.Repositories.Credit
             debit.batchCode = transactionCode;
             debit.glAccountId = debitGLId; // (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
             debit.sourceReferenceNumber = transactionCode;
-            debit.casaAccountId = debitAccountId;
+            debit.casaAccountId = null;
             debit.debitAmount = chargeAmount;
             debit.creditAmount = 0;
             debit.sourceBranchId = basicInput.userBranchId;
-            debit.destinationBranchId = casa.BRANCHID;
+            debit.destinationBranchId = loan.BRANCHID;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             credit.operationId = (int)OperationsEnum.CreditBureauSearch;
             credit.description = basicInput.description;
             credit.valueDate = generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
-            credit.currencyId = casa.CURRENCYID;
+            credit.currencyId = loan.CURRENCYID;
             credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, basicInput.companyId).sellingRate;
             credit.isApproved = true;
             credit.postedBy = basicInput.createdBy;
