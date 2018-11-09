@@ -6,12 +6,25 @@ using Microsoft.Owin.Security.OAuth;
 using Owin;
 using FintrakBanking.APICore.Providers;
 using System.Configuration;
-
+using FintrakBanking.Interfaces.Setups.General;
+using FintrakBanking.Interfaces.Admin;
 
 namespace FintrakBanking.APICore
 {
     public partial class Startup
     {
+        public Startup()
+        {
+
+        }
+        private readonly IGeneralSetupRepository _setup;
+        private readonly IAuditTrailRepository _auditTrail;
+
+        public Startup(IGeneralSetupRepository setup, IAuditTrailRepository auditTrail)
+        {
+            _setup = setup;
+            _auditTrail = auditTrail;
+        }
         public static OAuthAuthorizationServerOptions OAuthOptions { get; private set; }
 
         public static string PublicClientId { get; private set; }

@@ -5028,6 +5028,7 @@ namespace FintrakBanking.Repositories.Customer
                            where b.CUSTOMERBVN == bvn
                            select new CustomerRelatedDirectorViewModel
                            {
+                               customerCode =a.CUSTOMERCODE,
                                customerId = a.CUSTOMERID,
                                customerName = a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME,
                                customerTypeId = a.CUSTOMERTYPEID,
@@ -5041,6 +5042,7 @@ namespace FintrakBanking.Repositories.Customer
                                       where c.CUSTOMERBVN == bvn
                                       select new CustomerRelatedDirectorViewModel
                                       {
+                                          customerCode = a.CUSTOMERCODE,
                                           customerId = a.CUSTOMERID,
                                           customerName = a.FIRSTNAME + " " + a.MIDDLENAME + " " + a.LASTNAME,
                                           customerTypeId = a.CUSTOMERTYPEID,

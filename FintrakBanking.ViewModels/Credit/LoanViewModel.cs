@@ -99,6 +99,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? casaAccountId2 { get; set; }
         public short? crmsRepaymentAgreementTypeId { get; set; }
         public int loanApplicationId { get; set; }
+        public int? loanReviewApplicationId { get; set; }
+
         public int loanApplicationDetailId { get; set; }
        
         public short branchId { get; set; }
@@ -587,6 +589,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short? productScheduleTypeId { get; set; }
         public short? productDealTypeId { get; set; }
         public short? productDayCountConventionId { get; set; }
+        public string lmsApplicationReferenceNumber { get; set; }
+        public int? loanReviewApplicationId { get; set; }
 
         public int? loanReviewOperationId { get; set; }
 
@@ -903,6 +907,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public DateTime date { get; set; }
 
+        public DateTime? pastDueDate { get; set; }
+
+        public int ? gracePeriod { get; set; }
         public short dayCountConventionId { get; set; }
 
         public double dailyAccuralAmount { get; set; }
