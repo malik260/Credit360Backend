@@ -13,6 +13,9 @@ using static FintrakBanking.Repositories.Credit.LoanApplicationRepository;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels;
 using FintrakBanking.Interfaces;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Common.Enum;
+using FintrakBanking.Repositories.Admin;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -20,13 +23,15 @@ namespace FintrakBanking.Repositories.Setups.General
     public class AuthenticationRepository : IAuthenticationRepository
     {
         private FinTrakBankingContext context;
+        private  IAuditTrailRepository _auditTrail;
 
         TBL_PROFILE_SETTING profile_Setting;
 
-        public AuthenticationRepository(FinTrakBankingContext _context)
+        public AuthenticationRepository(FinTrakBankingContext _context, IAuditTrailRepository auditTrail)
         {
             this.context = _context;
             profile_Setting = _context.TBL_PROFILE_SETTING.FirstOrDefault();
+            _auditTrail = auditTrail != null ? auditTrail : new AuditTrailRepository(_context);
         }
 
         public async Task<bool> CreateUser(UserViewModel user)
@@ -292,6 +297,7 @@ namespace FintrakBanking.Repositories.Setups.General
             {
                 if (data == null)
                 {
+                    
                     throw new SecureException("1001 Login Failure.");
                 }
 
@@ -337,16 +343,62 @@ namespace FintrakBanking.Repositories.Setups.General
             var data = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == userName);
             if (data != null)
             {
+              var  loginInfo = GetUserLoginInfoByUserName(userName);
+
+                var audit = new TBL_AUDIT()
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
+                    STAFFID = loginInfo.staffId,
+                    BRANCHID = (short)context.TBL_STAFF.Where(x=>x.STAFFID== loginInfo.staffId).Select(x=>x.BRANCHID).FirstOrDefault(),
+                    DETAIL = $"{loginInfo.username} - This account is LOCKED",
+                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    //URL = Request.RequestUri.AbsoluteUri,
+                     APPLICATIONDATE =context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = -1
+                };
+
+                _auditTrail.AddAuditTrail(audit);
+                context.SaveChanges();
+
                 return data.isLocked;
             }
             throw new SecureException("1001 Login Failure.");
         }
+
+        //public bool IsAccountLocked(string userName)
+        //{
+        //    var data = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == userName);
+        //    if (data != null)
+        //    {
+        //        return data.isLocked;
+        //    }
+        //    throw new SecureException("1001 Login Failure.");
+        //}
 
         public bool IsAccountActive(string userName)
         {
             var data = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == userName);
             if (data != null)
             {
+                var loginInfo = GetUserLoginInfoByUserName(userName);
+
+                var audit = new TBL_AUDIT()
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
+                    STAFFID = loginInfo.staffId,
+                    BRANCHID = (short)context.TBL_STAFF.Where(x => x.STAFFID == loginInfo.staffId).Select(x => x.BRANCHID).FirstOrDefault(),
+                    DETAIL = $"{loginInfo.username} - This account is INACTIVE",
+                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    //URL = Request.RequestUri.AbsoluteUri,
+                    APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = -1
+                };
+
+                _auditTrail.AddAuditTrail(audit);
+                context.SaveChanges();
+
                 return data.isActive;
             }
 
@@ -399,6 +451,23 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
             }
 
+            var loginInfo = GetUserLoginInfoByUserName(userName);
+
+            var audit = new TBL_AUDIT()
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
+                STAFFID = loginInfo.staffId,
+                BRANCHID = (short)context.TBL_STAFF.Where(x => x.STAFFID == loginInfo.staffId).Select(x => x.BRANCHID).FirstOrDefault(),
+                DETAIL = $"{loginInfo.username} - You cannot resume now.",
+                IPADDRESS = CommonHelpers.GetUserIP(),
+                //URL = Request.RequestUri.AbsoluteUri,
+                APPLICATIONDATE = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = -1
+            };
+
+            _auditTrail.AddAuditTrail(audit);
+            context.SaveChanges();
             throw new SecureException("You cannot resume now.");
         }
 
@@ -519,7 +588,7 @@ namespace FintrakBanking.Repositories.Setups.General
             return context.TBL_PROFILE_GROUP;
         }
 
-        public IEnumerable<UserViewModel> GetAllUsers()
+        public IQueryable<UserViewModel> GetAllUsers()
         {
             return (from u in context.TBL_PROFILE_USER
                     join st in context.TBL_STAFF
@@ -598,7 +667,34 @@ namespace FintrakBanking.Repositories.Setups.General
 
         }
 
+        public UserViewModel GetUserLoginInfoByUserName(string userName)
+        {
+            return (from u in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF
+                    on u.STAFFID equals st.STAFFID
+                    where u.USERNAME.ToLower() == userName.ToLower()
+                    select new UserViewModel()
+                    {
+                        user_id = u.USERID,
+                        staffId = u.STAFFID,
+                        username = u.USERNAME,
+                        isActive = u.ISACTIVE,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        email = st.EMAIL,
+                        password = u.PASSWORD,
+                        securityQuestion = u.SECURITYQUESTION,
+                        securityAnswer = u.SECURITYANSWER,
+                        groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
+                                    .Select(x => new UserGroupId
+                                    {
+                                        groupId = x.GROUPID,
+                                        groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
+                                    }).ToList(),
+                        isLocked = u.ISLOCKED,
+                        sessionTimeout = this.profile_Setting.SESSIONTIMEOUT
+                    }).FirstOrDefault();
 
+        }
 
         public bool ClearLoginToken(string userName)
         {

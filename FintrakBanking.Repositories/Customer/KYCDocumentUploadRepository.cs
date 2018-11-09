@@ -17,14 +17,16 @@ namespace FintrakBanking.Repositories.Customer
     public class KYCDocumentUploadRepository : IKYCDocumentUploadRepository
     {
         private FinTrakBankingDocumentsContext context;
+        private FinTrakBankingContext _finContext;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
 
-        public KYCDocumentUploadRepository(FinTrakBankingDocumentsContext _context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public KYCDocumentUploadRepository(FinTrakBankingDocumentsContext _context, IGeneralSetupRepository general, IAuditTrailRepository audit, FinTrakBankingContext finContext)
         {
             this.context = _context;
             this.general = general;
             this.audit = audit;
+            this._finContext = finContext;
         }
 
         #region KYC Document Upload
@@ -178,8 +180,29 @@ namespace FintrakBanking.Repositories.Customer
             return context.SaveChanges() == 0 ? 1 : 2;
 
         }
-        public CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId, bool isProductBased)
+        public CheckListDocumentUploadViewModel CheckListDocumentUploadViewModel(int definitionId, int statusId, int detailId, bool isProductBased, int? customerId=null,int? checkListItemId = null, int? checkListTypeId=null, DateTime ? checklistDate = null)
         {
+            if (checkListTypeId == (int)CheckTypeEnum.RegulatoryChecklist)
+            {
+                var creditBureauId = _finContext.TBL_CREDIT_BUREAU.Where(o => o.CHECKLISTITEMID == checkListItemId).Select(o=>o.CREDITBUREAUID).FirstOrDefault();
+                if (creditBureauId!=null)
+                {
+                    var customerCreditBureauId = (from q in _finContext.TBL_CUSTOMER_CREDIT_BUREAU 
+                                                  where q.CREDITBUREAUID == creditBureauId && q.CUSTOMERID == customerId && q.DATETIMECREATED <= checklistDate.Value
+                                                  orderby q.CUSTOMERCREDITBUREAUID descending
+                                                  select q.CUSTOMERCREDITBUREAUID).FirstOrDefault();
+
+                    var checklistDoc = (from ck in context.TBL_CUSTOMER_CREDIT_BUREAU
+                                        where ck.CUSTOMERCREDITBUREAUID == customerCreditBureauId                                        
+                                        select new CheckListDocumentUploadViewModel()
+                                        {
+                                            fileData = ck.FILEDATA,
+                                            fileName = ck.FILENAME,
+                                            fileExtension = ck.FILEEXTENSION
+                                        }).FirstOrDefault();
+                    return checklistDoc;
+                }
+            }
 
             if (isProductBased)
             {

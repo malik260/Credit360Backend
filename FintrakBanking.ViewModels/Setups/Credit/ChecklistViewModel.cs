@@ -20,6 +20,10 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string targetTypeName { get; set; }
         public string targetName { get; set; }
         public string checkListDefinitionItemName { get; set; }
+        public short checkListTypeId { get; set; }
+        public int checkListItemId { get; set; }
+        public int customerId { get; set; }
+        public DateTime checklistDate { get; set; }
     }
 
     public class ChecklistDefinitionViewModel : GeneralEntity
@@ -116,5 +120,6 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int? approvalLevelId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
+        public DateTime checklistDate { get; set; }
     }
 }
