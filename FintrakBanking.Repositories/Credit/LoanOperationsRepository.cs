@@ -970,7 +970,7 @@ namespace FintrakBanking.Repositories.Credit
                     var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / item.daysInAYear) * item.availableBalance);
 
                     dailyAccrual.DAILYACCURALAMOUNT = accuralAmount;
-                    dailyAccrual.DAILYACCURALAMOUNT2 = 0;
+                    dailyAccrual.DAILYACCURALAMOUNT2 = 0;                    
 
                     if (item.pastDueDate.HasValue && item.gracePeriod.HasValue)
                     {
@@ -3522,9 +3522,16 @@ namespace FintrakBanking.Repositories.Credit
                                    where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
                                    && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest && a.REPAYMENTPOSTEDSTATUS == false
                                    && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                   select a.DAILYACCURALAMOUNT).Sum();
-           
-            return pastDueInterest;
+                                   select a.DAILYACCURALAMOUNT);
+
+            decimal output = 0;
+
+            if (pastDueInterest.Any())
+            {
+                output = pastDueInterest.Sum();
+            }
+
+            return output;
         }
 
         private decimal GetPeriodInterestOnPastDuePrincipalAmount(string loanRefNo, int companyId)
@@ -3533,9 +3540,16 @@ namespace FintrakBanking.Repositories.Credit
                                     where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
                                     && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal && a.REPAYMENTPOSTEDSTATUS == false
                                     && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                    select a.DAILYACCURALAMOUNT).Sum();
+                                    select a.DAILYACCURALAMOUNT);
 
-            return pastDuePrincipal;
+            decimal output = 0;
+
+            if (pastDuePrincipal.Any())
+            {
+                output = pastDuePrincipal.Sum();
+            }
+
+            return output;
         }
 
         private decimal GetPeriodInterestOnPastDuePrincipalAndInterestAmount(string referenceNumber, int companyId)

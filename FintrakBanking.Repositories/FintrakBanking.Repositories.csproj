@@ -108,11 +108,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial">
-<<<<<<< HEAD
-      <HintPath>..\..\..\Users\CoreBankingDevServer\Desktop\XLeratorDLL-financial.dll</HintPath>
-=======
       <HintPath>C:\Program Files (x86)\WestClinTech LLC\XLeratorDLL-financial\XLeratorDLL-financial.dll</HintPath>
->>>>>>> 0fbebbaa10bb53ed56ae5933805e559a8098a592
     </Reference>
   </ItemGroup>
   <ItemGroup>
