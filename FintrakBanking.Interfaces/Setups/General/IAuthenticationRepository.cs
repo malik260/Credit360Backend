@@ -4,12 +4,13 @@ using FintrakBanking.ViewModels.Setups.General;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FintrakBanking.ViewModels;
+using System.Linq;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
     public interface IAuthenticationRepository
     {
-        IEnumerable<UserViewModel> GetAllUsers();
+        IQueryable<UserViewModel> GetAllUsers();
 
         UserViewModel GetSingleUser(int userId);
 
@@ -53,5 +54,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool ValidatePasswordPolicy(string password);
 
         bool ValidateOldPassword(string username, string oldPassword);
+
+        UserViewModel GetUserLoginInfoByUserName(string userName);
     }
 }

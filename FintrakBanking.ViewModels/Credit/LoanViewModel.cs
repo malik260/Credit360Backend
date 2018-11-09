@@ -907,6 +907,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public DateTime date { get; set; }
 
+        public DateTime? pastDueDate { get; set; }
+
+        public int ? gracePeriod { get; set; }
         public short dayCountConventionId { get; set; }
 
         public double dailyAccuralAmount { get; set; }

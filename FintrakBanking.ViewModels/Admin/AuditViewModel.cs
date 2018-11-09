@@ -25,4 +25,20 @@ namespace FintrakBanking.ViewModels.Admin
         public string ipAddress { get; set; }
         public string logo { get; set; }
     }
+
+    public class LoggingActivities
+    {
+        public string names { get; set; }
+        public string userName { get; set; }
+        public bool isUserLocked { get; set; }
+        public int? failedLoggingAttempts { get; set; }
+        public bool isUserActive { get; set; }
+        public DateTime? deactivatedDate { get; set; }
+        public DateTime? lastLogginDate { get; set; }
+        public DateTime? lastLogOutDate { get; set; }
+        public DateTime? dateCreated { get; set; }
+        public string approvalStatus { get; set; }
+        public string branchName { get; set; }
+        public string branchCode { get; set; }
+    }
 }

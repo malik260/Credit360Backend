@@ -667,9 +667,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/WeeklyRecoveryReportForFINCON.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
+         public string GetLoggingStatus(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
 
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoggingStatus.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&loginStatus=" + dateRange.loginStatus + "&branchCode=" + dateRange.branchCode;
+            return path; 
+        }
 
-        //GetCashCollaterizedCredits
 
         public string GetCashCollaterizedCredits(DateRange dateRange)
         {
