@@ -1506,7 +1506,18 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLoanApplicationDetailsByReference(string reference)
         {
             var data = repo.GetLoanApplicationDetailsByReference(reference, token.GetCompanyId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+
+            var id = 0;
+            foreach (var d in data) {
+                id = d.loanApplicationId;
+                break;
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new {
+                success = true,
+                result = data,
+                count = data.Count(),
+                loanApplicationId = id
+            });
         }
 
         [HttpGet]
@@ -1515,6 +1526,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLoanApplicationDetailFields(int id)
         {
             var data = repo.GetLoanApplicationDetailFields(id);
+
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
         }
 
