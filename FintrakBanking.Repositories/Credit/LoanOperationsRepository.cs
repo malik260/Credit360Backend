@@ -11521,6 +11521,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
                             join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
+                            join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                             join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -11540,6 +11541,7 @@ namespace FintrakBanking.Repositories.Credit
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
+                                loanReviewApplicationId = e.LOANAPPLICATIONID,
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
@@ -11642,6 +11644,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
                                      join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
+                                     join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -11660,6 +11663,7 @@ namespace FintrakBanking.Repositories.Credit
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
+                                         loanReviewApplicationId = e.LOANAPPLICATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -15422,6 +15426,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
+                        join e in context.TBL_LMSR_APPLICATION on l.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                         join ln in context.TBL_LOAN_REVIEW_OPERATION on l.LOANREVIEWAPPLICATIONID equals ln.LOANREVIEWAPPLICATIONID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.LOANREVIEWOPERATIONID equals atrail.TARGETID
@@ -15435,6 +15440,8 @@ namespace FintrakBanking.Repositories.Credit
                         && l.OPERATIONPERFORMED == true
                         select new CamProcessedLoanViewModel
                         {
+                            lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+                            loanReviewApplicationId = e.LOANAPPLICATIONID,
                             tenor = ln.TENOR ?? 0,
                             reviewDetails = ln.REVIEWDETAILS,
                             newinterestRate = ln.INTERATERATE,
