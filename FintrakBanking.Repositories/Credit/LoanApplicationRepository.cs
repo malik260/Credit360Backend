@@ -1436,6 +1436,25 @@ namespace FintrakBanking.Repositories.Credit
 
             fields.invoiceDetails = invoiceDetails;
 
+            var bondDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_BG where a.LOANAPPLICATIONDETAILID == detailId
+                        select new BondsAndGuranty
+                        {
+                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                            principalId = a.PRINCIPALID,
+                            bondAmount = a.AMOUNT,
+                            bondCurrencyId = a.CURRENCYID,
+                            contractStartDate = a.CONTRACT_STARTDATE,
+                            contractEndDate = a.CONTRACT_ENDDATE,
+                            isTenored = a.ISTENORED,
+                            isBankFormat = a.ISBANKFORMAT,
+                            casaAccountId = a.CASAACCOUNTID,
+                            referenceNo = a.REFERENCENO,
+
+                        }).FirstOrDefault();
+
+            fields.bondDetails = bondDetails;
+
+
             return fields;
         }
 
@@ -3560,7 +3579,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
                             proposedProductId = b.PROPOSEDPRODUCTID,
                             productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
-                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            productClassId = (short?)b.TBL_PRODUCT.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",
