@@ -6953,10 +6953,12 @@ namespace FintrakBanking.Repositories.Credit
                                        //orderby b.DATECREATED descending
                                        select new LoanViewModel
                                        {
+                                           loanReviewApplicationId = e.LOANAPPLICATIONID,
                                            loanId = a.REVOLVINGLOANID,
                                            customerId = a.CUSTOMERID,
                                            customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                           lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
                                            applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                            loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
                                            interestRate = a.INTERESTRATE,
@@ -8015,10 +8017,12 @@ namespace FintrakBanking.Repositories.Credit
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
                                    {
+                                       loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        loanId = a.CONTINGENTLOANID,
                                        customerId = a.CUSTOMERID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       lmsApplicationReferenceNumber=e.APPLICATIONREFERENCENUMBER,
                                        applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                        loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
                                        //interestRate = a.INTERESTRATE,
@@ -8775,12 +8779,14 @@ namespace FintrakBanking.Repositories.Credit
                 var applicationDate = generalSetup.GetApplicationDate();
                 var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                             join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
+                            join e in context.TBL_LMSR_APPLICATION on l.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                             join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                             join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                             where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
                             && l.OPERATIONPERFORMED == false && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                             select new CamProcessedLoanViewModel
                             {
+                                loanReviewApplicationId = e.LOANAPPLICATIONID,
                                 approvalStatusId = (short)m.APPROVALSTATUSID,
                                 loanApplicationId = m.LOANAPPLICATIONID,
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
@@ -8788,7 +8794,7 @@ namespace FintrakBanking.Repositories.Credit
                                 applicationStatusId = m.APPLICATIONSTATUSID,
                                 customerId = m.CUSTOMERID ?? 0,
                                 customerCode = c.CUSTOMERCODE,
-
+                                lmsApplicationReferenceNumber= e.APPLICATIONREFERENCENUMBER,
                                 customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                                 customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
                                 customerGroupName = m.CUSTOMERGROUPID.HasValue ? m.TBL_CUSTOMER_GROUP.GROUPNAME : "",
@@ -8962,6 +8968,7 @@ namespace FintrakBanking.Repositories.Credit
                                    //orderby b.DATECREATED descending
                                    select new LoanViewModel
                                    {
+                                       loanReviewApplicationId=e.LOANAPPLICATIONID,
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -9103,6 +9110,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                        select new LoanViewModel
                                        {
+                                           loanReviewApplicationId = b.LOANAPPLICATIONID,
                                            loanId = a.TERMLOANID,
                                            customerId = a.CUSTOMERID,
                                            customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -9201,6 +9209,7 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
+                                   join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join ln in context.TBL_LOAN_REVIEW_OPERATION on b.LOANREVIEWAPPLICATIONID equals ln.LOANREVIEWAPPLICATIONID //on b.LOANID equals ln.LOANID
                                    join atrail in context.TBL_APPROVAL_TRAIL on ln.LOANREVIEWOPERATIONID equals atrail.TARGETID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
@@ -9217,6 +9226,8 @@ namespace FintrakBanking.Repositories.Credit
                                    && ln.OPERATIONCOMPLETED == false && b.OPERATIONPERFORMED == true
                                    select new LoanViewModel
                                    {
+                                       lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+                                       loanReviewApplicationId = e.LOANAPPLICATIONID,
                                        currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                        newTenor = ln.TENOR ?? 0,
                                        operationPerformed = ln.REVIEWDETAILS,
