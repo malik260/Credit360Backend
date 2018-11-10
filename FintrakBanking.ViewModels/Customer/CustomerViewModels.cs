@@ -183,7 +183,8 @@ namespace FintrakBanking.ViewModels.Customer
             public string customerTypeName { get; set; }
             public short? directorTypeId { get; set; }
             public string directorTypeName { get; set; }
-          //  public int customerTypeId { get; set; }
-          //  public string customerTypeName { get; set; }
-        }
+        public string customerCode { get; set; }
+        //  public int customerTypeId { get; set; }
+        //  public string customerTypeName { get; set; }
+    }
     }
