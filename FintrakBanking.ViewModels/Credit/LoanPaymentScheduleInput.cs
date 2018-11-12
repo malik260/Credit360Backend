@@ -168,6 +168,11 @@ namespace FintrakBanking.ViewModels.Credit
         public short maturityInstructionTypeId { get; set; }
         public decimal pastDueInterestAmount { get; set; }
         public decimal pastDuePrincipalAmount { get; set; }
+
+        public decimal interestOnPastDueInterest { get; set; }
+
+        public decimal interestOnPastDuePrincipal { get; set; }
+
         public int? casaAccountId2 { get; set; }
 
 

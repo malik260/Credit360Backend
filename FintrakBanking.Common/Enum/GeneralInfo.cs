@@ -269,7 +269,8 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityTermination = 246,
         facilityBookingReferedBack = 247,
         lineAmountChange = 248,
-        maturityInstruction = 249
+        maturityInstruction = 249,
+        LoginFailed = 250,
     };
    public enum RegulatoryTypeEnum
     {

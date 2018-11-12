@@ -22,7 +22,7 @@ namespace FintrakBanking.APICore.Filters
             context.Exception.Data["validation_error_message"] = String.Empty;
             if (context.Exception.InnerException != null) innerException = context.Exception.InnerException.Message;
 
-            var x = context.Exception.InnerException.GetType();
+            //var x = context.Exception.InnerException.GetType();
 
             if (context.Exception is SecureException || context.Exception is AggregateException)
             {
