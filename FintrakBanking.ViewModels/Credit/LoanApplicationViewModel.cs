@@ -106,6 +106,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string lastName { get; set; }
         public int groupRoleId { get; set; }
         public string accountNumber { get; set; }
+        public string accountNumber2 { get; set; }
         public string applicationStatus { get; set; }
         public string relatedReferenceNumber { get; set; }
         public int? toStaffId { get; set; }

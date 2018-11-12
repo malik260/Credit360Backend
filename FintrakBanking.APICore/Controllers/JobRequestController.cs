@@ -222,7 +222,21 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-request-approval-status")]
+        public HttpResponseMessage GetJobRequestApprovaStatus()
+        {
+            var data = repo.GetJobRequestApprovaStatus();
+
+            if (data == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/comments/{jobRequestId}")]
         public HttpResponseMessage GetJobComments(int jobRequestId)
         {

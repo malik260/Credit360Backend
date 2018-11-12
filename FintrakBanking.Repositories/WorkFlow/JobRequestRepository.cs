@@ -806,6 +806,18 @@ namespace FintrakBanking.Repositories.WorkFlow
             return data;
         }
 
+        public IEnumerable<ApprovalStatusViewModel> GetJobRequestApprovaStatus()
+        {
+            var data = (from x in context.TBL_JOB_REQUEST_STATUS
+                        select new ApprovalStatusViewModel
+                        {
+                            approvalStatusId = x.REQUESTSTATUSID,
+                            approvalStatusName = x.STATUSNAME
+                        });
+
+            return data;
+        }
+
         public IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId)
         {
             var operationId = (int)OperationsEnum.CAM;
