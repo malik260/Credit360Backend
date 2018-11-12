@@ -2873,6 +2873,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, int casaAccountId, int casaAccountId2)
         {
+
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -3351,7 +3352,7 @@ namespace FintrakBanking.Repositories.Credit
                     userIPAddress = user.userIPAddress
                 };
 
-                PostContingentLiabilityPrincipalEntry((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, contingentLoanRecord, contingentLoanRecord.CONTINGENTAMOUNT, basicPostInputs);
+                PostContingentLiabilityPrincipalEntry((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, contingentLoanRecord, contingentLoanRecord.CONTINGENTAMOUNT, basicPostInputs, twoFactorAuthDetails);
                 twoFactorAuthDetails.skipAuthentication = true;
 
 
@@ -8257,12 +8258,12 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        private void PostContingentLiabilityPrincipalEntry(int debitGLId, int creditGLId, TBL_LOAN_CONTINGENT loan, decimal chargeAmount, BasicTrasactionSourceInputModel basicInput)
+        private void PostContingentLiabilityPrincipalEntry(int debitGLId, int creditGLId, TBL_LOAN_CONTINGENT loan, decimal chargeAmount, BasicTrasactionSourceInputModel basicInput,TwoFactorAutheticationViewModel twoFactorAuth)
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-            debit.operationId = (int)OperationsEnum.CreditBureauSearch;
+            debit.operationId = (int)OperationsEnum.ContigentLoanBooking;
             debit.description = basicInput.description;
             debit.valueDate = generalSetup.GetApplicationDate();
             debit.transactionDate = debit.valueDate;
@@ -8285,7 +8286,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.destinationBranchId = loan.BRANCHID;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-            credit.operationId = (int)OperationsEnum.CreditBureauSearch;
+            credit.operationId = (int)OperationsEnum.ContigentLoanBooking;
             credit.description = basicInput.description;
             credit.valueDate = generalSetup.GetApplicationDate();
             credit.transactionDate = credit.valueDate;
@@ -8311,7 +8312,7 @@ namespace FintrakBanking.Repositories.Credit
 
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
-            financeTransaction.PostTransaction(inputTransactions);
+            financeTransaction.PostTransaction(inputTransactions,false, twoFactorAuth);
         }
 
         //private void ReverseDebit(int debitGLId, int creditGLId, TBL_CASA casa, decimal chargeAmount, int? creditAccountId, BasicTrasactionSourceInputModel basicInput)

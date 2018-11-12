@@ -130,7 +130,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             var applicationDate = general.GetApplicationDate();
 
             data.ISACKNOWLEDGED = true;
-            data.REQUESTSTATUSID = 3;
+            data.REQUESTSTATUSID = (short)model?.statusId;
+            data.JOB_STATUS_FEEDBACKID = (short)model.rejectionReasonId;
             data.RESPONSECOMMENT = model.responseComment;
             data.RESPONSEDATE = applicationDate;
             data.SYSTEMRESPONSEDATE = DateTime.Now;
@@ -1358,6 +1359,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             jb.createdBy = model.createdBy;
             jb.companyId = model.companyId;
             jb.userBranchId = model.userBranchId;
+            jb.statusId = (short)model?.statusId;
+            jb.rejectionReasonId = (short)model?.rejectionReasonId;
+
             ReplyJobRequest(jb, jb.jobRequestId);
 
             // Audit Section ---------------------------
