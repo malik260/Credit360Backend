@@ -1154,7 +1154,50 @@ namespace FintrakBanking.Repositories.Credit
             detail.LOANPURPOSE = update.loanPurpose;
             detail.PRODUCTPRICEINDEXID = update.productPriceIndexId;
             detail.PRODUCTPRICEINDEXRATE = update.productPriceIndexRate;
+            detail.CASAACCOUNTID = update.casaAccountId;
+            detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
+            detail.CURRENCYID = update.currencyId;
 
+            var productClassId = detail.TBL_PRODUCT.PRODUCTCLASSID;
+
+            if (productClassId == (int)ProductClassEnum.InvoiceDiscountingFacility && update.invoiceDetails.Any())
+            {
+                var inv = context.TBL_LOAN_APPLICATION_DETL_INV.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+                var upd = update.invoiceDetails.FirstOrDefault();
+
+                inv.PRINCIPALID = upd.principalId;
+                inv.INVOICE_CURRENCYID = upd.invoiceCurrencyId;
+                inv.INVOICE_AMOUNT = upd.invoiceAmount;
+                inv.CONTRACT_STARTDATE = upd.contractStartDate;
+                inv.CONTRACT_ENDDATE = upd.contractEndDate;
+
+                inv.CONTRACTNO = upd.contractNo;
+                inv.PURCHASEORDERNUMBER = upd.purchaseOrderNumber;
+                inv.CERTIFICATENO = upd.certificateNumber;
+                inv.INVOICENO = upd.invoiceNo;
+                inv.INVOICE_DATE = upd.invoiceDate;
+                inv.INVOICE_AMOUNT = upd.invoiceAmount;
+            }
+
+            if (productClassId == (int)ProductClassEnum.BondAndGuarantees)
+            {
+                throw new SecureException("BondAndGuarantees!");
+            }
+
+            if (productClassId == (int)ProductClassEnum.FirstTrader)
+            {
+                throw new SecureException("FirstTrader!");
+            }
+
+            if (productClassId == (int)ProductClassEnum.ImportFinance)
+            {
+                throw new SecureException("ImportFinance!");
+            }
+
+            if (productClassId == (int)ProductClassEnum.FirstEdu)
+            {
+                throw new SecureException("FirstEdu!");
+            }
 
             if (context.SaveChanges() == 0) throw new SecureException("Nothing was updated!");
 
@@ -1344,6 +1387,7 @@ namespace FintrakBanking.Repositories.Credit
             var fields = new LoanApplicationDetailViewModel();
 
             var d = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == detailId);
+            //var inv = context.TBL_LOAN_APPLICATION_DETL_INV.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == detailId);
 
             fields = new LoanApplicationDetailViewModel
             {
@@ -1366,8 +1410,50 @@ namespace FintrakBanking.Repositories.Credit
                 crmsFundingSourceCategory = d.CRMSFUNDINGSOURCECATEGORY,
                 productPriceIndexId = d.PRODUCTPRICEINDEXID,
                 productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
+                
                 tenorModeId = 1,
             };
+
+            var invoiceDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_INV where a.LOANAPPLICATIONDETAILID == detailId
+                       select new InvoiceDetailViewModel
+                       {
+                           invoiceId = a.INVOICEID,
+                           loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                           principalId = a.PRINCIPALID,
+                           principalName = a.TBL_LOAN_PRINCIPAL.NAME,
+                           invoiceNo = a.INVOICENO,
+                           contractNo = a.CONTRACTNO,
+                           invoiceDate = a.INVOICE_DATE,
+                           invoiceAmount = a.INVOICE_AMOUNT,
+                           invoiceCurrencyId = a.INVOICE_CURRENCYID,
+                           invoiceCurrencyName = a.TBL_CURRENCY.CURRENCYNAME,
+                           contractStartDate = a.CONTRACT_STARTDATE,
+                           contractEndDate = a.CONTRACT_ENDDATE,
+                           approvalStatusId = a.APPROVALSTATUSID,
+                           purchaseOrderNumber = a.PURCHASEORDERNUMBER,
+                           productClassId = (int)ProductClassEnum.InvoiceDiscountingFacility
+                       }).ToList();
+
+            fields.invoiceDetails = invoiceDetails;
+
+            var bondDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_BG where a.LOANAPPLICATIONDETAILID == detailId
+                        select new BondsAndGuranty
+                        {
+                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                            principalId = a.PRINCIPALID,
+                            bondAmount = a.AMOUNT,
+                            bondCurrencyId = a.CURRENCYID,
+                            contractStartDate = a.CONTRACT_STARTDATE,
+                            contractEndDate = a.CONTRACT_ENDDATE,
+                            isTenored = a.ISTENORED,
+                            isBankFormat = a.ISBANKFORMAT,
+                            casaAccountId = a.CASAACCOUNTID,
+                            referenceNo = a.REFERENCENO,
+
+                        }).FirstOrDefault();
+
+            fields.bondDetails = bondDetails;
+
 
             return fields;
         }
@@ -3493,7 +3579,7 @@ namespace FintrakBanking.Repositories.Credit
                             customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
                             proposedProductId = b.PROPOSEDPRODUCTID,
                             productClassProcessId = b.TBL_LOAN_APPLICATION.PRODUCT_CLASS_PROCESSID,
-                            productClassId = (short?)b.TBL_LOAN_APPLICATION.PRODUCTCLASSID,
+                            productClassId = (short?)b.TBL_PRODUCT.PRODUCTCLASSID,
                             customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
                             branchName = a.TBL_BRANCH.BRANCHNAME,
                             customerGroupId = (int?)a.CUSTOMERGROUPID,//.HasValue ? a.TBL_CUSTOMER_GROUP.GROUPNAME : "",

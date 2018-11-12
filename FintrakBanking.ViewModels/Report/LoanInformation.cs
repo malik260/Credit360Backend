@@ -91,6 +91,11 @@ namespace FintrakBanking.ViewModels.Reports
         public string current { get; set; }
         public string businessGroup { get; set; }
         public int loanTenor { get; set; }
+        public decimal pastDuePrincipal { get; set; }
+        public decimal pastDueInterest { get; set; }
+        public decimal interestOnPastDuePrincipal { get; set; }
+        public decimal interestOnPastDueInterest { get; set; }
+        public string crmsCode { get; set; }
     }
 
     public class DateRange

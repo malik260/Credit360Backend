@@ -120,16 +120,17 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
                 bool result = false;
-                var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+                //var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
 
-                var scheduledLoan = (from a in context.TBL_LOAN_SCHEDULE_DAILY
-                                     join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                                     join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
-                                     join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                var scheduledLoan = (//from a in context.TBL_LOAN_SCHEDULE_DAILY
+                                     from b in context.TBL_LOAN //on a.LOANID equals b.TERMLOANID
+                                     //join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
+                                     //join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
                                      join e in context.TBL_PRODUCT on b.PRODUCTID equals e.PRODUCTID
                                      join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
-                                     where a.DATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                     && a.PAYMENTDATE == c.PAYMENTDATE
+                                     where b.LOANSTATUSID == (short)LoanStatusEnum.Active && DbFunctions.TruncateTime(applicationDate) <= b.MATURITYDATE
+                                     //a.DATE == DbFunctions.TruncateTime(applicationDate) &&
+                                     //&& a.PAYMENTDATE == c.PAYMENTDATE
                                      //&&
                                      //(f.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
 
@@ -141,15 +142,15 @@ namespace FintrakBanking.Repositories.Credit
                                          companyId = b.COMPANYID,
                                          currencyId = b.CURRENCYID,
                                          //exchangeRate = b.EXCHANGERATE,
-                                         interestRate = a.INTERESTRATE,
+                                         interestRate = b.INTERESTRATE, //a.INTERESTRATE
                                          date = applicationDate,
                                          //dailyAccuralAmount = (double)a.DAILYINTERESTAMOUNT,
                                          availableBalance = b.OUTSTANDINGPRINCIPAL,
-                                         mainAmount = c.PERIODINTERESTAMOUNT,
+                                         mainAmount = b.OUTSTANDINGPRINCIPAL, //c.PERIODINTERESTAMOUNT
                                          categoryId = (short)DailyAccrualCategory.TermLoan,
                                          transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
                                          baseReferenceNumber = null,
-                                         dayCountConventionId = d.DAYCOUNTCONVENTIONID,
+                                         dayCountConventionId = b.SCHEDULEDAYCOUNTCONVENTIONID,
 
                                      }).ToList().Select(x =>
                                      {
@@ -970,7 +971,7 @@ namespace FintrakBanking.Repositories.Credit
                     var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / item.daysInAYear) * item.availableBalance);
 
                     dailyAccrual.DAILYACCURALAMOUNT = accuralAmount;
-                    dailyAccrual.DAILYACCURALAMOUNT2 = 0;
+                    dailyAccrual.DAILYACCURALAMOUNT2 = 0;                    
 
                     if (item.pastDueDate.HasValue && item.gracePeriod.HasValue)
                     {
@@ -3119,7 +3120,7 @@ namespace FintrakBanking.Repositories.Credit
                              companyId = b.COMPANYID,
                              currencyId = b.CURRENCYID,
                              exchangeRate = b.EXCHANGERATE,
-                             periodInterestAmount = b.OUTSTANDINGINTEREST,
+                             //periodInterestAmount = b.OUTSTANDINGINTEREST,
                              periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
                              interestRate = b.INTERESTRATE,
                              paymentDate = applicationDate,
@@ -3128,6 +3129,10 @@ namespace FintrakBanking.Repositories.Credit
                              casaAccountId = b.CASAACCOUNTID,
                              loanRefNo = b.LOANREFERENCENUMBER,
                              casaAccountId2 = b.CASAACCOUNTID2,
+                         }).ToList().Select(x =>
+                         {
+                             x.periodInterestAmount = GetPeriodInterestAmountFromAccural(x.loanRefNo, x.companyId);
+                             return x;
                          }).ToList();
 
             //var commercialLoan = (from b in context.TBL_LOAN
@@ -3516,18 +3521,41 @@ namespace FintrakBanking.Repositories.Credit
             return interestAmount;
         }
 
+        private decimal GetPeriodInterestAmountFromAccural(string loanRefNo, int companyId)
+        {
+            var interestAmount = (from a in context.TBL_DAILY_ACCRUAL
+                                   where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
+                                   && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan && a.REPAYMENTPOSTEDSTATUS == false
+                                   && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                   select a.DAILYACCURALAMOUNT);
+
+            decimal output = 0;
+
+            if (interestAmount.Any())
+            {
+                output = interestAmount.Sum();
+            }
+
+            return output;
+        }
+
+
         private decimal GetPeriodInterestOnPastDueInterestAmount(string loanRefNo, int companyId)
         {
-          
-             var   pastDueInterest = (from a in context.TBL_DAILY_ACCRUAL
-                                       where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
-                                       && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest && a.REPAYMENTPOSTEDSTATUS == false
-                                       && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                       select a.DAILYACCURALAMOUNT).Sum();
+            var pastDueInterest = (from a in context.TBL_DAILY_ACCRUAL
+                                   where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
+                                   && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest && a.REPAYMENTPOSTEDSTATUS == false
+                                   && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                   select a.DAILYACCURALAMOUNT);
 
-                return pastDueInterest;
-           
-            
+            decimal output = 0;
+
+            if (pastDueInterest.Any())
+            {
+                output = pastDueInterest.Sum();
+            }
+
+            return output;
         }
 
         private decimal GetPeriodInterestOnPastDuePrincipalAmount(string loanRefNo, int companyId)
@@ -3565,20 +3593,15 @@ namespace FintrakBanking.Repositories.Credit
 
             var interest = context.TBL_DAILY_ACCRUAL.Where(x => x.REFERENCENUMBER == referenceNumber && x.COMPANYID == companyId && x.REPAYMENTPOSTEDSTATUS == false);
 
-            decimal interestAmount = 0;
+            decimal output = 0;
 
-            if (interest.Count() > 0)
+            if (pastDuePrincipal.Any())
             {
-                interestAmount = interest.Sum(x => x.DAILYACCURALAMOUNT);
-            }
-            else
-            {
-                interestAmount = 0;
+                output = pastDuePrincipal.Sum();
             }
 
-
-            return interestAmount;
-        }
+            return output;
+        }       
 
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
         {
@@ -5957,7 +5980,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var systemDate = generalSetup.GetApplicationDate();
                 var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
-                //DeleteLoanExist(loanId, systemDate);
+                DeleteLoanExist(loanId, systemDate);
                 ArchiveOverDraft(loanId, archiveBatchCode);
                 var model = (from a in context.TBL_LOAN_REVOLVING
                              join b in context.TBL_LOAN_REVIEW_OPERATION on a.REVOLVINGLOANID equals b.LOANID
@@ -11721,6 +11744,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
                             join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
+                            join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                             join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                             join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -11740,6 +11764,7 @@ namespace FintrakBanking.Repositories.Credit
                             orderby op.DATECREATED descending
                             select new LoanReviewOperationApprovalViewModel
                             {
+                                loanReviewApplicationId = e.LOANAPPLICATIONID,
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
@@ -11842,6 +11867,7 @@ namespace FintrakBanking.Repositories.Credit
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
                                      join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
+                                     join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -11860,6 +11886,7 @@ namespace FintrakBanking.Repositories.Credit
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
+                                         loanReviewApplicationId = e.LOANAPPLICATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -15622,6 +15649,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                         join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
+                        join e in context.TBL_LMSR_APPLICATION on l.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                         join ln in context.TBL_LOAN_REVIEW_OPERATION on l.LOANREVIEWAPPLICATIONID equals ln.LOANREVIEWAPPLICATIONID
                         join m in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals m.LOANAPPLICATIONID
                         join atrail in context.TBL_APPROVAL_TRAIL on ln.LOANREVIEWOPERATIONID equals atrail.TARGETID
@@ -15635,6 +15663,8 @@ namespace FintrakBanking.Repositories.Credit
                         && l.OPERATIONPERFORMED == true
                         select new CamProcessedLoanViewModel
                         {
+                            lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+                            loanReviewApplicationId = e.LOANAPPLICATIONID,
                             tenor = ln.TENOR ?? 0,
                             reviewDetails = ln.REVIEWDETAILS,
                             newinterestRate = ln.INTERATERATE,
