@@ -3571,38 +3571,7 @@ namespace FintrakBanking.Repositories.Credit
            
         }
 
-        private decimal GetPeriodInterestOnPastDuePrincipalAndInterestAmount(string referenceNumber, int companyId)
-        {
-            ////TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
-
-            ////dailyAccrual.REFERENCENUMBER = item.referenceNumber;
-            ////dailyAccrual.PRODUCTID = item.productId;
-            ////dailyAccrual.BRANCHID = item.branchId;
-            ////dailyAccrual.EXCHANGERATE = item.exchangeRate;
-            ////dailyAccrual.CURRENCYID = item.currencyId;
-            ////dailyAccrual.INTERESTRATE = item.interestRate;
-            ////dailyAccrual.DATE = item.date;
-            ////dailyAccrual.DAILYACCURALAMOUNT = (decimal)Math.Abs((decimal)(item.dailyAccuralAmount / item.daysInAYear) * item.availableBalance);
-            ////dailyAccrual.MAINAMOUNT = item.mainAmount;
-            ////dailyAccrual.CATEGORYID = item.categoryId;
-            ////dailyAccrual.COMPANYID = item.companyId;
-            ////dailyAccrual.DAYCOUNTCONVENTIONID = item.dayCountConventionId;
-            ////dailyAccrual.BASEREFERENCENUMBER = item.baseReferenceNumber;
-            ////dailyAccrual.TRANSACTIONTYPEID = item.transactionTypeId;
-            ////dailyAccrual.REPAYMENTPOSTEDSTATUS = false;
-
-            var interest = context.TBL_DAILY_ACCRUAL.Where(x => x.REFERENCENUMBER == referenceNumber && x.COMPANYID == companyId && x.REPAYMENTPOSTEDSTATUS == false);
-
-            decimal output = 0;
-
-            if (pastDuePrincipal.Any())
-            {
-                output = pastDuePrincipal.Sum();
-            }
-
-            return output;
-        }       
-
+        
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
         {
 
