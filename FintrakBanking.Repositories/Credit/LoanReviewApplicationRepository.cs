@@ -265,7 +265,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var detail in model.applicationDetails)
             {
 
-                if (model.operationId == (int)OperationsEnum.CommercialLoanSubAllocation)
+                if (detail.operationId == (int)OperationsEnum.CommercialLoanSubAllocation)
                 {
                     result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
 
@@ -273,9 +273,10 @@ namespace FintrakBanking.Repositories.Credit
                         throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
 
                 }
-                else if (model.operationId == (int)OperationsEnum.OverdraftSubAllocation)
+                else if (detail.operationId == (int)OperationsEnum.OverdraftSubAllocation)
                 {
                     result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
+
                     if (result == false)
                         throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
                 }
