@@ -9,6 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+//using FinTrakBanking.ThirdPartyIntegration.Customer;
+using System.Threading.Tasks;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FinTrakBanking.ThirdPartyIntegration.Customer;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
@@ -461,6 +465,28 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return false;
         }
+
         #endregion
+
+
+
+
+
+        public async Task<List<CustomerTurnoverViewModels>> TestTurnover()
+        {
+            var api = new CustomerTransaction(context);
+
+            return await api.GetCustomerTransactions("", 2);//.ToString();
+        }
+
+        public async Task<List<CustomerTurnoverInterestViewModels>> TestTurnoverInterest(InputVM body)
+        {
+            var api = new CustomerTransaction(context);
+
+            return await api.GetCustomerInterestTransactions(body);//.ToString();
+        }
+
     }
+
+
 }

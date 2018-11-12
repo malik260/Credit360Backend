@@ -35,7 +35,7 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
 
     }
 
-    public class CustomerIntegrationViewModels 
+    public class CustomerTransactionViewModels 
     {
         public int customerId { get; set; }
         public string customerCode { get; set; }
@@ -156,8 +156,44 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string lastChangedDate { get; set; }
         public string interestRateAmount { get; set; }
         public string interestTableCode { get; set; }
-
-
     }
 
+    public class CustomerTurnoverViewModels // TEMPORARY LOCATION
+    {
+        public string foracid { get; set; }
+        public string cusT_ID { get; set; }
+        public string schM_TYPE { get; set; }
+        public string period { get; set; }
+        public decimal? miN_DEBIT_BALANCE { get; set; }
+        public decimal? maX_DEBIT_BALANCE { get; set; }
+        public decimal? miN_CREDIT_BALANCE { get; set; }
+        public decimal? maX_CREDIT_BALANCE { get; set; }
+        public decimal? debiT_TURNOVER { get; set; }
+        public decimal? crediT_TURNOVER { get; set; }
+        public string smS_ALERT { get; set; }
+        public string amc { get; set; }
+        public string vat { get; set; }
+        public string managemenT_FEE { get; set; }
+        public string commitmenT_FEES { get; set; }
+        public string coM_CONTINGENT_LIAB { get; set; }
+        public string lC_COMMISION { get; set; }
+    }
+
+    public class CustomerTurnoverInterestViewModels
+    {
+        public string as_Of_Date { get; set; } // "1/31/2018 12:00:00 AM",
+        public string account_Number { get; set; } // "2013995959",
+        public string acct_Type { get; set; } // "Loan",
+        public string float_Charge { get; set; } // "2081981.94",
+        public string interest { get; set; } // "2909416.54",
+        public string account_Name { get; set; } // "FORTE OIL PLC",
+        public string cif_Id { get; set; } // "230009868"
+    }
+
+    public class InputVM
+    {
+        public int cifid { get; set; }
+        public DateTime fromdate { get; set; }
+        public DateTime todate { get; set; }
+    }
 }

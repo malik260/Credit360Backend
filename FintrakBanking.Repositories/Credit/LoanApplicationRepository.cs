@@ -943,7 +943,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-
             if (loan.relationshipOfficerId != 0)
             {
                 var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
@@ -1098,6 +1097,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail
             };
+
             if (isGroupLoan)
             {
                 loanData.CUSTOMERGROUPID = loan.customerGroupId;

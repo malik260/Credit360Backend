@@ -122,6 +122,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
             }
         }
+
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/loan-search")]
         public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)

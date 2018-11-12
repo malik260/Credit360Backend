@@ -73,7 +73,7 @@
 
 
 
-                CustomerIntegrationViewModels customerViewModels = new CustomerIntegrationViewModels();
+                CustomerTransactionViewModels customerViewModels = new CustomerTransactionViewModels();
                 List<CustomerViewModels> customers = new List<CustomerViewModels>();
                 ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
@@ -83,7 +83,7 @@
                 responseDateTime = DateTime.Now;
                 if (response.IsSuccessStatusCode)
                 { 
-                    customerViewModels = await response.Content.ReadAsAsync<CustomerIntegrationViewModels>();
+                    customerViewModels = await response.Content.ReadAsAsync<CustomerTransactionViewModels>();
 
                     customers.Add(new CustomerViewModels
                     {

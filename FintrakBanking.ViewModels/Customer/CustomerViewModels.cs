@@ -186,4 +186,7 @@ namespace FintrakBanking.ViewModels.Customer
           //  public int customerTypeId { get; set; }
           //  public string customerTypeName { get; set; }
         }
-    }
+
+
+
+}

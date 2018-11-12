@@ -1,6 +1,8 @@
 ﻿using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.Interfaces.Setups.General
 {
@@ -21,6 +23,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<LanguageViewModel> GetLanguages();
 
         IEnumerable<NatureOfBusinessViewModel> GetNatureOfBusiness();
+
         //bool DeleteAccount(short accountId);
 
         byte[] GetCompanyLogoArray(int conpanyId);
@@ -35,5 +38,10 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool ValidateCompanyDirectorEmail(int companyId, string email);
         bool ValidateCompanyDirectorBVN(int companyId, string bvn);
         #endregion
+
+        Task<List<CustomerTurnoverViewModels>> TestTurnover();
+
+        Task<List<CustomerTurnoverInterestViewModels>> TestTurnoverInterest(InputVM body);
+
     }
 }
