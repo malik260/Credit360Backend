@@ -8575,8 +8575,8 @@ namespace FintrakBanking.Repositories.Credit
                              join e in context.TBL_PRODUCT on b.PRODUCTID equals e.PRODUCTID
                              join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
                              where a.DATE == DbFunctions.TruncateTime(effectiveDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active && b.TERMLOANID == loanId
-                             && a.PAYMENTDATE == c.PAYMENTDATE &&
-                             (f.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
+                             && a.PAYMENTDATE == c.PAYMENTDATE
+                             // && (f.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
 
                              select new DailyInterestAccrualViewModel()
                              {
@@ -8597,34 +8597,34 @@ namespace FintrakBanking.Repositories.Credit
 
                              }).ToList();
 
-                var data2 = (from a in context.TBL_LOAN
-                             join e in context.TBL_PRODUCT on a.PRODUCTID equals e.PRODUCTID
-                             join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
-                             where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.TERMLOANID == loanId &&
-                              (f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
-                             && a.MATURITYDATE == DbFunctions.TruncateTime(effectiveDate)
+                //var data2 = (from a in context.TBL_LOAN
+                //             join e in context.TBL_PRODUCT on a.PRODUCTID equals e.PRODUCTID
+                //             join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
+                //             where a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.TERMLOANID == loanId &&
+                //              (f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan || f.PRODUCTTYPEID == (short)LoanProductTypeEnum.ForeignXRevolving)
+                //             && a.MATURITYDATE == DbFunctions.TruncateTime(effectiveDate)
 
 
-                             select new DailyInterestAccrualViewModel()
-                             {
-                                 referenceNumber = a.LOANREFERENCENUMBER,
-                                 productId = a.PRODUCTID,
-                                 branchId = a.BRANCHID,
-                                 companyId = a.COMPANYID,
-                                 currencyId = a.CURRENCYID,
-                                 exchangeRate = a.EXCHANGERATE,
-                                 interestRate = a.INTERESTRATE,
-                                 date = effectiveDate,
-                                 dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365) * (DateDiff(effectiveDate, applicationDate) - 1),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
-                                 mainAmount = a.PRINCIPALAMOUNT,
-                                 categoryId = f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan ? (short)DailyAccrualCategory.CommercialLoan : (short)DailyAccrualCategory.FXRevolvingLoan,/// change to commercial paper 
-                                 availableBalance = a.PRINCIPALAMOUNT,
-                                 transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
-                                 baseReferenceNumber = null,
-                                 dayCountConventionId = 0,
-                             }).ToList();
+                //             select new DailyInterestAccrualViewModel()
+                //             {
+                //                 referenceNumber = a.LOANREFERENCENUMBER,
+                //                 productId = a.PRODUCTID,
+                //                 branchId = a.BRANCHID,
+                //                 companyId = a.COMPANYID,
+                //                 currencyId = a.CURRENCYID,
+                //                 exchangeRate = a.EXCHANGERATE,
+                //                 interestRate = a.INTERESTRATE,
+                //                 date = effectiveDate,
+                //                 dailyAccuralAmount = ((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365) * (DateDiff(effectiveDate, applicationDate) - 1),//((a.INTERESTRATE / 100) * (double)a.PRINCIPALAMOUNT * 1 / 365),
+                //                 mainAmount = a.PRINCIPALAMOUNT,
+                //                 categoryId = f.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan ? (short)DailyAccrualCategory.CommercialLoan : (short)DailyAccrualCategory.FXRevolvingLoan,/// change to commercial paper 
+                //                 availableBalance = a.PRINCIPALAMOUNT,
+                //                 transactionTypeId = (byte)LoanTransactionTypeEnum.Interest,
+                //                 baseReferenceNumber = null,
+                //                 dayCountConventionId = 0,
+                //             }).ToList();
 
-                List<DailyInterestAccrualViewModel> data = data1.Union(data2).ToList();
+                List<DailyInterestAccrualViewModel> data = data1.ToList(); //data1.Union(data2).ToList();
 
                 List<TBL_DAILY_ACCRUAL> transAccrual = new List<TBL_DAILY_ACCRUAL>();
 
