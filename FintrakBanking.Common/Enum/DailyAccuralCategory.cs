@@ -10,10 +10,10 @@ namespace FintrakBanking.Common.Enum
         AuthorisedOverdraft = 2,
         UnauthorisedOverdraft = 3,
         PastDuePrincipal  = 4,
-        CreditCards = 5,
+        //CreditCards = 5,
         PastDueInterest  = 6,
-        CommercialLoan = 7,
-        FXRevolvingLoan = 8,
+        //CommercialLoan = 7,
+        //FXRevolvingLoan = 8,
         Fee = 9,
         Tax = 10,
     }
