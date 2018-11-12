@@ -34,8 +34,26 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-
-                return GetTermLoan().Concat(GetRevolvingLoan());
+                var gerlist = GetTermLoan();
+                var rev = GetRevolvingLoan();
+                var res = gerlist.ToList().Concat(rev.ToList());
+                var test = GetTermLoan().Concat(GetRevolvingLoan());
+                return test;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        public IEnumerable<LoanViewModel> GetAllLoans()
+        {
+            try
+            {
+                var gerlist = GetTermLoan();
+                var rev = GetRevolvingLoan();
+                var res = gerlist.ToList().Concat(rev.ToList());
+                //var test = GetTermLoan().Concat(GetRevolvingLoan());
+                return res;
             }
             catch (Exception ex)
             {
@@ -69,6 +87,8 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<LoanViewModel> GetTermLoan()
         {
             var allFilteredLoan = (from a in context.TBL_LOAN
+                                   //join lmsd in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals lmsd.LOANID
+                                   //join lms in context.TBL_LMSR_APPLICATION on lmsd.LOANAPPLICATIONID equals lms.LOANAPPLICATIONID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    join d in context.TBL_LOAN_APPLICATION_DETAIL  on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -112,6 +132,8 @@ namespace FintrakBanking.Repositories.Credit
         private IQueryable<LoanViewModel> GetRevolvingLoan()
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
+                                   //join lmsd in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals lmsd.LOANID
+                                   //join lms in context.TBL_LMSR_APPLICATION on lmsd.LOANAPPLICATIONID equals lms.LOANAPPLICATIONID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                                    join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
@@ -119,8 +141,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join f in context.TBL_LOAN_APPLICATION_TYPE on e.LOANAPPLICATIONTYPEID equals f.LOANAPPLICATIONTYPEID
                                    join g in context.TBL_PRODUCT on a.PRODUCTID equals g.PRODUCTID
                                    join h in context.TBL_CUSTOMER on a.CUSTOMERID equals h.CUSTOMERID
-                                   join i in context.TBL_CASA on a.CASAACCOUNTID equals i.CASAACCOUNTID
-                                   
+                                   join i in context.TBL_CASA on a.CASAACCOUNTID equals i.CASAACCOUNTID                                   
                                    where a.ISDISBURSED == true
                                    select new LoanViewModel
                                    {
@@ -138,7 +159,7 @@ namespace FintrakBanking.Repositories.Credit
                                        productTypeId = g.PRODUCTTYPEID,//a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = g.PRODUCTNAME,//a.TBL_PRODUCT.PRODUCTNAME,
                                        outstandingInterest = 0,
-                                       outstandingPrincipal = (decimal)i.OVERDRAFTAMOUNT,//(decimal)a.TBL_CASA.OVERDRAFTAMOUNT,
+                                       //outstandingPrincipal = (decimal)i.OVERDRAFTAMOUNT,//(decimal)a.TBL_CASA.OVERDRAFTAMOUNT,
                                        internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
                                        externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
                                        userPrudentialGuidelineStatusId = a.USER_PRUDENTIAL_GUIDE_STATUSID,
@@ -275,8 +296,8 @@ namespace FintrakBanking.Repositories.Credit
             credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
             credit.companyId = model.companyId;
 
-            var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId).PRINCIPALBALANCEGL2.Value;
-            credit.glAccountId = repaymentAccountGL;
+            var repaymentAccountGL = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == model.productId).PRINCIPALBALANCEGL2;
+            credit.glAccountId = (int)repaymentAccountGL;
             credit.sourceReferenceNumber = model.loanReferenceNumber;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
@@ -314,7 +335,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loanRecord != null)
                 {
                     loanRecord.USER_PRUDENTIAL_GUIDE_STATUSID = entity.prudentialGuidelineStatusId;
-                    LoanPerformancePosting(prudTypeId, termLoan);
+                    //LoanPerformancePosting(prudTypeId, termLoan);
                 }
 
             }
@@ -329,7 +350,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (revolvingLoanRecord != null)
                 {
                     revolvingLoanRecord.USER_PRUDENTIAL_GUIDE_STATUSID = entity.prudentialGuidelineStatusId;
-                    LoanPerformancePosting(prudTypeId,  revolvingLoan);
+                    //LoanPerformancePosting(prudTypeId,  revolvingLoan);
                 }
             }
             var audit = new TBL_AUDIT
