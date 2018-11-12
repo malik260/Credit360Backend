@@ -260,41 +260,28 @@ namespace FintrakBanking.Repositories.Credit
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
             int camOperationId = GetCamOperation(model.performanceTypeId);
-            
+            bool result = true;
+
             foreach (var detail in model.applicationDetails)
             {
 
-                if (detail.loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility && model.operationId == (int)OperationsEnum.CommercialLoanSubAllocation)
+                if (model.operationId == (int)OperationsEnum.CommercialLoanSubAllocation)
                 {
-                    var loanData = (from a in context.TBL_LOAN
-                                    join b in context.TBL_PRODUCT
-                                    on a.PRODUCTID equals b.PRODUCTID
-                                    where a.LOANAPPLICATIONDETAILID == detail.detailId
-                                    && b.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan
-                                    && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                    select a).ToList();
-                    if (loanData.Count < 2 || loanData == null)
+                    result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
+
+                    if (result == false)
                         throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
 
                 }
-                else if (detail.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility && model.operationId == (int)OperationsEnum.OverdraftSubAllocation)
+                else if (model.operationId == (int)OperationsEnum.OverdraftSubAllocation)
                 {
-                    var appplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == detail.detailId).Select(x => x.LOANAPPLICATIONID).FirstOrDefault();
-
-                    var loanData = (from a in context.TBL_LOAN_REVOLVING
-                                    join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                                    where b.LOANAPPLICATIONID == appplicationId
-                                    && a.MATURITYDATE >= context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
-                                    && a.LOANSTATUSID == (short)LoanStatusEnum.Active
-                                    select a).ToList();
-
-                    if (loanData.Count < 2 || loanData == null)
+                    result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
+                    if (result == false)
                         throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
                 }
-                
 
             }
-            
+
             var application = context.TBL_LMSR_APPLICATION.Add(new TBL_LMSR_APPLICATION
             {
                 APPLICATIONREFERENCENUMBER = referenceNumber,
@@ -373,8 +360,8 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
             throw new SecureException("An error occured while saving the data!");
         }
-        
-        
+
+
         public bool ValidateSubAllocationOperation(int loanApplicationDetailId, int customerId)
         {
 
