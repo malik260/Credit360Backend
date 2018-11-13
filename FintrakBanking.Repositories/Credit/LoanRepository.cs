@@ -5434,11 +5434,15 @@ namespace FintrakBanking.Repositories.Credit
                     operationId = (short)OperationsEnum.TermLoanBooking;
                 if (productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
                     operationId = (short)OperationsEnum.CommercialLoanBooking;
+                if (productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
+                    operationId = (short)OperationsEnum.RevolvingLoanBooking;
                 if (productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
                     operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
 
                 try
                 {
+                    if (entity.casaAccountId2 == 0) entity.casaAccountId2 = null;
+                    if (entity.casaAccountId == 0) entity.casaAccountId = null;
                     var request = new TBL_LOAN_BOOKING_REQUEST
                     {
                         AMOUNT_REQUESTED = entity.amount_Requested,

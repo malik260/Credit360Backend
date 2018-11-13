@@ -1155,12 +1155,13 @@ namespace FintrakBanking.Repositories.Credit
             var update = loan.LoanApplicationDetail.SingleOrDefault();
             if (update == null) throw new SecureException("Sequence contain not single! " + loan.LoanApplicationDetail.Count());
 
+
             // LEFT TO RIGHT MAPPING
             detail.SUBSECTORID = update.subSectorId;
             detail.PROPOSEDAMOUNT = update.proposedAmount;
             detail.PROPOSEDINTERESTRATE = (double)update.proposedInterestRate;
             detail.PROPOSEDPRODUCTID = update.proposedProductId;
-            detail.PROPOSEDTENOR = update.proposedTenor;
+            detail.PROPOSEDTENOR = ConvertTenorToDays(update.proposedTenor,update.tenorModeId);
             detail.REPAYMENTTERMS = update.repaymentTerm;
             detail.LOANPURPOSE = update.loanPurpose;
             detail.PRODUCTPRICEINDEXID = update.productPriceIndexId;
@@ -1168,6 +1169,7 @@ namespace FintrakBanking.Repositories.Credit
             detail.CASAACCOUNTID = update.casaAccountId;
             detail.EQUITYCASAACCOUNTID = update.equityCasaAccountId;
             detail.CURRENCYID = update.currencyId;
+            detail.TENORFREQUENCYTYPEID = update.tenorModeId;
 
             var productClassId = detail.TBL_PRODUCT.PRODUCTCLASSID;
 
@@ -1224,6 +1226,18 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() == 0) throw new SecureException("Nothing was updated!");
 
             return true;
+        }
+
+        private int ConvertTenorToDays(int proposedTenor, int tenorModeId)
+        {
+            int tenor = 0;
+            switch (tenorModeId)
+            {
+                case (int)TenorMode.Daily: tenor = proposedTenor; break;
+                case (int)TenorMode.Monthly: tenor = (proposedTenor * 365) / 12; break;
+                case (int)TenorMode.Yearly: tenor = (proposedTenor * 365); break;
+            }
+            return tenor;
         }
 
         private void UpdateLoanApplication(LoanApplicationViewModel loan)
@@ -1361,7 +1375,8 @@ namespace FintrakBanking.Repositories.Credit
                     FIELD2 = a.fieldTwo,
                     FIELD3 = a.fieldThree,
                     PRODUCTPRICEINDEXID = a.productPriceIndexId,
-                    PRODUCTPRICEINDEXRATE = a.productPriceIndexRate
+                    PRODUCTPRICEINDEXRATE = a.productPriceIndexRate,
+                    TENORFREQUENCYTYPEID = a.tenorModeId,
                 };
 
                 context.TBL_LOAN_APPLICATION_DETAIL.Add(data);
@@ -1433,7 +1448,7 @@ namespace FintrakBanking.Repositories.Credit
                 productPriceIndexId = d.PRODUCTPRICEINDEXID,
                 productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
                 
-                tenorModeId = 1,
+                tenorModeId = (int)d.TENORFREQUENCYTYPEID,
             };
 
             var invoiceDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_INV where a.LOANAPPLICATIONDETAILID == detailId

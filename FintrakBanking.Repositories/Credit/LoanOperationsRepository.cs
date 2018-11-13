@@ -15866,12 +15866,6 @@ namespace FintrakBanking.Repositories.Credit
                         return 4;
                     }
 
-
-
-
-                    // workFlow.LogForApproval(entity);
-                    // var b = workFlow.NextLevelId ?? 0;
-
                     workFlow.StaffId = userModel.staffId;
                     workFlow.CompanyId = userModel.companyId;
                     workFlow.StatusId = ((int)userModel.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)userModel.approvalStatusId;
