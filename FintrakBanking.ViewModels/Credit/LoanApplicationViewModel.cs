@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -201,6 +202,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string purchaseOrderNumber { get; set; }
         public string certificateNumber { get; set; }
     }
+
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
         public int applicationStatusPosition { get; set; }
@@ -354,6 +356,21 @@ namespace FintrakBanking.ViewModels.Credit
                 var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + " " + units;
+            }
+        }
+
+        public int proposedTenorInDays
+        {
+            get
+            {
+                int tenor = 0;
+                switch (tenorModeId)
+                {
+                    case (int)TenorMode.Daily: tenor = proposedTenor; break;
+                    case (int)TenorMode.Monthly: tenor = (proposedTenor * 365) / 12; break;
+                    case (int)TenorMode.Yearly: tenor = (proposedTenor * 365); break;
+                }
+                return tenor;
             }
         }
 
