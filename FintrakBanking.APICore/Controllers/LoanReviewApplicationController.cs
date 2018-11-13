@@ -152,8 +152,17 @@ namespace FintrakBanking.APICore.Controllers
             var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
-
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-review-application/loan-search-fee")]
+        public HttpResponseMessage LoanSearchFee([FromBody] SearchViewModel search)
+        {
+            var searchString = search.searchString.Trim();
+            //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+            var data = loanRepo.SearchForLoanAndRevolvingLoanFeeCharge(search.loanSystemTypeId, searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        }
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/forward-application")]
         public HttpResponseMessage ForwardApplication([FromBody] ForwardReviewViewModel model)
         {
