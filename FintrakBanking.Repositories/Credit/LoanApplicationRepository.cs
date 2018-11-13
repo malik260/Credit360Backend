@@ -872,10 +872,10 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
-                LoadCustomerTurnover(
-                    applicationId,
-                    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList()
-                );
+                //LoadCustomerTurnover(
+                //    applicationId,
+                //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList()
+                //);
 
                 return new LoanApplicationUpdateMessage
                 {
