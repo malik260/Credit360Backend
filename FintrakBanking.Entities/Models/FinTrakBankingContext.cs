@@ -216,6 +216,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_APPLICATION_STATUS> TBL_LOAN_APPLICATION_STATUS { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_TYPE> TBL_LOAN_APPLICATION_TYPE { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATION_COMMENT> TBL_LOAN_APPLICATION_COMMENT { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_TRANS> TBL_LOAN_APPLICATION_TRANS { get; set; }
+        public virtual DbSet<TBL_LOAN_APPLICATION_TRANS2> TBL_LOAN_APPLICATION_TRANS2 { get; set; }
         public virtual DbSet<TBL_LOAN_APPLICATN_DETL_MTRIG> TBL_LOAN_APPLICATN_DETL_MTRIG { get; set; }
         public virtual DbSet<TBL_LOAN_APPLTN_CREDIT_BUREAU> TBL_LOAN_APPLTN_CREDIT_BUREAU { get; set; }
         public virtual DbSet<TBL_LOAN_ARCHIVE> TBL_LOAN_ARCHIVE { get; set; }

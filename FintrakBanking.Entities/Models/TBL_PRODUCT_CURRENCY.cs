@@ -29,6 +29,7 @@ namespace FintrakBanking.Entities.Models
         public int? DELETEDBY { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
+        public short? DAYCOUNTCONVENTIONID { get; set; }
 
         public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
 

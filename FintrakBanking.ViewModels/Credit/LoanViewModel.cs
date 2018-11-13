@@ -48,7 +48,6 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-
         public string operationTypeName { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public int approvedTenor { get; set; }
@@ -206,8 +205,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanReviewOperationTypeId { get; set; }
         public string reviewDetails { get; set; }
         //.............Other Attributes................//
-        public int productTypeId { get; set; }
-
+        public int productTypeId { get; set; } 
+        public int? productClassId { get; set; }
         public string productTypeName { get; set; }
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
@@ -382,7 +381,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int customerId { get; set; }
         public short productId { get; set; }
         public int casaAccountId { get; set; }
-        public int? casaAccountId2  { get; set; }
+        //public int? casaAccountId2  { get; set; }
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
@@ -425,8 +424,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? nplDate { get; set; }
 
         //.............Other Attributes................//
-        public int productTypeId { get; set; }
-
+        public int productTypeId { get; set; } 
+        public int? productClassId { get; set; }
         public string productTypeName { get; set; }
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
@@ -479,13 +478,13 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal disbursableAmount { get; set; }
         public bool isBidbond { get; set; }
         public bool isOverdraft { get; set; }
-        public string casaAccountNumber { get; set; }
 
         public int loanId { get; set; }
         public int loanApplicationId { get; set; }
         public int customerId { get; set; }
         public short productId { get; set; }
         public int casaAccountId { get; set; }
+        public string casaAccountNumber { get; set; }
         public short branchId { get; set; }
         public short currencyId { get; set; }
         public double exchangeRate { get; set; }
@@ -519,8 +518,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short customerSensitivityLevelId { get; set; }
 
         //.............Other Attributes................//
-        public int productTypeId { get; set; }
-
+        public int productTypeId { get; set; } 
+        public int? productClassId { get; set; }
         public string productTypeName { get; set; }
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
@@ -557,8 +556,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanBookingRequestViewModel : GeneralEntity
     {
-        public bool? isUsed;
-        public string currencyCode;
+        public int casaAccountId { get; set; }
+        public int casaAccountId2 { get; set; }
+        public bool? isUsed { get; set; }
+        public string currencyCode { get; set; }
 
         public int loanBookingRequestId { get; set; }
 
@@ -639,6 +640,7 @@ namespace FintrakBanking.ViewModels.Credit
         public List<CasaViewModel> customerAccounts { get; set; }
         public int? appraisalMemorandumId { get; set; }
         public int? casaAccountId { get; set; }
+        public int? casaAccountId2 { get; set; }
         public string loanStatusName { get; set; }
         public string sectorName { get; set; }
         public string subSectorName { get; set; }

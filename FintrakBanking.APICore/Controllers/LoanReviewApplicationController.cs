@@ -143,8 +143,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/loan-search")]
         public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)

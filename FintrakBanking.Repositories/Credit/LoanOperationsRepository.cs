@@ -15356,7 +15356,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     op.LOANID = lmsApprovalRefRecord.LOANID;
                     op.LOANSYSTEMTYPEID = lmsApprovalRefRecord.LOANSYSTEMTYPEID;
-                    op.OPERATIONTYPEID = lmsApprovalRefRecord.OPERATIONID;
+                    op.OPERATIONTYPEID = userModel.operationId;
                     op.REVIEWDETAILS = "TenorChange";
                     op.TENOR = userModel.newTenor;
                     op.LOANREVIEWAPPLICATIONID = lmsApprovalRefRecord.LOANREVIEWAPPLICATIONID;
@@ -15397,8 +15397,8 @@ namespace FintrakBanking.Repositories.Credit
                                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                                 comment = "Please approve this CX/FX Operation",
                                 targetId = op.LOANREVIEWOPERATIONID,
-                                operationId = (int)OperationsEnum.TenorChange,
-                                BranchId = userModel.userBranchId,
+                                operationId = userModel.operationId,
+                            BranchId = userModel.userBranchId,
                                 externalInitialization = true
                             };
                             var response = workFlow.LogForApproval(entity);
@@ -16230,7 +16230,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 op.LOANID = lmsApprovalRecord.LOANID;
                 op.LOANSYSTEMTYPEID = lmsApprovalRecord.LOANSYSTEMTYPEID;
-                op.OPERATIONTYPEID = lmsApprovalRecord.OPERATIONID;
+                op.OPERATIONTYPEID = (int)model.operationId;
                 op.REVIEWDETAILS = "RollOver";
                 op.TENOR = model.newTenor;
                 op.MATURITYINSTRUCTIONTYPEID = (short)model.maturityInstructionId;
@@ -16273,7 +16273,7 @@ namespace FintrakBanking.Repositories.Credit
                             approvalStatusId = (int)ApprovalStatusEnum.Pending,
                             comment = "Please approve this Roll-Over Operation",
                             targetId = op.LOANREVIEWOPERATIONID,
-                            operationId = (int)OperationsEnum.MaturityInstruction,
+                            operationId = (int)model.operationId,
                             BranchId = model.userBranchId,
                             externalInitialization = true
                         };
@@ -16350,7 +16350,7 @@ namespace FintrakBanking.Repositories.Credit
 
             op.LOANID = lmsApprovalRecord.LOANID;
             op.LOANSYSTEMTYPEID = lmsApprovalRecord.LOANSYSTEMTYPEID;
-            op.OPERATIONTYPEID = lmsApprovalRecord.OPERATIONID;
+            op.OPERATIONTYPEID = (int)userModel.operationId;
             op.REVIEWDETAILS = "RollOver";
             op.TENOR = userModel.newTenor;
             op.MATURITYINSTRUCTIONTYPEID = (short)userModel.maturityInstructionId;
@@ -16395,7 +16395,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
                         comment = "Please approve this Roll-Over Operation",
                         targetId = op.LOANREVIEWOPERATIONID,
-                        operationId = (int)OperationsEnum.CommercialLoanRollOver,
+                        operationId = (int)userModel.operationId,
                         BranchId = userModel.userBranchId,
                         externalInitialization = true
                     };

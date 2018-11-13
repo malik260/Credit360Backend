@@ -11,7 +11,8 @@ namespace FintrakBanking.ViewModels.CASA
 
         public int itemId { get; set; }
         public string itemName { get; set; }
-        public string status { get; set; }
+        public string status { get; set; } 
+        public string reason { get; set; }
         public string customerCode { get; set; }
         public string customerName { get; set; }
         public string referenceNumber { get; set; }

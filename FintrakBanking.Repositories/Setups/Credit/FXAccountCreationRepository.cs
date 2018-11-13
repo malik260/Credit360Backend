@@ -385,7 +385,7 @@ namespace FintrakBanking.Repositories.Setups.Credit
                             addCustomerAcct.CUSTOMERID = customerInfo.CUSTOMERID;
                             addCustomerAcct.AVAILABLEBALANCE = 0;
                             addCustomerAcct.LEDGERBALANCE = 0;
-                            addCustomerAcct.PRODUCTACCOUNTNAME = "Foreign Account";
+                            addCustomerAcct.PRODUCTACCOUNTNAME = "FX Revolving Interest CAP Account";
                             addCustomerAcct.PRODUCTACCOUNTNUMBER = accountInfo.accountNumber;
                             addCustomerAcct.PRODUCTID = (short)DefaultProductEnum.CASA; ;
                             addCustomerAcct.COMPANYID = user.companyId;
