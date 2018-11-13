@@ -68,6 +68,7 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.APICore.Filters;
     using FintrakBanking.Interfaces.CRMS;
     using FintrakBanking.Repositories.CRMS;
+    using FintrakBanking.APICore.Providers;
 
     public static class NinjectWebCommon
     {
@@ -229,6 +230,7 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IDashboardRepository>().To<DashboardRepository>();
             kernel.Bind<ICRMSCodeBookRepository>().To<CRMSCodeBookRepository>();
             kernel.Bind<IAPIErrorLog>().To<APIErrorLog>();
+            kernel.Bind<ApplicationOAuthProvider>().To<ApplicationOAuthProvider>();
         }
 
     }

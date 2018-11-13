@@ -88,6 +88,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public int? loanReviewApplicationId { get; set; }
         public string currencyCode { get; set; }
         public bool isBankFormat { get; set; }
         public int companyId { get; set; }
@@ -237,6 +238,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public string lmsLoanReferenceNumber { get; set; }
         public DateTime? newMaturityDate { get; set; }
         public int? loanSystemTypeId { get; set; }
+        public int? maturityInstructionTypeId { get; set; }
     }
 
 
@@ -460,6 +462,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int tenor { get; set; }
         public short loanSystemTypeId { get; set; }
         public short approvalStatusId { get; set; }
+        public int? loanReviewOperationsId { get; set; }
 
     }
 }

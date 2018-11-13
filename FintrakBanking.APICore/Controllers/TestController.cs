@@ -34,11 +34,11 @@ namespace FintrakBanking.APICore.Controllers
             });
         }
 
-        [HttpPost]
-        [Route("turnover")]
-        public async Task<HttpResponseMessage> TestTurnoverInterestAsync([FromBody] InputVM body)
+        [HttpGet]
+        [Route("interest-turnover")]
+        public async Task<HttpResponseMessage> TestTurnoverInterestAsync()
         {
-            var t = await repo.TestTurnoverInterest(body);
+            var t = await repo.TestTurnoverInterest();
             return Request.CreateResponse(HttpStatusCode.OK, new
             {
                 success = true,
@@ -52,31 +52,31 @@ namespace FintrakBanking.APICore.Controllers
          * todate
          */
 
-        //[HttpGet]
-        //[Route("")]
-        //public HttpResponseMessage GetAllCompany()
-        //{
-        //    try
-        //    {
-        //        var companys = repo.GetAllCompany().ToList();
-        //        if (companys == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK,
-        //               new { success = false, result = companys, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new
-        //        {
-        //            success = true,
-        //            result = companys
+        [HttpGet]
+        [Route("")]
+        public HttpResponseMessage GetAllCompany()
+        {
+            try
+            {
+                var companys = repo.GetAllCompany().ToList();
+                if (companys == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, result = companys, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new
+                {
+                    success = true,
+                    result = companys
 
-        //        });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
+                });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
 
-        //}
+        }
     }
 
 }

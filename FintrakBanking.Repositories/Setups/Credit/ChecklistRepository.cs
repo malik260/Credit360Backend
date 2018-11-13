@@ -100,6 +100,7 @@ namespace FintrakBanking.Repositories.Credit
                                   itemDescription = k.ITEMDESCRIPTION,
                                   checklistStatusId = s.CHECKLISTSTATUSID,
                                   approvalLevelId = k.APPROVALLEVELID,
+                                  checklistDate = s.DATETIMECREATED,
                                   customerId = customerId,
 
                                   responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
@@ -130,6 +131,7 @@ namespace FintrakBanking.Repositories.Credit
                             itemDescription = a.ITEMDESCRIPTION,
                             productId = a.PRODUCTID,
                             approvalLevelId = a.APPROVALLEVELID,
+                            checklistDate = d.DATETIMECREATED,
                             customerId = customerId,
                             responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == d.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
                             Select(x => new CheckListStatusViewModel()
@@ -769,7 +771,7 @@ namespace FintrakBanking.Repositories.Credit
                              }).ToList();
             return checkList;
         }
-        public IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId, bool isCamChecklist)
+        public IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId, bool isCamChecklist,int? customerId=null)
         {
             var isproductBased = context.TBL_CHECKLIST_TYPE.Where(x => x.CHECKLIST_TYPEID == checkListtypeId).Select(k => k.ISPRODUCT_BASED).FirstOrDefault();
             if (isproductBased)
@@ -793,6 +795,10 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListValidationStatus1 = cl.CHECKLISTSTATUSID2,
                                      checkListValidationStatus2 = cl.CHECKLISTSTATUSID3,
                                      checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                     checkListTypeId = def.CHECKLIST_TYPEID,
+                                     checkListItemId = def.CHECKLISTITEMID,
+                                     customerId = customerId.Value,
+                                     checklistDate = cl.DATETIMECREATED,
                                      checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
                                  }).ToList();
                 if (isCamChecklist)
@@ -825,6 +831,10 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListValidationStatus1 = cl.CHECKLISTSTATUSID2,
                                      checkListValidationStatus2 = cl.CHECKLISTSTATUSID3,
                                      checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
+                                     checkListTypeId = def.CHECKLIST_TYPEID,
+                                     checkListItemId = def.CHECKLISTITEMID,
+                                     customerId = customerId.Value,
+                                     checklistDate = cl.DATETIMECREATED,
                                      checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
 
                                  }).ToList();

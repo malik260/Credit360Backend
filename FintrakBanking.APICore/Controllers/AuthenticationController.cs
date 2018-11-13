@@ -194,10 +194,10 @@ namespace FintrakBanking.APICore.Controllers
                     {
                         var audit1 = new TBL_AUDIT()
                         {
-                            AUDITTYPEID = (short)AuditTypeEnum.Loggedfailed,
+                            AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
                             STAFFID = found.staffId,
                             BRANCHID = (short)found.branchId,
-                            DETAIL = $"{user.username} logged failed",
+                            DETAIL = $"{user.username} login failed",
                             IPADDRESS = CommonHelpers.GetUserIP(),
                             URL = Request.RequestUri.AbsoluteUri,
                             APPLICATIONDATE = _genSetup.GetApplicationDate(),

@@ -1,6 +1,8 @@
 ﻿using FintrakBanking.Common;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.Setups.General;
 using FintrakBanking.ViewModels.Setups.General;
 using Microsoft.Owin.Security;
@@ -77,7 +79,7 @@ namespace FintrakBanking.APICore.Providers
                 };
                 ClaimsIdentity identity;
 
-                var authRepo = new AuthenticationRepository(_bankingContext);
+                var authRepo = new AuthenticationRepository(_bankingContext,null);
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 

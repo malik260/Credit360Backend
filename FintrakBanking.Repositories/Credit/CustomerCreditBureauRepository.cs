@@ -446,6 +446,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             XDSSearchResult resultData; // = new XDSSearchResult();
 
+
             if (searchInfoList.dateOfBirth != string.Empty && searchInfoList.dateOfBirth != null)
             {
                 var dateOfBirth = Convert.ToDateTime(searchInfoList.dateOfBirth);
@@ -614,6 +615,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
 
             chargeModel.feeAmount = chargeAmount;
             chargeModel.referenceNumber = referenceNumber;
@@ -697,7 +699,7 @@ namespace FintrakBanking.Repositories.Credit
                 catch (TimeoutException ex)
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message);
+                    throw new CustomTimeoutException(ex.Message);
                 }
                 catch (APIErrorException ex)
                 {
@@ -775,6 +777,7 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
 
             var chargeModel = new CreditBereauViewModel();
             chargeModel.feeAmount = chargeAmount;
@@ -914,19 +917,19 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 catch (APIErrorException ex)
                 {
-                    throw new APIErrorException(ex.ToString());
+                    throw new APIErrorException(ex.Message);
                 }
                 catch (TimeoutException ex)
                 {
-                    throw new ConditionNotMetException(ex.ToString());
+                    throw new TimeoutException(ex.Message);
                 }
                 catch (ConditionNotMetException ex)
                 {
-                    throw new ConditionNotMetException(ex.ToString());
+                    throw new ConditionNotMetException(ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    throw new SecureException(ex.ToString());
+                    throw new SecureException(ex.Message);
                 }
             }
         }
@@ -982,6 +985,8 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
+
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.feeAmount = chargeAmount;
             chargeModel.casaAccountId = casa.CASAACCOUNTID;
@@ -989,77 +994,71 @@ namespace FintrakBanking.Repositories.Credit
             byte[] binaryData = null;
             var response = new XDSSearchResult();
             var creditBureauProcess = new CreditBureauProcess();
-            try
+
+            var task = Task.Run(() => binaryData = creditBureauProcess.GetXDSFullSearchResultInPDF(searchInput));
+            if (task.Wait(TimeSpan.FromSeconds(2500)))
             {
-                var task = Task.Run(() => binaryData = creditBureauProcess.GetXDSFullSearchResultInPDF(searchInput));
+                if (binaryData == null)
+                    throw new SecureException("File report not found. Please try again.");
 
-                if (task.Wait(TimeSpan.FromSeconds(2500)))
+                using (var docTrans = docContext.Database.BeginTransaction())
+                using (var trans = context.Database.BeginTransaction())
                 {
-                    if (binaryData == null)
-                        throw new SecureException("File report not found. Please try again.");
-
-                    using (var docTrans = docContext.Database.BeginTransaction())
-                    using (var trans = context.Database.BeginTransaction())
+                    try
                     {
-                        try
+                        var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
+                        if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
                         {
-                            var customerCreditBureauId = AddCustomerCreditBureauCharge(searchInput.customerCreditBureauUploadDetails);
-                            if (!SaveCreditBureauReportFile(customerCreditBureauId, binaryData, searchInput))
-                            {
-                                response.fileSaved = false;
-                                response.errorOccured = true;
-                                response.status = 1;
-                                throw new SecureException("Could not save file");
-                            }
-                            else
-                            {
-                                response.file = binaryData;
-                                response.searchResult = Encoding.ASCII.GetString(binaryData);
-                                response.errorOccured = false;
-                                response.status = 0;
-                                response.fileSaved = true;
-                            }
-
-                            if (!searchInput.chargeBusiness) { DebitCustomer(chargeModel); }
-                                
-                            context.SaveChanges();
-                            trans.Commit();
-                            docTrans.Commit();
-
-                            return response;
+                            response.fileSaved = false;
+                            response.errorOccured = true;
+                            response.status = 1;
+                            throw new SecureException("Could not save file");
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            throw new SecureException(ex.Message.ToString());
+                            response.file = binaryData;
+                            response.searchResult = Encoding.ASCII.GetString(binaryData);
+                            response.errorOccured = false;
+                            response.status = 0;
+                            response.fileSaved = true;
                         }
+
+                        if (!searchInput.chargeBusiness) { DebitCustomer(chargeModel); }
+
+                        context.SaveChanges();
+                        trans.Commit();
+                        docTrans.Commit();
+
+                        return response;
+                    }
+                    catch (TimeoutException ex)
+                    {
+                        throw new ConditionNotMetException(ex.Message);
+                    }
+                    catch (APIErrorException ex)
+                    {
+                        throw new ConditionNotMetException(ex.Message);
+                    }
+                    catch (ConditionNotMetException ex)
+                    {
+                        throw new ConditionNotMetException(ex.Message);
+                    }
+                    catch (SecureException ex)
+                    {
+                        throw new SecureException(ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception(ex.Message);
                     }
                 }
-                else
-                {
-                    // ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
-                    throw new ConditionNotMetException("Search result Timed out");
-                }
             }
-            catch (TimeoutException ex)
+            else
             {
-                throw new ConditionNotMetException(ex.ToString());
+                // ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
+                throw new ConditionNotMetException("Search result Timed out");
             }
-            catch (APIErrorException ex)
-            {
-                throw new ConditionNotMetException(ex.ToString());
-            }
-            catch (ConditionNotMetException ex)
-            {
-                throw new ConditionNotMetException(ex.ToString());
-            }
-            catch (SecureException ex)
-            {
-                throw new SecureException(ex.ToString());
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.ToString());
-            }
+          
         }
 
         private bool SaveCreditBureauReportFile(int customerCreditBureauId, byte[] file, SearchInput model)

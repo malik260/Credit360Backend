@@ -18,7 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
-        bool SendBackToBookingModifier(LoanViewModel model);
+        LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
+        bool SendBackToBookingModifier(ApprovalViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
         decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
@@ -200,5 +201,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> GetCompletedLoan(string searchValue);
         bool GetChangeLoanStatusOfACompletedLoan(int loanId);
 
+        List<CustomerTurnoverViewModel> GetCustomerTurnover(List<int> customerIds); // OBIE (Page 4)
     }
 }

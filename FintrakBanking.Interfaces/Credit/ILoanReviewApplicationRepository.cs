@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? productClassId);
 
         SelectListViewModel GetAllSelectList();
-        bool validateCustomer(int loanApplicationDetailId, int customerId);
+        bool ValidateSubAllocationOperation(int loanApplicationDetailId, int customerId);
 
         string SubmitLoanReviewApplication(LoanReviewApplicationViewModel entity);
 
@@ -38,6 +38,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AppraisalReviewReferBack(ForwardViewModel entity);
         bool UpdateManagementPosition(ManagementPositionViewModel entity);
         ManagementPositionViewModel GetManagementPosition(int detailId);
+
+        bool ValidateNewSubAllocationOperation(int loanApplicationDetailId, int customerId, int loanSystemTypeId);
 
         List<LoanReviewOperationViewModel> GetLMSOperation(int loanId, short loansystemTypeId);
     }

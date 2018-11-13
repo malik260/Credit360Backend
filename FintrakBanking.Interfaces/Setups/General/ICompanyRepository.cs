@@ -28,7 +28,6 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         byte[] GetCompanyLogoArray(int conpanyId);
 
-
         #region Company Director
         IEnumerable<CompanyDirectorsViewModel> GetCompanyDirectors();
         IEnumerable<LookupViewModel> GetCompanyDirectorsByCompanyId(int companyId);
@@ -40,8 +39,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         #endregion
 
         Task<List<CustomerTurnoverViewModels>> TestTurnover();
-
-        Task<List<CustomerTurnoverInterestViewModels>> TestTurnoverInterest(InputVM body);
+        Task<List<CustomerTurnoverViewModels>> TestTurnoverInterest();
 
     }
 }

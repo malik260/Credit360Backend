@@ -45,6 +45,7 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(1000)]
         public string TOKEN { get; set; }
+        public int? CHECKLISTITEMID { get; set; }
 
         public virtual TBL_CHART_OF_ACCOUNT TBL_CHART_OF_ACCOUNT { get; set; }
 

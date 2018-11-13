@@ -21,20 +21,19 @@
     {
         public class CustomerDetails
         {
-
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
-            public CustomerDetails(
 
-            FinTrakBankingContext _context)
+            private static HttpClient httpClientInstance;
+            private HttpClientHandler handler = new HttpClientHandler();
+
+            public CustomerDetails(FinTrakBankingContext _context)
             {
                 this.context = _context;
                 var configdata = context.TBL_SETUP_COMPANY.FirstOrDefault();
                 API_KEY = configdata.APIKEY;
                 API_URL = configdata.APIURL;
             } 
-            private HttpClientHandler handler = new HttpClientHandler();
-            private static HttpClient httpClientInstance;
 
             public void Run()
             {
@@ -532,6 +531,133 @@
                 }
             }
 
+            public async Task<List<CustomerTurnoverViewModels>> GetCustomerTransactions(string cifid, int month)
+            {
+                //month = 48;
+                //cifid = "483008974";
+
+                var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={cifid}&Month={month}";
+
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                //
+                handler.UseDefaultCredentials = true;
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+                HttpClient client = new HttpClient(handler);
+                client.Timeout = TimeSpan.FromSeconds(60);
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Authorization = token;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                HttpResponseMessage response = null;
+                DateTime requestTime = new DateTime();
+                DateTime responseTime = new DateTime();
+
+                requestTime = DateTime.Now;
+                response = await client.GetAsync(endpointUrl);
+                responseTime = DateTime.Now;
+
+                List<CustomerTurnoverViewModels> result = null;
+                // var responseMessage = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode) result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModels>>();
+
+                handler.Dispose();
+                client.Dispose();
+
+                FintrakBankingDatabaseCustomerTurnoverOperations(
+                    endpointUrl,
+                    cifid,
+                    requestTime,
+                    responseTime,
+                    "Cif_Id={cifid}&Month={month}",
+                    response.Content.ReadAsStringAsync().Result,
+                    result
+                );
+
+                return result;
+            }
+
+            public async Task<List<CustomerTurnoverViewModels>> GetCustomerInterestTransactions(string cifid, int month)
+            {
+                //month = 48;
+                //cifid = "230009868";
+
+                var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails?Cif_Id={cifid}&Month={month}";
+
+                httpClientInstance = new HttpClient();
+                httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
+                //
+                handler.UseDefaultCredentials = true;
+                var token = new AuthenticationHeaderValue("Authorization", API_KEY);
+
+                HttpClient client = new HttpClient(handler);
+                client.Timeout = TimeSpan.FromSeconds(60);
+                client.BaseAddress = new Uri(API_URL);
+                client.DefaultRequestHeaders.Authorization = token;
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+                HttpResponseMessage response = null;
+                DateTime requestTime = new DateTime();
+                DateTime responseTime = new DateTime();
+
+                requestTime = DateTime.Now;
+                response = await client.GetAsync(endpointUrl);
+                responseTime = DateTime.Now;
+
+                List<CustomerTurnoverViewModels> result = null;
+                // var responseMessage = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode) result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModels>>();
+                
+                handler.Dispose();
+                client.Dispose();
+
+                FintrakBankingDatabaseCustomerTurnoverOperations(
+                    endpointUrl,
+                    cifid,
+                    requestTime,
+                    responseTime,
+                    "Cif_Id={cifid}&Month={month}",
+                    response.Content.ReadAsStringAsync().Result,
+                    result
+                );
+
+                return result;
+            }
+
+
+            private void FintrakBankingDatabaseCustomerTurnoverOperations(
+                string endpointUrl,
+                string cifid,
+                DateTime requestTime,
+                DateTime responseTime,
+                string requestMessage,
+                string responseMessage,
+                List<CustomerTurnoverViewModels> result
+                )
+            {
+
+                var logs = new TBL_CUSTOM_API_LOGS
+                {
+                    APIURL = endpointUrl,
+                    LOGTYPEID = 4,
+                    REFERENCENUMBER = cifid,
+                    REQUESTDATETIME = requestTime,
+                    REQUESTMESSAGE = requestMessage,
+                    RESPONSEDATETIME = responseTime,
+                    RESPONSEMESSAGE = responseMessage,
+                };
+
+                FinTrakBankingContext logContext = new FinTrakBankingContext();
+                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                logContext.SaveChanges();
+            }
 
         }
     }

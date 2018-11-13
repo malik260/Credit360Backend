@@ -48,8 +48,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
-        public string operationTypeName { get; set; }
 
+        public string operationTypeName { get; set; }
+        public int? currentApprovalLevelId { get; set; }
         public int approvedTenor { get; set; }
 
         public string payingAccountNumber { get; set; }
@@ -98,12 +99,16 @@ namespace FintrakBanking.ViewModels.Credit
         public int? casaAccountId2 { get; set; }
         public short? crmsRepaymentAgreementTypeId { get; set; }
         public int loanApplicationId { get; set; }
+        public int? loanReviewApplicationId { get; set; }
+
         public int loanApplicationDetailId { get; set; }
        
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string RelatedloanReferenceNumber { get; set; }
         public string applicationReferenceNumber { get; set; }
+        public string lmsApplicationReferenceNumber { get; set; }
+
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
         public int tenorUsed { get; set; }
         public short ? principalFrequencyTypeId { get; set; }
@@ -228,8 +233,11 @@ namespace FintrakBanking.ViewModels.Credit
         public bool hasLein { get; set; }
         public int postNoStatusId { get; set; }
         public int lmsApplicationDetailId  { get; set; }
-        
 
+        public decimal availableBalance { get; set; }
+
+        public decimal overdraftDrawnAmount{ get; set; }
+        public decimal overdraftUndrawnAmount { get; set; }
 
         public List<ApprovalLevelStaffViewModel> loanOperationApprovers { get; set; }
 
@@ -575,11 +583,14 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public int? loanId { get; set; }
         public string productPriceDescription { get; set; }
         public string reviewDetails { get; set; }
         public short? productScheduleTypeId { get; set; }
         public short? productDealTypeId { get; set; }
         public short? productDayCountConventionId { get; set; }
+        public string lmsApplicationReferenceNumber { get; set; }
+        public int? loanReviewApplicationId { get; set; }
 
         public int? loanReviewOperationId { get; set; }
 
@@ -896,6 +907,9 @@ namespace FintrakBanking.ViewModels.Credit
 
         public DateTime date { get; set; }
 
+        public DateTime? pastDueDate { get; set; }
+
+        public int ? gracePeriod { get; set; }
         public short dayCountConventionId { get; set; }
 
         public double dailyAccuralAmount { get; set; }

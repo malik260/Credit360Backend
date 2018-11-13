@@ -190,7 +190,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             model.apiUrl = @"api/OverDraft/Renew ";
 
-                Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await overDraft.APIOverDraftRenew(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -435,7 +435,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
         public PostingResult PostTransactions(List<FinanceTransactionViewModel> model)
-        {
+        { 
             ResponseMessage result = null;
             
             List<TransactionPostingViewModel> transactionList = TransactionData(model);
@@ -473,13 +473,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 {
                     var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
 
-                    throw new ConditionNotMetException("Core Banking API error - " + message); //result.APIResponse.webRequestStatus
+                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
                 }
             }
             else
             {
                 var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{","").Replace("}", "").Replace(@"""", "");
-                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
+                //throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
 
             //return result.APIStatus;
@@ -638,14 +639,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
-            var nostroAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
+            var nonBranchSpecificAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
                                join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE                               
                                where gla.GLACCOUNTID == glAccountId
-                               select new { gl.ACCOUNTID, gl.ISNOSTROACCOUNT }).FirstOrDefault();
+                               select new { gl.ACCOUNTID, gl.ISBRANCHSPECIFIC }).FirstOrDefault();
 
-            if (nostroAccount.ISNOSTROACCOUNT == true)
+            if (nonBranchSpecificAccount.ISBRANCHSPECIFIC == false)
             {
-                return nostroAccount.ACCOUNTID;
+                return nonBranchSpecificAccount.ACCOUNTID;
             }
             else
             {
