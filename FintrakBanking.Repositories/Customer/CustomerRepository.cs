@@ -79,12 +79,17 @@ namespace FintrakBanking.Repositories.Customer
             {
                 throw new ConditionNotMetException("Customer General Information is already undergoing approval.");
             }
-            if (USE_THIRD_PARTY_INTEGRATION)
-                entity.isPoliticallyExposed = finacle.GetExposePersonStatus(entity.customerCode);
+
             if (entity.isProspect == true)
             {
                 string code = CommonHelpers.GenerateUniqueIntergers(7).ToString();
                 entity.prospectCustomerCode = "PROS-" + code;
+                //entity.customerCode = "PROS-" + code;
+            }
+            else
+            {
+                if (USE_THIRD_PARTY_INTEGRATION)
+                    entity.isPoliticallyExposed = finacle.GetExposePersonStatus(entity.customerCode);
             }
 
             var customer = new TBL_CUSTOMER

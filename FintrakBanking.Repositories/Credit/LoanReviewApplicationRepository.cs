@@ -118,7 +118,7 @@ namespace FintrakBanking.Repositories.Credit
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
-                
+
             })
             .GroupBy(d => d.loanReviewApplicationId)
             .ToList()
@@ -130,7 +130,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //var list = applications.ToList();
             //var count = applications.Count();
-            
+
             return applications; // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
@@ -175,11 +175,13 @@ namespace FintrakBanking.Repositories.Credit
             //LMSOperationListViewModel value = new LMSOperationListViewModel {operationId = (short)OperationsEnum.TenorChange, operationName = "Tenor Change", loanSystemTypeId = (short)LoanSystemTypeEnum.ContingentLiability };
 
             // ----------------contingent liability --------------------------------------
-            output.Add( new LMSOperationListViewModel
-            {   operationId = (short)OperationsEnum.ContingentLiabilityRenewal,
-                operationName = operations.FirstOrDefault(x=>x.OPERATIONID== (short)OperationsEnum.ContingentLiabilityRenewal).OPERATIONNAME,
+            output.Add(new LMSOperationListViewModel
+            {
+                operationId = (short)OperationsEnum.ContingentLiabilityRenewal,
+                operationName = operations.FirstOrDefault(x => x.OPERATIONID == (short)OperationsEnum.ContingentLiabilityRenewal).OPERATIONNAME,
                 loanSystemTypeId = (short)LoanSystemTypeEnum.ContingentLiability,
-                productTypeId = (short) LoanProductTypeEnum.ContingentLiability });
+                productTypeId = (short)LoanProductTypeEnum.ContingentLiability
+            });
             output.Add(new LMSOperationListViewModel
             {
                 operationId = (short)OperationsEnum.ContingentLiabilityTermination,
@@ -242,8 +244,8 @@ namespace FintrakBanking.Repositories.Credit
 
             list.casaAccounts = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
             list.productTypes = context.TBL_PRODUCT_TYPE.Select(x => new DropDownSelect { id = x.PRODUCTTYPEID, name = x.PRODUCTTYPENAME }).ToList();
-            list.operationTypes = context.TBL_OPERATIONS.Where(x => 
-                (x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement 
+            list.operationTypes = context.TBL_OPERATIONS.Where(x =>
+                (x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
                 || x.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagementOverdraft
                 || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial)
                 && x.ISDISABLED == false
@@ -258,6 +260,28 @@ namespace FintrakBanking.Repositories.Credit
             var referenceNumber = GenerateReferenceNumber();
             var applicationDate = general.GetApplicationDate();
             int camOperationId = GetCamOperation(model.performanceTypeId);
+            bool result = true;
+
+            foreach (var detail in model.applicationDetails)
+            {
+
+                if (detail.operationId == (int)OperationsEnum.CommercialLoanSubAllocation)
+                {
+                    result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
+
+                    if (result == false)
+                        throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
+
+                }
+                else if (detail.operationId == (int)OperationsEnum.OverdraftSubAllocation)
+                {
+                    result = ValidateNewSubAllocationOperation(detail.detailId, model.customerId, detail.loanSystemTypeId);
+
+                    if (result == false)
+                        throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
+                }
+
+            }
 
             var application = context.TBL_LMSR_APPLICATION.Add(new TBL_LMSR_APPLICATION
             {
@@ -338,6 +362,7 @@ namespace FintrakBanking.Repositories.Credit
             throw new SecureException("An error occured while saving the data!");
         }
 
+
         public bool ValidateSubAllocationOperation(int loanApplicationDetailId, int customerId)
         {
 
@@ -381,14 +406,14 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-           
+
         }
 
 
         public bool ValidateNewSubAllocationOperation(int loanApplicationDetailId, int customerId, int loanSystemTypeId)
         {
 
-            if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility )
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 var loanData = (from a in context.TBL_LOAN
                                 join b in context.TBL_PRODUCT
@@ -406,7 +431,7 @@ namespace FintrakBanking.Repositories.Credit
                     return true;
                 }
             }
-            else 
+            else
             {
                 var appplicationId = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == loanApplicationDetailId).Select(x => x.LOANAPPLICATIONID).FirstOrDefault();
 
@@ -462,8 +487,8 @@ namespace FintrakBanking.Repositories.Credit
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
             int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
-            if (appl.CREATEDBY == model.createdBy 
-                && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter 
+            if (appl.CREATEDBY == model.createdBy
+                && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter
                 && ChecklistCompleted(model.applicationId) == false)
             {
                 throw new SecureException("Checklist not complleted!");
@@ -699,7 +724,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private int GetLoanApplicationDetailId(int loanId, int loanTypeId)
         {
-            int id=0;
+            int id = 0;
             if (loanTypeId == 1)
             {
                 var loan = context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
@@ -759,7 +784,7 @@ namespace FintrakBanking.Repositories.Credit
                         && levels.Contains((int)x.TOAPPROVALLEVELID)
                         && x.RESPONSESTAFFID == null
                         ),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
-                        
+
                     a => a.LOANAPPLICATIONID,
                     b => b.TARGETID,
                     (a, b) => new { a, b, branch = a.TBL_BRANCH, customer = a.TBL_CUSTOMER })
@@ -768,7 +793,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvalState = x.b.TBL_APPROVAL_STATE.APPROVALSTATE,
                     approvalTrailId = x.b.APPROVALTRAILID,
                     currentApprovalLevel = x.b.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
-                        currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
+                    currentApprovalLevelId = x.b.TOAPPROVALLEVELID,
                     lastComment = x.b.COMMENT,
                     toStaffId = x.b.TOSTAFFID,
 
@@ -821,7 +846,7 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
 
         }
-        
+
         #region
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
