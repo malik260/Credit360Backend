@@ -170,7 +170,7 @@ namespace FintrakBanking.Repositories.Credit
             this.approvalLevel = GetApprovalLevel();
             this.proposedConditions = GetProposedConditionsMarkup();
             this.monitoringTriggers = MonitoringTriggersMarkup();
-            this.customerTurnover = CustomerTurnoverMarkup();
+            //this.customerTurnover = CustomerTurnoverMarkup(); // lazy loaded
 
             return true;
         }
@@ -234,7 +234,12 @@ namespace FintrakBanking.Repositories.Credit
             content = content.Replace(proposedConditionsHolder, proposedConditions);
             content = content.Replace(monitoringTriggersHolder, monitoringTriggers);
             content = content.Replace(environmentalSocialRiskHolder, environmentalSocialRisk);
-            content = content.Replace(customerTurnoverHolder, customerTurnover);
+
+            if (content.Contains(customerTurnoverHolder))
+            {
+                customerTurnover = CustomerTurnoverMarkup();
+                content = content.Replace(customerTurnoverHolder, customerTurnover);
+            }
 
             // lms cam only
             content = content.Replace(securityTypeHolder, securityType);
@@ -606,12 +611,10 @@ namespace FintrakBanking.Repositories.Credit
         // customer turnover
         public IEnumerable<CustomerTurnoverViewModel> GetCustomerTurnover()
         {
+            List<int> ids = new List<int>();
+            foreach (var exposure in customerIds) ids.Add(exposure.customerId);
             List<CustomerTurnoverViewModel> turnover = new List<CustomerTurnoverViewModel>();
-            //if (operationId == (int)OperationsEnum.CAM) return memo.GetApplicationCustomerTurnover(targetId);
-            //return memo.GetApplicationCustomerTurnoverLms(targetId);
-
-            // CHECK IF PLACEHOLDER EXIST
-            // CALL API
+            turnover = loan.GetCustomerTurnover(ids);
             return turnover;
         }
 
