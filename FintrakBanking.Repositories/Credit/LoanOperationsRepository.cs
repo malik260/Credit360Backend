@@ -124,8 +124,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var scheduledLoan = (//from a in context.TBL_LOAN_SCHEDULE_DAILY
                                      from b in context.TBL_LOAN //on a.LOANID equals b.TERMLOANID
-                                     //join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
-                                     //join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
+                                                                //join c in context.TBL_LOAN_SCHEDULE_PERIODIC on b.TERMLOANID equals c.LOANID
+                                                                //join d in context.TBL_DAY_COUNT_CONVENTION on b.SCHEDULEDAYCOUNTCONVENTIONID equals d.DAYCOUNTCONVENTIONID
                                      join e in context.TBL_PRODUCT on b.PRODUCTID equals e.PRODUCTID
                                      join f in context.TBL_PRODUCT_TYPE on e.PRODUCTTYPEID equals f.PRODUCTTYPEID
                                      where b.LOANSTATUSID == (short)LoanStatusEnum.Active && DbFunctions.TruncateTime(applicationDate) <= b.MATURITYDATE
@@ -971,7 +971,7 @@ namespace FintrakBanking.Repositories.Credit
                     var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / item.daysInAYear) * item.availableBalance);
 
                     dailyAccrual.DAILYACCURALAMOUNT = accuralAmount;
-                    dailyAccrual.DAILYACCURALAMOUNT2 = 0;                    
+                    dailyAccrual.DAILYACCURALAMOUNT2 = 0;
 
                     if (item.pastDueDate.HasValue && item.gracePeriod.HasValue)
                     {
@@ -3524,10 +3524,10 @@ namespace FintrakBanking.Repositories.Credit
         private decimal GetPeriodInterestAmountFromAccural(string loanRefNo, int companyId)
         {
             var interestAmount = (from a in context.TBL_DAILY_ACCRUAL
-                                   where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
-                                   && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan && a.REPAYMENTPOSTEDSTATUS == false
-                                   && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                   select a.DAILYACCURALAMOUNT);
+                                  where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
+                                  && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan && a.REPAYMENTPOSTEDSTATUS == false
+                                  && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                  select a.DAILYACCURALAMOUNT);
 
             decimal output = 0;
 
@@ -3542,17 +3542,26 @@ namespace FintrakBanking.Repositories.Credit
 
         private decimal GetPeriodInterestOnPastDueInterestAmount(string loanRefNo, int companyId)
         {
-            var pastDueInterest = (from a in context.TBL_DAILY_ACCRUAL
-                                   where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
-                                   && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest && a.REPAYMENTPOSTEDSTATUS == false
-                                   && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                   select a.DAILYACCURALAMOUNT);
-
             decimal output = 0;
 
-            if (pastDueInterest.Any())
+            try
             {
-                output = pastDueInterest.Sum();
+                var pastDueInterest = (from a in context.TBL_DAILY_ACCRUAL
+                                       where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
+                                       && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest && a.REPAYMENTPOSTEDSTATUS == false
+                                       && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                       select a.DAILYACCURALAMOUNT);
+
+                if (pastDueInterest.Any())
+                {
+                    output = pastDueInterest.Sum();
+
+                }
+            }
+            catch (Exception)
+            {
+
+                return output;
             }
 
             return output;
@@ -3560,18 +3569,29 @@ namespace FintrakBanking.Repositories.Credit
 
         private decimal GetPeriodInterestOnPastDuePrincipalAmount(string loanRefNo, int companyId)
         {
-          
-             var   pastDuePrincipal = (from a in context.TBL_DAILY_ACCRUAL
+
+            decimal pastDuePrincipal = 0;
+            
+            try
+            {
+                pastDuePrincipal = (from a in context.TBL_DAILY_ACCRUAL
                                     where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
                                     && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal && a.REPAYMENTPOSTEDSTATUS == false
                                     && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
                                     select a.DAILYACCURALAMOUNT).Sum();
+            }
+            catch (Exception)
+            {
 
                 return pastDuePrincipal;
+            }
+
            
+            return pastDuePrincipal;
+
         }
 
-        
+
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate)
         {
 
