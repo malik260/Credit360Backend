@@ -262,6 +262,7 @@ namespace FintrakBanking.Repositories.Credit
             int camOperationId = GetCamOperation(model.performanceTypeId);
             bool result = true;
 
+
             foreach (var detail in model.applicationDetails)
             {
 

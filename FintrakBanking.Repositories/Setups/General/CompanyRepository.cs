@@ -9,11 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
+using System.Threading.Tasks;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Setups.General
 {
-    [Export(typeof(ICompanyRepository))]
-    [PartCreationPolicy(CreationPolicy.NonShared)]
     public class CompanyRepository : ICompanyRepository
     {
         private FinTrakBankingContext context;
@@ -21,13 +22,17 @@ namespace FintrakBanking.Repositories.Setups.General
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository generalSetup;
 
+        private CustomerDetails _customerIntegration; // test
+
         public CompanyRepository(FinTrakBankingContext _context, FinTrakBankingDocumentsContext _documentContext,
-            IAuditTrailRepository _auditTrail, IGeneralSetupRepository _generalSetup)
+            IAuditTrailRepository _auditTrail, IGeneralSetupRepository _generalSetup,
+            CustomerDetails _customerIntegration)
         {
             this.context = _context;
             this.documentContext = _documentContext;
             this.auditTrail = _auditTrail;
             this.generalSetup = _generalSetup;
+            this._customerIntegration = _customerIntegration;
         }
 
         private bool SaveAll()
@@ -461,6 +466,32 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return false;
         }
+
         #endregion
+
+
+
+        #region test
+
+        public async Task<List<CustomerTurnoverViewModels>> TestTurnover()
+        {
+            var data = new List<CustomerTurnoverViewModels>();
+            //Task.Run(async () => { data = await _customerIntegration.GetCustomerTransactions("483008974", 48); }).GetAwaiter().GetResult();
+            data = await _customerIntegration.GetCustomerTransactions("483008974", 48);
+            return data;
+        }
+
+        public async Task<List<CustomerTurnoverViewModels>> TestTurnoverInterest()
+        {
+            var data = new List<CustomerTurnoverViewModels>();
+            //Task.Run(async () => { data = await _customerIntegration.GetCustomerInterestTransactions("230009868", 48); }).GetAwaiter().GetResult();
+            data = await _customerIntegration.GetCustomerInterestTransactions("230009868", 48);
+            return data;
+        }
+        
+        #endregion test
+
     }
+
+
 }

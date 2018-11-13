@@ -304,12 +304,14 @@ namespace FintrakBanking.ViewModels.Credit
         public int accountId { get; set; }
         public string schemeType { get; set; }
         public string period { get; set; }
-        public decimal minimumDebitBalance { get; set; }
-        public decimal maximumDebitBalance { get; set; }
-        public decimal minimumCreitBalance { get; set; }
-        public decimal maximumCreditBalance { get; set; }
-        public decimal debitTurnover { get; set; }
-        public decimal creditTurnover { get; set; }
+        public decimal? minimumDebitBalance { get; set; }
+        public decimal? maximumDebitBalance { get; set; }
+        public decimal? minimumCreitBalance { get; set; }
+        public decimal? maximumCreditBalance { get; set; }
+        public decimal? debitTurnover { get; set; }
+        public decimal? creditTurnover { get; set; }
+        public string floatCharge { get; set; }
+        public string interest { get; set; }
     }
 
     public class RepaymentScheduleTermsViewModel

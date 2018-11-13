@@ -21,6 +21,8 @@ using System.Threading.Tasks;
 using FintrakBanking.Common.CustomException;
 using System.Configuration;
 using System.Data.Entity;
+using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -34,6 +36,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICreditLimitValidationsRepository creditLimitValidationsRepository;
         private ICustomerCollateralRepository collateral;
         private IFinanceTransactionRepository fina;
+        private CustomerDetails _customerIntegration;
 
         private IApprovalLevelStaffRepository approvalLevel;
 
@@ -41,15 +44,18 @@ namespace FintrakBanking.Repositories.Credit
         public bool isGroupLoan { get; set; }
         public TBL_LOAN_APPLICATION loanData { get; set; }
 
-        public LoanApplicationRepository(IAuditTrailRepository _auditTrail,
+        public LoanApplicationRepository(
+            IAuditTrailRepository _auditTrail,
             ICasaRepository _casa,
             ICustomerCollateralRepository _collateral,
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
+            CustomerDetails _customerIntegration,
             IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
             IFinanceTransactionRepository fina,
-            ICreditLimitValidationsRepository _creditLimitValidationsRepository)
+            ICreditLimitValidationsRepository _creditLimitValidationsRepository
+            )
         {
             this.collateral = _collateral;
             this.fina = fina;
@@ -866,6 +872,11 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
+                //LoadCustomerTurnover(
+                //    applicationId,
+                //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList()
+                //);
+
                 return new LoanApplicationUpdateMessage
                 {
                     isdone = isCheckListDone, // true
@@ -951,7 +962,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-
             if (loan.relationshipOfficerId != 0)
             {
                 var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
@@ -1106,6 +1116,7 @@ namespace FintrakBanking.Repositories.Credit
                 LOANAPPLICATIONTYPEID = loan.loanTypeId,
                 COLLATERALDETAIL = loan.collateralDetail
             };
+
             if (isGroupLoan)
             {
                 loanData.CUSTOMERGROUPID = loan.customerGroupId;
@@ -1162,41 +1173,52 @@ namespace FintrakBanking.Repositories.Credit
 
             if (productClassId == (int)ProductClassEnum.InvoiceDiscountingFacility && update.invoiceDetails.Any())
             {
-                var inv = context.TBL_LOAN_APPLICATION_DETL_INV.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
-                var upd = update.invoiceDetails.FirstOrDefault();
-
-                inv.PRINCIPALID = upd.principalId;
-                inv.INVOICE_CURRENCYID = upd.invoiceCurrencyId;
-                inv.INVOICE_AMOUNT = upd.invoiceAmount;
-                inv.CONTRACT_STARTDATE = upd.contractStartDate;
-                inv.CONTRACT_ENDDATE = upd.contractEndDate;
-
-                inv.CONTRACTNO = upd.contractNo;
-                inv.PURCHASEORDERNUMBER = upd.purchaseOrderNumber;
-                inv.CERTIFICATENO = upd.certificateNumber;
-                inv.INVOICENO = upd.invoiceNo;
-                inv.INVOICE_DATE = upd.invoiceDate;
-                inv.INVOICE_AMOUNT = upd.invoiceAmount;
+                var invoice = context.TBL_LOAN_APPLICATION_DETL_INV.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+                var invoiceUpdate = update.invoiceDetails.FirstOrDefault();
+                invoice.PRINCIPALID = invoiceUpdate.principalId;
+                invoice.INVOICE_CURRENCYID = invoiceUpdate.invoiceCurrencyId;
+                invoice.INVOICE_AMOUNT = invoiceUpdate.invoiceAmount;
+                invoice.CONTRACT_STARTDATE = invoiceUpdate.contractStartDate;
+                invoice.CONTRACT_ENDDATE = invoiceUpdate.contractEndDate;
+                invoice.CONTRACTNO = invoiceUpdate.contractNo;
+                invoice.PURCHASEORDERNUMBER = invoiceUpdate.purchaseOrderNumber;
+                invoice.CERTIFICATENO = invoiceUpdate.certificateNumber;
+                invoice.INVOICENO = invoiceUpdate.invoiceNo;
+                invoice.INVOICE_DATE = invoiceUpdate.invoiceDate;
+                invoice.INVOICE_AMOUNT = invoiceUpdate.invoiceAmount;
             }
 
             if (productClassId == (int)ProductClassEnum.BondAndGuarantees)
             {
-                throw new SecureException("BondAndGuarantees!");
-            }
-
-            if (productClassId == (int)ProductClassEnum.FirstTrader)
-            {
-                throw new SecureException("FirstTrader!");
-            }
-
-            if (productClassId == (int)ProductClassEnum.ImportFinance)
-            {
-                throw new SecureException("ImportFinance!");
+                var bond = context.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+                var bondUpdate = update.bondDetails;
+                bond.PRINCIPALID = bondUpdate.principalId;
+                bond.AMOUNT = bondUpdate.bondAmount;
+                bond.CURRENCYID = bondUpdate.bondCurrencyId;
+                bond.CONTRACT_STARTDATE = bondUpdate.contractStartDate;
+                bond.CONTRACT_ENDDATE = bondUpdate.contractEndDate;
+                bond.ISTENORED = bondUpdate.isTenored;
+                bond.ISBANKFORMAT = bondUpdate.isBankFormat;
+                bond.CASAACCOUNTID = bondUpdate.casaAccountId;
+                bond.REFERENCENO = bondUpdate.referenceNo;
             }
 
             if (productClassId == (int)ProductClassEnum.FirstEdu)
             {
-                throw new SecureException("FirstEdu!");
+                var edu = context.TBL_LOAN_APPLICATION_DETL_EDU.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+                var eduUpdate = update.educationLoan;
+                edu.NUMBER_OF_STUDENTS = eduUpdate.numberOfStudent;
+                edu.AVERAGE_SCHOOL_FEES = eduUpdate.averageSchoolFees;
+                edu.TOTAL_PREVIOUS_TERM_SCHOL_FEES = eduUpdate.totalPreviousTermSchoolFees;
+            }
+
+            if (productClassId == (int)ProductClassEnum.FirstTrader)
+            {
+                var trader = context.TBL_LOAN_APPLICATION_DETL_TRA.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == loan.loanApplicationDetailId);
+                var traderUpdate = update.traderLoan;
+                trader.MARKETID = traderUpdate.marketId;
+                trader.AVERAGE_MONTHLY_TURNOVER = traderUpdate.averageMonthlyTurnover;
+                trader.SOLDITEMS = traderUpdate.soldItems;
             }
 
             if (context.SaveChanges() == 0) throw new SecureException("Nothing was updated!");
@@ -1434,8 +1456,6 @@ namespace FintrakBanking.Repositories.Credit
                            productClassId = (int)ProductClassEnum.InvoiceDiscountingFacility
                        }).ToList();
 
-            fields.invoiceDetails = invoiceDetails;
-
             var bondDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_BG where a.LOANAPPLICATIONDETAILID == detailId
                         select new BondsAndGuranty
                         {
@@ -1452,8 +1472,31 @@ namespace FintrakBanking.Repositories.Credit
 
                         }).FirstOrDefault();
 
-            fields.bondDetails = bondDetails;
+            var educationLoan = (from a in context.TBL_LOAN_APPLICATION_DETL_EDU where a.LOANAPPLICATIONDETAILID == detailId
+                        select new EducationLoanViewModel
+                        {
+                            numberOfStudent = a.NUMBER_OF_STUDENTS,
+                            averageSchoolFees = a.AVERAGE_SCHOOL_FEES,
+                            totalPreviousTermSchoolFees = a.TOTAL_PREVIOUS_TERM_SCHOL_FEES,
 
+                        }).FirstOrDefault();
+
+
+            var traderLoan = (from a in context.TBL_LOAN_APPLICATION_DETL_TRA where a.LOANAPPLICATIONDETAILID == detailId
+                        select new TraderLoanViewModel
+                        {
+                            loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                            marketId = a.MARKETID,
+                            marketName = a.TBL_LOAN_MARKET.MARKETNAME,
+                            averageMonthlyTurnover = a.AVERAGE_MONTHLY_TURNOVER,
+                            soldItems = a.SOLDITEMS
+
+                        }).FirstOrDefault();
+
+            fields.invoiceDetails = invoiceDetails;
+            fields.bondDetails = bondDetails;
+            fields.educationLoan = educationLoan;
+            fields.traderLoan = traderLoan;
 
             return fields;
         }
@@ -3592,6 +3635,72 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        
+        public void LoadCustomerTurnover(int applicationId, List<int> customerIds) // OBIE (Page 4)
+        {
+            int turnoverDuration = 48;
+            var trx = new List<CustomerTurnoverViewModels>();
+            var itx = new List<CustomerTurnoverViewModels>();
+
+            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));//.Select(x => x.CUSTOMERCODE);
+
+            foreach (var customer in customers)
+            {
+                Task.Run(async () => { trx = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
+
+                foreach (var t in trx)
+                {
+                    context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
+                    {
+                        LOANAPPLICATIONID = (short)applicationId,
+                        CUSTOMERID = (short)customer.CUSTOMERID,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
+                        ACCOUNTNUMBER = t.foracid,
+                        PERIOD = t.period,
+                        PRODUCTNAME = "n/a",
+                        MINIMUMDEBITBALANCE = t.min_Debit_Balance,
+                        MAXIMUMDEBITBALANCE = t.max_Debit_Balance,
+                        MINIMUMCREDITBALANCE = t.min_Credit_Balance,
+                        MAXIMUMCREDITBALANCE = t.max_Credit_Balance,
+                        DEBITTURNOVER = t.debit_Turnover,
+                        CREDITTURNOVER = t.credit_Turnover,
+                        SMSALERT = t.sms_Alert,
+                        //AMC                                          = t.amc,
+                        //VAT                                          = t.vat,
+                        //MANAGEMENTFEE                                = t.management_Fee,
+                        //COMMITMENTFEE                                = t.commitment_Fees,
+                        //CONTINGENTLIABILITYCOMM                      = t.com_Contigent_Liab,
+                        //LC_COMMISSION                                = t.lc_Commission,
+                        CREATEDBY = 1,
+                        DATETIMECREATED = DateTime.Now,
+                    });
+                }
+            }
+
+            foreach (var customer in customers)
+            {
+                Task.Run(async () => { itx = await _customerIntegration.GetCustomerInterestTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
+
+
+                foreach (var t in itx)
+                {
+                    context.TBL_LOAN_APPLICATION_TRANS2.Add(new TBL_LOAN_APPLICATION_TRANS2
+                    {
+                        LOANAPPLICATIONID = (short)applicationId,
+                        CUSTOMERID = (short)customer.CUSTOMERID,
+                        CUSTOMERCODE = customer.CUSTOMERCODE,
+                        ACCOUNTNUMBER = t.foracid,
+                        PERIOD = t.period,
+                        PRODUCTNAME = "n/a",
+                        //FLOATCHARGE=t.float_Charge,
+                        //INTEREST =t.interest,
+                        CREATEDBY = 1,
+                        DATETIMECREATED = DateTime.Now,
+                    });
+                }
+            }
+
+            if (context.SaveChanges() == 0) throw new SecureException("Customer turnover failed to load!");
+
+        }
     }
 }

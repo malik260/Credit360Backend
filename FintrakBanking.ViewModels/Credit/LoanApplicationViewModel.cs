@@ -74,6 +74,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         //public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
         public string applicantName { get { return this.customerName + "(" + this.customerGroupName + ")"; } }
+        public int lmsApplicationDetailId { get; set; }
 
         public int? loanPreliminaryEvaluationId { get; set; }
         public double exchangeRate { get; set; }

@@ -7,6 +7,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using System.Threading.Tasks;
+using FintrakBanking.ViewModels.ThridPartyIntegration;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -20,7 +22,37 @@ namespace FintrakBanking.APICore.Controllers
             this.repo = _repo;
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [Route("turnover")]
+        public async Task<HttpResponseMessage> TestTurnoverAsync()
+        {
+            var t = await repo.TestTurnover();
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                success = true,
+                result = t
+            });
+        }
+
+        [HttpGet]
+        [Route("interest-turnover")]
+        public async Task<HttpResponseMessage> TestTurnoverInterestAsync()
+        {
+            var t = await repo.TestTurnoverInterest();
+            return Request.CreateResponse(HttpStatusCode.OK, new
+            {
+                success = true,
+                result = t
+            });
+        }
+
+        /*
+         * fromdate
+         * cifid
+         * todate
+         */
+
+        [HttpGet]
         [Route("")]
         public HttpResponseMessage GetAllCompany()
         {
@@ -46,4 +78,5 @@ namespace FintrakBanking.APICore.Controllers
 
         }
     }
+
 }
