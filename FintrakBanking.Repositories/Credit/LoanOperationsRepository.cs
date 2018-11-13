@@ -3552,16 +3552,14 @@ namespace FintrakBanking.Repositories.Credit
                                        && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
                                        select a.DAILYACCURALAMOUNT);
 
-                if (pastDueInterest.Any())
+                if (pastDueInterest.Count() > 0)
                 {
                     output = pastDueInterest.Sum();
-
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                return output;
+                throw ex;
             }
 
             return output;
@@ -3570,24 +3568,27 @@ namespace FintrakBanking.Repositories.Credit
         private decimal GetPeriodInterestOnPastDuePrincipalAmount(string loanRefNo, int companyId)
         {
 
-            decimal pastDuePrincipal = 0;
+            decimal output = 0;
             
             try
             {
-                pastDuePrincipal = (from a in context.TBL_DAILY_ACCRUAL
+                var pastDuePrincipal = (from a in context.TBL_DAILY_ACCRUAL
                                     where a.REFERENCENUMBER == loanRefNo && a.COMPANYID == companyId
                                     && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal && a.REPAYMENTPOSTEDSTATUS == false
                                     && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                    select a.DAILYACCURALAMOUNT).Sum();
+                                    select a.DAILYACCURALAMOUNT);
+
+                if (pastDuePrincipal.Count() > 0)
+                {
+                    output = pastDuePrincipal.Sum();
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                return pastDuePrincipal;
+                throw ex;
             }
-
-           
-            return pastDuePrincipal;
+            
+            return output;
 
         }
 
