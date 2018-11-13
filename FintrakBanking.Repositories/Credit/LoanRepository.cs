@@ -7534,6 +7534,7 @@ namespace FintrakBanking.Repositories.Credit
             //                       currencyId = a.CURRENCYID,
             //                       currency = a.TBL_CURRENCY.CURRENCYNAME
             //                   }).FirstOrDefault();
+            var applicationDate = generalSetup.GetApplicationDate();
 
             var loanDetails = (from a in context.TBL_LOAN_REVOLVING
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
@@ -7601,6 +7602,7 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                   accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.REVOLVINGLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.REVOLVINGLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -7636,6 +7638,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public LoanViewModel GetDisbursedLoanByLoan(int loanId)//GetDisbursedLoanByLoanId
         {
+            var applicationDate = generalSetup.GetApplicationDate();
             var loanDetails = (from a in context.TBL_LOAN
                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
@@ -7719,6 +7722,7 @@ namespace FintrakBanking.Repositories.Credit
                                    customerSensitivityLevelId = b.CUSTOMERSENSITIVITYLEVELID,
                                    createdBy = a.CREATEDBY,
                                    dateTimeCreated = a.DATETIMECREATED,
+                                   accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.TERMLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
                                    // isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
                                    exchangeRate = a.EXCHANGERATE,
                                    currencyId = a.CURRENCYID,
@@ -7841,6 +7845,7 @@ namespace FintrakBanking.Repositories.Credit
             //                       currencyId = a.CURRENCYID,
             //                       currency = a.TBL_CURRENCY.CURRENCYNAME
             //                   }).FirstOrDefault();
+            var applicationDate = generalSetup.GetApplicationDate();
 
             var loanDetails = (from a in context.TBL_LOAN_CONTINGENT
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
@@ -7907,6 +7912,8 @@ namespace FintrakBanking.Repositories.Credit
                                    currencyId = a.CURRENCYID,
                                    currency = a.TBL_CURRENCY.CURRENCYNAME,
                                    currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
+                                   accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.CONTINGENTLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST, //d.ACCRUEDINTEREST,
+
                                    operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                    {
                                        loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -9611,6 +9618,7 @@ namespace FintrakBanking.Repositories.Credit
                                            interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
                                            interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
                                            pastDueInterest = a.PASTDUEINTEREST,
+                                           accrualedAmount = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == a.TERMLOANID && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,  
                                            //accrualedAmount = d.ACCRUEDINTEREST, //context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.TBL_LOAN.LOANREFERENCENUMBER == a.LOANREFERENCENUMBER && x.DATE == applicationDate).FirstOrDefault().ACCRUEDINTEREST,
                                            systemCurrentDate = applicationDate,
                                            lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
