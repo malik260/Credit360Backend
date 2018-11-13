@@ -556,8 +556,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanBookingRequestViewModel : GeneralEntity
     {
-        public int casaAccountId { get; set; }
-        public int casaAccountId2 { get; set; }
+        public int? casaAccountId { get; set; }
+        public int? casaAccountId2 { get; set; }
         public bool? isUsed { get; set; }
         public string currencyCode { get; set; }
 
@@ -592,6 +592,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? productDayCountConventionId { get; set; }
         public string lmsApplicationReferenceNumber { get; set; }
         public int? loanReviewApplicationId { get; set; }
+        public LoanReviewOperationApprovalViewModel operationReview { get; set; }
 
         public int? loanReviewOperationId { get; set; }
 

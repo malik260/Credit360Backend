@@ -453,6 +453,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int oldTenor { get; set; }
         public int newTenor { get; set; }
         public double interestRate { get; set; }
+        public int? operationId { get; set; }
 
         public DateTime? valueDate { get; set; }
 
