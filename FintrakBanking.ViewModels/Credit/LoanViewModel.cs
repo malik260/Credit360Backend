@@ -591,6 +591,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? productDayCountConventionId { get; set; }
         public string lmsApplicationReferenceNumber { get; set; }
         public int? loanReviewApplicationId { get; set; }
+        public LoanReviewOperationApprovalViewModel operationReview { get; set; }
 
         public int? loanReviewOperationId { get; set; }
 
