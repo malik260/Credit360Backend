@@ -644,6 +644,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
                                where gla.GLACCOUNTID == glAccountId
                                select new { gl.ACCOUNTID, gl.ISBRANCHSPECIFIC }).FirstOrDefault();
 
+            if (nonBranchSpecificAccount == null)
+                throw new ConditionNotMetException("There is no custom GL setup for this product. Check the custom GL setup for this product");
+
             if (nonBranchSpecificAccount.ISBRANCHSPECIFIC == false)
             {
                 return nonBranchSpecificAccount.ACCOUNTID;
@@ -657,6 +660,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
                                    join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
                                    where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
                                    select gl.ACCOUNTID).FirstOrDefault();
+
+                if (accountCode == null)
+                    throw new ConditionNotMetException("There is no custom GL setup for this product. Check the custom GL setup for this product");
 
                 var glAccountCode = branchCode + accountCode; //"100" + accountCode;
 
