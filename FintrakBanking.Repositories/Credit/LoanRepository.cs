@@ -9699,7 +9699,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(x => new CustomerTurnoverViewModel
                 {
                     accountId = x.CUSTOMERID,
-                    schemeType = x.,
+                    //schemeType = x.,
                     period = x.PERIOD,
                     //debitTurnover = x.DEBITTURNOVER,
                     //creditTurnover = x.CREDITTURNOVER,
