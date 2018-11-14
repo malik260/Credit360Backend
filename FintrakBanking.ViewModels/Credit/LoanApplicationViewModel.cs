@@ -262,7 +262,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int approvedTenor { get; set; }
         
-        public int tenorModeId { get; set; }
+        public int? tenorModeId { get; set; }
 
         public double approvedInterestRate { get; set; }
 

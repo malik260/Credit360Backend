@@ -1228,7 +1228,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        private int ConvertTenorToDays(int proposedTenor, int tenorModeId)
+        private int ConvertTenorToDays(int proposedTenor, int? tenorModeId = 1)
         {
             int tenor = 0;
             switch (tenorModeId)
@@ -1448,7 +1448,7 @@ namespace FintrakBanking.Repositories.Credit
                 productPriceIndexId = d.PRODUCTPRICEINDEXID,
                 productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
                 
-                tenorModeId = (int)d.TENORFREQUENCYTYPEID,
+                tenorModeId = d.TENORFREQUENCYTYPEID,
             };
 
             var invoiceDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_INV where a.LOANAPPLICATIONDETAILID == detailId
