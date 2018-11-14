@@ -639,13 +639,19 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
+            var account = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == glAccountId);
+
+            var currency = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == currencyId);
+
+            var accountInfo = account.ACCOUNTCODE + " - " + account.ACCOUNTNAME + " for currency " + currency.CURRENCYCODE;
+
             var nonBranchSpecificAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
                                join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE                               
                                where gla.GLACCOUNTID == glAccountId
                                select new { gl.ACCOUNTID, gl.ISBRANCHSPECIFIC }).FirstOrDefault();
 
             if (nonBranchSpecificAccount == null)
-                throw new ConditionNotMetException("There is no custom GL setup for this product. Check the custom GL setup for this product");
+                throw new ConditionNotMetException("There is no custom GL setup for GL " + accountInfo +  ". Check the custom GL setup");
 
             if (nonBranchSpecificAccount.ISBRANCHSPECIFIC == false)
             {
@@ -662,7 +668,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                                    select gl.ACCOUNTID).FirstOrDefault();
 
                 if (accountCode == null)
-                    throw new ConditionNotMetException("There is no custom GL setup for this product. Check the custom GL setup for this product");
+                    throw new ConditionNotMetException("There is no custom GL setup for GL " + accountInfo + ". Check the custom GL setup");
 
                 var glAccountCode = branchCode + accountCode; //"100" + accountCode;
 
