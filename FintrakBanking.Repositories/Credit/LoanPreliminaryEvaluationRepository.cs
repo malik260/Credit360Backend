@@ -686,7 +686,7 @@ namespace FintrakBanking.Repositories.Credit
             if ((int)LoanTypeEnum.Single == loanTypeId)
             {
                 var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
-                            where p.CUSTOMERID == customerId
+                            where p.CUSTOMERID == customerId && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                             select new LookupViewModel()
                             {
                                 lookupId = (short)p.LOANPRELIMINARYEVALUATIONID,
@@ -698,7 +698,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var data = (from p in context.TBL_LOAN_PRELIMINARY_EVALUATN
                             join g in context. TBL_CUSTOMER_GROUP_MAPPING on p.CUSTOMERGROUPID equals g.CUSTOMERGROUPID
-                            where p.CUSTOMERGROUPID == customerGroupId
+                            where p.CUSTOMERGROUPID == customerGroupId && p.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                             select new LookupViewModel()
                             {
                                 lookupId = (short)p.LOANPRELIMINARYEVALUATIONID,

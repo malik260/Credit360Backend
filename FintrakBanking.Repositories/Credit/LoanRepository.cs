@@ -6494,7 +6494,7 @@ namespace FintrakBanking.Repositories.Credit
         }
         public List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId)
         {
-            IQueryable<CurrentCustomerExposure> exposure = null;
+            IEnumerable<CurrentCustomerExposure> exposure = null;
             List<CurrentCustomerExposure> exposures = new List<CurrentCustomerExposure>();
 
 
@@ -6511,6 +6511,7 @@ namespace FintrakBanking.Repositories.Credit
                                //proposedLimit = a.OUTSTANDINGPRINCIPAL,
                                proposedLimit = 0,
                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                               outstandings = a.OUTSTANDINGPRINCIPAL,
                                recommendedLimit = 0,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
@@ -6521,8 +6522,8 @@ namespace FintrakBanking.Repositories.Credit
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
-
-                exposure = from a in context.TBL_LOAN_REVOLVING
+                
+                exposure = (from a in context.TBL_LOAN_REVOLVING
                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
                            select new CurrentCustomerExposure
                            {
@@ -6530,15 +6531,30 @@ namespace FintrakBanking.Repositories.Credit
                                existingLimit = a.OVERDRAFTLIMIT,
                                //proposedLimit = a.OVERDRAFTLIMIT,
                                proposedLimit = 0,
-                               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
+                               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,                               
                                recommendedLimit = 0,
+                               casaAccountId = a.CASAACCOUNTID,
                                PastDueObligationsInterest = a.PASTDUEINTEREST,
                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
                                loanStatus = "Running",
                                referenceNumber = a.LOANREFERENCENUMBER
-                           };
+                           }).ToList().Select(x =>
+                           {
+                               //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
+                               var availableBalance = context.TBL_CASA.FirstOrDefault(m=>m.CASAACCOUNTID == (int)x.casaAccountId).AVAILABLEBALANCE;
+
+                               if ( availableBalance >= 0)
+                               {
+                                   x.outstandings = 0;
+                               }
+                               else
+                               {
+                                   x.outstandings = Math.Abs(availableBalance); 
+                               }
+                               return x;
+                           });
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
@@ -6550,11 +6566,13 @@ namespace FintrakBanking.Repositories.Credit
                                existingLimit = 0,
                                proposedLimit = a.PROPOSEDAMOUNT,
                                recommendedLimit = a.APPROVEDAMOUNT,
+                               outstandings = 0,
                                PastDueObligationsInterest = 0,
                                PastDueObligationsPrincipal = 0,
                                reviewDate = DateTime.Now,
                                prudentialGuideline = "Processing",
                                loanStatus = "Processing",
+                               referenceNumber = a.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                // referenceNumber = a.
                            };
 
@@ -6570,8 +6588,9 @@ namespace FintrakBanking.Repositories.Credit
                                        //proposedLimit = a.FINAL_BALANCE,
                                        proposedLimit = 0,
                                        recommendedLimit = 0,
+                                       outstandings = a.FINAL_BALANCE,
                                        PastDueObligationsInterest = a.INT_DUE,
-                                       PastDueObligationsPrincipal = 0,
+                                       PastDueObligationsPrincipal = a.DAYS_PAST_DUE,// 0,
                                        reviewDate = DateTime.Now,
                                        prudentialGuideline = a.USER_CLASSIFICATION == "1" ? "Performing" : "Non-Performing",
                                        loanStatus = "Running"
@@ -8407,7 +8426,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.casaAccountId = null;
             debit.debitAmount = chargeAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = basicInput.userBranchId;
+            debit.sourceBranchId = loan.BRANCHID;
             debit.destinationBranchId = loan.BRANCHID;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
@@ -8430,8 +8449,8 @@ namespace FintrakBanking.Repositories.Credit
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = chargeAmount;
-            credit.sourceBranchId = basicInput.userBranchId;
-            credit.destinationBranchId = basicInput.userBranchId;
+            credit.sourceBranchId = loan.BRANCHID;
+            credit.destinationBranchId = loan.BRANCHID;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 

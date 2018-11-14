@@ -106,6 +106,12 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? currencyId { get; set; }
     }
 
+    public class jobReasignment : GeneralEntity
+    {
+        public int reasignmentId { get; set; }
+        public int jobTypeId { get; set; }
+    }
+
     public class JobRequestCollateralSearchViewModel : GeneralEntity
     {
         public int casaAccountId { get; set; }
@@ -171,6 +177,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public short jobTypeId { get; set; }
         public string jobTypeName { get; set; }
         public bool inUse { get; set; }
+        public bool? canBeReasigned { get; set; }
     }
 
     public class JobSubTypeViewModel : JobTypeViewModel

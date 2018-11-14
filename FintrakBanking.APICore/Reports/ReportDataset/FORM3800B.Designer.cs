@@ -641,6 +641,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnReviewDate;
             
+            private global::System.Data.DataColumn columnapprovedDate;
+            
+            private global::System.Data.DataColumn columnnewApplicationDate;
+            
+            private global::System.Data.DataColumn columnapplicationReferenceNumber;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public FacilityDataTable() {
@@ -724,6 +730,30 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn approvedDateColumn {
+                get {
+                    return this.columnapprovedDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn newApplicationDateColumn {
+                get {
+                    return this.columnnewApplicationDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn applicationReferenceNumberColumn {
+                get {
+                    return this.columnapplicationReferenceNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -759,7 +789,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public FacilityRow AddFacilityRow(string productName, string purpose, string approvedAmountCurrency, string tenor, string interestRate, string ReviewDate) {
+            public FacilityRow AddFacilityRow(string productName, string purpose, string approvedAmountCurrency, string tenor, string interestRate, string ReviewDate, string approvedDate, string newApplicationDate, string applicationReferenceNumber) {
                 FacilityRow rowFacilityRow = ((FacilityRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         productName,
@@ -767,7 +797,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         approvedAmountCurrency,
                         tenor,
                         interestRate,
-                        ReviewDate};
+                        ReviewDate,
+                        approvedDate,
+                        newApplicationDate,
+                        applicationReferenceNumber};
                 rowFacilityRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFacilityRow);
                 return rowFacilityRow;
@@ -796,6 +829,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columntenor = base.Columns["tenor"];
                 this.columninterestRate = base.Columns["interestRate"];
                 this.columnReviewDate = base.Columns["ReviewDate"];
+                this.columnapprovedDate = base.Columns["approvedDate"];
+                this.columnnewApplicationDate = base.Columns["newApplicationDate"];
+                this.columnapplicationReferenceNumber = base.Columns["applicationReferenceNumber"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -813,6 +849,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columninterestRate);
                 this.columnReviewDate = new global::System.Data.DataColumn("ReviewDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnReviewDate);
+                this.columnapprovedDate = new global::System.Data.DataColumn("approvedDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapprovedDate);
+                this.columnnewApplicationDate = new global::System.Data.DataColumn("newApplicationDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnnewApplicationDate);
+                this.columnapplicationReferenceNumber = new global::System.Data.DataColumn("applicationReferenceNumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapplicationReferenceNumber);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3969,6 +4011,54 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string approvedDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFacility.approvedDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedDate\' in table \'Facility\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFacility.approvedDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string newApplicationDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFacility.newApplicationDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'newApplicationDate\' in table \'Facility\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFacility.newApplicationDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string applicationReferenceNumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableFacility.applicationReferenceNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'Facility\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFacility.applicationReferenceNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsproductNameNull() {
                 return this.IsNull(this.tableFacility.productNameColumn);
             }
@@ -4037,6 +4127,42 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetReviewDateNull() {
                 this[this.tableFacility.ReviewDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsapprovedDateNull() {
+                return this.IsNull(this.tableFacility.approvedDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetapprovedDateNull() {
+                this[this.tableFacility.approvedDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsnewApplicationDateNull() {
+                return this.IsNull(this.tableFacility.newApplicationDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetnewApplicationDateNull() {
+                this[this.tableFacility.newApplicationDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsapplicationReferenceNumberNull() {
+                return this.IsNull(this.tableFacility.applicationReferenceNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetapplicationReferenceNumberNull() {
+                this[this.tableFacility.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
             }
         }
         
