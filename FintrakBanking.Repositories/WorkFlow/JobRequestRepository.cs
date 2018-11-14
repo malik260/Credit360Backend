@@ -131,7 +131,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             data.ISACKNOWLEDGED = true;
             data.REQUESTSTATUSID = (short)model?.statusId;
-            data.JOB_STATUS_FEEDBACKID = (short)model.rejectionReasonId;
+            data.JOB_STATUS_FEEDBACKID = model.rejectionReasonId;
             data.RESPONSECOMMENT = model.responseComment;
             data.RESPONSEDATE = applicationDate;
             data.SYSTEMRESPONSEDATE = DateTime.Now;
@@ -532,7 +532,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var singleJobDetail = jobDetail.FirstOrDefault();
                 foreach (var item in jobDetail)
                 {
-                    chargeAmount = chargeAmount + item.AMOUNT.Value;
+                    if (item.AMOUNT == null) item.AMOUNT = 0;
+
+                     chargeAmount = chargeAmount + item.AMOUNT.Value;
                     description = item.DESCRIPTION != null ? description + item.DESCRIPTION.ToString() + ", " : string.Empty;
                     jobSubTypeName = item.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME != null ? jobSubTypeName + item.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME.ToString() + ", " : string.Empty;
                     //jobTypeName = item.TBL_JOB_REQUEST.TBL_JOB_TYPE.TBL_JOB_REQUEST != null ? jobTypeName + item.TBL_JOB_REQUEST.TBL_JOB_TYPE.TBL_JOB_REQUEST.ToString() + ", " : string.Empty;
@@ -1270,8 +1272,24 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 jobTypeId = x.JOBTYPEID,
                 jobTypeName = x.JOBTYPENAME,
-                inUse = x.INUSE
+                inUse = x.INUSE,
+                canBeReasigned = x.CANBEREASSIGNED
             }).Where(c=>c.inUse == true);
+        }
+
+        public List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId)
+        {
+            var details = (from x in context.TBL_JOB_TYPE_REASSIGNMENT
+                           where x.STAFFID == staffId && x.COMPANYID == companyId && x.DELETED == false
+                           select new jobReasignment
+                           {
+                               staffId = x.STAFFID,
+                               jobTypeId = x.JOBTYPEID,
+                               dateTimeCreated = x.DATETIMECREATED
+
+                           }).ToList();
+
+            return details;
         }
 
         public IEnumerable<JobTypeViewModel> GetJobSubType(short jobId)

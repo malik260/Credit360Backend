@@ -1128,6 +1128,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanData.CUSTOMERGROUPID = null;
             }
 
+            if(loan.loanPreliminaryEvaluationId != null && loan.loanPreliminaryEvaluationId != 0)
+            {
+                var pen = context.TBL_LOAN_PRELIMINARY_EVALUATN.Find(loan.loanPreliminaryEvaluationId);
+                pen.SENTFORLOANAPPLICATION = true;
+            }
+            
+
             context.TBL_LOAN_APPLICATION.Add(loanData);
 
             // Audit Section ---------------------------

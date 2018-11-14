@@ -8400,7 +8400,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.casaAccountId = null;
             debit.debitAmount = chargeAmount;
             debit.creditAmount = 0;
-            debit.sourceBranchId = basicInput.userBranchId;
+            debit.sourceBranchId = loan.BRANCHID;
             debit.destinationBranchId = loan.BRANCHID;
 
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
@@ -8423,8 +8423,8 @@ namespace FintrakBanking.Repositories.Credit
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = chargeAmount;
-            credit.sourceBranchId = basicInput.userBranchId;
-            credit.destinationBranchId = basicInput.userBranchId;
+            credit.sourceBranchId = loan.BRANCHID;
+            credit.destinationBranchId = loan.BRANCHID;
 
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 

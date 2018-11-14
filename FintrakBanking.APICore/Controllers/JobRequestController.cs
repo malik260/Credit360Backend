@@ -31,46 +31,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-request")]
         public HttpResponseMessage GetJobRequest()
         {
-            try
-            {
-                var data = repo.GetAllJobRequest();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetAllJobRequest();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }       
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request-detail/legal-details")]
         public HttpResponseMessage GetLegalJobRequestDetails()
         {
-            try
-            {
-                var data = repo.GetLegalJobRequestDetails();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
-            }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetLegalJobRequestDetails();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
@@ -78,148 +48,67 @@ namespace FintrakBanking.APICore.Controllers
         [Route("legal-job-request-detail/{jobRequestId}")]
         public HttpResponseMessage GetJobRequestDetailsById(int jobRequestId)
         {
-            try
-            {
-                var data = repo.GetJobRequestDetailsById(jobRequestId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
-            }
-            catch (BadLogicException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetJobRequestDetailsById(jobRequestId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/loan-application-details/{applicationId}")]
         public HttpResponseMessage GetLoanApplicationJobsById(int applicationId)
         {
-            try
-            {
-                var data = repo.GetLoanApplicationJobsById(applicationId, token.GetCompanyId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetLoanApplicationJobsById(applicationId, token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("job-request-status-feedback/{statusId}/{jobTypeId}")]
         public HttpResponseMessage GetJobRequestStatusFeedback(short statusId, short jobTypeId)
         {
-            try
-            {
-                var data = repo.GetJobRequestStatusFeedback(statusId, jobTypeId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
-            }
+            var data = repo.GetJobRequestStatusFeedback(statusId, jobTypeId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("reasigned-job-by-staff/{staffId}")]
+        public HttpResponseMessage GetJobReasignmentStaffById(int staffId)
+        {
+            var data = repo.GetJobReasignmentStaffById(staffId, token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/staff")]
         public HttpResponseMessage getJobRequestByStaffId()
         {
-            try
-            {
-                var data = repo.GetJobRequestByStaffId(token.GetStaffId, token.GetBranchId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetJobRequestByStaffId(token.GetStaffId, token.GetBranchId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/{jobRequestId}")]
         public HttpResponseMessage GetJobRequest(int jobRequestId)
         {
-            try
-            {
-                var data = repo.GetJobRequest(jobRequestId);
+            var data = repo.GetJobRequest(jobRequestId);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception )
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("application-detail-job-request/{applicationDetailId}")]
         public HttpResponseMessage GetApplicationJobRequest(int applicationDetailId)
         {
-            try
-            {
-                var data = repo.GetApplicationJobRequest(applicationDetailId);
+            var data = repo.GetApplicationJobRequest(applicationDetailId);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An eror occured" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpGet]
@@ -240,76 +129,29 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-request/comments/{jobRequestId}")]
         public HttpResponseMessage GetJobComments(int jobRequestId)
         {
-            try
-            {
-                var data = repo.GetJobComments(jobRequestId);
+            var data = repo.GetJobComments(jobRequestId);
 
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
+            if (data == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
             }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
-            }
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/department")]
         public HttpResponseMessage GetJobRequestByDepartment()
         {
-            try
-            {
-
-                var data = repo.GetJobRequestByDepartment(token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetJobRequestByDepartment(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/department/unit")]
         public HttpResponseMessage GetJobRequestByDepartmentUnit()
         {
-            try
-            {
-
-                var data = repo.GetJobRequestByDepartment(token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message ="An error occured."});
-            }
+            var data = repo.GetJobRequestByDepartment(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
         [HttpPost]
@@ -621,46 +463,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-request-documents/{jobRequestCode}")]
         public HttpResponseMessage GetJobRequestDocuments(string jobRequestCode)
         {
-            try
-            {
-                var data = repo.GetJobRequestDocuments(jobRequestCode);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured" });
-            }
+            var data = repo.GetJobRequestDocuments(jobRequestCode);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("job-request-document/{documentId}")]
         public HttpResponseMessage GetJobRequestDocumentById(int documentId)
         {
-            try
-            {
-                var data = repo.GetJobRequestDocumentById(documentId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetJobRequestDocumentById(documentId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
          [HttpPost] [ClaimsAuthorization]
@@ -827,46 +639,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-type")]
         public HttpResponseMessage GetJobType()
         {
-            try
-            {
-                var data = repo.GetAllJobType();
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetAllJobType();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("job-sub-type/{jobId}")]
         public HttpResponseMessage GetJobSubType(short jobId)
         {
-            try
-            {
-                var data = repo.GetJobSubType(jobId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (BadLogicException be)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
-            }
-            catch (Exception)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occured." });
-            }
+            var data = repo.GetJobSubType(jobId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
          [HttpPost] [ClaimsAuthorization][Route("job-type")]
