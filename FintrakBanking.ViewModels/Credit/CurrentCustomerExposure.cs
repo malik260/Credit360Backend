@@ -7,14 +7,17 @@ namespace FintrakBanking.ViewModels.Credit
         public string facilityType { get; set; }
         public decimal existingLimit { get; set; }
         public decimal proposedLimit { get; set; }
-        public decimal change { get { return (recommendedLimit - proposedLimit); } }
-        public decimal outstandings { get { return proposedLimit; } }
+        public decimal change { get { return (proposedLimit - recommendedLimit); } }
+        //public decimal outstandings { get { return proposedLimit; } }
+        public decimal outstandings { get; set; }
 
         public decimal PastDueObligationsPrincipal { get; set; }
         public decimal PastDueObligationsInterest { get; set; }
         public DateTime reviewDate { get; set; }
         public string prudentialGuideline { get; set; }
         public string loanStatus { get; set; }
+        public int? casaAccountId { get; set; }
+
         public decimal recommendedLimit { get; set; }
         public string referenceNumber { get; set; }
         public int productTypeId { get; set; }
