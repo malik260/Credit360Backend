@@ -173,7 +173,30 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("city-class/{lgaId}")]
+        public HttpResponseMessage GetAllCityClass(int lgaId)
+        {
+            try
+            {
+                var rank = repo.GetCity(lgaId);
+
+                if (rank == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("city")]
         public HttpResponseMessage GetCity()
         {

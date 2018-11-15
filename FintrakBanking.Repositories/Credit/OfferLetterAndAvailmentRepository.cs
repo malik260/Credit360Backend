@@ -389,21 +389,40 @@ namespace FintrakBanking.Repositories.Credit
 
             var templateLink = GetProductSpecificTemplate(productClassProcess.PRODUCT_CLASS_PROCESSID, (short?)targetAppl.PRODUCTCLASSID ?? 1);
 
-            var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
-                                       join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                                       && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-                                       && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                                       && (b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived || b.CHECKLISTSTATUSID == null)
-                                       && b.ISSUBSEQUENT == false
-                                       select new OfferLetterConditionPrecidentViewModel()
-                                       {
-                                           conditionPrecident = b.CONDITION,
-                                           loanApplicationId = b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
-                                           isExternal = b.ISEXTERNAL,
-                                           productName = c.TBL_PRODUCT.PRODUCTNAME
-                                       }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+            //var conditionPrecedentsSub = (from a in context.TBL_LOAN_APPLICATION
+            //                           join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+            //                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+            //                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+            //                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+            //                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+            //                           && (b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived || b.CHECKLISTSTATUSID == null)
+            //                           && b.ISSUBSEQUENT == false
+            //                           select new OfferLetterConditionPrecidentViewModel()
+            //                           {
+            //                               conditionPrecident = b.CONDITION,
+            //                               loanApplicationId = a.LOANAPPLICATIONID,
+            //                               isExternal = b.ISEXTERNAL,
+            //                               productName = c.TBL_PRODUCT.PRODUCTNAME
+            //                           }).GroupBy(x => x.conditionPrecident).Select(y => y.FirstOrDefault()).ToList();
+
+            var conditionPrecedentsSub = (from a in context.TBL_LOAN_APPLICATION
+                                          join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                          join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                          where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
+                                          && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                          && (b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived || b.CHECKLISTSTATUSID == null)
+                                          && b.ISSUBSEQUENT == false
+                                          select new OfferLetterConditionPrecidentViewModel()
+                                          {
+                                              conditionId = b.CONDITIONID,
+                                              conditionPrecident = b.CONDITION,
+                                              loanApplicationId = a.LOANAPPLICATIONID,
+                                              isExternal = b.ISEXTERNAL,
+                                              productName = c.TBL_PRODUCT.PRODUCTNAME
+                                          }).Distinct().ToList();
+
+            var conditionPrecedents = conditionPrecedentsSub;
 
             var conditionSubsequents = (from a in context.TBL_LOAN_APPLICATION
                                         join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
@@ -466,10 +485,11 @@ namespace FintrakBanking.Repositories.Credit
                                    tenor = b.APPROVEDTENOR,
                                    interestRate = b.APPROVEDINTERESTRATE,
                                    purpose = b.LOANPURPOSE,
-                                   applicationDate = applDate,
                                    approvedAmountCurrency = e.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
                                    productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
-
+                                   approvedDate = a.APPROVEDDATE,
+                                   newApplicationDate = a.APPLICATIONDATE,
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER
                                    //approvedAmount = b.APPROVEDAMOUNT
                                }).ToList();
 
@@ -1062,6 +1082,8 @@ namespace FintrakBanking.Repositories.Credit
                                    applicationDate = applDate,
                                    approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
                                    //approvedAmount = b.APPROVEDAMOUNT
+                                   approvedDate = a.APPROVEDDATE,
+                                   newApplicationDate =a.APPLICATIONDATE
 
                                }).ToList();
 

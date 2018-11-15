@@ -68,5 +68,6 @@ namespace FintrakBanking.Interfaces.Reports
         string GetweeklyRecoveryReportforFINCON(DateRange dateRange);
         string GetCashCollaterizedCredits(DateRange dateRange);
         string GetLoggingStatus(DateRange dateRange);
+        string GetGeneratedFORM3800BLMS(string applicationRefNumber);
     }
 }

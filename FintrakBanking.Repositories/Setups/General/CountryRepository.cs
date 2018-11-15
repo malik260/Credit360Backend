@@ -95,6 +95,18 @@ namespace FintrakBanking.Repositories.Setups.General
                               });
             return cityEntity;
         }
+         public IEnumerable<CityViewModel> GetCity(int Id)
+        {
+            var cityEntity = (from a in context.TBL_CITY where a.LOCALGOVERNMENTID==Id
+                              select new CityViewModel
+                              {
+                                  cityId = a.CITYID,
+                                  cityName = a.CITYNAME,
+                                  localGovernmentId = a.LOCALGOVERNMENTID
+                                 
+                              });
+            return cityEntity;
+        }
 
         public bool AddLocalGovt(LocalGovtViewModel entity)
         {

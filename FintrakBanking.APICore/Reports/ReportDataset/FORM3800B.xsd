@@ -21,6 +21,9 @@
               <xs:element name="tenor" msprop:Generator_ColumnVarNameInTable="columntenor" msprop:Generator_ColumnPropNameInRow="tenor" msprop:Generator_ColumnPropNameInTable="tenorColumn" msprop:Generator_UserColumnName="tenor" type="xs:string" minOccurs="0" />
               <xs:element name="interestRate" msprop:Generator_ColumnVarNameInTable="columninterestRate" msprop:Generator_ColumnPropNameInRow="interestRate" msprop:Generator_ColumnPropNameInTable="interestRateColumn" msprop:Generator_UserColumnName="interestRate" type="xs:string" minOccurs="0" />
               <xs:element name="ReviewDate" msprop:Generator_ColumnVarNameInTable="columnReviewDate" msprop:Generator_ColumnPropNameInRow="ReviewDate" msprop:Generator_ColumnPropNameInTable="ReviewDateColumn" msprop:Generator_UserColumnName="ReviewDate" type="xs:string" minOccurs="0" />
+              <xs:element name="approvedDate" msprop:Generator_ColumnVarNameInTable="columnapprovedDate" msprop:Generator_ColumnPropNameInRow="approvedDate" msprop:Generator_ColumnPropNameInTable="approvedDateColumn" msprop:Generator_UserColumnName="approvedDate" type="xs:string" minOccurs="0" />
+              <xs:element name="newApplicationDate" msprop:Generator_ColumnVarNameInTable="columnnewApplicationDate" msprop:Generator_ColumnPropNameInRow="newApplicationDate" msprop:Generator_ColumnPropNameInTable="newApplicationDateColumn" msprop:Generator_UserColumnName="newApplicationDate" type="xs:string" minOccurs="0" />
+              <xs:element name="applicationReferenceNumber" msprop:Generator_ColumnVarNameInTable="columnapplicationReferenceNumber" msprop:Generator_ColumnPropNameInRow="applicationReferenceNumber" msprop:Generator_ColumnPropNameInTable="applicationReferenceNumberColumn" msprop:Generator_UserColumnName="applicationReferenceNumber" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -44,6 +47,7 @@
               <xs:element name="locationOfDocument" msprop:Generator_ColumnVarNameInTable="columnlocationOfDocument" msprop:Generator_ColumnPropNameInRow="locationOfDocument" msprop:Generator_ColumnPropNameInTable="locationOfDocumentColumn" msprop:Generator_UserColumnName="locationOfDocument" type="xs:string" minOccurs="0" />
               <xs:element name="SN" msprop:Generator_ColumnVarNameInTable="columnSN" msprop:Generator_ColumnPropNameInRow="SN" msprop:Generator_ColumnPropNameInTable="SNColumn" msprop:Generator_UserColumnName="SN" type="xs:string" minOccurs="0" />
               <xs:element name="isExternal" msprop:Generator_ColumnVarNameInTable="columnisExternal" msprop:Generator_ColumnPropNameInRow="isExternal" msprop:Generator_ColumnPropNameInTable="isExternalColumn" msprop:Generator_UserColumnName="isExternal" type="xs:string" minOccurs="0" />
+              <xs:element name="sortOrder" msprop:Generator_ColumnVarNameInTable="columnsortOrder" msprop:Generator_ColumnPropNameInRow="sortOrder" msprop:Generator_ColumnPropNameInTable="sortOrderColumn" msprop:Generator_UserColumnName="sortOrder" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -65,6 +69,7 @@
               <xs:element name="creditMonitoring" msprop:Generator_ColumnVarNameInTable="columncreditMonitoring" msprop:Generator_ColumnPropNameInRow="creditMonitoring" msprop:Generator_ColumnPropNameInTable="creditMonitoringColumn" msprop:Generator_UserColumnName="creditMonitoring" type="xs:string" minOccurs="0" />
               <xs:element name="productName" msprop:Generator_ColumnVarNameInTable="columnproductName" msprop:Generator_ColumnPropNameInRow="productName" msprop:Generator_ColumnPropNameInTable="productNameColumn" msprop:Generator_UserColumnName="productName" type="xs:string" minOccurs="0" />
               <xs:element name="isExternal" msprop:Generator_ColumnVarNameInTable="columnisExternal" msprop:Generator_ColumnPropNameInRow="isExternal" msprop:Generator_ColumnPropNameInTable="isExternalColumn" msprop:Generator_UserColumnName="isExternal" type="xs:string" minOccurs="0" />
+              <xs:element name="sortOrder" msprop:Generator_ColumnVarNameInTable="columnsortOrder" msprop:Generator_ColumnPropNameInRow="sortOrder" msprop:Generator_ColumnPropNameInTable="sortOrderColumn" msprop:Generator_UserColumnName="sortOrder" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -111,6 +116,7 @@
               <xs:element name="creditMonitoring" msprop:Generator_ColumnVarNameInTable="columncreditMonitoring" msprop:Generator_ColumnPropNameInRow="creditMonitoring" msprop:Generator_ColumnPropNameInTable="creditMonitoringColumn" msprop:Generator_UserColumnName="creditMonitoring" type="xs:string" minOccurs="0" />
               <xs:element name="productName" msprop:Generator_ColumnVarNameInTable="columnproductName" msprop:Generator_ColumnPropNameInRow="productName" msprop:Generator_ColumnPropNameInTable="productNameColumn" msprop:Generator_UserColumnName="productName" type="xs:string" minOccurs="0" />
               <xs:element name="isExternal" msprop:Generator_ColumnVarNameInTable="columnisExternal" msprop:Generator_ColumnPropNameInRow="isExternal" msprop:Generator_ColumnPropNameInTable="isExternalColumn" msprop:Generator_UserColumnName="isExternal" type="xs:string" minOccurs="0" />
+              <xs:element name="sortOrder" msprop:Generator_ColumnVarNameInTable="columnsortOrder" msprop:Generator_ColumnPropNameInRow="sortOrder" msprop:Generator_ColumnPropNameInTable="sortOrderColumn" msprop:Generator_UserColumnName="sortOrder" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -123,6 +129,7 @@
               <xs:element name="locationOfDocument" msprop:Generator_ColumnVarNameInTable="columnlocationOfDocument" msprop:Generator_ColumnPropNameInRow="locationOfDocument" msprop:Generator_ColumnPropNameInTable="locationOfDocumentColumn" msprop:Generator_UserColumnName="locationOfDocument" type="xs:string" minOccurs="0" />
               <xs:element name="SN" msprop:Generator_ColumnVarNameInTable="columnSN" msprop:Generator_ColumnPropNameInRow="SN" msprop:Generator_ColumnPropNameInTable="SNColumn" msprop:Generator_UserColumnName="SN" type="xs:string" minOccurs="0" />
               <xs:element name="isExternal" msprop:Generator_ColumnVarNameInTable="columnisExternal" msprop:Generator_ColumnPropNameInRow="isExternal" msprop:Generator_ColumnPropNameInTable="isExternalColumn" msprop:Generator_UserColumnName="isExternal" type="xs:string" minOccurs="0" />
+              <xs:element name="sortOrder" msprop:Generator_ColumnVarNameInTable="columnsortOrder" msprop:Generator_ColumnPropNameInRow="sortOrder" msprop:Generator_ColumnPropNameInTable="sortOrderColumn" msprop:Generator_UserColumnName="sortOrder" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
