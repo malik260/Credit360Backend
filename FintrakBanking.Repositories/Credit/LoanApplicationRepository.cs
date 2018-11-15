@@ -779,7 +779,19 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
+        public IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId)
+        {
+            var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL 
+                        join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                       where a.LOANAPPLICATIONID == applicationId 
+                       select new CustomerViewModels
+                       {
+                           customerId = a.CUSTOMERID,
+                           fullName = b.FIRSTNAME + " " + b.LASTNAME
+                       }).Distinct().ToList();
 
+            return customers;
+        }
         // PLEASE RENAME THIS METHOD NAME TO BE MORE DESCRIPTIVE like LoanApplicationChecklistValidation
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {

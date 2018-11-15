@@ -11,6 +11,7 @@ using System.Linq;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -31,6 +32,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationViewModel> GetLoanApplicationById(int loanApplicationId, int companyId);
 
         IEnumerable<ProductClassViewModel> GetProductClass();
+        IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId);
+
 
         // LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId);
         LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId);

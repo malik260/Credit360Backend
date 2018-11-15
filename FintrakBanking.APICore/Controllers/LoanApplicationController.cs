@@ -376,6 +376,20 @@ namespace FintrakBanking.APICore.Controllers
         //      }
         //  }
 
+        [HttpGet]
+        [Route("customer-by-application/{applicationId}")]
+        public HttpResponseMessage GetCustomerByApplicationId(int applicationId)
+        {
+            try
+            {
+                var status = repo.GetCustomerByApplicationId(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application")]
