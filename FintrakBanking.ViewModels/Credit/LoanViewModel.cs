@@ -646,7 +646,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string subSectorName { get; set; }
         public string sectorSubSectorName { get {return (this.sectorName + "/" + this.subSectorName); } } 
         public short productTypeId { get; set; }
-        public short productPriceIndexId { get; set; }
+        public short? productPriceIndexId { get; set; }
         public double? productPriceIndexRate { get; set; }
         public string productTypeName { get; set; }
         public int customerSensitivityLevelId { get; set; }

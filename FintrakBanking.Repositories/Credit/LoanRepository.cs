@@ -330,6 +330,7 @@ namespace FintrakBanking.Repositories.Credit
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Find(entity.loanApplicationDetailId);
             var systemDate = generalSetup.GetApplicationDate();
+            var product = context.TBL_PRODUCT.Find(applicationDetail.APPROVEDPRODUCTID);
 
             //**********VALIDATING COMMERCIAL LOAN INPUTS ************//
             if (entity.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
@@ -355,6 +356,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
                     throw new ConditionNotMetException($"Commercial Loan maturity date should not exceed the line expiry date [{Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}]. ");
+
+                if (product.MAXIMUMTENOR > 0 && product.MAXIMUMTENOR < (entity.maturityDate - entity.effectiveDate).Days)
+                    throw new ConditionNotMetException("You have exceeded the maximun tenor of the product. The maximun tenor is " + product.MAXIMUMTENOR);
             }
 
             //**********VALIDATING FX REVOLVING LOAN INPUTS ************//
@@ -374,6 +378,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (applicationDetail.EXPIRYDATE != null && entity.maturityDate > applicationDetail.EXPIRYDATE)
                     throw new ConditionNotMetException($"FX revolving loan maturity date should not exceed the line expiry date [{Convert.ToDateTime(applicationDetail.EXPIRYDATE).ToString("dd/MM/yyyy")}]. ");
+
+                if (product.MAXIMUMTENOR > 0 && product.MAXIMUMTENOR < (entity.maturityDate - entity.effectiveDate).Days)
+                    throw new ConditionNotMetException("You have exceeded the maximun tenor of the product. The maximun tenor is " + product.MAXIMUMTENOR);
             }
 
             //********** VALIDATING TERM LOAN BOOKING INPUTS ************//
@@ -399,6 +406,9 @@ namespace FintrakBanking.Repositories.Credit
                     if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                         throw new ConditionNotMetException("Specify the collection account.");
                 }
+
+                if (product.MAXIMUMTENOR > 0 && product.MAXIMUMTENOR < (entity.maturityDate - entity.effectiveDate).Days)
+                    throw new ConditionNotMetException("You have exceeded the maximun tenor of the product. The maximun tenor is " + product.MAXIMUMTENOR);
             }
 
             //********** VALIDATING CONTIGENT FACILITY INPUTS ************//
@@ -430,6 +440,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (entity.effectiveDate > systemDate)
                     throw new ConditionNotMetException("You effective date cannot be post-dated.");
+
+                if (product.MAXIMUMTENOR > 0 && product.MAXIMUMTENOR < (entity.maturityDate - entity.effectiveDate).Days)
+                    throw new ConditionNotMetException("You have exceeded the maximun tenor of the product. The maximun tenor is " + product.MAXIMUMTENOR);
             }
 
             //********** VALIDATING REVOLVING FACILITY INPUTS ************//
@@ -458,6 +471,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
                     throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
+
+                if (product.MAXIMUMTENOR > 0 && product.MAXIMUMTENOR < (entity.maturityDate - entity.effectiveDate).Days)
+                    throw new ConditionNotMetException("You have exceeded the maximun tenor of the product. The maximun tenor is " + product.MAXIMUMTENOR);
             }
 
         }
@@ -578,8 +594,10 @@ namespace FintrakBanking.Repositories.Credit
 
             var product = context.TBL_PRODUCT.Find(model.productId);
 
+            if (product.MAXIMUMTENOR > 0 && product.MAXIMUMTENOR < (model.maturityDate - model.effectiveDate).Days)
+                throw new ConditionNotMetException("You have exceeded the maximun tenor of the product. The maximun tenor is " + product.MAXIMUMTENOR);
+
             var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, model.productId, (short)LoanSystemTypeEnum.OverdraftFacility);
-            //branchId, productId, serial
 
             if (revolvingLoanInput.revolvingTypeId == 0)
                 revolvingLoanInput.revolvingTypeId = (short)LoanRevolvingTypeEnum.NormalOverdraft;
@@ -1144,9 +1162,10 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                   select sumPrincipalAmount;
 
-            var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == applicationDetail.CURRENCYID).FirstOrDefault();
-            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
-
+            //var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == applicationDetail.CURRENCYID).FirstOrDefault();
+            //var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == applicationDetail.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+            
             var interestRate = Convert.ToDouble(entity.interestRate);
             if (priceIndex != null)
             {
@@ -1500,7 +1519,15 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                   select sumPrincipalAmount;
 
-            double? priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
+           // double? priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
+
+            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == applicationDetail.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+
+            var interestRate = Convert.ToDouble(entity.interestRate);
+            if (priceIndex != null)
+            {
+                interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+            }
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
 
@@ -1527,7 +1554,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALNUMBEROFINSTALLMENT = 1,
                 INTERESTNUMBEROFINSTALLMENT = 1,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
-                PRODUCTPRICEINDEXRATE = (double)priceIndex,
+                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
+                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
                 SUBSECTORID = applicationDetail.SUBSECTORID,
                 CURRENCYID = (short)applicationDetail.CURRENCYID,
                 EXCHANGERATE = currentExchangeRate,
@@ -1808,7 +1836,15 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                   select sumPrincipalAmount;
 
-            double? priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
+            //double? priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
+
+            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == applicationDetail.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+
+            var interestRate = Convert.ToDouble(entity.interestRate);
+            if (priceIndex != null)
+            {
+                interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+            }
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
 
@@ -1839,7 +1875,8 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALNUMBEROFINSTALLMENT = 1,
                 INTERESTNUMBEROFINSTALLMENT = 1,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
-                PRODUCTPRICEINDEXRATE = (double)priceIndex,
+                PRODUCTPRICEINDEXRATE =priceIndex.PRICEINDEXRATE,
+                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
                 SUBSECTORID = applicationDetail.SUBSECTORID,
                 CURRENCYID = (short)applicationDetail.CURRENCYID,
                 EXCHANGERATE = currentExchangeRate,
@@ -3345,7 +3382,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     sourceApplicationId = (short)contingentLoanRecord.CONTINGENTLOANID,
                     applicationUrl = user.applicationUrl,
-                    description = "APG Transaction Booking",
+                    description = "Bonds & Guarantee Issuance",
                     companyId = user.companyId,
                     createdBy = user.createdBy,
                     userBranchId = (short)user.BranchId,
@@ -5354,6 +5391,14 @@ namespace FintrakBanking.Repositories.Credit
                             }
                             item.customerAvailableAmount = item.approvedAmount - contingentBal;
                             break;
+                        case (short)LoanProductTypeEnum.SyndicatedTermLoan:
+                            decimal customerAvailableAmount4 = 0;
+                            foreach (var loan in loans)
+                            {
+                                if (loan.PRINCIPALAMOUNT > 0) customerAvailableAmount3 = customerAvailableAmount4 + loan.PRINCIPALAMOUNT;
+                            }
+                            item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount4;
+                            break;
                     }
 
                     if(item.effectiveDate == null) item.effectiveDate = item.availmentDate;
@@ -5604,6 +5649,7 @@ namespace FintrakBanking.Repositories.Credit
                          loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                          productId = d.APPROVEDPRODUCTID,
                          productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+                         productPriceIndexId = (short)d.PRODUCTPRICEINDEXID,
                          productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                          productName = d.TBL_PRODUCT.PRODUCTNAME,
                          casaAccountId = s.CASAACCOUNTID,
@@ -5668,6 +5714,7 @@ namespace FintrakBanking.Repositories.Credit
                          loanTypeName = m.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                          productId = d.APPROVEDPRODUCTID,
                          productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+                         productPriceIndexId = (short)d.PRODUCTPRICEINDEXID,
                          productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                          productName = d.TBL_PRODUCT.PRODUCTNAME,
 
@@ -5732,17 +5779,6 @@ namespace FintrakBanking.Repositories.Credit
                 if (trailInfo.Any())
                     item.isUnderApproval = true;
 
-                var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == item.currencyId).FirstOrDefault();
-                var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
-
-                var interestRate = Convert.ToDouble(item.interestRate);
-                if (priceIndex != null)
-                {
-                    item.interestRate = priceIndex.PRICEINDEXRATE + interestRate;
-                    item.productPriceIndex = priceIndex.PRICEINDEXNAME;
-                    item.productPriceDescription = priceIndex.PRICEINDEXDESCRIPTION;
-                }
-
                 var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
@@ -5804,6 +5840,22 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         item.customerAvailableAmount = item.approvedAmount - customerAvailableAmount5;
                         break;
+                }
+
+                if(item.productTypeId == (short)LoanProductTypeEnum.TermLoan
+                    || item.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating
+                    || item.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving 
+                    || item.productTypeId == (short)LoanProductTypeEnum.CommercialLoan 
+                    || item.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                {
+                    var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(item.productPriceIndexId);
+                    var interestRate = Convert.ToDouble(item.interestRate);
+                    if (priceIndex != null)
+                    {
+                        item.interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                        item.productPriceIndex = priceIndex.PRICEINDEXNAME;
+                        item.productPriceDescription = priceIndex.PRICEINDEXDESCRIPTION;
+                    }
                 }
 
                 var disbursedLoan = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId && x.ISDISBURSED == true);
@@ -5925,6 +5977,7 @@ namespace FintrakBanking.Repositories.Credit
                             camReference = m.TBL_CREDIT_APPRAISAL_MEMORANDM.FirstOrDefault().CAMREF,
                             productId = d.APPROVEDPRODUCTID,
                             productTypeId = d.TBL_PRODUCT.PRODUCTTYPEID,
+                            productPriceIndexId = (short)d.PRODUCTPRICEINDEXID,
                             productTypeName = d.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                             productName = d.TBL_PRODUCT.PRODUCTNAME,
                             productClassId = p.PRODUCTCLASSID,
@@ -5983,17 +6036,6 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
 
-                var productCurrencyIndex = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.CURRENCYID == item.currencyId).FirstOrDefault();
-                var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == productCurrencyIndex.PRODUCTPRICEINDEXID select a).FirstOrDefault();
-
-                var interestRate = Convert.ToDouble(item.interestRate);
-                if (priceIndex != null)
-                {
-                    item.interestRate = priceIndex.PRICEINDEXRATE + interestRate;
-                    item.productPriceIndex = priceIndex.PRICEINDEXNAME;
-                    item.productPriceDescription = priceIndex.PRICEINDEXDESCRIPTION;
-                }
-
                 var loans = context.TBL_LOAN.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var overdrafts = context.TBL_LOAN_REVOLVING.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
                 var contingents = context.TBL_LOAN_CONTINGENT.Where(tl => tl.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId);
@@ -6045,6 +6087,18 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         item.customerAvailableAmount = item.approvedAmount - contingentBal;
                         break;
+                }
+
+                if (item.operationId == (short)OperationsEnum.TermLoanBooking || item.operationId == (short)OperationsEnum.CommercialLoanBooking || item.operationId == (short)OperationsEnum.ForeignExchangeLoanBooking)
+                {
+                    var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(item.productPriceIndexId);
+                    var interestRate = Convert.ToDouble(item.interestRate);
+                    if (priceIndex != null)
+                    {
+                        item.interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                        item.productPriceIndex = priceIndex.PRICEINDEXNAME;
+                        item.productPriceDescription = priceIndex.PRICEINDEXDESCRIPTION;
+                    }
                 }
                 //var companyInformation = (from a in context.TBL_CUSTOMER_COMPANYINFOMATION
                 //                          where a.CUSTOMERID == item.customerId
@@ -8422,7 +8476,7 @@ namespace FintrakBanking.Repositories.Credit
             debit.companyId = basicInput.companyId;
             debit.batchCode = transactionCode;
             debit.glAccountId = debitGLId; // (int)casa.TBL_PRODUCT.PRINCIPALBALANCEGL;
-            debit.sourceReferenceNumber = transactionCode;
+            debit.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
             debit.casaAccountId = null;
             debit.debitAmount = chargeAmount;
             debit.creditAmount = 0;
@@ -8445,7 +8499,7 @@ namespace FintrakBanking.Repositories.Credit
             credit.companyId = basicInput.companyId;
             credit.batchCode = transactionCode;
             credit.glAccountId = creditGLId;
-            credit.sourceReferenceNumber = transactionCode;
+            credit.sourceReferenceNumber = loan.LOANREFERENCENUMBER;
             credit.casaAccountId = null;
             credit.debitAmount = 0;
             credit.creditAmount = chargeAmount;
