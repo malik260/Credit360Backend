@@ -60,7 +60,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-request-status-feedback/{statusId}/{jobTypeId}")]
         public HttpResponseMessage GetJobRequestStatusFeedback(short statusId, short jobTypeId)
         {
