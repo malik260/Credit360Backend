@@ -12,6 +12,8 @@ namespace FintrakBanking.Interfaces.Credit
     {
         IEnumerable<PrudGuildlineTypeViewModel> GetPrudGuildlineType();
         IQueryable<LoanViewModel> GetAllLoan();
+        IEnumerable<LoanViewModel> GetAllLoans();
+
         IEnumerable<PrudentialGuidelineViewModel> GetPrudGuildlineStatus();
         bool LoanPerformanceStatusChange(PrudGuidelineStatusChangeViewModel entity);
     }

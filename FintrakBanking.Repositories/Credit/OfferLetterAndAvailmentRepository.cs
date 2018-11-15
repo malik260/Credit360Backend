@@ -1925,8 +1925,11 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var record in loanApplicationDetails.ToList())
             {
                 var systemdate = genSetup.GetApplicationDate();
-                record.EFFECTIVEDATE = systemdate;
-                record.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
+
+                var currentLoanApplicationDetailRow = context.TBL_LOAN_APPLICATION_DETAIL.Find(record.LOANAPPLICATIONDETAILID);
+                currentLoanApplicationDetailRow.EFFECTIVEDATE = systemdate;
+                currentLoanApplicationDetailRow.EXPIRYDATE = (systemdate.AddDays(record.APPROVEDTENOR));
+
                 ctx.SaveChanges();
 
                 if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability))
