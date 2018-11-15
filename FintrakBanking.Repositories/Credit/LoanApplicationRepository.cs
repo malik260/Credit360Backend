@@ -792,6 +792,42 @@ namespace FintrakBanking.Repositories.Credit
 
             return customers;
         }
+        public CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId)
+        {
+            var fields = new CustomerApplicationTransactionsViewModels();
+
+            var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
+                             where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
+                         select new CustomerTransactionsViewModels
+                             {
+                                 cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
+                                 period = a.PERIOD,
+                                 productName = a.PRODUCTNAME,
+                                 accountNumber =a.ACCOUNTNUMBER,
+                                 max_Credit_Balance = a.MAXIMUMCREDITBALANCE,
+                                 max_Debit_Balance = a.MAXIMUMDEBITBALANCE,
+                                 min_Credit_Balance = a.MINIMUMCREDITBALANCE,
+                                 min_Debit_Balance = a.MINIMUMDEBITBALANCE,
+                                 credit_Turnover = a.CREDITTURNOVER,
+                                 debit_Turnover = a.DEBITTURNOVER,
+                             }).ToList();
+            var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
+                         where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
+                          select new CustomerTransactionsViewModels
+                         {
+                             cust_Id = a.CUSTOMERTRANSACTIONID2.ToString(),
+                             period = a.PERIOD,
+                             productName = a.PRODUCTNAME,
+                             accountNumber = a.ACCOUNTNUMBER,
+                             interest = a.INTEREST,
+                             float_Charge = a.FLOATCHARGE,
+                         }).ToList();
+
+            fields.firstTransaction = first;
+            fields.secondTransaction = second;
+
+            return fields;
+        }
         // PLEASE RENAME THIS METHOD NAME TO BE MORE DESCRIPTIVE like LoanApplicationChecklistValidation
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {

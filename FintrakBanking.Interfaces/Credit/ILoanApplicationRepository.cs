@@ -33,6 +33,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductClassViewModel> GetProductClass();
         IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId);
+        CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId);
 
 
         // LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId);

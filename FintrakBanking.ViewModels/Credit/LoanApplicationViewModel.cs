@@ -738,4 +738,43 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationDetailId { get; set; }
         public string managementPosition { get; set; }
     }
+
+    public class CustomerApplicationTransactionsViewModels // TEMPORARY LOCATION
+    {
+        public CustomerApplicationTransactionsViewModels()
+        {
+
+            firstTransaction = new List<CustomerTransactionsViewModels>();
+            secondTransaction = new List<CustomerTransactionsViewModels>();
+        }
+        public List<CustomerTransactionsViewModels> firstTransaction { get; set; }
+        public List<CustomerTransactionsViewModels> secondTransaction { get; set; }
+
+    }
+    public class CustomerTransactionsViewModels // TEMPORARY LOCATION
+    {
+        public string foracid { get; set; } // ": "2022072744",
+        public string cust_Id { get; set; } // ": "483008974",
+        public string schm_Type { get; set; } // ": "ODA|OVERDRAFT A/C",
+        public string period { get; set; } // ": "Apr-15",
+        public decimal? min_Debit_Balance { get; set; } // ": "",
+        public decimal? max_Debit_Balance { get; set; } // ": "",
+        public decimal? min_Credit_Balance { get; set; } // ": "34218.39",
+        public decimal? max_Credit_Balance { get; set; } // ": "1050843.73",
+        public decimal? debit_Turnover { get; set; } // ": "1159360.11",
+        public decimal? credit_Turnover { get; set; } // ": "1207425.56",
+        public string sms_Alert { get; set; } // ": "-176",
+        public string amc { get; set; } // ": "",
+        public string vat { get; set; } // ": "-92.50",
+        public string management_Fee { get; set; } // ": "",
+        public string commitment_Fees { get; set; } // ": "",
+        public string com_Contigent_Liab { get; set; } // ": "",
+        public string lc_Commission { get; set; } // ": 
+        public decimal? float_Charge { get; set; } // "2081981.94",
+        public decimal? interest { get; set; } // "2909416.54",
+        public string accountNumber { get; set; } // "2909416.54",
+        public string productName { get; set; } // "2909416.54",
+
+    }
+
 }
