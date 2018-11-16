@@ -12,6 +12,7 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int checkedBy { get; set; }
         public short targetTypeId { get; set; }
         public int targetId { get; set; }
+        public int targetId2 { get; set; }
         public short checkListStatusId { get; set; }
         public DateTime? deferedDate { get; set; }
         public string checkListStatusName { get; set; }

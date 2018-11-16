@@ -924,6 +924,7 @@ namespace FintrakBanking.Repositories.Credit
                             CHECKLISTDEFINITIONID = model.checkListDefinitionId,
                             TARGETTYPEID = model.targetTypeId,
                             TARGETID = model.targetId,
+                            TARGETID2 = model.targetId2,
                             CHECKLISTSTATUSID = model.checkListStatusId,
                             CHECKEDBY = (int)model.createdBy,
                             DEFEREDDATE = model.deferedDate,

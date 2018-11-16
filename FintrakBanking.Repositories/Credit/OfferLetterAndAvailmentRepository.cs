@@ -489,7 +489,7 @@ namespace FintrakBanking.Repositories.Credit
                                    productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                                    approvedDate = a.APPROVEDDATE,
                                    newApplicationDate = a.APPLICATIONDATE,
-                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                    //approvedAmount = b.APPROVEDAMOUNT
                                }).ToList();
 
@@ -801,7 +801,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.newApplicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
 
