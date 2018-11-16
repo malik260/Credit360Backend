@@ -473,17 +473,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
         #region test
 
-        public async Task<List<CustomerTurnoverViewModels>> TestTurnover()
+        public async Task<List<CustomerTurnoverViewModel>> TestTurnover()
         {
-            var data = new List<CustomerTurnoverViewModels>();
+            var data = new List<CustomerTurnoverViewModel>();
             //Task.Run(async () => { data = await _customerIntegration.GetCustomerTransactions("483008974", 48); }).GetAwaiter().GetResult();
             data = await _customerIntegration.GetCustomerTransactions("483008974", 48);
             return data;
         }
 
-        public async Task<List<CustomerTurnoverViewModels>> TestTurnoverInterest()
+        public async Task<List<CustomerTurnoverViewModel>> TestTurnoverInterest()
         {
-            var data = new List<CustomerTurnoverViewModels>();
+            var data = new List<CustomerTurnoverViewModel>();
             //Task.Run(async () => { data = await _customerIntegration.GetCustomerInterestTransactions("230009868", 48); }).GetAwaiter().GetResult();
             data = await _customerIntegration.GetCustomerInterestTransactions("230009868", 48);
             return data;

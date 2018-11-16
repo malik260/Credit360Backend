@@ -301,7 +301,7 @@ namespace FintrakBanking.ViewModels.Credit
         public double SN { get; set; }
     }
 
-    public class CustomerTurnoverViewModel
+    public class CustomersTurnoverViewModel
     {
         public int accountId { get; set; }
         public string schemeType { get; set; }
