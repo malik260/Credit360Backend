@@ -337,7 +337,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanTenorDays = (entity.maturityDate - entity.effectiveDate).Days;
                 if (loanTenorDays > applicationDetail.APPROVEDTENOR)
-                    throw new ConditionNotMetException("The loan tenor cannot be more than the tenor of its line");
+                    throw new ConditionNotMetException("The loan tenor cannot be more than the tenor of it's line. \r\n The Line tenor is "+ applicationDetail.APPROVEDTENOR +" days");
 
                 if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                     throw new ConditionNotMetException("Specify the recieving account.");
@@ -1289,8 +1289,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-
-                    // ............. Checking customer balance, and fee override ......
                     confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                     entity.feeOverride = true;
 
