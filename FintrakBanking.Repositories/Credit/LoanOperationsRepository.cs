@@ -11871,6 +11871,8 @@ namespace FintrakBanking.Repositories.Credit
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
+                                     join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+
                                      where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == op.OPERATIONTYPEID
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
@@ -11949,7 +11951,14 @@ namespace FintrakBanking.Repositories.Credit
                                          newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
                                          newMaturityDate = op.MATURITYDATE,
                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.REVOLVINGLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
-                                         dateTimeCreated = op.DATECREATED
+                                         dateTimeCreated = op.DATECREATED,
+
+
+                                         currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
+                                         productAccountNumber = ch.ACCOUNTCODE,
+                                         productAccountName = ch.ACCOUNTNAME,                                        
+                                         approvedAmount = ld.APPROVEDAMOUNT,
+                                         creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
 
                                      }).ToList();
 

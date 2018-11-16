@@ -771,6 +771,7 @@ namespace FintrakBanking.Repositories.Credit
                         syndicationAmount = x.d.FIELD3,
                         conditionPrecedent = x.d.CONDITIONPRECIDENT,
                         conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
+                        transactionDynamics = x.d.TRANSACTIONDYNAMICS,
 
                     }).ToList();
 
