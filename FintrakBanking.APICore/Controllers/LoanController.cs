@@ -421,15 +421,28 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                         || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving
                         || entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
+                        if(entity.isInEditMode)
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Loan Loan with Account Number: '{ data}' was successfully modified."  });
+                        else
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
                     }
 
                     if(entity.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+                    {
+                        if (entity.isInEditMode)
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Overdaft with Account Number: '{ data}' was successfully modified." });
+                        else
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+                    }
 
                     if (entity.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
-
+                    {
+                        if (entity.isInEditMode)
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"contigent facility with Account Number: '{ data}' was successfully modified." });
+                        else
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+                    }
+                        
 
                     //This is not allowed
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Unknown facility type booked.\r\n Facility Account Number: " + data });

@@ -407,6 +407,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                          operationsId = x.OPERATIONSID,
                          operationName = x.TBL_OPERATIONS.OPERATIONNAME,
                          requestStatusId = x.REQUESTSTATUSID,
+                         requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+                         jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+                         jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
                          senderComment = x.SENDERCOMMENT,
                          responseComment = x.RESPONSECOMMENT,
                          arrivalDate = x.ARRIVALDATE,
@@ -418,7 +421,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                          acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                          systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
                          loggedInStaffId = staffId,
-
+                         
+                         
                          refNo = (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM ) 
                          && context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l=>l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
                          ? context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
