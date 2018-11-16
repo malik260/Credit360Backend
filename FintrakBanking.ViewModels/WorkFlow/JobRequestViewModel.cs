@@ -10,6 +10,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public string requestStatusname { get; set; }
+        public string jobStatusFeedBack { get; set; }
+
         public short? statusId { get; set; }
         public short? rejectionReasonId { get; set; }
 

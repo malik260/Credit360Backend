@@ -8612,7 +8612,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                searchQuery = searchQuery.ToUpper();
+                searchQuery = searchQuery.ToLower();
             }
 
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
@@ -8654,6 +8654,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery)
         {
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID

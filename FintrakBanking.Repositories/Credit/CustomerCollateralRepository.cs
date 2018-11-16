@@ -1733,8 +1733,8 @@ namespace FintrakBanking.Repositories.Credit
                                    hairCut = c.HAIRCUT,
                                    collateralTypeId = c.COLLATERALTYPEID,
                                    exchangeRate = c.EXCHANGERATE,
-                                   releaseApprovalStatusId = (short)x.RELEASEAPPROVALSTATUSID
-                               }).ToList();
+                                   releaseApprovalStatusId = (x.RELEASEAPPROVALSTATUSID == null) ? 0 : x.RELEASEAPPROVALSTATUSID, 
+        }).ToList();
 
             var test = collaterals.ToList();
 

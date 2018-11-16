@@ -199,7 +199,7 @@ namespace FintrakBanking.Repositories.Credit
                     canEdit = x.t.CANEDIT, // system
                     editable = sectionIds.Contains(x.t.TEMPLATESECTIONID),
                     templateSectionId = x.t.TEMPLATESECTIONID,
-                    staffRoleName = x.r.STAFFROLENAME 
+                    staffRoleName = x.r.STAFFROLENAME
                 })
                 .ToList();
 
@@ -308,10 +308,16 @@ var qry = Foo.GroupJoin(
             if (section == null) return true;
             if (section.CANEDIT == false) return true;
 
-            section.TEMPLATEDOCUMENT = entity.templateDocument;
-            section.LASTUPDATEDBY = entity.staffId;
-            section.DATETIMEUPDATED = DateTime.Now;
-            return context.SaveChanges() > 0;
+            if (entity.templateDocument != null)
+            {
+                section.TEMPLATEDOCUMENT = entity.templateDocument;
+                section.LASTUPDATEDBY = entity.staffId;
+                section.DATETIMEUPDATED = DateTime.Now;
+                return context.SaveChanges() > 0;
+
+            }
+
+            return true;
         }
 
         public LoadedDocumentSectionViewModel GetDocumentSection(int staffId, int operationId, int targetId, int sectionId)
@@ -369,7 +375,7 @@ var qry = Foo.GroupJoin(
                 templateName = x.TEMPLATENAME,
                 staffRoleId = x.STAFFROLEID,
                 operationId = x.OPERATIONID,
-                
+
                 //productClassId = x.ProductClassId,
             });
         }
@@ -384,7 +390,7 @@ var qry = Foo.GroupJoin(
                 position = x.POSITION,
                 isDisabled = x.ISDISABLED,
                 canEdit = x.CANEDIT,
-                description=x.DESCRIPTION,
+                description = x.DESCRIPTION,
             });
         }
         public IEnumerable<DocumentTemplateSectionRoleViewModel> GetAllDocumentTemplateSectionRoleSetup(int templateSectionId)
@@ -490,7 +496,7 @@ var qry = Foo.GroupJoin(
                 TEMPLATEDOCUMENT = model.templateDocument,
                 POSITION = model.position,
                 CANEDIT = model.canEdit,
-                DESCRIPTION=model.description,
+                DESCRIPTION = model.description,
                 //ProductClassId = model.productClassId,
                 CREATEDBY = (int)model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate()
@@ -523,7 +529,7 @@ var qry = Foo.GroupJoin(
             {
                 return false;
             }
-            if(string.IsNullOrEmpty(model.templateDocument))
+            if (string.IsNullOrEmpty(model.templateDocument))
             {
                 model.templateDocument = "<p> </p>";
             }
