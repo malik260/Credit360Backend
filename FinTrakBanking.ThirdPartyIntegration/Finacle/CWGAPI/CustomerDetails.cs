@@ -24,8 +24,8 @@
             private FinTrakBankingContext context;
             string API_KEY, API_URL = string.Empty;
 
-            private static HttpClient httpClientInstance;
-            private HttpClientHandler handler = new HttpClientHandler();
+            //private static HttpClient httpClientInstance;
+            //private HttpClientHandler handler = new HttpClientHandler();
 
             public CustomerDetails(FinTrakBankingContext _context)
             {
@@ -54,6 +54,8 @@
  
             public async Task<List<CustomerViewModels>> GetCustomerByAccountsNumber(string customerAccount)
             {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
 
                 handler.UseDefaultCredentials = true;
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
@@ -123,6 +125,9 @@
 
             public async Task<CasaBalanceViewModel> GetCustomerAccountBalance(string customerAccount)
             {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
@@ -227,6 +232,9 @@
 
             public async Task<List<CasaViewModel>> GetCustomerAccountsBalanceByCustomerCode(string customerCode)
             {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
@@ -313,6 +321,9 @@
 
             public async Task<string> CheckExposePerson(string customerCode)
             {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
@@ -378,6 +389,10 @@
 
             public async Task<BVNCustomerDetailsViewModel> BVNCustomerDetails(string customerCode)
             {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
+
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
@@ -449,6 +464,9 @@
 
             public async Task<InterestRateInquiryViewModel> GetInterestRateInquiry(string accountNumber, string accountType)
             {
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
+
                 HttpClient client = new HttpClient(handler);
                 DateTime requestDatetime = new DateTime(), responseDateTime = new DateTime();
                 HttpResponseMessage response = null;
@@ -531,12 +549,14 @@
                 }
             }
 
-            public async Task<List<CustomerTurnoverViewModels>> GetCustomerTransactions(string cifid, int month)
+            public async Task<List<CustomerTurnoverViewModel>> GetCustomerTransactions(string customerCode, int durationInMonths)
             {
                 //month = 48;
                 //cifid = "483008974";
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
 
-                var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={cifid}&Month={month}";
+                var endpointUrl = $"api/Customer/GetCustomerTransactions?Cif_Id={customerCode}&Month={durationInMonths}";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -561,32 +581,91 @@
                 response = await client.GetAsync(endpointUrl);
                 responseTime = DateTime.Now;
 
-                List<CustomerTurnoverViewModels> result = null;
-                // var responseMessage = await response.Content.ReadAsStringAsync();
-                if (response.IsSuccessStatusCode) result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModels>>();
+                //List<CustomerTurnoverViewModelAPI> result = null;
+
+                List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
+
+                var responseMessage = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
+
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(jsonString);
+
+                    foreach (var item in apiData)
+                    {
+
+                        decimal amc = 0;
+                        Decimal.TryParse(item.amc.Replace(",", ""), out amc);
+
+                        decimal vat = 0;
+                        Decimal.TryParse(item.vat.Replace(",", ""), out vat);
+
+                        decimal management_Fee = 0;
+                        Decimal.TryParse(item.management_Fee.Replace(",", ""), out management_Fee);
+
+                        decimal commitment_Fees = 0;
+                        Decimal.TryParse(item.commitment_Fees.Replace(",", ""), out commitment_Fees);
+
+                        decimal com_Contigent_Liab = 0;
+                        Decimal.TryParse(item.com_Contigent_Liab.Replace(",", ""), out com_Contigent_Liab);
+
+                        decimal lc_Commission = 0;
+                        Decimal.TryParse(item.lc_Commission.Replace(",", ""), out lc_Commission);
+
+                        decimal sms_Alert = 0;
+                        Decimal.TryParse(item.sms_Alert.Replace(",", ""), out lc_Commission);
+
+                        accounts.Add(new CustomerTurnoverViewModel
+                        {
+                            accountNumber = item.foracid,
+                            customerCode = item.cust_Id,
+                            period = item.period,
+                            productName = item.schm_Type,
+                            max_Credit_Balance = item.max_Credit_Balance,
+                            max_Debit_Balance = item.max_Debit_Balance,
+                            min_Credit_Balance = item.min_Credit_Balance,
+                            min_Debit_Balance = item.min_Debit_Balance,
+                            credit_Turnover = item.credit_Turnover,
+                            debit_Turnover = item.debit_Turnover,
+                            amc = amc,
+                            vat = vat,
+                            management_Fee = management_Fee,
+                            commitment_Fees = commitment_Fees,
+                            com_Contigent_Liab = com_Contigent_Liab,
+                            lc_Commission = lc_Commission,
+                            sms_Alert = sms_Alert
+                        });
+                    }
+
+                }
+
 
                 handler.Dispose();
                 client.Dispose();
 
                 FintrakBankingDatabaseCustomerTurnoverOperations(
                     endpointUrl,
-                    cifid,
+                    customerCode,
                     requestTime,
                     responseTime,
                     "Cif_Id={cifid}&Month={month}",
-                    response.Content.ReadAsStringAsync().Result,
-                    result
+                    responseMessage
                 );
 
-                return result;
+                return accounts;
             }
 
-            public async Task<List<CustomerTurnoverViewModels>> GetCustomerInterestTransactions(string cifid, int month)
+            public async Task<List<CustomerTurnoverViewModel>> GetCustomerInterestTransactions(string customerCode, int durationInMonths)
             {
                 //month = 48;
-                //cifid = "230009868";
+                //cifid = "483008974";
+                HttpClientHandler handler = new HttpClientHandler();
+                HttpClient httpClientInstance;
 
-                var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails?Cif_Id={cifid}&Month={month}";
+                var endpointUrl = $"api/Customer/GetCustomerLoanInterestDetails?Cif_Id={customerCode}&Month={durationInMonths}";
 
                 httpClientInstance = new HttpClient();
                 httpClientInstance.DefaultRequestHeaders.ConnectionClose = false;
@@ -611,25 +690,55 @@
                 response = await client.GetAsync(endpointUrl);
                 responseTime = DateTime.Now;
 
-                List<CustomerTurnoverViewModels> result = null;
-                // var responseMessage = await response.Content.ReadAsStringAsync();
-                if (response.IsSuccessStatusCode) result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModels>>();
-                
+                //List<CustomerTurnoverViewModelAPI> result = null;
+
+                List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
+
+                var responseMessage = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    //result = await response.Content.ReadAsAsync<List<CustomerTurnoverViewModelAPI>>();
+
+                    var jsonString = await response.Content.ReadAsStringAsync();
+                    var apiData = JsonConvert.DeserializeObject<List<CustomerTurnoverViewModelAPI>>(jsonString);
+
+                    foreach (var item in apiData)
+                    {
+                        decimal float_Charge = 0;
+                        Decimal.TryParse(item.float_Charge.Replace(",", ""), out float_Charge);
+                        decimal interest = 0;
+                        Decimal.TryParse(item.interest.Replace(",", ""), out interest);
+                        accounts.Add(new CustomerTurnoverViewModel
+                        {
+                            accountNumber = item.foracid,
+                            customerCode = item.cust_Id,
+                            period = item.period,
+                            productName = item.schm_Type,
+                            interest = interest,
+                            float_Charge = float_Charge,
+                        });
+                    }
+
+                }
+
+
                 handler.Dispose();
                 client.Dispose();
 
                 FintrakBankingDatabaseCustomerTurnoverOperations(
                     endpointUrl,
-                    cifid,
+                    customerCode,
                     requestTime,
                     responseTime,
                     "Cif_Id={cifid}&Month={month}",
-                    response.Content.ReadAsStringAsync().Result,
-                    result
+                    responseMessage
                 );
 
-                return result;
+                return accounts;
             }
+
+
 
 
             private void FintrakBankingDatabaseCustomerTurnoverOperations(
@@ -638,8 +747,8 @@
                 DateTime requestTime,
                 DateTime responseTime,
                 string requestMessage,
-                string responseMessage,
-                List<CustomerTurnoverViewModels> result
+                string responseMessage
+                
                 )
             {
 

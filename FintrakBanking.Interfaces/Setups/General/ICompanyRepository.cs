@@ -38,8 +38,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool ValidateCompanyDirectorBVN(int companyId, string bvn);
         #endregion
 
-        Task<List<CustomerTurnoverViewModels>> TestTurnover();
-        Task<List<CustomerTurnoverViewModels>> TestTurnoverInterest();
+        Task<List<CustomerTurnoverViewModel>> TestTurnover();
+        Task<List<CustomerTurnoverViewModel>> TestTurnoverInterest();
 
     }
 }

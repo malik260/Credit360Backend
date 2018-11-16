@@ -609,11 +609,11 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         // customer turnover
-        public IEnumerable<CustomerTurnoverViewModel> GetCustomerTurnover()
+        public IEnumerable<CustomersTurnoverViewModel> GetCustomerTurnover()
         {
             List<int> ids = new List<int>();
             foreach (var exposure in customerIds) ids.Add(exposure.customerId);
-            List<CustomerTurnoverViewModel> turnover = new List<CustomerTurnoverViewModel>();
+            List<CustomersTurnoverViewModel> turnover = new List<CustomersTurnoverViewModel>();
             turnover = loan.GetCustomerTurnover(ids);
             return turnover;
         }

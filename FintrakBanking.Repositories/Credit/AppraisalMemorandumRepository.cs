@@ -415,7 +415,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.comment == "debug_test") throw new SecureException("debug_test => FFW:" + model.forwardAction + ", APR:" + workflow.StatusId + ", APL:" + appl.APPLICATIONSTATUSID + ", CHG:" + model.recommendedChanges.Count() + ", STE:" + workflow.NewState + ", AMO:" + appl.APPROVEDAMOUNT + ", upd:" + updateApprovedAmount + ", EXP:" + appl.TOTALEXPOSUREAMOUNT);
 
-            LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate,model.vote); // LOG CHANGES
+            LogApplicationDetailChanges(appl.LOANAPPLICATIONID, model.createdBy, applicationDate,model.vote , (short)model.forwardAction); // LOG CHANGES
             context.SaveChanges();
 
             var lastStatus = workflow.StatusId; // prevents the nex
@@ -430,7 +430,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-        private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date, short? decision)
+        private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date, short? decision, short status)
         {
             var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false);
             foreach (var detail in details)
@@ -443,7 +443,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDINTERESTRATE = detail.APPROVEDINTERESTRATE,
                     APPROVEDAMOUNT = detail.APPROVEDAMOUNT,
                     EXCHANGERATE = detail.EXCHANGERATE,
-                    STATUSID = detail.STATUSID,
+                    //STATUSID = detail.STATUSID,
+                    STATUSID= status,
                     CREATEDBY = staffId,
                     DATETIMECREATED = date,
                     SYSTEMDATETIME = DateTime.Now,
@@ -771,6 +772,7 @@ namespace FintrakBanking.Repositories.Credit
                         syndicationAmount = x.d.FIELD3,
                         conditionPrecedent = x.d.CONDITIONPRECIDENT,
                         conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
+                        transactionDynamics = x.d.TRANSACTIONDYNAMICS,
 
                     }).ToList();
 
@@ -991,6 +993,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Join(context.TBL_STAFF, a => a.CREATEDBY, b => b.STAFFID, (a, b) => new { a, b })
                 .Select(x => new LoanApplicationDetailLogViewModel
                 {
+                    loanApplicationlogId = x.a.LOAN_APPLICATION_DETAIL_LOGID,
                     loanApplicationDetailId = x.a.LOANAPPLICATIONDETAILID,
                     applicationId = x.a.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                     customerId = x.a.TBL_LOAN_APPLICATION_DETAIL.CUSTOMERID,
@@ -1004,7 +1007,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerName = x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + x.a.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME,
                     approvedProductName = x.a.TBL_PRODUCT.PRODUCTNAME,
                     staffName = x.b.FIRSTNAME + " " + x.b.MIDDLENAME + " " + x.b.LASTNAME,
-                });
+                }).OrderByDescending(p=>p.loanApplicationlogId);
 
             return details;
         }

@@ -33,6 +33,7 @@ namespace FintrakBanking.Repositories.Credit
                 //LOANAPPLICATIONID = model.loanApplicationId,
                 LOANAPPLICATIONDETAILID = model.loanApplicationDetailId,
                 DATETIMECREATED = general.GetApplicationDate(),
+                POSITION = model.position,
             };
 
             context.TBL_LOAN_TRANSACTION_DYNAMICS.Add(data);
@@ -68,6 +69,7 @@ namespace FintrakBanking.Repositories.Credit
             data.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
+            data.POSITION = model.position;
 
             context.Entry(data).State = System.Data.Entity.EntityState.Modified;
 
@@ -106,12 +108,13 @@ namespace FintrakBanking.Repositories.Credit
                         loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                         dateTimeCreated = c.DATETIMECREATED,
                         dateTimeUpdated = c.DATETIMEUPDATED,
+                        position = c.POSITION,
                     });
         }
 
         public IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByDetailId(int detailId)
         {
-            return this.GetAllTransactionDynamics().Where(x => x.loanApplicationDetailId == detailId);
+            return this.GetAllTransactionDynamics().Where(x => x.loanApplicationDetailId == detailId).OrderBy(a=> a.position);
         }
 
         public bool RemoveLoanTransactionDynamics(int id, UserInfo model)
@@ -159,6 +162,7 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = c.CREATEDBY,
                         LOANAPPLICATIONDETAILID = entity.detailId,
                         DATETIMECREATED = general.GetApplicationDate(),
+                        POSITION = 1,
                     });
                 }
             }
