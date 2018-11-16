@@ -155,7 +155,7 @@ namespace FintrakBanking.Repositories.Credit
                                      }).ToList().Select(x =>
                                      {
                                          x.exchangeRate = financeTransaction.GetExchangeRate(applicationDate, x.currencyId, x.companyId).sellingRate;
-                                         x.dailyAccuralAmount = ((x.interestRate / 100) * (double)x.availableBalance * 1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId));
+                                         x.dailyAccuralAmount = ((x.interestRate / 100) * (double)x.availableBalance * (1 / (double)loanSchedule.GetDaysInAYear((DayCountConventionEnum)x.dayCountConventionId)));
                                          return x;
                                      });
 
@@ -968,7 +968,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
 
-                    var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / item.daysInAYear) * item.availableBalance);
+                    var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate/100) * item.availableBalance * (1 / item.daysInAYear));
 
                     dailyAccrual.DAILYACCURALAMOUNT = accuralAmount;
                     dailyAccrual.DAILYACCURALAMOUNT2 = 0;
@@ -1119,7 +1119,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
 
-                    var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / item.daysInAYear) * item.availableBalance);
+                    var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / 100) * item.availableBalance * (1 / item.daysInAYear));
 
                     dailyAccrual.DAILYACCURALAMOUNT = accuralAmount;
                     dailyAccrual.DAILYACCURALAMOUNT2 = 0;
