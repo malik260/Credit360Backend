@@ -851,7 +851,7 @@ namespace FintrakBanking.Repositories.Credit
                         if (checklistType.ISPRODUCT_BASED)
                             targetId = detail.LOANAPPLICATIONDETAILID;
                         else
-                            targetId = applicationId;
+                            targetId = detail.LOANAPPLICATIONDETAILID;
 
                         var checklistDetails = from a in context.TBL_CHECKLIST_DEFINITION
                                                join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
