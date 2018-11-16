@@ -23,6 +23,7 @@ using System.Configuration;
 using System.Data.Entity;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
+using FintrakBanking.ViewModels.Customer;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -778,7 +779,55 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
+        public IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId)
+        {
+            var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL 
+                        join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                       where a.LOANAPPLICATIONID == applicationId 
+                       select new CustomerViewModels
+                       {
+                           customerId = a.CUSTOMERID,
+                           fullName = b.FIRSTNAME + " " + b.LASTNAME
+                       }).Distinct().ToList();
 
+            return customers;
+        }
+        public CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId)
+        {
+            var fields = new CustomerApplicationTransactionsViewModels();
+
+            var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
+                             where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
+                         select new CustomerTransactionsViewModels
+                             {
+                                 cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
+                                 period = a.PERIOD,
+                                 productName = a.PRODUCTNAME,
+                                 accountNumber =a.ACCOUNTNUMBER,
+                                 max_Credit_Balance = a.MAXIMUMCREDITBALANCE,
+                                 max_Debit_Balance = a.MAXIMUMDEBITBALANCE,
+                                 min_Credit_Balance = a.MINIMUMCREDITBALANCE,
+                                 min_Debit_Balance = a.MINIMUMDEBITBALANCE,
+                                 credit_Turnover = a.CREDITTURNOVER,
+                                 debit_Turnover = a.DEBITTURNOVER,
+                             }).ToList();
+            var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
+                         where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
+                          select new CustomerTransactionsViewModels
+                         {
+                             cust_Id = a.CUSTOMERTRANSACTIONID2.ToString(),
+                             period = a.PERIOD,
+                             productName = a.PRODUCTNAME,
+                             accountNumber = a.ACCOUNTNUMBER,
+                             interest = a.INTEREST,
+                             float_Charge = a.FLOATCHARGE,
+                         }).ToList();
+
+            fields.firstTransaction = first;
+            fields.secondTransaction = second;
+
+            return fields;
+        }
         // PLEASE RENAME THIS METHOD NAME TO BE MORE DESCRIPTIVE like LoanApplicationChecklistValidation
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
@@ -872,10 +921,11 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
-                //LoadCustomerTurnover(
-                //    applicationId,
-                //    loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList()
-                //);
+                LoadCustomerTurnover(
+                   applicationId,
+                   loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                   (short)staffId
+                );
 
                 return new LoanApplicationUpdateMessage
                 {
@@ -1235,7 +1285,7 @@ namespace FintrakBanking.Repositories.Credit
             return true;
         }
 
-        private int ConvertTenorToDays(int proposedTenor, int tenorModeId)
+        private int ConvertTenorToDays(int proposedTenor, int? tenorModeId = 1)
         {
             int tenor = 0;
             switch (tenorModeId)
@@ -1455,7 +1505,7 @@ namespace FintrakBanking.Repositories.Credit
                 productPriceIndexId = d.PRODUCTPRICEINDEXID,
                 productPriceIndexRate = d.PRODUCTPRICEINDEXRATE,
                 
-                tenorModeId = (int)d.TENORFREQUENCYTYPEID,
+                tenorModeId = d.TENORFREQUENCYTYPEID,
             };
 
             var invoiceDetails = (from a in context.TBL_LOAN_APPLICATION_DETL_INV where a.LOANAPPLICATIONDETAILID == detailId
@@ -3657,42 +3707,64 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public void LoadCustomerTurnover(int applicationId, List<int> customerIds) // OBIE (Page 4)
+        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId) // OBIE (Page 4)
         {
             int turnoverDuration = 48;
-            var trx = new List<CustomerTurnoverViewModels>();
+            var apiTransactions = new List<CustomerTurnoverViewModels>();
             var itx = new List<CustomerTurnoverViewModels>();
+
+            //var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL 
+            //            join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+            //            where a.LOANAPPLICATIONID == applicationId 
+            //            select new CustomerViewModels
+            //            {
+            //                customerId = a.CUSTOMERID,
+            //                customerCode = b.CUSTOMERCODE
+                           
+            //            }).Distinct().ToList();
 
             var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));//.Select(x => x.CUSTOMERCODE);
 
             foreach (var customer in customers)
             {
-                Task.Run(async () => { trx = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
+                Task.Run(async () => { apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
 
-                foreach (var t in trx)
+                foreach (var transaction in apiTransactions)
                 {
+                    decimal amc = 0;
+                    Decimal.TryParse(transaction.amc.Replace(",", ""), out amc);
+                    decimal vat = 0;
+                    Decimal.TryParse(transaction.vat.Replace(",", ""), out vat);
+                    decimal management_Fee = 0;
+                    Decimal.TryParse(transaction.management_Fee.Replace(",", ""), out management_Fee);
+                    decimal commitment_Fees = 0;
+                    Decimal.TryParse(transaction.commitment_Fees.Replace(",", ""), out commitment_Fees);
+                    decimal com_Contigent_Liab = 0;
+                    Decimal.TryParse(transaction.com_Contigent_Liab.Replace(",", ""), out com_Contigent_Liab);
+                    decimal lc_Commission = 0;
+                    Decimal.TryParse(transaction.lc_Commission.Replace(",", ""), out lc_Commission);
                     context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
                     {
                         LOANAPPLICATIONID = (short)applicationId,
                         CUSTOMERID = (short)customer.CUSTOMERID,
                         CUSTOMERCODE = customer.CUSTOMERCODE,
-                        ACCOUNTNUMBER = t.foracid,
-                        PERIOD = t.period,
+                        ACCOUNTNUMBER = transaction.foracid,
+                        PERIOD = transaction.period,
                         PRODUCTNAME = "n/a",
-                        MINIMUMDEBITBALANCE = t.min_Debit_Balance,
-                        MAXIMUMDEBITBALANCE = t.max_Debit_Balance,
-                        MINIMUMCREDITBALANCE = t.min_Credit_Balance,
-                        MAXIMUMCREDITBALANCE = t.max_Credit_Balance,
-                        DEBITTURNOVER = t.debit_Turnover,
-                        CREDITTURNOVER = t.credit_Turnover,
-                        SMSALERT = t.sms_Alert,
-                        //AMC                                          = t.amc,
-                        //VAT                                          = t.vat,
-                        //MANAGEMENTFEE                                = t.management_Fee,
-                        //COMMITMENTFEE                                = t.commitment_Fees,
-                        //CONTINGENTLIABILITYCOMM                      = t.com_Contigent_Liab,
-                        //LC_COMMISSION                                = t.lc_Commission,
-                        CREATEDBY = 1,
+                        MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
+                        MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
+                        MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
+                        MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
+                        DEBITTURNOVER = transaction.debit_Turnover,
+                        CREDITTURNOVER = transaction.credit_Turnover,
+                        SMSALERT = transaction.sms_Alert,
+                        AMC  = amc ,
+                        VAT = vat,
+                        MANAGEMENTFEE = management_Fee,
+                        COMMITMENTFEE = commitment_Fees,
+                        CONTINGENTLIABILITYCOMM = com_Contigent_Liab,
+                        LC_COMMISSION = lc_Commission,
+                        CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
                     });
                 }
@@ -3705,6 +3777,11 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var t in itx)
                 {
+                    decimal float_Charge = 0;
+                    Decimal.TryParse(t.float_Charge.Replace(",", ""), out float_Charge);
+                    decimal interest = 0;
+                    Decimal.TryParse(t.interest.Replace(",", ""), out interest);
+
                     context.TBL_LOAN_APPLICATION_TRANS2.Add(new TBL_LOAN_APPLICATION_TRANS2
                     {
                         LOANAPPLICATIONID = (short)applicationId,
@@ -3713,9 +3790,9 @@ namespace FintrakBanking.Repositories.Credit
                         ACCOUNTNUMBER = t.foracid,
                         PERIOD = t.period,
                         PRODUCTNAME = "n/a",
-                        //FLOATCHARGE=t.float_Charge,
-                        //INTEREST =t.interest,
-                        CREATEDBY = 1,
+                        FLOATCHARGE= float_Charge,
+                        INTEREST = interest,
+                        CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
                     });
                 }
