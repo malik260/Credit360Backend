@@ -3,6 +3,8 @@ namespace FintrakBanking.ViewModels
 {
     public class LookupViewModel
     {
+        public short approvalStatusId { get; set; }
+
         public short lookupId { get; set; }
         public string lookupName { get; set; }
         public int? lookupcustomerId { get; set; }
