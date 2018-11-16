@@ -12,6 +12,8 @@ namespace FintrakBanking.Interfaces.Setups.General
     {
         IEnumerable<CityViewModel> GetCity();
 
+        IEnumerable<CityViewModel> GetCity(int Id);
+
         IEnumerable<LookupViewModel> GetAllCityClass();
 
         CityViewModel GetCityById(int cityId);

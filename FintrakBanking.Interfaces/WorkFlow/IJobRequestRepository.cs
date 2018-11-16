@@ -9,7 +9,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
     public interface IJobRequestRepository
     {
         // bool ChargeCustomerJob(CollateralViewModel model, string actionName, string actionType, int loanApplicationDetailId);
-
+        List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId);
         IEnumerable<ApprovalStatusViewModel> GetJobRequestApprovaStatus();
         IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId);
         JobRequestViewModel GetJobRequest(int jobRequestId);

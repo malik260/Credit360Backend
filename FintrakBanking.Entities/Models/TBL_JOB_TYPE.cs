@@ -27,6 +27,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool INUSE { get; set; }
 
+        public int? COMPANYID { get; set; }
+        public bool? CANBEREASSIGNED { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
 
