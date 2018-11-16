@@ -10108,10 +10108,10 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion Commercial loan Operations
 
-        public List<CustomerTurnoverViewModel> GetCustomerTurnover(List<int> customerIds) // OBIE (Page 4)
+        public List<CustomersTurnoverViewModel> GetCustomerTurnover(List<int> customerIds) // OBIE (Page 4)
         {
             var trx = context.TBL_LOAN_APPLICATION_TRANS.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomerTurnoverViewModel
+                .Select(x => new CustomersTurnoverViewModel
                 {
                     accountId = x.CUSTOMERID,
                     //schemeType = x.,
@@ -10127,7 +10127,7 @@ namespace FintrakBanking.Repositories.Credit
                 }).ToList();
 
             var itx = context.TBL_LOAN_APPLICATION_TRANS2.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomerTurnoverViewModel
+                .Select(x => new CustomersTurnoverViewModel
                 {
                     accountId = x.CUSTOMERID,
                     //schemeType = x.,
