@@ -790,7 +790,7 @@ namespace FintrakBanking.Repositories.Credit
                        select new CustomerViewModels
                        {
                            customerId = a.CUSTOMERID,
-                           fullName = b.FIRSTNAME + " " + b.LASTNAME
+                           fullName = b.FIRSTNAME + " " + b.LASTNAME + "-" + b.CUSTOMERCODE
                        }).Distinct().ToList();
 
             return customers;

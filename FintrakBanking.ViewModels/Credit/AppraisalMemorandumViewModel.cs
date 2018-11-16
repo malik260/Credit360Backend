@@ -215,6 +215,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationDetailLogViewModel : GeneralEntity
     {
+        public int loanApplicationlogId { get; set; }
+
         public int loanApplicationDetailId { get; set; }
 
         public string customerName { get; set; }
