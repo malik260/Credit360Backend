@@ -96,6 +96,10 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
         void SendAlertsForCollateralPropertyDueForVisitationRM(List<CollateralViewModel> loanDetails, string title);
         void SendAlertsForCollateralPropertyDueForVisitationMonitoringTeam(List<CollateralViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups);
 
+        bool SendAlertsForLoanRepayment(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups);
+        void SendAlertsForLoanRepaymentRM(List<LoanPaymentSchedulePeriodicViewModel> loanDetails, string title);
+        void SendAlertsForLoanRepaymentTeam(List<LoanPaymentSchedulePeriodicViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups);
+
         int SaveMessageDetails(MessageLogViewModel model);
 
         List<TBL_MONITORING_ALERT_SETUP> getAlertMessageSetting();

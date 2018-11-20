@@ -27,6 +27,7 @@ namespace FintrakBanking.Repositories.Credit
         private ICasaLienRepository casaLien;
         private ICustomerRepository customers;
         private IOverRideRepository overrider;
+        private IFinanceTransactionRepository transRepo;
 
         public FacilityDetailSummary(
 
@@ -38,7 +39,8 @@ namespace FintrakBanking.Repositories.Credit
         IFinanceTransactionRepository _financeTransaction,
         ICasaLienRepository _casaLien,
         ICustomerRepository _customers,
-        IOverRideRepository _overrider
+        IOverRideRepository _overrider,
+        IFinanceTransactionRepository _transRepo
             )
         {
             context = _context;
@@ -46,6 +48,7 @@ namespace FintrakBanking.Repositories.Credit
             loanSchedule = _loanSchedule;
             loanCovenant = _loanCovenant;
             financeTransaction = _financeTransaction;
+            transRepo=_transRepo;
         }
         public List<CollateralViewModel> Collateral(int loanId)
         {
@@ -205,6 +208,16 @@ namespace FintrakBanking.Repositories.Credit
 
         private LoanViewModel GetDisbursedODByODId(int loanId)
         {
+            decimal overDraftLimit = 0;
+            decimal availableBalance = 0;
+
+            var odDetail = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId).Select(x=>x).FirstOrDefault();
+            if (odDetail!=null)
+            {
+                 availableBalance = transRepo.GetCASABalance(odDetail.CASAACCOUNTID).availableBalance;
+                 overDraftLimit = odDetail.OVERDRAFTLIMIT;
+
+            }
 
             var loanDetails = (from a in context.TBL_LOAN_REVOLVING
                                join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
@@ -288,6 +301,20 @@ namespace FintrakBanking.Repositories.Credit
                                    // internalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.INT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    userPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.USER_PRUDENTIAL_GUIDE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                }).FirstOrDefault();
+
+            loanDetails.availableBalance = availableBalance;
+
+            if (availableBalance >= 0)
+            {
+                loanDetails.overdraftUndrawnAmount = overDraftLimit;
+                loanDetails.overdraftDrawnAmount = 0;
+            }
+            else
+            {
+                //overDraftDetail.overDraft = overDraftLimit - Math.Abs(availableBalance);
+                loanDetails.overdraftUndrawnAmount = overDraftLimit - Math.Abs(availableBalance);
+                loanDetails.overdraftDrawnAmount = Math.Abs(availableBalance);
+            }
             return loanDetails;
         }
         private LoanViewModel GetODByODArchive(int archiveId)
@@ -1946,7 +1973,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId, searchValue).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased);
+                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId, searchValue);//.Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased);
 
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -2059,7 +2086,7 @@ namespace FintrakBanking.Repositories.Credit
                            productPriceIndexName = context.TBL_PRODUCT_PRICE_INDEX.Where(q => q.PRODUCTPRICEINDEXID == context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.PRODUCTID).FirstOrDefault().TBL_PRODUCT_PRICE_INDEX.PRODUCTPRICEINDEXID).Select(q => q.PRICEINDEXNAME).FirstOrDefault(),
                        }).ToList();
 
-            if (loan==null)
+            if (loan.Count==0)
             {
                 loan = (from a in context.TBL_LOAN_CONTINGENT
                         where a.LOANAPPLICATIONDETAILID == loanApplicationDetilId
@@ -2089,7 +2116,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                            
+                            principalAmount = a.CONTINGENTAMOUNT,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATETIMECREATED,
                             exchangeRate = a.EXCHANGERATE,
@@ -2103,7 +2130,7 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             }
 
-            if (loan == null)
+            if (loan.Count == 0)
             {
                 loan = (from a in context.TBL_LOAN_REVOLVING
                         where a.LOANAPPLICATIONDETAILID == loanApplicationDetilId

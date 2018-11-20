@@ -478,8 +478,9 @@ namespace FintrakBanking.ReportObjects.Credit
                                    applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                                    approvedAmountCurrency = e.CURRENCYNAME + " " + b.APPROVEDAMOUNT + " % p.a ",
                                    productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
-
-                                   //approvedAmount = b.APPROVEDAMOUNT
+                                   approvedDate = a.APPROVEDDATE,
+                                   newApplicationDate = a.APPLICATIONDATE,
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                }).ToList();
 
             return loanDetails;
@@ -611,7 +612,8 @@ namespace FintrakBanking.ReportObjects.Credit
                         {
                             SN = +count,
                             feeName = c.CHARGEFEENAME,
-                            rateValue = a.RECOMMENDED_FEERATEVALUE
+                            rateValue = a.RECOMMENDED_FEERATEVALUE,
+                            productName=b.TBL_PRODUCT.PRODUCTNAME
                         }).ToList();
 
             return fees;
@@ -636,6 +638,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                               {
                                                   SN = +count,
                                                   dynamics = a.DYNAMICS,
+                                                  productName = b.TBL_PRODUCT.PRODUCTNAME
                                               }).Distinct().ToList();
 
             return transactionDynamicsDetails;
@@ -676,6 +679,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                           {
                                               SN = +count,
                                               monitoringTrigger = x.MONITORING_TRIGGER,
+                                              productName = y.TBL_PRODUCT.PRODUCTNAME
                                           }).Distinct().ToList();
 
             return loanMonitoringTriggers;

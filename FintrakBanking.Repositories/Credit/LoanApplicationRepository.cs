@@ -24,6 +24,7 @@ using System.Data.Entity;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
+using System.Web.Configuration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -420,6 +421,7 @@ namespace FintrakBanking.Repositories.Credit
                                                          invoiceAmount = i.INVOICE_AMOUNT,
                                                          invoiceNo = i.INVOICENO,
                                                          invoiceDate = i.INVOICE_DATE,
+                                                         invoiceId = i.INVOICEID,
                                                          invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
                                                          approvaStatusId = i.APPROVALSTATUSID,
                                                          approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
@@ -813,7 +815,9 @@ namespace FintrakBanking.Repositories.Credit
                                  min_Debit_Balance = a.MINIMUMDEBITBALANCE,
                                  credit_Turnover = a.CREDITTURNOVER,
                                  debit_Turnover = a.DEBITTURNOVER,
-                             }).ToList();
+                                 month =a.MONTH,
+                                 year = a.YEAR,
+                             }).OrderByDescending(m=>m.year).ThenByDescending(b => b.month).ToList();
             var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
                          where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
                           select new CustomerTransactionsViewModels
@@ -824,7 +828,9 @@ namespace FintrakBanking.Repositories.Credit
                              accountNumber = a.ACCOUNTNUMBER,
                              interest = a.INTEREST,
                              float_Charge = a.FLOATCHARGE,
-                         }).ToList();
+                             month = a.MONTH,
+                             year = a.YEAR,
+                         }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
 
             fields.firstTransaction = first;
             fields.secondTransaction = second;
@@ -860,10 +866,11 @@ namespace FintrakBanking.Repositories.Credit
                                                join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
                                                equals b.CHECKLISTDEFINITIONID
                                                where b.TARGETID == targetId
-                && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-                && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                && ids.Contains((int)a.APPROVALLEVELID)
-                                               select b;
+                                               && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                               && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
+                                               && b.CHECKLISTSTATUSID != null
+                                               && ids.Contains((int)a.APPROVALLEVELID)
+                                                                           select b;
 
                         var productId = checklistType.ISPRODUCT_BASED ? (short?)detail.APPROVEDPRODUCTID : null;
 
@@ -880,14 +887,31 @@ namespace FintrakBanking.Repositories.Credit
                         if (camsolJobRequests.Count > 0)
                             isCamsolJobRequestSent = true;
 
-                        var cc = checklistDefinitions.Count();
-                        var bb = checklistDetails.Count();
+                        var definitionsCount = checklistDefinitions.Count();
+                        var detailsCount = checklistDetails.Count();
 
-                        if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
+
+                        if (checklistType.ISPRODUCT_BASED)
                         {
-                            isCheckListDone = false;
-                            str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
-                            checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                            if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
+                            {
+                                isCheckListDone = false;
+                                str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                            }
+                        }
+                        else
+                        {
+                            var customerCount = (from a in loanApplicationDetails select a.CUSTOMERID).Distinct().Count();
+
+                            var validationCount = definitionsCount * customerCount;
+
+                            if (detailsCount != validationCount)
+                            {
+                                isCheckListDone = false;
+                                str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                            }
                         }
 
                         var negativeChecklistDetails = checklistDetails.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
@@ -2500,9 +2524,13 @@ namespace FintrakBanking.Repositories.Credit
                               isBankFormat = b.ISBANKFORMAT,
                               referenceNo = b.REFERENCENO,
                               approvalStatusId = b.APPROVALSTATUSID,
-                              principalName = context.TBL_LOAN_PRINCIPAL.FirstOrDefault(x=>x.PRINCIPALID==(int)b.PRINCIPALID) == null ? b.PRINCIPALNAME : b.TBL_LOAN_PRINCIPAL.NAME,
+
+                              principalName = context.TBL_LOAN_PRINCIPAL.FirstOrDefault(x => x.PRINCIPALID == (int)b.PRINCIPALID) == null ? b.PRINCIPALNAME : b.TBL_LOAN_PRINCIPAL.NAME,
                               //principalNameOthers = b.PRINCIPALNAME,
                               // principalName = (b.PRINCIPALID == null) ? b.PRINCIPALNAME : b.TBL_LOAN_PRINCIPAL.NAME,
+
+                              //principalName = (b.PRINCIPALID != null) ? b.TBL_LOAN_PRINCIPAL.NAME : b.PRINCIPALNAME,
+                              //principalNameOthers = b.PRINCIPALNAME,
                               invoiceCurrencyCode = b.TBL_CURRENCY.CURRENCYCODE,
                               approvalStatusName = b.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                               productClassId = (int)ProductClassEnum.BondAndGuarantees
@@ -3718,7 +3746,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId) // OBIE (Page 4)
         {
-            int turnoverDuration = 48;
+            string duration = WebConfigurationManager.AppSettings["turnOverDuration"];
+            int newDuration = 0;
+            if (string.IsNullOrEmpty(duration))
+            {
+                duration = "48";
+            }
+            Int32.TryParse(duration, out newDuration);
+
+
+            int turnoverDuration = newDuration;
             var apiTransactions = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
             var itx = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
 
@@ -3767,6 +3804,8 @@ namespace FintrakBanking.Repositories.Credit
                         LC_COMMISSION = transaction.lc_Commission,
                         CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
+                        MONTH = transaction.month,
+                        YEAR = transaction.year,
                     });
                 }
             }
@@ -3793,6 +3832,8 @@ namespace FintrakBanking.Repositories.Credit
                         INTEREST = t.interest,
                         CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
+                        MONTH = t.month,
+                        YEAR = t.year,
                     });
                 }
             }
