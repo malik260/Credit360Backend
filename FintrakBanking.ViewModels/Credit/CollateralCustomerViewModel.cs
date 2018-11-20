@@ -791,7 +791,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isInvestmentGrade { get; set; }
         public bool isPoliticallyExposed { get; set; }
         public bool isReleased { get; set; }
-        public short releaseApprovalStatusId { get; set; }
+        public short? releaseApprovalStatusId { get; set; }
         public decimal collateralValue { get; set; }
     }
 

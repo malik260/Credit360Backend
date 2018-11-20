@@ -337,7 +337,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var loanTenorDays = (entity.maturityDate - entity.effectiveDate).Days;
                 if (loanTenorDays > applicationDetail.APPROVEDTENOR)
-                    throw new ConditionNotMetException("The loan tenor cannot be more than the tenor of its line");
+                    throw new ConditionNotMetException("The loan tenor cannot be more than the tenor of it's line. \r\n The Line tenor is "+ applicationDetail.APPROVEDTENOR +" days");
 
                 if (entity.casaAccountId2 == null || entity.casaAccountId2 == 0)
                     throw new ConditionNotMetException("Specify the recieving account.");
@@ -1289,8 +1289,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 try
                 {
-
-                    // ............. Checking customer balance, and fee override ......
                     confirmCustomerAccountFunded(entity.loanChargeFee, entity.casaAccountId, entity.companyId, entity.customerId, loanReferenceNumber);
                     entity.feeOverride = true;
 
@@ -8614,7 +8612,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                searchQuery = searchQuery.ToUpper();
+                searchQuery = searchQuery.ToLower();
             }
 
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
@@ -8656,6 +8654,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery)
         {
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
@@ -10108,10 +10112,10 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion Commercial loan Operations
 
-        public List<CustomerTurnoverViewModel> GetCustomerTurnover(List<int> customerIds) // OBIE (Page 4)
+        public List<CustomersTurnoverViewModel> GetCustomerTurnover(List<int> customerIds) // OBIE (Page 4)
         {
             var trx = context.TBL_LOAN_APPLICATION_TRANS.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomerTurnoverViewModel
+                .Select(x => new CustomersTurnoverViewModel
                 {
                     accountId = x.CUSTOMERID,
                     //schemeType = x.,
@@ -10127,7 +10131,7 @@ namespace FintrakBanking.Repositories.Credit
                 }).ToList();
 
             var itx = context.TBL_LOAN_APPLICATION_TRANS2.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomerTurnoverViewModel
+                .Select(x => new CustomersTurnoverViewModel
                 {
                     accountId = x.CUSTOMERID,
                     //schemeType = x.,

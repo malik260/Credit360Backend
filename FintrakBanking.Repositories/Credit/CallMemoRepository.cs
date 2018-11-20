@@ -38,7 +38,9 @@ namespace FintrakBanking.Repositories.Credit
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
 
-                var JobRole = (from a in _context.TBL_STAFF where a.STAFFID == staffId select a.JOBTITLEID).FirstOrDefault();
+                //var JobRole = (from a in _context.TBL_STAFF where a.STAFFID == staffId select a.JOBTITLEID).FirstOrDefault();
+                var JobRole = (from a in _context.TBL_STAFF where a.STAFFID == staffId select a.STAFFROLEID).FirstOrDefault();
+
                 if (JobRole > 0)
                 {
                     var memoLimit = (from b in _context.TBL_CALL_MEMO_LIMIT where b.JOBTITLEID == JobRole && b.CALLLIMITTYPEID == 1 select b).FirstOrDefault();

@@ -637,6 +637,24 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return casa;
         }
 
+        public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
+        {
+            List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
+
+            Task.Run(async () => accounts = await customer.GetCustomerTransactions(customerCode, durationInMonths)).GetAwaiter()
+                .GetResult();
+
+            return accounts;
+        }
+        public List<CustomerTurnoverViewModel> GetCustomerAccountInterestTransactions(string customerCode, int durationInMonths)
+        {
+            List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
+
+            Task.Run(async () => accounts = await customer.GetCustomerInterestTransactions(customerCode, durationInMonths)).GetAwaiter()
+                .GetResult();
+
+            return accounts;
+        }
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
             var account = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == glAccountId);

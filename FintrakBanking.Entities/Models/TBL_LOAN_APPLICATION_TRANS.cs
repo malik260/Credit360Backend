@@ -23,7 +23,7 @@
         public decimal? MAXIMUMCREDITBALANCE { get; set; }
         public decimal? DEBITTURNOVER { get; set; }
         public decimal? CREDITTURNOVER { get; set; }
-        public string SMSALERT { get; set; }
+        public decimal? SMSALERT { get; set; }
         public decimal? AMC { get; set; }
         public decimal? VAT { get; set; }
         public decimal? MANAGEMENTFEE { get; set; }
