@@ -905,7 +905,8 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Loan Collateral
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]  
         [Route("loan-application-details-product/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanApplicationDetailsProductProgram([FromUri] int loanApplicationDetailId)
         {

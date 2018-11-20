@@ -2485,7 +2485,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var bg = (from b in context.TBL_LOAN_APPLICATION_DETL_BG
                           where b.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                          select new BondsAndGauranteeViewModel()
+                          select new BondsAndGauranteeViewModel
                           {
                               bondId = b.BONDID,
                               loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
@@ -2498,7 +2498,13 @@ namespace FintrakBanking.Repositories.Credit
                               isBankFormat = b.ISBANKFORMAT,
                               referenceNo = b.REFERENCENO,
                               approvalStatusId = b.APPROVALSTATUSID,
-                              principalName = b.TBL_LOAN_PRINCIPAL.NAME,
+
+                              principalName = context.TBL_LOAN_PRINCIPAL.FirstOrDefault(x => x.PRINCIPALID == (int)b.PRINCIPALID) == null ? b.PRINCIPALNAME : b.TBL_LOAN_PRINCIPAL.NAME,
+                              //principalNameOthers = b.PRINCIPALNAME,
+                              // principalName = (b.PRINCIPALID == null) ? b.PRINCIPALNAME : b.TBL_LOAN_PRINCIPAL.NAME,
+
+                              //principalName = (b.PRINCIPALID != null) ? b.TBL_LOAN_PRINCIPAL.NAME : b.PRINCIPALNAME,
+                              //principalNameOthers = b.PRINCIPALNAME,
                               invoiceCurrencyCode = b.TBL_CURRENCY.CURRENCYCODE,
                               approvalStatusName = b.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                               productClassId = (int)ProductClassEnum.BondAndGuarantees
