@@ -197,7 +197,7 @@ namespace FintrakBanking.ReportObjects
 
             }
         }
-        public IEnumerable<RunningLoansViewModel> GetCurrentyRuningLoans(DateTime startDate, DateTime endDate, int companyId, string loanRefNo, short? branchId, int? productClassId, int staffId)
+        public IEnumerable<RunningLoansViewModel> GetActiveRuningLoans(DateTime startDate, DateTime endDate, int companyId, string loanRefNo, short? branchId, int? productClassId, int staffId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
