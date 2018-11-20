@@ -183,11 +183,11 @@ namespace FintrakBanking.APICore.Controllers
         [HttpGet]
         [ClaimsAuthorization]
         [Route("checklist-definition-checklisttype/")]
-        public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId, int checklistTypeId, int? productId, int loanTargetId)
+        public HttpResponseMessage GetChecklistDefinitionByApprovalLevelCheckListType(int operationId, int checklistTypeId, int? productId, int loanTargetId,int? customerId=null)
         {
             try
             {
-                var data = repo.GetChecklistDefinitionByApprovalLevelCheckListType(token.GetStaffId, productId, loanTargetId, operationId, checklistTypeId);
+                var data = repo.GetChecklistDefinitionByApprovalLevelCheckListType(token.GetStaffId, productId, loanTargetId, operationId, checklistTypeId, customerId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1816,6 +1816,28 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
             }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("populate-loanapplication-checklist")]
+        public HttpResponseMessage PopulateLoanApplicationChecklist(CheckListTargetTypeViewModel model)
+        {
+            //try
+            //{   
+                var data = repo.PopulateLoanApplicationChecklist(model.loanApplicationId,token.GetStaffId,token.GetCompanyId,model.productClassProcessId);
+
+                if (data == false)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error populating checklist" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            //}
         }
         #endregion
     }

@@ -26,15 +26,15 @@ namespace FintrakBanking.APICore.JWTAuth
             
             switch (tokenType)
             {
-                case 1: return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
-                case 2: return decryptedToken.First(st => st.Type == "companyId").Value.ToString();
-                case 3: return decryptedToken.First(st => st.Type == "branchId").Value.ToString();
-                case 4: return decryptedToken.First(st => st.Type == "username").Value.ToString();
-                case 5: return decryptedToken.First(st => st.Type == "countryId").Value.ToString();
-                case 6: return decryptedToken.First(st => st.Type == "userId").Value.ToString();
-                case 8: return decryptedToken.First(st => st.Type == "logincode").Value.ToString();
-                case 9: return decryptedToken.First(st => st.Type == "roleId").Value.ToString();
-                default: return decryptedToken.First(st => st.Type == "staffId").Value.ToString();
+                case 1: return decryptedToken.FirstOrDefault(st => st.Type == "staffId").Value.ToString();
+                case 2: return decryptedToken.FirstOrDefault(st => st.Type == "companyId").Value.ToString();
+                case 3: return decryptedToken.FirstOrDefault(st => st.Type == "branchId").Value.ToString();
+                case 4: return decryptedToken.FirstOrDefault(st => st.Type == "username").Value.ToString();
+                case 5: return decryptedToken.FirstOrDefault(st => st.Type == "countryId").Value.ToString();
+                case 6: return decryptedToken.FirstOrDefault(st => st.Type == "userId").Value.ToString();
+                case 8: return decryptedToken.FirstOrDefault(st => st.Type == "logincode").Value.ToString();
+                case 9: return decryptedToken.FirstOrDefault(st => st.Type == "roleId").Value.ToString();
+                default: return decryptedToken.FirstOrDefault(st => st.Type == "staffId").Value.ToString();
             }
         }
     }

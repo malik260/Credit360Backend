@@ -7169,7 +7169,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 decimal overDraftLimit = 0;
                 decimal availableBalance = 0;
-                var odDetail = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.REVOLVINGLOANID == revolvingLoanId);
+                var odDetail = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == revolvingLoanId).Select(x=>x).FirstOrDefault();
                 if (odDetail != null)
                 {
                     overDraftLimit = odDetail.OVERDRAFTLIMIT;

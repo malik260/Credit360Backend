@@ -860,10 +860,11 @@ namespace FintrakBanking.Repositories.Credit
                                                join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
                                                equals b.CHECKLISTDEFINITIONID
                                                where b.TARGETID == targetId
-                && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-                && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                && ids.Contains((int)a.APPROVALLEVELID)
-                                               select b;
+                                               && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                               && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
+                                               && b.CHECKLISTSTATUSID != null
+                                               && ids.Contains((int)a.APPROVALLEVELID)
+                                                                           select b;
 
                         var productId = checklistType.ISPRODUCT_BASED ? (short?)detail.APPROVEDPRODUCTID : null;
 
@@ -880,14 +881,31 @@ namespace FintrakBanking.Repositories.Credit
                         if (camsolJobRequests.Count > 0)
                             isCamsolJobRequestSent = true;
 
-                        var cc = checklistDefinitions.Count();
-                        var bb = checklistDetails.Count();
+                        var definitionsCount = checklistDefinitions.Count();
+                        var detailsCount = checklistDetails.Count();
 
-                        if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
+
+                        if (checklistType.ISPRODUCT_BASED)
                         {
-                            isCheckListDone = false;
-                            str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
-                            checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                            if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
+                            {
+                                isCheckListDone = false;
+                                str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                            }
+                        }
+                        else
+                        {
+                            var customerCount = (from a in loanApplicationDetails select a.CUSTOMERID).Distinct().Count();
+
+                            var validationCount = definitionsCount * customerCount;
+
+                            if (detailsCount != validationCount)
+                            {
+                                isCheckListDone = false;
+                                str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
+                                checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
+                            }
                         }
 
                         var negativeChecklistDetails = checklistDetails.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
