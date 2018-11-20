@@ -636,7 +636,10 @@
                             commitment_Fees = commitment_Fees,
                             com_Contigent_Liab = com_Contigent_Liab,
                             lc_Commission = lc_Commission,
-                            sms_Alert = sms_Alert
+                            sms_Alert = sms_Alert,
+                            month=item.month,
+                            year = item.year,
+
                         });
                     }
 
@@ -717,6 +720,8 @@
                             productName = item.schm_Type,
                             interest = interest,
                             float_Charge = float_Charge,
+                            month = item.month,
+                            year = item.year,
                         });
                     }
 

@@ -24,6 +24,7 @@ using System.Data.Entity;
 using FinTrakBanking.ThirdPartyIntegration.CustomerInfo;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Customer;
+using System.Web.Configuration;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -813,7 +814,9 @@ namespace FintrakBanking.Repositories.Credit
                                  min_Debit_Balance = a.MINIMUMDEBITBALANCE,
                                  credit_Turnover = a.CREDITTURNOVER,
                                  debit_Turnover = a.DEBITTURNOVER,
-                             }).ToList();
+                                 month =a.MONTH,
+                                 year = a.YEAR,
+                             }).OrderByDescending(m=>m.year).ThenByDescending(b => b.month).ToList();
             var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
                          where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
                           select new CustomerTransactionsViewModels
@@ -824,7 +827,9 @@ namespace FintrakBanking.Repositories.Credit
                              accountNumber = a.ACCOUNTNUMBER,
                              interest = a.INTEREST,
                              float_Charge = a.FLOATCHARGE,
-                         }).ToList();
+                             month = a.MONTH,
+                             year = a.YEAR,
+                         }).OrderByDescending(m => m.year).ThenByDescending(b => b.month).ToList(); ;
 
             fields.firstTransaction = first;
             fields.secondTransaction = second;
@@ -3712,7 +3717,16 @@ namespace FintrakBanking.Repositories.Credit
 
         public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId) // OBIE (Page 4)
         {
-            int turnoverDuration = 48;
+            string duration = WebConfigurationManager.AppSettings["turnOverDuration"];
+            int newDuration = 0;
+            if (string.IsNullOrEmpty(duration))
+            {
+                duration = "48";
+            }
+            Int32.TryParse(duration, out newDuration);
+
+
+            int turnoverDuration = newDuration;
             var apiTransactions = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
             var itx = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
 
@@ -3761,6 +3775,8 @@ namespace FintrakBanking.Repositories.Credit
                         LC_COMMISSION = transaction.lc_Commission,
                         CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
+                        MONTH = transaction.month,
+                        YEAR = transaction.year,
                     });
                 }
             }
@@ -3787,6 +3803,8 @@ namespace FintrakBanking.Repositories.Credit
                         INTEREST = t.interest,
                         CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
+                        MONTH = t.month,
+                        YEAR = t.year,
                     });
                 }
             }

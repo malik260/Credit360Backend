@@ -32,5 +32,8 @@
         public decimal? LC_COMMISSION { get; set; }
         public short CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
+        public int? MONTH { get; set; }
+        public int? YEAR { get; set; }
+
     }
 }

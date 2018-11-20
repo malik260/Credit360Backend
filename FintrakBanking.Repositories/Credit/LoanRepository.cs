@@ -6574,39 +6574,41 @@ namespace FintrakBanking.Repositories.Credit
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
-                
-                exposure = (from a in context.TBL_LOAN_REVOLVING
-                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                           select new CurrentCustomerExposure
-                           {
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = a.OVERDRAFTLIMIT,
-                               //proposedLimit = a.OVERDRAFTLIMIT,
-                               proposedLimit = 0,
-                               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,                               
-                               recommendedLimit = 0,
-                               casaAccountId = a.CASAACCOUNTID,
-                               PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                               reviewDate = DateTime.Now,
-                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                               loanStatus = "Running",
-                               referenceNumber = a.LOANREFERENCENUMBER
-                           }).ToList().Select(x =>
-                           {
-                               //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
-                               var availableBalance = context.TBL_CASA.FirstOrDefault(m=>m.CASAACCOUNTID == (int)x.casaAccountId).AVAILABLEBALANCE;
 
-                               if ( availableBalance >= 0)
-                               {
-                                   x.outstandings = 0;
-                               }
-                               else
-                               {
-                                   x.outstandings = Math.Abs(availableBalance); 
-                               }
-                               return x;
-                           });
+                exposure = (from a in context.TBL_LOAN_REVOLVING
+                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                            select new CurrentCustomerExposure
+                            {
+                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                                existingLimit = a.OVERDRAFTLIMIT,
+                                //proposedLimit = a.OVERDRAFTLIMIT,
+                                proposedLimit = 0,
+                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
+                                outstandings=a.OVERDRAFTLIMIT,
+                                recommendedLimit = 0,
+                                casaAccountId = a.CASAACCOUNTID,
+                                PastDueObligationsInterest = a.PASTDUEINTEREST,
+                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                                reviewDate = DateTime.Now,
+                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                                loanStatus = "Running",
+                                referenceNumber = a.LOANREFERENCENUMBER
+                            }).ToList();
+                           //.Select(x =>
+                           //{
+                           //    //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
+                           //    var availableBalance = context.TBL_CASA.FirstOrDefault(m=>m.CASAACCOUNTID == (int)x.casaAccountId).AVAILABLEBALANCE;
+
+                           //    if ( availableBalance >= 0)
+                           //    {
+                           //        x.outstandings = 0;
+                           //    }
+                           //    else
+                           //    {
+                           //        x.outstandings = Math.Abs(availableBalance); 
+                           //    }
+                           //    return x;
+                           //});
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
