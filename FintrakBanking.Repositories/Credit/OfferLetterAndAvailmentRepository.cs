@@ -464,6 +464,7 @@ namespace FintrakBanking.Repositories.Credit
                          && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new ProductFeeViewModel()
                         {
+                            productName = b.TBL_PRODUCT.PRODUCTNAME,
                             feeName = c.CHARGEFEENAME,
                             rateValue = a.RECOMMENDED_FEERATEVALUE
                         }).ToList();
@@ -490,7 +491,7 @@ namespace FintrakBanking.Repositories.Credit
                                    productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                                    approvedDate = a.APPROVEDDATE,
                                    newApplicationDate = a.APPLICATIONDATE,
-                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                    //approvedAmount = b.APPROVEDAMOUNT
                                }).ToList();
 
@@ -506,6 +507,7 @@ namespace FintrakBanking.Repositories.Credit
                                               && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                               select new TransactionDynamicsViewModel()
                                               {
+                                                  productName = b.TBL_PRODUCT.PRODUCTNAME,
                                                   dynamics = a.DYNAMICS,
                                               }).Distinct().ToList();
 
@@ -535,6 +537,7 @@ namespace FintrakBanking.Repositories.Credit
                                           && z.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                           select new MonitoringTriggersViewModel()
                                           {
+                                              productName = y.TBL_PRODUCT.PRODUCTNAME,
                                               monitoringTrigger = x.MONITORING_TRIGGER,
                                           }).Distinct().ToList();
 
@@ -749,7 +752,11 @@ namespace FintrakBanking.Repositories.Credit
                     $"<strong> Name </strong></p></td>" +
 
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                    $"<strong> Rate </strong></td></tr>";
+                    $"<strong> Rate </strong></td>" +
+
+
+                                        $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Product </strong></td></tr>";
 
 
 
@@ -760,6 +767,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.feeName}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.rateValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"</tr>";
             }
 
@@ -802,7 +810,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.newApplicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
 
@@ -894,7 +902,11 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
                         $"<strong> S/No </strong></td>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                    $"<strong>  </strong></td></tr>";
+                    $"<strong> Monitoring Trigger </strong></td>" +
+                                       $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<strong> Product Name </strong></td>" + 
+
+                    $"</tr>";
 
 
 
@@ -904,6 +916,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.monitoringTrigger}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"</tr>";
             }
 
@@ -929,7 +942,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
                     $"<strong> Credit Verification Officer’s initial for compliance only </strong></p></td>" +
                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                    $"<strong>  </strong></td></tr>";
+                    $"<strong> Product Name </strong></td></tr>";
 
 
 
@@ -940,6 +953,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.dynamics}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p></p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"</tr>";
             }
 
@@ -1058,6 +1072,7 @@ namespace FintrakBanking.Repositories.Credit
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                         select new ProductFeeViewModel()
                         {
+                            productName =b.TBL_PRODUCT.PRODUCTNAME,
                             feeName = c.CHARGEFEENAME,
                             rateValue = a.RECOMMENDED_FEERATEVALUE
                         }).ToList();
@@ -1097,6 +1112,7 @@ namespace FintrakBanking.Repositories.Credit
                                               where b.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
                                               select new TransactionDynamicsViewModel()
                                               {
+                                                  productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == b.PRODUCTID).Select(x=>x.PRODUCTNAME).FirstOrDefault(),
                                                   dynamics = a.DYNAMICS,
                                               }).Distinct().ToList();
 
@@ -1128,6 +1144,7 @@ namespace FintrakBanking.Repositories.Credit
                                           where y.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
                                           select new MonitoringTriggersViewModel()
                                           {
+                                              productName = context.TBL_PRODUCT.Where(x => x.PRODUCTID == y.PRODUCTID).Select(x => x.PRODUCTNAME).FirstOrDefault(),
                                               monitoringTrigger = x.MONITORING_TRIGGER,
                                           }).Distinct().ToList();
 
@@ -1324,15 +1341,19 @@ namespace FintrakBanking.Repositories.Credit
             fee = $"<p><strong> Fee Deatils: </strong></p>";
 
             fee = fee +
-                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
-                    $"<tr>" +
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                        $"<strong> S/No </strong></td>" +
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                    $"<strong> Name </strong></p></td>" +
+                     $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
+                     $"<tr>" +
+                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                         $"<strong> S/No </strong></td>" +
+                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                     $"<strong> Name </strong></p></td>" +
 
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                    $"<strong> Rate </strong></td></tr>";
+                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                     $"<strong> Rate </strong></td>" +
+
+
+                                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                     $"<strong> Product </strong></td></tr>";
 
 
 
@@ -1342,7 +1363,8 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.feeName}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.rateValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.rateValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"</tr>";
             }
 
@@ -1468,12 +1490,16 @@ namespace FintrakBanking.Repositories.Credit
             loanMonitoringTrigger = $"<p><strong> Monitoring Triggers: </strong></p>";
 
             loanMonitoringTrigger = loanMonitoringTrigger +
-                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
-                    $"<tr>" +
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                        $"<strong> S/No </strong></td>" +
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                    $"<strong>  </strong></td></tr>";
+                      $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
+                      $"<tr>" +
+                      $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                          $"<strong> S/No </strong></td>" +
+                      $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                      $"<strong> Monitoring Trigger </strong></td>" +
+                                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                          $"<strong> Product Name </strong></td>" +
+
+                      $"</tr>";
 
 
 
@@ -1483,6 +1509,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.monitoringTrigger}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"</tr>";
             }
 
@@ -1499,16 +1526,16 @@ namespace FintrakBanking.Repositories.Credit
             loanTransactionDynamics = $"<p><strong> Transaction Dynamics: </strong></p>";
 
             loanTransactionDynamics = loanTransactionDynamics +
-                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
-                    $"<tr>" +
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                    $"<strong> S/No </strong></td>" +
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
-                    $"<strong> Dynamics </strong></p></td>" +
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
-                    $"<strong> Credit Verification Officer’s initial for compliance only </strong></p></td>" +
-                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                    $"<strong>  </strong></td></tr>";
+                     $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
+                     $"<tr>" +
+                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                     $"<strong> S/No </strong></td>" +
+                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                     $"<strong> Dynamics </strong></p></td>" +
+                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                     $"<strong> Credit Verification Officer’s initial for compliance only </strong></p></td>" +
+                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                     $"<strong> Product Name </strong></td></tr>";
 
 
 
@@ -1519,6 +1546,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfExternalConditions}</li></ol></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.dynamics}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p></p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"</tr>";
             }
 

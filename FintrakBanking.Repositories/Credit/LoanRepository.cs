@@ -6574,39 +6574,41 @@ namespace FintrakBanking.Repositories.Credit
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
-                
-                exposure = (from a in context.TBL_LOAN_REVOLVING
-                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                           select new CurrentCustomerExposure
-                           {
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = a.OVERDRAFTLIMIT,
-                               //proposedLimit = a.OVERDRAFTLIMIT,
-                               proposedLimit = 0,
-                               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,                               
-                               recommendedLimit = 0,
-                               casaAccountId = a.CASAACCOUNTID,
-                               PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                               reviewDate = DateTime.Now,
-                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                               loanStatus = "Running",
-                               referenceNumber = a.LOANREFERENCENUMBER
-                           }).ToList().Select(x =>
-                           {
-                               //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
-                               var availableBalance = context.TBL_CASA.FirstOrDefault(m=>m.CASAACCOUNTID == (int)x.casaAccountId).AVAILABLEBALANCE;
 
-                               if ( availableBalance >= 0)
-                               {
-                                   x.outstandings = 0;
-                               }
-                               else
-                               {
-                                   x.outstandings = Math.Abs(availableBalance); 
-                               }
-                               return x;
-                           });
+                exposure = (from a in context.TBL_LOAN_REVOLVING
+                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                            select new CurrentCustomerExposure
+                            {
+                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                                existingLimit = a.OVERDRAFTLIMIT,
+                                //proposedLimit = a.OVERDRAFTLIMIT,
+                                proposedLimit = 0,
+                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
+                                outstandings=a.OVERDRAFTLIMIT,
+                                recommendedLimit = 0,
+                                casaAccountId = a.CASAACCOUNTID,
+                                PastDueObligationsInterest = a.PASTDUEINTEREST,
+                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                                reviewDate = DateTime.Now,
+                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                                loanStatus = "Running",
+                                referenceNumber = a.LOANREFERENCENUMBER
+                            }).ToList();
+                           //.Select(x =>
+                           //{
+                           //    //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
+                           //    var availableBalance = context.TBL_CASA.FirstOrDefault(m=>m.CASAACCOUNTID == (int)x.casaAccountId).AVAILABLEBALANCE;
+
+                           //    if ( availableBalance >= 0)
+                           //    {
+                           //        x.outstandings = 0;
+                           //    }
+                           //    else
+                           //    {
+                           //        x.outstandings = Math.Abs(availableBalance); 
+                           //    }
+                           //    return x;
+                           //});
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
@@ -7169,7 +7171,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 decimal overDraftLimit = 0;
                 decimal availableBalance = 0;
-                var odDetail = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.REVOLVINGLOANID == revolvingLoanId);
+                var odDetail = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == revolvingLoanId).Select(x=>x).FirstOrDefault();
                 if (odDetail != null)
                 {
                     overDraftLimit = odDetail.OVERDRAFTLIMIT;
@@ -8612,7 +8614,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                searchQuery = searchQuery.ToUpper();
+                searchQuery = searchQuery.ToLower();
             }
 
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
@@ -8654,6 +8656,12 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery)
         {
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
@@ -10106,10 +10114,10 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion Commercial loan Operations
 
-        public List<CustomerTurnoverViewModel> GetCustomerTurnover(List<int> customerIds) // OBIE (Page 4)
+        public List<CustomersTurnoverViewModel> GetCustomerTurnover(List<int> customerIds) // OBIE (Page 4)
         {
             var trx = context.TBL_LOAN_APPLICATION_TRANS.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomerTurnoverViewModel
+                .Select(x => new CustomersTurnoverViewModel
                 {
                     accountId = x.CUSTOMERID,
                     //schemeType = x.,
@@ -10125,7 +10133,7 @@ namespace FintrakBanking.Repositories.Credit
                 }).ToList();
 
             var itx = context.TBL_LOAN_APPLICATION_TRANS2.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomerTurnoverViewModel
+                .Select(x => new CustomersTurnoverViewModel
                 {
                     accountId = x.CUSTOMERID,
                     //schemeType = x.,
