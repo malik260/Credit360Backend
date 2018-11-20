@@ -666,6 +666,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatusName { get; set; }
 
         public int productClassId { get; set; }
+
+        public string principalNameOthers { get; set; }
     }
 
     public class SyndicatedLoanDetailViewModel
@@ -774,6 +776,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? interest { get; set; } // "2909416.54",
         public string accountNumber { get; set; } // "2909416.54",
         public string productName { get; set; } // "2909416.54",
+        public int? month { get; set; } // "0",
+        public int? year { get; set; } // "0",
+
 
     }
 

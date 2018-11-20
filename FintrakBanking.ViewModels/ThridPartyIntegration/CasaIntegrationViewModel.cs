@@ -179,6 +179,8 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public string lc_Commission { get; set; } // ": 
         public string float_Charge { get; set; } // "2081981.94",
         public string interest { get; set; } // "2909416.54",
+        public int? month { get; set; } // "0",
+        public int? year { get; set; } // "0",
 
         //public string foracid { get; set; }
         //public string cusT_ID { get; set; }
@@ -220,8 +222,10 @@ namespace FintrakBanking.ViewModels.ThridPartyIntegration
         public decimal? lc_Commission { get; set; } // ": 
         public decimal? float_Charge { get; set; } // "2081981.94",
         public decimal? interest { get; set; } // "2909416.54",
+        public int? month { get; set; } // "0",
+        public int? year { get; set; } // "0",
 
-   
+
     }
 
     //public class CustomerTurnoverInterestViewModels
