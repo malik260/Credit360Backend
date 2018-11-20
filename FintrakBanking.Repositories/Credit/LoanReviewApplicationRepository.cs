@@ -840,7 +840,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvedAmount = d.APPROVEDAMOUNT,
                     })
                 })
-                .GroupBy(d => d.timeIn)
+                .GroupBy(d => d.approvalTrailId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 

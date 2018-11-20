@@ -2483,9 +2483,11 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (details == (short)ProductClassEnum.BondAndGuarantees)
             {
+
                 var bg = (from b in context.TBL_LOAN_APPLICATION_DETL_BG
+                          //join p in context.TBL_LOAN_PRINCIPAL on b.PRINCIPALID equals p.PRINCIPALID
                           where b.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                          select new BondsAndGauranteeViewModel()
+                          select new BondsAndGauranteeViewModel
                           {
                               bondId = b.BONDID,
                               loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
@@ -2498,7 +2500,9 @@ namespace FintrakBanking.Repositories.Credit
                               isBankFormat = b.ISBANKFORMAT,
                               referenceNo = b.REFERENCENO,
                               approvalStatusId = b.APPROVALSTATUSID,
-                              principalName = b.TBL_LOAN_PRINCIPAL.NAME,
+                              principalName = context.TBL_LOAN_PRINCIPAL.FirstOrDefault(x=>x.PRINCIPALID==(int)b.PRINCIPALID) == null ? b.PRINCIPALNAME : b.TBL_LOAN_PRINCIPAL.NAME,
+                              //principalNameOthers = b.PRINCIPALNAME,
+                              // principalName = (b.PRINCIPALID == null) ? b.PRINCIPALNAME : b.TBL_LOAN_PRINCIPAL.NAME,
                               invoiceCurrencyCode = b.TBL_CURRENCY.CURRENCYCODE,
                               approvalStatusName = b.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,
                               productClassId = (int)ProductClassEnum.BondAndGuarantees
@@ -3645,6 +3649,7 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.CODE + "-" + x.DESCRIPTION
             }).ToList();
         }
+
         public IEnumerable<LookupViewModel> GetAllCRMSRepaymentSource()
         {
             return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.RepaymentSourceType).Select(x => new LookupViewModel()
@@ -3662,6 +3667,7 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.CODE + "-" + x.DESCRIPTION
             }).ToList();
         }
+
         public IEnumerable<LookupViewModel> GetAllSyndicationType()
         {
             return context.TBL_LOAN_SYNDICATION_PARTY_TYP.Select(x => new LookupViewModel()

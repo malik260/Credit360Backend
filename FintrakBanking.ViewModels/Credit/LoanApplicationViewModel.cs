@@ -666,6 +666,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatusName { get; set; }
 
         public int productClassId { get; set; }
+        public string principalNameOthers { get; set; }
     }
 
     public class SyndicatedLoanDetailViewModel
