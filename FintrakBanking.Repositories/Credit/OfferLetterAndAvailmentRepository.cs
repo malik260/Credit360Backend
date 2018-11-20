@@ -16,6 +16,7 @@ using System.Data.Entity;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using System.Web.Hosting;
 
@@ -1866,6 +1867,7 @@ namespace FintrakBanking.Repositories.Credit
                 return false;
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
         public int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
             int operationId = (int)OperationsEnum.LoanAvailment;

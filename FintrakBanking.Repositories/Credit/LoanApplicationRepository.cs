@@ -417,6 +417,7 @@ namespace FintrakBanking.Repositories.Credit
                                                          invoiceAmount = i.INVOICE_AMOUNT,
                                                          invoiceNo = i.INVOICENO,
                                                          invoiceDate = i.INVOICE_DATE,
+                                                         invoiceId = i.INVOICEID,
                                                          invoiceCurrencyCode = i.TBL_CURRENCY.CURRENCYCODE,
                                                          approvaStatusId = i.APPROVALSTATUSID,
                                                          approvalStatusName = i.TBL_LOAN_APPLICATION_DETL_STA.STATUSNAME,

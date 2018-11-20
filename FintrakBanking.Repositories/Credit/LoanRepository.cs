@@ -4099,7 +4099,7 @@ namespace FintrakBanking.Repositories.Credit
                             credit.description = $"Fee charge on {credits.DESCRIPTION}";
                             credit.valueDate = generalSetup.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;
-                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
+                            credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanDetails.companyId).CURRENCYID; //(short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
                             credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, loanDetails.companyId).sellingRate;
                             credit.isApproved = true;
                             credit.postedBy = loanDetails.createdBy;
