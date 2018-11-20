@@ -1119,6 +1119,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LMS12.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ClassifiedAssetManagement.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS - Copy %282%29.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.rdlc" />

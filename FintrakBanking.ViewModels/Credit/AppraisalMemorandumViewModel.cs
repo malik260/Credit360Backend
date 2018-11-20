@@ -297,6 +297,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? monitoringTriggerId { get; set; }
         public string productCustomerName { get; set; }
         public double SN { get; set; }
+        public string productName { get; set; }
     }
 
     public class CustomerTurnoverViewModel
