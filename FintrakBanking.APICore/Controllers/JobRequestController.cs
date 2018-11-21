@@ -27,13 +27,13 @@ namespace FintrakBanking.APICore.Controllers
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-        [HttpGet] [ClaimsAuthorization]  
-        [Route("job-request")]
-        public HttpResponseMessage GetJobRequest()
-        {
-            var data = repo.GetAllJobRequest();
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        }       
+        //[HttpGet] [ClaimsAuthorization]  
+        //[Route("job-request")]
+        //public HttpResponseMessage GetJobRequest()
+        //{
+        //    var data = repo.GetAllJobRequest();
+        //    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        //}       
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request-detail/legal-details")]
@@ -85,7 +85,8 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/{jobRequestId}")]
         public HttpResponseMessage GetJobRequest(int jobRequestId)
         {
@@ -98,7 +99,16 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("filter-job-request-by-status/{status}")]
+        public HttpResponseMessage GetJobRequestByFilter(string filter)
+        {
+            var data = repo.GetJobRequestByFilter(token.GetStaffId, token.GetBranchId, filter);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("application-detail-job-request/{applicationDetailId}")]
         public HttpResponseMessage GetApplicationJobRequest(int applicationDetailId)
         {
@@ -434,10 +444,14 @@ namespace FintrakBanking.APICore.Controllers
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = true;// repo.UpdateInvoiceStatus(entity);
+                var data = repo.UpdateInvoiceStatus(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been updated successfully" });
+                    if (entity.status)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Invoice successfully approved." });
+                    }
+                    else return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Invoice successfully disapproved." });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
