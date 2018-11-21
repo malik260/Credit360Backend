@@ -50,6 +50,8 @@ namespace FintrakBanking.ViewModels.Reports
 
     public class DisburstLoanViewModel
     {
+        public string loanStatus;
+
         public decimal  outstandingInterest { get; set; }
         public double approvedInterestRate { get; set; }
         private int tenor { get { return (maturitydate - effectiveDate).Days; } }
@@ -91,6 +93,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string current { get; set; }
         public string businessGroup { get; set; }
         public int loanTenor { get; set; }
+        public string cRMSCode { get; set; }
     }
 
     public class DateRange
@@ -108,6 +111,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int auditTypeId { get; set; }
         public int companyId { get; set; }
         public string searchInfo { get; set; }
+        public string crmSCode { get; set; }
     }
 
     public class ReportSearchEntity

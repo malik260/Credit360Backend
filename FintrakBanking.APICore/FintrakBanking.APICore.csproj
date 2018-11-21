@@ -427,6 +427,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FORM3800B.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\StaffInfoDataSet.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\TransactionDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -593,6 +598,13 @@
     <Compile Include="Reports\ReportViews\PostedTransactions.aspx.designer.cs">
       <DependentUpon>PostedTransactions.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ProfileActivityReport.aspx.cs">
+      <DependentUpon>ProfileActivityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ProfileActivityReport.aspx.designer.cs">
+      <DependentUpon>ProfileActivityReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ReceivableInterest.aspx.cs">
       <DependentUpon>ReceivableInterest.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -606,6 +618,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\Repayment.aspx.designer.cs">
       <DependentUpon>Repayment.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RunningFacilitiesReport.aspx.cs">
+      <DependentUpon>RunningFacilitiesReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\RunningFacilitiesReport.aspx.designer.cs">
+      <DependentUpon>RunningFacilitiesReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\SeftLiquidatingLoans.aspx.cs">
       <DependentUpon>SeftLiquidatingLoans.aspx</DependentUpon>
@@ -777,6 +796,27 @@
     <Compile Include="Reports\ReportViews\SLAReport.aspx.designer.cs">
       <DependentUpon>SLAReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\StaffPriviledgeChangeReport.aspx.cs">
+      <DependentUpon>StaffPriviledgeChangeReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\StaffPriviledgeChangeReport.aspx.designer.cs">
+      <DependentUpon>StaffPriviledgeChangeReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\StaffRoleProfileActivityReport.aspx.cs">
+      <DependentUpon>StaffRoleProfileActivityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\StaffRoleProfileActivityReport.aspx.designer.cs">
+      <DependentUpon>StaffRoleProfileActivityReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\StaffRoleProfileGroupReport.aspx.cs">
+      <DependentUpon>StaffRoleProfileGroupReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\StaffRoleProfileGroupReport.aspx.designer.cs">
+      <DependentUpon>StaffRoleProfileGroupReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\StalledPerfection.aspx.cs">
       <DependentUpon>StalledPerfection.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -797,6 +837,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\UnearnedLoanInterest.aspx.designer.cs">
       <DependentUpon>UnearnedLoanInterest.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\UserGroupChangeReport.aspx.cs">
+      <DependentUpon>UserGroupChangeReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\UserGroupChangeReport.aspx.designer.cs">
+      <DependentUpon>UserGroupChangeReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx.cs">
       <DependentUpon>WeeklyRecoveryReportForFINCON.aspx</DependentUpon>
@@ -883,6 +930,7 @@
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
+    <Content Include="Reports\ReportViews\ProfileActivityReport.aspx" />
     <Content Include="Reports\ReportViews\ReceivableInterest.aspx" />
     <Content Include="Reports\ReportViews\Repayment.aspx" />
     <Content Include="Reports\ReportViews\RuningLoansByLoanType.aspx" />
@@ -897,11 +945,16 @@
     <Content Include="Reports\ReportViews\LoanRepaymentSchedule.aspx" />
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
+    <Content Include="Reports\ReportViews\RunningFacilitiesReport.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\SLAReport.aspx" />
+    <Content Include="Reports\ReportViews\StaffPriviledgeChangeReport.aspx" />
+    <Content Include="Reports\ReportViews\StaffRoleProfileActivityReport.aspx" />
+    <Content Include="Reports\ReportViews\StaffRoleProfileGroupReport.aspx" />
     <Content Include="Reports\ReportViews\StalledPerfection.aspx" />
     <Content Include="Reports\ReportViews\TurnOverConvenant.aspx" />
     <Content Include="Reports\ReportViews\UnearnedLoanInterest.aspx" />
+    <Content Include="Reports\ReportViews\UserGroupChangeReport.aspx" />
     <Content Include="Reports\ReportViews\WeeklyRecoveryReportForFINCON.aspx" />
     <Content Include="Reports\ReportViews\Workflow.aspx" />
     <Content Include="Reports\ReportViews\SectorialLimitMonitoring.aspx" />
@@ -979,6 +1032,17 @@
     <Content Include="Scripts\bootstrap.bundle.js.map" />
     <Content Include="Reports\ReportDataset\TransactionDataSet.xsc">
       <DependentUpon>TransactionDataSet.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
+      <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\StaffInfoDataSet.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>StaffInfoDataSet.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\StaffInfoDataSet.xss">
+      <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\TransactionDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>
@@ -1159,17 +1223,23 @@
     <Content Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
+    <EmbeddedResource Include="Reports\Report\RunningFacilities.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\SLAMonitoringReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\StaffPrivilegeChangeReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\StaffRoleProfileActivityReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\StaffRoleProfileGroupReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\StakeholderWithExpiredFTP.rdlc" />
     <EmbeddedResource Include="Reports\Report\StalledPerfection.rdlc" />
     <EmbeddedResource Include="Reports\Report\TestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\TurnoverCovenant.rdlc" />
     <EmbeddedResource Include="Reports\Report\UnearnedLoanInterest.rdlc" />
+    <EmbeddedResource Include="Reports\Report\UserGroupChangeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\WeeklyRecoveryReportFINCON.rdlc" />
     <EmbeddedResource Include="Reports\Report\WorkflowDefinition.rdlc" />
   </ItemGroup>
