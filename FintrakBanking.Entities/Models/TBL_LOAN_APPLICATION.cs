@@ -139,7 +139,7 @@ namespace FintrakBanking.Entities.Models
 
         public int? CAPREGIONID { get; set; }
 
-        public short? REQUIREDCOLLATERALTYPEID { get; set; }
+        public short? REQUIRECOLLATERALTYPEID { get; set; }
 
         public bool? ISCHECKLISTLOADED { get; set; }
 
