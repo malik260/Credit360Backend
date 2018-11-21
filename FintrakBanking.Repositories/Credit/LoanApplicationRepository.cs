@@ -692,6 +692,7 @@ namespace FintrakBanking.Repositories.Credit
                            applicationTenor = Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0),
                            applicationAmount = a.APPLICATIONAMOUNT,
                            regionId = a.CAPREGIONID,
+                           requiredCollateralTypeId = a.REQUIREDCOLLATERALTYPEID,
                            preliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
                            collateralDetail = a.COLLATERALDETAIL,
                            loanInformation = a.LOANINFORMATION,
@@ -1352,6 +1353,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             this.loanData.COLLATERALDETAIL = loan.collateralDetail;
             this.loanData.CAPREGIONID = loan.regionId;
+            this.loanData.REQUIREDCOLLATERALTYPEID = loan.requiredCollateralTypeId;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
