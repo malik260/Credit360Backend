@@ -431,6 +431,7 @@ namespace FintrakBanking.Repositories.Credit
                                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                         && b.ISSUBSEQUENT == true
+                                        && b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived
                                         select new OfferLetterConditionPrecidentViewModel()
                                         {
                                             conditionPrecident = b.CONDITION,
@@ -1029,6 +1030,7 @@ namespace FintrakBanking.Repositories.Credit
                                        join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                        where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == false
                                         && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+
                                           //&& b.CHECKLISTSTATUSID == null
                                        select new OfferLetterConditionPrecidentViewModel()
                                        {
@@ -1041,7 +1043,9 @@ namespace FintrakBanking.Repositories.Credit
             var conditionSubsequents = (from a in context.TBL_LMSR_APPLICATION
                                         join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                         join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                        where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == true
+                                        where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER 
+                                        && b.ISSUBSEQUENT == true
+                                        && b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived
                                         select new OfferLetterConditionPrecidentViewModel()
                                         {
                                             conditionPrecident = b.CONDITION,
