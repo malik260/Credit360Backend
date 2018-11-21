@@ -783,7 +783,7 @@ namespace FintrakBanking.Repositories.Credit
                 .Join(
                     context.TBL_APPROVAL_TRAIL.Where(x => camOperationIds.Contains(x.OPERATIONID)
                         && levels.Contains((int)x.TOAPPROVALLEVELID)
-                        && (x.RESPONSESTAFFID == null || x.RESPONSESTAFFID == staffId)
+                        && (x.RESPONSESTAFFID == null || (x.RESPONSESTAFFID == staffId && x.TOSTAFFID != null))
                         ),// && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)),
 
                     a => a.LOANAPPLICATIONID,
