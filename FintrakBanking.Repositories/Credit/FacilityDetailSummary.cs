@@ -1973,7 +1973,7 @@ namespace FintrakBanking.Repositories.Credit
             try
             {
 
-                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId, searchValue).Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased);
+                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId, searchValue);//.Where(x => x.productClassProcessId != (short)ProductClassProcessEnum.ProductBased);
 
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
@@ -2086,7 +2086,7 @@ namespace FintrakBanking.Repositories.Credit
                            productPriceIndexName = context.TBL_PRODUCT_PRICE_INDEX.Where(q => q.PRODUCTPRICEINDEXID == context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.PRODUCTID).FirstOrDefault().TBL_PRODUCT_PRICE_INDEX.PRODUCTPRICEINDEXID).Select(q => q.PRICEINDEXNAME).FirstOrDefault(),
                        }).ToList();
 
-            if (loan==null)
+            if (loan.Count==0)
             {
                 loan = (from a in context.TBL_LOAN_CONTINGENT
                         where a.LOANAPPLICATIONDETAILID == loanApplicationDetilId
@@ -2116,7 +2116,7 @@ namespace FintrakBanking.Repositories.Credit
                             operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
                             sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
-                            
+                            principalAmount = a.CONTINGENTAMOUNT,
                             createdBy = a.CREATEDBY,
                             dateTimeCreated = a.DATETIMECREATED,
                             exchangeRate = a.EXCHANGERATE,
@@ -2130,7 +2130,7 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             }
 
-            if (loan == null)
+            if (loan.Count == 0)
             {
                 loan = (from a in context.TBL_LOAN_REVOLVING
                         where a.LOANAPPLICATIONDETAILID == loanApplicationDetilId

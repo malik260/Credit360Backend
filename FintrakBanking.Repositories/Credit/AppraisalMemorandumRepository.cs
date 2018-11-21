@@ -1288,7 +1288,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var operationId = (int)OperationsEnum.CAM;
 
-            List<int> levels = general.GetRouteLevels(operationId, 1);
+            List<int> levels = general.GetRouteLevels(operationId, 1);//.ToList().Distinct();
 
             //var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
             //                .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
