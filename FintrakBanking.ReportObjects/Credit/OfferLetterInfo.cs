@@ -573,6 +573,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                         where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                        && b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived
                                         && b.ISSUBSEQUENT == true
                                         select new { b, c }).ToList();
 
