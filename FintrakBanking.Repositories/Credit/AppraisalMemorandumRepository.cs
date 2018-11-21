@@ -1318,6 +1318,7 @@ namespace FintrakBanking.Repositories.Credit
                 )
                 .OrderByDescending(x => x.LOANAPPLICATIONID)
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                        && (x.RESPONSESTAFFID == null || x.RESPONSESTAFFID == staffId)
                         && x.TOAPPROVALLEVELID != null && levels.Contains((int)x.TOAPPROVALLEVELID)),
                     a => a.LOANAPPLICATIONID, b => b.TARGETID, (a, b) => new { a, b })
                 .Select(x => new RegionLoanApplicationViewModel
@@ -1353,7 +1354,7 @@ namespace FintrakBanking.Repositories.Credit
                         toStaffId = x.b.TOSTAFFID,
                         approvalTrailId = x.b.APPROVALTRAILID,
                 })
-                .GroupBy(d => d.timeIn)
+                .GroupBy(d => d.approvalTrailId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 

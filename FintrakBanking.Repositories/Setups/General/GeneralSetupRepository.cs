@@ -436,7 +436,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 controlLevels.AddRange(cls.ToList());
             }
 
-            return controlLevels.Select(x => x.levelId).ToList();
+            return controlLevels.Select(x => x.levelId).Distinct().ToList();
         }
 
     }
