@@ -654,7 +654,6 @@ namespace FintrakBanking.Repositories.Credit
                           && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                           && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
 
-
                        orderby a.APPLICATIONDATE descending
 
                        select new
@@ -692,7 +691,7 @@ namespace FintrakBanking.Repositories.Credit
                            applicationTenor = Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0),
                            applicationAmount = a.APPLICATIONAMOUNT,
                            regionId = a.CAPREGIONID,
-                           requiredCollateralTypeId = a.REQUIRECOLLATERALTYPEID,
+                           requireCollateralTypeId = a.REQUIRECOLLATERALTYPEID,
                            preliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
                            collateralDetail = a.COLLATERALDETAIL,
                            loanInformation = a.LOANINFORMATION,
@@ -838,6 +837,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return fields;
         }
+
         // PLEASE RENAME THIS METHOD NAME TO BE MORE DESCRIPTIVE like LoanApplicationChecklistValidation
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
@@ -949,11 +949,15 @@ namespace FintrakBanking.Repositories.Credit
 
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
-                LoadCustomerTurnover(
-                   applicationId,
-                   loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                   (short)staffId
-                );
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    LoadCustomerTurnover(
+                       applicationId,
+                       loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                       (short)staffId
+                    );
+                }
 
                 return new LoanApplicationUpdateMessage
                 {
@@ -1101,16 +1105,8 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
-            try
-            {
-                response = context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                //
-            }
-
-
+            response = context.SaveChanges();
+           
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
             if (response > 0 && !loan.isNewApplication)
@@ -1353,7 +1349,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             this.loanData.COLLATERALDETAIL = loan.collateralDetail;
             this.loanData.CAPREGIONID = loan.regionId;
-            this.loanData.REQUIRECOLLATERALTYPEID = loan.requiredCollateralTypeId;
+            this.loanData.REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -3747,8 +3743,7 @@ namespace FintrakBanking.Repositories.Credit
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
-            var test = result.Count();
-
+            // var test = result.Count();
             return result;
         }
 
