@@ -315,13 +315,28 @@ namespace FintrakBanking.Repositories.Credit
         //    ).Any();
         //}
 
-        private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
+        private bool PendingBondsAndGuaranteeJobRequest(int applicationDetailId)
         {
-            return context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationId
-                && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
+            var requestsToLegal = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId
+                && x.OPERATIONSID == (short)OperationsEnum.LoanAvailment
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
-                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
-            ).Any();
+            );
+
+            if (requestsToLegal.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                throw new ConditionNotMetException("There are pending B&G Legal Job request which must be approved");
+
+            var attendedRequests = requestsToLegal.Where(x => x.REQUESTSTATUSID != (short)JobRequestStatusEnum.pending);
+
+            if (attendedRequests.Any())
+            {
+                if (attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved).Any())
+                    return true;
+
+                if(attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
+                    throw new ConditionNotMetException("Bond and gaurantee job sent to legal was disapproved. You cannot continue with the application.");
+            }
+
+            return false;
         }
 
         private void loanBookingValidation(LoanViewModel entity)
@@ -830,6 +845,8 @@ namespace FintrakBanking.Repositories.Credit
             //if (entity.effectiveDate > systemDate)
             //    throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
+            loanBookingValidation(entity);
+
             var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
 
             var isTenored = false;
@@ -843,7 +860,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
             {
-                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationId))
+                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationDetailId))
                     throw new ConditionNotMetException("There are pending bonds and gaurantees that must be attended to");
             }
 
@@ -3380,7 +3397,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     sourceApplicationId = (short)contingentLoanRecord.CONTINGENTLOANID,
                     applicationUrl = user.applicationUrl,
-                    description = "Bonds & Guarantee Issuance",
+                    description = "Contingent Liability Issuance",
                     companyId = user.companyId,
                     createdBy = user.createdBy,
                     userBranchId = (short)user.BranchId,
