@@ -139,6 +139,8 @@ namespace FintrakBanking.Entities.Models
 
         public int? CAPREGIONID { get; set; }
 
+        public short? REQUIREDCOLLATERALTYPEID { get; set; }
+
         public bool? ISCHECKLISTLOADED { get; set; }
 
         public virtual TBL_APPROVAL_LEVEL TBL_APPROVAL_LEVEL { get; set; }
