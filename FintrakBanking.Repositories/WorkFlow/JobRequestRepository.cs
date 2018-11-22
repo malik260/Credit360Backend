@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ARRIVALDATE = applicationDate,
                 SYSTEMARRIVALDATE = date,
             };
-            var job = context.TBL_JOB_REQUEST.Add(data);
+            var job = context.TBL_JOB_REQUEST.Add(data); 
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
