@@ -47,17 +47,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.chartOfAccount = _chartOfAccount;
         }
 
-        public string AddGlobalJobRequest(JobRequestViewModel model)
+        private string saveJobRequest(JobRequestViewModel model)
         {
-            if (model.receiverStaffId == model.createdBy)
-                throw new SecureException("You cannot assign a job to yourself");
-
-            var date = DateTime.Now;
             var applicationDate = general.GetApplicationDate();
-            model.jobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode();
-            model.requestStatusId = 1;
-            //if(model.operationsId == 0)  model.operationsId = 1;
-
+            var date = DateTime.Now;
             var data = new TBL_JOB_REQUEST
             {
                 JOBREQUESTCODE = model.jobRequestCode,
@@ -78,8 +71,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 ARRIVALDATE = applicationDate,
                 SYSTEMARRIVALDATE = date,
             };
-
-            var job = context.TBL_JOB_REQUEST.Add(data);
+            var job = context.TBL_JOB_REQUEST.Add(data); 
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -95,8 +87,41 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
-            var result = context.SaveChanges();
-            return job.JOBREQUESTCODE;
+            if (context.SaveChanges() > 0)
+            {
+                return job.JOBREQUESTCODE;
+            }
+            else return string.Empty;
+        }
+        public string AddGlobalJobRequest(JobRequestViewModel model)
+        {
+            if (model.receiverStaffId == model.createdBy)
+                throw new SecureException("You cannot assign a job to yourself");
+
+            model.requestStatusId = (short)RequestStatusEnum.Pending;
+
+            if (model.isApplicationLevel)
+            {
+                var applicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == model.targetId);
+                if (!applicationDetail.Any())
+                    throw new ConditionNotMetException("Targeted for this record could not be resolved");
+
+                var code = string.Empty;
+                int ctr = 0;
+                foreach (var item in applicationDetail)
+                {
+                    model.jobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode();
+                    code = saveJobRequest(model);
+                    ctr = ctr + 1;
+                }
+                if (ctr > 1) { code = code + "..."; }
+                return code;
+            }
+            else
+            {
+                model.jobRequestCode = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode();
+                return saveJobRequest(model);
+            }
         }
 
         public bool AddJobComment(JobRequestMessageViewModel model)
@@ -453,8 +478,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                          systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
                          loggedInStaffId = staffId,
                          
-                         refNo = (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM ) 
-                         && context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l=>l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+                         refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l=>l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
                          ? context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
 
                          from = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME +" " + x.TBL_STAFF.LASTNAME,
@@ -1421,6 +1445,42 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool AddJobReplyAndDocument(RequestDocumentViewModel model, byte[] file)
         {
+            //var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
+            //{
+            //    FILEDATA = file,
+            //    JOBREQUESTCODE = model.jobRequestCode,
+            //    DOCUMENTTITLE = model.documentTitle,
+            //    DOCUMENTTYPEID = model.documentTypeId,
+            //    FILENAME = model.fileName,
+            //    FILEEXTENSION = model.fileExtension,
+            //    SYSTEMDATETIME = DateTime.Now,
+            //    PHYSICALFILENUMBER = model.physicalFileNumber,
+            //    PHYSICALLOCATION = model.physicalLocation,
+            //    CREATEDBY = (int)model.createdBy,
+            //};
+
+            //docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
+
+            if (AddJobDocumentOnly(model, file))
+            {
+                JobRequestViewModel jb = new JobRequestViewModel();
+                jb.jobRequestId = context.TBL_JOB_REQUEST.Where(x => x.JOBREQUESTCODE == model.jobRequestCode).FirstOrDefault().JOBREQUESTID;
+                jb.responseComment = model.comment;
+                jb.createdBy = model.createdBy;
+                jb.companyId = model.companyId;
+                jb.userBranchId = model.userBranchId;
+                jb.statusId = (short)model?.statusId;
+                jb.rejectionReasonId = (short)model?.rejectionReasonId;
+
+                ReplyJobRequest(jb, jb.jobRequestId);
+
+                return context.SaveChanges() > 0;
+            }
+            else return false;
+        }
+
+        public bool AddJobDocumentOnly(RequestDocumentViewModel model, byte[] file)
+        {
             var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
             {
                 FILEDATA = file,
@@ -1437,17 +1497,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
 
-            JobRequestViewModel jb = new JobRequestViewModel();
-            jb.jobRequestId = context.TBL_JOB_REQUEST.Where(x => x.JOBREQUESTCODE == model.jobRequestCode).FirstOrDefault().JOBREQUESTID;
-            jb.responseComment = model.comment;
-            jb.createdBy = model.createdBy;
-            jb.companyId = model.companyId;
-            jb.userBranchId = model.userBranchId;
-            jb.statusId = (short)model?.statusId;
-            jb.rejectionReasonId = (short)model?.rejectionReasonId;
-
-            ReplyJobRequest(jb, jb.jobRequestId);
-
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -1463,12 +1512,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.audit.AddAuditTrail(audit);
             // End of Audit Section ---------------------
 
-            var aud = context.SaveChanges() != 0;
+            context.SaveChanges();
 
             return docContext.SaveChanges() != 0;
         }
 
-        public bool AddJobDocument(RequestDocumentViewModel model, JobRequestViewModel requestModel, byte[] file)
+        public string AddJobDocument(RequestDocumentViewModel model, JobRequestViewModel requestModel, byte[] file)
         {
             var code = AddGlobalJobRequest(requestModel);
             model.jobRequestCode = code;
@@ -1505,7 +1554,11 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             var aud = context.SaveChanges() != 0;
 
-            return docContext.SaveChanges() != 0;
+            if (docContext.SaveChanges() != 0)
+            {
+                return code;
+            }
+            else return string.Empty;
         }
 
         public bool UpdateJobDocument(RequestDocumentViewModel model, int documentId)
