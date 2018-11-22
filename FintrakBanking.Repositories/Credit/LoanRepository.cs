@@ -318,7 +318,7 @@ namespace FintrakBanking.Repositories.Credit
         private bool PendingBondsAndGuaranteeJobRequest(int applicationDetailId)
         {
             var requestsToLegal = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId
-                && x.OPERATIONSID == (short)OperationsEnum.LoanAvailment
+                && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
             );
 
@@ -1056,8 +1056,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.loanScheduleInput.principalAmount);
 
-            if (totalPrincipalAmount > (decimal)approvedAmount)
-                throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
+            //if (totalPrincipalAmount > (decimal)approvedAmount)
+            //    throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
             if (entity.loanScheduleInput.scheduleMethodId == (short)LoanScheduleTypeEnum.BulletPayment)
             {
@@ -1442,8 +1442,8 @@ namespace FintrakBanking.Repositories.Credit
             var totalPreviouslyBookedAmount = principalAmount.FirstOrDefault();
             var totalPrincipalAmount = (decimal)(totalPreviouslyBookedAmount + (decimal)entity.principalAmount);
 
-            if (totalPrincipalAmount > (decimal)approvedAmount)
-                throw new ConditionNotMetException("The loan amount cannot be greater than the available amount");
+            //if (totalPrincipalAmount > (decimal)approvedAmount)
+            //    throw new ConditionNotMetException("The loan amount cannot be greater than the available amount");
 
             var loanData = context.TBL_LOAN.Find(entity.loanId);
             loanData.CASAACCOUNTID = entity.casaAccountId;
@@ -5428,7 +5428,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             try
             {
-                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
+                //var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId).Where(x => x.productTypeId != (short)LoanProductTypeEnum.ContingentLiability);
+                var data = AvailedLoanApplicationsDetails(companyId, staffId, branchId);
                 data = (from a in data where ((a.customerAvailableAmount > 0) || (a.customerAvailableAmount == null)) select a).ToList();
 
                 foreach (var item in data)
@@ -7333,9 +7334,6 @@ namespace FintrakBanking.Repositories.Credit
                     overDraftDetail.overdraftUndrawnAmount = overDraftLimit - Math.Abs(availableBalance);
                     overDraftDetail.overdraftDrawnAmount = Math.Abs(availableBalance);
                 }
-
-
-
 
                 return overDraftDetail;
             }

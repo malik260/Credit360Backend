@@ -1,4 +1,5 @@
 ﻿using FintrakBanking.ViewModels.Admin;
+using System;
 using System.Collections.Generic;
 
 namespace FintrakBanking.ViewModels.Setups.General
@@ -19,6 +20,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int approvalStatusId { get; set; }
         public List<UserGroup> userGroup { get; set; }
         public List<UserActivities> activities { get; set; }
+
+       
     }
     
 }
