@@ -847,6 +847,7 @@ namespace FintrakBanking.Repositories.Credit
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
 
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
             bool isCamsolJobRequestSent = false;
             if (loanApplicationDetails.Any())
@@ -944,6 +945,8 @@ namespace FintrakBanking.Repositories.Credit
 
             } // loanApplicationDetails.Any()
 
+            ValidateJobRequests(applicationId, application.REQUIRECOLLATERALTYPEID, true);
+
             if (!isCamsolJobRequestSent)
                 throw new ConditionNotMetException("Job Request must be sent to CAMSOL before you can proceed.");
 
@@ -1001,6 +1004,29 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Comment = "New loan application";
 
             return workflow.LogActivity();
+        }
+
+        private bool ValidateJobRequests(int applicationId, int? requireCollateralTypeId = null, bool throwErrorMessage = false)
+        {
+            string errorMessage = String.Empty;
+            List<TBL_JOB_REQUEST> requests = new List<TBL_JOB_REQUEST>();
+
+            if (requireCollateralTypeId == (int)RequiredCollateralTypeEnum.ImmovablePropertyCollateral)
+            {
+                requests = context.TBL_JOB_REQUEST
+                    .Where(x => x.TARGETID == applicationId
+                    && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+                    && x.JOBTYPEID == (short)JobTypeEnum.legal
+                    && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
+                ).ToList();
+
+                if (requests.Count() > 0) errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
+            }
+
+            // var test = requests;
+
+            if (throwErrorMessage) throw new SecureException(errorMessage);
+            return requests.Count() > 0;
         }
 
         public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)

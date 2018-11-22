@@ -2050,7 +2050,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-
         private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)
         {
             workflow.StaffId = model.createdBy;
@@ -2392,6 +2391,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
         }
+
         public LoanApplicationUpdateMessage AvailmentChecklistValidation(int applicationId, int staffId)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
