@@ -234,6 +234,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_CONDITION_DEFERRAL> TBL_LOAN_CONDITION_DEFERRAL { get; set; }
         public virtual DbSet<TBL_LOAN_CONDITION_PRECEDENT> TBL_LOAN_CONDITION_PRECEDENT { get; set; }
         public virtual DbSet<TBL_LOAN_CONTINGENT> TBL_LOAN_CONTINGENT { get; set; }
+        public virtual DbSet<TBL_LOAN_CONTINGENT_ARCHIVE> TBL_LOAN_CONTINGENT_ARCHIVE { get; set; }
         public virtual DbSet<TBL_LOAN_CONTINGENT_USAGE> TBL_LOAN_CONTINGENT_USAGE { get; set; }
         public virtual DbSet<TBL_LOAN_COVENANT_DETAIL> TBL_LOAN_COVENANT_DETAIL { get; set; }
         public virtual DbSet<TBL_LOAN_COVENANT_TYPE> TBL_LOAN_COVENANT_TYPE { get; set; }
