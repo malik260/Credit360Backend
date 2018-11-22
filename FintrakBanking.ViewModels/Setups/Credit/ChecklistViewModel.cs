@@ -12,7 +12,8 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int checkedBy { get; set; }
         public short targetTypeId { get; set; }
         public int targetId { get; set; }
-        public short checkListStatusId { get; set; }
+        public int targetId2 { get; set; }
+        public short? checkListStatusId { get; set; }
         public DateTime? deferedDate { get; set; }
         public string checkListStatusName { get; set; }
         public bool? checkListValidationStatus1 { get; set; }
@@ -20,6 +21,10 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public string targetTypeName { get; set; }
         public string targetName { get; set; }
         public string checkListDefinitionItemName { get; set; }
+        public short checkListTypeId { get; set; }
+        public int checkListItemId { get; set; }
+        public int customerId { get; set; }
+        public DateTime checklistDate { get; set; }
     }
 
     public class ChecklistDefinitionViewModel : GeneralEntity
@@ -80,6 +85,10 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public bool isproductbased { get; set; }
         public bool canDoChecklist { get; set; }
         public bool canValidateChecklist { get; set; }
+        public int loanApplicationId { get; set; }
+        public int staffId { get; set; }
+        public int operationId { get; set; }
+        public int productClassProcessId { get; set; }
     }
     public class CheckListTypeMappingViewModel : GeneralEntity
     {
@@ -111,10 +120,11 @@ namespace FintrakBanking.ViewModels.Setups.Credit
         public int checkListItemId { get; set; }
         public string checkListItemName { get; set; }
         public string itemDescription { get; set; }
-        public int checklistStatusId { get; set; }
+        public int ? checklistStatusId { get; set; }
         public short? productId { get; set; }
         public int? approvalLevelId { get; set; }
 
         public List<CheckListStatusViewModel> responseTypes { get; set; }
+        public DateTime checklistDate { get; set; }
     }
 }

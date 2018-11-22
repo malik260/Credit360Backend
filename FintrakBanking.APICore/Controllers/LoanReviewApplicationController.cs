@@ -106,6 +106,8 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
             }
         }
+
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-review-application/validatecustomer/{loanApplicationDetailId}/{customerId}")]
@@ -114,7 +116,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 
-                bool response = repo.validateCustomer(loanApplicationDetailId, customerId);
+                bool response = repo.ValidateSubAllocationOperation(loanApplicationDetailId, customerId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
             }
             catch (SecureException ex)
@@ -122,6 +124,25 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
             }
         }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-review-application/validatesuballocation/{loanApplicationDetailId}/{customerId}/{loanSystemTypeId}")]
+        public HttpResponseMessage validatesuballocation(int loanApplicationDetailId, int customerId, int loanSystemTypeId)
+        {
+            try
+            {
+
+                bool response = repo.ValidateNewSubAllocationOperation(loanApplicationDetailId, customerId, loanSystemTypeId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });
+            }
+        }
+
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/loan-search")]
         public HttpResponseMessage LoanSearch([FromBody] SearchViewModel search)
@@ -131,8 +152,17 @@ namespace FintrakBanking.APICore.Controllers
             var data = loanRepo.SearchForLoanAndRevolvingLoan(search.loanSystemTypeId, searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }
-
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loan-review-application/loan-search-fee")]
+        public HttpResponseMessage LoanSearchFee([FromBody] SearchViewModel search)
+        {
+            var searchString = search.searchString.Trim();
+            //List<LoanViewModel> data = repo.LoanSearch(token.GetCompanyId, search);
+            var data = loanRepo.SearchForLoanAndRevolvingLoanFeeCharge(search.loanSystemTypeId, searchString);//.Where(a=>a.loanStatusId != (short)LoanStatusEnum.Terminated);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        }
+        [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/forward-application")]
         public HttpResponseMessage ForwardApplication([FromBody] ForwardReviewViewModel model)
         {

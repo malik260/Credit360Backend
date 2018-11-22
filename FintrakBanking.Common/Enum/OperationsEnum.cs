@@ -76,6 +76,8 @@ namespace FintrakBanking.Common.Enum
         PrincipalLoanRepayment = 66,
         InterestPastDueLoanRepayment = 67,
         PrincipalPastDueLoanRepayment = 68,
+        InterestOnPastDueInterest = 93,
+        InterestOnPastDuePrincipal = 94,
         PenalFee = 69,
         CamsolBackbookModification = 70,
         NPLoanReviewApprovalAppraisal = 71,

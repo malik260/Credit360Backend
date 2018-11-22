@@ -7,6 +7,7 @@
         public int feeAmount;
         public bool isIntegralFee;
         public bool? isRecurring;
+        public string approvalStatusName { get; set; }
 
         public int loanChargeFeeId { get; set; }
         public int loanApplicationDetailId { get; set; }

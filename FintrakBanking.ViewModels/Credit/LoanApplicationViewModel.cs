@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.ViewModels.Credit
 {
@@ -74,6 +75,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         //public string amount { get { return this.principalAmount.ToString("#,#.00#"); } }
         public string applicantName { get { return this.customerName + "(" + this.customerGroupName + ")"; } }
+        public int lmsApplicationDetailId { get; set; }
 
         public int? loanPreliminaryEvaluationId { get; set; }
         public double exchangeRate { get; set; }
@@ -106,6 +108,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string lastName { get; set; }
         public int groupRoleId { get; set; }
         public string accountNumber { get; set; }
+        public string accountNumber2 { get; set; }
         public string applicationStatus { get; set; }
         public string relatedReferenceNumber { get; set; }
         public int? toStaffId { get; set; }
@@ -148,6 +151,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? tranchLevelId { get; set; }
         public int? regionId { get; set; }
         public bool editMode { get; set; }
+        public short? requireCollateralTypeId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -200,8 +204,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string purchaseOrderNumber { get; set; }
         public string certificateNumber { get; set; }
     }
+
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
+        public string approvedProductName { get; set; }
+
         public int applicationStatusPosition { get; set; }
 
         public LoanApplicationDetailViewModel()
@@ -258,7 +265,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int approvedTenor { get; set; }
         
-        public int tenorModeId { get; set; }
+        public int? tenorModeId { get; set; }
 
         public double approvedInterestRate { get; set; }
 
@@ -353,6 +360,21 @@ namespace FintrakBanking.ViewModels.Credit
                 var months = Math.Ceiling((Math.Floor(approvedTenor / 15.00)) / 2);
                 units = months == 1 ? " month" : " months";
                 return months.ToString() + " " + units;
+            }
+        }
+
+        public int proposedTenorInDays
+        {
+            get
+            {
+                int tenor = 0;
+                switch (tenorModeId)
+                {
+                    case (int)TenorMode.Daily: tenor = proposedTenor; break;
+                    case (int)TenorMode.Monthly: tenor = (proposedTenor * 365) / 12; break;
+                    case (int)TenorMode.Yearly: tenor = (proposedTenor * 365); break;
+                }
+                return tenor;
             }
         }
 
@@ -647,6 +669,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatusName { get; set; }
 
         public int productClassId { get; set; }
+
+        public string principalNameOthers { get; set; }
     }
 
     public class SyndicatedLoanDetailViewModel
@@ -719,4 +743,46 @@ namespace FintrakBanking.ViewModels.Credit
         public int applicationDetailId { get; set; }
         public string managementPosition { get; set; }
     }
+
+    public class CustomerApplicationTransactionsViewModels // TEMPORARY LOCATION
+    {
+        public CustomerApplicationTransactionsViewModels()
+        {
+
+            firstTransaction = new List<CustomerTransactionsViewModels>();
+            secondTransaction = new List<CustomerTransactionsViewModels>();
+        }
+        public List<CustomerTransactionsViewModels> firstTransaction { get; set; }
+        public List<CustomerTransactionsViewModels> secondTransaction { get; set; }
+
+    }
+    public class CustomerTransactionsViewModels // TEMPORARY LOCATION
+    {
+        public string foracid { get; set; } // ": "2022072744",
+        public string cust_Id { get; set; } // ": "483008974",
+        public string schm_Type { get; set; } // ": "ODA|OVERDRAFT A/C",
+        public string period { get; set; } // ": "Apr-15",
+        public decimal? min_Debit_Balance { get; set; } // ": "",
+        public decimal? max_Debit_Balance { get; set; } // ": "",
+        public decimal? min_Credit_Balance { get; set; } // ": "34218.39",
+        public decimal? max_Credit_Balance { get; set; } // ": "1050843.73",
+        public decimal? debit_Turnover { get; set; } // ": "1159360.11",
+        public decimal? credit_Turnover { get; set; } // ": "1207425.56",
+        public string sms_Alert { get; set; } // ": "-176",
+        public string amc { get; set; } // ": "",
+        public string vat { get; set; } // ": "-92.50",
+        public string management_Fee { get; set; } // ": "",
+        public string commitment_Fees { get; set; } // ": "",
+        public string com_Contigent_Liab { get; set; } // ": "",
+        public string lc_Commission { get; set; } // ": 
+        public decimal? float_Charge { get; set; } // "2081981.94",
+        public decimal? interest { get; set; } // "2909416.54",
+        public string accountNumber { get; set; } // "2909416.54",
+        public string productName { get; set; } // "2909416.54",
+        public int? month { get; set; } // "0",
+        public int? year { get; set; } // "0",
+
+
+    }
+
 }

@@ -21,6 +21,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string tenorMode { get; set; }
         public int numberOfPayments { get; set; }
         public int scheduleList { get; set; }
+        public short? repricingModeId { get; set; }
+        public int? repricingDuration { get; set; }
 
         //public int tenor { get { return  }  }
         private int _tenor;
@@ -166,6 +168,11 @@ namespace FintrakBanking.ViewModels.Credit
         public short maturityInstructionTypeId { get; set; }
         public decimal pastDueInterestAmount { get; set; }
         public decimal pastDuePrincipalAmount { get; set; }
+
+        public decimal interestOnPastDueInterest { get; set; }
+
+        public decimal interestOnPastDuePrincipal { get; set; }
+
         public int? casaAccountId2 { get; set; }
 
 

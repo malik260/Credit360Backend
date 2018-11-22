@@ -26,9 +26,9 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IWorkflow workflow;
         private IGeneralSetupRepository genSetup;
-         
+
         public LaonCamSolRepository(FinTrakBankingContext _context, IGeneralSetupRepository _generalSetup, IAuditTrailRepository _auditTrail, IWorkflow _workflow,
-            IGeneralSetupRepository _genSetup )
+            IGeneralSetupRepository _genSetup)
         {
             context = _context;
             generalSetup = _generalSetup;
@@ -40,7 +40,7 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanCAMSOLViewModel> GetCamSol()
         {
             var data = (from camsol in context.TBL_LOAN_CAMSOL
-                        //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
+                            //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
                         join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
                         select new LoanCAMSOLViewModel
                         {
@@ -68,7 +68,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = from camsol in context.TBL_LOAN_CAMSOL
                        join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
                        //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
-                       where camsol.CUSTOMERNAME.StartsWith(loancamsolid.ToUpper()) || camsol.CUSTOMERCODE ==loancamsolid
+                       where camsol.CUSTOMERNAME.StartsWith(loancamsolid.ToUpper()) || camsol.CUSTOMERCODE == loancamsolid
                        select new LoanCAMSOLViewModel
                        {
                            accountname = camsol.ACCOUNTNAME,
@@ -95,10 +95,8 @@ namespace FintrakBanking.Repositories.Credit
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CamsolBackbookModification).ToList();
 
             var data = from camsol in context.TBL_TEMP_LOAN_CAMSOL
-                       join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
-                       //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
                        join atrail in context.TBL_APPROVAL_TRAIL on camsol.TEMPLOAN_CAMSOLID equals atrail.TARGETID
-                       where 
+                       where
                                       atrail.RESPONSESTAFFID == null
                                      && atrail.OPERATIONID == (int)OperationsEnum.CamsolBackbookModification
                                         && atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
@@ -110,11 +108,11 @@ namespace FintrakBanking.Repositories.Credit
                            accountname = camsol.ACCOUNTNAME,
                            accountnumber = camsol.ACCOUNTNAME,
                            balance = camsol.BALANCE,
-                            camsoltypeid = camsol.CAMSOLTYPEID,
+                           camsoltypeid = camsol.CAMSOLTYPEID,
                            cantakeloan = camsol.CANTAKELOAN,
                            customercode = camsol.CUSTOMERCODE,
                            customername = camsol.CUSTOMERNAME,
-                           camsolType = c.CAMSOLTYPENAME,
+                           camsolType = context.TBL_LOAN_CAMSOL_TYPE.Where(o => o.CAMSOLTYPEID == camsol.CAMSOLTYPEID).Select(o => o.CAMSOLTYPENAME).FirstOrDefault(),
                            loansystemtype = context.TBL_LOAN_SYSTEM_TYPE.Where(x => x.LOANSYSTEMTYPEID == camsol.LOANSYSTEMTYPEID).Select(x => x.LOANSYSTEMTYPENAME).FirstOrDefault(),
                            //date = camsol.DATE,
                            interestinsuspense = camsol.INTERESTINSUSPENSE,
@@ -156,46 +154,47 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanCAMSOLViewModel> GetCamSolByType(int camsolTyepId)
         {
             var data = from camsol in context.TBL_LOAN_CAMSOL
-                        //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
-                        join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
-                        where camsol.CAMSOLTYPEID  == camsolTyepId
-                        select new LoanCAMSOLViewModel
-                        {
-                            accountname = camsol.ACCOUNTNAME,
-                            accountnumber = camsol.ACCOUNTNAME,
-                            balance = camsol.BALANCE,
-                            camsoltypeid = camsol.CAMSOLTYPEID,
-                            cantakeloan = camsol.CANTAKELOAN,
-                            customercode = camsol.CUSTOMERCODE,
-                            customername = camsol.CUSTOMERNAME,
-                            date = camsol.DATE,
-                            loansystemtype = context.TBL_LOAN_SYSTEM_TYPE.Where(x => x.LOANSYSTEMTYPEID == camsol.LOANSYSTEMTYPEID).Select(x => x.LOANSYSTEMTYPENAME).FirstOrDefault(),
-                            camsolType = c.CAMSOLTYPENAME,
-                            interestinsuspense = camsol.INTERESTINSUSPENSE,
-                            loancamsolid = camsol.LOAN_CAMSOLID,
-                            loanid = camsol.LOANID,
-                            principal = camsol.PRINCIPAL,
-                            remark = camsol.REMARK,
-                        };
+                           //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
+                       join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
+                       where camsol.CAMSOLTYPEID == camsolTyepId
+                       select new LoanCAMSOLViewModel
+                       {
+                           accountname = camsol.ACCOUNTNAME,
+                           accountnumber = camsol.ACCOUNTNAME,
+                           balance = camsol.BALANCE,
+                           camsoltypeid = camsol.CAMSOLTYPEID,
+                           cantakeloan = camsol.CANTAKELOAN,
+                           customercode = camsol.CUSTOMERCODE,
+                           customername = camsol.CUSTOMERNAME,
+                           date = camsol.DATE,
+                           loansystemtype = context.TBL_LOAN_SYSTEM_TYPE.Where(x => x.LOANSYSTEMTYPEID == camsol.LOANSYSTEMTYPEID).Select(x => x.LOANSYSTEMTYPENAME).FirstOrDefault(),
+                           camsolType = c.CAMSOLTYPENAME,
+                           interestinsuspense = camsol.INTERESTINSUSPENSE,
+                           loancamsolid = camsol.LOAN_CAMSOLID,
+                           loanid = camsol.LOANID,
+                           principal = camsol.PRINCIPAL,
+                           remark = camsol.REMARK,
+                       };
             return data.ToList();
         }
 
         public List<LoanCAMSOLViewModel> GetCamSolType()
         {
-          var camsolType = (from x in context.TBL_LOAN_CAMSOL_TYPE
-                           select new LoanCAMSOLViewModel {
-                                camsoltypeid = x.CAMSOLTYPEID,
-                                camsolType = x.CAMSOLTYPENAME
-            }).ToList();
+            var camsolType = (from x in context.TBL_LOAN_CAMSOL_TYPE
+                              select new LoanCAMSOLViewModel
+                              {
+                                  camsoltypeid = x.CAMSOLTYPEID,
+                                  camsolType = x.CAMSOLTYPENAME
+                              }).ToList();
             return camsolType;
         }
 
         public LoanCAMSOLViewModel ViewCamSolByType(int id)
         {
             var data = from camsol in context.TBL_LOAN_CAMSOL
-                       //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
+                           //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
                        join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
-                       where camsol.LOAN_CAMSOLID == id 
+                       where camsol.LOAN_CAMSOLID == id
                        select new LoanCAMSOLViewModel
                        {
                            accountname = camsol.ACCOUNTNAME,
@@ -221,9 +220,9 @@ namespace FintrakBanking.Repositories.Credit
         public LoanCAMSOLViewModel CamSolAwaitingApprovalById(int id)
         {
             var data = from camsol in context.TBL_TEMP_LOAN_CAMSOL
-                       //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
+                           //join a in context.TBL_LOAN_SYSTEM_TYPE on camsol.LOANSYSTEMTYPEID equals a.LOANSYSTEMTYPEID
                        join c in context.TBL_LOAN_CAMSOL_TYPE on camsol.CAMSOLTYPEID equals c.CAMSOLTYPEID
-                       where camsol.TEMPLOAN_CAMSOLID == id 
+                       where camsol.TEMPLOAN_CAMSOLID == id
                        select new LoanCAMSOLViewModel
                        {
                            accountname = camsol.ACCOUNTNAME,
@@ -233,15 +232,15 @@ namespace FintrakBanking.Repositories.Credit
                            cantakeloan = camsol.CANTAKELOAN,
                            customercode = camsol.CUSTOMERCODE,
                            customername = camsol.CUSTOMERNAME,
-                           loansystemtype = context.TBL_LOAN_SYSTEM_TYPE.Where(x=>x.LOANSYSTEMTYPEID == camsol.LOANSYSTEMTYPEID).Select(x=>x.LOANSYSTEMTYPENAME).FirstOrDefault(),
+                           loansystemtype = context.TBL_LOAN_SYSTEM_TYPE.Where(x => x.LOANSYSTEMTYPEID == camsol.LOANSYSTEMTYPEID).Select(x => x.LOANSYSTEMTYPENAME).FirstOrDefault(),
                            camsolType = c.CAMSOLTYPENAME,
-                          // date = camsol.DATE,
+                           // date = camsol.DATE,
                            interestinsuspense = camsol.INTERESTINSUSPENSE,
                            loancamsolid = camsol.LOAN_CAMSOLID,
                            loanid = camsol.LOANID,
                            principal = camsol.PRINCIPAL,
                            remark = camsol.REMARK,
-                           tempLoancamsolid=(short)camsol.TEMPLOAN_CAMSOLID
+                           tempLoancamsolid = (short)camsol.TEMPLOAN_CAMSOLID
 
                        };
             return data.FirstOrDefault();
@@ -250,19 +249,19 @@ namespace FintrakBanking.Repositories.Credit
 
         public string ApproveCamsol(LoanCAMSOLViewModel option)
         {
-           
+
             var data = (from camsol in context.TBL_LOAN_CAMSOL
-                       where camsol.CUSTOMERCODE == option.customercode 
-                       select camsol).ToList();
+                        where camsol.CUSTOMERCODE == option.customercode
+                        select camsol).ToList();
 
             if (data != null)
             {
                 string listOfExistingCamsols = string.Empty;
                 foreach (var x in data)
                 {
-                    var iSCamsolExit = context.TBL_TEMP_LOAN_CAMSOL.Any(a => a.LOAN_CAMSOLID == x.LOAN_CAMSOLID && a.APPROVALSTATUSID!=(int)ApprovalStatusEnum.Approved);
+                    var iSCamsolExit = context.TBL_TEMP_LOAN_CAMSOL.Any(a => a.LOAN_CAMSOLID == x.LOAN_CAMSOLID && a.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved);
 
-                    bool cantakeLoanStatus  = option.updateOption;
+                    bool cantakeLoanStatus = option.updateOption;
 
                     if (!iSCamsolExit)
                     {
@@ -282,7 +281,7 @@ namespace FintrakBanking.Repositories.Credit
                             DATETIMECREATED = DateTime.Now,
                             INTERESTINSUSPENSE = x.INTERESTINSUSPENSE,
                             ISCURRENT = true,
-              
+
                             LOANID = x.LOANID,
                             LOANSYSTEMTYPEID = x.LOANSYSTEMTYPEID,
                             LOAN_CAMSOLID = x.LOAN_CAMSOLID,
@@ -292,7 +291,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         context.TBL_TEMP_LOAN_CAMSOL.Add(temp);
                         context.SaveChanges();
-                      
+
                         workflow.StaffId = x.CREATEDBY;
                         workflow.CompanyId = x.COMPANYID;
                         workflow.StatusId = (int)ApprovalStatusEnum.Processing;
@@ -308,12 +307,12 @@ namespace FintrakBanking.Repositories.Credit
                         listOfExistingCamsols = listOfExistingCamsols + x.CUSTOMERCODE + " | ";
                     }
                 }
-            
+
                 if (listOfExistingCamsols != null)
                 {
                     return " The following Customer code is currently undergoing approval : " + listOfExistingCamsols;
                 }
-              
+
             }
             return " Record not found ";
         }
@@ -321,29 +320,22 @@ namespace FintrakBanking.Repositories.Credit
         private bool finalCamsolApproval(LoanCAMSOLViewModel data, short StatusId)
         {
             var loanamSolId = (from x in context.TBL_TEMP_LOAN_CAMSOL
-                             where x.CUSTOMERCODE == data.customercode
-                             select new { x.LOAN_CAMSOLID, x.CANTAKELOAN,x.APPROVALSTATUSID }).FirstOrDefault();
+                               where x.CUSTOMERCODE == data.customercode
+                               select new { x.LOAN_CAMSOLID, x.CANTAKELOAN, x.APPROVALSTATUSID, x.CUSTOMERCODE }).FirstOrDefault();
 
             if (loanamSolId != null)
             {
-                var values = (from camsol in context.TBL_LOAN_CAMSOL
-                           where camsol.LOAN_CAMSOLID == loanamSolId.LOAN_CAMSOLID
-                              select camsol).ToList();
-                if (values != null)
+                context.TBL_LOAN_CAMSOL.Where(o => o.CUSTOMERCODE == loanamSolId.CUSTOMERCODE).ToList().ForEach(x =>
+                   {
+                       x.CANTAKELOAN = loanamSolId.CANTAKELOAN;
+                   });
+
+                context.TBL_TEMP_LOAN_CAMSOL.Where(o => o.CUSTOMERCODE == data.customercode).ToList().ForEach(x =>
                 {
-                    foreach (var ca in values)
-                    { ca.CANTAKELOAN = loanamSolId.CANTAKELOAN; }
+                    x.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                });
 
-                    var temp=   context.TBL_TEMP_LOAN_CAMSOL.Where(o => o.CUSTOMERCODE == data.customercode).Select(o => o).ToList();
-
-                    foreach(var t in temp)
-                    { t.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved; }
-
-                    if(context.SaveChanges() > 0)
-                        return true;
-
-                }
-             
+                
             }
             return false;
         }
@@ -467,7 +459,7 @@ namespace FintrakBanking.Repositories.Credit
                             break;
                         case "J":
                             var cantakeloan = cell.Value.ToString();
-                            if (cantakeloan == "1" )
+                            if (cantakeloan == "1")
                             {
                                 camsolRowData.cantakeloan = true;
 
@@ -604,7 +596,7 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         if (data.approvalStatusId != (int)ApprovalStatusEnum.Disapproved)
                         {
-                                action = finalCamsolApproval(data, (short)workflow.StatusId);
+                            action = finalCamsolApproval(data, (short)workflow.StatusId);
                         }
                     }
                     if (context.SaveChanges() > 0)
@@ -729,10 +721,10 @@ namespace FintrakBanking.Repositories.Credit
                     CANTAKELOAN = tempApprovalLoanCamsol.CANTAKELOAN,
                     CREATEDBY = (int)tempApprovalLoanCamsol.CREATEDBY,
                     DATETIMECREATED = genSetup.GetApplicationDate(),
-                    ACCOUNTNUMBER =tempApprovalLoanCamsol.ACCOUNTNUMBER,
-                    ACCOUNTNAME=tempApprovalLoanCamsol.ACCOUNTNAME,
-                    REMARK=tempApprovalLoanCamsol.REMARK,
-                    DATE=DateTime.Now,
+                    ACCOUNTNUMBER = tempApprovalLoanCamsol.ACCOUNTNUMBER,
+                    ACCOUNTNAME = tempApprovalLoanCamsol.ACCOUNTNAME,
+                    REMARK = tempApprovalLoanCamsol.REMARK,
+                    DATE = DateTime.Now,
 
                 };
                 context.TBL_LOAN_CAMSOL.Add(targetApprovalLoanCamsol);

@@ -265,7 +265,22 @@ namespace FintrakBanking.ReportObjects.ReportCalls
                 throw ex;
             }
         }
+        public string GetGeneratedFORM3800BLMS(string applicationRefNumber)
+        {
+            try
+            {
+                HashProperty hashValue = GetHashedDateValue(dateInfor);
 
+                string path = string.Empty;
+                path = reportPath + "Credit/OfferLetterGeneration/FORM3800B_LMS.aspx?applicationRefNumber=" + applicationRefNumber + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+                return path;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public string GetGeneratedOfferLetterLMS(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -677,9 +692,15 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             path = reportPath + "ReportViews/WeeklyRecoveryReportForFINCON.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
+         public string GetLoggingStatus(DateRange dateRange)
+        {
+            HashProperty hashValue = GetHashedDateValue(dateInfor);
 
+            string path = string.Empty;
+            path = reportPath + "ReportViews/LoggingStatus.aspx?startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + dateRange.companyId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue + "&loginStatus=" + dateRange.loginStatus + "&branchCode=" + dateRange.branchCode;
+            return path; 
+        }
 
-        //GetCashCollaterizedCredits
 
         public string GetCashCollaterizedCredits(DateRange dateRange)
         {

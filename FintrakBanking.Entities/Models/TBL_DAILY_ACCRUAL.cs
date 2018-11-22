@@ -50,7 +50,9 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "money")]
         public decimal DAILYACCURALAMOUNT { get; set; }
 
+        public decimal DAILYACCURALAMOUNT2 { get; set; }
         public bool REPAYMENTPOSTEDSTATUS { get; set; }
+        public DateTime ? DEMANDDATE { get; set; }
 
         //[Column(TypeName = "money")]
         public decimal SYSTEMDATETIME { get; set; }

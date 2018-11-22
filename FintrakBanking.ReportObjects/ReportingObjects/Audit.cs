@@ -50,6 +50,39 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
         
         }
+
+
+        public IEnumerable<LoggingActivities> GetLoggingStatus(DateTime startDate, DateTime endDate, bool? logingStatus,  string branchCode)
+        {
+            using (FinTrakBankingContext context = new FinTrakBankingContext())
+            {
+                var data = from lg in context.TBL_PROFILE_USER
+                           join st in context.TBL_STAFF on lg.USERNAME equals st.STAFFCODE
+                           join b in context.TBL_BRANCH on st.BRANCHID equals b.BRANCHID
+                           where (DbFunctions.TruncateTime(lg.LASTLOGINDATE) >= DbFunctions.TruncateTime(startDate) 
+                           && DbFunctions.TruncateTime(lg.LASTLOGINDATE) <= DbFunctions.TruncateTime(endDate)
+                           && lg.ISLOCKED == !logingStatus ) //&& (b.BRANCHCODE==branchCode || branchCode=="")
+                          orderby lg.LASTLOGINDATE descending
+                           select new LoggingActivities
+                           {
+                              approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID== lg.APPROVALSTATUSID).Select(o=>o.APPROVALSTATUSNAME).FirstOrDefault(),
+                              branchName = b.BRANCHNAME,
+                              dateCreated = lg.DATETIMECREATED,
+                              deactivatedDate = lg.DEACTIVATEDDATE,
+                              failedLoggingAttempts = lg.FAILEDLOGONATTEMPT,
+                              isUserActive = lg.ISACTIVE,
+                               isUserLocked = lg.ISLOCKED,
+                              lastLogginDate = lg.LASTLOGINDATE,
+                              lastLogOutDate = lg.LASTLOCKOUTDATE,
+                              names = st.FIRSTNAME + " " + st.LASTNAME + " " + st.MIDDLENAME,
+                              userName = lg.USERNAME,
+                              branchCode = b.BRANCHCODE
+
+                           };
+                return data.ToList();
+            }
+
+        }
         public IEnumerable<AuditViewModel> AuditType(string searchValue)
         {
 

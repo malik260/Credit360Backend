@@ -190,7 +190,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             model.apiUrl = @"api/OverDraft/Renew ";
 
-                Task.Run(async () => result = await overDraft.APIOverDraftTopUp(model)).GetAwaiter().GetResult();
+                Task.Run(async () => result = await overDraft.APIOverDraftRenew(model)).GetAwaiter().GetResult();
 
             if (result.Message.IsSuccessStatusCode)
             {
@@ -435,7 +435,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
 
         public PostingResult PostTransactions(List<FinanceTransactionViewModel> model)
-        {
+        { 
             ResponseMessage result = null;
             
             List<TransactionPostingViewModel> transactionList = TransactionData(model);
@@ -473,13 +473,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 {
                     var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{", "").Replace("}", "").Replace(@"""", "");
 
-                    throw new ConditionNotMetException("Core Banking API error - " + message); //result.APIResponse.webRequestStatus
+                    throw new ConditionNotMetException("Core Banking API error - Response Code:" + result.APIResponse.responseCode + ". Response Message:" + result.APIResponse.webRequestStatus); //message result.APIResponse.webRequestStatus
                 }
             }
             else
             {
                 var message = result.responseMessage.Replace("[", "").Replace("]", "").Replace("{","").Replace("}", "").Replace(@"""", "");
-                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
+                //throw new APIErrorException("Core Banking API Error - Kindly contact the administrator. See error log below :" + "/n" + message); // .Message.ReasonPhrase);
+                throw new APIErrorException("Core Banking API Error - Kindly contact the administrator.");
             }
 
             //return result.APIStatus;
@@ -636,12 +637,41 @@ namespace FinTrakBanking.ThirdPartyIntegration
             return casa;
         }
 
+        public List<CustomerTurnoverViewModel> GetCustomerAccountTurnover(string customerCode, int durationInMonths)
+        {
+            List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
+
+            Task.Run(async () => accounts = await customer.GetCustomerTransactions(customerCode, durationInMonths)).GetAwaiter()
+                .GetResult();
+
+            return accounts;
+        }
+
+        public List<CustomerTurnoverViewModel> GetCustomerAccountInterestTransactions(string customerCode, int durationInMonths)
+        {
+            List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
+
+            Task.Run(async () => accounts = await customer.GetCustomerInterestTransactions(customerCode, durationInMonths)).GetAwaiter()
+                .GetResult();
+
+            return accounts;
+        }
+
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
+            var account = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == glAccountId);
+
+            var currency = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == currencyId);
+
+            var accountInfo = account.ACCOUNTCODE + " - " + account.ACCOUNTNAME + " for currency " + currency.CURRENCYCODE;
+
             var nonBranchSpecificAccount = (from gl in context.TBL_CUSTOM_CHART_OF_ACCOUNT
                                join gla in context.TBL_CHART_OF_ACCOUNT on gl.PLACEHOLDERID equals gla.ACCOUNTCODE                               
                                where gla.GLACCOUNTID == glAccountId
                                select new { gl.ACCOUNTID, gl.ISBRANCHSPECIFIC }).FirstOrDefault();
+
+            if (nonBranchSpecificAccount == null)
+                throw new ConditionNotMetException("There is no custom GL setup for GL " + accountInfo +  ". Check the custom GL setup");
 
             if (nonBranchSpecificAccount.ISBRANCHSPECIFIC == false)
             {
@@ -656,6 +686,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
                                    join cur in context.TBL_CURRENCY on gl.CURRENCYCODE equals cur.CURRENCYCODE
                                    where cur.CURRENCYID == currencyId && gla.GLACCOUNTID == glAccountId
                                    select gl.ACCOUNTID).FirstOrDefault();
+
+                if (accountCode == null)
+                    throw new ConditionNotMetException("There is no custom GL setup for GL " + accountInfo + ". Check the custom GL setup");
 
                 var glAccountCode = branchCode + accountCode; //"100" + accountCode;
 

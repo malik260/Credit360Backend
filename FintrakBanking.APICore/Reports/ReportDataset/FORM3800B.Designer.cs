@@ -641,6 +641,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnReviewDate;
             
+            private global::System.Data.DataColumn columnapprovedDate;
+            
+            private global::System.Data.DataColumn columnnewApplicationDate;
+            
+            private global::System.Data.DataColumn columnapplicationReferenceNumber;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public FacilityDataTable() {
@@ -724,6 +730,30 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn approvedDateColumn {
+                get {
+                    return this.columnapprovedDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn newApplicationDateColumn {
+                get {
+                    return this.columnnewApplicationDate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn applicationReferenceNumberColumn {
+                get {
+                    return this.columnapplicationReferenceNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -759,7 +789,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public FacilityRow AddFacilityRow(string productName, string purpose, string approvedAmountCurrency, string tenor, string interestRate, string ReviewDate) {
+            public FacilityRow AddFacilityRow(string productName, string purpose, string approvedAmountCurrency, string tenor, string interestRate, string ReviewDate, string approvedDate, string newApplicationDate, string applicationReferenceNumber) {
                 FacilityRow rowFacilityRow = ((FacilityRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         productName,
@@ -767,7 +797,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         approvedAmountCurrency,
                         tenor,
                         interestRate,
-                        ReviewDate};
+                        ReviewDate,
+                        approvedDate,
+                        newApplicationDate,
+                        applicationReferenceNumber};
                 rowFacilityRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFacilityRow);
                 return rowFacilityRow;
@@ -796,6 +829,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columntenor = base.Columns["tenor"];
                 this.columninterestRate = base.Columns["interestRate"];
                 this.columnReviewDate = base.Columns["ReviewDate"];
+                this.columnapprovedDate = base.Columns["approvedDate"];
+                this.columnnewApplicationDate = base.Columns["newApplicationDate"];
+                this.columnapplicationReferenceNumber = base.Columns["applicationReferenceNumber"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -813,6 +849,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columninterestRate);
                 this.columnReviewDate = new global::System.Data.DataColumn("ReviewDate", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnReviewDate);
+                this.columnapprovedDate = new global::System.Data.DataColumn("approvedDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapprovedDate);
+                this.columnnewApplicationDate = new global::System.Data.DataColumn("newApplicationDate", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnnewApplicationDate);
+                this.columnapplicationReferenceNumber = new global::System.Data.DataColumn("applicationReferenceNumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnapplicationReferenceNumber);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1261,6 +1303,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnisExternal;
             
+            private global::System.Data.DataColumn columnsortOrder;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public InternalConditionsPrecedentDataTable() {
@@ -1344,6 +1388,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn sortOrderColumn {
+                get {
+                    return this.columnsortOrder;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1379,7 +1431,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public InternalConditionsPrecedentRow AddInternalConditionsPrecedentRow(string conditionPrecident, string productName, string creditVerificationOfficers, string locationOfDocument, string SN, string isExternal) {
+            public InternalConditionsPrecedentRow AddInternalConditionsPrecedentRow(string conditionPrecident, string productName, string creditVerificationOfficers, string locationOfDocument, string SN, string isExternal, string sortOrder) {
                 InternalConditionsPrecedentRow rowInternalConditionsPrecedentRow = ((InternalConditionsPrecedentRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         conditionPrecident,
@@ -1387,7 +1439,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         creditVerificationOfficers,
                         locationOfDocument,
                         SN,
-                        isExternal};
+                        isExternal,
+                        sortOrder};
                 rowInternalConditionsPrecedentRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowInternalConditionsPrecedentRow);
                 return rowInternalConditionsPrecedentRow;
@@ -1416,6 +1469,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnlocationOfDocument = base.Columns["locationOfDocument"];
                 this.columnSN = base.Columns["SN"];
                 this.columnisExternal = base.Columns["isExternal"];
+                this.columnsortOrder = base.Columns["sortOrder"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1433,6 +1487,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnSN);
                 this.columnisExternal = new global::System.Data.DataColumn("isExternal", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnisExternal);
+                this.columnsortOrder = new global::System.Data.DataColumn("sortOrder", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsortOrder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1572,6 +1628,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnSN;
             
+            private global::System.Data.DataColumn columnproductName;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public FeeDetailsDataTable() {
@@ -1631,6 +1689,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn productNameColumn {
+                get {
+                    return this.columnproductName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1666,12 +1732,13 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public FeeDetailsRow AddFeeDetailsRow(string feeName, string rateValue, string SN) {
+            public FeeDetailsRow AddFeeDetailsRow(string feeName, string rateValue, string SN, string productName) {
                 FeeDetailsRow rowFeeDetailsRow = ((FeeDetailsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         feeName,
                         rateValue,
-                        SN};
+                        SN,
+                        productName};
                 rowFeeDetailsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowFeeDetailsRow);
                 return rowFeeDetailsRow;
@@ -1697,6 +1764,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnfeeName = base.Columns["feeName"];
                 this.columnrateValue = base.Columns["rateValue"];
                 this.columnSN = base.Columns["SN"];
+                this.columnproductName = base.Columns["productName"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1708,6 +1776,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnrateValue);
                 this.columnSN = new global::System.Data.DataColumn("SN", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnSN);
+                this.columnproductName = new global::System.Data.DataColumn("productName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnproductName);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1853,6 +1923,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnisExternal;
             
+            private global::System.Data.DataColumn columnsortOrder;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public InternalConditionSubsquentDataTable() {
@@ -1936,6 +2008,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn sortOrderColumn {
+                get {
+                    return this.columnsortOrder;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1971,7 +2051,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public InternalConditionSubsquentRow AddInternalConditionSubsquentRow(string SN, string conditionPrecident, string timeline, string creditMonitoring, string productName, string isExternal) {
+            public InternalConditionSubsquentRow AddInternalConditionSubsquentRow(string SN, string conditionPrecident, string timeline, string creditMonitoring, string productName, string isExternal, string sortOrder) {
                 InternalConditionSubsquentRow rowInternalConditionSubsquentRow = ((InternalConditionSubsquentRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SN,
@@ -1979,7 +2059,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         timeline,
                         creditMonitoring,
                         productName,
-                        isExternal};
+                        isExternal,
+                        sortOrder};
                 rowInternalConditionSubsquentRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowInternalConditionSubsquentRow);
                 return rowInternalConditionSubsquentRow;
@@ -2008,6 +2089,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columncreditMonitoring = base.Columns["creditMonitoring"];
                 this.columnproductName = base.Columns["productName"];
                 this.columnisExternal = base.Columns["isExternal"];
+                this.columnsortOrder = base.Columns["sortOrder"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2025,6 +2107,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnproductName);
                 this.columnisExternal = new global::System.Data.DataColumn("isExternal", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnisExternal);
+                this.columnsortOrder = new global::System.Data.DataColumn("sortOrder", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsortOrder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2164,6 +2248,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columncreditVerification;
             
+            private global::System.Data.DataColumn columnproductName;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public TransactionDynamicsDataTable() {
@@ -2223,6 +2309,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn productNameColumn {
+                get {
+                    return this.columnproductName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -2258,12 +2352,13 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public TransactionDynamicsRow AddTransactionDynamicsRow(string SN, string dynamics, string creditVerification) {
+            public TransactionDynamicsRow AddTransactionDynamicsRow(string SN, string dynamics, string creditVerification, string productName) {
                 TransactionDynamicsRow rowTransactionDynamicsRow = ((TransactionDynamicsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SN,
                         dynamics,
-                        creditVerification};
+                        creditVerification,
+                        productName};
                 rowTransactionDynamicsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowTransactionDynamicsRow);
                 return rowTransactionDynamicsRow;
@@ -2289,6 +2384,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnSN = base.Columns["SN"];
                 this.columndynamics = base.Columns["dynamics"];
                 this.columncreditVerification = base.Columns["creditVerification"];
+                this.columnproductName = base.Columns["productName"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2300,6 +2396,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columndynamics);
                 this.columncreditVerification = new global::System.Data.DataColumn("creditVerification", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncreditVerification);
+                this.columnproductName = new global::System.Data.DataColumn("productName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnproductName);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2437,6 +2535,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnmonitoringTrigger;
             
+            private global::System.Data.DataColumn columnproductName;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public MonitoringTrggersDataTable() {
@@ -2488,6 +2588,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn productNameColumn {
+                get {
+                    return this.columnproductName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -2523,11 +2631,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public MonitoringTrggersRow AddMonitoringTrggersRow(string SN, string monitoringTrigger) {
+            public MonitoringTrggersRow AddMonitoringTrggersRow(string SN, string monitoringTrigger, string productName) {
                 MonitoringTrggersRow rowMonitoringTrggersRow = ((MonitoringTrggersRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SN,
-                        monitoringTrigger};
+                        monitoringTrigger,
+                        productName};
                 rowMonitoringTrggersRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowMonitoringTrggersRow);
                 return rowMonitoringTrggersRow;
@@ -2552,6 +2661,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             internal void InitVars() {
                 this.columnSN = base.Columns["SN"];
                 this.columnmonitoringTrigger = base.Columns["monitoringTrigger"];
+                this.columnproductName = base.Columns["productName"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2561,6 +2671,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnSN);
                 this.columnmonitoringTrigger = new global::System.Data.DataColumn("monitoringTrigger", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnmonitoringTrigger);
+                this.columnproductName = new global::System.Data.DataColumn("productName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnproductName);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3242,6 +3354,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnisExternal;
             
+            private global::System.Data.DataColumn columnsortOrder;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public ExternalConditionSubsquentDataTable() {
@@ -3325,6 +3439,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn sortOrderColumn {
+                get {
+                    return this.columnsortOrder;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -3360,7 +3482,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ExternalConditionSubsquentRow AddExternalConditionSubsquentRow(string SN, string conditionPrecident, string timeline, string creditMonitoring, string productName, string isExternal) {
+            public ExternalConditionSubsquentRow AddExternalConditionSubsquentRow(string SN, string conditionPrecident, string timeline, string creditMonitoring, string productName, string isExternal, string sortOrder) {
                 ExternalConditionSubsquentRow rowExternalConditionSubsquentRow = ((ExternalConditionSubsquentRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         SN,
@@ -3368,7 +3490,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         timeline,
                         creditMonitoring,
                         productName,
-                        isExternal};
+                        isExternal,
+                        sortOrder};
                 rowExternalConditionSubsquentRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowExternalConditionSubsquentRow);
                 return rowExternalConditionSubsquentRow;
@@ -3397,6 +3520,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columncreditMonitoring = base.Columns["creditMonitoring"];
                 this.columnproductName = base.Columns["productName"];
                 this.columnisExternal = base.Columns["isExternal"];
+                this.columnsortOrder = base.Columns["sortOrder"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3414,6 +3538,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnproductName);
                 this.columnisExternal = new global::System.Data.DataColumn("isExternal", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnisExternal);
+                this.columnsortOrder = new global::System.Data.DataColumn("sortOrder", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsortOrder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3559,6 +3685,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnisExternal;
             
+            private global::System.Data.DataColumn columnsortOrder;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public ExternalConditionsPrecedentDataTable() {
@@ -3642,6 +3770,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn sortOrderColumn {
+                get {
+                    return this.columnsortOrder;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -3677,7 +3813,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public ExternalConditionsPrecedentRow AddExternalConditionsPrecedentRow(string conditionPrecident, string productName, string creditVerificationOfficers, string locationOfDocument, string SN, string isExternal) {
+            public ExternalConditionsPrecedentRow AddExternalConditionsPrecedentRow(string conditionPrecident, string productName, string creditVerificationOfficers, string locationOfDocument, string SN, string isExternal, string sortOrder) {
                 ExternalConditionsPrecedentRow rowExternalConditionsPrecedentRow = ((ExternalConditionsPrecedentRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         conditionPrecident,
@@ -3685,7 +3821,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         creditVerificationOfficers,
                         locationOfDocument,
                         SN,
-                        isExternal};
+                        isExternal,
+                        sortOrder};
                 rowExternalConditionsPrecedentRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowExternalConditionsPrecedentRow);
                 return rowExternalConditionsPrecedentRow;
@@ -3714,6 +3851,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnlocationOfDocument = base.Columns["locationOfDocument"];
                 this.columnSN = base.Columns["SN"];
                 this.columnisExternal = base.Columns["isExternal"];
+                this.columnsortOrder = base.Columns["sortOrder"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3731,6 +3869,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columnSN);
                 this.columnisExternal = new global::System.Data.DataColumn("isExternal", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnisExternal);
+                this.columnsortOrder = new global::System.Data.DataColumn("sortOrder", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnsortOrder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -3969,6 +4109,54 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string approvedDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFacility.approvedDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'approvedDate\' in table \'Facility\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFacility.approvedDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string newApplicationDate {
+                get {
+                    try {
+                        return ((string)(this[this.tableFacility.newApplicationDateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'newApplicationDate\' in table \'Facility\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFacility.newApplicationDateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string applicationReferenceNumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableFacility.applicationReferenceNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'Facility\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFacility.applicationReferenceNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsproductNameNull() {
                 return this.IsNull(this.tableFacility.productNameColumn);
             }
@@ -4037,6 +4225,42 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetReviewDateNull() {
                 this[this.tableFacility.ReviewDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsapprovedDateNull() {
+                return this.IsNull(this.tableFacility.approvedDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetapprovedDateNull() {
+                this[this.tableFacility.approvedDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsnewApplicationDateNull() {
+                return this.IsNull(this.tableFacility.newApplicationDateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetnewApplicationDateNull() {
+                this[this.tableFacility.newApplicationDateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsapplicationReferenceNumberNull() {
+                return this.IsNull(this.tableFacility.applicationReferenceNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetapplicationReferenceNumberNull() {
+                this[this.tableFacility.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -4312,6 +4536,23 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string sortOrder {
+                get {
+                    try {
+                        return ((string)(this[this.tableInternalConditionsPrecedent.sortOrderColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'sortOrder\' in table \'InternalConditionsPrecedent\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableInternalConditionsPrecedent.sortOrderColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsconditionPrecidentNull() {
                 return this.IsNull(this.tableInternalConditionsPrecedent.conditionPrecidentColumn);
             }
@@ -4381,6 +4622,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public void SetisExternalNull() {
                 this[this.tableInternalConditionsPrecedent.isExternalColumn] = global::System.Convert.DBNull;
             }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IssortOrderNull() {
+                return this.IsNull(this.tableInternalConditionsPrecedent.sortOrderColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetsortOrderNull() {
+                this[this.tableInternalConditionsPrecedent.sortOrderColumn] = global::System.Convert.DBNull;
+            }
         }
         
         /// <summary>
@@ -4447,6 +4700,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string productName {
+                get {
+                    try {
+                        return ((string)(this[this.tableFeeDetails.productNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'FeeDetails\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableFeeDetails.productNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsfeeNameNull() {
                 return this.IsNull(this.tableFeeDetails.feeNameColumn);
             }
@@ -4479,6 +4748,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetSNNull() {
                 this[this.tableFeeDetails.SNColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsproductNameNull() {
+                return this.IsNull(this.tableFeeDetails.productNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetproductNameNull() {
+                this[this.tableFeeDetails.productNameColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -4598,6 +4879,23 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string sortOrder {
+                get {
+                    try {
+                        return ((string)(this[this.tableInternalConditionSubsquent.sortOrderColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'sortOrder\' in table \'InternalConditionSubsquent\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableInternalConditionSubsquent.sortOrderColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsSNNull() {
                 return this.IsNull(this.tableInternalConditionSubsquent.SNColumn);
             }
@@ -4667,6 +4965,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public void SetisExternalNull() {
                 this[this.tableInternalConditionSubsquent.isExternalColumn] = global::System.Convert.DBNull;
             }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IssortOrderNull() {
+                return this.IsNull(this.tableInternalConditionSubsquent.sortOrderColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetsortOrderNull() {
+                this[this.tableInternalConditionSubsquent.sortOrderColumn] = global::System.Convert.DBNull;
+            }
         }
         
         /// <summary>
@@ -4734,6 +5044,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string productName {
+                get {
+                    try {
+                        return ((string)(this[this.tableTransactionDynamics.productNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'TransactionDynamics\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableTransactionDynamics.productNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsSNNull() {
                 return this.IsNull(this.tableTransactionDynamics.SNColumn);
             }
@@ -4766,6 +5092,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcreditVerificationNull() {
                 this[this.tableTransactionDynamics.creditVerificationColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsproductNameNull() {
+                return this.IsNull(this.tableTransactionDynamics.productNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetproductNameNull() {
+                this[this.tableTransactionDynamics.productNameColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -4817,6 +5155,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string productName {
+                get {
+                    try {
+                        return ((string)(this[this.tableMonitoringTrggers.productNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'MonitoringTrggers\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableMonitoringTrggers.productNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsSNNull() {
                 return this.IsNull(this.tableMonitoringTrggers.SNColumn);
             }
@@ -4837,6 +5191,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetmonitoringTriggerNull() {
                 this[this.tableMonitoringTrggers.monitoringTriggerColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsproductNameNull() {
+                return this.IsNull(this.tableMonitoringTrggers.productNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetproductNameNull() {
+                this[this.tableMonitoringTrggers.productNameColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -5126,6 +5492,23 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string sortOrder {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionSubsquent.sortOrderColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'sortOrder\' in table \'ExternalConditionSubsquent\' is DBNull." +
+                                "", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionSubsquent.sortOrderColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsSNNull() {
                 return this.IsNull(this.tableExternalConditionSubsquent.SNColumn);
             }
@@ -5194,6 +5577,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetisExternalNull() {
                 this[this.tableExternalConditionSubsquent.isExternalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IssortOrderNull() {
+                return this.IsNull(this.tableExternalConditionSubsquent.sortOrderColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetsortOrderNull() {
+                this[this.tableExternalConditionSubsquent.sortOrderColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -5314,6 +5709,23 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string sortOrder {
+                get {
+                    try {
+                        return ((string)(this[this.tableExternalConditionsPrecedent.sortOrderColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'sortOrder\' in table \'ExternalConditionsPrecedent\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableExternalConditionsPrecedent.sortOrderColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsconditionPrecidentNull() {
                 return this.IsNull(this.tableExternalConditionsPrecedent.conditionPrecidentColumn);
             }
@@ -5382,6 +5794,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetisExternalNull() {
                 this[this.tableExternalConditionsPrecedent.isExternalColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IssortOrderNull() {
+                return this.IsNull(this.tableExternalConditionsPrecedent.sortOrderColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetsortOrderNull() {
+                this[this.tableExternalConditionsPrecedent.sortOrderColumn] = global::System.Convert.DBNull;
             }
         }
         

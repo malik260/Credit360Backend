@@ -49,7 +49,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var loans = repo.GetAllLoan();
+                var loans = repo.GetAllLoans();
                 int totalItems = loans.Count();
 
                 loans = loans.OrderBy(x => x.maturityDate).Skip(page).Take(itemsPerPage);
@@ -66,7 +66,45 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-performance/search-loan")]
+        public HttpResponseMessage SearchForFilteredLoanPerformance(string searchQuery)
+        {
+            try
+            {
+                var loans = repo.GetAllLoans();
+
+                loans = loans.OrderBy(x => x.maturityDate)
+                    .Where(x => x.loanReferenceNumber.ToLower().Contains(searchQuery.ToLower())
+                    || x.customerName.ToLower().Contains(searchQuery)
+                    || x.customerName.ToUpper().Contains(searchQuery));
+
+                var data = loans.ToList();
+
+                int totalItems = loans.Count();
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = loans.ToList(), count = loans.Count() });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error fetchcing the records. Error - {ex.Message}" });
+
+            }
+        }
+
+
+
+
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-performance/search")]
         public HttpResponseMessage FilteredLoanPerformance([FromUri] int page, string searchQuery)
         {

@@ -376,7 +376,34 @@ namespace FintrakBanking.APICore.Controllers
         //      }
         //  }
 
-
+        [HttpGet]
+        [Route("customer-by-application/{applicationId}")]
+        public HttpResponseMessage GetCustomerByApplicationId(int applicationId)
+        {
+            try
+            {
+                var status = repo.GetCustomerByApplicationId(applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("customer-transactions/{customerId}/{applicationId}")]
+        public HttpResponseMessage GetCustomerTransactions(int customerId, int applicationId)
+        {
+            try
+            {
+                var status = repo.GetCustomerTransactions(customerId, applicationId);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
@@ -878,7 +905,8 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Loan Collateral
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]  
         [Route("loan-application-details-product/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanApplicationDetailsProductProgram([FromUri] int loanApplicationDetailId)
         {
@@ -1526,6 +1554,16 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLoanApplicationDetailFields(int id)
         {
             var data = repo.GetLoanApplicationDetailFields(id);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("application-detail/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanApplicationDetailsById(int loanApplicationId)
+        {
+            var data = repo.GetLoanApplicationDetailsById(loanApplicationId,token.GetCompanyId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
         }

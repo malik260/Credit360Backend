@@ -33,7 +33,7 @@ namespace FintrakBanking.Interfaces.Setups
         #region Loan Checklist Detail
         IEnumerable<ChecklistDetailViewModel> GetAllChecklistDetail();
         IEnumerable<ChecklistDetailViewModel> GetChecklistByTargetId(int targetId);
-        IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId, bool isCamChecklist);
+        IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId, bool isCamChecklist,int? customerId=null);
         // IEnumerable<ChecklistDetailViewModel> GetChecklistByCheckListTypeAndTargetId(int targetId, int checkListtypeId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailById(int ChecklistId);
         List<ChecklistDetailViewModel> GetAllChecklistDetailByProductAndTargetId(int targetTypeId, int productId);
@@ -108,5 +108,6 @@ namespace FintrakBanking.Interfaces.Setups
         IEnumerable<ConditionPrecedentViewModel> GetLMSConditionPrecedenceChecklistStatus(int loanReviewApplicationId);
         #endregion
         IEnumerable<ChecklistDefinitionAndDetailViewModel> GetChecklistItemSimulationDetails(int productId);
+        bool PopulateLoanApplicationChecklist(int loanApplicationId, int staffId, int companyId, int productClassProcessId);
     }
 }

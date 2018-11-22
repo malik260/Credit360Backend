@@ -10,6 +10,17 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public bool isApplicationLevel { get; set; }
+        public bool requireApplicationDetail { get; set; }
+        public bool? hasLegalRecommendedSearch { get; set; }
+        public bool? customerCharged { get; set; }
+
+        public string requestStatusname { get; set; }
+        public string jobStatusFeedBack { get; set; }
+
+        public short? statusId { get; set; }
+        public short? rejectionReasonId { get; set; }
+
         public string senderRoleCode { get; set; }
 
         public string refNo { get; set; }
@@ -103,6 +114,12 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int? currencyId { get; set; }
     }
 
+    public class jobReasignment : GeneralEntity
+    {
+        public int reasignmentId { get; set; }
+        public int jobTypeId { get; set; }
+    }
+
     public class JobRequestCollateralSearchViewModel : GeneralEntity
     {
         public int casaAccountId { get; set; }
@@ -168,6 +185,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public short jobTypeId { get; set; }
         public string jobTypeName { get; set; }
         public bool inUse { get; set; }
+        public bool? canBeReasigned { get; set; }
     }
 
     public class JobSubTypeViewModel : JobTypeViewModel
@@ -185,8 +203,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class RequestDocumentViewModel : GeneralEntity
     {
-        public string comment;
-
+        public int? statusId { get; set; }
+        public int? rejectionReasonId { get; set; }
+        public string comment { get; set; }
         public int documentId { get; set; }
         public int targetId { get; set; }
         public int operationId { get; set; }
@@ -207,7 +226,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
     {
         public bool status { get; set; }
         public short? rejectionId { get; set; }
-        public short jobRequestId { get; set; }
+        public short? jobRequestId { get; set; }
+        public short invoiceId { get; set; }
     }
 
    }

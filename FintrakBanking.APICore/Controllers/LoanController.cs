@@ -421,15 +421,28 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                         || entity.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving
                         || entity.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                     {
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
+                        if(entity.isInEditMode)
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Loan Loan with Account Number: '{ data}' was successfully modified."  });
+                        else
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan booking was successful and is waiting approval.\r\n Loan Account Number: " + data });
                     }
 
                     if(entity.productTypeId == (short)LoanProductTypeEnum.RevolvingLoan)
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+                    {
+                        if (entity.isInEditMode)
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"Overdaft with Account Number: '{ data}' was successfully modified." });
+                        else
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Revolving facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+                    }
 
                     if (entity.productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
-                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
-
+                    {
+                        if (entity.isInEditMode)
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = $"contigent facility with Account Number: '{ data}' was successfully modified." });
+                        else
+                            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Contingent facility booking was successful and is waiting approval.\r\n Facility Account Number: " + data });
+                    }
+                        
 
                     //This is not allowed
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Unknown facility type booked.\r\n Facility Account Number: " + data });
@@ -1008,8 +1021,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("loan-booking/approval/{loanBookingRequestId}")]
-        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
+        [Route("loan-booking/approval/{loanBookingRequestId}/{casaAccountId}/{casaAccountId2}")]
+        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId,int casaAccountId , int casaAccountId2)
         {
             try
             {
@@ -1020,7 +1033,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
 
-                var responseId = repo.GoForApproval(model, loanBookingRequestId);
+                var responseId = repo.GoForApproval(model, loanBookingRequestId, casaAccountId, casaAccountId2);
                 var dynamicMessage = string.Empty;
                 if (responseId == 1)
                 {
@@ -1198,6 +1211,16 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
         }
+
+
+        [HttpGet]
+        [Route("customer-loan-booking-override/{customerCode}")]
+        public HttpResponseMessage getBookingOverride(string customerCode)
+        {
+            var data = repo.getBookingOverride(customerCode);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
+        }
+
 
         [HttpGet]
         [Route("existing-loans/{applicationId}")]
@@ -1595,6 +1618,24 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
         }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("referred-booked-facility-record")]
+        public HttpResponseMessage GetReferedBookingFacilityRecordsById([FromBody] CamProcessedLoanViewModel entity)
+        {
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = Request.RequestUri.Host;
+            entity.createdBy = token.GetStaffId;
+
+            var data = repo.GetReferedBookingFacilityRecordsById(entity);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        }
+
 
         #endregion Loan
 

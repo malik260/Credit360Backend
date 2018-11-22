@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Enum;
+﻿using FintrakBanking.Common.CustomException;
+using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
@@ -37,7 +38,9 @@ namespace FintrakBanking.Repositories.Credit
             if (!string.IsNullOrWhiteSpace(searchQuery.Trim()))
             {
 
-                var JobRole = (from a in _context.TBL_STAFF where a.STAFFID == staffId select a.JOBTITLEID).FirstOrDefault();
+                //var JobRole = (from a in _context.TBL_STAFF where a.STAFFID == staffId select a.JOBTITLEID).FirstOrDefault();
+                var JobRole = (from a in _context.TBL_STAFF where a.STAFFID == staffId select a.STAFFROLEID).FirstOrDefault();
+
                 if (JobRole > 0)
                 {
                     var memoLimit = (from b in _context.TBL_CALL_MEMO_LIMIT where b.JOBTITLEID == JobRole && b.CALLLIMITTYPEID == 1 select b).FirstOrDefault();
@@ -55,6 +58,11 @@ namespace FintrakBanking.Repositories.Credit
                                                loanReferenceNo = a.APPLICATIONREFERENCENUMBER,
                                                principalAmount = a.APPLICATIONAMOUNT
                                            }).Take(10).AsQueryable();
+                    }
+                    else
+                    {
+                        var jobName = _context.TBL_STAFF_JOBTITLE.Where(x => x.JOBTITLEID == JobRole).FirstOrDefault();
+                        throw new ConditionNotMetException("Kindly Setup Call Memo Limit For Job Title : '" + jobName.JOBTITLENAME + "' For This Staff");
                     }
                 }
             }

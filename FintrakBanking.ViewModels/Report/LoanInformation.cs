@@ -112,6 +112,7 @@ namespace FintrakBanking.ViewModels.Reports
         public int companyId { get; set; }
         public string searchInfo { get; set; }
         public string crmSCode { get; set; }
+        public string loginStatus { get; set; }
     }
 
     public class ReportSearchEntity

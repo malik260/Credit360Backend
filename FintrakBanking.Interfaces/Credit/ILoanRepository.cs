@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        List<OverrideItemVeiwModel> getBookingOverride(string customerCode);
+        LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
         bool SendBackToBookingModifier(ApprovalViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
@@ -91,7 +93,7 @@ namespace FintrakBanking.Interfaces.Credit
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredRevolvingLoanFeeAwaitingApproval(int staffId, int companyId);
         //IEnumerable<LoanChargeFeeViewModel> GetDeferredContingentLoanFeeAwaitingApproval(int staffId, int companyId);
 
-        int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId);
+        int GoForApproval(ApprovalViewModel entity, int loanBookingRequestId, int casaAccountId, int casaAccountId2);
 
         bool GoForFeeOverrideApproval(ApprovalViewModel entity);
 
@@ -131,6 +133,7 @@ namespace FintrakBanking.Interfaces.Credit
         //void AddLoanTestFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short productTypeId, int companyId, bool feeOverride);
 
         IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery);
+        IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoanFeeCharge(int loanSystemTypeId, string searchQuery);
 
         string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);
 
@@ -200,5 +203,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> GetCompletedLoan(string searchValue);
         bool GetChangeLoanStatusOfACompletedLoan(int loanId);
 
+        List<CustomersTurnoverViewModel> GetCustomerTurnover(List<int> customerIds); // OBIE (Page 4)
     }
 }
