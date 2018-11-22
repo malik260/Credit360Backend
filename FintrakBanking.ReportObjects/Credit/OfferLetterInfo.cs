@@ -256,13 +256,14 @@ namespace FintrakBanking.ReportObjects.Credit
 
             var conditionPrecedentData = (from a in context.TBL_LOAN_APPLICATION
                                           join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                          join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                          join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                           && (b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived 
                                           || b.CHECKLISTSTATUSID == null)
                                           && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                          && c.STATUSID == (int)ApprovalStatusEnum.Approved
                                           select new OfferLetterConditionPrecidentViewModel()
                                           {
                                               conditionPrecident = b.CONDITION,
@@ -284,10 +285,11 @@ namespace FintrakBanking.ReportObjects.Credit
 
             var conditionSubsequentData = (from a in context.TBL_LOAN_APPLICATION
                                           join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                          join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                          where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
+                                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
                                                && c.STATUSID == (int)ApprovalStatusEnum.Approved
                                                && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                               && c.STATUSID == (int)ApprovalStatusEnum.Approved
                                            select new OfferLetterConditionPrecidentViewModel()
                                           {
                                               conditionPrecident = b.CONDITION,
@@ -298,12 +300,13 @@ namespace FintrakBanking.ReportObjects.Credit
 
             var conditionPrecedentDeferralData = (from a in context.TBL_LOAN_APPLICATION
                                           join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                          join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                          join d in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals d.LOANCONDITIONID
+                                                  join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                                  join d in context.TBL_LOAN_CONDITION_DEFERRAL on b.LOANCONDITIONID equals d.LOANCONDITIONID
                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
                                                && c.STATUSID == (int)ApprovalStatusEnum.Approved && b.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Deferred 
                                                && d.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                                                && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                               && c.STATUSID == (int)ApprovalStatusEnum.Approved
                                                   select new OfferLetterConditionPrecidentViewModel()
                                           {
                                               conditionPrecident = b.CONDITION,
@@ -399,6 +402,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
                                       where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISEXTERNAL == true
                                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
                                       select new OfferLetterConditionPrecidentViewModel()
                                       {
                                           conditionPrecident = b.CONDITION,
@@ -478,8 +482,9 @@ namespace FintrakBanking.ReportObjects.Credit
                                    applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                                    approvedAmountCurrency = e.CURRENCYNAME + " " + b.APPROVEDAMOUNT + " % p.a ",
                                    productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
-
-                                   //approvedAmount = b.APPROVEDAMOUNT
+                                   approvedDate = a.APPROVEDDATE,
+                                   newApplicationDate = a.APPLICATIONDATE,
+                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                }).ToList();
 
             return loanDetails;
@@ -503,12 +508,13 @@ namespace FintrakBanking.ReportObjects.Credit
 
             var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                       join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                        where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                        && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
                                        && (b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived || b.CHECKLISTSTATUSID == null)
                                        && b.ISSUBSEQUENT == false
+                                       && c.STATUSID == (int)ApprovalStatusEnum.Approved
                                        select new OfferLetterConditionPrecidentViewModel()
                                        {
                                            conditionId = b.CONDITIONID,
@@ -568,10 +574,12 @@ namespace FintrakBanking.ReportObjects.Credit
 
             var conditionSubsequents = (from a in context.TBL_LOAN_APPLICATION
                                         join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                        join b in context.TBL_LOAN_CONDITION_PRECEDENT on c.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                         where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                         && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                        && b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived
+                                       && c.STATUSID == (int)ApprovalStatusEnum.Approved
                                         && b.ISSUBSEQUENT == true
                                         select new { b, c }).ToList();
 
@@ -611,7 +619,8 @@ namespace FintrakBanking.ReportObjects.Credit
                         {
                             SN = +count,
                             feeName = c.CHARGEFEENAME,
-                            rateValue = a.RECOMMENDED_FEERATEVALUE
+                            rateValue = a.RECOMMENDED_FEERATEVALUE,
+                            productName=b.TBL_PRODUCT.PRODUCTNAME
                         }).ToList();
 
             return fees;
@@ -632,10 +641,12 @@ namespace FintrakBanking.ReportObjects.Credit
                                               where c.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                               && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                               && c.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                              && b.STATUSID == (int)ApprovalStatusEnum.Approved
                                               select new TransactionDynamicsViewModel()
                                               {
                                                   SN = +count,
                                                   dynamics = a.DYNAMICS,
+                                                  productName = b.TBL_PRODUCT.PRODUCTNAME
                                               }).Distinct().ToList();
 
             return transactionDynamicsDetails;
@@ -672,10 +683,12 @@ namespace FintrakBanking.ReportObjects.Credit
                                           where z.APPLICATIONREFERENCENUMBER == applicationRefNumber
                                           && z.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                           && z.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
+                                          && y.STATUSID == (int)ApprovalStatusEnum.Approved
                                           select new MonitoringTriggersViewModel()
                                           {
                                               SN = +count,
                                               monitoringTrigger = x.MONITORING_TRIGGER,
+                                              productName = y.TBL_PRODUCT.PRODUCTNAME
                                           }).Distinct().ToList();
 
             return loanMonitoringTriggers;

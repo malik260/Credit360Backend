@@ -315,13 +315,28 @@ namespace FintrakBanking.Repositories.Credit
         //    ).Any();
         //}
 
-        private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
+        private bool PendingBondsAndGuaranteeJobRequest(int applicationDetailId)
         {
-            return context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationId
-                && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
+            var requestsToLegal = context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId
+                && x.OPERATIONSID == (short)OperationsEnum.LoanAvailment
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
-                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
-            ).Any();
+            );
+
+            if (requestsToLegal.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                throw new ConditionNotMetException("There are pending B&G Legal Job request which must be approved");
+
+            var attendedRequests = requestsToLegal.Where(x => x.REQUESTSTATUSID != (short)JobRequestStatusEnum.pending);
+
+            if (attendedRequests.Any())
+            {
+                if (attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved).Any())
+                    return true;
+
+                if(attendedRequests.Where(x => x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
+                    throw new ConditionNotMetException("Bond and gaurantee job sent to legal was disapproved. You cannot continue with the application.");
+            }
+
+            return false;
         }
 
         private void loanBookingValidation(LoanViewModel entity)
@@ -830,6 +845,8 @@ namespace FintrakBanking.Repositories.Credit
             //if (entity.effectiveDate > systemDate)
             //    throw new ConditionNotMetException("You effective date cannot be post-dated.");
 
+            loanBookingValidation(entity);
+
             var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
 
             var isTenored = false;
@@ -843,7 +860,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
             {
-                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationId))
+                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationDetailId))
                     throw new ConditionNotMetException("There are pending bonds and gaurantees that must be attended to");
             }
 
@@ -3380,7 +3397,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     sourceApplicationId = (short)contingentLoanRecord.CONTINGENTLOANID,
                     applicationUrl = user.applicationUrl,
-                    description = "Bonds & Guarantee Issuance",
+                    description = "Contingent Liability Issuance",
                     companyId = user.companyId,
                     createdBy = user.createdBy,
                     userBranchId = (short)user.BranchId,
@@ -4099,7 +4116,7 @@ namespace FintrakBanking.Repositories.Credit
                             credit.description = $"Fee charge on {credits.DESCRIPTION}";
                             credit.valueDate = generalSetup.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;
-                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
+                            credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanDetails.companyId).CURRENCYID; //(short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
                             credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, loanDetails.companyId).sellingRate;
                             credit.isApproved = true;
                             credit.postedBy = loanDetails.createdBy;
@@ -6574,39 +6591,41 @@ namespace FintrakBanking.Repositories.Credit
                            };
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
-                
-                exposure = (from a in context.TBL_LOAN_REVOLVING
-                           where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
-                           select new CurrentCustomerExposure
-                           {
-                               facilityType = a.TBL_PRODUCT.PRODUCTNAME,
-                               existingLimit = a.OVERDRAFTLIMIT,
-                               //proposedLimit = a.OVERDRAFTLIMIT,
-                               proposedLimit = 0,
-                               //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,                               
-                               recommendedLimit = 0,
-                               casaAccountId = a.CASAACCOUNTID,
-                               PastDueObligationsInterest = a.PASTDUEINTEREST,
-                               PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
-                               reviewDate = DateTime.Now,
-                               prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
-                               loanStatus = "Running",
-                               referenceNumber = a.LOANREFERENCENUMBER
-                           }).ToList().Select(x =>
-                           {
-                               //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
-                               var availableBalance = context.TBL_CASA.FirstOrDefault(m=>m.CASAACCOUNTID == (int)x.casaAccountId).AVAILABLEBALANCE;
 
-                               if ( availableBalance >= 0)
-                               {
-                                   x.outstandings = 0;
-                               }
-                               else
-                               {
-                                   x.outstandings = Math.Abs(availableBalance); 
-                               }
-                               return x;
-                           });
+                exposure = (from a in context.TBL_LOAN_REVOLVING
+                            where a.CUSTOMERID == item.customerId && a.COMPANYID == companyId && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                            select new CurrentCustomerExposure
+                            {
+                                facilityType = a.TBL_PRODUCT.PRODUCTNAME,
+                                existingLimit = a.OVERDRAFTLIMIT,
+                                //proposedLimit = a.OVERDRAFTLIMIT,
+                                proposedLimit = 0,
+                                //recommendedLimit = a.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,   
+                                outstandings=a.OVERDRAFTLIMIT,
+                                recommendedLimit = 0,
+                                casaAccountId = a.CASAACCOUNTID,
+                                PastDueObligationsInterest = a.PASTDUEINTEREST,
+                                PastDueObligationsPrincipal = a.PASTDUEPRINCIPAL,
+                                reviewDate = DateTime.Now,
+                                prudentialGuideline = a.TBL_LOAN_PRUDENTIALGUIDELINE2.STATUSNAME,
+                                loanStatus = "Running",
+                                referenceNumber = a.LOANREFERENCENUMBER
+                            }).ToList();
+                           //.Select(x =>
+                           //{
+                           //    //var availableBalance = transRepo.GetCASABalance((int)x.casaAccountId).availableBalance;
+                           //    var availableBalance = context.TBL_CASA.FirstOrDefault(m=>m.CASAACCOUNTID == (int)x.casaAccountId).AVAILABLEBALANCE;
+
+                           //    if ( availableBalance >= 0)
+                           //    {
+                           //        x.outstandings = 0;
+                           //    }
+                           //    else
+                           //    {
+                           //        x.outstandings = Math.Abs(availableBalance); 
+                           //    }
+                           //    return x;
+                           //});
 
                 if (exposure.Count() > 0) exposures.AddRange(exposure);
 
@@ -7169,7 +7188,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 decimal overDraftLimit = 0;
                 decimal availableBalance = 0;
-                var odDetail = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.REVOLVINGLOANID == revolvingLoanId);
+                var odDetail = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == revolvingLoanId).Select(x=>x).FirstOrDefault();
                 if (odDetail != null)
                 {
                     overDraftLimit = odDetail.OVERDRAFTLIMIT;
@@ -9457,8 +9476,6 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
 
             List<short> productTypes = new List<short>();
-            productTypes.Add((short)LoanProductTypeEnum.CommercialLoan);
-            productTypes.Add((short)LoanProductTypeEnum.ForeignXRevolving);
 
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
@@ -9466,9 +9483,10 @@ namespace FintrakBanking.Repositories.Credit
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                    where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                   && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
-                                  && b.OPERATIONPERFORMED == false && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                                  && b.OPERATIONPERFORMED == false 
+                                  && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
-                                  && !productTypes.Contains(a.TBL_PRODUCT.PRODUCTTYPEID)
+                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                    //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                    //orderby b.DATECREATED descending
                                    select new LoanViewModel
@@ -9600,7 +9618,6 @@ namespace FintrakBanking.Repositories.Credit
                 var applicationDate = generalSetup.GetApplicationDate();
                 List<short> productTypes = new List<short>();
                 productTypes.Add((short)LoanProductTypeEnum.CommercialLoan);
-                productTypes.Add((short)LoanProductTypeEnum.ForeignXRevolving);
 
 
                 var allFilteredLoan = (from a in context.TBL_LOAN

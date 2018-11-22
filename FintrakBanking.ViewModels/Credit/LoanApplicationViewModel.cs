@@ -151,6 +151,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? tranchLevelId { get; set; }
         public int? regionId { get; set; }
         public bool editMode { get; set; }
+        public short? requireCollateralTypeId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -206,6 +207,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
+        public string approvedProductName { get; set; }
+
         public int applicationStatusPosition { get; set; }
 
         public LoanApplicationDetailViewModel()
@@ -666,6 +669,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatusName { get; set; }
 
         public int productClassId { get; set; }
+
+        public string principalNameOthers { get; set; }
     }
 
     public class SyndicatedLoanDetailViewModel
@@ -774,6 +779,9 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal? interest { get; set; } // "2909416.54",
         public string accountNumber { get; set; } // "2909416.54",
         public string productName { get; set; } // "2909416.54",
+        public int? month { get; set; } // "0",
+        public int? year { get; set; } // "0",
+
 
     }
 

@@ -10,6 +10,11 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public bool isApplicationLevel { get; set; }
+        public bool requireApplicationDetail { get; set; }
+        public bool? hasLegalRecommendedSearch { get; set; }
+        public bool? customerCharged { get; set; }
+
         public string requestStatusname { get; set; }
         public string jobStatusFeedBack { get; set; }
 
@@ -221,7 +226,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
     {
         public bool status { get; set; }
         public short? rejectionId { get; set; }
-        public short jobRequestId { get; set; }
+        public short? jobRequestId { get; set; }
+        public short invoiceId { get; set; }
     }
 
    }

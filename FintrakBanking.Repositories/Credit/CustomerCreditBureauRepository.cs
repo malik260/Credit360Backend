@@ -1325,7 +1325,7 @@ namespace FintrakBanking.Repositories.Credit
                             credit.description = $"Fee charge on {credits.DESCRIPTION}";
                             credit.valueDate = genSetup.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;
-                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                            credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).CURRENCYID;//(short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
                             credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
                             credit.isApproved = true;
                             credit.postedBy = model.createdBy;
@@ -1404,7 +1404,7 @@ namespace FintrakBanking.Repositories.Credit
                             credit.description = $"Fee charge reversal on {credits.DESCRIPTION}";
                             credit.valueDate = genSetup.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;
-                            credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                            credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).CURRENCYID; //(short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
                             credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
                             credit.isApproved = true;
                             credit.postedBy = model.createdBy;

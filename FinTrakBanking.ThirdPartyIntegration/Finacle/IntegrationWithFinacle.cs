@@ -646,6 +646,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             return accounts;
         }
+
         public List<CustomerTurnoverViewModel> GetCustomerAccountInterestTransactions(string customerCode, int durationInMonths)
         {
             List<CustomerTurnoverViewModel> accounts = new List<CustomerTurnoverViewModel>();
@@ -655,6 +656,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             return accounts;
         }
+
         public string GetGlAccountCode(int glAccountId, int currencyId, int branchId)
         {
             var account = context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == glAccountId);

@@ -44,7 +44,7 @@
                 </SelectParameters>
             </asp:ObjectDataSource>
 
-            <asp:ObjectDataSource ID="odsSecurityDetails" runat="server" SelectMethod="Collateral" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+            <asp:ObjectDataSource ID="odsSecurityDetails" runat="server" SelectMethod="Lmsr_Collateral" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
                 <SelectParameters>
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>
@@ -54,18 +54,18 @@
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>
             </asp:ObjectDataSource>
-            <asp:ObjectDataSource ID="odsFeeDetails" runat="server" SelectMethod="Lmsr_Fee" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+            <asp:ObjectDataSource ID="odsFeeDetails" runat="server" SelectMethod="GetLoanApplicationFee" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
                 <SelectParameters>
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>
             </asp:ObjectDataSource>
 
-         <asp:ObjectDataSource ID="odsInteralConditionsPrecedent" runat="server" SelectMethod="Lmsr_ConditionPrecedents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+         <asp:ObjectDataSource ID="odsInteralConditionsPrecedent" runat="server" SelectMethod="Lmsr_Internal_ConditionPrecedents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
                 <SelectParameters>
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>
             </asp:ObjectDataSource>
-            <asp:ObjectDataSource ID="odsExternalConditionsPrecedent" runat="server" SelectMethod="External_ConditionPrecedents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+            <asp:ObjectDataSource ID="odsExternalConditionsPrecedent" runat="server" SelectMethod="Lmsr_External_ConditionPrecedents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
                 <SelectParameters>
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>
@@ -77,17 +77,17 @@
             </asp:ObjectDataSource>
 
 
-              <asp:ObjectDataSource ID="odsInternalConditionSubsquent" runat="server" SelectMethod="Lmsr_ConditionSubsequents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+              <asp:ObjectDataSource ID="odsInternalConditionSubsquent" runat="server" SelectMethod="Lmsr_External_ConditionSubsequents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
                 <SelectParameters>
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>
             </asp:ObjectDataSource>
-           <asp:ObjectDataSource ID="odsExternalConditionSubsquent" runat="server" SelectMethod="External_ConditionSubsequents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+           <asp:ObjectDataSource ID="odsExternalConditionSubsquent" runat="server" SelectMethod="Lmsr_Internal_ConditionSubsequents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
                 <SelectParameters>
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>
             </asp:ObjectDataSource>
-            <asp:ObjectDataSource ID="odsComments" runat="server" SelectMethod="LoanComments" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+            <asp:ObjectDataSource ID="odsComments" runat="server" SelectMethod="Lmsr_LoanComments" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
                 <SelectParameters>
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>

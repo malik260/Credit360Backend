@@ -905,7 +905,8 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion Loan Collateral
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]  
         [Route("loan-application-details-product/{loanApplicationDetailId}")]
         public HttpResponseMessage GetLoanApplicationDetailsProductProgram([FromUri] int loanApplicationDetailId)
         {
@@ -1553,6 +1554,16 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage GetLoanApplicationDetailFields(int id)
         {
             var data = repo.GetLoanApplicationDetailFields(id);
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("application-detail/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanApplicationDetailsById(int loanApplicationId)
+        {
+            var data = repo.GetLoanApplicationDetailsById(loanApplicationId,token.GetCompanyId);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = 1 });
         }
