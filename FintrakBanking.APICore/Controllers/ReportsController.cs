@@ -277,28 +277,28 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("form3800b-lms")]
-        public HttpResponseMessage GetGeneratedForm3800bLMS(string applicationRefNumber)
-        {
-            try
-            {
-                var data = repo.GetGeneratedFORM3800BLMS(applicationRefNumber);
-                if (data == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, message = "No record found" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
-        }
+        //[HttpGet]
+        //[ClaimsAuthorization]
+        //[Route("form3800b-lms")]
+        //public HttpResponseMessage GetGeneratedForm3800bLMS(string applicationRefNumber)
+        //{
+        //    try
+        //    {
+        //        var data = repo.GetGeneratedFORM3800BLMS(applicationRefNumber);
+        //        if (data == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK,
+        //                new { success = false, message = "No record found" });
+        //        }
+        //        return Request.CreateResponse(HttpStatusCode.OK,
+        //            new { success = true, result = data });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+        //    }
+        //}
         [HttpGet]
         [ClaimsAuthorization]
         [Route("offer-letter-lms")]
@@ -1418,18 +1418,18 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-       
 
         [HttpPost]
-        [Route("login-status")]
-        public HttpResponseMessage getAllUserLogingStatus([FromBody]DateRange param)
+        [ClaimsAuthorization]
+        [Route("staff-priviledge-change-report")]
+        public HttpResponseMessage GetStaffPrivilegeChangeReport([FromBody]DateRange param)
         {
             var token = new TokenDecryptionHelper();
             try
             {
                 param.companyId = token.GetCompanyId;
 
-                var data = repo.GetLoggingStatus(param);
+                var data = repo.GetStaffPrivilegeChangeReport(param);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1443,6 +1443,135 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("user-group-change-report")]
+        public HttpResponseMessage GetUserGroupChangeReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetUserGroupChangeReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("profile-activity-report")]
+        public HttpResponseMessage GetProfileActivityReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetProfileActivityReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("staff-role-profile-group-report")]
+        public HttpResponseMessage GetStaffRoleProfileGroupReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetStaffRoleProfileGroupReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("staff-role-profile-activity-report")]
+        public HttpResponseMessage GetStaffRoleProfileActivityReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetStaffRoleProfileActivityReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("running-facilities")]
+        public HttpResponseMessage GetRunningFacilities(DateRange dateRange)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = repo.GetRunningFacilities(dateRange, token.GetCompanyId, token.GetStaffId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
 
     }
 }

@@ -101,7 +101,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("filter-job-request-by-status/{status}")]
+        [Route("filter-job-request-by-status/{filter}")]
         public HttpResponseMessage GetJobRequestByFilter(string filter)
         {
             var data = repo.GetJobRequestByFilter(token.GetStaffId, token.GetBranchId, filter);
