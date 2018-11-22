@@ -151,7 +151,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? tranchLevelId { get; set; }
         public int? regionId { get; set; }
         public bool editMode { get; set; }
-        public short? requiredCollateralTypeId { get; set; }
+        public short? requireCollateralTypeId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
