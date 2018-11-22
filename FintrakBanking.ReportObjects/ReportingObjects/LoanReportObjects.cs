@@ -1550,6 +1550,51 @@ namespace FintrakBanking.ReportObjects
 
         }
 
+        public List<LoanViewModel> InActiveContigentLiability()
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var loanDetails = (from a in context.TBL_LOAN_CONTINGENT
+                               join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
+                               join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                               join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                               join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                               join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                               join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                               join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
+                               join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
+                               join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
+                               where a.LOANSTATUSID == (int)LoanStatusEnum.Inactive
+                              
+                               select new LoanViewModel
+                               {
+                                   loanId = a.CONTINGENTLOANID,
+                                   customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                   branchName = br.BRANCHNAME,
+                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                   applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                   productName = pr.PRODUCTNAME,
+                                   productTypeName = pr.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                   relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                   relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                   effectiveDate = a.EFFECTIVEDATE,
+                                   maturityDate = a.MATURITYDATE,
+                                   bookingDate = a.BOOKINGDATE,
+                                   isDisbursedState = a.ISDISBURSED ? "True" : "False",
+                                   disburserComment = a.DISBURSERCOMMENT,
+                                   operationName = tt.OPERATIONNAME,
+                                   casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                   productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+                                   loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                   currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                   ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
+                                   loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
+                                   productPriceIndex = ld.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == ld.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
+
+                               }).ToList();
+            return loanDetails;
+        }
+
     }
 }
     
