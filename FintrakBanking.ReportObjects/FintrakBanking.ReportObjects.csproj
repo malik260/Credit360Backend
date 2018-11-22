@@ -74,6 +74,7 @@
     <Compile Include="ReportingObjects\LoanReportObjects.cs" />
     <Compile Include="ReportingObjects\ScheduledCollateralObject.cs" />
     <Compile Include="ReportingObjects\ScheduleOfCollateralsObjects.cs" />
+    <Compile Include="ReportingObjects\StaffModifiedInformationReport.cs" />
     <Compile Include="ReportingObjects\WorkFlowDesign.cs" />
     <Compile Include="SqlServerTypes\Loader.cs" />
   </ItemGroup>

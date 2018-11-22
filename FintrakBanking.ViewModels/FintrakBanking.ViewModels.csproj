@@ -170,6 +170,9 @@
     <Compile Include="Report\ReportSearchParamViewModel.cs" />
     <Compile Include="Report\ScheduledCollateralModel.cs" />
     <Compile Include="Report\SectorLimitViewModel.cs" />
+    <Compile Include="Report\StaffPrivilegeChangeViewModel.cs" />
+    <Compile Include="Report\StaffRoleProfileActivityReportViewModel.cs" />
+    <Compile Include="Report\StaffRoleProfileGroupReportViewModel.cs" />
     <Compile Include="Report\TransactionViewModel.cs" />
     <Compile Include="Risk\RiskLoanApplicationViewModel.cs" />
     <Compile Include="Risk\RiskAssessmentViewModels.cs" />
@@ -208,6 +211,7 @@
     <Compile Include="Setups\General\MonitoringSetupViewModel.cs" />
     <Compile Include="Setups\General\MessageLogViewModel.cs" />
     <Compile Include="Setups\General\ProductChargeFeeViewModel.cs" />
+    <Compile Include="Report\ProfileActivityReportViewModel.cs" />
     <Compile Include="Setups\General\PublicHolidayViewModel.cs" />
     <Compile Include="Setups\General\SectorViewModel.cs" />
     <Compile Include="Setups\General\CustomFieldsDataViewModel.cs" />
@@ -229,6 +233,7 @@
     <Compile Include="Setups\General\StaffViewModel.cs" />
     <Compile Include="Setups\General\StateViewModel.cs" />
     <Compile Include="Setups\Finance\TaxViewModel.cs" />
+    <Compile Include="Report\UserGroupProfileViewModel.cs" />
     <Compile Include="Setups\General\UserViewModel.cs" />
     <Compile Include="Setups\Risk\RiskAssessmentIndexViewModels.cs" />
     <Compile Include="Setups\Risk\RiskRatingViewModel.cs" />

@@ -7335,9 +7335,6 @@ namespace FintrakBanking.Repositories.Credit
                     overDraftDetail.overdraftDrawnAmount = Math.Abs(availableBalance);
                 }
 
-
-
-
                 return overDraftDetail;
             }
             catch (Exception ex)
