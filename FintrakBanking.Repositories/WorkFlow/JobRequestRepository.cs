@@ -513,28 +513,41 @@ namespace FintrakBanking.Repositories.WorkFlow
             switch (filtered)
             {
                 case "completed":
-                    return GetAllJobRequest(staffId).Where(x=>x.responseComment != null).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    return GetAllJobRequest(staffId).Where(x=>x.responseComment != null || x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
+                    //break;
+
+                case "approved":
+                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
+                    //break;
 
                 case "pending":
-                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Pending).OrderByDescending(x => x.jobRequestId);
+                    //break;
 
                 case "in-progress":
                     return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Processing).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    //break;
 
                 case "cancelled":
                     return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Cancel).OrderByDescending(x => x.jobRequestId);
-                    break;
+                   // break;
 
                 case "disapproved":
                     return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Disapproved).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    //break;
 
-                default :
+                case "assigned":
+                    return GetAllJobRequest(staffId).Where(x => x.reassignedTo != null).OrderByDescending(x => x.jobRequestId);
+                    //break;
+
+                case "unassigned":
+                    return GetAllJobRequest(staffId).Where(x => x.reassignedTo == null).OrderByDescending(x => x.jobRequestId);
+                    //break;
+
+
+                default:
                      return GetAllJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    //break;
 
             }
         }
