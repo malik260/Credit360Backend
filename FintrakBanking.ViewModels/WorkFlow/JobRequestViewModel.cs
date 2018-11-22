@@ -10,6 +10,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public bool isApplicationLevel { get; set; }
+        public bool requireApplicationDetail { get; set; }
         public bool? hasLegalRecommendedSearch { get; set; }
         public bool? customerCharged { get; set; }
 

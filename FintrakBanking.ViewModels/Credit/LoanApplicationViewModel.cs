@@ -206,6 +206,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
+        public string approvedProductName { get; set; }
+
         public int applicationStatusPosition { get; set; }
 
         public LoanApplicationDetailViewModel()
