@@ -692,6 +692,7 @@ namespace FintrakBanking.Repositories.Credit
                            applicationTenor = Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0),
                            applicationAmount = a.APPLICATIONAMOUNT,
                            regionId = a.CAPREGIONID,
+                           requiredCollateralTypeId = a.REQUIRECOLLATERALTYPEID,
                            preliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
                            collateralDetail = a.COLLATERALDETAIL,
                            loanInformation = a.LOANINFORMATION,
@@ -1352,6 +1353,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             this.loanData.COLLATERALDETAIL = loan.collateralDetail;
             this.loanData.CAPREGIONID = loan.regionId;
+            this.loanData.REQUIRECOLLATERALTYPEID = loan.requiredCollateralTypeId;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -2513,7 +2515,9 @@ namespace FintrakBanking.Repositories.Credit
             }
             else if (details == (short)ProductClassEnum.BondAndGuarantees)
             {
+
                 var bg = (from b in context.TBL_LOAN_APPLICATION_DETL_BG
+                          //join p in context.TBL_LOAN_PRINCIPAL on b.PRINCIPALID equals p.PRINCIPALID
                           where b.LOANAPPLICATIONDETAILID == loanApplicationDetailId
                           select new BondsAndGauranteeViewModel
                           {
@@ -3681,6 +3685,7 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.CODE + "-" + x.DESCRIPTION
             }).ToList();
         }
+
         public IEnumerable<LookupViewModel> GetAllCRMSRepaymentSource()
         {
             return context.TBL_CRMS_REGULATORY.Where(x => x.CRMSTYPEID == (int)RegulatoryTypeEnum.RepaymentSourceType).Select(x => new LookupViewModel()
@@ -3698,6 +3703,7 @@ namespace FintrakBanking.Repositories.Credit
                 lookupName = x.CODE + "-" + x.DESCRIPTION
             }).ToList();
         }
+
         public IEnumerable<LookupViewModel> GetAllSyndicationType()
         {
             return context.TBL_LOAN_SYNDICATION_PARTY_TYP.Select(x => new LookupViewModel()
