@@ -1011,7 +1011,7 @@ namespace FintrakBanking.Repositories.Credit
             string errorMessage = String.Empty;
             List<TBL_JOB_REQUEST> requests = new List<TBL_JOB_REQUEST>();
 
-            if (requireCollateralTypeId == (int)RequiredCollateralTypeEnum.ImmovablePropertyCollateral)
+            if (requireCollateralTypeId == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
             {
                 requests = context.TBL_JOB_REQUEST
                     .Where(x => x.TARGETID == applicationId
