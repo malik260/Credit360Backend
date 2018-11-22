@@ -1033,7 +1033,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditionPrecedents = (from a in context.TBL_LMSR_APPLICATION
                                        join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                       join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                       join b in context.TBL_LMSR_CONDITION_PRECEDENT on c.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
                                        where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER && b.ISSUBSEQUENT == false
                                         && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
                                         && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
@@ -1048,7 +1048,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var conditionSubsequents = (from a in context.TBL_LMSR_APPLICATION
                                         join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-                                        join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                        join b in context.TBL_LMSR_CONDITION_PRECEDENT on c.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
                                         where a.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER 
                                         && b.ISSUBSEQUENT == true
                                         && b.CHECKLISTSTATUSID != (int)CheckListStatusEnum.Waived

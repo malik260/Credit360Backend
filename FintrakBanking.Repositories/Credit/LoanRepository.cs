@@ -9476,8 +9476,6 @@ namespace FintrakBanking.Repositories.Credit
             var applicationDate = generalSetup.GetApplicationDate();
 
             List<short> productTypes = new List<short>();
-            productTypes.Add((short)LoanProductTypeEnum.CommercialLoan);
-            productTypes.Add((short)LoanProductTypeEnum.ForeignXRevolving);
 
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
@@ -9485,9 +9483,10 @@ namespace FintrakBanking.Repositories.Credit
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                    where a.ISDISBURSED == true && e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                   && b.TBL_OPERATIONS.OPERATIONTYPEID == (int)OperationTypeEnum.LoanManagement
-                                  && b.OPERATIONPERFORMED == false && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                                  && b.OPERATIONPERFORMED == false 
+                                  && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
-                                  && !productTypes.Contains(a.TBL_PRODUCT.PRODUCTTYPEID)
+                                  && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                                    //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                    //orderby b.DATECREATED descending
                                    select new LoanViewModel
@@ -9619,7 +9618,6 @@ namespace FintrakBanking.Repositories.Credit
                 var applicationDate = generalSetup.GetApplicationDate();
                 List<short> productTypes = new List<short>();
                 productTypes.Add((short)LoanProductTypeEnum.CommercialLoan);
-                productTypes.Add((short)LoanProductTypeEnum.ForeignXRevolving);
 
 
                 var allFilteredLoan = (from a in context.TBL_LOAN
