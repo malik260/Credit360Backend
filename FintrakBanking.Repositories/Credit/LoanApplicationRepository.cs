@@ -2122,8 +2122,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanApplicationDetailViewModel> GetLoanApplicationsDetails(int companyId)
         {
-            var data = (from a in context.TBL_LOAN_APPLICATION
-                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+            var data = (from b in context.TBL_LOAN_APPLICATION_DETAIL 
+                        join a in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
                         where a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
                         && a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
                         select new LoanApplicationDetailViewModel()
@@ -2140,6 +2140,8 @@ namespace FintrakBanking.Repositories.Credit
                             loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
                             proposedProductId = b.PROPOSEDPRODUCTID,
                             proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            approvedProductName = b.TBL_PRODUCT1.PRODUCTNAME,
+                            approvedAmount = b.APPROVEDAMOUNT,
                             proposedTenor = b.PROPOSEDTENOR,
                             proposedAmount = b.PROPOSEDAMOUNT,
                             proposedInterestRate = b.PROPOSEDINTERESTRATE,
@@ -2153,6 +2155,10 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId)
+        {
+            return GetLoanApplicationsDetails(companyId).Where(x => x.loanApplicationId == loanApplicationId).ToList();
+        }
 
         public IEnumerable<LoanApplicationDetailViewModel> SearchLoanApplicationDetails(int companyId, string searchQuery)
         {

@@ -9,6 +9,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
     public interface IJobRequestRepository
     {
         // bool ChargeCustomerJob(CollateralViewModel model, string actionName, string actionType, int loanApplicationDetailId);
+        bool AddJobDocumentOnly(RequestDocumentViewModel model, byte[] file);
         IEnumerable<JobRequestViewModel> GetJobRequestByFilter(int staffId, int branchId, string filter);
         bool UpdateInvoiceStatus(JobRequestInvoiceViewModel model);
         List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId);
@@ -52,7 +53,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         //IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId);
         List<JobRequestViewModel> GetJobRequestLegalJobDetail();
         List<JobRequestDetailViewModel> GetJobRequestDetailsById(int jobRequestId);
-        bool AddJobDocument(RequestDocumentViewModel model, JobRequestViewModel requestModel, byte[] file);
+        string AddJobDocument(RequestDocumentViewModel model, JobRequestViewModel requestModel, byte[] file);
         bool AddJobReplyAndDocument(RequestDocumentViewModel model, byte[] file);
         bool UpdateJobDocument(RequestDocumentViewModel model, int documentId);
         IEnumerable<RequestDocumentViewModel> GetAllJobDocument();
