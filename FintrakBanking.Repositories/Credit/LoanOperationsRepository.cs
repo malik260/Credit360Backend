@@ -47,13 +47,13 @@ namespace FintrakBanking.Repositories.Credit
         bool USE_THIRD_PARTY_INTEGRATION = false;
         private ITwoFactorAuthIntegrationService twoFactoeAuth;
         private IAdminRepository admin;
-
+        private IAccreditedConsultantsRepository consultant;
 
         public LoanOperationsRepository(
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
             , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stagingContext,
-             ITwoFactorAuthIntegrationService _twoFactoeAuth, IAdminRepository _admin)
+             ITwoFactorAuthIntegrationService _twoFactoeAuth, IAdminRepository _admin, IAccreditedConsultantsRepository _consultant)
         {
 
             this.context = _context;
@@ -69,6 +69,7 @@ namespace FintrakBanking.Repositories.Credit
             this.stagingContext = _stagingContext;
             this.twoFactoeAuth = _twoFactoeAuth;
             this.admin = _admin;
+            this.consultant = _consultant;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -3531,7 +3532,7 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal output = 0;
 
-            if (interestAmount.Any())
+            if (interestAmount.Count() > 0)
             {
                 output = interestAmount.Sum();
             }
@@ -3626,8 +3627,8 @@ namespace FintrakBanking.Repositories.Credit
                                      pastDueInterestAmount = b.PASTDUEINTEREST,
                                      pastDuePrincipalAmount = b.PASTDUEPRINCIPAL,
                                  }).ToList().Select(x =>
-                                 {
-                                     x.periodInterestAmount = GetPeriodInterestAmount(x.loanId, x.paymentDate);
+                                 {                                     
+                                     x.periodInterestAmount = GetPeriodInterestAmountFromAccural(x.loanRefNo, x.companyId);  //GetPeriodInterestAmount(x.loanId, x.paymentDate);
                                      x.interestOnPastDueInterest = GetPeriodInterestOnPastDueInterestAmount(x.loanRefNo, x.companyId);
                                      x.interestOnPastDuePrincipal = GetPeriodInterestOnPastDuePrincipalAmount(x.loanRefNo, x.companyId);
                                      return x;
@@ -11669,6 +11670,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType()
         {
+          
             return (from data in context.TBL_OPERATIONS
                     where data.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
                     select new LoanOperationTypeViewModel()
@@ -18091,5 +18093,52 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion
+
+        public bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId)
+        {
+            var messageBody = "A recovery email";
+            var subject = "RECOVERY EMAIL";
+            if (accreditedConsultantId == 0) return false;
+
+            var data = consultant.GetAccreditedConsultants(companyId, accreditedConsultantId);
+            if (data == null) return false;
+
+            var email = (from m in context.TBL_ACCREDITEDCONSULTANT
+                         where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTID == accreditedConsultantId
+                         select new { m.EMAILADDRESS }).FirstOrDefault();
+
+            var emailLog = new TBL_MESSAGE_LOG
+            {
+                DATETIMERECEIVED = DateTime.Now,
+                FROMADDRESS = email.EMAILADDRESS,
+                TOADDRESS = email.EMAILADDRESS,
+                MESSAGEBODY = messageBody,
+                MESSAGESUBJECT = subject,
+                MESSAGESTATUSID = 1,
+                MESSAGETYPEID = 1,
+                OPERATIONID = (int)OperationsEnum.LoanRecovery,
+                SENDONDATETIME = DateTime.Now,
+
+            };
+
+            context.TBL_MESSAGE_LOG.Add(emailLog);
+
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                STAFFID = staffId,
+                BRANCHID = branchId,
+                DETAIL = $"A recovery Email has been sent to accredited consultant with consultantId  '{ accreditedConsultantId}' ",
+                // IPADDRESS = model.userIPAddress,
+                //URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
     }
 }

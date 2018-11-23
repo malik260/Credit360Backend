@@ -617,6 +617,7 @@ namespace FintrakBanking.Repositories.Admin
         //        throw new SecureException(ex.Message);
         //    }
         //}
+
         #endregion Users
 
         #region Group
@@ -908,6 +909,8 @@ namespace FintrakBanking.Repositories.Admin
             StaticHelpers.RestartService();
             return context.SaveChanges() > 0;
         }
+
+       
 
         #endregion
 
