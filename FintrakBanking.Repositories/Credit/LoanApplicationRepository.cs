@@ -654,7 +654,6 @@ namespace FintrakBanking.Repositories.Credit
                           && a.APPLICATIONSTATUSID == (short)LoanApplicationStatusEnum.ApplicationInProgress
                           && a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
 
-
                        orderby a.APPLICATIONDATE descending
 
                        select new
@@ -692,7 +691,7 @@ namespace FintrakBanking.Repositories.Credit
                            applicationTenor = Math.Round((double)a.APPLICATIONTENOR) * (12.0 / 365.0),
                            applicationAmount = a.APPLICATIONAMOUNT,
                            regionId = a.CAPREGIONID,
-                           requiredCollateralTypeId = a.REQUIRECOLLATERALTYPEID,
+                           requireCollateralTypeId = a.REQUIRECOLLATERALTYPEID,
                            preliminaryEvaluationId = a.LOANPRELIMINARYEVALUATIONID,
                            collateralDetail = a.COLLATERALDETAIL,
                            loanInformation = a.LOANINFORMATION,
@@ -838,6 +837,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return fields;
         }
+
         // PLEASE RENAME THIS METHOD NAME TO BE MORE DESCRIPTIVE like LoanApplicationChecklistValidation
         public LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId)//, object entity)
         {
@@ -847,6 +847,7 @@ namespace FintrakBanking.Repositories.Credit
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
 
+            var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
             bool isCamsolJobRequestSent = false;
             if (loanApplicationDetails.Any())
@@ -944,16 +945,22 @@ namespace FintrakBanking.Repositories.Credit
 
             } // loanApplicationDetails.Any()
 
+            ValidateJobRequests(applicationId, application.REQUIRECOLLATERALTYPEID, true);
+
             if (!isCamsolJobRequestSent)
                 throw new ConditionNotMetException("Job Request must be sent to CAMSOL before you can proceed.");
 
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
-                LoadCustomerTurnover(
-                   applicationId,
-                   loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                   (short)staffId
-                );
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                {
+                    LoadCustomerTurnover(
+                       applicationId,
+                       loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
+                       (short)staffId
+                    );
+                }
 
                 return new LoanApplicationUpdateMessage
                 {
@@ -997,6 +1004,29 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Comment = "New loan application";
 
             return workflow.LogActivity();
+        }
+
+        private bool ValidateJobRequests(int applicationId, int? requireCollateralTypeId = null, bool throwErrorMessage = false)
+        {
+            string errorMessage = String.Empty;
+            List<TBL_JOB_REQUEST> requests = new List<TBL_JOB_REQUEST>();
+
+            if (requireCollateralTypeId == (int)RequiredCollateralTypeEnum.ImmovablePropertyCollateral)
+            {
+                requests = context.TBL_JOB_REQUEST
+                    .Where(x => x.TARGETID == applicationId
+                    && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+                    && x.JOBTYPEID == (short)JobTypeEnum.legal
+                    && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
+                ).ToList();
+
+                if (requests.Count() > 0) errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
+            }
+
+            // var test = requests;
+
+            if (throwErrorMessage) throw new SecureException(errorMessage);
+            return requests.Count() > 0;
         }
 
         public int? GetFirstReceiverLevel(int staffId, int operationId, short? productClassId, bool next = false)
@@ -1101,16 +1131,8 @@ namespace FintrakBanking.Repositories.Credit
                 UpdateLoanApplication(loan);
             }
 
-            try
-            {
-                response = context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                //
-            }
-
-
+            response = context.SaveChanges();
+           
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
             if (response > 0 && !loan.isNewApplication)
@@ -1353,7 +1375,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.APPLICATIONTENOR = application.Max(c => c.PROPOSEDTENOR);
             this.loanData.COLLATERALDETAIL = loan.collateralDetail;
             this.loanData.CAPREGIONID = loan.regionId;
-            this.loanData.REQUIRECOLLATERALTYPEID = loan.requiredCollateralTypeId;
+            this.loanData.REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -3747,8 +3769,7 @@ namespace FintrakBanking.Repositories.Credit
                             //customerAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER
                         });
             var result = data.ToList();
-            var test = result.Count();
-
+            // var test = result.Count();
             return result;
         }
 

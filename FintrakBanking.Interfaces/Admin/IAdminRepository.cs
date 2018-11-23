@@ -38,6 +38,8 @@ namespace FintrakBanking.Interfaces.Admin
 
         //   Object ManageUserAccount(int userId, int lockStatus);
 
+        List<string> GetUserActivitiesByUser(int userId);
+
         #endregion Users
 
         #region Group

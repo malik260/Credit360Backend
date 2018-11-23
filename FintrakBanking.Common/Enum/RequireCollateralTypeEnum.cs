@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FintrakBanking.Common.Enum
 {
-    public enum RequiredCollateralTypeEnum
+    public enum RequireCollateralTypeEnum
     {
         ImmovablePropertyCollateral = 1,
         OtherCollateral = 2,

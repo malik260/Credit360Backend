@@ -418,7 +418,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.GetApprovedLoanReviewRemedial();
+                var userId = token.GetStaffId;
+
+                var data = loanRepo.GetApprovedLoanReviewRemedial(userId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -971,7 +973,28 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("sent-email-for-recovery/{accreditedConsultantId}")]
+        public HttpResponseMessage SendEmailForRecovery( int accreditedConsultantId)
+        {
+            try
+            {
+                var data = repo.SendEmailToRecoveryAgent(token.GetCompanyId,token.GetStaffId,(short)token.GetBranchId, accreditedConsultantId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }
