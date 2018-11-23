@@ -101,7 +101,7 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("filter-job-request-by-status/{status}")]
+        [Route("filter-job-request-by-status/{filter}")]
         public HttpResponseMessage GetJobRequestByFilter(string filter)
         {
             var data = repo.GetJobRequestByFilter(token.GetStaffId, token.GetBranchId, filter);
@@ -888,41 +888,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
-
-        //[HttpGet]
-        //[Route("operation-staff/{operationId}")]
-        //public HttpResponseMessage GetOperationStaff(int operationId)
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetOperationStaff(operationId);
-
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("job-request/group")]
-        //public HttpResponseMessage GetJobRequestByGroupId()
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetJobRequestByGroupId(token.GetStaffId);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-        //    }
-        //}
 
     }
 }

@@ -148,6 +148,7 @@
     <Compile Include="Enum\ProductClassProcessEnum.cs" />
     <Compile Include="Enum\ProductClassEnum.cs" />
     <Compile Include="Enum\RequestStatusEnum.cs" />
+    <Compile Include="Enum\RequireCollateralTypeEnum.cs" />
     <Compile Include="Enum\RequiredCollateralTypeEnum.cs" />
     <Compile Include="Enum\SourceApplicationEnum.cs" />
     <Compile Include="Enum\ProcessViewScopeEnum.cs" />

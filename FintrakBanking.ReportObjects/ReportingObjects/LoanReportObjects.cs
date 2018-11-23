@@ -309,22 +309,25 @@ namespace FintrakBanking.ReportObjects
 
             }
         }
-        public IEnumerable<RunningLoansViewModel> GetActiveRuningLoans(DateTime startDate, DateTime endDate, int companyId, string loanRefNo, short? branchId, int? productClassId, int staffId)
+
+        public IEnumerable<DisburstLoanViewModel> RunningFacilities(DateTime startDate, DateTime endDate, int companyId, int staffId, string crmSCode)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var data = from a in context.TBL_LOAN
+                //  var approvedCustomerSentivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
+                IQueryable< DisburstLoanViewModel> data = from a in context.TBL_LOAN
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                           where (a.LOANSTATUSID== (int)LoanStatusEnum.Active  && a.COMPANYID == companyId)
+                           where (a.ISDISBURSED && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                             && DbFunctions.TruncateTime(a.DISBURSEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.DISBURSEDATE) <= DbFunctions.TruncateTime(endDate)
+                         && a.COMPANYID == companyId)
+                         //&& (a.BRANCHID == branchId || branchId == null || branchId == 0)
+                        
+                           //  && a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID <= approvedCustomerSentivityLevelId
 
-                           select new RunningLoansViewModel
+                           select new DisburstLoanViewModel
                            {
-                               crmsCode = a.CRMSCODE,
+                               cRMSCode = a.CRMSCODE,
                                bookingRef = a.LOANREFERENCENUMBER,
-                               pastDuePrincipal = a.PASTDUEPRINCIPAL,
-                               pastDueInterest = a.PASTDUEINTEREST,
-                               interestOnPastDuePrincipal=a.INTERESTONPASTDUEPRINCIPAL,
-                               interestOnPastDueInterest =a.INTERESTONPASTDUEINTEREST,
                                outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
                                approvedInterestRate = a.INTERESTRATE,
                                outstandingInterest = a.OUTSTANDINGINTEREST,
@@ -343,16 +346,33 @@ namespace FintrakBanking.ReportObjects
                                exchangeValue = (a.EXCHANGERATE * (double)a.PRINCIPALAMOUNT),
                                facilityCurrency = a.TBL_CURRENCY.CURRENCYCODE,
                                maturitydate = a.MATURITYDATE,
-                               productId = a.PRODUCTID,
                                status = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
-                               branchId = a.BRANCHID
-
+                              
                            };
-                return data.ToList();
+               // var output = data.ToList();
+
+                if (crmSCode == "Yes")
+                {
+
+                    return data.Where(u=>u.cRMSCode != null).ToList();
+
+                }
+                else if(crmSCode == "No")
+                {
+                    return data.Where(x => x.cRMSCode == null).ToList();
+                }
+                else
+                {
+                    return data.ToList();
+                }
+                //var output = data.ToList();
+
+                ///return output;
 
 
             }
         }
+
         public static List<AllLoanViewModel> LoanReport(int ProductClassId, DateTime startDate, DateTime endDdate, int companyId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -1524,7 +1544,7 @@ namespace FintrakBanking.ReportObjects
 
                 return reportData.ToList();
             }
-
+            
 
         }
 
@@ -1660,6 +1680,51 @@ namespace FintrakBanking.ReportObjects
 
             // businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
 
+        }
+
+        public List<LoanViewModel> InActiveContigentLiability()
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var loanDetails = (from a in context.TBL_LOAN_CONTINGENT
+                               join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
+                               join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                               join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                               join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                               join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                               join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                               join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
+                               join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
+                               join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
+                               where a.LOANSTATUSID == (int)LoanStatusEnum.Inactive
+                              
+                               select new LoanViewModel
+                               {
+                                   loanId = a.CONTINGENTLOANID,
+                                   customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                   branchName = br.BRANCHNAME,
+                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                   applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                   productName = pr.PRODUCTNAME,
+                                   productTypeName = pr.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                   relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                   relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                   effectiveDate = a.EFFECTIVEDATE,
+                                   maturityDate = a.MATURITYDATE,
+                                   bookingDate = a.BOOKINGDATE,
+                                   isDisbursedState = a.ISDISBURSED ? "True" : "False",
+                                   disburserComment = a.DISBURSERCOMMENT,
+                                   operationName = tt.OPERATIONNAME,
+                                   casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                   productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+                                   loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                   currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                   ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
+                                   loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
+                                   productPriceIndex = ld.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == ld.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
+
+                               }).ToList();
+            return loanDetails;
         }
 
     }

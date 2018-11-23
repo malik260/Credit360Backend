@@ -8,6 +8,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanPreliminaryEvaluationRepository
     {
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanPreliminaryEvaluationMappedToApplication();
         Task<LoanPreliminaryEvaluationViewModel> AddPreliminaryEvaluation(LoanPreliminaryEvaluationViewModel model);
 
         Task<LoanPreliminaryEvaluationViewModel> AddMultiplePreliminaryEvaluation(List<LoanPreliminaryEvaluationViewModel> model);

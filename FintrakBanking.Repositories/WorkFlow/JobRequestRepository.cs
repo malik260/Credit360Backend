@@ -477,9 +477,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                          acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                          systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
                          loggedInStaffId = staffId,
-                         
-                         refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l=>l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
-                         ? context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
+                         refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID ) != null
+                         ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).LastOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
 
                          from = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME +" " + x.TBL_STAFF.LASTNAME,
                          fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
@@ -513,28 +513,41 @@ namespace FintrakBanking.Repositories.WorkFlow
             switch (filtered)
             {
                 case "completed":
-                    return GetAllJobRequest(staffId).Where(x=>x.responseComment != null).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    return GetAllJobRequest(staffId).Where(x=>x.responseComment != null || x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
+                    //break;
+
+                case "approved":
+                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
+                    //break;
 
                 case "pending":
-                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Pending).OrderByDescending(x => x.jobRequestId);
+                    //break;
 
                 case "in-progress":
                     return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Processing).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    //break;
 
                 case "cancelled":
                     return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Cancel).OrderByDescending(x => x.jobRequestId);
-                    break;
+                   // break;
 
                 case "disapproved":
                     return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Disapproved).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    //break;
 
-                default :
+                case "assigned":
+                    return GetAllJobRequest(staffId).Where(x => x.reassignedTo != null).OrderByDescending(x => x.jobRequestId);
+                    //break;
+
+                case "unassigned":
+                    return GetAllJobRequest(staffId).Where(x => x.reassignedTo == null).OrderByDescending(x => x.jobRequestId);
+                    //break;
+
+
+                default:
                      return GetAllJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
-                    break;
+                    //break;
 
             }
         }
