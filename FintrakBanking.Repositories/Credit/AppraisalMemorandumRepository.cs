@@ -910,7 +910,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationAmount = a.APPLICATIONAMOUNT,
                 dateTimeCreated = a.DATETIMECREATED,
                 collateralDetail = a.COLLATERALDETAIL,
-                LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
+                LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false)
                                             .Select(c => new LoanApplicationDetailViewModel
                                             {
                                                 equityAmount = c.EQUITYAMOUNT,
