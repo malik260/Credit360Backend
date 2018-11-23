@@ -13,8 +13,9 @@ namespace FintrakBanking.Common.Enum
         camsolCheck = 4,
         blackBookCheck   = 5,
         others = 6
-
     }
+
+   
 
     public enum JobRequestStatusEnum
     {

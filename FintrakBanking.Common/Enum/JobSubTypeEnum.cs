@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.Common.Enum
 {
-    public enum JobSubTypeEnum
+    public enum JobOtherSubTypeEnum
     {
         LegalSearch = LegalJob.Search,
         LegalVerification = LegalJob.Verification,
@@ -17,6 +17,13 @@ namespace FintrakBanking.Common.Enum
         BlackBookCheck = 6,
         OtherBlackBookCheckFunction = 7
     }
+
+    public enum JobSubTypeEnum
+    {
+        CollateralRelated = 1,
+        BondAndGuaranteeVetting = 2,
+    }
+
     public enum LegalJob
     {
         Search = 1,

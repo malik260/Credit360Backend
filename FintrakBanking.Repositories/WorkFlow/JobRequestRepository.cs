@@ -55,6 +55,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 JOBREQUESTCODE = model.jobRequestCode,
                 JOBTYPEID = model.jobTypeId,
+                JOB_SUB_TYPEID = model.jobSubTypeId,
                 JOB_TITLE = model.requestTitle,
                 SENDERSTAFFID = model.createdBy,
                 RECEIVERSTAFFID = model.receiverStaffId == 0 ? null : model.receiverStaffId,
@@ -560,7 +561,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var details = (from x in this.context.TBL_JOB_REQUEST_DETAIL
                            join b in context.TBL_JOB_REQUEST on x.JOBREQUESTID equals b.JOBREQUESTID
-                           where x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
+                           where x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalVerification || x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.OtherLegalJobs
                            && x.DELETED == false
                            select new JobRequestDetailViewModel
                            {
@@ -605,10 +606,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             List<JobRequestDetailViewModel> jobDetailList = new List<JobRequestDetailViewModel>();
             foreach(var i in jobRequest)
             {
-                var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == i.JOBREQUESTID && ((x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting) 
-                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch) 
-                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification) 
-                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs)) && x.ACCREDITEDCONSULTANTPAID == false).ToList();
+                var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == i.JOBREQUESTID && ((x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalCharting) 
+                || (x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalSearch) 
+                || (x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalVerification) 
+                || (x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.OtherLegalJobs)) && x.ACCREDITEDCONSULTANTPAID == false).ToList();
                 decimal chargeAmount = 0;
                 var jobSubTypeName = string.Empty; 
                 var jobTypeName = string.Empty;
@@ -708,7 +709,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //var job = context.TBL_JOB_REQUEST.Where(x => x. == (short)JobSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs);
             var details = (from x in this.context.TBL_JOB_REQUEST
                            join b in context.TBL_JOB_REQUEST_DETAIL on x.JOBREQUESTID equals b.JOBREQUESTID
-                           where b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
+                           where b.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalCharting || b.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalSearch || b.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalVerification || b.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.OtherLegalJobs
                            && b.DELETED == false
                            select new JobRequestViewModel
                            {
@@ -975,10 +976,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
             var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId
-            && ((x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch)
-            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification)
-            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting)
-            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs))
+            && ((x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalSearch)
+            || (x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalVerification)
+            || (x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.LegalCharting)
+            || (x.JOB_SUB_TYPEID == (short)JobOtherSubTypeEnum.OtherLegalJobs))
             ).ToList();
 
             var auditDetail = "";
@@ -1115,7 +1116,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalCharting,
+                    jobSubTypeId = (short)JobOtherSubTypeEnum.LegalCharting,
                     amount = model.chartChargeAmount, //collateralStateDetails.CHARTINGAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -1131,7 +1132,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalSearch,
+                    jobSubTypeId = (short)JobOtherSubTypeEnum.LegalSearch,
                     amount = model.searchChargeAmount, //collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -1147,7 +1148,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalVerification,
+                    jobSubTypeId = (short)JobOtherSubTypeEnum.LegalVerification,
                     amount = model.verificationChargeAmount, //collateralStateDetails.VERIFICATIONAMOUNT,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -1163,7 +1164,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.OtherLegalJobs,
+                    jobSubTypeId = (short)JobOtherSubTypeEnum.OtherLegalJobs,
                     amount = model.additionalCharge,
                     description = model.additionalChargeJustification,
                     jobRequestId = model.jobRequestId,

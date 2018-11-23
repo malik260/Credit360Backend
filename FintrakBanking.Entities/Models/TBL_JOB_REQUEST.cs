@@ -26,6 +26,8 @@ namespace FintrakBanking.Entities.Models
 
         public short JOBTYPEID { get; set; }
 
+        public short ? JOB_SUB_TYPEID { get; set; }
+
         public int SENDERSTAFFID { get; set; }
 
         public int? RECEIVERSTAFFID { get; set; }
