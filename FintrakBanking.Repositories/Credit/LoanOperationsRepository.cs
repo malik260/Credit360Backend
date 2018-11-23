@@ -12496,6 +12496,16 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                         {
+                            //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
+                            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                            {
+                                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                                if (authenticated.authenticated == false)
+                                    throw new TwoFactorAuthenticationException(authenticated.message);
+                            }
+                            twoFADetails.skipAuthentication = true;
+
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                             reviewRecord.OPERATIONCOMPLETED = true;
                             context.SaveChanges();

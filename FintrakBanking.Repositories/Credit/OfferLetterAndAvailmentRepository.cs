@@ -2043,14 +2043,17 @@ namespace FintrakBanking.Repositories.Credit
         {
             foreach (var item in loanApplicationDetails)
             {
-                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID != (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                    throw new ConditionNotMetException("There are pending job request for this application.");
+
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
                     throw new ConditionNotMetException("There are unapproved middle office request.");
-                if(item.TBL_LOAN_APPLICATION.PRODUCTCLASSID != (short)ProductClassEnum.BondAndGuarantees)
+
+                if (item.TBL_LOAN_APPLICATION.PRODUCTCLASSID != (short)ProductClassEnum.BondAndGuarantees)
                 {
-                    if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID != (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
-                        throw new ConditionNotMetException("There are unattended job request which must be attended to.");
+                    if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID == (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                        throw new ConditionNotMetException("There are unattended Legal job request which must be attended to.");
                 }
-                
             }
         }
 
