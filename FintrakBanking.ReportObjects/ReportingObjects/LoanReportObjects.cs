@@ -109,11 +109,10 @@ namespace FintrakBanking.ReportObjects
         public static IList<LoanStatementViewModel> LoanStatement(int companyId, int loanId)
          {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
-            {
-                IQueryable<LoanStatementViewModel> Loandata = (from a in context.TBL_LOAN
+            {               
+                IQueryable<LoanStatementViewModel> principalRepayment = (from a in context.TBL_LOAN
                                                               join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
-                                                              where a.COMPANYID == companyId && a.LOANSTATUSID == 1
-                                                              && a.TERMLOANID == loanId 
+                                                              where a.COMPANYID == companyId && a.TERMLOANID == loanId 
                                                               && b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanSchedule
                                                               select new LoanStatementViewModel()
                                                               {
@@ -137,7 +136,120 @@ namespace FintrakBanking.ReportObjects
                                                                   discription = b.DESCRIPTION,
                                                                   transactionCurrency = b.TBL_CURRENCY.CURRENCYCODE,
                                                               });
-                var list = Loandata.OrderBy(x => x.valueDate).ToList();
+
+                IQueryable<LoanStatementViewModel> interstRepayment = (from a in context.TBL_LOAN
+                                                                         join b in context.TBL_FINANCE_TRANSACTION on a.LOANREFERENCENUMBER equals b.SOURCEREFERENCENUMBER
+                                                                         where a.COMPANYID == companyId && a.TERMLOANID == loanId
+                                                                         && b.TBL_CHART_OF_ACCOUNT.GLCLASSID == (int)ChartOfAccountClassEnum.LoanInterestReceivable
+                                                                         select new LoanStatementViewModel()
+                                                                         {
+                                                                             //balance = a.OUTSTANDINGPRINCIPAL,
+                                                                             companyName = a.TBL_COMPANY.NAME,
+                                                                             logoPath = a.TBL_COMPANY.LOGOPATH,
+                                                                             firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                                                                             lastName = a.TBL_CUSTOMER.LASTNAME,
+                                                                             middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                                                                             accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                                                             productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                                                             loanRefrenceNumber = a.LOANREFERENCENUMBER,
+                                                                             applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                                             grantedAmount = a.PRINCIPALAMOUNT,
+                                                                             loanCurrency = a.TBL_CURRENCY.CURRENCYCODE,
+                                                                             productId = a.PRODUCTID,
+                                                                             postDate = b.POSTEDDATE,
+                                                                             valueDate = b.VALUEDATE,
+                                                                             creditAmount = b.CREDITAMOUNT,
+                                                                             debitAmount = b.DEBITAMOUNT,
+                                                                             discription = b.DESCRIPTION,
+                                                                             transactionCurrency = b.TBL_CURRENCY.CURRENCYCODE,
+                                                                         });
+
+                //var loan = context.TBL_LOAN.Find(loanId);
+                
+                List<short> interestItems = new List<short>() { (short)DailyAccrualCategory.TermLoan, (short)DailyAccrualCategory.PastDueInterest, (short)DailyAccrualCategory.PastDuePrincipal };
+                
+
+                IQueryable<LoanStatementViewModel> interestAccuralsSub = (from a in context.TBL_LOAN
+                                                                       join b in context.TBL_DAILY_ACCRUAL on a.LOANREFERENCENUMBER equals b.REFERENCENUMBER
+                                                                       join c in context.TBL_DAILY_ACCRUAL_CATEGORY on b.CATEGORYID equals c.CATEGORYID
+                                                                       where a.COMPANYID == companyId && a.TERMLOANID == loanId && b.COMPANYID == companyId
+                                                                        && interestItems.Contains(b.CATEGORYID) 
+                                                                        && b.REPAYMENTPOSTEDSTATUS == true
+                                                                        && b.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest                                                                       
+                                                                       select new LoanStatementViewModel()
+                                                                       {
+                                                                           //balance = a.OUTSTANDINGPRINCIPAL,
+                                                                           companyName = a.TBL_COMPANY.NAME,
+                                                                           logoPath = a.TBL_COMPANY.LOGOPATH,
+                                                                           firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                                                                           lastName = a.TBL_CUSTOMER.LASTNAME,
+                                                                           middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                                                                           accountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                                                           productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                                                           loanRefrenceNumber = a.LOANREFERENCENUMBER,
+                                                                           applicationRefrenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                                                           grantedAmount = a.PRINCIPALAMOUNT,
+                                                                           loanCurrency = a.TBL_CURRENCY.CURRENCYCODE,
+                                                                           productId = a.PRODUCTID,
+                                                                           postDate = b.DEMANDDATE.GetValueOrDefault(),
+                                                                           valueDate = b.DEMANDDATE.GetValueOrDefault(),
+                                                                           creditAmount = b.DAILYACCURALAMOUNT,
+                                                                           debitAmount = 0,
+                                                                           discription = c.CATEGORYNAME,
+                                                                           transactionCurrency = b.TBL_CURRENCY.CURRENCYCODE,
+                                                                       });
+
+                IQueryable<LoanStatementViewModel> interestAccurals = (from a in interestAccuralsSub
+                                        group a by new { a.companyName, a.logoPath, a.firstName, a.lastName, a.middleName, a.accountNumber, a.productName, a.loanRefrenceNumber,
+                                                         a.applicationRefrenceNumber, a.grantedAmount, a.loanCurrency, a.productId, a.postDate, a.valueDate,
+                                                         a.discription, a.transactionCurrency
+                                                       } into groupedQ
+                                                                       select new LoanStatementViewModel()
+                                                                       {
+                                                                           companyName = groupedQ.Key.companyName,
+                                                                           logoPath = groupedQ.Key.logoPath,
+                                                                           firstName = groupedQ.Key.firstName,
+                                                                           lastName = groupedQ.Key.lastName,
+                                                                           middleName = groupedQ.Key.middleName,
+                                                                           accountNumber = groupedQ.Key.accountNumber,
+                                                                           productName = groupedQ.Key.productName,
+                                                                           loanRefrenceNumber = groupedQ.Key.loanRefrenceNumber,
+                                                                           applicationRefrenceNumber = groupedQ.Key.applicationRefrenceNumber,
+                                                                           grantedAmount = groupedQ.Key.grantedAmount,
+                                                                           loanCurrency = groupedQ.Key.loanCurrency,
+                                                                           productId = groupedQ.Key.productId,
+                                                                           postDate = groupedQ.Key.postDate,
+                                                                           valueDate = groupedQ.Key.valueDate,
+                                                                           creditAmount = groupedQ.Sum(i => i.creditAmount),
+                                                                           debitAmount = groupedQ.Sum(i => i.debitAmount),
+                                                                           discription = groupedQ.Key.discription,
+                                                                           transactionCurrency = groupedQ.Key.transactionCurrency
+                                                                       }
+
+
+
+                                        );
+
+                //var model = (from a in context.TBL_DAILY_ACCRUAL
+                //             where a.DATE == DbFunctions.TruncateTime(applicationDate) && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan
+                //             group a by new { a.PRODUCTID, a.BRANCHID, a.COMPANYID, a.CURRENCYID } into groupedQ
+                //             select new DailyInterestAccrualViewModel()
+                //             {
+                //                 productId = groupedQ.Key.PRODUCTID,
+                //                 branchId = groupedQ.Key.BRANCHID,
+                //                 companyId = groupedQ.Key.COMPANYID,
+                //                 currencyId = groupedQ.Key.CURRENCYID,
+                //                 dailyAccuralAmount = (double)groupedQ.Sum(i => (double)i.DAILYACCURALAMOUNT * i.EXCHANGERATE),
+                //             }).ToList();
+
+                //var pastDueInterestDaily = (from a in context.TBL_DAILY_ACCRUAL
+                //                            where a.REFERENCENUMBER == item.loanRefNo && a.COMPANYID == item.companyId
+                //                            && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest && a.REPAYMENTPOSTEDSTATUS == false
+                //                            && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                //                            select a);
+
+                var list = (principalRepayment.Union(interstRepayment).Union(interestAccurals)).OrderBy(x => x.valueDate).ToList();
+
                 decimal rbalance = 0;
                 list = list.Select(i => {
                     rbalance += i.creditAmount - i.debitAmount;
@@ -1568,6 +1680,51 @@ namespace FintrakBanking.ReportObjects
 
             // businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
 
+        }
+
+        public List<LoanViewModel> InActiveContigentLiability()
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var loanDetails = (from a in context.TBL_LOAN_CONTINGENT
+                               join tt in context.TBL_OPERATIONS on a.OPERATIONID equals tt.OPERATIONID
+                               join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
+                               join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
+                               join lp in context.TBL_LOAN_APPLICATION on ld.LOANAPPLICATIONID equals lp.LOANAPPLICATIONID
+                               join at in context.TBL_LOAN_APPLICATION_TYPE on lp.LOANAPPLICATIONTYPEID equals at.LOANAPPLICATIONTYPEID
+                               join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                               join pr in context.TBL_PRODUCT on a.PRODUCTID equals pr.PRODUCTID
+                               join st in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals st.STAFFID
+                               join stm in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals stm.STAFFID
+                               where a.LOANSTATUSID == (int)LoanStatusEnum.Inactive
+                              
+                               select new LoanViewModel
+                               {
+                                   loanId = a.CONTINGENTLOANID,
+                                   customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                   branchName = br.BRANCHNAME,
+                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                   applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                   productName = pr.PRODUCTNAME,
+                                   productTypeName = pr.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                   relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                                   relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
+                                   effectiveDate = a.EFFECTIVEDATE,
+                                   maturityDate = a.MATURITYDATE,
+                                   bookingDate = a.BOOKINGDATE,
+                                   isDisbursedState = a.ISDISBURSED ? "True" : "False",
+                                   disburserComment = a.DISBURSERCOMMENT,
+                                   operationName = tt.OPERATIONNAME,
+                                   casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                   productAccountName = a.TBL_PRODUCT.PRODUCTNAME,
+                                   loanTypeName = at.LOANAPPLICATIONTYPENAME,
+                                   currency = a.TBL_CURRENCY.CURRENCYNAME,
+                                   ApprovalStatus = context.TBL_APPROVAL_STATUS.Where(x => x.APPROVALSTATUSID == a.APPROVALSTATUSID).Select(x => x.APPROVALSTATUSNAME).FirstOrDefault(),
+                                   loanStatus = context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == a.LOANSTATUSID).Select(x => x.ACCOUNTSTATUS).FirstOrDefault(),
+                                   productPriceIndex = ld.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == ld.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
+
+                               }).ToList();
+            return loanDetails;
         }
 
     }

@@ -88,6 +88,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);
 
+        bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId);
+
         #region COMMERCIAL PAPER LOANS
         bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);
         IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
