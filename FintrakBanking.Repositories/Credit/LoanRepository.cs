@@ -3836,18 +3836,20 @@ namespace FintrakBanking.Repositories.Credit
         private string getLoanDisbursementDescription(LoanViewModel model)
         {
             var loanDescription = "Loan disbursement";
-            if ((int)model.operationId == (short)OperationsEnum.TermLoanBooking)
-            {
-                loanDescription = "Term Loan Disbursement";
-                if (model.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating )
-                    loanDescription = "Self Liquidating Loan Disbursement";
-                if (model.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-                    loanDescription = "Syndicated Loan Disbursement";
-            }
 
-            if ((int)model.operationId == (short)OperationsEnum.CommercialLoanBooking)
+            if (model.productTypeId == (short)LoanProductTypeEnum.TermLoan)
+                loanDescription = "Term Loan Disbursement";
+
+            if (model.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
+                loanDescription = "Self Liquidating Loan Disbursement";
+
+            if (model.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+                loanDescription = "Syndicated Loan Disbursement";
+
+            if ((int)model.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
                 loanDescription = "Commercial Loan Disbursement";
-            if ((int)model.operationId == (short)OperationsEnum.ForeignExchangeLoanBooking)
+
+            if ((int)model.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
                 loanDescription = "fx revolving Loan Disbursement";
 
             return loanDescription;
@@ -6800,7 +6802,11 @@ namespace FintrakBanking.Repositories.Credit
                                  loanReferenceNumber = a.LOANREFERENCENUMBER,
                                  principalAmount = a.PRINCIPALAMOUNT,
                                  loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                 lmsApplicationDetailId = r.LOANREVIEWAPPLICATIONID
+                                 lmsApplicationDetailId = r.LOANREVIEWAPPLICATIONID,
+                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                 productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                 currencyId = a.CURRENCYID,
+                                 currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
                                  //applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
                                  //principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID != null ? (short)a.PRINCIPALFREQUENCYTYPEID : (short)0,
                                  //pricipalFrequencyTypeName = a.TBL_FREQUENCY_TYPE.MODE,
