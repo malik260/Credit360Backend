@@ -3531,7 +3531,7 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal output = 0;
 
-            if (interestAmount.Any())
+            if (interestAmount.Count() > 0)
             {
                 output = interestAmount.Sum();
             }
@@ -3626,8 +3626,8 @@ namespace FintrakBanking.Repositories.Credit
                                      pastDueInterestAmount = b.PASTDUEINTEREST,
                                      pastDuePrincipalAmount = b.PASTDUEPRINCIPAL,
                                  }).ToList().Select(x =>
-                                 {
-                                     x.periodInterestAmount = GetPeriodInterestAmount(x.loanId, x.paymentDate);
+                                 {                                     
+                                     x.periodInterestAmount = GetPeriodInterestAmountFromAccural(x.loanRefNo, x.companyId);  //GetPeriodInterestAmount(x.loanId, x.paymentDate);
                                      x.interestOnPastDueInterest = GetPeriodInterestOnPastDueInterestAmount(x.loanRefNo, x.companyId);
                                      x.interestOnPastDuePrincipal = GetPeriodInterestOnPastDuePrincipalAmount(x.loanRefNo, x.companyId);
                                      return x;

@@ -61,10 +61,12 @@ namespace FintrakBaking.BranchUpdateService
 
                 string UpdateRespose = newBranch.UpdateStaffInformation();
                 string AddRespose = newBranch.AddNewBranches();
+
                 excep.CurrencyExchangeRateExtraction();
                 excep.CustomerAccountBalances();
                 excep.CustomerAccountExtraction();
                 excep.ProductPricingExtraction();
+                excep.DeactivateInactiveUsers();
 
 
 

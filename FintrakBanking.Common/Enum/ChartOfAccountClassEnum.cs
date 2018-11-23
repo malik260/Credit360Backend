@@ -14,6 +14,8 @@ namespace FintrakBanking.Common.Enum
 	TreasuryBillSchedule =4,
 	PlacementSchedule = 5,
 	BondSchedule = 6,
-	NoScheduleGL =7
+	NoScheduleGL =7,
+    ContingentLiabilitySchedule = 8,
+    LoanInterestReceivable = 9
     }
 }
