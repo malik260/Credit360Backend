@@ -75,6 +75,28 @@ namespace FintrakBaking.BranchUpdateService.Stagging_Logic
 
         }
 
+        public void DeactivateInactiveUsers()
+        {
+            // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
+
+            var currentDateTime = DateTime.Now;
+
+            var profileSetting = coreContext.TBL_PROFILE_SETTING.FirstOrDefault();
+
+            var inactiveUsers = (from a in coreContext.TBL_PROFILE_USER
+                                 where a.ISACTIVE == true
+                                 && a.LASTLOGINDATE.GetValueOrDefault(new DateTime(2000, 1, 1)).AddDays(profileSetting.MAXPERIODOFUSERINACTIVITY) >= currentDateTime
+                                 select a);
+
+            foreach (var item in inactiveUsers)
+            {
+                item.ISACTIVE = false;
+                item.DEACTIVATEDDATE = currentDateTime;
+            }
+
+            coreContext.SaveChanges();
+        }
+
         public   void CurrencyExchangeRateExtraction()
         {
             var applicationDate = coreContext.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;

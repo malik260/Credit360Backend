@@ -748,7 +748,8 @@ namespace FintrakBanking.Repositories.Credit
                         proposedRate = x.d.PROPOSEDINTERESTRATE,
                         proposedAmount = x.d.PROPOSEDAMOUNT,
                         proposedProductId = x.d.PROPOSEDPRODUCTID,
-                        proposedProductIdType = context.TBL_PRODUCT.Where(f => f.PRODUCTID == x.d.PROPOSEDPRODUCTID).Select(q => q.PRODUCTTYPEID).FirstOrDefault(),
+                        proposedProductClassId = x.d.TBL_PRODUCT.PRODUCTCLASSID,
+                        //proposedProductIdType = context.TBL_PRODUCT.Where(f => f.PRODUCTID == x.d.PROPOSEDPRODUCTID).Select(q => q.PRODUCTTYPEID).FirstOrDefault(),
 
                         approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
                         approvedTenor = x.d.APPROVEDTENOR,
@@ -774,7 +775,8 @@ namespace FintrakBanking.Repositories.Credit
                         conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
                         transactionDynamics = x.d.TRANSACTIONDYNAMICS,
 
-                    }).ToList();
+                    })
+                    .ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
                 var duplications = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => customerIds.Contains(x.CUSTOMERID)
@@ -782,11 +784,9 @@ namespace FintrakBanking.Repositories.Credit
                     && x.LOANAPPLICATIONID != applicationId
                     && x.STATUSID == (int)ApprovalStatusEnum.Approved
                 )
-                .Join(
-                    context.TBL_LOAN_APPLICATION.Where(x => 
-                        x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                        , d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
+                .Join(context.TBL_LOAN_APPLICATION.Where(x => x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved), 
+                        d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
                 .Select(x => new DedupeApplicationViewModel
                 {
                     applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
@@ -798,29 +798,10 @@ namespace FintrakBanking.Repositories.Credit
                     productName = x.d.TBL_PRODUCT.PRODUCTNAME,
                 })
                 .ToList();
-            //var syndicated = new List<SyndicatedLoanDetailViewModel>();
-            //foreach (var item in facilities)
-            //{
-            //    syndicated = context.TBL_LOAN_APPLICATION_DETAIL//.Where(x => x.LOANAPPLICATIONID == applicationId)
-            //        .Join(context.TBL_LOAN_APPLICATION_DETL_SYN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId),
-            //        a => a.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (a, d) => new { a, d })
-            //        .Select(x => new SyndicatedLoanDetailViewModel
-            //        {
-            //            syndicationId = x.d.SYNDICATIONID,
-            //            loanApplicationDetailId = x.a.LOANAPPLICATIONDETAILID,
-            //            bankCode = x.d.BANKCODE,
-            //            bankName = x.d.BANKNAME,
-            //            amountContributed = x.d.AMOUNTCONTRIBUTED,
-            //            typeId = (short)x.d.PARTY_TYPEID,
-            //            typeName = context.TBL_LOAN_SYNDICATION_PARTY_TYP.Where(f => f.PARTY_TYPEID == x.d.PARTY_TYPEID).FirstOrDefault().PARTY_TYPENAME,
-            //        }).ToList();
-            //    details.syndicated.AddRange(syndicated);
-            //}
 
             details.duplications = duplications;
             details.facilities = facilities;
             details.application = GetLoanApplicationInformation(applicationId);
-            //details.syndicated = syndicated;
 
             return details;
         }
@@ -844,7 +825,7 @@ namespace FintrakBanking.Repositories.Credit
                     proposedRate = x.d.PROPOSEDINTERESTRATE,
                     proposedAmount = x.d.PROPOSEDAMOUNT,
                     proposedProductId = x.d.PROPOSEDPRODUCTID,
-                    proposedProductIdType = context.TBL_PRODUCT.Where(f=>f.PRODUCTID == x.d.PROPOSEDPRODUCTID).Select(q=>q.PRODUCTTYPEID).FirstOrDefault(),
+                    // proposedProductIdType = context.TBL_PRODUCT.Where(f=>f.PRODUCTID == x.d.PROPOSEDPRODUCTID).Select(q=>q.PRODUCTTYPEID).FirstOrDefault(),
 
                     approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
                     approvedTenor = x.d.APPROVEDTENOR,
@@ -1288,7 +1269,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var operationId = (int)OperationsEnum.CAM;
 
-            List<int> levels = general.GetRouteLevels(operationId, 1);
+            List<int> levels = general.GetRouteLevels(operationId, 1);//.ToList().Distinct();
 
             //var branches = context.TBL_BRANCH_REGION_STAFF.Where(x => x.STAFFID == staffId)
             //                .Join(context.TBL_BRANCH_REGION, s => s.REGIONID, r => r.REGIONID, (s, r) => new { s, r })
@@ -1318,6 +1299,7 @@ namespace FintrakBanking.Repositories.Credit
                 )
                 .OrderByDescending(x => x.LOANAPPLICATIONID)
                 .Join(context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                        && (x.RESPONSESTAFFID == null || (x.RESPONSESTAFFID == staffId && x.TOSTAFFID != null))
                         && x.TOAPPROVALLEVELID != null && levels.Contains((int)x.TOAPPROVALLEVELID)),
                     a => a.LOANAPPLICATIONID, b => b.TARGETID, (a, b) => new { a, b })
                 .Select(x => new RegionLoanApplicationViewModel
@@ -1353,7 +1335,7 @@ namespace FintrakBanking.Repositories.Credit
                         toStaffId = x.b.TOSTAFFID,
                         approvalTrailId = x.b.APPROVALTRAILID,
                 })
-                .GroupBy(d => d.timeIn)
+                .GroupBy(d => d.approvalTrailId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 

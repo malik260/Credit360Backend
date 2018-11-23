@@ -47,13 +47,13 @@ namespace FintrakBanking.Repositories.Credit
         bool USE_THIRD_PARTY_INTEGRATION = false;
         private ITwoFactorAuthIntegrationService twoFactoeAuth;
         private IAdminRepository admin;
-
+        private IAccreditedConsultantsRepository consultant;
 
         public LoanOperationsRepository(
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
             , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stagingContext,
-             ITwoFactorAuthIntegrationService _twoFactoeAuth, IAdminRepository _admin)
+             ITwoFactorAuthIntegrationService _twoFactoeAuth, IAdminRepository _admin, IAccreditedConsultantsRepository _consultant)
         {
 
             this.context = _context;
@@ -69,6 +69,7 @@ namespace FintrakBanking.Repositories.Credit
             this.stagingContext = _stagingContext;
             this.twoFactoeAuth = _twoFactoeAuth;
             this.admin = _admin;
+            this.consultant = _consultant;
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -968,7 +969,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     TBL_DAILY_ACCRUAL dailyAccrual = new TBL_DAILY_ACCRUAL();
 
-                    var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate/100) * item.availableBalance * (1 / item.daysInAYear));
+                    var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / 100) * item.availableBalance * (1 / item.daysInAYear));
 
                     dailyAccrual.DAILYACCURALAMOUNT = accuralAmount;
                     dailyAccrual.DAILYACCURALAMOUNT2 = 0;
@@ -3531,7 +3532,7 @@ namespace FintrakBanking.Repositories.Credit
 
             decimal output = 0;
 
-            if (interestAmount.Any())
+            if (interestAmount.Count() > 0)
             {
                 output = interestAmount.Sum();
             }
@@ -3626,8 +3627,8 @@ namespace FintrakBanking.Repositories.Credit
                                      pastDueInterestAmount = b.PASTDUEINTEREST,
                                      pastDuePrincipalAmount = b.PASTDUEPRINCIPAL,
                                  }).ToList().Select(x =>
-                                 {
-                                     x.periodInterestAmount = GetPeriodInterestAmount(x.loanId, x.paymentDate);
+                                 {                                     
+                                     x.periodInterestAmount = GetPeriodInterestAmountFromAccural(x.loanRefNo, x.companyId);  //GetPeriodInterestAmount(x.loanId, x.paymentDate);
                                      x.interestOnPastDueInterest = GetPeriodInterestOnPastDueInterestAmount(x.loanRefNo, x.companyId);
                                      x.interestOnPastDuePrincipal = GetPeriodInterestOnPastDuePrincipalAmount(x.loanRefNo, x.companyId);
                                      return x;
@@ -6281,7 +6282,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByContingent()
         {
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination
+                    where data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -6297,6 +6298,86 @@ namespace FintrakBanking.Repositories.Credit
             int loanRefResults = loanRef.Count();
 
             return loanRefResults;
+        }
+
+
+        public bool DeleteLoanContingentExist(int loanId, DateTime applicationDate)
+        {
+            bool output = false;
+
+            var removeLoan_Archive = (from p in context.TBL_LOAN_ARCHIVE
+                                      where p.LOANID == loanId && p.CHANGEEFFECTIVEDATE == applicationDate
+                                      select p);
+            var removeLoan_Schedule_Periodic_Archive = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
+                                                        where p.LOANID == loanId && p.ARCHIVEDATE == applicationDate
+                                                        select p);
+            var removeLoan_Schedule_Daily_Archive = (from p in context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV
+                                                     where p.LOANID == loanId && p.ARCHIVEDATE == applicationDate
+                                                     select p);
+            var removeLoan_Schedule_Daily_Temp = (from p in context.TBL_LOAN_SCHEDULE_DAILY_TEMP
+                                                  where p.LOANID == loanId
+                                                  select p);
+            var removeLoan_Schedule_Periodic_Temp = (from p in context.TBL_LOAN_SCHEDULE_PERIODIC_TMP
+                                                     where p.LOANID == loanId
+                                                     select p);
+
+            //var removeOD_Archive = (from p in context.TBL_LOAN_REVOLVING_ARCHIVE
+            //                        where p.REVOLVINGLOANID == loanId && p.ARCHIVEDATE == applicationDate
+            //                        select p);
+
+            var removeLoan_IrregularSchedule = (from p in context.TBL_LOAN_SCHEDULE_IREGUL_INPUT
+                                                where p.LOANID == loanId
+                                                select p);
+
+            if (removeLoan_Archive != null)
+            {
+                context.TBL_LOAN_ARCHIVE.RemoveRange(removeLoan_Archive);
+            }
+            if (removeLoan_Schedule_Periodic_Archive != null)
+            {
+                context.TBL_LOAN_SCHEDULE_PERIODIC_ARC.RemoveRange(removeLoan_Schedule_Periodic_Archive);
+
+            }
+            if (removeLoan_Schedule_Daily_Archive != null)
+            {
+                context.TBL_LOAN_SCHEDULE_DAILY_ARCHIV.RemoveRange(removeLoan_Schedule_Daily_Archive);
+
+            }
+            if (removeLoan_Schedule_Daily_Temp != null)
+            {
+                context.TBL_LOAN_SCHEDULE_DAILY_TEMP.RemoveRange(removeLoan_Schedule_Daily_Temp);
+
+            }
+            if (removeLoan_Schedule_Periodic_Temp != null)
+            {
+                context.TBL_LOAN_SCHEDULE_PERIODIC_TMP.RemoveRange(removeLoan_Schedule_Periodic_Temp);
+
+            }
+
+            //if (removeOD_Archive != null)
+            //{
+            //    context.TBL_LOAN_REVOLVING_ARCHIVE.RemoveRange(removeOD_Archive);
+
+            //}
+
+            if (removeLoan_IrregularSchedule != null)
+            {
+                context.TBL_LOAN_SCHEDULE_IREGUL_INPUT.RemoveRange(removeLoan_IrregularSchedule);
+
+            }
+
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            {
+                string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                throw new System.Data.Entity.Validation.DbEntityValidationException(errorMessages);
+            }
+            output = true;
+
+            return output;
         }
 
         public bool DeleteLoanExist(int loanId, DateTime applicationDate)
@@ -6413,6 +6494,181 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
+
+        public LoanViewModel ArchiveLoanContingent(int loanId, int operationId, string archiveBatchCode)
+        {
+            var systemDate = generalSetup.GetApplicationDate();
+            var model = (from a in context.TBL_LOAN
+                         where a.TERMLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         select new LoanViewModel()
+                         {
+                             loanId = a.TERMLOANID,
+                             productPriceIndexRate = (double)a.PRODUCTPRICEINDEXRATE,
+                             customerRiskRatingId = a.CUSTOMERRISKRATINGID,
+                             loanSystemTypeId = (short)a.LOANSYSTEMTYPEID,
+                             customerId = a.CUSTOMERID,
+                             productId = a.PRODUCTID,
+                             companyId = a.COMPANYID,
+                             casaAccountId = a.CASAACCOUNTID,
+                             branchId = a.BRANCHID,
+                             currencyId = a.CURRENCYID,
+                             exchangeRate = a.EXCHANGERATE,
+                             loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                             loanReferenceNumber = a.LOANREFERENCENUMBER,
+                             subSectorId = a.SUBSECTORID,
+                             principalFrequencyTypeId = a.PRINCIPALFREQUENCYTYPEID,
+                             interestFrequencyTypeId = a.INTERESTFREQUENCYTYPEID,
+                             principalNumberOfInstallment = a.PRINCIPALNUMBEROFINSTALLMENT,
+                             interestNumberOfInstallment = a.INTERESTNUMBEROFINSTALLMENT,
+                             relationshipOfficerId = a.RELATIONSHIPOFFICERID,
+                             relationshipManagerId = a.RELATIONSHIPMANAGERID,
+                             misCode = a.MISCODE,
+                             teamMiscode = a.TEAMMISCODE,
+                             interestRate = a.INTERESTRATE,
+                             effectiveDate = a.EFFECTIVEDATE,
+                             lastRestructureDate = (DateTime)a.LASTRESTRUCTUREDATE,
+                             maturityDate = a.MATURITYDATE,
+                             bookingDate = a.BOOKINGDATE,
+                             principalAmount = a.PRINCIPALAMOUNT,
+                             principalInstallmentLeft = a.PRINCIPALINSTALLMENTLEFT,
+                             interestInstallmentLeft = a.INTERESTINSTALLMENTLEFT,
+                             approvalStatusId = a.APPROVALSTATUSID,
+                             approvedBy = a.APPROVEDBY,
+                             approverComment = a.APPROVERCOMMENT,
+                             dateApproved = a.DATEAPPROVED,
+                             loanStatusId = a.LOANSTATUSID,
+                             scheduleTypeId = a.SCHEDULETYPEID,
+                             scheduleDayCountConventionId = a.SCHEDULEDAYCOUNTCONVENTIONID,
+                             scheduleDayInterestTypeId = a.SCHEDULEDAYINTERESTTYPEID,
+                             isDisbursed = a.ISDISBURSED,
+                             disbursedBy = a.DISBURSEDBY,
+                             disburserComment = a.DISBURSERCOMMENT,
+                             disburseDate = a.DISBURSEDATE,
+                             operationId = a.OPERATIONID,
+                             customerGroupId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.CUSTOMERGROUPID,
+                             loanTypeId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONTYPEID,
+                             equityContribution = a.EQUITYCONTRIBUTION,
+                             firstPrincipalPaymentDate = a.FIRSTPRINCIPALPAYMENTDATE,
+                             firstInterestPaymentDate = a.FIRSTINTERESTPAYMENTDATE,
+                             outstandingPrincipal = a.OUTSTANDINGPRINCIPAL,
+                             outstandingInterest = a.OUTSTANDINGINTEREST,
+                             pastDuePrincipal = a.PASTDUEPRINCIPAL,
+                             pastDueInterest = a.PASTDUEINTEREST,
+                             interestOnPastDuePrincipal = a.INTERESTONPASTDUEPRINCIPAL,
+                             interesrtOnPastDueInterest = a.INTERESTONPASTDUEINTEREST,
+                             penalChargeAmount = a.PENALCHARGEAMOUNT,
+                             principalAdditionCount = a.PRINCIPALADDITIONCOUNT,
+                             principalReductionCount = a.PRINCIPALREDUCTIONCOUNT,
+                             fixedPrincipal = a.FIXEDPRINCIPAL,
+                             profileLoan = a.PROFILELOAN,
+                             dischargeLetter = a.DISCHARGELETTER,
+                             suspendInterest = a.SUSPENDINTEREST,
+                             isScheduledPrepayment = a.ISSCHEDULEDPREPAYMENT,
+                             allowForceDebitRepayment = a.ALLOWFORCEDEBITREPAYMENT,
+                             scheduledPrepaymentAmount = a.SCHEDULEDPREPAYMENTAMOUNT,
+                             scheduledPrepaymentDate = a.SCHEDULEDPREPAYMENTDATE,
+                             scheduledPrepaymentFrequencyTypeId = a.SCH_PREPAYMENT_FREQUENCY_TYPID,
+                             internalPrudentialGuidelineStatusId = a.INT_PRUDENT_GUIDELINE_STATUSID,
+                             externalPrudentialGuidelineStatusId = a.EXT_PRUDENT_GUIDELINE_STATUSID,
+                             userPrudentialGuidelineStatusId = a.USER_PRUDENTIAL_GUIDE_STATUSID,
+                             nplDate = a.NPLDATE,
+                             createdBy = a.CREATEDBY,
+                             dateTimeCreated = a.DATETIMECREATED,
+
+                         }).FirstOrDefault();
+
+            List<TBL_LOAN_ARCHIVE> loanArchive = new List<TBL_LOAN_ARCHIVE>();
+
+            TBL_LOAN_ARCHIVE addLoanArchive = new TBL_LOAN_ARCHIVE();
+
+
+            addLoanArchive.CHANGEEFFECTIVEDATE = systemDate;
+            addLoanArchive.ISAPPLIED = false;
+            addLoanArchive.CHANGEREASON = "Rephasement";
+            addLoanArchive.LOANID = model.loanId;
+            addLoanArchive.PRODUCTPRICEINDEXRATE = model.productPriceIndexRate;
+            addLoanArchive.CUSTOMERRISKRATINGID = model.customerRiskRatingId;
+            addLoanArchive.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+            addLoanArchive.CUSTOMERID = model.customerId;
+            addLoanArchive.PRODUCTID = model.productId;
+            addLoanArchive.COMPANYID = model.companyId;
+            addLoanArchive.CASAACCOUNTID = model.casaAccountId;
+            addLoanArchive.BRANCHID = model.branchId;
+            addLoanArchive.CURRENCYID = (short)model.currencyId;
+            addLoanArchive.EXCHANGERATE = model.exchangeRate;
+            addLoanArchive.LOANAPPLICATIONDETAILID = model.loanApplicationDetailId;
+            addLoanArchive.LOANREFERENCENUMBER = model.loanReferenceNumber;
+            addLoanArchive.SUBSECTORID = model.subSectorId;
+            addLoanArchive.PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId;
+            addLoanArchive.INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId;
+            addLoanArchive.PRINCIPALNUMBEROFINSTALLMENT = model.principalNumberOfInstallment;
+            addLoanArchive.INTERESTNUMBEROFINSTALLMENT = model.interestNumberOfInstallment;
+            addLoanArchive.RELATIONSHIPOFFICERID = model.relationshipOfficerId;
+            addLoanArchive.RELATIONSHIPMANAGERID = model.relationshipManagerId;
+            addLoanArchive.MISCODE = model.misCode;
+            addLoanArchive.TEAMMISCODE = model.teamMiscode;
+            addLoanArchive.INTERESTRATE = model.interestRate;
+            addLoanArchive.EFFECTIVEDATE = model.effectiveDate;
+            addLoanArchive.LASTRESTRUCTUREDATE = model.lastRestructureDate;
+            addLoanArchive.MATURITYDATE = model.maturityDate;
+            addLoanArchive.BOOKINGDATE = model.bookingDate;
+            addLoanArchive.PRINCIPALAMOUNT = model.principalAmount;
+            addLoanArchive.PRINCIPALINSTALLMENTLEFT = model.principalInstallmentLeft;
+            addLoanArchive.INTERESTINSTALLMENTLEFT = model.interestInstallmentLeft;
+            addLoanArchive.APPROVALSTATUSID = model.approvalStatusId;
+            addLoanArchive.APPROVEDBY = model.approvedBy;
+            addLoanArchive.APPROVERCOMMENT = model.approverComment;
+            addLoanArchive.DATEAPPROVED = model.dateApproved;
+            addLoanArchive.LOANSTATUSID = model.loanStatusId;
+            addLoanArchive.CREATEDBY = model.createdBy;
+            addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
+            addLoanArchive.SCHEDULETYPEID = model.scheduleTypeId;
+            addLoanArchive.SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountConventionId;
+            addLoanArchive.SCHEDULEDAYINTERESTTYPEID = model.scheduleDayInterestTypeId;
+            addLoanArchive.ISDISBURSED = model.isDisbursed;
+            addLoanArchive.DISBURSEDBY = model.disbursedBy;
+            addLoanArchive.DISBURSERCOMMENT = model.disburserComment;
+            addLoanArchive.DISBURSEDATE = model.disburseDate;
+            addLoanArchive.OPERATIONID = operationId;
+            addLoanArchive.EQUITYCONTRIBUTION = model.equityContribution;
+            addLoanArchive.FIRSTPRINCIPALPAYMENTDATE = model.firstPrincipalPaymentDate;
+            addLoanArchive.FIRSTINTERESTPAYMENTDATE = model.firstInterestPaymentDate;
+            addLoanArchive.OUTSTANDINGPRINCIPAL = model.outstandingPrincipal;
+            addLoanArchive.OUTSTANDINGINTEREST = model.outstandingInterest;
+            addLoanArchive.PASTDUEPRINCIPAL = model.pastDuePrincipal;
+            addLoanArchive.PASTDUEINTEREST = model.pastDueInterest;
+            addLoanArchive.INTERESTONPASTDUEPRINCIPAL = model.interestOnPastDuePrincipal;
+            addLoanArchive.INTERESTONPASTDUEINTEREST = model.interesrtOnPastDueInterest;
+            addLoanArchive.PENALCHARGEAMOUNT = model.penalChargeAmount;
+            addLoanArchive.PRINCIPALADDITIONCOUNT = model.principalAdditionCount;
+            addLoanArchive.PRINCIPALREDUCTIONCOUNT = model.principalReductionCount;
+            addLoanArchive.FIXEDPRINCIPAL = model.fixedPrincipal;
+            addLoanArchive.PROFILELOAN = model.profileLoan;
+            addLoanArchive.DISCHARGELETTER = model.dischargeLetter;
+            addLoanArchive.SUSPENDINTEREST = model.suspendInterest;
+            addLoanArchive.ISSCHEDULEDPREPAYMENT = model.isScheduledPrepayment;
+            addLoanArchive.ALLOWFORCEDEBITREPAYMENT = model.allowForceDebitRepayment;
+            addLoanArchive.SCHEDULEDPREPAYMENTAMOUNT = model.scheduledPrepaymentAmount;
+            addLoanArchive.SCHEDULEDPREPAYMENTDATE = model.scheduledPrepaymentDate;
+            addLoanArchive.SCH_PREPAYMENT_FREQUENCY_TYPID = model.principalFrequencyTypeId;//scheduledPrepaymentFrequencyTypeId;
+            addLoanArchive.INT_PRUDENT_GUIDELINE_STATUSID = (int)model.internalPrudentialGuidelineStatusId;
+            addLoanArchive.EXT_PRUDENT_GUIDELINE_STATUSID = (int)model.externalPrudentialGuidelineStatusId;
+            addLoanArchive.USER_PRUDENTIAL_GUIDE_STATUSID = (int)model.userPrudentialGuidelineStatusId;
+            addLoanArchive.NPLDATE = model.nplDate;
+            addLoanArchive.CREATEDBY = model.createdBy;
+            addLoanArchive.DATETIMECREATED = model.dateTimeCreated;
+            addLoanArchive.ARCHIVEBATCHCODE = archiveBatchCode;
+
+            //loanArchive.Add(addLoanArchive);
+
+            //this.context.TBL_LOAN_ARCHIVE.AddRange(loanArchive);
+
+            this.context.TBL_LOAN_ARCHIVE.Add(addLoanArchive);
+
+            context.SaveChanges();
+            return model;
+        }
+
 
         public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode)
         {
@@ -10702,6 +10958,8 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
+
+
         public bool Restructured(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             bool output = false;
@@ -11412,6 +11670,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanOperationTypeViewModel> GetRemedialOperationType()
         {
+          
             return (from data in context.TBL_OPERATIONS
                     where data.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial
                     select new LoanOperationTypeViewModel()
@@ -11956,7 +12215,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                          productAccountNumber = ch.ACCOUNTCODE,
-                                         productAccountName = ch.ACCOUNTNAME,                                        
+                                         productAccountName = ch.ACCOUNTNAME,
                                          approvedAmount = ld.APPROVEDAMOUNT,
                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
 
@@ -12239,6 +12498,16 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                         {
+                            //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
+                            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                            {
+                                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                                if (authenticated.authenticated == false)
+                                    throw new TwoFactorAuthenticationException(authenticated.message);
+                            }
+                            twoFADetails.skipAuthentication = true;
+
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                             reviewRecord.OPERATIONCOMPLETED = true;
                             context.SaveChanges();
@@ -13622,7 +13891,6 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
-
         public bool ProcessContingentLiabilityTerminationAtMaturity(DateTime applicationDate)
         {
             //DateTime date = applicationDate;
@@ -13702,9 +13970,7 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-
-
-        private bool ProcessContingentLiabilityTermination(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
+        public bool ProcessContingentLiabilityTermination(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
@@ -13793,6 +14059,195 @@ namespace FintrakBanking.Repositories.Credit
             return output;
         }
 
+        public bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
+        {
+
+            if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
+            {
+                throw new ConditionNotMetException("The requested operation already exist and going through approval");
+            }
+
+            var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
+            oldContingent.MATURITYDATE = (DateTime)model.newMaturityDate;
+
+            bool output = false;
+
+            try
+            {
+
+                var applicationDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+                var currentDate = DateTime.Now;
+                
+                TBL_LOAN_CONTINGENT_ARCHIVE addContingent = new TBL_LOAN_CONTINGENT_ARCHIVE
+                {
+                    ARCHIVEDATE = applicationDate,
+                    ARCHIVEBATCHCODE = archiveBatchCode,
+                    CONTINGENTLOANID = oldContingent.CONTINGENTLOANID,
+                    CUSTOMERID = oldContingent.CUSTOMERID,
+                    LOANSYSTEMTYPEID = oldContingent.LOANSYSTEMTYPEID,
+                    PRODUCTID = oldContingent.PRODUCTID,
+                    COMPANYID = oldContingent.COMPANYID,
+                    CASAACCOUNTID = oldContingent.CASAACCOUNTID,
+                    BRANCHID = oldContingent.BRANCHID,
+                    CURRENCYID = oldContingent.CURRENCYID,
+                    LOANAPPLICATIONDETAILID = oldContingent.LOANAPPLICATIONDETAILID,
+                    CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT,
+                    EXCHANGERATE = oldContingent.EXCHANGERATE,
+                    LOANREFERENCENUMBER = oldContingent.LOANREFERENCENUMBER,
+                    RELATED_LOAN_REFERENCE_NUMBER = oldContingent.LOANREFERENCENUMBER,
+                    SUBSECTORID = oldContingent.SUBSECTORID,
+                    RELATIONSHIPOFFICERID = oldContingent.RELATIONSHIPOFFICERID,
+                    RELATIONSHIPMANAGERID = oldContingent.RELATIONSHIPMANAGERID,
+                    MISCODE = oldContingent.MISCODE,
+                    TEAMMISCODE = oldContingent.TEAMMISCODE,
+                    EFFECTIVEDATE = model.effectiveDate,
+                    MATURITYDATE = model.maturityDate,
+                    BOOKINGDATE = currentDate.Date,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
+                    APPROVEDBY = model.createdBy,
+                    APPROVERCOMMENT = approvalComment,
+                    DATEAPPROVED = currentDate.Date,
+                    LOANSTATUSID = (short)LoanStatusEnum.Active,
+                    ISDISBURSED = true,
+                    DISBURSEDBY = "",
+                    DISBURSERCOMMENT = approvalComment,
+                    DISBURSEDATE = currentDate,
+                    OPERATIONID = model.operationId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = currentDate,
+                    DISCHARGELETTER = true,
+                    FIELD1 = oldContingent.FIELD1,
+                    FIELD2 = oldContingent.FIELD2,
+                    FIELD3 = oldContingent.FIELD3,
+                    FIELD4 = oldContingent.FIELD4,
+                    FIELD5 = oldContingent.FIELD5,
+                    FIELD6 = oldContingent.FIELD6,
+                    FIELD7 = oldContingent.FIELD7,
+                    FIELD8 = oldContingent.FIELD8,
+                    FIELD9 = oldContingent.FIELD9,
+                    FIELD10 = oldContingent.FIELD10,
+
+                };
+                
+                this.context.TBL_LOAN_CONTINGENT_ARCHIVE.Add(addContingent);
+
+                var result = context.SaveChanges() > 0;
+
+                if (result)
+                {
+                    output = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new SecureException(ex.Message);
+
+            }
+
+            return output;
+        }
+
+        public bool ContingentLiabilityAmountReduction(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
+        {
+
+            if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
+            {
+                throw new ConditionNotMetException("The requested operation already exist and going through approval");
+            }
+
+            var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
+            oldContingent.CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT - (decimal)model.principalAmount;
+
+            bool output = false;
+            
+            try
+            {
+
+                var applicationDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+                var currentDate = DateTime.Now;
+                
+                List<FinanceTransactionViewModel> chargeDetails = new List<FinanceTransactionViewModel>();
+
+                TBL_LOAN_CONTINGENT_ARCHIVE addContingent = new TBL_LOAN_CONTINGENT_ARCHIVE
+                {
+                    ARCHIVEDATE = applicationDate,
+                    ARCHIVEBATCHCODE = archiveBatchCode,
+                    CONTINGENTLOANID = oldContingent.CONTINGENTLOANID,
+                    CUSTOMERID = oldContingent.CUSTOMERID,
+                    LOANSYSTEMTYPEID = oldContingent.LOANSYSTEMTYPEID,
+                    PRODUCTID = oldContingent.PRODUCTID,
+                    COMPANYID = oldContingent.COMPANYID,
+                    CASAACCOUNTID = oldContingent.CASAACCOUNTID,
+                    BRANCHID = oldContingent.BRANCHID,
+                    CURRENCYID = oldContingent.CURRENCYID,
+                    LOANAPPLICATIONDETAILID = oldContingent.LOANAPPLICATIONDETAILID,
+                    CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT,
+                    EXCHANGERATE = oldContingent.EXCHANGERATE,
+                    LOANREFERENCENUMBER = oldContingent.LOANREFERENCENUMBER,
+                    RELATED_LOAN_REFERENCE_NUMBER = oldContingent.LOANREFERENCENUMBER,
+                    SUBSECTORID = oldContingent.SUBSECTORID,
+                    RELATIONSHIPOFFICERID = oldContingent.RELATIONSHIPOFFICERID,
+                    RELATIONSHIPMANAGERID = oldContingent.RELATIONSHIPMANAGERID,
+                    MISCODE = oldContingent.MISCODE,
+                    TEAMMISCODE = oldContingent.TEAMMISCODE,
+                    EFFECTIVEDATE = model.effectiveDate,
+                    MATURITYDATE = model.maturityDate,
+                    BOOKINGDATE = currentDate.Date,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
+                    APPROVEDBY = model.createdBy,
+                    APPROVERCOMMENT = approvalComment,
+                    DATEAPPROVED = currentDate.Date,
+                    LOANSTATUSID = (short)LoanStatusEnum.Active,
+                    ISDISBURSED = true,
+                    DISBURSEDBY = "",
+                    DISBURSERCOMMENT = approvalComment,
+                    DISBURSEDATE = currentDate,
+                    OPERATIONID = model.operationId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = currentDate,
+                    DISCHARGELETTER = true,
+                    FIELD1 = oldContingent.FIELD1,
+                    FIELD2 = oldContingent.FIELD2,
+                    FIELD3 = oldContingent.FIELD3,
+                    FIELD4 = oldContingent.FIELD4,
+                    FIELD5 = oldContingent.FIELD5,
+                    FIELD6 = oldContingent.FIELD6,
+                    FIELD7 = oldContingent.FIELD7,
+                    FIELD8 = oldContingent.FIELD8,
+                    FIELD9 = oldContingent.FIELD9,
+                    FIELD10 = oldContingent.FIELD10,
+
+                };
+
+
+                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, oldContingent.LOANREFERENCENUMBER, (decimal)model.principalAmount, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityAmountReduction));
+
+                financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
+
+                this.context.TBL_LOAN_CONTINGENT_ARCHIVE.Add(addContingent);
+                
+                var result = context.SaveChanges() > 0;
+
+                if (result)
+                {
+                    output = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new SecureException(ex.Message);
+
+            }
+
+            return output;
+        }
+        
         #endregion
 
         //[OperationBehavior(TransactionScopeRequired = true)]
@@ -14575,6 +15030,36 @@ namespace FintrakBanking.Repositories.Credit
                     {
 
                         result = ProcessContingentLiabilityTermination(twoFactorAuth, model, approvalComment);
+
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.ContingentLiabilityTenorExtension == model.operationId)
+                    {
+
+                        result = ContingentLiabilityTenorExtension(twoFactorAuth, model, approvalComment);
+
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.ContingentLiabilityAmountReduction == model.operationId)
+                    {
+
+                        result = ContingentLiabilityAmountReduction(twoFactorAuth, model, approvalComment);
 
                         if (result == true)
                         {
@@ -17608,5 +18093,52 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #endregion
+
+        public bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId)
+        {
+            var messageBody = "A recovery email";
+            var subject = "RECOVERY EMAIL";
+            if (accreditedConsultantId == 0) return false;
+
+            var data = consultant.GetAccreditedConsultants(companyId, accreditedConsultantId);
+            if (data == null) return false;
+
+            var email = (from m in context.TBL_ACCREDITEDCONSULTANT
+                         where m.COMPANYID == companyId && m.ACCREDITEDCONSULTANTID == accreditedConsultantId
+                         select new { m.EMAILADDRESS }).FirstOrDefault();
+
+            var emailLog = new TBL_MESSAGE_LOG
+            {
+                DATETIMERECEIVED = DateTime.Now,
+                FROMADDRESS = email.EMAILADDRESS,
+                TOADDRESS = email.EMAILADDRESS,
+                MESSAGEBODY = messageBody,
+                MESSAGESUBJECT = subject,
+                MESSAGESTATUSID = 1,
+                MESSAGETYPEID = 1,
+                OPERATIONID = (int)OperationsEnum.LoanRecovery,
+                SENDONDATETIME = DateTime.Now,
+
+            };
+
+            context.TBL_MESSAGE_LOG.Add(emailLog);
+
+
+            auditTrail.AddAuditTrail(new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanDocumentAdded,
+                STAFFID = staffId,
+                BRANCHID = branchId,
+                DETAIL = $"A recovery Email has been sent to accredited consultant with consultantId  '{ accreditedConsultantId}' ",
+                // IPADDRESS = model.userIPAddress,
+                //URL = model.applicationUrl,
+                APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            });
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
     }
 }

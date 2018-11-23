@@ -17,6 +17,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetBranchLoanAmountLimit(int branchId, int companyId, int staffId);
         string GetWorkflowDefinition(int operationId, int companyId, int staffId);
         string GetDisburstLoans(DateRange dateRange, int companyId, int staffId);
+        string GetRunningFacilities(DateRange dateRange, int companyId, int staffId);
         string GetLoanStatement(int companyId, int loanId, int staffId);
         string GetLoanAnniversery(DateRange dateRange, int companyId, int staffId);
         string GetLoanDocumentWaived(int companyId, DateRange dateRange, int staffId);
@@ -58,6 +59,7 @@ namespace FintrakBanking.Interfaces.Reports
         IEnumerable<AuditViewModel> AuditType(string searchValue);
         List<GLAccountSearchViewModel> GLAccount(string searchValue);
         string GetGeneratedFORM3800BLOS(string applicationRefNumber);
+        string GetGeneratedFORM3800BLMS(string applicationRefNumber);
         string GetStalledPerfection(DateRange dateRange);
         string GetCollateralPerfectionYetToCommence(DateRange dateRange);
         string GetAllCommercialLoanReport(DateRange dateRange);
@@ -67,7 +69,10 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCashBackedBondAndGuarantee(DateRange dateRange);
         string GetweeklyRecoveryReportforFINCON(DateRange dateRange);
         string GetCashCollaterizedCredits(DateRange dateRange);
-        string GetLoggingStatus(DateRange dateRange);
-        string GetGeneratedFORM3800BLMS(string applicationRefNumber);
+        string GetStaffPrivilegeChangeReport(DateRange dateRange);
+        string GetUserGroupChangeReport(DateRange dateRange);
+        string GetProfileActivityReport(DateRange dateRange);
+        string GetStaffRoleProfileGroupReport(DateRange dateRange);
+        string GetStaffRoleProfileActivityReport(DateRange dateRange);
     }
 }

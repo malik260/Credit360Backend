@@ -151,6 +151,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? tranchLevelId { get; set; }
         public int? regionId { get; set; }
         public bool editMode { get; set; }
+        public short? requireCollateralTypeId { get; set; }
     }
 
     public class LoanApplicationUpdateMessage
@@ -206,6 +207,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
+        public string approvedProductName { get; set; }
+
         public int applicationStatusPosition { get; set; }
 
         public LoanApplicationDetailViewModel()
