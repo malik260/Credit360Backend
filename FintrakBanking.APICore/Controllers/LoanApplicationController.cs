@@ -693,7 +693,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("loan-preliminary-evaluation/loan-type/{loanTypeId}")]
         public HttpResponseMessage GetAllLoanPreliminaryEvaluationsByLoanType(int loanTypeId)
         {
@@ -713,6 +713,20 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK,
                    new { success = false, message = $"Error: {ex.Message}" });
             }
+        }
+
+        [HttpGet] [ClaimsAuthorization]
+        [Route("loan-preliminary-evaluation-mapped-to-application")]
+        public HttpResponseMessage GetLoanPreliminaryEvaluationMappedToApplication()
+        {
+                var data = repoLoanPEN.GetLoanPreliminaryEvaluationMappedToApplication();
+
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data.ToList() });
         }
 
         [HttpGet]

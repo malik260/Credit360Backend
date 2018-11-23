@@ -929,6 +929,18 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
                 }
+                else if ((int)OperationsEnum.ContingentLiabilityTenorExtension == model.operationTypeId || (int)OperationsEnum.ContingentLiabilityAmountReduction == model.operationTypeId)
+                {
+
+                    var response = repo.AddOperationReviewContingent(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+                }
+                
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
