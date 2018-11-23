@@ -3741,11 +3741,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId) // OBIE (Page 4)
         {
-            string duration = WebConfigurationManager.AppSettings["turnOverDuration"];
+            string duration = WebConfigurationManager.AppSettings["AccountStatisticsDurationInMonths"];
             int newDuration = 0;
             if (string.IsNullOrEmpty(duration))
             {
-                duration = "48";
+                duration = "6";
             }
             Int32.TryParse(duration, out newDuration);
 
