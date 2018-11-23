@@ -2457,7 +2457,7 @@ namespace FintrakBanking.Repositories.Credit
                            join b in context.TBL_LOAN_APPLICATION
                            on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                            where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                           select b.PRODUCTCLASSID).FirstOrDefault();
+                           select a.TBL_PRODUCT1.PRODUCTCLASSID).FirstOrDefault();
 
             var typeId = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                           join b in context.TBL_LOAN_APPLICATION

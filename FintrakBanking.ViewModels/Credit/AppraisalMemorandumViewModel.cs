@@ -81,7 +81,7 @@ namespace FintrakBanking.ViewModels.Credit
         //public double proposedExchangeRate { get; set; }
         //public double approvedExchangeRate { get; set; }
         public short proposedProductId { get; set; }
-        public short proposedProductIdType { get; set; }
+        //public short proposedProductIdType { get; set; }
 
         public short approvedProductId { get; set; }
         public decimal convertedApprovedAmount { get { return this.approvedAmount * (decimal)this.exchangeRate; } }
@@ -123,7 +123,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string conditionPrecedent { get; set; }
         public string conditionSubsequent { get; set; }
         public string transactionDynamics { get; set; }
-
+        public short proposedProductClassId { get; set; }
     }
 
     public class LoanApplicationDetailsViewModel : GeneralEntity // TO CARRY ALL APPLICATION DETAILS PAYLOAD IN ONE API CALL
