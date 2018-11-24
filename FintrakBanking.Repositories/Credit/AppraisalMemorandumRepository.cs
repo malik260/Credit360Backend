@@ -733,7 +733,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var details = new LoanApplicationDetailsViewModel();
                 var facilities = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
-                    .Join(context.TBL_LOAN_APPLICATION_DETAIL,
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.DELETED == false),
                     a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Select(x => new ApprovedLoanDetailViewModel
                     {
@@ -749,7 +749,6 @@ namespace FintrakBanking.Repositories.Credit
                         proposedAmount = x.d.PROPOSEDAMOUNT,
                         proposedProductId = x.d.PROPOSEDPRODUCTID,
                         proposedProductClassId = x.d.TBL_PRODUCT.PRODUCTCLASSID,
-                        //proposedProductIdType = context.TBL_PRODUCT.Where(f => f.PRODUCTID == x.d.PROPOSEDPRODUCTID).Select(q => q.PRODUCTTYPEID).FirstOrDefault(),
 
                         approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
                         approvedTenor = x.d.APPROVEDTENOR,
@@ -825,7 +824,6 @@ namespace FintrakBanking.Repositories.Credit
                     proposedRate = x.d.PROPOSEDINTERESTRATE,
                     proposedAmount = x.d.PROPOSEDAMOUNT,
                     proposedProductId = x.d.PROPOSEDPRODUCTID,
-                    // proposedProductIdType = context.TBL_PRODUCT.Where(f=>f.PRODUCTID == x.d.PROPOSEDPRODUCTID).Select(q=>q.PRODUCTTYPEID).FirstOrDefault(),
 
                     approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
                     approvedTenor = x.d.APPROVEDTENOR,
@@ -912,7 +910,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationAmount = a.APPLICATIONAMOUNT,
                 dateTimeCreated = a.DATETIMECREATED,
                 collateralDetail = a.COLLATERALDETAIL,
-                LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
+                LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false)
                                             .Select(c => new LoanApplicationDetailViewModel
                                             {
                                                 equityAmount = c.EQUITYAMOUNT,
