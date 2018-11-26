@@ -184,15 +184,13 @@ namespace FintrakBanking.Repositories.Setups.General
             //return null;
         }
 
-        public async Task<SessionStatusInfo> CheckSessionState(string username, string ipAddress)
+        public SessionStatusInfo CheckSessionState(string username, string ipAddress)
         {
             Guid loginCode = Guid.Empty;
-            var user = await context.TBL_PROFILE_USER.FirstOrDefaultAsync(x =>
-                x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
+            var user = context.TBL_PROFILE_USER.FirstOrDefault(x => x.USERNAME.ToLower() == username); // && x.PASSWORD == password);
             SessionStatusInfo result = null;
             string loginCodeStr = null;
             string ipAddressStr = null;
-
 
             if (user != null)
             {
@@ -204,7 +202,6 @@ namespace FintrakBanking.Repositories.Setups.General
                     ipAddressStr = gcode[1];
                 }
 
-
                 if (loginCodeStr == null || loginCodeStr == Guid.Empty.ToString())
                 {
                     var gcode = Guid.NewGuid();
@@ -214,12 +211,9 @@ namespace FintrakBanking.Repositories.Setups.General
                         state = 0,
                         ipaddress = ipAddressStr,
                         errorMessage = "",
-
                     };
                     this.LogCode = gcode.ToString() + "@" + ipAddress;
                 }
-
-
                 else if (loginCodeStr != null)
                 {
                     //  int timeStamp = 1;// (DateTime.Now - Convert.ToDateTime(user.LASTLOCKOUTDATE.HasValue) ).Minutes;
@@ -283,7 +277,7 @@ namespace FintrakBanking.Repositories.Setups.General
         public string LogCode { get; set; }
 
 
-        public async Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password)
+        public UserViewModel FindUserByUserNameAndPassword(string username, string password)
         {
             UserViewModel data = null;
             var result = _sessionInfo;

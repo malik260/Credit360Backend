@@ -107,7 +107,7 @@ namespace FintrakBanking.APICore.Providers
                     if (Task.FromResult(
                         ValidateActiveDirectoryCredentials(context.UserName, context.Password, out identity)).Result)
                     {
-                        authRepo.SessionInfo =   authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress).GetAwaiter().GetResult();
+                        authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress);//.GetAwaiter().GetResult();
                         user = await Task.FromResult(authRepo.FindUserByUserNameAsync(userVm.username.ToLower())).Result;
                     }
                     else
@@ -119,13 +119,13 @@ namespace FintrakBanking.APICore.Providers
                 }
                 else
                 {
-                   
 
-                    authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress).GetAwaiter().GetResult();
+
+                    authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress);//.GetAwaiter().GetResult();
                     //user = await Task
                     //    .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
                     //    .Result;
-                    user = await authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password);
+                    user = authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password);
                     if (user == null)
                     {
                         context.SetError("invalid_grant", "Login Failure.");
