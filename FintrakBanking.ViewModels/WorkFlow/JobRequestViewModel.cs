@@ -10,7 +10,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
-        //public int? jobSubTypeId { get; set; }
+        public short? jobSubTypeId { get; set; }
         public string jobSubTypeName { get; set; }
 
         public bool isApplicationLevel { get; set; }
