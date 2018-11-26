@@ -2211,7 +2211,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     RISKRATINGID = productModel.riskRatingId,
                     TBL_TEMP_PRODUCT_CURRENCY = productCurrencies,
                     TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals,
-                    TBL_TEMP_PRODUCT_CHARGE_FEE = productFees
+                    TBL_TEMP_PRODUCT_CHARGE_FEE = productFees,
+                    PRODUCTID = (short)productModel.productId
                 };
 
                 tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
