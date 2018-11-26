@@ -1602,10 +1602,11 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         }
 
+
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("booking/modification/back-to-business")]
-        public HttpResponseMessage SendBackToBusinessAvailment([FromBody] ApprovalViewModel entity)
+        [Route("loan-booking-modification/refer-back")]
+        public HttpResponseMessage ReferBackBooking([FromBody] ApprovalViewModel entity)
         {
             entity.BranchId = (short)token.GetBranchId;
             entity.companyId = token.GetCompanyId;
@@ -1614,10 +1615,11 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             entity.userIPAddress = Request.RequestUri.Host;
             entity.createdBy = token.GetStaffId;
 
-            bool data = repo.SendBackToBookingModifier(entity);
+            bool data = repo.ReferBackBooking(entity);
 
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful" });
         }
+
 
         [HttpPost]
         [ClaimsAuthorization]

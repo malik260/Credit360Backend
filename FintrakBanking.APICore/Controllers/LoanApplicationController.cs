@@ -390,13 +390,14 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [Route("customer-transactions/{customerId}/{applicationId}")]
         public HttpResponseMessage GetCustomerTransactions(int customerId, int applicationId)
         {
             try
             {
-                var status = repo.GetCustomerTransactions(customerId, applicationId);
+                var status = repo.GetCustomerTransactions(customerId, applicationId, false);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
             }
             catch (SecureException ex)
@@ -404,6 +405,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("lms-customer-transactions/{customerId}/{applicationId}")]
+        public HttpResponseMessage GetLmsCustomerTransactions(int customerId, int applicationId)
+        {
+            try
+            {
+                var status = repo.GetCustomerTransactions(customerId, applicationId, true);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-application")]
         public HttpResponseMessage UpdateApprovalStatusForApplication([FromBody] int id)
