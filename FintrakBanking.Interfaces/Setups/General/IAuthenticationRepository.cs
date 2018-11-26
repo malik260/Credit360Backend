@@ -22,7 +22,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool IsAccountLocked(string userName);
 
-        Task<SessionStatusInfo> CheckSessionState(string username, string ipAddress);
+        SessionStatusInfo CheckSessionState(string username, string ipAddress);
 
         SessionStatusInfo SessionInfo { get; set; }
 
@@ -31,7 +31,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool IsAccountActive(string userName);
         bool ResumptionClosignTime(string userName);
 
-        Task<UserViewModel> FindUserByUserNameAndPassword(string username, string password);
+        UserViewModel FindUserByUserNameAndPassword(string username, string password);
 
         Task<UserViewModel> FindUserByUserNameAsync(string username);
 

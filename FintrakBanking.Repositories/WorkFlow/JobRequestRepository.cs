@@ -57,6 +57,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 JOBTYPEID = model.jobTypeId,
                 JOB_TITLE = model.requestTitle,
                 SENDERSTAFFID = model.createdBy,
+                JOB_SUB_TYPEID = model.jobSubTypeId,
                 RECEIVERSTAFFID = model.receiverStaffId == 0 ? null : model.receiverStaffId,
                 DEPARTMENTID = model.departmentId,
                 DEPARTMENTUNITID = model.departmentUnitId,
@@ -988,17 +989,23 @@ namespace FintrakBanking.Repositories.WorkFlow
         #region
         public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
+            // NOTE: THIS METHOD IS USED BY RM & LEGAL IN TWO WAYS
+            // 1. THE INITIATION STAGE: RM INITIATES PAYMENT, DEBITS CUSTOMER'S ACCOUNT WITH RECOMMENDED FEE FROM EGAL
+            // 2.  THE NONE INITIATION: LEGAL COMPLETE'S THE PROCESS. CONFIRMING SOLICITOR'S JOB DONE TO CREDIT SOLICITOR AND DEBIT SUSPENSE ACCOUNT, WITHOLDING %.
             var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated).ToList();
 
-            var auditDetail = "";
-            var accountNumber = "";
+            var auditDetail = string.Empty;
+            var accountNumber = string.Empty;
             var consultantId = jobRequestDetail.FirstOrDefault().ACCREDITEDCONSULTANTID;
             var consultantRecord = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == consultantId);
+            decimal accountBalance = 0;
             if (model.isInitiation)
             {
                 var casa = context.TBL_CASA.Find(model.casaAccountId);
                 if (casa == null)
                     throw new ConditionNotMetException("Customer account number is not supplied");
+
+                if (casa != null) accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
 
                 model.casaAccountId = casa.CASAACCOUNTID;
                 model.operationId = (short)OperationsEnum.CollateralSearchInitiation;
@@ -1031,6 +1038,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 item.ACCREDITEDCONSULTANTPAID = !model.isInitiation ? true : false;
                 item.ACCOUNTNUMBER = model.isInitiation ? accountNumber : null;
             }
+
+            if (model.isInitiation && model.totalChargeAmount > accountBalance)
+                throw new ConditionNotMetException("The customer's Account is not funded.");
 
             if (model.totalChargeAmount > 0)
             {
