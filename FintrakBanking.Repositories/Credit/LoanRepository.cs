@@ -10245,37 +10245,5 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion Commercial loan Operations
 
-        public List<CustomersTurnoverViewModel> GetCustomerTurnover(List<int> customerIds) // OBIE (Page 4)
-        {
-            var trx = context.TBL_LOAN_APPLICATION_TRANS.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomersTurnoverViewModel
-                {
-                    accountId = x.CUSTOMERID,
-                    //schemeType = x.,
-                    period = x.PERIOD,
-                    minimumDebitBalance = x.MINIMUMDEBITBALANCE,
-                    maximumDebitBalance = x.MAXIMUMDEBITBALANCE,
-                    minimumCreitBalance = x.MINIMUMCREDITBALANCE,
-                    maximumCreditBalance = x.MAXIMUMCREDITBALANCE,
-                    debitTurnover = x.DEBITTURNOVER,
-                    creditTurnover = x.CREDITTURNOVER,
-                    //floatCharge = x.FLOATCHARGE,
-                    //interest = x.INTEREST,
-                }).ToList();
-
-            var itx = context.TBL_LOAN_APPLICATION_TRANS2.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomersTurnoverViewModel
-                {
-                    accountId = x.CUSTOMERID,
-                    //schemeType = x.,
-                    period = x.PERIOD,
-                    //debitTurnover = x.DEBITTURNOVER,
-                    //creditTurnover = x.CREDITTURNOVER,
-                    //floatCharge = x.FLOATCHARGE,
-                    //interest = x.INTEREST,
-                }).ToList();
-
-            return trx.Union(itx).ToList();
-        }
     }
 }

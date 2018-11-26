@@ -609,52 +609,52 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         // customer turnover
-        public IEnumerable<CustomersTurnoverViewModel> GetCustomerTurnover()
-        {
-            List<int> ids = new List<int>();
-            foreach (var exposure in customerIds) ids.Add(exposure.customerId);
-            List<CustomersTurnoverViewModel> turnover = new List<CustomersTurnoverViewModel>();
-            turnover = loan.GetCustomerTurnover(ids);
-            return turnover;
-        }
+        //public IEnumerable<CustomersTurnoverViewModel> GetCustomerTurnover()
+        //{
+        //    List<int> ids = new List<int>();
+        //    foreach (var exposure in customerIds) ids.Add(exposure.customerId);
+        //    List<CustomersTurnoverViewModel> turnover = new List<CustomersTurnoverViewModel>();
+        //    turnover = loan.GetCustomerTurnover(ids, lmsCamOperationIds.Contains(operationId));
+        //    return turnover;
+        //}
 
         private string CustomerTurnoverMarkup()
         {
             var result = String.Empty;
-            var turnover = GetCustomerTurnover();
-            var n = 0;
-            result = result + $@"
-                <table border=1>
-                    <tr>
-                        <th>S/N</th>
-                        <th>Account ID</th>
-                        <th>Scheme Type</th>
-                        <th>Min Debit Balance</th>
-                        <th>Max Debit Balance</th>
-                        <th>Min Creit Balance</th>
-                        <th>Max Credit Balance</th>
-                        <th>Debit Turnover</th>
-                        <th>Credit Turnover</th>
-                    </tr>
-                 ";
-            foreach (var t in turnover)
-            {
-                n++;
-                result = result + $@"
-                    <tr>
-                        <td>{n}</td>
-                        <td>{t.accountId}</td>
-                        <td>{t.schemeType}</td>
-                        <td>{t.minimumDebitBalance}</td>
-                        <td>{t.maximumDebitBalance}</td>
-                        <td>{t.minimumCreitBalance}</td>
-                        <td>{t.maximumCreditBalance}</td>
-                        <td>{t.debitTurnover}</td>
-                        <td>{t.creditTurnover}</td>
-                    </tr>
-                ";
-            }
-            result = result + $"</table>";
+            //var turnover = GetCustomerTurnover();
+            //var n = 0;
+            //result = result + $@"
+            //    <table border=1>
+            //        <tr>
+            //            <th>S/N</th>
+            //            <th>Account ID</th>
+            //            <th>Scheme Type</th>
+            //            <th>Min Debit Balance</th>
+            //            <th>Max Debit Balance</th>
+            //            <th>Min Creit Balance</th>
+            //            <th>Max Credit Balance</th>
+            //            <th>Debit Turnover</th>
+            //            <th>Credit Turnover</th>
+            //        </tr>
+            //     ";
+            //foreach (var t in turnover)
+            //{
+            //    n++;
+            //    result = result + $@"
+            //        <tr>
+            //            <td>{n}</td>
+            //            <td>{t.accountId}</td>
+            //            <td>{t.schemeType}</td>
+            //            <td>{t.minimumDebitBalance}</td>
+            //            <td>{t.maximumDebitBalance}</td>
+            //            <td>{t.minimumCreitBalance}</td>
+            //            <td>{t.maximumCreditBalance}</td>
+            //            <td>{t.debitTurnover}</td>
+            //            <td>{t.creditTurnover}</td>
+            //        </tr>
+            //    ";
+            //}
+            //result = result + $"</table>";
             return result;
         }
     }

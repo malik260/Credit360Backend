@@ -784,6 +784,7 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
+
         public IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId)
         {
             var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL
@@ -797,12 +798,13 @@ namespace FintrakBanking.Repositories.Credit
 
             return customers;
         }
-        public CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId)
+
+        public CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId, bool isLms = false)
         {
             var fields = new CustomerApplicationTransactionsViewModels();
 
             var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
-                         where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
+                         where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
                          select new CustomerTransactionsViewModels
                              {
                                  cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
@@ -818,8 +820,9 @@ namespace FintrakBanking.Repositories.Credit
                                  month =a.MONTH,
                                  year = a.YEAR,
                              }).OrderByDescending(m=>m.year).ThenByDescending(b => b.month).ToList();
+
             var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
-                          where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
+                          where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
                           select new CustomerTransactionsViewModels
                          {
                              cust_Id = a.CUSTOMERTRANSACTIONID2.ToString(),
@@ -3823,7 +3826,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId) // OBIE (Page 4)
+        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId, bool isLms = false) // OBIE (Page 4)
         {
             string duration = WebConfigurationManager.AppSettings["AccountStatisticsDurationInMonths"];
             int newDuration = 0;
@@ -3885,6 +3888,7 @@ namespace FintrakBanking.Repositories.Credit
                         DATETIMECREATED = DateTime.Now,
                         MONTH = transaction.month,
                         YEAR = transaction.year,
+                        ISLMS = isLms
                     });
                 }
             }
@@ -3913,6 +3917,8 @@ namespace FintrakBanking.Repositories.Credit
                         DATETIMECREATED = DateTime.Now,
                         MONTH = t.month,
                         YEAR = t.year,
+                        ISLMS = isLms
+
                     });
                 }
             }
