@@ -9316,11 +9316,11 @@ namespace FintrakBanking.Repositories.Credit
             return frequencyTypes;
         }
 
-        public bool SendBackToBookingModifier(ApprovalViewModel model)
+      
+
+        public bool ReferBackBooking(ApprovalViewModel model)
         {
-
             int staffId = model.staffId;
-
 
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
@@ -9342,6 +9342,12 @@ namespace FintrakBanking.Repositories.Credit
             var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
             var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
             var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
+            int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+
+            if (nextLevelIndex > currentLevelIndex)
+                throw new ConditionNotMetException("The refered level is higher than the current level.");
 
 
             workflow.StaffId = model.createdBy;

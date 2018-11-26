@@ -877,12 +877,14 @@ namespace FintrakBanking.Repositories.Credit
                     /* Collateral Search Job Request */
                     if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
                     {
-                        var legalRequests = context.TBL_JOB_REQUEST
+                        var legalRequestSub = context.TBL_JOB_REQUEST
                             .Where(x => x.TARGETID == detail.LOANAPPLICATIONDETAILID
                             && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
                             && x.JOBTYPEID == (short)JobTypeEnum.legal
                             && x.JOB_SUB_TYPEID == (short) JobSubTypeEnum.CollateralRelated                            
-                        ).ToList();
+                        );
+
+                        var legalRequests = legalRequestSub.ToList();
 
                         if (legalRequests.Count() > 0)
                             isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
@@ -994,7 +996,7 @@ namespace FintrakBanking.Repositories.Credit
             if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
             {                
                 if(isCollateralSearchJobRequestSent == false)
-                    throw new ConditionNotMetException("Job Request to Legal for immovable property collateral is required!");
+                    throw new ConditionNotMetException("Job Request to Legal of type Collateral Related is required!");
 
                 //if (requests.Count() > 0) isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
             }
