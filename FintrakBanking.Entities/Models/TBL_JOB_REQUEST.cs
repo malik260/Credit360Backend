@@ -25,7 +25,7 @@ namespace FintrakBanking.Entities.Models
         public string JOBREQUESTCODE { get; set; }
 
         public short JOBTYPEID { get; set; }
-        public int? JOB_SUB_TYPEID { get; set; }
+        //public int? JOB_SUB_TYPEID { get; set; }
 
         public short ? JOB_SUB_TYPEID { get; set; }
 
