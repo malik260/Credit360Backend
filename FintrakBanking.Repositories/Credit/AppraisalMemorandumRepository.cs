@@ -1695,7 +1695,7 @@ namespace FintrakBanking.Repositories.Credit
                     proposedProductId = x.d.PRODUCTID,
 
                     approvedProductName = context.TBL_PRODUCT.Where(s=>s.PRODUCTID==x.d.PRODUCTID).Select(s=>s.PRODUCTNAME).FirstOrDefault(), // <----------take note of 1
-                        approvedTenor = x.d.APPROVEDTENOR,
+                    approvedTenor = x.d.APPROVEDTENOR,
                     approvedRate = x.d.APPROVEDINTERESTRATE,
                     approvedAmount = x.d.APPROVEDAMOUNT,
                     approvedProductId = x.d.PRODUCTID,
