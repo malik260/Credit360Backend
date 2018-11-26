@@ -10,6 +10,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public int? jobSubTypeId { get; set; }
+        public string jobSubTypeName { get; set; }
+
         public bool isApplicationLevel { get; set; }
         public bool requireApplicationDetail { get; set; }
         public bool? hasLegalRecommendedSearch { get; set; }
@@ -46,6 +49,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string requestTitle { get; set; }
         public string jobRequestCode { get; set; }
         public short jobTypeId { get; set; }
+        public short? jobSubTypeId { get; set; }
         public int senderStaffId { get; set; }
         public int? receiverStaffId { get; set; }
         public int? reassignedTo { get; set; }
@@ -63,7 +67,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public DateTime? systemResponseDate { get; set; }
         public DateTime? acknowledgementDate { get; set; }
         public DateTime? systemAcknowledgementDate { get; set; }
-        public string from { get; set; }
+        public string fromSender { get; set; }
         public string fromBranchName { get; set; }
         public string toBranchName { get; set; }
         
@@ -86,8 +90,13 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public DateTime datetimeSent { get; set; }
     }
 
+    //public int JOB_SUB_TYPE_CLASSID { get; set; }
+
+   
     public class JobRequestDetailViewModel : GeneralEntity
     {
+        public string jobSubTypeClassName;
+
         public int customerId { get; set; }
 
         public string jobRequestCode { get; set; }
@@ -108,10 +117,18 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int jobRequestId { get; set; }
         public int accreditedConsultantId { get; set; }
         public short jobSubTypeId { get; set; }
+        public int? jobSubTypeclassId { get; set; }
         public string description { get; set; }
         public decimal? amount { get; set; }
         public string accountNumber { get; set; }
         public int? currencyId { get; set; }
+    }
+
+    public class JobSubTypeClassViewModel
+    {
+        public int jobSubTypeclassId { get; set; }
+        public string jobSubTypeclassName { get; set; }
+        public short jobSubTypeId { get; set; }
     }
 
     public class jobReasignment : GeneralEntity
@@ -123,7 +140,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
     public class JobRequestCollateralSearchViewModel : GeneralEntity
     {
         public int casaAccountId { get; set; }
-
+        public int? jobSubTypeclassId { get; set; }
         public bool requireCharting { get; set; }
         public bool requireVerification { get; set; }
         public bool requireSearch { get; set; }
