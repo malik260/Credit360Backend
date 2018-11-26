@@ -173,26 +173,24 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]// [ClaimsAuthorization]
         [Route("token")]
-        public async Task<HttpResponseMessage> GetTokenAsync([FromBody] TokenVM user)
+        public HttpResponseMessage GetTokenAsync([FromBody] TokenVM user)
         {
             //try
             //{
                 user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
-                string ipAddressStr = null;
-                if (token.LoginCode == null)
-                    ipAddressStr = token.LoginCode.Split('@')[1];
+                string ipAddressStr = String.Empty;
+                if (token.LoginCode == null) ipAddressStr = token.LoginCode.Split('@')[1];
 
-                _repo.SessionInfo = await _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
-                var foundUser = await _repo.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
+                _repo.SessionInfo = _repo.CheckSessionState(user.username.ToLower(), ipAddressStr);
+                var foundUser = _repo.FindUserByUserNameAndPassword(user.username.ToLower(), user.password);
 
                 if (foundUser == null)
                 {
                     var found = _repo.GetSingleUserByUserName(user.username.ToLower());
 
-
                     if (found.branchId != null)
                     {
-                        var audit1 = new TBL_AUDIT()
+                        var audit1 = new TBL_AUDIT
                         {
                             AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
                             STAFFID = found.staffId,
@@ -218,7 +216,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (currUser.branchId != null)
                 {
-                    var audit = new TBL_AUDIT()
+                    var audit = new TBL_AUDIT
                     {
                         AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
                         STAFFID = currUser.staffId,
@@ -234,7 +232,7 @@ namespace FintrakBanking.APICore.Controllers
                     _auditTrail.AddAuditTrail(audit);
                 }
 
-                await _context.SaveChangesAsync();
+                _context.SaveChanges();
 
                 // build the json response
                 return Request.CreateResponse(HttpStatusCode.OK, new

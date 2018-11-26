@@ -850,12 +850,54 @@ namespace FintrakBanking.Repositories.Credit
             var application = context.TBL_LOAN_APPLICATION.Find(applicationId);
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId);
             bool isCamsolJobRequestSent = false;
+            bool isCollateralSearchJobRequestSent = false;
+
             if (loanApplicationDetails.Any())
             {
                 var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanApplication).ToList();
 
                 foreach (var detail in loanApplicationDetails)
                 {
+
+                    /* Camsol Search Job Request */
+                    var camsolJobRequestsSub = (from r in context.TBL_JOB_REQUEST
+                                                 join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
+                                                 where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.camsolCheck
+                                                 select r);
+
+                    var camsolJobRequests = camsolJobRequestsSub.ToList();
+
+                    if (camsolJobRequests.Count > 0)
+                        isCamsolJobRequestSent = true;
+                        
+
+                    /* Collateral Search Job Request */
+                    if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
+                    {
+                        var legalRequests = context.TBL_JOB_REQUEST
+                            .Where(x => x.TARGETID == detail.LOANAPPLICATIONDETAILID
+                            && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
+                            && x.JOBTYPEID == (short)JobTypeEnum.legal
+                            && x.JOB_SUB_TYPEID == (short) JobSubTypeEnum.CollateralRelated                            
+                        ).ToList();
+
+                        if (legalRequests.Count() > 0)
+                            isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
+                    }
+
+                    /* Middle office Job Request for IDF */
+                    var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == detail.APPROVEDPRODUCTID);
+                    if (product.PRODUCTCLASSID == (short) ProductClassEnum.InvoiceDiscountingFacility)
+                    {
+                        var middleOfficeRequests = (from r in context.TBL_JOB_REQUEST
+                                                 join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
+                                                 where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && r.TARGETID == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification
+                                                 select r).ToList();
+
+                        if (middleOfficeRequests.Count <= 0)
+                            throw new ConditionNotMetException($"Job Request to middle office for product {product.PRODUCTNAME} is required!");
+                    }
+
                     var checklistTypes = from a in context.TBL_CHECKLIST_TYPE select a;
                     foreach (var checklistType in checklistTypes) // through checklist types
                     {
@@ -880,15 +922,7 @@ namespace FintrakBanking.Repositories.Credit
                                                     join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
                                                     where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID
                                                     && a.OPERATIONID == (int)OperationsEnum.LoanApplication && a.PRODUCTID == productId
-                                                    select a).AsQueryable();
-
-                        var camsolJobRequests = (from r in context.TBL_JOB_REQUEST
-                                                 join j in context.TBL_JOB_TYPE on r.JOBTYPEID equals j.JOBTYPEID
-                                                 where r.OPERATIONSID == (short)OperationsEnum.LoanApplication && targetId == detail.LOANAPPLICATIONDETAILID && j.JOBTYPEID == (short)JobTypeEnum.camsolCheck
-                                                 select r).ToList();
-
-                        if (camsolJobRequests.Count > 0)
-                            isCamsolJobRequestSent = true;
+                                                    select a).AsQueryable();                       
 
                         var definitionsCount = checklistDefinitions.Count();
                         var detailsCount = checklistDetails.Count();
@@ -896,6 +930,9 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (checklistType.ISPRODUCT_BASED)
                         {
+                            var count1 = checklistDefinitions.Count();
+                            var count2 = checklistDetails.Count();
+
                             if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
                             {
                                 isCheckListDone = false;
@@ -946,10 +983,18 @@ namespace FintrakBanking.Repositories.Credit
 
             } // loanApplicationDetails.Any()
 
-            ValidateJobRequests(applicationId, application.REQUIRECOLLATERALTYPEID, true);
+            //ValidateCollateralSearchJobRequests(applicationId, application.REQUIRECOLLATERALTYPEID, true);
 
             if (!isCamsolJobRequestSent)
                 throw new ConditionNotMetException("Job Request must be sent to CAMSOL before you can proceed.");
+
+            if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
+            {                
+                if(isCollateralSearchJobRequestSent == false)
+                    throw new ConditionNotMetException("Job Request to Legal for immovable property collateral is required!");
+
+                //if (requests.Count() > 0) isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
+            }
 
             if (isCheckListDone && SubmitLoanApplicationForCam(applicationId, staffId, checkListIndex))
             {
@@ -1007,7 +1052,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.LogActivity();
         }
 
-        private bool ValidateJobRequests(int applicationId, int? requireCollateralTypeId = null, bool throwErrorMessage = false)
+        private bool ValidateCollateralSearchJobRequests(int loanApplicationDetailId, int? requireCollateralTypeId = null, bool throwErrorMessage = false)
         {
             string errorMessage = String.Empty;
             List<TBL_JOB_REQUEST> requests = new List<TBL_JOB_REQUEST>();
@@ -1015,7 +1060,7 @@ namespace FintrakBanking.Repositories.Credit
             if (requireCollateralTypeId == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
             {
                 requests = context.TBL_JOB_REQUEST
-                    .Where(x => x.TARGETID == applicationId
+                    .Where(x => x.TARGETID == loanApplicationDetailId
                     && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
                     && x.JOBTYPEID == (short)JobTypeEnum.legal
                     && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
@@ -2457,7 +2502,7 @@ namespace FintrakBanking.Repositories.Credit
                            join b in context.TBL_LOAN_APPLICATION
                            on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                            where a.LOANAPPLICATIONDETAILID == loanApplicationDetailId
-                           select b.PRODUCTCLASSID).FirstOrDefault();
+                           select a.TBL_PRODUCT1.PRODUCTCLASSID).FirstOrDefault();
 
             var typeId = (from a in context.TBL_LOAN_APPLICATION_DETAIL
                           join b in context.TBL_LOAN_APPLICATION
@@ -3780,11 +3825,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId) // OBIE (Page 4)
         {
-            string duration = WebConfigurationManager.AppSettings["turnOverDuration"];
+            string duration = WebConfigurationManager.AppSettings["AccountStatisticsDurationInMonths"];
             int newDuration = 0;
             if (string.IsNullOrEmpty(duration))
             {
-                duration = "48";
+                duration = "6";
             }
             Int32.TryParse(duration, out newDuration);
 

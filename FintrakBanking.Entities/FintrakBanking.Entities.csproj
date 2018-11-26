@@ -76,6 +76,7 @@
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_REASSIGNMENT.cs" />
+    <Compile Include="Models\TBL_JOB_TYPE_SUB_CLASS.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_TRANS.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_TRANS2.cs" />
     <Compile Include="Models\TBL_LOAN_CONTINGENT_ARCHIVE.cs" />

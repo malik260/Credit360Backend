@@ -411,7 +411,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                          && context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
                          ? context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
 
-                         from = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                         fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
                          fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
                          to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                          assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
@@ -438,54 +438,61 @@ namespace FintrakBanking.Repositories.WorkFlow
             var unitId = 0;
             unitId = thisStaff.TBL_DEPARTMENT_UNIT != null ? thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID : 0;
 
-            var data = context.TBL_JOB_REQUEST
-               .Where(t => (t.DEPARTMENTUNITID == unitId || t.SENDERSTAFFID == staffId || t.REASSIGNEDTO == staffId))
-               .Select(
-                  x =>
-                     new JobRequestViewModel
-                     {
-                         jobRequestId = x.JOBREQUESTID,
-                         requestTitle = x.JOB_TITLE,
-                         jobRequestCode = x.JOBREQUESTCODE,
-                         targetId = x.TARGETID,
-                         jobTypeId = x.JOBTYPEID,
-                         jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
-                         senderStaffId = x.SENDERSTAFFID,
-                         senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-                         senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
-                         departmentUnitId = x.DEPARTMENTUNITID,
-                         departmentId = x.DEPARTMENTID,
+            var data = (from x in context.TBL_JOB_REQUEST
+                        join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
+                        join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
+                        where (x.DEPARTMENTUNITID == unitId || x.SENDERSTAFFID == staffId || x.REASSIGNEDTO == staffId)
+               orderby x.ARRIVALDATE descending
+                       select (
+                       new JobRequestViewModel
+                       {
+                           jobRequestId = x.JOBREQUESTID,
+                           requestTitle = x.JOB_TITLE,
+                           jobRequestCode = x.JOBREQUESTCODE,
+                           targetId = x.TARGETID,
+                           jobTypeId = t.JOBTYPEID,
+                           jobSubTypeId = s.JOB_SUB_TYPEID,
+                           jobTypeName = t.JOBTYPENAME,
+                           jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                           jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+                           jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
+                           senderStaffId = x.SENDERSTAFFID,
+                           senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                           senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
+                           departmentUnitId = x.DEPARTMENTUNITID,
+                           departmentId = x.DEPARTMENTID,
 
-                         receiverStaffId = (int)x.RECEIVERSTAFFID,
-                         reassignedTo = x.REASSIGNEDTO,
-                         isReassigned = x.ISREASSIGNED,
-                         isAcknowledged = x.ISACKNOWLEDGED,
-                         operationsId = x.OPERATIONSID,
-                         operationName = x.TBL_OPERATIONS.OPERATIONNAME,
-                         requestStatusId = x.REQUESTSTATUSID,
-                         requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
-                         jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
-                         jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
-                         senderComment = x.SENDERCOMMENT,
-                         responseComment = x.RESPONSECOMMENT,
-                         arrivalDate = x.ARRIVALDATE,
-                         systemArrivalDate = x.SYSTEMARRIVALDATE,
-                         reassignedDate = x.REASSIGNEDDATE,
-                         systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
-                         responseDate = x.RESPONSEDATE,
-                         systemResponseDate = x.SYSTEMRESPONSEDATE,
-                         acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
-                         systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
-                         loggedInStaffId = staffId,
-                         
-                         refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l=>l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
-                         ? context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+                           receiverStaffId = (int)x.RECEIVERSTAFFID,
+                           reassignedTo = x.REASSIGNEDTO,
+                           isReassigned = x.ISREASSIGNED,
+                           isAcknowledged = x.ISACKNOWLEDGED,
+                           operationsId = x.OPERATIONSID,
+                           operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+                           requestStatusId = x.REQUESTSTATUSID,
+                           requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
 
-                         from = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME +" " + x.TBL_STAFF.LASTNAME,
-                         fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
-                         to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
-                         assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME +  " " + x.TBL_STAFF1.LASTNAME,
-                     }).OrderByDescending(x => x.arrivalDate).Take(500);
+                           senderComment = x.SENDERCOMMENT,
+                           responseComment = x.RESPONSECOMMENT,
+                           arrivalDate = x.ARRIVALDATE,
+                           systemArrivalDate = x.SYSTEMARRIVALDATE,
+                           reassignedDate = x.REASSIGNEDDATE,
+                           systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+                           responseDate = x.RESPONSEDATE,
+                           systemResponseDate = x.SYSTEMRESPONSEDATE,
+                           acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+                           systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                           loggedInStaffId = staffId,
+
+                           refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+                                ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
+                           fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                           fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
+                           to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+                           assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+
+                       })).Take(500);
+
 
             foreach (var item in data)
             {
@@ -496,6 +503,14 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
                         item.customerCharged = true;
                 };
+
+                if(item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
+                if(item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
+                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
+                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
+                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
+                if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
+
             }
 
             var c = data.ToList();
@@ -560,7 +575,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         {
             var details = (from x in this.context.TBL_JOB_REQUEST_DETAIL
                            join b in context.TBL_JOB_REQUEST on x.JOBREQUESTID equals b.JOBREQUESTID
-                           where x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
+                           where x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated
                            && x.DELETED == false
                            select new JobRequestDetailViewModel
                            {
@@ -569,6 +584,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                                accreditedConsultantId = (int)x.ACCREDITEDCONSULTANTID,
                                accreditedConsultantName = x.TBL_ACCREDITEDCONSULTANT.FIRMNAME,
                                jobSubTypeId = x.JOB_SUB_TYPEID,
+                               jobSubTypeclassId = x.JOB_SUB_TYPE_CLASSID,
+                               jobSubTypeClassName = x.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME,
                                jobRequestCode = b.JOBREQUESTCODE,
                                jobSubTypeName = x.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME,
                                jobTypeId = x.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPEID,
@@ -605,10 +622,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             List<JobRequestDetailViewModel> jobDetailList = new List<JobRequestDetailViewModel>();
             foreach(var i in jobRequest)
             {
-                var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == i.JOBREQUESTID && ((x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting) 
-                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch) 
-                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification) 
-                || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs)) && x.ACCREDITEDCONSULTANTPAID == false).ToList();
+                var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == i.JOBREQUESTID && (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated) && x.ACCREDITEDCONSULTANTPAID == false).ToList();
                 decimal chargeAmount = 0;
                 var jobSubTypeName = string.Empty; 
                 var jobTypeName = string.Empty;
@@ -708,7 +722,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             //var job = context.TBL_JOB_REQUEST.Where(x => x. == (short)JobSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs);
             var details = (from x in this.context.TBL_JOB_REQUEST
                            join b in context.TBL_JOB_REQUEST_DETAIL on x.JOBREQUESTID equals b.JOBREQUESTID
-                           where b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
+                           where b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated
                            && b.DELETED == false
                            select new JobRequestViewModel
                            {
@@ -814,7 +828,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 };
 
                 var fromData = context.TBL_STAFF.Where(b => b.STAFFID == request.senderStaffId).FirstOrDefault();
-                request.from = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
+                request.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
 
                 var toData = context.TBL_STAFF.Where(b => b.STAFFID == request.receiverStaffId).FirstOrDefault();
                 request.to = toData != null ? toData.FIRSTNAME + " " + toData.MIDDLENAME + " " + toData.LASTNAME : "n/a";
@@ -868,7 +882,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
 
             var fromData = context.TBL_STAFF.Where(b => b.STAFFID == request.senderStaffId).FirstOrDefault();
-            request.from = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
+            request.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
 
             var toData = context.TBL_STAFF.Where(b => b.STAFFID == request.receiverStaffId).FirstOrDefault();
             request.to = toData != null ? toData.FIRSTNAME + " " + toData.MIDDLENAME + " " + toData.LASTNAME : "n/a";
@@ -952,7 +966,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     systemResponseDate = x.b.SYSTEMRESPONSEDATE,
                     acknowledgementDate = x.b.ACKNOWLEDGEMENTDATE,
                     systemAcknowledgementDate = x.b.SYSTEMACKNOWLEDGEMENTDATE,
-                    from = allstaff.FirstOrDefault(s => s.id == x.b.SENDERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.SENDERSTAFFID).name,
+                    fromSender = allstaff.FirstOrDefault(s => s.id == x.b.SENDERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.SENDERSTAFFID).name,
                     to = allstaff.FirstOrDefault(s => s.id == x.b.RECEIVERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.RECEIVERSTAFFID).name,
                     assignee = allstaff.FirstOrDefault(s => s.id == x.b.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.REASSIGNEDTO).name,
                 })
@@ -974,12 +988,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         #region
         public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
-            var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId
-            && ((x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch)
-            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification)
-            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting)
-            || (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs))
-            ).ToList();
+            var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated).ToList();
 
             var auditDetail = "";
             var accountNumber = "";
@@ -1115,8 +1124,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalCharting,
-                    amount = model.chartChargeAmount, //collateralStateDetails.CHARTINGAMOUNT,
+                    jobSubTypeId = (short)JobSubTypeClassEnum.CollateralCharting,
+                    jobSubTypeclassId = model.jobSubTypeclassId,
+                    amount = model.chartChargeAmount, 
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
@@ -1131,8 +1141,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalSearch,
-                    amount = model.searchChargeAmount, //collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT,
+                    jobSubTypeId = (short)JobSubTypeClassEnum.CollateralSearch,
+                    jobSubTypeclassId = model.jobSubTypeclassId,
+                    amount = model.searchChargeAmount, 
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
@@ -1147,8 +1158,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.LegalVerification,
-                    amount = model.verificationChargeAmount, //collateralStateDetails.VERIFICATIONAMOUNT,
+                    jobSubTypeId = (short)JobSubTypeClassEnum.CollateralVerification,
+                    jobSubTypeclassId = model.jobSubTypeclassId,
+                    amount = model.verificationChargeAmount,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
@@ -1163,7 +1175,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeEnum.OtherLegalJobs,
+                    jobSubTypeId = (short)JobSubTypeClassEnum.AdditionalCharges,
+                    jobSubTypeclassId = model.jobSubTypeclassId,
                     amount = model.additionalCharge,
                     description = model.additionalChargeJustification,
                     jobRequestId = model.jobRequestId,
@@ -1199,6 +1212,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             jobDetail.AMOUNT = model.amount;
             jobDetail.DESCRIPTION = model.description;
             jobDetail.JOBREQUESTID = model.jobRequestId;
+            jobDetail.JOB_SUB_TYPE_CLASSID = model.jobSubTypeclassId;
             jobDetail.JOB_SUB_TYPEID = model.jobSubTypeId;
             jobDetail.DESCRIPTION = model.description;
             jobDetail.ACCREDITEDCONSULTANTID = model.accreditedConsultantId;

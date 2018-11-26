@@ -46,7 +46,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
         {
             var recordExist = context.TBL_TEMP_APPROVAL_GRP_MAPPING.Where(x => x.OPERATIONID == model.operationId && x.GROUPID == model.groupId && x.POSITION == model.position).Any();
             if (recordExist)
-                throw new ConditionNotMetException("This operation has already been initiated and is apprival pending");
+                throw new ConditionNotMetException("This operation has already been initiated and is approval pending");
 
             if (admin.IsSuperAdmin(model.createdBy) == true)
             {
@@ -82,7 +82,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 };
                 this.auditTrail.AddAuditTrail(audit);
 
-                var status = this.SaveAll();
+                var status = this.context.SaveChanges() > 0;
 
                 if (status)
                     return entity.GROUPOPERATIONMAPPINGID;
@@ -165,11 +165,13 @@ namespace FintrakBanking.Repositories.Setups.Approval
                 return false;
             if (admin.IsSuperAdmin(model.createdBy) == true)
             {
-                data.DELETEDBY = model.createdBy;
-                data.DATETIMEDELETED = generalSetup.GetApplicationDate();
-                data.DELETED = true;
+                //data.DELETEDBY = model.createdBy;
+                //data.DATETIMEDELETED = generalSetup.GetApplicationDate();
+                //data.DELETED = true;
 
-                var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == data.OPERATIONID).OPERATIONNAME;
+                context.TBL_APPROVAL_GROUP_MAPPING.Remove(data);
+
+                 var operationName = this.context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == data.OPERATIONID).OPERATIONNAME;
                 var groupName = this.context.TBL_APPROVAL_GROUP.FirstOrDefault(x => x.GROUPID == data.GROUPID).GROUPNAME;
 
                 var audit = new TBL_AUDIT
@@ -177,7 +179,7 @@ namespace FintrakBanking.Repositories.Setups.Approval
                     AUDITTYPEID = (short)AuditTypeEnum.ApprovalGroupMappingDeleted,
                     STAFFID = (int)model.createdBy,
                     BRANCHID = (short)model.BranchId,
-                    DETAIL = $"Request to Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
+                    DETAIL = $"Delete Approval Group Mapping for Operation: {operationName} in Group: {groupName}",
                     IPADDRESS = model.userIPAddress,
                     URL = model.applicationUrl,
                     SYSTEMDATETIME = DateTime.Now,
@@ -535,9 +537,10 @@ namespace FintrakBanking.Repositories.Setups.Approval
 
             if (updateData != null)
             {
-                updateData.DELETED = true;
-                updateData.DELETEDBY = data.CREATEDBY;
-                updateData.DATETIMEDELETED = data.DATETIMECREATED;
+                //updateData.DELETED = true;
+                //updateData.DELETEDBY = data.CREATEDBY;
+                //updateData.DATETIMEDELETED = data.DATETIMECREATED;
+                context.TBL_APPROVAL_GROUP_MAPPING.Remove(updateData);
             }
         }
         private void UpdateTempApprovalGroup(ApprovalGroupMappingViewModel data, short status)
