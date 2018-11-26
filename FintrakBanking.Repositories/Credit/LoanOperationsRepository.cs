@@ -12471,15 +12471,12 @@ namespace FintrakBanking.Repositories.Credit
                         var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
                         lmsrRecord.OPERATIONPERFORMED = false;
 
-
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
                         reviewRecord.OPERATIONCOMPLETED = false;
                         context.SaveChanges();
                         trans.Commit();
                         return 4;
                     }
-
-
 
                     workFlow.StaffId = entity.staffId;
                     workFlow.CompanyId = entity.companyId;
@@ -12488,7 +12485,6 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.Comment = entity.comment;
                     workFlow.OperationId = entity.operationId;
                     workFlow.LogActivity();
-
 
                     if (workFlow.Saved)
                     {
@@ -12514,7 +12510,6 @@ namespace FintrakBanking.Repositories.Credit
                             trans.Commit();
                             return 2;
                         }
-
 
                         if (workFlow.NewState != (int)ApprovalState.Ended)
                         {

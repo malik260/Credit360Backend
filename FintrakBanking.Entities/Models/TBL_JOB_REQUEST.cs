@@ -25,6 +25,9 @@ namespace FintrakBanking.Entities.Models
         public string JOBREQUESTCODE { get; set; }
 
         public short JOBTYPEID { get; set; }
+        public int? JOB_SUB_TYPEID { get; set; }
+
+        public short ? JOB_SUB_TYPEID { get; set; }
 
         public int SENDERSTAFFID { get; set; }
 
@@ -94,7 +97,9 @@ namespace FintrakBanking.Entities.Models
 
         public virtual TBL_JOB_REQUEST_STATUS_FEEDBAK TBL_JOB_REQUEST_STATUS_FEEDBAK { get; set; }
 
-        public virtual TBL_JOB_TYPE TBL_JOB_TYPE { get; set; }
+        public virtual TBL_JOB_TYPE TBL_JOB_TYPE { get; set; } 
+
+        //public virtual TBL_JOB_TYPE_SUB TBL_JOB_TYPE_SUB { get; set; }
 
         public virtual TBL_OPERATIONS TBL_OPERATIONS { get; set; }
 

@@ -16,6 +16,8 @@ namespace FintrakBanking.Entities.Models
 
         public short JOB_SUB_TYPEID { get; set; }
 
+        public int? JOB_SUB_TYPE_CLASSID { get; set; }
+
         public int? ACCREDITEDCONSULTANTID { get; set; }
 
         [StringLength(2000)]
@@ -50,5 +52,7 @@ namespace FintrakBanking.Entities.Models
         public virtual TBL_JOB_REQUEST TBL_JOB_REQUEST { get; set; }
 
         public virtual TBL_JOB_TYPE_SUB TBL_JOB_TYPE_SUB { get; set; }
+
+        public virtual TBL_JOB_TYPE_SUB_CLASS TBL_JOB_TYPE_SUB_CLASS { get; set; }
     }
 }
