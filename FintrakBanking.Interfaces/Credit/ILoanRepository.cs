@@ -203,7 +203,5 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> GetCompletedLoan(string searchValue);
         bool GetChangeLoanStatusOfACompletedLoan(int loanId);
 
-        List<CustomersTurnoverViewModel> GetCustomerTurnover(List<int> customerIds); // OBIE (Page 4)
-
     }
 }

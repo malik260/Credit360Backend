@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
     public interface ILoanApplicationRepository
     {
         List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId);
+
         IEnumerable<jobLoanApplicationDetailViewModel> GetLoanApplicationDetailById(int loanApplicationDetailId, int companyId);
 
         IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetailsById(int loanApplicationId, int companyId);
@@ -34,8 +35,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<ProductClassViewModel> GetProductClass();
         IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId);
-        CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId);
-
+        CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId, bool islms);
 
         // LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId);
         LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId, int staffId);
