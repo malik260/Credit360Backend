@@ -418,6 +418,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                          assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
                      }).OrderByDescending(x => x.arrivalDate);
 
+           
             foreach (var item in data)
             {
                 var detail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == item.jobRequestId);
@@ -427,8 +428,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                     if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
                         item.customerCharged = true;
                 };
-            }
 
+                if (item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
+                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
+                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
+                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
+                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
+                if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
+
+            }
             var c = data.ToList();
             return data;
         }
@@ -514,7 +522,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             }
 
-            var c = data.ToList();
+           // var c = data.ToList();
             return data;
         }
 
@@ -1014,7 +1022,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             else
             {
-                accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
+                var b = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
+                if ( b == null || b == string.Empty || b == " ")
+                    throw new ConditionNotMetException("The solicitor's account number is not defined.");
+
+                    accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
                 //var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
 
                 //var casaUnique = casa.FirstOrDefault();
@@ -1022,7 +1034,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 var witholdingAmount = (double)model.totalChargeAmount / 0.9;
                 //model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
-                model.currencyId = (short) jobRequestDetail.FirstOrDefault().CURRENCYID.Value;
+                var id = (short)jobRequestDetail.FirstOrDefault().CURRENCYID.Value;
+                model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
                 var currency = context.TBL_CURRENCY.Find(model.currencyId);
                 model.operationId = (short)OperationsEnum.CollateralSearchCompletion;
                 model.feeNarration = $"Payment to solicitor";
@@ -1134,8 +1147,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.CHARTINGAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeClassEnum.CollateralCharting,
-                    jobSubTypeclassId = model.jobSubTypeclassId,
+                    jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralCharting,
+                    jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
+                    jobTypeId = (short)JobTypeEnum.legal,
                     amount = model.chartChargeAmount, 
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -1151,8 +1165,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.COLLATERALSEARCHCHARGEAMOUNT);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeClassEnum.CollateralSearch,
-                    jobSubTypeclassId = model.jobSubTypeclassId,
+                    jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralSearch,
+                    jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
+                    jobTypeId = (short)JobTypeEnum.legal,
                     amount = model.searchChargeAmount, 
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -1168,8 +1183,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (collateralStateDetails.VERIFICATIONAMOUNT ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeClassEnum.CollateralVerification,
-                    jobSubTypeclassId = model.jobSubTypeclassId,
+                    jobSubTypeclassId = (short)JobSubTypeClassEnum.CollateralVerification,
+                    jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
+                    jobTypeId = (short)JobTypeEnum.legal,
                     amount = model.verificationChargeAmount,
                     jobRequestId = model.jobRequestId,
                     createdBy = model.createdBy,
@@ -1185,8 +1201,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //chargeAmount = chargeAmount + (model.additionalCharge ?? 0);
                 var detail = new JobRequestDetailViewModel
                 {
-                    jobSubTypeId = (short)JobSubTypeClassEnum.AdditionalCharges,
-                    jobSubTypeclassId = model.jobSubTypeclassId,
+                    jobSubTypeclassId = (short)JobSubTypeClassEnum.AdditionalCharges,
+                    jobSubTypeId = (short)JobSubTypeEnum.CollateralRelated,
+                    jobTypeId = (short)JobTypeEnum.legal,
                     amount = model.additionalCharge,
                     description = model.additionalChargeJustification,
                     jobRequestId = model.jobRequestId,
@@ -1227,6 +1244,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             jobDetail.DESCRIPTION = model.description;
             jobDetail.ACCREDITEDCONSULTANTID = model.accreditedConsultantId;
             jobDetail.ACCOUNTNUMBER = model.accountNumber;
+            jobDetail.CURRENCYID = model.currencyId;
             jobDetail.CREATEDBY = model.createdBy;
             jobDetail.DATETIMECREATED = DateTime.Now;
             context.TBL_JOB_REQUEST_DETAIL.Add(jobDetail);
