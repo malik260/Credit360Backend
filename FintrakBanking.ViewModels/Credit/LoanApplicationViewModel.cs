@@ -207,17 +207,17 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationDetailViewModel : GeneralEntity
     {
-        public string approvedProductName { get; set; }
-
-        public int applicationStatusPosition { get; set; }
-
         public LoanApplicationDetailViewModel()
         {
-          
             invoiceDetails = new List<InvoiceDetailViewModel>();
             productFees = new List<ProductFeesViewModel>();
             syndicatedLoan = new List<SyndicatedLoanDetailViewModel>();
         }
+
+        public string approvedProductName { get; set; }
+
+        public int applicationStatusPosition { get; set; }
+
         public string currencyCode { get; set; }
         public DateTime applicationDate { get; set; }
         public short applicationStatusId { get; set; }
@@ -264,8 +264,16 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; }
 
         public int approvedTenor { get; set; }
-        
+
         public int? tenorModeId { get; set; }
+
+        public int? tenorFrequencyTypeId
+        {
+            get
+            {
+                return tenorModeId == null ? (int?)TenorMode.Daily : tenorModeId; // default to days
+            }
+        }
 
         public double approvedInterestRate { get; set; }
 
@@ -363,7 +371,7 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
-        public int proposedTenorInDays
+        public int proposedTenorConverted
         {
             get
             {
@@ -373,12 +381,13 @@ namespace FintrakBanking.ViewModels.Credit
                     case (int)TenorMode.Daily: tenor = proposedTenor; break;
                     case (int)TenorMode.Monthly: tenor = (proposedTenor * 365) / 12; break;
                     case (int)TenorMode.Yearly: tenor = (proposedTenor * 365); break;
+                    default: tenor = proposedTenor; break;
                 }
                 return tenor;
             }
         }
 
-        public int? loanreViewApplicationId { get; set; }
+        // public int? loanreViewApplicationId { get; set; }
     }
 
     public class ProductFeesViewModel// : GeneralEntity

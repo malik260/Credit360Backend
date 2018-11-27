@@ -889,11 +889,20 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+
+                model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.userBranchId = (short)token.GetBranchId;
+
                 if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
 
                 {
-                    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
-
+                   
                     //if (model.maturityDate < model.proposedEffectiveDate)
                     //{
                     //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Maturity Date cannot be less than Effective date" });
