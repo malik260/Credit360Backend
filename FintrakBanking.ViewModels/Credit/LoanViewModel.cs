@@ -101,7 +101,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? loanReviewApplicationId { get; set; }
 
         public int loanApplicationDetailId { get; set; }
-       
+
         public short branchId { get; set; }
         public string loanReferenceNumber { get; set; }
         public string RelatedloanReferenceNumber { get; set; }
@@ -110,8 +110,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int tenor { get { return (this.maturityDate - this.effectiveDate).Days; } }
         public int tenorUsed { get; set; }
-        public short ? principalFrequencyTypeId { get; set; }
-        public short ? interestFrequencyTypeId { get; set; }
+        public short? principalFrequencyTypeId { get; set; }
+        public short? interestFrequencyTypeId { get; set; }
         public int principalNumberOfInstallment { get; set; }
         public int interestNumberOfInstallment { get; set; }
         public int relationshipOfficerId { get; set; }
@@ -142,11 +142,13 @@ namespace FintrakBanking.ViewModels.Credit
         public bool creditAppraisalCompleted { get; set; }
         public int? operationId { get; set; }
         public int? operationTypeId { get; set; }
-        public string operationName {get; set; }
+        public string operationName { get; set; }
         public int? customerGroupId { get; set; }
         public short loanTypeId { get; set; }
         public decimal overDraft { get; set; }
         public string archiveCode { get; set; }
+        public int contigentAmount {get; set;}
+        public string branchCode { get; set; }
 
 
         public decimal equityContribution { get; set; }

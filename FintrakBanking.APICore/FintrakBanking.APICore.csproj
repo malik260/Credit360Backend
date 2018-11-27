@@ -570,6 +570,13 @@
     <Compile Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx.designer.cs">
       <DependentUpon>FORM3800B_LOS.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\InActiveContigentLiabilityReport.aspx.cs">
+      <DependentUpon>InActiveContigentLiabilityReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\InActiveContigentLiabilityReport.aspx.designer.cs">
+      <DependentUpon>InActiveContigentLiabilityReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\Lein.aspx.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -939,6 +946,7 @@
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx" />
+    <Content Include="Reports\ReportViews\InActiveContigentLiabilityReport.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
@@ -1211,6 +1219,7 @@
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\InActiveContigentLiability.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
