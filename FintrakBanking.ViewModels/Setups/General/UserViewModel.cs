@@ -101,6 +101,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string currentPassword { get; set; }
         public string newPassword { get; set; }
     }
+
     public class ActiveUserDetails
     {
         public int companyId { get; set; }
@@ -122,5 +123,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string actionMessage { get; set; }
         public bool lockStatus { get; set; }
         public bool accountStatus { get; set; }
+        public string grantMessage { get; set; }
+
     }
 }

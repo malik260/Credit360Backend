@@ -64,7 +64,6 @@ namespace FintrakBanking.APICore.Providers
             //var origin = context.OwinContext.Request.Headers["Origin"];
             try
             {
-
                 string ipAddress = GetIpAddress();
                 UserViewModel user = null;
 
@@ -83,24 +82,13 @@ namespace FintrakBanking.APICore.Providers
 
                 appSetup = _bankingContext.TBL_SETUP_GLOBAL.SingleOrDefault();
 
-                if (authRepo.IsAccountLocked(userVm.username.ToLower()))
-                {
-                    context.SetError("invalid_grant", "This account is LOCKED");
-                    return;
-                }
+                ActiveUserDetails userInfo = authRepo.GetUserAuthenticationInfo(userVm.username);
 
-                if (! authRepo.IsAccountActive(userVm.username.ToLower()))
+                if (userInfo.grantMessage != "valid")
                 {
-                    context.SetError("invalid_grant", "This account is INACTIVE");
+                    context.SetError("invalid_grant", userInfo.grantMessage);
                     return;
                 }
-
-                if (!authRepo.ResumptionClosignTime(userVm.username.ToLower()))
-                {
-                    context.SetError("invalid_grant", "You cannot login at this time");
-                    return;
-                }
-                
 
                 if (appSetup != null && appSetup.USE_ACTIVE_DIRECTORY)
                 {
@@ -112,15 +100,12 @@ namespace FintrakBanking.APICore.Providers
                     }
                     else
                     {
-                        context.SetError("invalid_grant",
-                            "The user is not registered in the application. Contact the system administrator.");
+                        context.SetError("invalid_grant", "The user is not registered in the application. Contact the system administrator.");
                         return;
                     }
                 }
                 else
                 {
-
-
                     authRepo.SessionInfo = authRepo.CheckSessionState(userVm.username.ToLower(), ipAddress);//.GetAwaiter().GetResult();
                     //user = await Task
                     //    .FromResult(authRepo.FindUserByUserNameAndPassword(userVm.username.ToLower(), userVm.password))
@@ -181,9 +166,6 @@ namespace FintrakBanking.APICore.Providers
             }
             catch (Exception ex)
             {
-
-
-
                 if (CommonHelpers.IsNumeric(CommonHelpers.Left(ex.Message, 4)))
                 {
                     string str = ex.Message.Replace("1001", "");
@@ -198,8 +180,6 @@ namespace FintrakBanking.APICore.Providers
                     context.SetError("invalid_grant", str);
                     return;
                 }
-
-
             }
         }
 
