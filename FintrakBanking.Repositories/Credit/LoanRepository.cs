@@ -9316,11 +9316,11 @@ namespace FintrakBanking.Repositories.Credit
             return frequencyTypes;
         }
 
-        public bool SendBackToBookingModifier(ApprovalViewModel model)
+      
+
+        public bool ReferBackBooking(ApprovalViewModel model)
         {
-
             int staffId = model.staffId;
-
 
             var staff = context.TBL_STAFF.Where(x => x.STAFFID == staffId).FirstOrDefault();
 
@@ -9342,6 +9342,12 @@ namespace FintrakBanking.Repositories.Credit
             var staffRoleLevels = levels.Where(x => x.staffRoleId == staff.STAFFROLEID);
             var staffRoleLevelIds = staffRoleLevels.Select(x => x.levelId);
             var staffRoleLevelId = staffRoleLevelIds.FirstOrDefault();
+
+            int currentLevelIndex = levels.FindIndex(p => p.levelId == staffRoleLevelId);
+            int nextLevelIndex = levels.FindIndex(p => p.levelId == model.approvalLevelId);
+
+            if (nextLevelIndex > currentLevelIndex)
+                throw new ConditionNotMetException("The refered level is higher than the current level.");
 
 
             workflow.StaffId = model.createdBy;
@@ -10245,37 +10251,5 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion Commercial loan Operations
 
-        public List<CustomersTurnoverViewModel> GetCustomerTurnover(List<int> customerIds) // OBIE (Page 4)
-        {
-            var trx = context.TBL_LOAN_APPLICATION_TRANS.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomersTurnoverViewModel
-                {
-                    accountId = x.CUSTOMERID,
-                    //schemeType = x.,
-                    period = x.PERIOD,
-                    minimumDebitBalance = x.MINIMUMDEBITBALANCE,
-                    maximumDebitBalance = x.MAXIMUMDEBITBALANCE,
-                    minimumCreitBalance = x.MINIMUMCREDITBALANCE,
-                    maximumCreditBalance = x.MAXIMUMCREDITBALANCE,
-                    debitTurnover = x.DEBITTURNOVER,
-                    creditTurnover = x.CREDITTURNOVER,
-                    //floatCharge = x.FLOATCHARGE,
-                    //interest = x.INTEREST,
-                }).ToList();
-
-            var itx = context.TBL_LOAN_APPLICATION_TRANS2.Where(x => customerIds.Contains(x.CUSTOMERID))
-                .Select(x => new CustomersTurnoverViewModel
-                {
-                    accountId = x.CUSTOMERID,
-                    //schemeType = x.,
-                    period = x.PERIOD,
-                    //debitTurnover = x.DEBITTURNOVER,
-                    //creditTurnover = x.CREDITTURNOVER,
-                    //floatCharge = x.FLOATCHARGE,
-                    //interest = x.INTEREST,
-                }).ToList();
-
-            return trx.Union(itx).ToList();
-        }
     }
 }

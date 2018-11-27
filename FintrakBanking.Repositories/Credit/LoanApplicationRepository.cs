@@ -784,6 +784,7 @@ namespace FintrakBanking.Repositories.Credit
             return this.context.TBL_LOAN_STATUS.Where(x => x.LOANSTATUSID == loanStatusId).SingleOrDefault()
                 .ACCOUNTSTATUS;
         }
+
         public IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId)
         {
             var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL
@@ -797,12 +798,13 @@ namespace FintrakBanking.Repositories.Credit
 
             return customers;
         }
-        public CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId)
+
+        public CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId, bool isLms = false)
         {
             var fields = new CustomerApplicationTransactionsViewModels();
 
             var first = (from a in context.TBL_LOAN_APPLICATION_TRANS
-                         where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
+                         where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
                          select new CustomerTransactionsViewModels
                              {
                                  cust_Id = a.CUSTOMERTRANSACTIONID.ToString(),
@@ -818,8 +820,9 @@ namespace FintrakBanking.Repositories.Credit
                                  month =a.MONTH,
                                  year = a.YEAR,
                              }).OrderByDescending(m=>m.year).ThenByDescending(b => b.month).ToList();
+
             var second = (from a in context.TBL_LOAN_APPLICATION_TRANS2
-                          where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId
+                          where a.CUSTOMERID == customerId && a.LOANAPPLICATIONID == applicationId && a.ISLMS == isLms
                           select new CustomerTransactionsViewModels
                          {
                              cust_Id = a.CUSTOMERTRANSACTIONID2.ToString(),
@@ -874,12 +877,14 @@ namespace FintrakBanking.Repositories.Credit
                     /* Collateral Search Job Request */
                     if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
                     {
-                        var legalRequests = context.TBL_JOB_REQUEST
+                        var legalRequestSub = context.TBL_JOB_REQUEST
                             .Where(x => x.TARGETID == detail.LOANAPPLICATIONDETAILID
                             && x.OPERATIONSID == (short)OperationsEnum.LoanApplication
                             && x.JOBTYPEID == (short)JobTypeEnum.legal
                             && x.JOB_SUB_TYPEID == (short) JobSubTypeEnum.CollateralRelated                            
-                        ).ToList();
+                        );
+
+                        var legalRequests = legalRequestSub.ToList();
 
                         if (legalRequests.Count() > 0)
                             isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
@@ -991,7 +996,7 @@ namespace FintrakBanking.Repositories.Credit
             if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
             {                
                 if(isCollateralSearchJobRequestSent == false)
-                    throw new ConditionNotMetException("Job Request to Legal for immovable property collateral is required!");
+                    throw new ConditionNotMetException("Job Request to Legal of type Collateral Related is required!");
 
                 //if (requests.Count() > 0) isCollateralSearchJobRequestSent = true; //errorMessage = errorMessage + "Job Request to Legal for immovable property collateral is required! ";
             }
@@ -3823,7 +3828,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId) // OBIE (Page 4)
+        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId, bool isLms = false) // OBIE (Page 4)
         {
             string duration = WebConfigurationManager.AppSettings["AccountStatisticsDurationInMonths"];
             int newDuration = 0;
@@ -3885,6 +3890,7 @@ namespace FintrakBanking.Repositories.Credit
                         DATETIMECREATED = DateTime.Now,
                         MONTH = transaction.month,
                         YEAR = transaction.year,
+                        ISLMS = isLms
                     });
                 }
             }
@@ -3913,6 +3919,8 @@ namespace FintrakBanking.Repositories.Credit
                         DATETIMECREATED = DateTime.Now,
                         MONTH = t.month,
                         YEAR = t.year,
+                        ISLMS = isLms
+
                     });
                 }
             }
