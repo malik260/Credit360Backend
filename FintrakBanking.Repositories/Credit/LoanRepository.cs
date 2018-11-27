@@ -1254,7 +1254,7 @@ namespace FintrakBanking.Repositories.Credit
                 MISCODE = entity.misCode,
                 TEAMMISCODE = entity.teamMiscode,
                 INTERESTRATE = interestRate,
-
+                
                 PRINCIPALINSTALLMENTLEFT = 0,
                 INTERESTINSTALLMENTLEFT = 0,
 

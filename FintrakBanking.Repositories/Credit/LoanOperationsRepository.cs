@@ -5351,7 +5351,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 TBL_LOAN_FEE feeResult = (from p in context.TBL_LOAN_FEE
                                           where p.LOANID == loanId
-                                                && p.LOANCHARGEFEEID == chargeTypeId
+                                                //&& p.LOANCHARGEFEEID == chargeTypeId
+                                                && p.CHARGEFEEID == chargeTypeId
+                                                && p.LOANSYSTEMTYPEID == chargeDetails.LOANSYSTEMTYPEID
                                           select p).SingleOrDefault();
 
                 feeResult.FEEAMOUNT = NewFeeAmount;
@@ -5361,9 +5363,9 @@ namespace FintrakBanking.Repositories.Credit
                 var result = context.SaveChanges() > 0;
                 if (result)
                 {
-                    output = true; ;
+                    output = true;
                 }
-                return false;
+                return output;
             }
             catch (Exception ex)
             {
