@@ -750,6 +750,10 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         allFilteredLoan = SearchContigentLoan(searchQuery);
                     }
+                    else if (loanSystemTypeId == (int)LoanSystemTypeEnum.LineFacility)
+                    {
+                        allFilteredLoan = SearchLoanLine(searchQuery);
+                    }
                 }
 
                 //var x = allFilteredLoan.ToList();
@@ -800,6 +804,7 @@ namespace FintrakBanking.Repositories.Credit
                 return null;
             }
         }
+
         private List<LoanViewModel> SearchTermLoan(string searchQuery)
         {
             if (!string.IsNullOrWhiteSpace(searchQuery))
@@ -839,6 +844,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+        
         private List<LoanViewModel> SearchLMSLoan(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN
@@ -875,6 +881,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+        
         private List<LoanViewModel> SearchContigentLMSLoan(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
@@ -907,6 +914,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+
         private List<LoanViewModel> SearchRevolvingLMSLoan(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
@@ -940,6 +948,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+
         private List<LoanViewModel> RelatedFacilities(string relaltedLoanRefNo, string loanRefNo)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN
@@ -962,6 +971,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+
         public List<LoanViewModel> ArchiveLoanFacilityDetail(int loanId)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_ARCHIVE
@@ -992,6 +1002,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+
         private List<LoanViewModel> SearchRevolvingLoan(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
@@ -1024,6 +1035,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+
         private List<LoanViewModel> RelatedRevolvingLoan(string relatedLoanFreNo, string loanRefNo)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
@@ -1045,6 +1057,7 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+
         private List<LoanViewModel> SearchContigentLoan(string searchQuery)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
@@ -1076,6 +1089,42 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
+        
+        private List<LoanViewModel> SearchLoanLine(string searchQuery)
+        {
+            if (!string.IsNullOrWhiteSpace(searchQuery)) searchQuery = searchQuery.ToUpper();
+
+            var allFilteredLoan = (from a in context.TBL_LOAN_APPLICATION
+                                   join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                   where a.APPROVALSTATUSID == 2 && d.STATUSID == 2
+                                   && (a.APPLICATIONREFERENCENUMBER.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
+                                       b.LASTNAME.ToUpper().Contains(searchQuery.Trim())
+                                   )
+                                   select new LoanViewModel
+                                   {
+                                       loanId = d.LOANAPPLICATIONDETAILID,
+                                       customerId = d.CUSTOMERID,
+                                       productId = d.APPROVEDPRODUCTID,
+                                       customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
+                                       loanReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                       applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                       loanApplicationId = d.LOANAPPLICATIONID,
+                                       interestRate = 1,
+                                       principalAmount = d.APPROVEDAMOUNT,
+                                       //effectiveDate = a.EFFECTIVEDATE,
+                                       //maturityDate = a.MATURITYDATE,
+                                       loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = d.TBL_PRODUCT1.PRODUCTTYPEID, // 1
+                                       productName = d.TBL_PRODUCT1.PRODUCTNAME, // 1
+                                       //writtenOff = a.LOANSTATUSID == 7
+
+                                   }).ToList();
+            return allFilteredLoan;
+        }
+        
         private List<LoanViewModel> RelatedContigentLoan(string relatedLoanRef, string loanRefNo)
         {
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
@@ -1491,6 +1540,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+
         public List<LoanViewModel> ContingentUtilization(int contingentId)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
@@ -1510,8 +1560,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
-
-
+        
         public List<LoanViewModel> DailyInterestAccrual(DateTime startDate, DateTime endDate, string loanReferenceNumber)
         {
             List<LoanViewModel> data;
@@ -1536,11 +1585,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return data;
         }
-
-
-
-
-
+        
         #region
 
         private LoanViewModel GetLMSLoanByLoan(int loanId)
@@ -1845,8 +1890,7 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
         #endregion
-
-
+        
         #region
         private IEnumerable<CamProcessedLoanViewModel> AvailedLoanApplicationsDetails(int companyId, int staffId, int branchId, string refNo)
         {
