@@ -7,15 +7,12 @@
         EOD = 22, EOM = 23, EOY = 24, OneOff = 21, Transaction = 25
     };
 
-
     public enum TenorMode
     {
         Monthly = 1,
         Daily = 2,
         Yearly = 3
     }
-
-
 }
 
 //1	Yearly
