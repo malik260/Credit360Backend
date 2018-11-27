@@ -1068,7 +1068,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 foreach (var item in pendingProducts)
                 {
-                    var behaviour = context.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == item.productId);
+                    var behaviour = context.TBL_TEMP_PRODUCT_BEHAVIOUR.Where(x => x.TEMP_PRODUCTID == item.productId).ToList();
                     if (behaviour.Any())
                     {
                         var x = behaviour.FirstOrDefault();
@@ -1089,8 +1089,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     item.invoiceBased = x.ISINVOICEBASED;
                     item.requireCasaAccount = x.REQUIRECASAACCOUNT;
                     item.allowFundUsage = x.ALLOWFUNDUSAGE;
-                    item.productBehaviour.crmsRegulatoryId = x.CRMSREGULATORYID;
-
+                    item.crmsRegulatoryId = x.CRMSREGULATORYID;
+                    item.productBehaviourId = x.TEMPPRODUCT_BEHAVIOURID;
+                    //item.productBehaviour.crmsRegulatoryId = x.CRMSREGULATORYID;
                 }
             }
                 foreach (var currency in pendingProducts)
@@ -2210,7 +2211,8 @@ namespace FintrakBanking.Repositories.Setups.General
                     RISKRATINGID = productModel.riskRatingId,
                     TBL_TEMP_PRODUCT_CURRENCY = productCurrencies,
                     TBL_TEMP_PRODUCT_COLLATERALTYP = productCollaterals,
-                    TBL_TEMP_PRODUCT_CHARGE_FEE = productFees
+                    TBL_TEMP_PRODUCT_CHARGE_FEE = productFees,
+                    PRODUCTID = (short)productModel.productId
                 };
 
                 tempProductBehaviour = new TBL_TEMP_PRODUCT_BEHAVIOUR()
