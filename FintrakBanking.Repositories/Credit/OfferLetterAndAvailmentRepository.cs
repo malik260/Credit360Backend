@@ -2115,10 +2115,15 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (appl.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees) // Bonds and Guarantees adapter
                 {
-                    if (PendingBondsAndGuaranteeJobRequest(appl.LOANAPPLICATIONID) == false)
+                    var bondAndGauranteeSent = false;
+                    var detail = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID);
+                    foreach(var item in detail)
                     {
-                        throw new ConditionNotMetException("There is no Job Request sent to Legal for the B&G document. Please send one to proceed to availment!.");
+                        if (PendingBondsAndGuaranteeJobRequest(item.LOANAPPLICATIONDETAILID) == true) bondAndGauranteeSent = true;
                     }
+
+                    if (bondAndGauranteeSent == false)
+                        throw new ConditionNotMetException("There is no Job Request sent to Legal for the B&G document. Please send one to proceed to availment!.");
 
                     //appl.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BondAndGuaranteesInProgress;
                     //context.SaveChanges(); // save changes at this point
@@ -2155,10 +2160,10 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
-        private bool PendingBondsAndGuaranteeJobRequest(int applicationId)
+        private bool PendingBondsAndGuaranteeJobRequest(int applicationdetailId)
         {
             var requests = context.TBL_JOB_REQUEST
-                .Where(x => x.TARGETID == applicationId
+                .Where(x => x.TARGETID == applicationdetailId
                 && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
                 && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
