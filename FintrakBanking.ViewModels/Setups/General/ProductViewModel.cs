@@ -112,6 +112,8 @@ namespace FintrakBanking.ViewModels.Setups.General
         public bool? invoiceBased { get; set; }
         public bool? allowFundUsage { get; set; }
         public List<ProductCurrencyViewModel> currencies { get; set; }
+        public int? crmsRegulatoryId { get; set; }
+        public int? productBehaviourId { get; set; }
 
         public List<ProductFeeViewModel> fees { get; set; }
 

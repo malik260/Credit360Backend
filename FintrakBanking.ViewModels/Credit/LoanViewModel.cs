@@ -864,6 +864,7 @@ namespace FintrakBanking.ViewModels.Credit
         public bool isPercentage { get; set; }
         public DateTime? nextCovenantDate { get; set; }
         public short loanSystemTypeId { get; set; }
+        public string productCustomerName { get; set; }
     }
 
     public class LoanMonitoringTriggerViewModel : GeneralEntity
