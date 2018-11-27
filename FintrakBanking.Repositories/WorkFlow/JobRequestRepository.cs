@@ -1024,7 +1024,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 var b = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
                 if ( b == null || b == string.Empty || b == " ")
-                    throw new ConditionNotMetException("The solicitor's account number is not defined.");
+                    throw new ConditionNotMetException("The solicitor's account number is not found. No account number has been mapped to this solicitor.");
 
                     accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
                 //var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
