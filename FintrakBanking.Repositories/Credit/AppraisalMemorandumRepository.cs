@@ -733,7 +733,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var details = new LoanApplicationDetailsViewModel();
                 var facilities = context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == applicationId)
-                    .Join(context.TBL_LOAN_APPLICATION_DETAIL,
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.DELETED == false),
                     a => a.LOANAPPLICATIONID, d => d.LOANAPPLICATIONID, (a, d) => new { a, d })
                     .Select(x => new ApprovedLoanDetailViewModel
                     {
@@ -748,7 +748,7 @@ namespace FintrakBanking.Repositories.Credit
                         proposedRate = x.d.PROPOSEDINTERESTRATE,
                         proposedAmount = x.d.PROPOSEDAMOUNT,
                         proposedProductId = x.d.PROPOSEDPRODUCTID,
-                        proposedProductIdType = context.TBL_PRODUCT.Where(f => f.PRODUCTID == x.d.PROPOSEDPRODUCTID).Select(q => q.PRODUCTTYPEID).FirstOrDefault(),
+                        proposedProductClassId = x.d.TBL_PRODUCT.PRODUCTCLASSID,
 
                         approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
                         approvedTenor = x.d.APPROVEDTENOR,
@@ -774,7 +774,8 @@ namespace FintrakBanking.Repositories.Credit
                         conditionSubsequent = x.d.CONDITIONSUBSEQUENT,
                         transactionDynamics = x.d.TRANSACTIONDYNAMICS,
 
-                    }).ToList();
+                    })
+                    .ToList();
 
                 var customerIds = facilities.Select(x => x.customerId).ToList();
                 var duplications = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => customerIds.Contains(x.CUSTOMERID)
@@ -782,11 +783,9 @@ namespace FintrakBanking.Repositories.Credit
                     && x.LOANAPPLICATIONID != applicationId
                     && x.STATUSID == (int)ApprovalStatusEnum.Approved
                 )
-                .Join(
-                    context.TBL_LOAN_APPLICATION.Where(x => 
-                        x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved)
-                        , d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
+                .Join(context.TBL_LOAN_APPLICATION.Where(x => x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                        && x.APPROVALSTATUSID != (int)ApprovalStatusEnum.Disapproved), 
+                        d => d.LOANAPPLICATIONID, a => a.LOANAPPLICATIONID, (d, a) => new { d, a })
                 .Select(x => new DedupeApplicationViewModel
                 {
                     applicationReferenceNumber = x.a.APPLICATIONREFERENCENUMBER,
@@ -798,29 +797,10 @@ namespace FintrakBanking.Repositories.Credit
                     productName = x.d.TBL_PRODUCT.PRODUCTNAME,
                 })
                 .ToList();
-            //var syndicated = new List<SyndicatedLoanDetailViewModel>();
-            //foreach (var item in facilities)
-            //{
-            //    syndicated = context.TBL_LOAN_APPLICATION_DETAIL//.Where(x => x.LOANAPPLICATIONID == applicationId)
-            //        .Join(context.TBL_LOAN_APPLICATION_DETL_SYN.Where(x => x.LOANAPPLICATIONDETAILID == item.loanApplicationDetailId),
-            //        a => a.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (a, d) => new { a, d })
-            //        .Select(x => new SyndicatedLoanDetailViewModel
-            //        {
-            //            syndicationId = x.d.SYNDICATIONID,
-            //            loanApplicationDetailId = x.a.LOANAPPLICATIONDETAILID,
-            //            bankCode = x.d.BANKCODE,
-            //            bankName = x.d.BANKNAME,
-            //            amountContributed = x.d.AMOUNTCONTRIBUTED,
-            //            typeId = (short)x.d.PARTY_TYPEID,
-            //            typeName = context.TBL_LOAN_SYNDICATION_PARTY_TYP.Where(f => f.PARTY_TYPEID == x.d.PARTY_TYPEID).FirstOrDefault().PARTY_TYPENAME,
-            //        }).ToList();
-            //    details.syndicated.AddRange(syndicated);
-            //}
 
             details.duplications = duplications;
             details.facilities = facilities;
             details.application = GetLoanApplicationInformation(applicationId);
-            //details.syndicated = syndicated;
 
             return details;
         }
@@ -844,7 +824,6 @@ namespace FintrakBanking.Repositories.Credit
                     proposedRate = x.d.PROPOSEDINTERESTRATE,
                     proposedAmount = x.d.PROPOSEDAMOUNT,
                     proposedProductId = x.d.PROPOSEDPRODUCTID,
-                    proposedProductIdType = context.TBL_PRODUCT.Where(f=>f.PRODUCTID == x.d.PROPOSEDPRODUCTID).Select(q=>q.PRODUCTTYPEID).FirstOrDefault(),
 
                     approvedProductName = x.d.TBL_PRODUCT1.PRODUCTNAME, // <----------take note of 1
                     approvedTenor = x.d.APPROVEDTENOR,
@@ -931,7 +910,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationAmount = a.APPLICATIONAMOUNT,
                 dateTimeCreated = a.DATETIMECREATED,
                 collateralDetail = a.COLLATERALDETAIL,
-                LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID)
+                LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false)
                                             .Select(c => new LoanApplicationDetailViewModel
                                             {
                                                 equityAmount = c.EQUITYAMOUNT,
@@ -1716,7 +1695,7 @@ namespace FintrakBanking.Repositories.Credit
                     proposedProductId = x.d.PRODUCTID,
 
                     approvedProductName = context.TBL_PRODUCT.Where(s=>s.PRODUCTID==x.d.PRODUCTID).Select(s=>s.PRODUCTNAME).FirstOrDefault(), // <----------take note of 1
-                        approvedTenor = x.d.APPROVEDTENOR,
+                    approvedTenor = x.d.APPROVEDTENOR,
                     approvedRate = x.d.APPROVEDINTERESTRATE,
                     approvedAmount = x.d.APPROVEDAMOUNT,
                     approvedProductId = x.d.PRODUCTID,

@@ -534,6 +534,7 @@ namespace FintrakBanking.APICore.Controllers
                 requestModel.targetId = Convert.ToInt32(provider.FormData["targetId"]);
                 requestModel.operationsId = Convert.ToInt32(provider.FormData["operationId"]);
                 requestModel.jobTypeId = (short)Convert.ToInt32(provider.FormData["jobTypeId"]);
+                requestModel.jobSubTypeId = (short)Convert.ToInt32(provider.FormData["jobSubTypeId"]);
                 requestModel.isReassigned = provider.FormData["isReassigned"].ToLower() != "undefined" ? Convert.ToBoolean(provider.FormData["isReassigned"]) : false;
                 requestModel.isAcknowledged = provider.FormData["isAcknowledged"] != "undefined" ?Convert.ToBoolean(provider.FormData["isAcknowledged"]) : false;
 
@@ -888,41 +889,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
         #endregion
-
-        //[HttpGet]
-        //[Route("operation-staff/{operationId}")]
-        //public HttpResponseMessage GetOperationStaff(int operationId)
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetOperationStaff(operationId);
-
-        //        if (data == null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //        }
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-        //    }
-        //}
-
-        //[HttpGet]
-        //[Route("job-request/group")]
-        //public HttpResponseMessage GetJobRequestByGroupId()
-        //{
-        //    try
-        //    {
-        //        var data = repo.GetJobRequestByGroupId(token.GetStaffId);
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-        //    }
-        //}
 
     }
 }

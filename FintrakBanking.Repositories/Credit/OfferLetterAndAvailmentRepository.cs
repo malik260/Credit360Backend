@@ -1977,22 +1977,22 @@ namespace FintrakBanking.Repositories.Credit
 
                 ctx.SaveChanges();
 
-                if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability))
-                {
-                    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
-                    {
-                        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
-                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
-                        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
-                        DATETIMECREATED = DateTime.Now,
-                        ISUSED = false,
-                        CREATEDBY = entity.staffId,
-                    });
+                //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.ContingentLiability))
+                //{
+                //    var request = ctx.TBL_LOAN_BOOKING_REQUEST.Add(new TBL_LOAN_BOOKING_REQUEST
+                //    {
+                //        AMOUNT_REQUESTED = record.APPROVEDAMOUNT,
+                //        APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved,
+                //        LOANAPPLICATIONDETAILID = record.LOANAPPLICATIONDETAILID,
+                //        DATETIMECREATED = DateTime.Now,
+                //        ISUSED = false,
+                //        CREATEDBY = entity.staffId,
+                //    });
 
-                    ctx.SaveChanges();
-                    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
-                    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
-                }
+                //    ctx.SaveChanges();
+                //    this.LogBookingApproval(entity, record, request.LOAN_BOOKING_REQUESTID);
+                //    record.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID = (short)LoanApplicationStatusEnum.BookingRequestCompleted;
+                //}
 
                 //if ((record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.TermLoan || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SelfLiquidating || record.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.SyndicatedTermLoan)
                 //&& (productClassId != 0 && productClassId != null)
@@ -2043,13 +2043,19 @@ namespace FintrakBanking.Repositories.Credit
         {
             foreach (var item in loanApplicationDetails)
             {
-                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID != (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                    throw new ConditionNotMetException("There are pending job request for this application.");
+
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
                     throw new ConditionNotMetException("There are unapproved middle office request.");
-                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.OPERATIONSID == (short)OperationsEnum.LoanApplication && x.JOBTYPEID != (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
-                    throw new ConditionNotMetException("There are unattended job request which must be attended to.");
+
+                if (item.TBL_LOAN_APPLICATION.PRODUCTCLASSID != (short)ProductClassEnum.BondAndGuarantees)
+                {
+                    if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID == (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                        throw new ConditionNotMetException("There are unattended Legal job request which must be attended to.");
+                }
             }
         }
-
 
         private bool ReferApplicationToSpecificLevel(LoanAvailmentApprovalViewModel model)
         {
@@ -2392,6 +2398,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return context.SaveChanges() > 0;
         }
+
         public LoanApplicationUpdateMessage AvailmentChecklistValidation(int applicationId, int staffId)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();

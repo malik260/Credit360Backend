@@ -73,6 +73,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short trailApprovalStatus { get; set; }
         public string currencyCode { get; set; }
 
+        public string userActivity { get; set; }
         public string ApprovalStatus { get; set; }
         public string approvedByName { get; set; }
 

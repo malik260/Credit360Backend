@@ -59,6 +59,7 @@ namespace FintrakBanking.Interfaces.Reports
         IEnumerable<AuditViewModel> AuditType(string searchValue);
         List<GLAccountSearchViewModel> GLAccount(string searchValue);
         string GetGeneratedFORM3800BLOS(string applicationRefNumber);
+        string GetGeneratedFORM3800BLMS(string applicationRefNumber);
         string GetStalledPerfection(DateRange dateRange);
         string GetCollateralPerfectionYetToCommence(DateRange dateRange);
         string GetAllCommercialLoanReport(DateRange dateRange);

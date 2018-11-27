@@ -36,7 +36,9 @@ namespace FintrakBanking.Interfaces.Admin
 
         bool UpdateUser(int userId, AppUserViewModel user);
 
-        //   Object ManageUserAccount(int userId, int lockStatus);
+        //   Object ManageUserAccount(int userId, int lockStatus);        
+
+        List<string> GetUserActivitiesByUser(int userId);
 
         #endregion Users
 

@@ -418,7 +418,9 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.GetApprovedLoanReviewRemedial();
+                var userId = token.GetStaffId;
+
+                var data = loanRepo.GetApprovedLoanReviewRemedial(userId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -887,11 +889,20 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
+
+                model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = Request.RequestUri.Host;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+                model.userBranchId = (short)token.GetBranchId;
+
                 if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
 
                 {
-                    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
-
+                   
                     //if (model.maturityDate < model.proposedEffectiveDate)
                     //{
                     //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Maturity Date cannot be less than Effective date" });
@@ -927,6 +938,18 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
                 }
+                else if ((int)OperationsEnum.ContingentLiabilityTenorExtension == model.operationTypeId || (int)OperationsEnum.ContingentLiabilityAmountReduction == model.operationTypeId)
+                {
+
+                    var response = repo.AddOperationReviewContingent(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+                }
+                
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
@@ -971,7 +994,28 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("sent-email-for-recovery/{accreditedConsultantId}")]
+        public HttpResponseMessage SendEmailForRecovery( int accreditedConsultantId)
+        {
+            try
+            {
+                var data = repo.SendEmailToRecoveryAgent(token.GetCompanyId,token.GetStaffId,(short)token.GetBranchId, accreditedConsultantId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

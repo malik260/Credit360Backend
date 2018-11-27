@@ -25,5 +25,7 @@ namespace FintrakBanking.Entities.Models
         public DateTime DATETIMECREATED { get; set; }
         public int? MONTH { get; set; }
         public int? YEAR { get; set; }
+        public bool ISLMS { get; set; }
+
     }
 }

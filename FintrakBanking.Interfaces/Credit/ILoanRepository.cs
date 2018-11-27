@@ -20,7 +20,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         List<OverrideItemVeiwModel> getBookingOverride(string customerCode);
         LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
-        bool SendBackToBookingModifier(ApprovalViewModel model);
+        bool ReferBackBooking(ApprovalViewModel model);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenantById(int applicationDetailId);
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
         decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
@@ -39,7 +39,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetApprovedLoanReview();
 
-        IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial();
+        IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId);
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
@@ -203,6 +203,5 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> GetCompletedLoan(string searchValue);
         bool GetChangeLoanStatusOfACompletedLoan(int loanId);
 
-        List<CustomersTurnoverViewModel> GetCustomerTurnover(List<int> customerIds); // OBIE (Page 4)
     }
 }

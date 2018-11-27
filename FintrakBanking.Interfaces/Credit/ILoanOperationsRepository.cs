@@ -26,8 +26,11 @@ namespace FintrakBanking.Interfaces.Credit
             
         bool ProcessContingentLiabilityTerminationAtMaturity(DateTime date);
 
-
         void ProcessAutomaticInterestRepricing(DateTime applicationDate, int staffId);
+        
+        bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment);
+
+        bool ContingentLiabilityAmountReduction(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment);
 
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyTermLoansInterestAccrual(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> ProcessDailyAuthorisedOverdraftInterestAccrual(DateTime applicationDate);
@@ -84,6 +87,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
 
         bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);
+
+        bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId);
 
         #region COMMERCIAL PAPER LOANS
         bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);
