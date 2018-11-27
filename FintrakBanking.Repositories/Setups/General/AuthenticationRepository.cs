@@ -119,6 +119,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public ActiveUserDetails GetUserAuthenticationInfo(string username)
         {
+            username = username.ToLower();
             ActiveUserDetails result = new ActiveUserDetails();
             var user = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == username);
             if (user == null) throw new SecureException("1001 Login Failure.");
@@ -438,7 +439,6 @@ namespace FintrakBanking.Repositories.Setups.General
             return false;
         }
 
-
         public bool ResumptionClosignTime(string userName, bool logAudit = true)
         {
             var presentTime = DateTime.Now.TimeOfDay;
@@ -625,6 +625,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         securityQuestion = u.SECURITYQUESTION,
                         securityAnswer = u.SECURITYANSWER,
                         branchId = st.BRANCHID,
+                        roleId = st.STAFFROLEID,
                         groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
                                     .Select(x => new UserGroupId
                                     {

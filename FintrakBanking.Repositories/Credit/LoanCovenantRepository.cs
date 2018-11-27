@@ -274,7 +274,9 @@ namespace FintrakBanking.Repositories.Customer
                 casaAccountId = c.CASAACCOUNTID,
 
                 companyId = c.COMPANYID,
-            });
+                productCustomerName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+
+                });
         }
 
         public bool AddLoanApplicationCovenant(LoanCovenantDetailViewModel entity)
@@ -370,6 +372,8 @@ namespace FintrakBanking.Repositories.Customer
                     casaAccountId = c.CASAACCOUNTID,
 
                     companyId = c.COMPANYID,
+                    productCustomerName = c.TBL_LMSR_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + c.TBL_LMSR_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LMSR_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LMSR_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+
                 });
         }
 
