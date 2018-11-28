@@ -531,7 +531,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private UserViewModel UserLoginDetails(string username, string password) // ERROR POINT 3 - underlying provider...
         {
-            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);// && c.PASSWORD == password);
+            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username.ToLower());// && c.PASSWORD == password);
 
             if (profile != null && profile.PASSWORD == password)
             {           
@@ -542,9 +542,9 @@ namespace FintrakBanking.Repositories.Setups.General
                     user_id = profile.USERID,
                     username = profile.USERNAME,
                     staffName = profile.TBL_STAFF.FIRSTNAME + " " + profile.TBL_STAFF.MIDDLENAME + " " + profile.TBL_STAFF.LASTNAME,
-                    branchId = profile.TBL_STAFF.BRANCHID.Value,
+                    branchId = profile.TBL_STAFF.BRANCHID,
                     countryId = profile.TBL_STAFF.TBL_COMPANY.COUNTRYID,
-                    branchName = context.TBL_BRANCH.FirstOrDefault(d => d.BRANCHID == profile.TBL_STAFF.BRANCHID.Value).BRANCHNAME,
+                    branchName = context.TBL_BRANCH.FirstOrDefault(d => d.BRANCHID == profile.TBL_STAFF.BRANCHID)?.BRANCHNAME,
                     companyName = profile.TBL_STAFF.TBL_COMPANY.NAME,
                     logincode = profile.LOGINCODE,
                     lastLoginDate = profile.LASTLOGINDATE
