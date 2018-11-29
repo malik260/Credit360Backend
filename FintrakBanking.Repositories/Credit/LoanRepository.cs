@@ -4254,7 +4254,6 @@ namespace FintrakBanking.Repositories.Credit
             return covenant;
         }
 
-
         public bool AddLoanCollateralMapping(int loanApplicationId, int loanId, short loanSystemTypeId)
         {
             var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();

@@ -363,7 +363,6 @@ namespace FintrakBanking.Repositories.Credit
             throw new SecureException("An error occured while saving the data!");
         }
 
-
         public bool ValidateSubAllocationOperation(int loanApplicationDetailId, int customerId)
         {
 
@@ -521,7 +520,6 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges(); // redundant !
 
-
             // DETAIL CHANGES
             List<TBL_LMSR_APPLICATION_DETAIL> items = null;
             if (model.recommendedChanges != null && model.recommendedChanges.Count() > 0) // only approving authority
@@ -537,26 +535,9 @@ namespace FintrakBanking.Repositories.Credit
                         detail.APPROVEDAMOUNT = changed.amount;
                         detail.APPROVEDINTERESTRATE = changed.interestRate;
                         detail.APPROVEDTENOR = changed.tenor;
-                        //detail.STATUSID = (short)changed.statusId;
-                        //detail.EXCHANGERATE = changed.exchangeRate;
-                        //detail.LASTUPDATEDBY = model.createdBy;
-                        //detail.DATETIMEUPDATED = DateTime.Now;
-
-                        //if (model.isBusiness) // DELETE OR UPDATE PROPOSED
-                        //{
-                        //    if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
-                        //    else
-                        //    {
-                        //        detail.PROPOSEDPRODUCTID = (short)changed.productId;
-                        //        detail.PROPOSEDAMOUNT = changed.amount;
-                        //        detail.PROPOSEDINTERESTRATE = changed.interestRate;
-                        //        detail.PROPOSEDTENOR = changed.tenor;
-                        //    }
-                        //}
                     }
                 }
             }
-
 
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -570,6 +551,8 @@ namespace FintrakBanking.Repositories.Credit
                 if (operationId == lastOperationId/* || model.operationId == 71*/) appl.APPROVALSTATUSID = (short)lastStatusId; // last or cam?
 
                 context.SaveChanges();
+
+                AddLoanCollateralMapping(model.applicationId);//, appl., (short)LoanSystemTypeEnum.OverdraftFacility);
             }
 
             //return lastStatusId;
@@ -1065,5 +1048,76 @@ namespace FintrakBanking.Repositories.Credit
             return ops.ToList();
         }
 
+        public bool AddLoanCollateralMapping(int loanApplicationId)
+        {
+            LoanApplicationViewModel appl;
+            List<int> existingCollateralIds;
+            List<TBL_LOAN_APPLICATION_COLLATERL> recommendedCollaterals;
+
+            var details = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
+            
+            foreach(var d in details)
+            {
+                appl = GetLoanApplicationByLoanSystemType(d.LOANSYSTEMTYPEID, d.LOANID);
+
+                existingCollateralIds = context.TBL_LOAN_COLLATERAL_MAPPING
+                    .Where(x => x.LOANID == d.LOANID && x.ISRELEASED == false)
+                    .Select(x => x.COLLATERALCUSTOMERID)
+                    .ToList();
+
+                recommendedCollaterals = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == appl.loanApplicationId).ToList();
+
+                foreach (var recommended in recommendedCollaterals)
+                {
+                    if (existingCollateralIds.Contains(recommended.COLLATERALCUSTOMERID)) continue;
+                    context.TBL_LOAN_COLLATERAL_MAPPING.Add(new TBL_LOAN_COLLATERAL_MAPPING
+                    {
+                        COLLATERALCUSTOMERID = recommended.COLLATERALCUSTOMERID,
+                        LOANID = d.LOANID,
+                        LOANSYSTEMTYPEID = d.LOANSYSTEMTYPEID,
+                        ISRELEASED = false,
+                    });
+                }
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
+        private LoanApplicationViewModel GetLoanApplicationByLoanSystemType(int loanSystemTypeId, int loanId)
+        {
+            var result = new LoanApplicationViewModel();
+
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+            {
+                result = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId)
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL, l => l.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (l, d) => new { l, d })
+                    .Select(x => new LoanApplicationViewModel { loanApplicationId = x.d.LOANAPPLICATIONID })
+                    .FirstOrDefault();
+            }
+            else
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
+            {
+                result = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId)
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL, l => l.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (l, d) => new { l, d })
+                    .Select(x => new LoanApplicationViewModel { loanApplicationId = x.d.LOANAPPLICATIONID })
+                    .FirstOrDefault();
+            }
+            else
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
+            {
+                result = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId)
+                    .Join(context.TBL_LOAN_APPLICATION_DETAIL, l => l.LOANAPPLICATIONDETAILID, d => d.LOANAPPLICATIONDETAILID, (l, d) => new { l, d })
+                    .Select(x => new LoanApplicationViewModel { loanApplicationId = x.d.LOANAPPLICATIONID })
+                    .FirstOrDefault();
+            }
+            else
+            {
+                throw new SecureException("Collateral Failed To Map. Loan System Type could not be resolved!");
+            }
+
+            if (result.loanApplicationId < 1) throw new SecureException("Collateral Failed To Map. Error resolving Loan Application Information.");
+
+            return result;
+        }
     }
 }

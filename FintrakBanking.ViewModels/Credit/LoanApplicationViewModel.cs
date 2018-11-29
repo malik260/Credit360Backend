@@ -379,8 +379,8 @@ namespace FintrakBanking.ViewModels.Credit
                 switch (tenorModeId)
                 {
                     case (int)TenorMode.Daily: tenor = proposedTenor; break;
-                    case (int)TenorMode.Monthly: tenor = (proposedTenor * 365) / 12; break;
-                    case (int)TenorMode.Yearly: tenor = (proposedTenor * 365); break;
+                    case (int)TenorMode.Monthly: tenor = proposedTenor / 30; break;
+                    case (int)TenorMode.Yearly: tenor = proposedTenor / 365; break;
                     default: tenor = proposedTenor; break;
                 }
                 return tenor;
