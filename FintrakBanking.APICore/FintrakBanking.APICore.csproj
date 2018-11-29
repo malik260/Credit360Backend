@@ -521,6 +521,13 @@
     <Compile Include="Reports\ReportViews\CollateralVisitation.aspx.designer.cs">
       <DependentUpon>CollateralVisitation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityInformation.aspx.cs">
+      <DependentUpon>ContigentLiabilityInformation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityInformation.aspx.designer.cs">
+      <DependentUpon>ContigentLiabilityInformation.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.cs">
       <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -569,13 +576,6 @@
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx.designer.cs">
       <DependentUpon>FORM3800B_LOS.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportViews\InActiveContigentLiabilityReport.aspx.cs">
-      <DependentUpon>InActiveContigentLiabilityReport.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Reports\ReportViews\InActiveContigentLiabilityReport.aspx.designer.cs">
-      <DependentUpon>InActiveContigentLiabilityReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Lein.aspx.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
@@ -939,6 +939,7 @@
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
+    <Content Include="Reports\ReportViews\ContigentLiabilityInformation.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
@@ -946,7 +947,6 @@
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx" />
-    <Content Include="Reports\ReportViews\InActiveContigentLiabilityReport.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
@@ -1213,13 +1213,13 @@
     <EmbeddedResource Include="Reports\Report\CollateralPerfectionYetToCommence.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ContigentLiabilityInformation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
-    <EmbeddedResource Include="Reports\Report\InActiveContigentLiability.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />

@@ -12,7 +12,7 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class InActiveContigentLiabilityReport : System.Web.UI.Page
+    public partial class ContigentLiabilityInformation : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -25,47 +25,48 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     //DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
 
                     int companyId = Int32.Parse(Request.QueryString["companyId"]);
+                    short loanStatusId = short.Parse(Request.QueryString["loanStatusId"]);
                     //short branchId = short.Parse(Request.QueryString["branchId"]);
-                    //string inputDateInfo = Request.QueryString["key1"];
-                    //string inputHashValue = Request.QueryString["key2"];
+                    string inputDateInfo = Request.QueryString["key1"];
+                    string inputHashValue = Request.QueryString["key2"];
 
-                    //HashHelper hash = new HashHelper();
+                    HashHelper hash = new HashHelper();
 
-                    //DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
+                    DateTime incomingDate = DateTime.ParseExact(inputDateInfo, "ddMMyyyyHHmmss", CultureInfo.InvariantCulture);
 
-                    //var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
+                    var incomingDateHash = hash.HashString(inputDateInfo).Replace("-", "");
 
-                    //if (inputHashValue != incomingDateHash)
-                    //{
-                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //    this.ReportViewer.LocalReport.Refresh();
-                    //    return;
-                    //}
+                    if (inputHashValue != incomingDateHash)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
 
-                    //var currentDate = DateTime.Now;
+                    var currentDate = DateTime.Now;
 
-                    //var dateDifference = currentDate - incomingDate;
+                    var dateDifference = currentDate - incomingDate;
 
-                    //if (dateDifference.Seconds > 30)
-                    //{
-                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //    this.ReportViewer.LocalReport.Refresh();
-                    //    return;
-                    //}
+                    if (dateDifference.Seconds > 30)
+                    {
+                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                        this.ReportViewer.LocalReport.Refresh();
+                        return;
+                    }
 
                     LoanReportObjects inActivityContigent = new LoanReportObjects();
-                    var data = inActivityContigent.InActiveContigentLiability(companyId);
+                    var data = inActivityContigent.ContigentLiabilityInformation(companyId,loanStatusId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "InActiveContigentLiability";
+                    reportDataSource.Name = "ContigentLiabilityInformation";
 
                     //   ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     //  ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/InActiveContigentLiability.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/ContigentLiabilityInformation.rdlc");
                     //ReportViewer1.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }

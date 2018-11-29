@@ -10,7 +10,7 @@
 namespace FintrakBanking.APICore.Reports.ReportViews {
     
     
-    public partial class InActiveContigentLiabilityReport {
+    public partial class ContigentLiabilityInformation {
         
         /// <summary>
         /// form1 control.

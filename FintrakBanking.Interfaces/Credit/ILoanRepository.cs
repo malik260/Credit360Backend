@@ -202,6 +202,6 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanViewModel> GetCompletedLoans();
         List<LoanViewModel> GetCompletedLoan(string searchValue);
         bool GetChangeLoanStatusOfACompletedLoan(int loanId);
-
+        IEnumerable<LookupViewModel> GetAllLoanStatus();
     }
 }

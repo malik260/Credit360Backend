@@ -80,7 +80,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         private RunningFacilitiesDataTable tableRunningFacilities;
         
-        private InActiveContigentLiabilityDataTable tableInActiveContigentLiability;
+        private ContigentLiabilityInformationDataTable tableContigentLiabilityInformation;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -194,8 +194,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["RunningFacilities"] != null)) {
                     base.Tables.Add(new RunningFacilitiesDataTable(ds.Tables["RunningFacilities"]));
                 }
-                if ((ds.Tables["InActiveContigentLiability"] != null)) {
-                    base.Tables.Add(new InActiveContigentLiabilityDataTable(ds.Tables["InActiveContigentLiability"]));
+                if ((ds.Tables["ContigentLiabilityInformation"] != null)) {
+                    base.Tables.Add(new ContigentLiabilityInformationDataTable(ds.Tables["ContigentLiabilityInformation"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -499,9 +499,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public InActiveContigentLiabilityDataTable InActiveContigentLiability {
+        public ContigentLiabilityInformationDataTable ContigentLiabilityInformation {
             get {
-                return this.tableInActiveContigentLiability;
+                return this.tableContigentLiabilityInformation;
             }
         }
         
@@ -656,8 +656,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["RunningFacilities"] != null)) {
                     base.Tables.Add(new RunningFacilitiesDataTable(ds.Tables["RunningFacilities"]));
                 }
-                if ((ds.Tables["InActiveContigentLiability"] != null)) {
-                    base.Tables.Add(new InActiveContigentLiabilityDataTable(ds.Tables["InActiveContigentLiability"]));
+                if ((ds.Tables["ContigentLiabilityInformation"] != null)) {
+                    base.Tables.Add(new ContigentLiabilityInformationDataTable(ds.Tables["ContigentLiabilityInformation"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -860,10 +860,10 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableRunningFacilities.InitVars();
                 }
             }
-            this.tableInActiveContigentLiability = ((InActiveContigentLiabilityDataTable)(base.Tables["InActiveContigentLiability"]));
+            this.tableContigentLiabilityInformation = ((ContigentLiabilityInformationDataTable)(base.Tables["ContigentLiabilityInformation"]));
             if ((initTable == true)) {
-                if ((this.tableInActiveContigentLiability != null)) {
-                    this.tableInActiveContigentLiability.InitVars();
+                if ((this.tableContigentLiabilityInformation != null)) {
+                    this.tableContigentLiabilityInformation.InitVars();
                 }
             }
         }
@@ -932,8 +932,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableCashCollaterizedCredits);
             this.tableRunningFacilities = new RunningFacilitiesDataTable();
             base.Tables.Add(this.tableRunningFacilities);
-            this.tableInActiveContigentLiability = new InActiveContigentLiabilityDataTable();
-            base.Tables.Add(this.tableInActiveContigentLiability);
+            this.tableContigentLiabilityInformation = new ContigentLiabilityInformationDataTable();
+            base.Tables.Add(this.tableContigentLiabilityInformation);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1106,7 +1106,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        private bool ShouldSerializeInActiveContigentLiability() {
+        private bool ShouldSerializeContigentLiabilityInformation() {
             return false;
         }
         
@@ -1250,7 +1250,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public delegate void RunningFacilitiesRowChangeEventHandler(object sender, RunningFacilitiesRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public delegate void InActiveContigentLiabilityRowChangeEventHandler(object sender, InActiveContigentLiabilityRowChangeEvent e);
+        public delegate void ContigentLiabilityInformationRowChangeEventHandler(object sender, ContigentLiabilityInformationRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -13408,7 +13408,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class InActiveContigentLiabilityDataTable : global::System.Data.TypedTableBase<InActiveContigentLiabilityRow> {
+        public partial class ContigentLiabilityInformationDataTable : global::System.Data.TypedTableBase<ContigentLiabilityInformationRow> {
             
             private global::System.Data.DataColumn columncustomerName;
             
@@ -13442,8 +13442,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public InActiveContigentLiabilityDataTable() {
-                this.TableName = "InActiveContigentLiability";
+            public ContigentLiabilityInformationDataTable() {
+                this.TableName = "ContigentLiabilityInformation";
                 this.BeginInit();
                 this.InitClass();
                 this.EndInit();
@@ -13451,7 +13451,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal InActiveContigentLiabilityDataTable(global::System.Data.DataTable table) {
+            internal ContigentLiabilityInformationDataTable(global::System.Data.DataTable table) {
                 this.TableName = table.TableName;
                 if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
                     this.CaseSensitive = table.CaseSensitive;
@@ -13468,7 +13468,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected InActiveContigentLiabilityDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+            protected ContigentLiabilityInformationDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
                     base(info, context) {
                 this.InitVars();
             }
@@ -13604,34 +13604,34 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public InActiveContigentLiabilityRow this[int index] {
+            public ContigentLiabilityInformationRow this[int index] {
                 get {
-                    return ((InActiveContigentLiabilityRow)(this.Rows[index]));
+                    return ((ContigentLiabilityInformationRow)(this.Rows[index]));
                 }
             }
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event InActiveContigentLiabilityRowChangeEventHandler InActiveContigentLiabilityRowChanging;
+            public event ContigentLiabilityInformationRowChangeEventHandler ContigentLiabilityInformationRowChanging;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event InActiveContigentLiabilityRowChangeEventHandler InActiveContigentLiabilityRowChanged;
+            public event ContigentLiabilityInformationRowChangeEventHandler ContigentLiabilityInformationRowChanged;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event InActiveContigentLiabilityRowChangeEventHandler InActiveContigentLiabilityRowDeleting;
+            public event ContigentLiabilityInformationRowChangeEventHandler ContigentLiabilityInformationRowDeleting;
             
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event InActiveContigentLiabilityRowChangeEventHandler InActiveContigentLiabilityRowDeleted;
+            public event ContigentLiabilityInformationRowChangeEventHandler ContigentLiabilityInformationRowDeleted;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void AddInActiveContigentLiabilityRow(InActiveContigentLiabilityRow row) {
+            public void AddContigentLiabilityInformationRow(ContigentLiabilityInformationRow row) {
                 this.Rows.Add(row);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public InActiveContigentLiabilityRow AddInActiveContigentLiabilityRow(string customerName, string branchName, string loanReferenceNumber, string applicationReferenceNumber, string productName, string productTypeName, string relationshipOfficerName, string effectiveDate, string maturityDate, string bookingDate, string dateTimeCreated, string casaAccountNumber, string productAccountName, string currency, string loanStatus) {
-                InActiveContigentLiabilityRow rowInActiveContigentLiabilityRow = ((InActiveContigentLiabilityRow)(this.NewRow()));
+            public ContigentLiabilityInformationRow AddContigentLiabilityInformationRow(string customerName, string branchName, string loanReferenceNumber, string applicationReferenceNumber, string productName, string productTypeName, string relationshipOfficerName, string effectiveDate, string maturityDate, string bookingDate, string dateTimeCreated, string casaAccountNumber, string productAccountName, string currency, string loanStatus) {
+                ContigentLiabilityInformationRow rowContigentLiabilityInformationRow = ((ContigentLiabilityInformationRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         customerName,
                         branchName,
@@ -13648,15 +13648,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         productAccountName,
                         currency,
                         loanStatus};
-                rowInActiveContigentLiabilityRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowInActiveContigentLiabilityRow);
-                return rowInActiveContigentLiabilityRow;
+                rowContigentLiabilityInformationRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowContigentLiabilityInformationRow);
+                return rowContigentLiabilityInformationRow;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public override global::System.Data.DataTable Clone() {
-                InActiveContigentLiabilityDataTable cln = ((InActiveContigentLiabilityDataTable)(base.Clone()));
+                ContigentLiabilityInformationDataTable cln = ((ContigentLiabilityInformationDataTable)(base.Clone()));
                 cln.InitVars();
                 return cln;
             }
@@ -13664,7 +13664,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Data.DataTable CreateInstance() {
-                return new InActiveContigentLiabilityDataTable();
+                return new ContigentLiabilityInformationDataTable();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -13724,28 +13724,28 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public InActiveContigentLiabilityRow NewInActiveContigentLiabilityRow() {
-                return ((InActiveContigentLiabilityRow)(this.NewRow()));
+            public ContigentLiabilityInformationRow NewContigentLiabilityInformationRow() {
+                return ((ContigentLiabilityInformationRow)(this.NewRow()));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new InActiveContigentLiabilityRow(builder);
+                return new ContigentLiabilityInformationRow(builder);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override global::System.Type GetRowType() {
-                return typeof(InActiveContigentLiabilityRow);
+                return typeof(ContigentLiabilityInformationRow);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanged(e);
-                if ((this.InActiveContigentLiabilityRowChanged != null)) {
-                    this.InActiveContigentLiabilityRowChanged(this, new InActiveContigentLiabilityRowChangeEvent(((InActiveContigentLiabilityRow)(e.Row)), e.Action));
+                if ((this.ContigentLiabilityInformationRowChanged != null)) {
+                    this.ContigentLiabilityInformationRowChanged(this, new ContigentLiabilityInformationRowChangeEvent(((ContigentLiabilityInformationRow)(e.Row)), e.Action));
                 }
             }
             
@@ -13753,8 +13753,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowChanging(e);
-                if ((this.InActiveContigentLiabilityRowChanging != null)) {
-                    this.InActiveContigentLiabilityRowChanging(this, new InActiveContigentLiabilityRowChangeEvent(((InActiveContigentLiabilityRow)(e.Row)), e.Action));
+                if ((this.ContigentLiabilityInformationRowChanging != null)) {
+                    this.ContigentLiabilityInformationRowChanging(this, new ContigentLiabilityInformationRowChangeEvent(((ContigentLiabilityInformationRow)(e.Row)), e.Action));
                 }
             }
             
@@ -13762,8 +13762,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleted(e);
-                if ((this.InActiveContigentLiabilityRowDeleted != null)) {
-                    this.InActiveContigentLiabilityRowDeleted(this, new InActiveContigentLiabilityRowChangeEvent(((InActiveContigentLiabilityRow)(e.Row)), e.Action));
+                if ((this.ContigentLiabilityInformationRowDeleted != null)) {
+                    this.ContigentLiabilityInformationRowDeleted(this, new ContigentLiabilityInformationRowChangeEvent(((ContigentLiabilityInformationRow)(e.Row)), e.Action));
                 }
             }
             
@@ -13771,14 +13771,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
                 base.OnRowDeleting(e);
-                if ((this.InActiveContigentLiabilityRowDeleting != null)) {
-                    this.InActiveContigentLiabilityRowDeleting(this, new InActiveContigentLiabilityRowChangeEvent(((InActiveContigentLiabilityRow)(e.Row)), e.Action));
+                if ((this.ContigentLiabilityInformationRowDeleting != null)) {
+                    this.ContigentLiabilityInformationRowDeleting(this, new ContigentLiabilityInformationRowChangeEvent(((ContigentLiabilityInformationRow)(e.Row)), e.Action));
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void RemoveInActiveContigentLiabilityRow(InActiveContigentLiabilityRow row) {
+            public void RemoveContigentLiabilityInformationRow(ContigentLiabilityInformationRow row) {
                 this.Rows.Remove(row);
             }
             
@@ -13805,7 +13805,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 type.Attributes.Add(attribute1);
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "InActiveContigentLiabilityDataTable";
+                attribute2.FixedValue = "ContigentLiabilityInformationDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -25208,15 +25208,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class InActiveContigentLiabilityRow : global::System.Data.DataRow {
+        public partial class ContigentLiabilityInformationRow : global::System.Data.DataRow {
             
-            private InActiveContigentLiabilityDataTable tableInActiveContigentLiability;
+            private ContigentLiabilityInformationDataTable tableContigentLiabilityInformation;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal InActiveContigentLiabilityRow(global::System.Data.DataRowBuilder rb) : 
+            internal ContigentLiabilityInformationRow(global::System.Data.DataRowBuilder rb) : 
                     base(rb) {
-                this.tableInActiveContigentLiability = ((InActiveContigentLiabilityDataTable)(this.Table));
+                this.tableContigentLiabilityInformation = ((ContigentLiabilityInformationDataTable)(this.Table));
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -25224,15 +25224,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string customerName {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.customerNameColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.customerNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'InActiveContigentLiability\' is DBNu" +
-                                "ll.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'customerName\' in table \'ContigentLiabilityInformation\' is D" +
+                                "BNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.customerNameColumn] = value;
+                    this[this.tableContigentLiabilityInformation.customerNameColumn] = value;
                 }
             }
             
@@ -25241,15 +25241,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string branchName {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.branchNameColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.branchNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'branchName\' in table \'InActiveContigentLiability\' is DBNull" +
-                                ".", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'branchName\' in table \'ContigentLiabilityInformation\' is DBN" +
+                                "ull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.branchNameColumn] = value;
+                    this[this.tableContigentLiabilityInformation.branchNameColumn] = value;
                 }
             }
             
@@ -25258,15 +25258,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string loanReferenceNumber {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.loanReferenceNumberColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.loanReferenceNumberColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'loanReferenceNumber\' in table \'InActiveContigentLiability\' " +
-                                "is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'loanReferenceNumber\' in table \'ContigentLiabilityInformatio" +
+                                "n\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.loanReferenceNumberColumn] = value;
+                    this[this.tableContigentLiabilityInformation.loanReferenceNumberColumn] = value;
                 }
             }
             
@@ -25275,15 +25275,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string applicationReferenceNumber {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.applicationReferenceNumberColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.applicationReferenceNumberColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'InActiveContigentLiab" +
-                                "ility\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'applicationReferenceNumber\' in table \'ContigentLiabilityInf" +
+                                "ormation\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.applicationReferenceNumberColumn] = value;
+                    this[this.tableContigentLiabilityInformation.applicationReferenceNumberColumn] = value;
                 }
             }
             
@@ -25292,15 +25292,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string productName {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.productNameColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.productNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'InActiveContigentLiability\' is DBNul" +
-                                "l.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productName\' in table \'ContigentLiabilityInformation\' is DB" +
+                                "Null.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.productNameColumn] = value;
+                    this[this.tableContigentLiabilityInformation.productNameColumn] = value;
                 }
             }
             
@@ -25309,15 +25309,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string productTypeName {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.productTypeNameColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.productTypeNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productTypeName\' in table \'InActiveContigentLiability\' is D" +
-                                "BNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productTypeName\' in table \'ContigentLiabilityInformation\' i" +
+                                "s DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.productTypeNameColumn] = value;
+                    this[this.tableContigentLiabilityInformation.productTypeNameColumn] = value;
                 }
             }
             
@@ -25326,15 +25326,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string relationshipOfficerName {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.relationshipOfficerNameColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.relationshipOfficerNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'relationshipOfficerName\' in table \'InActiveContigentLiabili" +
-                                "ty\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'relationshipOfficerName\' in table \'ContigentLiabilityInform" +
+                                "ation\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.relationshipOfficerNameColumn] = value;
+                    this[this.tableContigentLiabilityInformation.relationshipOfficerNameColumn] = value;
                 }
             }
             
@@ -25343,15 +25343,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string effectiveDate {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.effectiveDateColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.effectiveDateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'effectiveDate\' in table \'InActiveContigentLiability\' is DBN" +
-                                "ull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'effectiveDate\' in table \'ContigentLiabilityInformation\' is " +
+                                "DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.effectiveDateColumn] = value;
+                    this[this.tableContigentLiabilityInformation.effectiveDateColumn] = value;
                 }
             }
             
@@ -25360,15 +25360,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string maturityDate {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.maturityDateColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.maturityDateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'maturityDate\' in table \'InActiveContigentLiability\' is DBNu" +
-                                "ll.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'maturityDate\' in table \'ContigentLiabilityInformation\' is D" +
+                                "BNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.maturityDateColumn] = value;
+                    this[this.tableContigentLiabilityInformation.maturityDateColumn] = value;
                 }
             }
             
@@ -25377,15 +25377,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string bookingDate {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.bookingDateColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.bookingDateColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'bookingDate\' in table \'InActiveContigentLiability\' is DBNul" +
-                                "l.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'bookingDate\' in table \'ContigentLiabilityInformation\' is DB" +
+                                "Null.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.bookingDateColumn] = value;
+                    this[this.tableContigentLiabilityInformation.bookingDateColumn] = value;
                 }
             }
             
@@ -25394,15 +25394,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string dateTimeCreated {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.dateTimeCreatedColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.dateTimeCreatedColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'dateTimeCreated\' in table \'InActiveContigentLiability\' is D" +
-                                "BNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'dateTimeCreated\' in table \'ContigentLiabilityInformation\' i" +
+                                "s DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.dateTimeCreatedColumn] = value;
+                    this[this.tableContigentLiabilityInformation.dateTimeCreatedColumn] = value;
                 }
             }
             
@@ -25411,15 +25411,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string casaAccountNumber {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.casaAccountNumberColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.casaAccountNumberColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'casaAccountNumber\' in table \'InActiveContigentLiability\' is" +
-                                " DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'casaAccountNumber\' in table \'ContigentLiabilityInformation\'" +
+                                " is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.casaAccountNumberColumn] = value;
+                    this[this.tableContigentLiabilityInformation.casaAccountNumberColumn] = value;
                 }
             }
             
@@ -25428,15 +25428,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string productAccountName {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.productAccountNameColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.productAccountNameColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productAccountName\' in table \'InActiveContigentLiability\' i" +
-                                "s DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'productAccountName\' in table \'ContigentLiabilityInformation" +
+                                "\' is DBNull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.productAccountNameColumn] = value;
+                    this[this.tableContigentLiabilityInformation.productAccountNameColumn] = value;
                 }
             }
             
@@ -25445,14 +25445,15 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string currency {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.currencyColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.currencyColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'currency\' in table \'InActiveContigentLiability\' is DBNull.", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'currency\' in table \'ContigentLiabilityInformation\' is DBNul" +
+                                "l.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.currencyColumn] = value;
+                    this[this.tableContigentLiabilityInformation.currencyColumn] = value;
                 }
             }
             
@@ -25461,196 +25462,196 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             public string loanStatus {
                 get {
                     try {
-                        return ((string)(this[this.tableInActiveContigentLiability.loanStatusColumn]));
+                        return ((string)(this[this.tableContigentLiabilityInformation.loanStatusColumn]));
                     }
                     catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'loanStatus\' in table \'InActiveContigentLiability\' is DBNull" +
-                                ".", e);
+                        throw new global::System.Data.StrongTypingException("The value for column \'loanStatus\' in table \'ContigentLiabilityInformation\' is DBN" +
+                                "ull.", e);
                     }
                 }
                 set {
-                    this[this.tableInActiveContigentLiability.loanStatusColumn] = value;
+                    this[this.tableContigentLiabilityInformation.loanStatusColumn] = value;
                 }
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IscustomerNameNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.customerNameColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.customerNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetcustomerNameNull() {
-                this[this.tableInActiveContigentLiability.customerNameColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.customerNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsbranchNameNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.branchNameColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.branchNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetbranchNameNull() {
-                this[this.tableInActiveContigentLiability.branchNameColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.branchNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsloanReferenceNumberNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.loanReferenceNumberColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.loanReferenceNumberColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetloanReferenceNumberNull() {
-                this[this.tableInActiveContigentLiability.loanReferenceNumberColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.loanReferenceNumberColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsapplicationReferenceNumberNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.applicationReferenceNumberColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.applicationReferenceNumberColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetapplicationReferenceNumberNull() {
-                this[this.tableInActiveContigentLiability.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.applicationReferenceNumberColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsproductNameNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.productNameColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.productNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetproductNameNull() {
-                this[this.tableInActiveContigentLiability.productNameColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.productNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsproductTypeNameNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.productTypeNameColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.productTypeNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetproductTypeNameNull() {
-                this[this.tableInActiveContigentLiability.productTypeNameColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.productTypeNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsrelationshipOfficerNameNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.relationshipOfficerNameColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.relationshipOfficerNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetrelationshipOfficerNameNull() {
-                this[this.tableInActiveContigentLiability.relationshipOfficerNameColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.relationshipOfficerNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IseffectiveDateNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.effectiveDateColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.effectiveDateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SeteffectiveDateNull() {
-                this[this.tableInActiveContigentLiability.effectiveDateColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.effectiveDateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsmaturityDateNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.maturityDateColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.maturityDateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetmaturityDateNull() {
-                this[this.tableInActiveContigentLiability.maturityDateColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.maturityDateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsbookingDateNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.bookingDateColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.bookingDateColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetbookingDateNull() {
-                this[this.tableInActiveContigentLiability.bookingDateColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.bookingDateColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsdateTimeCreatedNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.dateTimeCreatedColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.dateTimeCreatedColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetdateTimeCreatedNull() {
-                this[this.tableInActiveContigentLiability.dateTimeCreatedColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.dateTimeCreatedColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IscasaAccountNumberNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.casaAccountNumberColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.casaAccountNumberColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetcasaAccountNumberNull() {
-                this[this.tableInActiveContigentLiability.casaAccountNumberColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.casaAccountNumberColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsproductAccountNameNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.productAccountNameColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.productAccountNameColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetproductAccountNameNull() {
-                this[this.tableInActiveContigentLiability.productAccountNameColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.productAccountNameColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IscurrencyNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.currencyColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.currencyColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetcurrencyNull() {
-                this[this.tableInActiveContigentLiability.currencyColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.currencyColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsloanStatusNull() {
-                return this.IsNull(this.tableInActiveContigentLiability.loanStatusColumn);
+                return this.IsNull(this.tableContigentLiabilityInformation.loanStatusColumn);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetloanStatusNull() {
-                this[this.tableInActiveContigentLiability.loanStatusColumn] = global::System.Convert.DBNull;
+                this[this.tableContigentLiabilityInformation.loanStatusColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -26610,22 +26611,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public class InActiveContigentLiabilityRowChangeEvent : global::System.EventArgs {
+        public class ContigentLiabilityInformationRowChangeEvent : global::System.EventArgs {
             
-            private InActiveContigentLiabilityRow eventRow;
+            private ContigentLiabilityInformationRow eventRow;
             
             private global::System.Data.DataRowAction eventAction;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public InActiveContigentLiabilityRowChangeEvent(InActiveContigentLiabilityRow row, global::System.Data.DataRowAction action) {
+            public ContigentLiabilityInformationRowChangeEvent(ContigentLiabilityInformationRow row, global::System.Data.DataRowAction action) {
                 this.eventRow = row;
                 this.eventAction = action;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public InActiveContigentLiabilityRow Row {
+            public ContigentLiabilityInformationRow Row {
                 get {
                     return this.eventRow;
                 }

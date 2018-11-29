@@ -758,12 +758,12 @@ namespace FintrakBanking.ReportObjects.ReportCalls
             return path;
         }
 
-        public string GetInActiveContigentLiabilityReport(int companyId)
+        public string GetInActiveContigentLiabilityReport(DateRange dateRange)
         {
             HashProperty hashValue = GetHashedDateValue(dateInfor);
 
             string path = string.Empty;
-            path = reportPath + "ReportViews/InActiveContigentLiabilityReport.aspx?companyId=" + companyId.ToString();
+            path = reportPath + "ReportViews/ContigentLiabilityInformation.aspx?companyId=" + dateRange.companyId + "&loanStatusId=" + dateRange.loanStatusId + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
             return path;
         }
     }
