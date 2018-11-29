@@ -4950,6 +4950,15 @@ namespace FintrakBanking.Repositories.Customer
                 customer.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
                 customer.ISCURRENT = true;
                 context.TBL_TEMP_CUSTOMER.Add(customer);
+                //try
+                //{
+                //    var resul = context.SaveChanges() > 0;
+                //}
+                //catch(Exception ex)
+                //{
+                //    var a = ex;
+                //}
+
             }
 
             var modified = new TBL_CUSTOMER_MODIFICATION
@@ -4979,11 +4988,13 @@ namespace FintrakBanking.Repositories.Customer
             {
                 try
                 {
+                    
+
                     if (USE_THIRD_PARTY_INTEGRATION)
                     {
                         if (customerMain.ISPROSPECT == true)
                         {
-                            finacle.AddCustomerAccounts(entity.customerCode);
+                            finacle.AddCustomerAccounts(customerId,entity.customerCode);
                         }
                     }
                     customerMain.ISPROSPECT = false;

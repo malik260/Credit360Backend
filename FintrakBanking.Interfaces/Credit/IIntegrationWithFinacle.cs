@@ -41,5 +41,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool ChangeOverDraftInterestRate(InterestRateInquiryViewModel model, string accountType, TwoFactorAutheticationViewModel twoFADetails = null);
         InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType);
         bool AddCustomerAccounts(string customerCode);
+        bool AddCustomerAccounts(int customerId, string customerCode);
+
     }
 }

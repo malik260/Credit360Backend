@@ -1254,7 +1254,7 @@ namespace FintrakBanking.Repositories.Credit
                 MISCODE = entity.misCode,
                 TEAMMISCODE = entity.teamMiscode,
                 INTERESTRATE = interestRate,
-
+                
                 PRINCIPALINSTALLMENTLEFT = 0,
                 INTERESTINSTALLMENTLEFT = 0,
 
@@ -4253,7 +4253,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return covenant;
         }
-
 
         public bool AddLoanCollateralMapping(int loanApplicationId, int loanId, short loanSystemTypeId)
         {
