@@ -345,6 +345,7 @@ namespace FintrakBanking.Repositories.Credit
                             orderby pen.LOANPRELIMINARYEVALUATIONID descending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
+                            penId = pen.LOANPRELIMINARYEVALUATIONID,
                             companyId = pen.COMPANYID,
                             companyName = pen.TBL_COMPANY.NAME,
                             loanPreliminaryEvaluationId = pen.LOANPRELIMINARYEVALUATIONID,
@@ -681,6 +682,17 @@ namespace FintrakBanking.Repositories.Credit
                     return new List<LoanPreliminaryEvaluationViewModel>();
             }
         }
+
+        public IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanApplicationPreliminaryEvaluations(int applicationId)
+        {
+            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            var applicationPenId = appl.LOANPRELIMINARYEVALUATIONID;
+
+            if (applicationPenId == null) return new List<LoanPreliminaryEvaluationViewModel>();
+
+            return GetAllSingleCustomerLoanPreliminaryEvaluations().Where(x => x.penId == applicationPenId).ToList();
+        }
+
         public IEnumerable<LookupViewModel> GetCustomerLoanPreliminaryEvaluations(int customerId, int loanTypeId, int customerGroupId = 0)
         {
             if ((int)LoanTypeEnum.Single == loanTypeId)

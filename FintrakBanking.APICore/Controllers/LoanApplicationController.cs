@@ -732,6 +732,16 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-preliminary-evaluation/application/{applicationId}")]
+        public HttpResponseMessage GetLoanApplicationPreliminaryEvaluations(int applicationId)
+        {
+            var data = repoLoanPEN.GetLoanApplicationPreliminaryEvaluations(applicationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data.Count(), result = data });
+        }
+
+
         [HttpGet] [ClaimsAuthorization]
         [Route("loan-preliminary-evaluation-mapped-to-application")]
         public HttpResponseMessage GetLoanPreliminaryEvaluationMappedToApplication()
