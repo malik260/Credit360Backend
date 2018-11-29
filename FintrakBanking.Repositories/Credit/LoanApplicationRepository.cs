@@ -785,17 +785,33 @@ namespace FintrakBanking.Repositories.Credit
                 .ACCOUNTSTATUS;
         }
 
-        public IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId)
+        public IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId, string processtype)
         {
-            var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL
-                             join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-                             where a.LOANAPPLICATIONID == applicationId
-                             select new CustomerViewModels
-                             {
-                                 customerId = a.CUSTOMERID,
-                                 fullName = b.FIRSTNAME + " " + b.LASTNAME + "-" + b.CUSTOMERCODE
-                             }).Distinct().ToList();
+            List<CustomerViewModels> customers = new List<CustomerViewModels>();
+            if (processtype == "LOS")
+            {
+                customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                                 join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                 where a.LOANAPPLICATIONID == applicationId
+                                 select new CustomerViewModels
+                                 {
+                                     customerId = a.CUSTOMERID,
+                                     fullName = b.FIRSTNAME + " " + b.LASTNAME + "-" + b.CUSTOMERCODE
+                                 }).Distinct().ToList();
 
+            }
+            else if (processtype == "LMS")
+            {
+                 customers = (from a in context.TBL_LMSR_APPLICATION_DETAIL
+                                 join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                 where a.LOANAPPLICATIONID == applicationId
+                                 select new CustomerViewModels
+                                 {
+                                     customerId = a.CUSTOMERID,
+                                     fullName = b.FIRSTNAME + " " + b.LASTNAME + "-" + b.CUSTOMERCODE
+                                 }).Distinct().ToList();
+
+            }
             return customers;
         }
 
@@ -2320,6 +2336,7 @@ namespace FintrakBanking.Repositories.Credit
                                     firstName = c.FIRSTNAME,
                                     middleName = c.MIDDLENAME,
                                     lastName = c.LASTNAME,
+                                    customerName= c.LASTNAME + " " + c.FIRSTNAME + " " + c.MIDDLENAME,
                                     customerCode = c.CUSTOMERCODE,
                                     applicationReferenceNumber = x.APPLICATIONREFERENCENUMBER,
                                     loanApplicationId = x.LOANAPPLICATIONID,

@@ -377,12 +377,12 @@ namespace FintrakBanking.APICore.Controllers
         //  }
 
         [HttpGet]
-        [Route("customer-by-application/{applicationId}")]
-        public HttpResponseMessage GetCustomerByApplicationId(int applicationId)
+        [Route("customer-by-application/{applicationId}/{processtype}")]
+        public HttpResponseMessage GetCustomerByApplicationId(int applicationId, string processtype)
         {
             try
             {
-                var status = repo.GetCustomerByApplicationId(applicationId);
+                var status = repo.GetCustomerByApplicationId(applicationId, processtype);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = status });
             }
             catch (SecureException ex)
