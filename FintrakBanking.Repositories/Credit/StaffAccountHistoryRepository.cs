@@ -306,7 +306,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetStaff(int staffId)
         {
-            return context.TBL_STAFF.Where(s => s.STAFFID == staffId).Select(s => new { staffName = s.LASTNAME + " " + s.FIRSTNAME + " " + s.MIDDLENAME }).FirstOrDefault().staffName;
+            return context.TBL_STAFF.Where(s => s.STAFFID == staffId).Select(s => new { staffName = s.LASTNAME + " " + s.FIRSTNAME + " " + s.MIDDLENAME + "-" + s.STAFFCODE }).FirstOrDefault().staffName;
         }
 
         private loanDetailsViewModel GetloanDetails(int loanId, int staffId, int accountTypeId)
