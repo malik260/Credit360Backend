@@ -902,7 +902,7 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                      checkListTypeId = def.CHECKLIST_TYPEID,
                                      checkListItemId = def.CHECKLISTITEMID,
-                                     customerId = customerId.Value,
+                                     customerId = customerId,
                                      checklistDate = cl.DATETIMECREATED,
                                      checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
                                  }).ToList();
@@ -938,7 +938,7 @@ namespace FintrakBanking.Repositories.Credit
                                      checkListStatusName = cl.TBL_CHECKLIST_STATUS.CHECKLISTSTATUSNAME,
                                      checkListTypeId = def.CHECKLIST_TYPEID,
                                      checkListItemId = def.CHECKLISTITEMID,
-                                     customerId = customerId.Value,
+                                     customerId = customerId,
                                      checklistDate = cl.DATETIMECREATED,
                                      checkListDefinitionItemName = cl.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME
 
