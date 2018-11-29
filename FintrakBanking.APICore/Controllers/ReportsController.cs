@@ -28,14 +28,16 @@ namespace FintrakBanking.APICore.Controllers
         IErrorLogRepository errorLogger;
         IFinanceTransactionsReport reportRepo;
         ILoanOperationsRepository flow;
+        ILoanRepository loanRepo;
 
         public ReportsController(IReportRoutes _repo, IFinanceTransactionsReport reportRepo, IErrorLogRepository _errorLogger,
-            ILoanOperationsRepository _flow) {
+            ILoanOperationsRepository _flow, ILoanRepository _loanRepo) {
 
             this.repo = _repo;
             this.reportRepo = reportRepo;
             errorLogger = _errorLogger;
             flow = _flow;
+            loanRepo = _loanRepo;
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -646,7 +648,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetLoanStatement(token.GetCompanyId,id, token.GetCompanyId);
+                var data = repo.GetLoanStatement(token.GetCompanyId,id, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1421,6 +1423,28 @@ namespace FintrakBanking.APICore.Controllers
         }
 
 
+        [HttpGet]
+        [Route("dropdown-loan-status")]
+        public HttpResponseMessage GetAllLoanStatus()
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                var data = loanRepo.GetAllLoanStatus();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("staff-priviledge-change-report")]
@@ -1574,6 +1598,32 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("inactive-contigent-liability-report")]
+        public HttpResponseMessage GetInActiveContigentLiabilityReport(DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+
+                param.companyId = token.GetCompanyId;
+                var data = repo.GetInActiveContigentLiabilityReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
     }
 }

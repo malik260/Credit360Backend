@@ -9,6 +9,9 @@ namespace FintrakBanking.ViewModels.Report
 {
     public class StaffPrivilegeChangeViewModel
     {
+        public string previousStaffRoleName { get; set; }
+        public string currentStaffRoleName { get; set; }
+
         public string staffCreatedByName { get; set; }
 
     
@@ -20,6 +23,6 @@ namespace FintrakBanking.ViewModels.Report
      
 
         public string staffFullName { get; set; }
-        public string staffRoleName { get; set; }
+      
     }
 }

@@ -676,7 +676,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.fileExtension = provider.FormData["fileExtension"];
                 entity.physicalFileNumber = provider.FormData["physicalFileNumber"];
                 entity.physicalLocation = provider.FormData["physicalLocation"];
-                entity.comment = provider.FormData["responseComment"];
+               // entity.comment = provider.FormData["responseComment"];
 
                 if (!provider.FileStreams.Any())
                 {
@@ -708,7 +708,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record." });
             }

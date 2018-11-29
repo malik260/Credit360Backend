@@ -1213,8 +1213,6 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddloanApplicationSub(LoanApplicationViewModel loan)
         {
-
-
             short productClassProcessId = 0;
             short? productClassId = null;
             isGroupLoan = false;
@@ -1276,6 +1274,8 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONAMOUNT = loan.applicationAmount,
                 APPLICATIONTENOR = loan.proposedTenor,
                 ISINVESTMENTGRADE = loan.isInvestmentGrade,
+                CAPREGIONID = loan.regionId,
+                REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId,
                 LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId,
                 CUSTOMERID = loan.customerId,
                 SUBMITTEDFORAPPRAISAL = loan.submittedForAppraisal,
@@ -1405,11 +1405,11 @@ namespace FintrakBanking.Repositories.Credit
         private int ConvertTenorToDays(int proposedTenor, int? tenorModeId = 1)
         {
             int tenor = 0;
-            switch (tenorModeId)
+            switch (tenorModeId) // UPDATED
             {
                 case (int)TenorMode.Daily: tenor = proposedTenor; break;
-                case (int)TenorMode.Monthly: tenor = (proposedTenor * 365) / 12; break;
-                case (int)TenorMode.Yearly: tenor = (proposedTenor * 365); break;
+                case (int)TenorMode.Monthly: tenor = proposedTenor * 30; break;
+                case (int)TenorMode.Yearly: tenor = proposedTenor * 365; break;
             }
             return tenor;
         }
@@ -1443,6 +1443,7 @@ namespace FintrakBanking.Repositories.Credit
             this.loanData.COLLATERALDETAIL = loan.collateralDetail;
             this.loanData.CAPREGIONID = loan.regionId;
             this.loanData.REQUIRECOLLATERALTYPEID = loan.requireCollateralTypeId;
+            this.loanData.LOANPRELIMINARYEVALUATIONID = loan.loanPreliminaryEvaluationId;
         }
 
         private void TradderLoan(TraderLoanViewModel entity, int loanApplicationId, int createdBy)
@@ -1506,14 +1507,7 @@ namespace FintrakBanking.Repositories.Credit
                     throw new SecureException("Tenor can not be ZERO (0)");
                 }
                 int loanId = this.loanData == null ? 0 : this.loanData.LOANAPPLICATIONID;
-                int tenor = 0;
-
-                switch (a.tenorModeId)
-                {
-                    case (int)TenorMode.Daily: tenor = a.proposedTenor; break;
-                    case (int)TenorMode.Monthly: tenor = (a.proposedTenor * 365) / 12; break;
-                    case (int)TenorMode.Yearly: tenor = (a.proposedTenor * 365); break;
-                }
+                int tenor = ConvertTenorToDays(a.proposedTenor, a.tenorModeId);
 
                 var data = new TBL_LOAN_APPLICATION_DETAIL
                 {

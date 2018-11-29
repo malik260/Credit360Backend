@@ -4254,7 +4254,6 @@ namespace FintrakBanking.Repositories.Credit
             return covenant;
         }
 
-
         public bool AddLoanCollateralMapping(int loanApplicationId, int loanId, short loanSystemTypeId)
         {
             var collateralModel = context.TBL_LOAN_APPLICATION_COLLATERL.Where(x => x.LOANAPPLICATIONID == loanApplicationId).ToList();
@@ -9316,7 +9315,18 @@ namespace FintrakBanking.Repositories.Credit
             return frequencyTypes;
         }
 
-      
+        public IEnumerable<LookupViewModel> GetAllLoanStatus()
+        {
+            return (from data in context.TBL_LOAN_STATUS
+                    select new LookupViewModel()
+                    {
+                        lookupId = data.LOANSTATUSID,
+                        lookupName = data.ACCOUNTSTATUS,
+                        //isVisible = data.ISVISIBLE,
+                        //value = data.VALUE,
+                    });
+        }
+
 
         public bool ReferBackBooking(ApprovalViewModel model)
         {

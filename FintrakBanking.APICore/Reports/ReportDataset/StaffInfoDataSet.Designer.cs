@@ -28,11 +28,11 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         private ProfileActivityReportDataTable tableProfileActivityReport;
         
-        private StaffPriviledgeChangeDataTable tableStaffPriviledgeChange;
-        
         private StaffRoleProfileGroupReportDataTable tableStaffRoleProfileGroupReport;
         
         private StaffRoleProfileActivityReportDataTable tableStaffRoleProfileActivityReport;
+        
+        private StaffPriviledgeChangeDataTable tableStaffPriviledgeChange;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -68,14 +68,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["ProfileActivityReport"] != null)) {
                     base.Tables.Add(new ProfileActivityReportDataTable(ds.Tables["ProfileActivityReport"]));
                 }
-                if ((ds.Tables["StaffPriviledgeChange"] != null)) {
-                    base.Tables.Add(new StaffPriviledgeChangeDataTable(ds.Tables["StaffPriviledgeChange"]));
-                }
                 if ((ds.Tables["StaffRoleProfileGroupReport"] != null)) {
                     base.Tables.Add(new StaffRoleProfileGroupReportDataTable(ds.Tables["StaffRoleProfileGroupReport"]));
                 }
                 if ((ds.Tables["StaffRoleProfileActivityReport"] != null)) {
                     base.Tables.Add(new StaffRoleProfileActivityReportDataTable(ds.Tables["StaffRoleProfileActivityReport"]));
+                }
+                if ((ds.Tables["StaffPriviledgeChange"] != null)) {
+                    base.Tables.Add(new StaffPriviledgeChangeDataTable(ds.Tables["StaffPriviledgeChange"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -119,16 +119,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public StaffPriviledgeChangeDataTable StaffPriviledgeChange {
-            get {
-                return this.tableStaffPriviledgeChange;
-            }
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        [global::System.ComponentModel.Browsable(false)]
-        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
         public StaffRoleProfileGroupReportDataTable StaffRoleProfileGroupReport {
             get {
                 return this.tableStaffRoleProfileGroupReport;
@@ -142,6 +132,16 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public StaffRoleProfileActivityReportDataTable StaffRoleProfileActivityReport {
             get {
                 return this.tableStaffRoleProfileActivityReport;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public StaffPriviledgeChangeDataTable StaffPriviledgeChange {
+            get {
+                return this.tableStaffPriviledgeChange;
             }
         }
         
@@ -218,14 +218,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["ProfileActivityReport"] != null)) {
                     base.Tables.Add(new ProfileActivityReportDataTable(ds.Tables["ProfileActivityReport"]));
                 }
-                if ((ds.Tables["StaffPriviledgeChange"] != null)) {
-                    base.Tables.Add(new StaffPriviledgeChangeDataTable(ds.Tables["StaffPriviledgeChange"]));
-                }
                 if ((ds.Tables["StaffRoleProfileGroupReport"] != null)) {
                     base.Tables.Add(new StaffRoleProfileGroupReportDataTable(ds.Tables["StaffRoleProfileGroupReport"]));
                 }
                 if ((ds.Tables["StaffRoleProfileActivityReport"] != null)) {
                     base.Tables.Add(new StaffRoleProfileActivityReportDataTable(ds.Tables["StaffRoleProfileActivityReport"]));
+                }
+                if ((ds.Tables["StaffPriviledgeChange"] != null)) {
+                    base.Tables.Add(new StaffPriviledgeChangeDataTable(ds.Tables["StaffPriviledgeChange"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -272,12 +272,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableProfileActivityReport.InitVars();
                 }
             }
-            this.tableStaffPriviledgeChange = ((StaffPriviledgeChangeDataTable)(base.Tables["StaffPriviledgeChange"]));
-            if ((initTable == true)) {
-                if ((this.tableStaffPriviledgeChange != null)) {
-                    this.tableStaffPriviledgeChange.InitVars();
-                }
-            }
             this.tableStaffRoleProfileGroupReport = ((StaffRoleProfileGroupReportDataTable)(base.Tables["StaffRoleProfileGroupReport"]));
             if ((initTable == true)) {
                 if ((this.tableStaffRoleProfileGroupReport != null)) {
@@ -288,6 +282,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             if ((initTable == true)) {
                 if ((this.tableStaffRoleProfileActivityReport != null)) {
                     this.tableStaffRoleProfileActivityReport.InitVars();
+                }
+            }
+            this.tableStaffPriviledgeChange = ((StaffPriviledgeChangeDataTable)(base.Tables["StaffPriviledgeChange"]));
+            if ((initTable == true)) {
+                if ((this.tableStaffPriviledgeChange != null)) {
+                    this.tableStaffPriviledgeChange.InitVars();
                 }
             }
         }
@@ -304,12 +304,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableUserGroupChangeReport);
             this.tableProfileActivityReport = new ProfileActivityReportDataTable();
             base.Tables.Add(this.tableProfileActivityReport);
-            this.tableStaffPriviledgeChange = new StaffPriviledgeChangeDataTable();
-            base.Tables.Add(this.tableStaffPriviledgeChange);
             this.tableStaffRoleProfileGroupReport = new StaffRoleProfileGroupReportDataTable();
             base.Tables.Add(this.tableStaffRoleProfileGroupReport);
             this.tableStaffRoleProfileActivityReport = new StaffRoleProfileActivityReportDataTable();
             base.Tables.Add(this.tableStaffRoleProfileActivityReport);
+            this.tableStaffPriviledgeChange = new StaffPriviledgeChangeDataTable();
+            base.Tables.Add(this.tableStaffPriviledgeChange);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -326,12 +326,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        private bool ShouldSerializeStaffPriviledgeChange() {
-            return false;
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializeStaffRoleProfileGroupReport() {
             return false;
         }
@@ -339,6 +333,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializeStaffRoleProfileActivityReport() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeStaffPriviledgeChange() {
             return false;
         }
         
@@ -404,13 +404,13 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public delegate void ProfileActivityReportRowChangeEventHandler(object sender, ProfileActivityReportRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public delegate void StaffPriviledgeChangeRowChangeEventHandler(object sender, StaffPriviledgeChangeRowChangeEvent e);
-        
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void StaffRoleProfileGroupReportRowChangeEventHandler(object sender, StaffRoleProfileGroupReportRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void StaffRoleProfileActivityReportRowChangeEventHandler(object sender, StaffRoleProfileActivityReportRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void StaffPriviledgeChangeRowChangeEventHandler(object sender, StaffPriviledgeChangeRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -950,323 +950,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
                 attribute2.FixedValue = "ProfileActivityReportDataTable";
-                type.Attributes.Add(attribute2);
-                type.Particle = sequence;
-                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
-                if (xs.Contains(dsSchema.TargetNamespace)) {
-                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
-                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
-                    try {
-                        global::System.Xml.Schema.XmlSchema schema = null;
-                        dsSchema.Write(s1);
-                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
-                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
-                            s2.SetLength(0);
-                            schema.Write(s2);
-                            if ((s1.Length == s2.Length)) {
-                                s1.Position = 0;
-                                s2.Position = 0;
-                                for (; ((s1.Position != s1.Length) 
-                                            && (s1.ReadByte() == s2.ReadByte())); ) {
-                                    ;
-                                }
-                                if ((s1.Position == s1.Length)) {
-                                    return type;
-                                }
-                            }
-                        }
-                    }
-                    finally {
-                        if ((s1 != null)) {
-                            s1.Close();
-                        }
-                        if ((s2 != null)) {
-                            s2.Close();
-                        }
-                    }
-                }
-                xs.Add(dsSchema);
-                return type;
-            }
-        }
-        
-        /// <summary>
-        ///Represents the strongly named DataTable class.
-        ///</summary>
-        [global::System.Serializable()]
-        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class StaffPriviledgeChangeDataTable : global::System.Data.TypedTableBase<StaffPriviledgeChangeRow> {
-            
-            private global::System.Data.DataColumn columnstaffFullName;
-            
-            private global::System.Data.DataColumn columnstaffCreatedByName;
-            
-            private global::System.Data.DataColumn columnstaffCreatedByCode;
-            
-            private global::System.Data.DataColumn columnstaffRoleName;
-            
-            private global::System.Data.DataColumn columndateTimeCreated;
-            
-            private global::System.Data.DataColumn columntempStaffCode;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public StaffPriviledgeChangeDataTable() {
-                this.TableName = "StaffPriviledgeChange";
-                this.BeginInit();
-                this.InitClass();
-                this.EndInit();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal StaffPriviledgeChangeDataTable(global::System.Data.DataTable table) {
-                this.TableName = table.TableName;
-                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
-                    this.CaseSensitive = table.CaseSensitive;
-                }
-                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
-                    this.Locale = table.Locale;
-                }
-                if ((table.Namespace != table.DataSet.Namespace)) {
-                    this.Namespace = table.Namespace;
-                }
-                this.Prefix = table.Prefix;
-                this.MinimumCapacity = table.MinimumCapacity;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected StaffPriviledgeChangeDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
-                    base(info, context) {
-                this.InitVars();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn staffFullNameColumn {
-                get {
-                    return this.columnstaffFullName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn staffCreatedByNameColumn {
-                get {
-                    return this.columnstaffCreatedByName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn staffCreatedByCodeColumn {
-                get {
-                    return this.columnstaffCreatedByCode;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn staffRoleNameColumn {
-                get {
-                    return this.columnstaffRoleName;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn dateTimeCreatedColumn {
-                get {
-                    return this.columndateTimeCreated;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn tempStaffCodeColumn {
-                get {
-                    return this.columntempStaffCode;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            [global::System.ComponentModel.Browsable(false)]
-            public int Count {
-                get {
-                    return this.Rows.Count;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public StaffPriviledgeChangeRow this[int index] {
-                get {
-                    return ((StaffPriviledgeChangeRow)(this.Rows[index]));
-                }
-            }
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event StaffPriviledgeChangeRowChangeEventHandler StaffPriviledgeChangeRowChanging;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event StaffPriviledgeChangeRowChangeEventHandler StaffPriviledgeChangeRowChanged;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event StaffPriviledgeChangeRowChangeEventHandler StaffPriviledgeChangeRowDeleting;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event StaffPriviledgeChangeRowChangeEventHandler StaffPriviledgeChangeRowDeleted;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void AddStaffPriviledgeChangeRow(StaffPriviledgeChangeRow row) {
-                this.Rows.Add(row);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public StaffPriviledgeChangeRow AddStaffPriviledgeChangeRow(string staffFullName, string staffCreatedByName, string staffCreatedByCode, string staffRoleName, string dateTimeCreated, string tempStaffCode) {
-                StaffPriviledgeChangeRow rowStaffPriviledgeChangeRow = ((StaffPriviledgeChangeRow)(this.NewRow()));
-                object[] columnValuesArray = new object[] {
-                        staffFullName,
-                        staffCreatedByName,
-                        staffCreatedByCode,
-                        staffRoleName,
-                        dateTimeCreated,
-                        tempStaffCode};
-                rowStaffPriviledgeChangeRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowStaffPriviledgeChangeRow);
-                return rowStaffPriviledgeChangeRow;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public override global::System.Data.DataTable Clone() {
-                StaffPriviledgeChangeDataTable cln = ((StaffPriviledgeChangeDataTable)(base.Clone()));
-                cln.InitVars();
-                return cln;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Data.DataTable CreateInstance() {
-                return new StaffPriviledgeChangeDataTable();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal void InitVars() {
-                this.columnstaffFullName = base.Columns["staffFullName"];
-                this.columnstaffCreatedByName = base.Columns["staffCreatedByName"];
-                this.columnstaffCreatedByCode = base.Columns["staffCreatedByCode"];
-                this.columnstaffRoleName = base.Columns["staffRoleName"];
-                this.columndateTimeCreated = base.Columns["dateTimeCreated"];
-                this.columntempStaffCode = base.Columns["tempStaffCode"];
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            private void InitClass() {
-                this.columnstaffFullName = new global::System.Data.DataColumn("staffFullName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnstaffFullName);
-                this.columnstaffCreatedByName = new global::System.Data.DataColumn("staffCreatedByName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnstaffCreatedByName);
-                this.columnstaffCreatedByCode = new global::System.Data.DataColumn("staffCreatedByCode", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnstaffCreatedByCode);
-                this.columnstaffRoleName = new global::System.Data.DataColumn("staffRoleName", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnstaffRoleName);
-                this.columndateTimeCreated = new global::System.Data.DataColumn("dateTimeCreated", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columndateTimeCreated);
-                this.columntempStaffCode = new global::System.Data.DataColumn("tempStaffCode", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columntempStaffCode);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public StaffPriviledgeChangeRow NewStaffPriviledgeChangeRow() {
-                return ((StaffPriviledgeChangeRow)(this.NewRow()));
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new StaffPriviledgeChangeRow(builder);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Type GetRowType() {
-                return typeof(StaffPriviledgeChangeRow);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanged(e);
-                if ((this.StaffPriviledgeChangeRowChanged != null)) {
-                    this.StaffPriviledgeChangeRowChanged(this, new StaffPriviledgeChangeRowChangeEvent(((StaffPriviledgeChangeRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanging(e);
-                if ((this.StaffPriviledgeChangeRowChanging != null)) {
-                    this.StaffPriviledgeChangeRowChanging(this, new StaffPriviledgeChangeRowChangeEvent(((StaffPriviledgeChangeRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleted(e);
-                if ((this.StaffPriviledgeChangeRowDeleted != null)) {
-                    this.StaffPriviledgeChangeRowDeleted(this, new StaffPriviledgeChangeRowChangeEvent(((StaffPriviledgeChangeRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleting(e);
-                if ((this.StaffPriviledgeChangeRowDeleting != null)) {
-                    this.StaffPriviledgeChangeRowDeleting(this, new StaffPriviledgeChangeRowChangeEvent(((StaffPriviledgeChangeRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void RemoveStaffPriviledgeChangeRow(StaffPriviledgeChangeRow row) {
-                this.Rows.Remove(row);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
-                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                StaffInfoDataSet ds = new StaffInfoDataSet();
-                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
-                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
-                any1.MinOccurs = new decimal(0);
-                any1.MaxOccurs = decimal.MaxValue;
-                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any1);
-                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
-                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
-                any2.MinOccurs = new decimal(1);
-                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any2);
-                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
-                attribute1.Name = "namespace";
-                attribute1.FixedValue = ds.Namespace;
-                type.Attributes.Add(attribute1);
-                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
-                attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "StaffPriviledgeChangeDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -1886,6 +1569,337 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class StaffPriviledgeChangeDataTable : global::System.Data.TypedTableBase<StaffPriviledgeChangeRow> {
+            
+            private global::System.Data.DataColumn columnstaffFullName;
+            
+            private global::System.Data.DataColumn columnstaffCreatedByName;
+            
+            private global::System.Data.DataColumn columnstaffCreatedByCode;
+            
+            private global::System.Data.DataColumn columndateTimeCreated;
+            
+            private global::System.Data.DataColumn columntempStaffCode;
+            
+            private global::System.Data.DataColumn columnpreviousStaffRoleName;
+            
+            private global::System.Data.DataColumn columncurrentStaffRoleName;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public StaffPriviledgeChangeDataTable() {
+                this.TableName = "StaffPriviledgeChange";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal StaffPriviledgeChangeDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected StaffPriviledgeChangeDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn staffFullNameColumn {
+                get {
+                    return this.columnstaffFullName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn staffCreatedByNameColumn {
+                get {
+                    return this.columnstaffCreatedByName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn staffCreatedByCodeColumn {
+                get {
+                    return this.columnstaffCreatedByCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn dateTimeCreatedColumn {
+                get {
+                    return this.columndateTimeCreated;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn tempStaffCodeColumn {
+                get {
+                    return this.columntempStaffCode;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn previousStaffRoleNameColumn {
+                get {
+                    return this.columnpreviousStaffRoleName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn currentStaffRoleNameColumn {
+                get {
+                    return this.columncurrentStaffRoleName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public StaffPriviledgeChangeRow this[int index] {
+                get {
+                    return ((StaffPriviledgeChangeRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event StaffPriviledgeChangeRowChangeEventHandler StaffPriviledgeChangeRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event StaffPriviledgeChangeRowChangeEventHandler StaffPriviledgeChangeRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event StaffPriviledgeChangeRowChangeEventHandler StaffPriviledgeChangeRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event StaffPriviledgeChangeRowChangeEventHandler StaffPriviledgeChangeRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddStaffPriviledgeChangeRow(StaffPriviledgeChangeRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public StaffPriviledgeChangeRow AddStaffPriviledgeChangeRow(string staffFullName, string staffCreatedByName, string staffCreatedByCode, string dateTimeCreated, string tempStaffCode, string previousStaffRoleName, string currentStaffRoleName) {
+                StaffPriviledgeChangeRow rowStaffPriviledgeChangeRow = ((StaffPriviledgeChangeRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        staffFullName,
+                        staffCreatedByName,
+                        staffCreatedByCode,
+                        dateTimeCreated,
+                        tempStaffCode,
+                        previousStaffRoleName,
+                        currentStaffRoleName};
+                rowStaffPriviledgeChangeRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowStaffPriviledgeChangeRow);
+                return rowStaffPriviledgeChangeRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                StaffPriviledgeChangeDataTable cln = ((StaffPriviledgeChangeDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new StaffPriviledgeChangeDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnstaffFullName = base.Columns["staffFullName"];
+                this.columnstaffCreatedByName = base.Columns["staffCreatedByName"];
+                this.columnstaffCreatedByCode = base.Columns["staffCreatedByCode"];
+                this.columndateTimeCreated = base.Columns["dateTimeCreated"];
+                this.columntempStaffCode = base.Columns["tempStaffCode"];
+                this.columnpreviousStaffRoleName = base.Columns["previousStaffRoleName"];
+                this.columncurrentStaffRoleName = base.Columns["currentStaffRoleName"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnstaffFullName = new global::System.Data.DataColumn("staffFullName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnstaffFullName);
+                this.columnstaffCreatedByName = new global::System.Data.DataColumn("staffCreatedByName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnstaffCreatedByName);
+                this.columnstaffCreatedByCode = new global::System.Data.DataColumn("staffCreatedByCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnstaffCreatedByCode);
+                this.columndateTimeCreated = new global::System.Data.DataColumn("dateTimeCreated", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columndateTimeCreated);
+                this.columntempStaffCode = new global::System.Data.DataColumn("tempStaffCode", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columntempStaffCode);
+                this.columnpreviousStaffRoleName = new global::System.Data.DataColumn("previousStaffRoleName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnpreviousStaffRoleName);
+                this.columncurrentStaffRoleName = new global::System.Data.DataColumn("currentStaffRoleName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncurrentStaffRoleName);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public StaffPriviledgeChangeRow NewStaffPriviledgeChangeRow() {
+                return ((StaffPriviledgeChangeRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new StaffPriviledgeChangeRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(StaffPriviledgeChangeRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.StaffPriviledgeChangeRowChanged != null)) {
+                    this.StaffPriviledgeChangeRowChanged(this, new StaffPriviledgeChangeRowChangeEvent(((StaffPriviledgeChangeRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.StaffPriviledgeChangeRowChanging != null)) {
+                    this.StaffPriviledgeChangeRowChanging(this, new StaffPriviledgeChangeRowChangeEvent(((StaffPriviledgeChangeRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.StaffPriviledgeChangeRowDeleted != null)) {
+                    this.StaffPriviledgeChangeRowDeleted(this, new StaffPriviledgeChangeRowChangeEvent(((StaffPriviledgeChangeRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.StaffPriviledgeChangeRowDeleting != null)) {
+                    this.StaffPriviledgeChangeRowDeleting(this, new StaffPriviledgeChangeRowChangeEvent(((StaffPriviledgeChangeRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveStaffPriviledgeChangeRow(StaffPriviledgeChangeRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                StaffInfoDataSet ds = new StaffInfoDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "StaffPriviledgeChangeDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
         public partial class UserGroupChangeReportRow : global::System.Data.DataRow {
@@ -2138,192 +2152,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetDateTimeCreatedNull() {
                 this[this.tableProfileActivityReport.DateTimeCreatedColumn] = global::System.Convert.DBNull;
-            }
-        }
-        
-        /// <summary>
-        ///Represents strongly named DataRow class.
-        ///</summary>
-        public partial class StaffPriviledgeChangeRow : global::System.Data.DataRow {
-            
-            private StaffPriviledgeChangeDataTable tableStaffPriviledgeChange;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal StaffPriviledgeChangeRow(global::System.Data.DataRowBuilder rb) : 
-                    base(rb) {
-                this.tableStaffPriviledgeChange = ((StaffPriviledgeChangeDataTable)(this.Table));
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string staffFullName {
-                get {
-                    try {
-                        return ((string)(this[this.tableStaffPriviledgeChange.staffFullNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'staffFullName\' in table \'StaffPriviledgeChange\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableStaffPriviledgeChange.staffFullNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string staffCreatedByName {
-                get {
-                    try {
-                        return ((string)(this[this.tableStaffPriviledgeChange.staffCreatedByNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'staffCreatedByName\' in table \'StaffPriviledgeChange\' is DBN" +
-                                "ull.", e);
-                    }
-                }
-                set {
-                    this[this.tableStaffPriviledgeChange.staffCreatedByNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string staffCreatedByCode {
-                get {
-                    try {
-                        return ((string)(this[this.tableStaffPriviledgeChange.staffCreatedByCodeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'staffCreatedByCode\' in table \'StaffPriviledgeChange\' is DBN" +
-                                "ull.", e);
-                    }
-                }
-                set {
-                    this[this.tableStaffPriviledgeChange.staffCreatedByCodeColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string staffRoleName {
-                get {
-                    try {
-                        return ((string)(this[this.tableStaffPriviledgeChange.staffRoleNameColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'staffRoleName\' in table \'StaffPriviledgeChange\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableStaffPriviledgeChange.staffRoleNameColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string dateTimeCreated {
-                get {
-                    try {
-                        return ((string)(this[this.tableStaffPriviledgeChange.dateTimeCreatedColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'dateTimeCreated\' in table \'StaffPriviledgeChange\' is DBNull" +
-                                ".", e);
-                    }
-                }
-                set {
-                    this[this.tableStaffPriviledgeChange.dateTimeCreatedColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string tempStaffCode {
-                get {
-                    try {
-                        return ((string)(this[this.tableStaffPriviledgeChange.tempStaffCodeColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'tempStaffCode\' in table \'StaffPriviledgeChange\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableStaffPriviledgeChange.tempStaffCodeColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsstaffFullNameNull() {
-                return this.IsNull(this.tableStaffPriviledgeChange.staffFullNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetstaffFullNameNull() {
-                this[this.tableStaffPriviledgeChange.staffFullNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsstaffCreatedByNameNull() {
-                return this.IsNull(this.tableStaffPriviledgeChange.staffCreatedByNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetstaffCreatedByNameNull() {
-                this[this.tableStaffPriviledgeChange.staffCreatedByNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsstaffCreatedByCodeNull() {
-                return this.IsNull(this.tableStaffPriviledgeChange.staffCreatedByCodeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetstaffCreatedByCodeNull() {
-                this[this.tableStaffPriviledgeChange.staffCreatedByCodeColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsstaffRoleNameNull() {
-                return this.IsNull(this.tableStaffPriviledgeChange.staffRoleNameColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetstaffRoleNameNull() {
-                this[this.tableStaffPriviledgeChange.staffRoleNameColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsdateTimeCreatedNull() {
-                return this.IsNull(this.tableStaffPriviledgeChange.dateTimeCreatedColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetdateTimeCreatedNull() {
-                this[this.tableStaffPriviledgeChange.dateTimeCreatedColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IstempStaffCodeNull() {
-                return this.IsNull(this.tableStaffPriviledgeChange.tempStaffCodeColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SettempStaffCodeNull() {
-                this[this.tableStaffPriviledgeChange.tempStaffCodeColumn] = global::System.Convert.DBNull;
             }
         }
         
@@ -2590,6 +2418,222 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class StaffPriviledgeChangeRow : global::System.Data.DataRow {
+            
+            private StaffPriviledgeChangeDataTable tableStaffPriviledgeChange;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal StaffPriviledgeChangeRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableStaffPriviledgeChange = ((StaffPriviledgeChangeDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string staffFullName {
+                get {
+                    try {
+                        return ((string)(this[this.tableStaffPriviledgeChange.staffFullNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'staffFullName\' in table \'StaffPriviledgeChange\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStaffPriviledgeChange.staffFullNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string staffCreatedByName {
+                get {
+                    try {
+                        return ((string)(this[this.tableStaffPriviledgeChange.staffCreatedByNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'staffCreatedByName\' in table \'StaffPriviledgeChange\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStaffPriviledgeChange.staffCreatedByNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string staffCreatedByCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableStaffPriviledgeChange.staffCreatedByCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'staffCreatedByCode\' in table \'StaffPriviledgeChange\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStaffPriviledgeChange.staffCreatedByCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string dateTimeCreated {
+                get {
+                    try {
+                        return ((string)(this[this.tableStaffPriviledgeChange.dateTimeCreatedColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'dateTimeCreated\' in table \'StaffPriviledgeChange\' is DBNull" +
+                                ".", e);
+                    }
+                }
+                set {
+                    this[this.tableStaffPriviledgeChange.dateTimeCreatedColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string tempStaffCode {
+                get {
+                    try {
+                        return ((string)(this[this.tableStaffPriviledgeChange.tempStaffCodeColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'tempStaffCode\' in table \'StaffPriviledgeChange\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStaffPriviledgeChange.tempStaffCodeColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string previousStaffRoleName {
+                get {
+                    try {
+                        return ((string)(this[this.tableStaffPriviledgeChange.previousStaffRoleNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'previousStaffRoleName\' in table \'StaffPriviledgeChange\' is " +
+                                "DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStaffPriviledgeChange.previousStaffRoleNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string currentStaffRoleName {
+                get {
+                    try {
+                        return ((string)(this[this.tableStaffPriviledgeChange.currentStaffRoleNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'currentStaffRoleName\' in table \'StaffPriviledgeChange\' is D" +
+                                "BNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableStaffPriviledgeChange.currentStaffRoleNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsstaffFullNameNull() {
+                return this.IsNull(this.tableStaffPriviledgeChange.staffFullNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetstaffFullNameNull() {
+                this[this.tableStaffPriviledgeChange.staffFullNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsstaffCreatedByNameNull() {
+                return this.IsNull(this.tableStaffPriviledgeChange.staffCreatedByNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetstaffCreatedByNameNull() {
+                this[this.tableStaffPriviledgeChange.staffCreatedByNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsstaffCreatedByCodeNull() {
+                return this.IsNull(this.tableStaffPriviledgeChange.staffCreatedByCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetstaffCreatedByCodeNull() {
+                this[this.tableStaffPriviledgeChange.staffCreatedByCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsdateTimeCreatedNull() {
+                return this.IsNull(this.tableStaffPriviledgeChange.dateTimeCreatedColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetdateTimeCreatedNull() {
+                this[this.tableStaffPriviledgeChange.dateTimeCreatedColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IstempStaffCodeNull() {
+                return this.IsNull(this.tableStaffPriviledgeChange.tempStaffCodeColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SettempStaffCodeNull() {
+                this[this.tableStaffPriviledgeChange.tempStaffCodeColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IspreviousStaffRoleNameNull() {
+                return this.IsNull(this.tableStaffPriviledgeChange.previousStaffRoleNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetpreviousStaffRoleNameNull() {
+                this[this.tableStaffPriviledgeChange.previousStaffRoleNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscurrentStaffRoleNameNull() {
+                return this.IsNull(this.tableStaffPriviledgeChange.currentStaffRoleNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcurrentStaffRoleNameNull() {
+                this[this.tableStaffPriviledgeChange.currentStaffRoleNameColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -2661,40 +2705,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public class StaffPriviledgeChangeRowChangeEvent : global::System.EventArgs {
-            
-            private StaffPriviledgeChangeRow eventRow;
-            
-            private global::System.Data.DataRowAction eventAction;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public StaffPriviledgeChangeRowChangeEvent(StaffPriviledgeChangeRow row, global::System.Data.DataRowAction action) {
-                this.eventRow = row;
-                this.eventAction = action;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public StaffPriviledgeChangeRow Row {
-                get {
-                    return this.eventRow;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataRowAction Action {
-                get {
-                    return this.eventAction;
-                }
-            }
-        }
-        
-        /// <summary>
-        ///Row event argument class
-        ///</summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public class StaffRoleProfileGroupReportRowChangeEvent : global::System.EventArgs {
             
             private StaffRoleProfileGroupReportRow eventRow;
@@ -2745,6 +2755,40 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public StaffRoleProfileActivityReportRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class StaffPriviledgeChangeRowChangeEvent : global::System.EventArgs {
+            
+            private StaffPriviledgeChangeRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public StaffPriviledgeChangeRowChangeEvent(StaffPriviledgeChangeRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public StaffPriviledgeChangeRow Row {
                 get {
                     return this.eventRow;
                 }

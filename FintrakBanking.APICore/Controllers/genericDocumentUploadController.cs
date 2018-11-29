@@ -63,7 +63,7 @@ namespace FintrakBanking.APICore.Controllers
                 int fileSize = buffer.Length;
                 if (fileSize > (1048576))//max file size should come from database
                 {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Exceed File Size. 3MB Maximum size is allowed");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, new { success = false , result = "Exceed File Size. 3MB Maximum size is allowed" }, "Exceed File Size. 3MB Maximum size is allowed");
                 }
 
                 int response = repo.uploadDocument(entity, buffer);

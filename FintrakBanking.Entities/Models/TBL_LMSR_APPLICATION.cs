@@ -95,5 +95,6 @@
 
         public virtual ICollection<TBL_LMSR_APPLICATION_DETAIL> TBL_LMSR_APPLICATION_DETAIL { get; set; }
         public int? OPERATIONID { get; set; }
+        public short? RISKRATINGID { get; set; }
     }
 }
