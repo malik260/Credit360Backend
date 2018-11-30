@@ -46,8 +46,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
         public bool AddCity(CityViewModel entity)
         {
-            var data = context.TBL_CITY.Where(c => c.CITYNAME == entity.cityName && c.LOCALGOVERNMENTID == entity.localGovernmentId);
-            if (data.Any())
+            var data = context.TBL_CITY.Where(c => c.CITYNAME == entity.cityName && c.LOCALGOVERNMENTID == entity.localGovernmentId).Select(c=>c).FirstOrDefault();
+            if (data==null)
             {
                 var cityEntity = new TBL_CITY
                 {

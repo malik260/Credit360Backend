@@ -84,6 +84,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> LoanHistory();
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
 
+       
+
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
 
         bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);

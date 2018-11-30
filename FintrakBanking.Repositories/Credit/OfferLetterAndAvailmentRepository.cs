@@ -374,6 +374,24 @@ namespace FintrakBanking.Repositories.Credit
             return data.GroupBy(x => x.loanApplicationId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.loanApplicationId).ToList();
         }
 
+
+        private List<ProductFeeViewModel> Los_Fee(int applicationDeatailId)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+            var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
+                        where b.LOANAPPLICATIONDETAILID == applicationDeatailId
+                        select new ProductFeeViewModel()
+                        {
+                            feeName = c.CHARGEFEENAME,
+                            rateValue = a.RECOMMENDED_FEERATEVALUE,
+                            productName = b.TBL_PRODUCT.PRODUCTNAME
+                        }).ToList();
+
+            return fees;
+        }
+
         public Form3800ViewModel GenerateForm3800Template(string applicationRefNumber)
         {
             var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
@@ -498,6 +516,8 @@ namespace FintrakBanking.Repositories.Credit
                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                    //approvedAmount = b.APPROVEDAMOUNT
                                }).ToList();
+
+           
 
             var transactionDynamicsDetails = (from a in context.TBL_LOAN_TRANSACTION_DYNAMICS
                                               join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
@@ -813,10 +833,10 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.newApplicationDate.ToString("dd/MM/yyyy")}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
 
@@ -1074,14 +1094,14 @@ namespace FintrakBanking.Repositories.Credit
                             }).ToList();
 
 
-            var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
-                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+            var fees = (from a in context.TBL_LMSR_APPLICATION_DETL_FEE
+                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
                         join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
-                        join d in context.TBL_LOAN_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+                        join d in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                         where d.APPLICATIONREFERENCENUMBER == targetAppl.APPLICATIONREFERENCENUMBER
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                         && d.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-                    && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                    && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                         select new ProductFeeViewModel()
                         {
                             productName =b.TBL_PRODUCT.PRODUCTNAME,
