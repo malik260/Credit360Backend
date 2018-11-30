@@ -18,6 +18,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using System.Web;
 using FintrakBanking.Common.CustomException;
+using System.Text;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -177,7 +178,11 @@ namespace FintrakBanking.APICore.Controllers
         {
             //try
             //{
-                user.password = StaticHelpers.EncryptSha512(user.password, StaticHelpers.EncryptionKey);
+            byte[] pass = Convert.FromBase64String(user.password);
+            string password = Encoding.UTF8.GetString(pass);
+
+
+            user.password = StaticHelpers.EncryptSha512(password, StaticHelpers.EncryptionKey);
                 string ipAddressStr = String.Empty;
                 if (token.LoginCode == null) ipAddressStr = token.LoginCode.Split('@')[1];
 
@@ -190,21 +195,21 @@ namespace FintrakBanking.APICore.Controllers
 
                     if (found.branchId != null)
                     {
-                        var audit1 = new TBL_AUDIT
-                        {
-                            AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
-                            STAFFID = found.staffId,
-                            BRANCHID = (short)found.branchId,
-                            DETAIL = $"{user.username} login failed",
-                            IPADDRESS = CommonHelpers.GetUserIP(),
-                            URL = Request.RequestUri.AbsoluteUri,
-                            APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                            SYSTEMDATETIME = DateTime.Now,
-                            TARGETID = -1
-                        };
+                    var audit1 = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.LoginFailed,
+                        STAFFID = found.staffId,
+                        BRANCHID = (short)found.branchId,
+                        DETAIL = $"{user.username} login failed",
+                        IPADDRESS = CommonHelpers.GetUserIP(),
+                        URL = Request.RequestUri.AbsoluteUri,
+                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now,
+                        TARGETID = -1
+                    };
 
-                        _auditTrail.AddAuditTrail(audit1);
-                    }
+                    _auditTrail.AddAuditTrail(audit1);
+                }
 
                     _context.SaveChanges();
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "1001 Login Failure." });
@@ -216,30 +221,35 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (currUser.branchId != null)
                 {
-                    var audit = new TBL_AUDIT
-                    {
-                        AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
-                        STAFFID = currUser.staffId,
-                        BRANCHID = (short)currUser.branchId,
-                        DETAIL = $"{currUser.username} logged in",
-                        IPADDRESS = CommonHelpers.GetUserIP(),
-                        URL = Request.RequestUri.AbsoluteUri,
-                        APPLICATIONDATE = _genSetup.GetApplicationDate(),
-                        SYSTEMDATETIME = DateTime.Now,
-                        TARGETID = -1
-                    };
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoggedIn,
+                    STAFFID = currUser.staffId,
+                    BRANCHID = (short)currUser.branchId,
+                    DETAIL = $"{currUser.username} logged in",
+                    IPADDRESS = CommonHelpers.GetUserIP(),
+                    URL = Request.RequestUri.AbsoluteUri,
+                    APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = -1
+                };
 
-                    _auditTrail.AddAuditTrail(audit);
-                }
+                _auditTrail.AddAuditTrail(audit);
+            }
 
                 _context.SaveChanges();
-
-                // build the json response
-                return Request.CreateResponse(HttpStatusCode.OK, new
+            //var ttttt = HttpUtility.HtmlDecode(user.encodedToken);
+            //var dat = HttpUtility.HtmlDecode(user.validTo);
+            byte[] data = Convert.FromBase64String(user.encodedToken);
+            string encodedToken = Encoding.UTF8.GetString(data);
+            byte[] data2 = Convert.FromBase64String(user.validTo);
+            string validTo = Encoding.UTF8.GetString(data2);
+            // build the json response
+            return Request.CreateResponse(HttpStatusCode.OK, new
                 {
                     success = true,
-                    access_token = user.encodedToken,
-                    expiration = user.validTo,
+                    access_token = encodedToken,
+                    expiration = validTo,
                     userInfo = new UserInfo
                     {
                         branchName = currUser.branchName,

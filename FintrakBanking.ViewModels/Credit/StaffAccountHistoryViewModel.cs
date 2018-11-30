@@ -26,6 +26,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int newRMStaffId { get; set; }
 
         public string reasonForChange { get; set; }
+        public string loanReferneceNumber { get; set; }
 
         public short approvalStatusId { get; set; }
 

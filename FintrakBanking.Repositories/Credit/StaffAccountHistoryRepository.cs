@@ -58,7 +58,8 @@ namespace FintrakBanking.Repositories.Credit
                 approvalStatusId = sa.APPROVALSTATUSID,
                 reasonForChange = sa.REASONFORCHANGE,
                 staffAccountHistoryId = sa.STAFFACCOUNTHISTORYID,
-                productType = sa.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                loanReferneceNumber = context.TBL_LOAN.Where(l=>l.TERMLOANID == sa.TARGETID).Select(k=>k.LOANREFERENCENUMBER).FirstOrDefault(),
+                //productType = sa.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                 endDate = sa.ENDDATE,
                 startDate = sa.STARTDATE,
                 accountTypeId = sa.ACCOUNTTYPEID,
@@ -305,7 +306,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private string GetStaff(int staffId)
         {
-            return context.TBL_STAFF.Where(s => s.STAFFID == staffId).Select(s => new { staffName = s.LASTNAME + " " + s.FIRSTNAME + " " + s.MIDDLENAME }).FirstOrDefault().staffName;
+            return context.TBL_STAFF.Where(s => s.STAFFID == staffId).Select(s => new { staffName = s.LASTNAME + " " + s.FIRSTNAME + " " + s.MIDDLENAME + "-" + s.STAFFCODE }).FirstOrDefault().staffName;
         }
 
         private loanDetailsViewModel GetloanDetails(int loanId, int staffId, int accountTypeId)
@@ -314,7 +315,7 @@ namespace FintrakBanking.Repositories.Credit
             switch (accountTypeId)
             {
                 case ((int)StaffAccountHistoryTypeEnum.TermOrDisbusrsedFacility):
-                    loanDetails = context.TBL_LOAN.Where(l => l.RELATIONSHIPOFFICERID == staffId && l.TERMLOANID == loanId).Select(l => new loanDetailsViewModel
+                    loanDetails = context.TBL_LOAN.Where(l => l.TERMLOANID == loanId).Select(l => new loanDetailsViewModel
                     {
                         loanId = l.TERMLOANID,
                         relationshipOfficerId = l.RELATIONSHIPOFFICERID,
@@ -331,7 +332,7 @@ namespace FintrakBanking.Repositories.Credit
                         field10 = l.FIELD10,
                     }).FirstOrDefault(); break;
                 case ((int)StaffAccountHistoryTypeEnum.RevolvingFacility):
-                    loanDetails = context.TBL_LOAN_REVOLVING.Where(r => r.RELATIONSHIPMANAGERID == staffId && r.REVOLVINGLOANID == loanId).Select(r => new loanDetailsViewModel
+                    loanDetails = context.TBL_LOAN_REVOLVING.Where(r => r.REVOLVINGLOANID == loanId).Select(r => new loanDetailsViewModel
                     {
                         loanId = r.REVOLVINGLOANID,
                         relationshipOfficerId = r.RELATIONSHIPOFFICERID,
@@ -348,7 +349,7 @@ namespace FintrakBanking.Repositories.Credit
                         field10 = r.FIELD10,
                     }).FirstOrDefault(); break;
                 case ((int)StaffAccountHistoryTypeEnum.ContingentLiability):
-                    loanDetails = context.TBL_LOAN_CONTINGENT.Where(c => c.RELATIONSHIPMANAGERID == staffId && c.CONTINGENTLOANID == loanId).Select(c => new loanDetailsViewModel
+                    loanDetails = context.TBL_LOAN_CONTINGENT.Where(c => c.CONTINGENTLOANID == loanId).Select(c => new loanDetailsViewModel
                     {
                         loanId = c.CONTINGENTLOANID,
                         relationshipOfficerId = c.RELATIONSHIPOFFICERID,

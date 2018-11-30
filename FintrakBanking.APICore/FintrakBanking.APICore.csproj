@@ -521,6 +521,13 @@
     <Compile Include="Reports\ReportViews\CollateralVisitation.aspx.designer.cs">
       <DependentUpon>CollateralVisitation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityInformation.aspx.cs">
+      <DependentUpon>ContigentLiabilityInformation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ContigentLiabilityInformation.aspx.designer.cs">
+      <DependentUpon>ContigentLiabilityInformation.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.cs">
       <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -932,6 +939,7 @@
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
+    <Content Include="Reports\ReportViews\ContigentLiabilityInformation.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
@@ -1205,6 +1213,7 @@
     <EmbeddedResource Include="Reports\Report\CollateralPerfectionYetToCommence.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ContigentLiabilityInformation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
