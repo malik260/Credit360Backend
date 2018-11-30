@@ -53,8 +53,30 @@ namespace FintrakBanking.Repositories.Admin
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
 
         }
-      
+
         #region Users
+
+        public void DeactivateInactiveUsers()
+        {
+            // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
+
+            var currentDateTime = DateTime.Now;
+
+            var profileSetting = context.TBL_PROFILE_SETTING.FirstOrDefault();
+
+            var inactiveUsers = (from a in context.TBL_PROFILE_USER
+                                 where a.ISACTIVE == true
+                                 && a.LASTLOGINDATE.GetValueOrDefault(new DateTime(2000, 1, 1)).AddDays(profileSetting.MAXPERIODOFUSERINACTIVITY) >= currentDateTime
+                                 select a);
+
+            foreach (var item in inactiveUsers)
+            {
+                item.ISACTIVE = false;
+                item.DEACTIVATEDDATE = currentDateTime;
+            }
+
+            context.SaveChanges();
+        }
 
         public bool isUserExist(string username)
         {
