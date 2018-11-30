@@ -73,8 +73,10 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ObligorLimitViewModel : GeneralEntity
     {
+        public int scenerio { get; set; } // 1 appl, 2 lmsa
         public int applicationId { get; set; }
-        public int customerId { get; set; }
+        public int? customerId { get; set; }
+        public int? customerGroupId { get; set; }
         public int riskRatingId { get; set; }
         public string riskRating { get; set; }
         public string description { get; set; }

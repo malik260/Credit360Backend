@@ -39,14 +39,14 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     var currentDate = DateTime.Now;
 
-                    var dateDifference = currentDate - incomingDate;
+                    //var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 30)
-                    {
-                        this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                        this.ReportViewer.LocalReport.Refresh();
-                        return;
-                    }
+                    //if (dateDifference.Seconds > 30)
+                    //{
+                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    //    this.ReportViewer.LocalReport.Refresh();
+                    //    return;
+                    //}
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
                     if (extension != null)

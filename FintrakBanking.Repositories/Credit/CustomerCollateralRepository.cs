@@ -24,6 +24,7 @@ using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using Newtonsoft.Json;
+using System.ServiceModel;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -81,11 +82,9 @@ namespace FintrakBanking.Repositories.Credit
         #region New 
 
         // ADD
-
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool AddCollateral(CollateralViewModel entity, byte[] file) //, 
         {
-            using (var trans = context.Database.BeginTransaction())
-            {
                 int collateralId = AddTempCollateralMainForm(entity);
 
                 if (collateralId > 0)
@@ -115,17 +114,15 @@ namespace FintrakBanking.Repositories.Credit
                     try
                     {
                         saved = context.SaveChanges() != 0;
-                        trans.Commit();
                     }
                     catch (Exception ex)
                     {
-                        trans.Rollback();
 
                         throw new SecureException("Error has occured while creating this collateral");
                     }
                     if (saved) { return true; }
 
-                }
+                
             }
 
             return false;

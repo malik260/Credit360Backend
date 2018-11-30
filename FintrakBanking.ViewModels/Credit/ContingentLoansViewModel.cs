@@ -49,7 +49,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public double percentageUsed { get { return (float)(((float)usedAmount / (float)facilityAmount) * 100); } }
 
-        public string outstandingAmount { get { return CommonHelpers.FormatNumberTwoPlaces(facilityAmount - usedAmount); } }
+        public decimal amountRemaining { get { return (facilityAmount - usedAmount); } }
 
         public string firstName { get; set; }
         public string lastName { get; set; }

@@ -459,7 +459,7 @@ namespace FintrakBanking.ReportObjects.Credit
         public List<CamProcessedLoanViewModel> Los_LoanDetail(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
-
+            var k = "";
             var loanDetails = (from a in context.TBL_LOAN_APPLICATION
                                join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                                join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
@@ -467,7 +467,6 @@ namespace FintrakBanking.ReportObjects.Credit
                                join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
                                from d in cg.DefaultIfEmpty()
                                join e in context.TBL_CURRENCY on b.CURRENCYID equals e.CURRENCYID
-
                                where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
                                && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
                                && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
@@ -480,16 +479,52 @@ namespace FintrakBanking.ReportObjects.Credit
                                    interestRate = b.APPROVEDINTERESTRATE,
                                    purpose = b.LOANPURPOSE,
                                    applicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
-                                   approvedAmountCurrency = e.CURRENCYNAME + " " + b.APPROVEDAMOUNT + " % p.a ",
+                                   approvedAmountCurrency = e.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
                                    productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(s => s.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(s => s.PRICEINDEXNAME).FirstOrDefault() : "",
                                    approvedDate = a.APPROVEDDATE,
-                                   newApplicationDate = a.APPLICATIONDATE,
+                                   newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,//a.APPLICATIONDATE,
                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                   loanApplicationDetailId = b.LOANAPPLICATIONDETAILID
                                }).ToList();
+
+
+
+            foreach(var x in loanDetails)
+            {
+              var fees=  Los_Fee(x.loanApplicationDetailId);
+                var feeVal = "";
+                foreach(var fee in fees)
+                {
+                    feeVal = feeVal + "  " + fee.feeName + ": " + fee.rateValue + "% flat,";
+                }
+
+                x.interestRateAndFees = "Interest Rate: " + x.interestRate + "% p/a, " + feeVal;
+                x.interestRateAndFees.Remove(x.interestRateAndFees.Length-1);
+            }
+
+            
 
             return loanDetails;
 
 
+        }
+
+        private List<ProductFeeViewModel> Los_Fee(int applicationDeatailId)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+            var fees = (from a in context.TBL_LOAN_APPLICATION_DETL_FEE
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                        join c in context.TBL_CHARGE_FEE on a.CHARGEFEEID equals c.CHARGEFEEID
+                        where b.LOANAPPLICATIONDETAILID == applicationDeatailId 
+                        select new ProductFeeViewModel()
+                        {
+                            SN = +count,
+                            feeName = c.CHARGEFEENAME,
+                            rateValue = a.RECOMMENDED_FEERATEVALUE,
+                            productName = b.TBL_PRODUCT.PRODUCTNAME
+                        }).ToList();
+
+            return fees;
         }
 
         public List<OfferLetterConditionPrecidentViewModel> Los_ConditionPrecedents(string applicationRefNumber)
