@@ -2260,8 +2260,10 @@ namespace FintrakBanking.Repositories.Credit
         /// <returns></returns>
         public IEnumerable<CamProcessedLoanViewModel> GetBookingRequestAwaitingApproval(int staffId, int companyId)
         {
-            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanBookingRequest).ToList();
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanTrancheBookingRequest).ToList();
+            var ids2 = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanBookingRequest).ToList();
             List<int> operationIds = new List<int>();
+            operationIds.Add((int)OperationsEnum.LoanTrancheBookingRequest);
             operationIds.Add((int)OperationsEnum.LoanBookingRequest);
 
             try
@@ -2279,7 +2281,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && req.DELETED == false && req.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CAMInProgress
                                   && m.APPLICATIONSTATUSID != (short)LoanApplicationStatusEnum.CancellationCompleted
-                                  && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                                  && (ids.Contains((int)atrail.TOAPPROVALLEVELID) || ids2.Contains((int)atrail.TOAPPROVALLEVELID))
                                   && atrail.RESPONSESTAFFID == null
                             orderby d.LOANAPPLICATIONDETAILID descending
 
@@ -2291,7 +2293,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                 applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                 applicationStatusId = m.APPLICATIONSTATUSID,
-                                operationId = (short)OperationsEnum.LoanBookingRequest,
+                                operationId = (short)OperationsEnum.LoanTrancheBookingRequest,
                                 requestedAmount = req.AMOUNT_REQUESTED,
                                 customerId = m.CUSTOMERID ?? 0,
                                 customerCode = cust.CUSTOMERCODE,
@@ -5548,7 +5550,8 @@ namespace FintrakBanking.Repositories.Credit
                         amount = entity.amount_Requested,
                     };
 
-                    LogApproval(approvalModel, (short)OperationsEnum.LoanBookingRequest, true, (int)ApprovalStatusEnum.Pending);
+                    if(loanApplicationDetails.TBL_LOAN_APPLICATION.TRANCHEAPPROVAL_LEVELID == null)LogApproval(approvalModel, (short)OperationsEnum.LoanBookingRequest, true, (int)ApprovalStatusEnum.Pending);
+                    else LogApproval(approvalModel, (short)OperationsEnum.LoanTrancheBookingRequest, true, (int)ApprovalStatusEnum.Pending);
 
                     // Audit Section ---------------------------
                     var audit = new TBL_AUDIT
@@ -5660,7 +5663,7 @@ namespace FintrakBanking.Repositories.Credit
                          requestDate = s.DATETIMECREATED,
                          requestedBy = "",
                          requestedAmount = s.AMOUNT_REQUESTED,
-                         requestOperationId = (short)OperationsEnum.LoanBookingRequest,
+                         requestOperationId = (short)OperationsEnum.LoanTrancheBookingRequest,
                          approvalStatusId = atrail.APPROVALSTATUSID,
                          approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                          loanApplicationId = m.LOANAPPLICATIONID,
@@ -5723,7 +5726,7 @@ namespace FintrakBanking.Repositories.Credit
                          requestDate = s.DATETIMECREATED,
                          requestedBy = "",
                          requestedAmount = s.AMOUNT_REQUESTED,
-                         requestOperationId = (short)OperationsEnum.LoanBookingRequest,
+                         requestOperationId = (short)OperationsEnum.LoanTrancheBookingRequest,
                          approvalStatusId = atrail.APPROVALSTATUSID,
                          approvalStatusName = atrail.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                          loanApplicationId = m.LOANAPPLICATIONID,
@@ -5964,7 +5967,7 @@ namespace FintrakBanking.Repositories.Credit
                             requestedBy = "",
 
                             requestedAmount = s.AMOUNT_REQUESTED,
-                            requestOperationId = (short)OperationsEnum.LoanBookingRequest,
+                            requestOperationId = (short)OperationsEnum.LoanTrancheBookingRequest,
                             approvalStatusId = (short)m.APPROVALSTATUSID,
                             loanApplicationId = m.LOANAPPLICATIONID,
                             loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,

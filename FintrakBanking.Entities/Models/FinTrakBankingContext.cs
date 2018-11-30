@@ -184,7 +184,8 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_FINANCIAL_STATEMENT_CAPTN> TBL_FINANCIAL_STATEMENT_CAPTN { get; set; }
         public virtual DbSet<TBL_FINANCIAL_STATEMENT_TYPE> TBL_FINANCIAL_STATEMENT_TYPE { get; set; }
         public virtual DbSet<TBL_FREQUENCY_TYPE> TBL_FREQUENCY_TYPE { get; set; }
-        public virtual DbSet<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
+        public virtual DbSet<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; } 
+        public virtual DbSet<TBL_JOB_TYPE_SUB_CLASS> TBL_JOB_TYPE_SUB_CLASS { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_DETAIL> TBL_JOB_REQUEST_DETAIL { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_DOCUMENT_MAPPN> TBL_JOB_REQUEST_DOCUMENT_MAPPN { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_MESSAGE> TBL_JOB_REQUEST_MESSAGE { get; set; }
