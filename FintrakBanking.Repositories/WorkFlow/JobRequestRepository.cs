@@ -383,8 +383,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                          senderStaffId = x.SENDERSTAFFID,
                          senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
                          senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
-                         departmentUnitId = x.DEPARTMENTUNITID,
-                         departmentId = x.DEPARTMENTID,
+                         departmentUnitId = x.DEPARTMENTUNITID ?? 0,
+                         departmentId = x.DEPARTMENTID ?? 0,
 
                          receiverStaffId = (int)x.RECEIVERSTAFFID,
                          reassignedTo = x.REASSIGNEDTO,
@@ -446,10 +446,10 @@ namespace FintrakBanking.Repositories.WorkFlow
             var thisStaff = this.context.TBL_STAFF.Find(staffId);
             var unitId = 0;
             unitId = thisStaff.TBL_DEPARTMENT_UNIT != null ? thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID : 0;
-            var data = (from x in context.TBL_JOB_REQUEST
+            var data =  from x in context.TBL_JOB_REQUEST
                         join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                         join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                        where (x.DEPARTMENTUNITID == unitId || x.SENDERSTAFFID == staffId || x.REASSIGNEDTO == staffId)
+                        where (x.DEPARTMENTUNITID == unitId || x.SENDERSTAFFID == staffId || x.REASSIGNEDTO == staffId) // ( )
                         orderby x.ARRIVALDATE descending
                         select (
                         new JobRequestViewModel
@@ -467,8 +467,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                             senderStaffId = x.SENDERSTAFFID,
                             senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
                             senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
-                            departmentUnitId = x.DEPARTMENTUNITID,
-                            departmentId = x.DEPARTMENTID,
+                            departmentUnitId = x.DEPARTMENTUNITID ?? 0,
+                            departmentId = x.DEPARTMENTID ?? 0,
 
                             receiverStaffId = (int)x.RECEIVERSTAFFID,
                             reassignedTo = x.REASSIGNEDTO,
@@ -499,7 +499,15 @@ namespace FintrakBanking.Repositories.WorkFlow
                             to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                             assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                        })).Take(50);
+                        });
+            try
+            {
+                var b = data.ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex; 
+            }
 
             foreach (var item in data)
             {

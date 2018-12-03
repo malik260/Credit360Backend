@@ -40,9 +40,9 @@ namespace FintrakBanking.Entities.Models
 
         public int TARGETID { get; set; }
 
-        public short DEPARTMENTID { get; set; }
+        public short? DEPARTMENTID { get; set; }
 
-        public short DEPARTMENTUNITID { get; set; }
+        public short? DEPARTMENTUNITID { get; set; }
 
         public int OPERATIONSID { get; set; }
 

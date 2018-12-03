@@ -59,17 +59,16 @@ namespace FintrakBanking.Repositories.Admin
 
         public void DeactivateInactiveUsers()
         {
-            // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
-
             var currentDateTime = DateTime.Now.Date;
 
-            var profileSetting = context.TBL_PROFILE_SETTING.FirstOrDefault();
+            int userInactivePeriod = context.TBL_PROFILE_SETTING.FirstOrDefault().MAXPERIODOFUSERINACTIVITY;
 
             var inactiveUsersSub = (from a in context.TBL_PROFILE_USER
-                                 where a.ISACTIVE == true
-                                 && DbFunctions.AddDays(a.LASTLOGINDATE, profileSetting.MAXPERIODOFUSERINACTIVITY) >= currentDateTime                                  
-                                 select a);
-
+                                    where a.ISACTIVE == true //&& a.LASTLOGINDATE != null
+                                    //&& (DbFunctions.AddDays(a.LASTLOGINDATE, userInactivePeriod) <= DbFunctions.AddDays(currentDateTime, 0))
+                                    && DbFunctions.DiffDays(a.LASTLOGINDATE, currentDateTime) > userInactivePeriod
+                                       select a);
+            
             var inactiveUsers = inactiveUsersSub.ToList();
 
             foreach (var item in inactiveUsers)

@@ -43,8 +43,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public List<JobRequestMessageViewModel> msgExchangeTrail { get; set; }
 
         public int targetId { get; set; }
-        public short departmentId { get; set; }
-        public short departmentUnitId { get; set; }
+        public short? departmentId { get; set; }
+        public short? departmentUnitId { get; set; }
         public int jobRequestId { get; set; }
         public string requestTitle { get; set; }
         public string jobRequestCode { get; set; }
