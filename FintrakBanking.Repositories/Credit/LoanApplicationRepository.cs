@@ -1218,6 +1218,9 @@ namespace FintrakBanking.Repositories.Credit
             isGroupLoan = false;
             response = 0;
             int loanId = 0;
+
+            ValidateLoanApplicationLimits(loan); // TODO
+
             if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
                 isGroupLoan = true;
@@ -3939,5 +3942,31 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() == 0) throw new SecureException("Customer turnover failed to load!");
 
         }
+
+        public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
+        {
+            int branchId = (int)application.branchId;
+
+            var branchValidation = creditLimitValidationsRepository.ValidateNPLByBranch((short)branchId);
+            
+            decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+          
+            decimal applicationAmount = application.details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+
+            var branch = context.TBL_BRANCH.Find(branchId);
+            if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+
+            List<int> sectorIds = new List<int>();
+            sectorIds.Add(application.subSectorId); // or sectorId. TODO inspect!
+
+            foreach (var sectorId in sectorIds)
+            {
+                var sectorValidation = creditLimitValidationsRepository.ValidateNPLBySector(sectorId);
+                decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                var sector = context.TBL_SECTOR.Find(sectorId);
+                if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+            }
+        }
+
     }
 }
