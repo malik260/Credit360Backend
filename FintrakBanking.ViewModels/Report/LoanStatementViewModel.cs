@@ -23,8 +23,8 @@ namespace FintrakBanking.ViewModels.Report
         public string loanCurrency { set; get; }
         public decimal productId { set; get; }
 
-        public DateTime postDate { set; get; }
-        public DateTime valueDate { set; get; }
+        public DateTime? postDate { set; get; }
+        public DateTime? valueDate { set; get; }
         public decimal creditAmount { set; get; }
         public decimal debitAmount { set; get; }
         public string discription { set; get; }

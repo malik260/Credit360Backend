@@ -18,6 +18,9 @@
               <Width>2.4809in</Width>
             </TablixColumn>
             <TablixColumn>
+              <Width>1.78125in</Width>
+            </TablixColumn>
+            <TablixColumn>
               <Width>2.02257in</Width>
             </TablixColumn>
             <TablixColumn>
@@ -130,7 +133,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>staff Role Name</Value>
+                              <Value>Previous Staff Role Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -138,6 +141,37 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <BackgroundColor>DarkGoldenrod</BackgroundColor>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox3">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Current Staff Role Name</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox3</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -311,21 +345,51 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="staffRoleName">
+                    <Textbox Name="previousStaffRoleName">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!staffRoleName.Value</Value>
+                              <Value>=Fields!previousStaffRoleName.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>staffRoleName</rd:DefaultName>
+                      <rd:DefaultName>previousStaffRoleName</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Color>LightGrey</Color>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="currentStaffRoleName">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!currentStaffRoleName.Value</Value>
+                              <Style />
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>currentStaffRoleName</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -414,6 +478,7 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -430,7 +495,7 @@
         <Top>0.51959in</Top>
         <Left>0.39583in</Left>
         <Height>0.48958in</Height>
-        <Width>12.92583in</Width>
+        <Width>14.70709in</Width>
         <Style>
           <Border>
             <Style>None</Style>
@@ -441,7 +506,7 @@
     <Height>2.04042in</Height>
     <Style />
   </Body>
-  <Width>14.31125in</Width>
+  <Width>15.10292in</Width>
   <Page>
     <PageHeader>
       <Height>1in</Height>
@@ -531,16 +596,20 @@
           <DataField>staffCreatedByName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="staffRoleName">
-          <DataField>staffRoleName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
         <Field Name="dateTimeCreated">
           <DataField>dateTimeCreated</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="tempStaffCode">
           <DataField>tempStaffCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="previousStaffRoleName">
+          <DataField>previousStaffRoleName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="currentStaffRoleName">
+          <DataField>currentStaffRoleName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

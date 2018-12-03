@@ -30,6 +30,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanPreliminaryEvaluationsByLoanTypeId(int loanTypeId);
 
+        IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanApplicationPreliminaryEvaluations(int applicationId);
+
         IEnumerable<LoanPreliminaryEvaluationViewModel> GetLoanPreliminaryEvaluationsAwaitingApprovalByLoanTypeId(
             int staffId, int companyId, int loanTypeId);
         IEnumerable<LookupViewModel> GetCustomerLoanPreliminaryEvaluations(int customerId, int loanTypeId, int customerGroupId = 0);

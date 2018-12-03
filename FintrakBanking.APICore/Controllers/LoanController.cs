@@ -1026,13 +1026,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
+
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
-
+               
                 var responseId = repo.GoForApproval(model, loanBookingRequestId, casaAccountId, casaAccountId2);
                 var dynamicMessage = string.Empty;
                 if (responseId == 1)
@@ -1864,11 +1865,15 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
             catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
             }
             catch (BadLogicException be)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message =  ex.Message });
             }
             catch (Exception)
             {

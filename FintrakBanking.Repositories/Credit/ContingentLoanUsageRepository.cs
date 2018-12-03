@@ -40,7 +40,33 @@ namespace FintrakBanking.Repositories.Credit
             {
                 List<ContingentLoansViewModel> contingentData = new List<ContingentLoansViewModel>();
                 DateTime currentDate = genSetup.GetApplicationDate();
-                var data = context.TBL_LOAN_CONTINGENT
+                var data = (from a in context.TBL_LOAN_CONTINGENT
+                            join b in context.TBL_PRODUCT_BEHAVIOUR on a.PRODUCTID equals b.PRODUCTID
+                            where  currentDate <= a.MATURITYDATE && b.ALLOWFUNDUSAGE == true
+                            select new ContingentLoansViewModel()
+                            {
+                                principalName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
+                                bookingDate = a.BOOKINGDATE,
+                                casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                                facilityAmount = a.CONTINGENTAMOUNT,
+                                contingentLoanId = a.CONTINGENTLOANID,
+                                currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
+                                currencyId = a.CURRENCYID,
+                                customerId = a.CUSTOMERID,
+                                firstName = a.TBL_CUSTOMER.FIRSTNAME,
+                                lastName = a.TBL_CUSTOMER.LASTNAME,
+                                middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                                productId = a.PRODUCTID,
+                                effectiveDate = a.EFFECTIVEDATE,
+                                exchangeRate = a.EXCHANGERATE,
+                                loanApplicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                maturityDate = a.MATURITYDATE,
+                                productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                            }).ToList();
+
+                var data2 = context.TBL_LOAN_CONTINGENT
                     .Where(c => c.MATURITYDATE <= currentDate
                     && context.TBL_PRODUCT_BEHAVIOUR.Where(d => d.PRODUCTID == c.PRODUCTID)
                     .FirstOrDefault().ALLOWFUNDUSAGE == true)
@@ -73,6 +99,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (usedData.Any())
                     {
                         item.usedAmount = usedData.Sum(c => c.AMOUNTREQUESTED);
+                        //item.amountRemaining = item.facilityAmount - item.usedAmount;
                     }
                     contingentData.Add(item);
 

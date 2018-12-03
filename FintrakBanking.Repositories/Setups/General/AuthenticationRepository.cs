@@ -121,7 +121,34 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             username = username.ToLower();
             ActiveUserDetails result = new ActiveUserDetails();
-            var user = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == username);
+            // var user = GetAllUsers().FirstOrDefault(c => c.username.ToLower() == username);
+
+            var user = (from u in context.TBL_PROFILE_USER
+                    join st in context.TBL_STAFF on u.STAFFID equals st.STAFFID
+                    where u.USERNAME.ToLower() == username
+                    select new UserViewModel
+                    {
+                        user_id = u.USERID,
+                        staffId = u.STAFFID,
+                        username = u.USERNAME,
+                        isActive = u.ISACTIVE,
+                        staffName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
+                        email = st.EMAIL,
+                        password = u.PASSWORD,
+                        securityQuestion = u.SECURITYQUESTION,
+                        securityAnswer = u.SECURITYANSWER,
+                        branchId = st.BRANCHID,
+                        roleId = st.STAFFROLEID,
+                        groupId = u.TBL_PROFILE_USERGROUP.Where(x => x.USERID == u.USERID)
+                                    .Select(x => new UserGroupId
+                                    {
+                                        groupId = x.GROUPID,
+                                        groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
+                                    }).ToList(),
+                        isLocked = u.ISLOCKED,
+                    })
+                    .FirstOrDefault();
+
             if (user == null) throw new SecureException("1001 Login Failure.");
 
             result.grantMessage = "valid";
@@ -531,28 +558,30 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private UserViewModel UserLoginDetails(string username, string password) // ERROR POINT 3 - underlying provider...
         {
-            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username);// && c.PASSWORD == password);
+            var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username.ToLower());// && c.PASSWORD == password);
 
             if (profile != null && profile.PASSWORD == password)
-            {           
-                var userInfo = new UserViewModel
-                {
-                    companyId = profile.TBL_STAFF.COMPANYID,
-                    staffId = profile.STAFFID,
-                    user_id = profile.USERID,
-                    username = profile.USERNAME,
-                    staffName = profile.TBL_STAFF.FIRSTNAME + " " + profile.TBL_STAFF.MIDDLENAME + " " + profile.TBL_STAFF.LASTNAME,
-                    branchId = profile.TBL_STAFF.BRANCHID.Value,
-                    countryId = profile.TBL_STAFF.TBL_COMPANY.COUNTRYID,
-                    branchName = context.TBL_BRANCH.FirstOrDefault(d => d.BRANCHID == profile.TBL_STAFF.BRANCHID.Value).BRANCHNAME,
-                    companyName = profile.TBL_STAFF.TBL_COMPANY.NAME,
-                    logincode = profile.LOGINCODE,
-                    lastLoginDate = profile.LASTLOGINDATE
-                };
+            {
+                var staff = context.TBL_STAFF.Find(profile.STAFFID);
+                var userInfo = new UserViewModel();
+
+                userInfo.companyId = staff.COMPANYID;
+                userInfo.staffId = profile.STAFFID;
+                userInfo.user_id = profile.USERID;
+                userInfo.username = profile.USERNAME;
+                userInfo.staffName = staff.FIRSTNAME + " " + staff.MIDDLENAME + " " + staff.LASTNAME;
+                userInfo.branchId = staff.BRANCHID;
+                userInfo.countryId = staff.TBL_COMPANY.COUNTRYID;
+                userInfo.branchName = context.TBL_BRANCH.FirstOrDefault(d => d.BRANCHID == staff.BRANCHID)?.BRANCHNAME;
+                userInfo.companyName = staff.TBL_COMPANY.NAME;
+                userInfo.logincode = profile.LOGINCODE;
+                userInfo.lastLoginDate = profile.LASTLOGINDATE;
 
                 profile.LASTLOGINDATE = DateTime.Now;
                 profile.LOGINCODE = LogCode;
                 profile.FAILEDLOGONATTEMPT = 0;
+
+                context.Entry(profile).State = EntityState.Modified;
                 context.SaveChanges();
 
                 return userInfo;

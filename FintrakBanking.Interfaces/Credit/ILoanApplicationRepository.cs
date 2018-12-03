@@ -34,7 +34,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanApplicationViewModel> GetLoanApplicationById(int loanApplicationId, int companyId);
 
         IEnumerable<ProductClassViewModel> GetProductClass();
-        IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId);
+        IEnumerable<CustomerViewModels> GetCustomerByApplicationId(int applicationId, string processtype);
         CustomerApplicationTransactionsViewModels GetCustomerTransactions(int customerId, int applicationId, bool islms);
 
         // LoanApplicationUpdateMessage UpdateApprovalStatusForApplication(int applicationId);

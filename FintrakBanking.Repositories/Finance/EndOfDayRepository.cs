@@ -28,7 +28,7 @@ namespace FintrakBanking.Repositories.Finance
                                     IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy)
         {
             this.context = _context;
-            this.generalSetup=_generalSetup;
+            this.generalSetup = _generalSetup;
             this.publicHoliday = _publicHoliday;
             this.auditTrail = _auditTrail;
             this.loanOperation = _loanOperation;
@@ -48,15 +48,15 @@ namespace FintrakBanking.Repositories.Finance
 
 
             if (financeEod == true)
-                throw new ConditionNotMetException("End of Day for "+ applicationDate+" has already been run.");
+                throw new ConditionNotMetException("End of Day for " + applicationDate + " has already been run.");
 
             var countryId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).COUNTRYID;
 
             var nextWorkDay = publicHoliday.GetNextWorkDay(applicationDate, countryId);
 
             if (applicationDate.AddDays(1) == nextWorkDay)
-            { 
-                  ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
+            {
+                ProcessEndOfDay(applicationDate, model.companyId, model.createdBy);
             }
             else
             {
@@ -65,7 +65,7 @@ namespace FintrakBanking.Repositories.Finance
                 do
                 {
                     ProcessEndOfDay(runDate, model.companyId, model.createdBy);
-                  
+
                     runDate = runDate.AddDays(1);
 
                     var currentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
@@ -97,7 +97,7 @@ namespace FintrakBanking.Repositories.Finance
 
             var response = context.SaveChanges();
 
-            return true;            
+            return true;
         }
 
 
@@ -139,12 +139,12 @@ namespace FintrakBanking.Repositories.Finance
             loanOperation.ProcessDailyInterestOnPastDueInterestAccrual(date);
 
             loanOperation.ProcessDailyInterestOnPastDuePrincipalAccrual(date);
-            
+
 
             loanOperation.ProcessDailyFeeAccrual(date);//TODO use batch posting and ensure the right accounting entries are passed
 
             loanOperation.ProcessDailyTaxAccrual(date); //TODO use batch posting and ensure the right accounting entries are passed
-            
+
 
             //loanOperation.ProcessIntervalFeeandCommissionPosting(date); //TODO use batch posting and ensure the right accounting entries are passed
 
@@ -162,7 +162,7 @@ namespace FintrakBanking.Repositories.Finance
             //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCovenant(date);
             //loanOperation.ProcessOverdraftBalanceSuspensionBaseOnCleanUp(date);
 
-            
+
 
             //collateralItemPolicy.CheckForExpiredItemPolicies(date);
 
@@ -182,4 +182,3 @@ namespace FintrakBanking.Repositories.Finance
 
     }
 }
- 

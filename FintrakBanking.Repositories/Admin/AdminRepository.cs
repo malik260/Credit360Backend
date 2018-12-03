@@ -13,6 +13,7 @@ using FintrakBanking.ViewModels.WorkFlow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Entity;
 using System.Threading.Tasks;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 using FintrakBanking.Common.CustomException;
@@ -53,8 +54,31 @@ namespace FintrakBanking.Repositories.Admin
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
 
         }
-      
+
         #region Users
+
+        public void DeactivateInactiveUsers()
+        {
+            var currentDateTime = DateTime.Now.Date;
+
+            int userInactivePeriod = context.TBL_PROFILE_SETTING.FirstOrDefault().MAXPERIODOFUSERINACTIVITY;
+
+            var inactiveUsersSub = (from a in context.TBL_PROFILE_USER
+                                    where a.ISACTIVE == true //&& a.LASTLOGINDATE != null
+                                    //&& (DbFunctions.AddDays(a.LASTLOGINDATE, userInactivePeriod) <= DbFunctions.AddDays(currentDateTime, 0))
+                                    && DbFunctions.DiffDays(a.LASTLOGINDATE, currentDateTime) > userInactivePeriod
+                                       select a);
+            
+            var inactiveUsers = inactiveUsersSub.ToList();
+
+            foreach (var item in inactiveUsers)
+            {
+                item.ISACTIVE = false;
+                item.DEACTIVATEDDATE = currentDateTime;
+            }
+
+            context.SaveChanges();
+        }
 
         public bool isUserExist(string username)
         {
