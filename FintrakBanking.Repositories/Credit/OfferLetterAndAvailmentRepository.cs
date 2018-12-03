@@ -1936,7 +1936,7 @@ namespace FintrakBanking.Repositories.Credit
             int operationId = (int)OperationsEnum.LoanAvailment;
             // var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == operationId).ToList();
             var loanApplication = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
-            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID);
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID && x.STATUSID == (int)ApprovalStatusEnum.Approved);
 
             var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == loanApplication.LOANAPPLICATIONID).Any();
 

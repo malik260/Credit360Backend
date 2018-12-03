@@ -9410,6 +9410,7 @@ namespace FintrakBanking.Repositories.Credit
                             join c in context.TBL_CUSTOMER on d.CUSTOMERID equals c.CUSTOMERID
                             where l.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.LineFacility
                             && l.OPERATIONPERFORMED == false && l.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                            //&& d.EXPIRYDATE >= systemDate
                             select new CamProcessedLoanViewModel
                             {
                                 loanReviewApplicationId = e.LOANAPPLICATIONID,
