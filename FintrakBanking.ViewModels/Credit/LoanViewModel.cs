@@ -720,6 +720,8 @@ namespace FintrakBanking.ViewModels.Credit
         public bool atInitiator { get; set; }
         public double? newinterestRate { get; set; }
         public decimal? newLineAmount { get; set; }
+        public int interestRateString { get; set; }
+        public string interestRateAndFees { get; set; }
 
 
         //......End f Loan Relational Table View Mapping Models......//

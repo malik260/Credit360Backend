@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.StagingModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -83,9 +84,14 @@ namespace FintrakBaking.BranchUpdateService.Stagging_Logic
 
             var profileSetting = coreContext.TBL_PROFILE_SETTING.FirstOrDefault();
 
+            //var inactiveUsers = (from a in coreContext.TBL_PROFILE_USER
+            //                     where a.ISACTIVE == true
+            //                     && a.LASTLOGINDATE.GetValueOrDefault(new DateTime(2000, 1, 1)).AddDays(profileSetting.MAXPERIODOFUSERINACTIVITY) >= currentDateTime
+            //                     select a);
+
             var inactiveUsers = (from a in coreContext.TBL_PROFILE_USER
                                  where a.ISACTIVE == true
-                                 && a.LASTLOGINDATE.GetValueOrDefault(new DateTime(2000, 1, 1)).AddDays(profileSetting.MAXPERIODOFUSERINACTIVITY) >= currentDateTime
+                                 && DbFunctions.AddDays(a.LASTLOGINDATE.GetValueOrDefault(new DateTime(2000, 1, 1)), profileSetting.MAXPERIODOFUSERINACTIVITY) >= currentDateTime
                                  select a);
 
             foreach (var item in inactiveUsers)

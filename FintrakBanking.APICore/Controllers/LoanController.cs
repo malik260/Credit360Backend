@@ -1026,13 +1026,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         {
             try
             {
+
                 model.applicationUrl = HttpContext.Current.Request.Path;
                 model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
-
+               
                 var responseId = repo.GoForApproval(model, loanBookingRequestId, casaAccountId, casaAccountId2);
                 var dynamicMessage = string.Empty;
                 if (responseId == 1)

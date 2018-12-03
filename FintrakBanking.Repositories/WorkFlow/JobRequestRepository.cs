@@ -1117,8 +1117,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS);
                         }
                     }
+                    try
+                    {
+                        context.SaveChanges();
+                    }
+                    catch(Exception ex)
+                    {
+                        var hhhh = ex;
+                    }
 
-                    context.SaveChanges();
+//                    context.SaveChanges();
                     return true;
                 }
 

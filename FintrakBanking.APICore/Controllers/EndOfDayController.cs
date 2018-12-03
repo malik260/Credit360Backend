@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.APICore.core;
 using FintrakBanking.APICore.JWTAuth;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.ViewModels.Finance;
@@ -16,11 +17,13 @@ namespace FintrakBanking.APICore.Controllers
     {
         private IEndOfDayRepository repoEOD;
         private ILoanOperationsRepository repoLoanOP;
+        private IAdminRepository adminRepo;
 
-        public EndOfDayController(IEndOfDayRepository _repoEOD, ILoanOperationsRepository _repoLoanOP)
+        public EndOfDayController(IEndOfDayRepository _repoEOD, ILoanOperationsRepository _repoLoanOP, IAdminRepository _adminRepo)
         {
             this.repoEOD = _repoEOD;
             this.repoLoanOP = _repoLoanOP;
+            this.adminRepo = _adminRepo;
         }
         TokenDecryptionHelper token = new TokenDecryptionHelper();
 
@@ -76,7 +79,8 @@ namespace FintrakBanking.APICore.Controllers
                 // model.companyId = token.GetCompanyId;
                 //model.createdBy = token.GetStaffId;
                 //model.userBranchId = (short)token.GetBranchId;
-                var data = repoLoanOP.GetRepaymentFromStaging();
+                var data = repoLoanOP.GetRepaymentFromStaging();                
+
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -100,7 +104,34 @@ namespace FintrakBanking.APICore.Controllers
             //}
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("deactivate-inactive-users")]
+        public HttpResponseMessage DeactivateInactiveUsers()
+        {
 
+           
+            adminRepo.DeactivateInactiveUsers();
+
+            
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, message = "Inactive Users Deactivated successfully" });
+            
+           
+            //}
+            //catch (ConditionNotMetException ce)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
+            //}
+            //catch (BadLogicException be)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
+            //}
+            //catch (SecureException e)
+            //{
+            //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
+            //}
+        }
     }
 
 }
