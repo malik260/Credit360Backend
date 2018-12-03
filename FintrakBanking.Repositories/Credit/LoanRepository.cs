@@ -825,30 +825,6 @@ namespace FintrakBanking.Repositories.Credit
             var request = context.TBL_LOAN_BOOKING_REQUEST.Find(entity.loanBookingRequestId);
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)contingentLoanInput.currencyId, entity.companyId).sellingRate;
 
-            //var contingentAmount = from a in context.TBL_LOAN_CONTINGENT
-            //                       where a.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId
-            //                       let sumAmount = context.TBL_LOAN_CONTINGENT.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.CONTINGENTAMOUNT)
-            //                       select sumAmount;
-
-            //var totalPreviouslyBookedAmount = contingentAmount.FirstOrDefault();
-
-            //var totalContingentAmount = totalPreviouslyBookedAmount + contingentLoanInput.contingentAmount;
-
-            //if (totalContingentAmount > entity.customerAvailableAmount)
-            //    throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount"); 
-
-            //if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
-            //    throw new ConditionNotMetException("This Loan Request has already been booked by another staff");
-
-            //if (entity.effectiveDate == entity.maturityDate)
-            //    throw new ConditionNotMetException("Effective date and maturity Date cannot be equal");
-
-            //if (entity.effectiveDate > entity.maturityDate)
-            //    throw new ConditionNotMetException("The effective cannot be greater than maturity date");
-
-            //if (entity.effectiveDate > systemDate)
-            //    throw new ConditionNotMetException("You effective date cannot be post-dated.");
-
             loanBookingValidation(entity);
 
             var bgData = context.TBL_LOAN_APPLICATION_DETL_BG.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId);
@@ -864,8 +840,14 @@ namespace FintrakBanking.Repositories.Credit
 
             if (application.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees)
             {
-                if (PendingBondsAndGuaranteeJobRequest(entity.loanApplicationDetailId))
-                    throw new ConditionNotMetException("There are pending bonds and gaurantees that must be attended to");
+                bool bAndGRequestSent = false;
+                var applicationfacilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == entity.loanApplicationId);
+                foreach(var item in applicationfacilities)
+                {
+                    if (PendingBondsAndGuaranteeJobRequest(item.LOANAPPLICATIONDETAILID))bAndGRequestSent = true;
+                }
+               
+                if(!bAndGRequestSent) throw new ConditionNotMetException("There are pending bonds and gaurantees that must be attended to");
             }
 
             var loanReferenceNumber = GenerateLoanReferenceNumber(application.BRANCHID, entity.productId, (short)LoanSystemTypeEnum.ContingentLiability);

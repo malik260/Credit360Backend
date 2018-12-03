@@ -966,14 +966,14 @@ namespace FinTrakBanking.ThirdPartyIntegration
                 if (item.useDirectAccount == false)
                 {
                     if (item.casaAccountId != null)
-                        transPosting.accounts = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?.PRODUCTACCOUNTNUMBER;
+                        transPosting.accounts = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId)?.PRODUCTACCOUNTNUMBER.Trim();
 
                     else
-                        transPosting.accounts = GetGlAccountCode(item.glAccountId, item.currencyId, item.sourceBranchId);
+                        transPosting.accounts = GetGlAccountCode(item.glAccountId, item.currencyId, item.sourceBranchId).Trim();
                 }
                 else
                 {
-                    transPosting.accounts = item.accountNumber;
+                    transPosting.accounts = item.accountNumber.Trim();
                 }
 
                 transPosting.amounts = item.creditAmount > 0
