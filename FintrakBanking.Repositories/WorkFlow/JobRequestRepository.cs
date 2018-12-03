@@ -61,6 +61,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 RECEIVERSTAFFID = model.receiverStaffId == 0 ? null : model.receiverStaffId,
                 DEPARTMENTID = model.departmentId,
                 DEPARTMENTUNITID = model.departmentUnitId,
+                JOBTYPEUNITID = model.departmentUnitId,
                 REASSIGNEDTO = model.reassignedTo,
                 ISREASSIGNED = model.isReassigned,
                 ISACKNOWLEDGED = model.isAcknowledged,
@@ -157,7 +158,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             data.ISACKNOWLEDGED = true;
             data.REQUESTSTATUSID = (short)model?.statusId;
-            data.JOB_STATUS_FEEDBACKID = model.rejectionReasonId;
+            if(model.rejectionReasonId != null)data.JOB_STATUS_FEEDBACKID = (short)model.rejectionReasonId;
             data.RESPONSECOMMENT = model.responseComment;
             data.RESPONSEDATE = applicationDate;
             data.SYSTEMRESPONSEDATE = DateTime.Now;
@@ -362,145 +363,73 @@ namespace FintrakBanking.Repositories.WorkFlow
             return data;
         }
 
-        private IEnumerable<JobRequestViewModel> GetAllJobRequest(int staffId)
+        private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, bool isFilter = false)
         {
             var thisStaff = this.context.TBL_STAFF.Find(staffId);
-            var unitId = 0;
-            unitId = thisStaff.TBL_DEPARTMENT_UNIT != null ? thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID : 0;
+            var staffAdmin = this.context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.STAFFID == staffId);
+            var staffHub = this.context.TBL_JOB_TYPE_HUB_STAFF.Where(x => x.STAFFID == staffId);
+            var middleOfficeUnit = from x in context.TBL_JOB_TYPE_UNIT join t in context.TBL_JOB_TYPE_HUB_STAFF on x.JOBTYPEUNITID equals t.JOBTYPEUNITID
+                                   where x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && t.STAFFID ==staffId select x;
 
-            var data = context.TBL_JOB_REQUEST
-               .Where(t => (t.DEPARTMENTUNITID == unitId || t.SENDERSTAFFID == staffId || t.REASSIGNEDTO == staffId))
-               .Select(
-                  x =>
-                     new JobRequestViewModel
-                     {
-                         jobRequestId = x.JOBREQUESTID,
-                         requestTitle = x.JOB_TITLE,
-                         jobRequestCode = x.JOBREQUESTCODE,
-                         targetId = x.TARGETID,
-                         jobTypeId = x.JOBTYPEID,
-                         jobTypeName = x.TBL_JOB_TYPE.JOBTYPENAME,
-                         senderStaffId = x.SENDERSTAFFID,
-                         senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-                         senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
-                         departmentUnitId = x.DEPARTMENTUNITID,
-                         departmentId = x.DEPARTMENTID,
-
-                         receiverStaffId = (int)x.RECEIVERSTAFFID,
-                         reassignedTo = x.REASSIGNEDTO,
-                         isReassigned = x.ISREASSIGNED,
-                         isAcknowledged = x.ISACKNOWLEDGED,
-                         operationsId = x.OPERATIONSID,
-                         operationName = x.TBL_OPERATIONS.OPERATIONNAME,
-                         requestStatusId = x.REQUESTSTATUSID,
-                         requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
-                         jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
-                         jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
-                         senderComment = x.SENDERCOMMENT,
-                         responseComment = x.RESPONSECOMMENT,
-                         arrivalDate = x.ARRIVALDATE,
-                         systemArrivalDate = x.SYSTEMARRIVALDATE,
-                         reassignedDate = x.REASSIGNEDDATE,
-                         systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
-                         responseDate = x.RESPONSEDATE,
-                         systemResponseDate = x.SYSTEMRESPONSEDATE,
-                         acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
-                         systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
-                         loggedInStaffId = staffId,
-
-                         refNo = (x.OPERATIONSID == (short)OperationsEnum.LoanApplication || x.OPERATIONSID == (short)OperationsEnum.CAM)
-                         && context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
-                         ? context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
-
-                         fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
-                         fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
-                         to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
-                         assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
-                     }).OrderByDescending(x => x.arrivalDate);
-
-           
-            foreach (var item in data)
-            {
-                var detail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == item.jobRequestId);
-                if (detail.Any())
-                {
-                    item.hasLegalRecommendedSearch = true;
-                    if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
-                        item.customerCharged = true;
-                };
-
-                if (item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
-                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
-                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
-                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
-                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
-                if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
-
-            }
-            var c = data.ToList();
-            return data;
-        }
-
-        private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, int branchId)
-        {
-            var thisStaff = this.context.TBL_STAFF.Find(staffId);
-            var unitId = 0;
-            unitId = thisStaff.TBL_DEPARTMENT_UNIT != null ? thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID : 0;
+            bool isTeamLead = (from s in context.TBL_JOB_TYPE_HUB_STAFF where s.STAFFID == staffId select s.ISTEAMLEAD).FirstOrDefault();
 
             var data = (from x in context.TBL_JOB_REQUEST
                         join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                         join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                        where (x.DEPARTMENTUNITID == unitId || x.SENDERSTAFFID == staffId || x.REASSIGNEDTO == staffId)
-               orderby x.ARRIVALDATE descending
-                       select (
-                       new JobRequestViewModel
-                       {
-                           jobRequestId = x.JOBREQUESTID,
-                           requestTitle = x.JOB_TITLE,
-                           jobRequestCode = x.JOBREQUESTCODE,
-                           targetId = x.TARGETID,
-                           jobTypeId = t.JOBTYPEID,
-                           jobSubTypeId = s.JOB_SUB_TYPEID,
-                           jobTypeName = t.JOBTYPENAME,
-                           jobSubTypeName = s.JOB_SUB_TYPE_NAME,
-                           jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
-                           jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
-                           senderStaffId = x.SENDERSTAFFID,
-                           senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-                           senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
-                           departmentUnitId = x.DEPARTMENTUNITID,
-                           departmentId = x.DEPARTMENTID,
+                        //where x.ISREASSIGNED == false
+                        orderby x.ARRIVALDATE descending
+                        select (
+                        new JobRequestViewModel
+                        {
+                            jobRequestId = x.JOBREQUESTID,
+                            requestTitle = x.JOB_TITLE,
+                            jobRequestCode = x.JOBREQUESTCODE,
+                            targetId = x.TARGETID,
+                            jobTypeId = t.JOBTYPEID,
+                            jobSubTypeId = s.JOB_SUB_TYPEID,
+                            jobTypeName = t.JOBTYPENAME,
+                            jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+                            jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+                            jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
+                            senderStaffId = x.SENDERSTAFFID,
+                            senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+                            senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
+                            departmentUnitId = x.DEPARTMENTUNITID,
 
-                           receiverStaffId = (int)x.RECEIVERSTAFFID,
-                           reassignedTo = x.REASSIGNEDTO,
-                           isReassigned = x.ISREASSIGNED,
-                           isAcknowledged = x.ISACKNOWLEDGED,
-                           operationsId = x.OPERATIONSID,
-                           operationName = x.TBL_OPERATIONS.OPERATIONNAME,
-                           requestStatusId = x.REQUESTSTATUSID,
-                           requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+                            receiverStaffId = (int)x.RECEIVERSTAFFID,
+                            reassignedTo = x.REASSIGNEDTO,
+                            isReassigned = x.ISREASSIGNED,
+                            isAcknowledged = x.ISACKNOWLEDGED,
+                            operationsId = x.OPERATIONSID,
+                            operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+                            requestStatusId = x.REQUESTSTATUSID,
+                            requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+                            
+                            senderComment = x.SENDERCOMMENT,
+                            responseComment = x.RESPONSECOMMENT,
+                            arrivalDate = x.ARRIVALDATE,
+                            systemArrivalDate = x.SYSTEMARRIVALDATE,
+                            reassignedDate = x.REASSIGNEDDATE,
+                            systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+                            responseDate = x.RESPONSEDATE,
+                            systemResponseDate = x.SYSTEMRESPONSEDATE,
+                            acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+                            systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+                            loggedInStaffId = staffId,
+                            jobTypeUnitId = x.JOBTYPEUNITID,
+                            jobTypeHubId = x.JOBTYPEHUBID,
+                            branchId = x.BRANCHID,
+                            isTeamLead = (from s in context.TBL_JOB_TYPE_HUB_STAFF where s.STAFFID == staffId select s.ISTEAMLEAD).FirstOrDefault(),
 
-                           senderComment = x.SENDERCOMMENT,
-                           responseComment = x.RESPONSECOMMENT,
-                           arrivalDate = x.ARRIVALDATE,
-                           systemArrivalDate = x.SYSTEMARRIVALDATE,
-                           reassignedDate = x.REASSIGNEDDATE,
-                           systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
-                           responseDate = x.RESPONSEDATE,
-                           systemResponseDate = x.SYSTEMRESPONSEDATE,
-                           acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
-                           systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
-                           loggedInStaffId = staffId,
+                            refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+                                                     ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
 
-                           refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
-                                ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+                            fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+                            fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
+                            to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+                            assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                           fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
-                           fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
-                           to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
-                           assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
-
-                       })).Take(500);
+                        })).ToList().OrderByDescending(x => x.arrivalDate); ;
 
 
             foreach (var item in data)
@@ -513,22 +442,209 @@ namespace FintrakBanking.Repositories.WorkFlow
                         item.customerCharged = true;
                 };
 
-                if(item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
-                if(item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
-                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
-                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
-                if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
+                if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
                 if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
-
             }
 
-           // var c = data.ToList();
-            return data;
+            if (staffAdmin.Any() && !isFilter)
+            {
+                return data.Where(x=>x.jobTypeId == staffAdmin.FirstOrDefault().JOBTYPEID && x.isReassigned == false);
+            }
+
+            if (staffAdmin.Any() && isFilter)
+            {
+                return data.Where(x => x.jobTypeId == staffAdmin.FirstOrDefault().JOBTYPEID);
+            }
+
+            else
+            {
+                if (staffHub.Any() && middleOfficeUnit.Any() && isTeamLead)
+                {
+                    return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId || x.jobTypeUnitId == staffHub.FirstOrDefault().JOBTYPEUNITID);
+                }
+                if (staffHub.Any() && middleOfficeUnit.Any() && !isTeamLead)
+                {
+                    return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId );
+                }
+                else if(staffHub.Any())
+                {
+                    return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId || x.jobTypeUnitId == staffHub.FirstOrDefault().JOBTYPEUNITID);
+                }
+                else { return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId); }
+            }
         }
+
+
+
+        //private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, int branchId)
+        //{
+        //    var thisStaff = this.context.TBL_STAFF.Find(staffId);
+        //    var staffHub = this.context.TBL_JOB_TYPE_HUB_STAFF.Where(x => x.STAFFID == staffId);
+        //    var staffAdmin = this.context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.STAFFID == staffId);
+
+        //    var data = new List<JobRequestViewModel>();
+        //    if (!staffHub.Any() && !staffAdmin.Any())
+        //    {
+        //       //STAFF HAS NO JOB REQUEST/SENT NO JOB REQUEST/NOT ADMIN
+        //        return data;
+        //    }
+
+        //    if (staffAdmin.Any())
+        //    {
+        //        //STAFF IS ADMIN
+        //         data = (from x in context.TBL_JOB_REQUEST
+        //                    join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
+        //                    join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
+        //                    where x.ISREASSIGNED == false
+        //                    orderby x.ARRIVALDATE descending
+        //                    select (
+        //                    new JobRequestViewModel
+        //                    {
+        //                        jobRequestId = x.JOBREQUESTID,
+        //                        requestTitle = x.JOB_TITLE,
+        //                        jobRequestCode = x.JOBREQUESTCODE,
+        //                        targetId = x.TARGETID,
+        //                        jobTypeId = t.JOBTYPEID,
+        //                        jobSubTypeId = s.JOB_SUB_TYPEID,
+        //                        jobTypeName = t.JOBTYPENAME,
+        //                        jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+        //                        jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+        //                        jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
+        //                        senderStaffId = x.SENDERSTAFFID,
+        //                        senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+        //                        senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
+        //                        departmentUnitId = x.DEPARTMENTUNITID,
+        //                        departmentId = x.DEPARTMENTID,
+
+        //                        receiverStaffId = (int)x.RECEIVERSTAFFID,
+        //                        reassignedTo = x.REASSIGNEDTO,
+        //                        isReassigned = x.ISREASSIGNED,
+        //                        isAcknowledged = x.ISACKNOWLEDGED,
+        //                        operationsId = x.OPERATIONSID,
+        //                        operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+        //                        requestStatusId = x.REQUESTSTATUSID,
+        //                        requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+
+        //                        senderComment = x.SENDERCOMMENT,
+        //                        responseComment = x.RESPONSECOMMENT,
+        //                        arrivalDate = x.ARRIVALDATE,
+        //                        systemArrivalDate = x.SYSTEMARRIVALDATE,
+        //                        reassignedDate = x.REASSIGNEDDATE,
+        //                        systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+        //                        responseDate = x.RESPONSEDATE,
+        //                        systemResponseDate = x.SYSTEMRESPONSEDATE,
+        //                        acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+        //                        systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+        //                        loggedInStaffId = staffId,
+        //                        jobTypeUnitId = x.JOBTYPEUNITID,
+        //                        jobTypeHubId = x.JOBTYPEHUBID,
+        //                        branchId = x.BRANCHID,
+
+        //                        refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+        //                             ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
+        //                        fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+        //                        fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
+        //                        to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+        //                        assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+
+        //                    })).ToList();
+        //    }
+
+        //    if (!staffAdmin.Any() && staffHub.Any())
+        //    {
+        //        data = (from x in context.TBL_JOB_REQUEST
+        //                    join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
+        //                    join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
+        //                    where (x.JOBTYPEHUBID == staffHub.FirstOrDefault().JOBTYPEHUBID || x.SENDERSTAFFID == staffId || x.REASSIGNEDTO == staffId)
+        //                    orderby x.ARRIVALDATE descending
+        //                    select (
+        //                    new JobRequestViewModel
+        //                    {
+        //                        jobRequestId = x.JOBREQUESTID,
+        //                        requestTitle = x.JOB_TITLE,
+        //                        jobRequestCode = x.JOBREQUESTCODE,
+        //                        targetId = x.TARGETID,
+        //                        jobTypeId = t.JOBTYPEID,
+        //                        jobSubTypeId = s.JOB_SUB_TYPEID,
+        //                        jobTypeName = t.JOBTYPENAME,
+        //                        jobSubTypeName = s.JOB_SUB_TYPE_NAME,
+        //                        jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
+        //                        jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
+        //                        senderStaffId = x.SENDERSTAFFID,
+        //                        senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
+        //                        senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
+        //                        departmentUnitId = x.DEPARTMENTUNITID,
+        //                        departmentId = x.DEPARTMENTID,
+
+        //                        receiverStaffId = (int)x.RECEIVERSTAFFID,
+        //                        reassignedTo = x.REASSIGNEDTO,
+        //                        isReassigned = x.ISREASSIGNED,
+        //                        isAcknowledged = x.ISACKNOWLEDGED,
+        //                        operationsId = x.OPERATIONSID,
+        //                        operationName = x.TBL_OPERATIONS.OPERATIONNAME,
+        //                        requestStatusId = x.REQUESTSTATUSID,
+        //                        requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+
+        //                        senderComment = x.SENDERCOMMENT,
+        //                        responseComment = x.RESPONSECOMMENT,
+        //                        arrivalDate = x.ARRIVALDATE,
+        //                        systemArrivalDate = x.SYSTEMARRIVALDATE,
+        //                        reassignedDate = x.REASSIGNEDDATE,
+        //                        systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
+        //                        responseDate = x.RESPONSEDATE,
+        //                        systemResponseDate = x.SYSTEMRESPONSEDATE,
+        //                        acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
+        //                        systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
+        //                        loggedInStaffId = staffId,
+        //                        jobTypeUnitId = x.JOBTYPEUNITID,
+        //                        jobTypeHubId = x.JOBTYPEHUBID,
+        //                        branchId = x.BRANCHID,
+
+        //                        refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
+        //                             ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
+
+        //                        fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
+        //                        fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
+        //                        to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
+        //                        assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
+
+        //                    })).ToList();
+        //    }
+
+        //    //var unitId = 0;
+        //    //unitId = thisStaff.TBL_DEPARTMENT_UNIT != null ? thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID : 0;
+
+        //    foreach (var item in data)
+        //    {
+        //        var detail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == item.jobRequestId);
+        //        if (detail.Any())
+        //        {
+        //            item.hasLegalRecommendedSearch = true;
+        //            if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
+        //                item.customerCharged = true;
+        //        };
+
+        //        if(item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
+        //        if(item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
+        //        if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
+        //        if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
+        //        if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
+        //        if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
+
+        //    }
+
+        //   // var c = data.ToList();
+        //    return data;
+        //}
 
         public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId, int branchId)
         {
-            return GetAllGlobalJobRequest(staffId, branchId).OrderByDescending(x => x.jobRequestId);
+            return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
         }
 
         public IEnumerable<JobRequestViewModel> GetJobRequestByFilter(int staffId, int branchId, string filter)
@@ -537,40 +653,40 @@ namespace FintrakBanking.Repositories.WorkFlow
             switch (filtered)
             {
                 case "completed":
-                    return GetAllJobRequest(staffId).Where(x=>x.responseComment != null || x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
+                    return GetAllGlobalJobRequest(staffId, true).Where(x=>x.responseComment != null || x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
                     //break;
 
                 case "approved":
-                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
+                    return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
                     //break;
 
                 case "pending":
-                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Pending).OrderByDescending(x => x.jobRequestId);
+                    return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Pending).OrderByDescending(x => x.jobRequestId);
                     //break;
 
                 case "in-progress":
-                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Processing).OrderByDescending(x => x.jobRequestId);
+                    return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Processing).OrderByDescending(x => x.jobRequestId);
                     //break;
 
                 case "cancelled":
-                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Cancel).OrderByDescending(x => x.jobRequestId);
+                    return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Cancel).OrderByDescending(x => x.jobRequestId);
                    // break;
 
                 case "disapproved":
-                    return GetAllJobRequest(staffId).Where(x => x.requestStatusId == (short)RequestStatusEnum.Disapproved).OrderByDescending(x => x.jobRequestId);
+                    return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Disapproved).OrderByDescending(x => x.jobRequestId);
                     //break;
 
                 case "assigned":
-                    return GetAllJobRequest(staffId).Where(x => x.reassignedTo != null).OrderByDescending(x => x.jobRequestId);
+                    return GetAllGlobalJobRequest(staffId,true).Where(x => x.reassignedTo != null).OrderByDescending(x => x.jobRequestId);
                     //break;
 
                 case "unassigned":
-                    return GetAllJobRequest(staffId).Where(x => x.reassignedTo == null).OrderByDescending(x => x.jobRequestId);
+                    return GetAllGlobalJobRequest(staffId,true).Where(x => x.reassignedTo == null).OrderByDescending(x => x.jobRequestId);
                     //break;
 
 
                 default:
-                     return GetAllJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
+                     return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
                     //break;
 
             }
@@ -819,7 +935,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                     systemResponseDate = x.SYSTEMRESPONSEDATE,
                     acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
                     systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
-                    jobStatusFeedBackId = x.JOB_STATUS_FEEDBACKID ?? 0,
+                    jobStatusFeedBackId =  x.JOB_STATUS_FEEDBACKID ?? 0,
                     jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
                     msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
                                         where y.JOBREQUESTID == x.JOBREQUESTID
@@ -1431,6 +1547,53 @@ namespace FintrakBanking.Repositories.WorkFlow
             }).Where(c=>c.inUse == true);
         }
 
+
+        public IEnumerable<JobTypeHubViewModel> GetAllJobTypeHub(short jobTypeId)
+        {
+            return this.context.TBL_JOB_TYPE_HUB.Select(x => new JobTypeHubViewModel
+            {
+                jobTypeId = x.JOBTYPEID,
+                jobTypeHubId = x.JOBTYPEHUBID,
+                jobTypeHubName = x.HUBNAME,
+                deleted = x.DELETED
+            }).Where(c => c.jobTypeId == jobTypeId && c.deleted == false).ToList();
+        }
+
+        public IEnumerable<HubStaffViewModel> GetHubStaffByHubId(short jobTypeHubId)
+        {
+            return this.context.TBL_JOB_TYPE_HUB_STAFF.Select(x => new HubStaffViewModel
+            {
+                hubStaffId = x.STAFFID,
+                jobTypeHubId = x.JOBTYPEHUBID,
+                jobTypeUnitId = x.JOBTYPEUNITID,
+                isTeamLead = x.ISTEAMLEAD,
+                deleted = x.DELETED,
+                hubStaffName = (from s in context.TBL_STAFF where s.STAFFID == x.STAFFID select s.FIRSTNAME+" "+s.LASTNAME +"("+ s.STAFFCODE+")" ).FirstOrDefault()
+            }).Where(c => c.jobTypeHubId == jobTypeHubId && c.deleted == false);
+        }
+
+        public IEnumerable<HubStaffViewModel> GetHubStaffByHubTypeUnitId(short jobTypeUnitId)
+        {
+            return this.context.TBL_JOB_TYPE_HUB_STAFF.Select(x => new HubStaffViewModel
+            {
+                hubStaffId = x.STAFFID,
+                jobTypeHubId = x.JOBTYPEHUBID,
+                jobTypeUnitId = x.JOBTYPEUNITID,
+                isTeamLead = x.ISTEAMLEAD,
+                deleted = x.DELETED,
+            }).Where(c => c.jobTypeHubId == jobTypeUnitId && c.deleted == false);
+        }
+
+        public IEnumerable<JobTypeUnitViewModel> GetAllJobTypeUnit(short jobTypeId)
+        {
+            return this.context.TBL_JOB_TYPE_UNIT.Select(x => new JobTypeUnitViewModel
+            {
+                jobTypeId = x.JOBTYPEID,
+                jobTypeUnitId = x.JOBTYPEUNITID,
+                unitName = x.UNITNAME
+            }).Where(c => c.jobTypeId == jobTypeId);
+        }
+
         public List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId)
         {
             var details = (from x in context.TBL_JOB_TYPE_REASSIGNMENT
@@ -1525,11 +1688,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jb.companyId = model.companyId;
                 jb.userBranchId = model.userBranchId;
                 jb.statusId = (short)model?.statusId;
-                jb.rejectionReasonId = (short)model?.rejectionReasonId;
+                jb.rejectionReasonId =  model?.rejectionReasonId;
 
-                ReplyJobRequest(jb, jb.jobRequestId);
-
-                return context.SaveChanges() > 0;
+                return ReplyJobRequest(jb, jb.jobRequestId);
             }
             else return false;
         }

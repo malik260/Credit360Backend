@@ -184,13 +184,17 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_FINANCIAL_STATEMENT_CAPTN> TBL_FINANCIAL_STATEMENT_CAPTN { get; set; }
         public virtual DbSet<TBL_FINANCIAL_STATEMENT_TYPE> TBL_FINANCIAL_STATEMENT_TYPE { get; set; }
         public virtual DbSet<TBL_FREQUENCY_TYPE> TBL_FREQUENCY_TYPE { get; set; }
-        public virtual DbSet<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; }
+        public virtual DbSet<TBL_JOB_REQUEST> TBL_JOB_REQUEST { get; set; } 
+        public virtual DbSet<TBL_JOB_TYPE_SUB_CLASS> TBL_JOB_TYPE_SUB_CLASS { get; set; }
+        public virtual DbSet<TBL_JOB_TYPE_HUB_STAFF> TBL_JOB_TYPE_HUB_STAFF { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_DETAIL> TBL_JOB_REQUEST_DETAIL { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_DOCUMENT_MAPPN> TBL_JOB_REQUEST_DOCUMENT_MAPPN { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_MESSAGE> TBL_JOB_REQUEST_MESSAGE { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_STATUS> TBL_JOB_REQUEST_STATUS { get; set; }
         public virtual DbSet<TBL_JOB_REQUEST_STATUS_FEEDBAK> TBL_JOB_REQUEST_STATUS_FEEDBAK { get; set; }
-        public virtual DbSet<TBL_JOB_TYPE> TBL_JOB_TYPE { get; set; } 
+        public virtual DbSet<TBL_JOB_TYPE> TBL_JOB_TYPE { get; set; }
+        public virtual DbSet<TBL_JOB_TYPE_HUB> TBL_JOB_TYPE_HUB { get; set; } 
+        public virtual DbSet<TBL_JOB_TYPE_UNIT> TBL_JOB_TYPE_UNIT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_REASSIGNMENT> TBL_JOB_TYPE_REASSIGNMENT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_DEPARTMENT> TBL_JOB_TYPE_DEPARTMENT { get; set; }
         public virtual DbSet<TBL_JOB_TYPE_SUB> TBL_JOB_TYPE_SUB { get; set; }
@@ -4307,6 +4311,15 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_JOB_REQUEST_STATUS_FEEDBAK)
                 .WithRequired(e => e.TBL_JOB_TYPE)
                 .WillCascadeOnDelete(false);
+
+            //modelBuilder.Entity<TBL_JOB_TYPE_HUB>()
+            //    .Property(e => e.HUBNAME)
+            //    .IsUnicode(false);
+
+            //modelbuilder.entity<TBL_JOB_TYPE>()
+            //    .hasmany(e => e.TBL_JOB_TYPE_HUB)
+            //    .withrequired(e => e.TBL_JOB_TYPE)
+            //    .willcascadeondelete(false);
 
             modelBuilder.Entity<TBL_JOB_TYPE>()
                 .HasMany(e => e.TBL_JOB_TYPE_DEPARTMENT)
@@ -8767,6 +8780,7 @@ namespace FintrakBanking.Entities.Models
                 .HasMany(e => e.TBL_PRODUCT)
                 .WithOptional(e => e.TBL_CUSTOMER_RISK_RATING)
                 .HasForeignKey(e => e.RISKRATINGID);
+
 
             //modelBuilder.Entity<TBL_CUSTOMER>().Ignore(x => x.FULLNAME);
 
