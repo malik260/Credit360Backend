@@ -498,10 +498,10 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("validate-application-customer-rating/{applicationId}")]
-        public HttpResponseMessage ValidateApplicationCustomerRating(int applicationId)
+        [Route("validate-application-customer-rating")]
+        public HttpResponseMessage ValidateApplicationCustomerRating([FromBody] ObligorLimitViewModel entity)
         {
-            CreditLimitValidationsModel data = repo.ValidateApplicationCustomerRating(applicationId);
+            CreditLimitValidationsModel data = repo.ValidateApplicationCustomerRating(entity);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 

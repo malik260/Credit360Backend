@@ -80,6 +80,7 @@
     <Compile Include="Models\TBL_JOB_TYPE_REASSIGNMENT.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_SUB_CLASS.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_UNIT.cs" />
+    <Compile Include="Models\TBL_LMSR_APPLICATION_DETL_FEE.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_TRANS.cs" />
     <Compile Include="Models\TBL_LOAN_APPLICATION_TRANS2.cs" />
     <Compile Include="Models\TBL_LOAN_CONTINGENT_ARCHIVE.cs" />

@@ -1258,7 +1258,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Interest Magin</Value>
+                              <Value>Interest/Margin</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1434,21 +1434,21 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="interestRate">
+                    <Textbox Name="interestRateAndFees">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!interestRate.Value</Value>
+                              <Value>=Fields!interestRateAndFees.Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>interestRate</rd:DefaultName>
+                      <rd:DefaultName>interestRateAndFees</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1459,18 +1459,19 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="ReviewDate">
+                    <Textbox Name="newApplicationDate">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!ReviewDate.Value</Value>
+                              <Value>=Fields!newApplicationDate.Value</Value>
                               <Style>
                                 <Format>dd-MMM-yy</Format>
                               </Style>
@@ -1479,7 +1480,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>ReviewDate</rd:DefaultName>
+                      <rd:DefaultName>newApplicationDate</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -3845,6 +3846,10 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Field>
         <Field Name="applicationReferenceNumber">
           <DataField>applicationReferenceNumber</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="interestRateAndFees">
+          <DataField>interestRateAndFees</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

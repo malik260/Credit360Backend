@@ -21,20 +21,23 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                 IQueryable<StaffPrivilegeChangeViewModel> data = (from a in context.TBL_TEMP_STAFF
                                                        join b in context.TBL_STAFF_ROLE on a.STAFFROLEID equals b.STAFFROLEID
                                                        join c in context.TBL_STAFF on a.CREATEDBY equals c.STAFFID
-
+                                                       join d in context.TBL_STAFF on a.STAFFCODE equals d.STAFFCODE
+                                                       join e in context.TBL_STAFF_ROLE on d.STAFFROLEID equals e.STAFFROLEID
 
                                                        where a.COMPANYID == companyId && a.APPROVALSTATUSID == (short)(ApprovalStatusEnum.Approved)
                                                        && (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                                                        && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
-
+                                                       && a.STAFFROLEID != d.STAFFROLEID
+                                                       && d.COMPANYID == companyId
                                                        select new StaffPrivilegeChangeViewModel()
                                                        {
 
 
                                                            staffFullName = a.FIRSTNAME + " " + " " + a.MIDDLENAME + " "+ " " + a.LASTNAME,
                                                            
-                                                           staffCreatedByName = c.FIRSTNAME + "" + c.MIDDLENAME + "" + c.LASTNAME + "-" + c.STAFFCODE,
-                                                           staffRoleName = b.STAFFROLENAME,
+                                                           staffCreatedByName = c.FIRSTNAME + "" +" " + c.LASTNAME +" " + "-" + c.STAFFCODE,
+                                                           previousStaffRoleName = b.STAFFROLENAME,
+                                                           currentStaffRoleName = e.STAFFROLENAME,
                                                            dateTimeCreated = a.DATETIMECREATED.Value,
                                                            tempStaffCode = a.STAFFCODE
                                                        });

@@ -2,6 +2,7 @@
 using FintrakBanking.Entities.StagingModels;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,16 +78,17 @@ namespace FintrakBaking.BranchUpdateService.Stagging_Logic
 
         public void DeactivateInactiveUsers()
         {
-            // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
+            var currentDateTime = DateTime.Now.Date;
 
-            var currentDateTime = DateTime.Now;
+            int userInactivePeriod = coreContext.TBL_PROFILE_SETTING.FirstOrDefault().MAXPERIODOFUSERINACTIVITY;
 
-            var profileSetting = coreContext.TBL_PROFILE_SETTING.FirstOrDefault();
+            var inactiveUsersSub = (from a in coreContext.TBL_PROFILE_USER
+                                    where a.ISACTIVE == true //&& a.LASTLOGINDATE != null
+                                    //&& (DbFunctions.AddDays(a.LASTLOGINDATE, userInactivePeriod) <= DbFunctions.AddDays(currentDateTime, 0))
+                                    && DbFunctions.DiffDays(a.LASTLOGINDATE, currentDateTime) > userInactivePeriod
+                                    select a);
 
-            var inactiveUsers = (from a in coreContext.TBL_PROFILE_USER
-                                 where a.ISACTIVE == true
-                                 && a.LASTLOGINDATE.GetValueOrDefault(new DateTime(2000, 1, 1)).AddDays(profileSetting.MAXPERIODOFUSERINACTIVITY) >= currentDateTime
-                                 select a);
+            var inactiveUsers = inactiveUsersSub.ToList();
 
             foreach (var item in inactiveUsers)
             {

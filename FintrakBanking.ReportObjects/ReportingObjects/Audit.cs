@@ -54,13 +54,15 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public IEnumerable<LoggingActivities> GetLoggingStatus(DateTime startDate, DateTime endDate, bool? logingStatus,  string branchCode)
         {
+            DateTime defaultDate = new DateTime(2018, 1, 1);
+
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 var data = from lg in context.TBL_PROFILE_USER
                            join st in context.TBL_STAFF on lg.USERNAME equals st.STAFFCODE
                            join b in context.TBL_BRANCH on st.BRANCHID equals b.BRANCHID
-                           where (DbFunctions.TruncateTime(lg.LASTLOGINDATE) >= DbFunctions.TruncateTime(startDate) 
-                           && DbFunctions.TruncateTime(lg.LASTLOGINDATE) <= DbFunctions.TruncateTime(endDate)
+                           where (DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) >= DbFunctions.TruncateTime(startDate) 
+                           && DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) <= DbFunctions.TruncateTime(endDate)
                            && lg.ISLOCKED == !logingStatus ) //&& (b.BRANCHCODE==branchCode || branchCode=="")
                           orderby lg.LASTLOGINDATE descending
                            select new LoggingActivities
