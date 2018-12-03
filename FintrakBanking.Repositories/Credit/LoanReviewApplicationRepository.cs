@@ -615,7 +615,7 @@ namespace FintrakBanking.Repositories.Credit
             if (contingentData != null)
             {
                 var balance = (from a in context.TBL_LOAN_CONTINGENT where a.CUSTOMERID == customerId select a.CONTINGENTAMOUNT).Sum();
-                overdraftBalance = balance;
+                contingentBalance = balance;
             }
 
             decimal totalBalance = loanBalance + overdraftBalance + contingentBalance;
