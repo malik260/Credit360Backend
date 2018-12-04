@@ -13,7 +13,10 @@ namespace FintrakBanking.Interfaces.Admin
 {
     public interface IAdminRepository
     {
-              #region Users
+        #region Users
+
+        void DeactivateInactiveUsers();
+
         IEnumerable<UserViewModel> GetAllUsers();
 
         UserViewModel GetUsersByStaffId(int staffId);

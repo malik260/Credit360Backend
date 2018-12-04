@@ -1021,8 +1021,8 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("loan-booking/approval/{loanBookingRequestId}/{casaAccountId}/{casaAccountId2}")]
-        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId,int casaAccountId , int casaAccountId2)
+        [Route("loan-booking/approval/{loanBookingRequestId}")]
+        public HttpResponseMessage ApproveLoanBooking([FromBody] ApprovalViewModel model, int loanBookingRequestId)
         {
             try
             {
@@ -1034,7 +1034,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                 model.BranchId = (short)token.GetBranchId;
                 model.staffId = token.GetStaffId;
                
-                var responseId = repo.GoForApproval(model, loanBookingRequestId, casaAccountId, casaAccountId2);
+                var responseId = repo.GoForApproval(model, loanBookingRequestId);
                 var dynamicMessage = string.Empty;
                 if (responseId == 1)
                 {
@@ -1865,11 +1865,15 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
             catch (ConditionNotMetException ce)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
             }
             catch (BadLogicException be)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = be.Message });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message =  ex.Message });
             }
             catch (Exception)
             {

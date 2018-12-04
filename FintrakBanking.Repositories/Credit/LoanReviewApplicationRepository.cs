@@ -594,34 +594,31 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanData = context.TBL_LOAN.FirstOrDefault(x => x.CUSTOMERID == customerId);
             var overdraftData = context.TBL_LOAN_REVOLVING.FirstOrDefault(x => x.CUSTOMERID == customerId);
+            var contingentData = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CUSTOMERID == customerId);
+
             decimal loanBalance = 0;
             decimal overdraftBalance = 0;
+            decimal contingentBalance = 0;
 
             if (loanData != null)
             {
-                var balance = (from a in context.TBL_LOAN
-                               where a.CUSTOMERID == customerId
-                               select a.OUTSTANDINGPRINCIPAL).Sum();
+                var balance = (from a in context.TBL_LOAN where a.CUSTOMERID == customerId select a.OUTSTANDINGPRINCIPAL).Sum();
                 loanBalance = balance;
-            }
-            else
-            {
-                loanBalance = 0;
             }
 
             if (overdraftData != null)
             {
-                var balance = (from a in context.TBL_LOAN_REVOLVING
-                               where a.CUSTOMERID == customerId
-                               select a.OVERDRAFTLIMIT).Sum();
+                var balance = (from a in context.TBL_LOAN_REVOLVING where a.CUSTOMERID == customerId select a.OVERDRAFTLIMIT).Sum();
                 overdraftBalance = balance;
             }
-            else
+
+            if (contingentData != null)
             {
-                overdraftBalance = 0;
+                var balance = (from a in context.TBL_LOAN_CONTINGENT where a.CUSTOMERID == customerId select a.CONTINGENTAMOUNT).Sum();
+                contingentBalance = balance;
             }
 
-            decimal totalBalance = loanBalance + overdraftBalance;
+            decimal totalBalance = loanBalance + overdraftBalance + contingentBalance;
 
             return totalBalance;
         }

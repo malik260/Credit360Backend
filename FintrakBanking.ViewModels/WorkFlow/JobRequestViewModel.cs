@@ -10,6 +10,11 @@ namespace FintrakBanking.ViewModels.WorkFlow
 {
     public class JobRequestViewModel : GeneralEntity
     {
+        public bool isTeamLead { get; set; }
+
+        public int? branchId { get; set; }
+        public short? jobTypeUnitId { get; set; }
+        public short? jobTypeHubId { get; set; }
         public short? jobSubTypeId { get; set; }
         public string jobSubTypeName { get; set; }
 
@@ -22,7 +27,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string jobStatusFeedBack { get; set; }
 
         public short? statusId { get; set; }
-        public short? rejectionReasonId { get; set; }
+        public int? rejectionReasonId { get; set; }
 
         public string senderRoleCode { get; set; }
 
@@ -38,13 +43,13 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string senderRole { get; set; }
         public int loggedInStaffId { get; set; }
         public string operationName { get; set; }
-        public short? jobStatusFeedBackId { get; set; }
+        public int? jobStatusFeedBackId { get; set; }
         public string jobStatusFeedback { get; set; }
         public List<JobRequestMessageViewModel> msgExchangeTrail { get; set; }
 
         public int targetId { get; set; }
-        public short departmentId { get; set; }
-        public short departmentUnitId { get; set; }
+        public short? departmentId { get; set; }
+        public short? departmentUnitId { get; set; }
         public int jobRequestId { get; set; }
         public string requestTitle { get; set; }
         public string jobRequestCode { get; set; }
@@ -76,6 +81,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public Array emailList { get; set; }
         public List<MessageLogViewModel> mailData { get; set; }
         public List<JobRequestDetailViewModel> jobDetail { get; set; }
+
+        public IEnumerable<RequestDocumentViewModel> jobDocuments { get; set; }
     }
 
     public  class JobRequestMessageViewModel : GeneralEntity
@@ -203,6 +210,31 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public string jobTypeName { get; set; }
         public bool inUse { get; set; }
         public bool? canBeReasigned { get; set; }
+    }
+
+    public class JobTypeHubViewModel : GeneralEntity
+    {
+        public short jobTypeHubId { get; set; }
+        public string jobTypeHubName { get; set; }
+        public short jobTypeId { get; set; }
+    }
+
+    public class HubStaffViewModel : GeneralEntity
+    {
+        public string hubStaffName { get; set; }
+
+        public int hubStaffId { get; set; }
+        public short jobTypeHubId { get; set; }
+        public short jobTypeUnitId { get; set; }
+        public bool isTeamLead { get; set; }
+
+    }
+
+    public class JobTypeUnitViewModel : GeneralEntity
+    {
+        public short jobTypeUnitId { get; set; }
+        public string unitName { get; set; }
+        public short jobTypeId { get; set; }
     }
 
     public class JobSubTypeViewModel : JobTypeViewModel
