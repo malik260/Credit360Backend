@@ -23,6 +23,8 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
                 {
                     DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                     DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+
+                    int companyId = Int32.Parse(Request.QueryString["companyId"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
 
@@ -50,7 +52,7 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
                         return;
                     }
                     LimitsMonitoringReportsObjects sla = new LimitsMonitoringReportsObjects();
-                    var data = sla.CovenantsApproachingDueDate(startDate, endDate);
+                    var data = sla.CovenantsApproachingDueDate(startDate, endDate,companyId);
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
@@ -63,7 +65,7 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "CovenantDetails";
+                    reportDataSource.Name = "LoanCovenantInformation";
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/CovenantsApproachingDueDate.rdlc");
