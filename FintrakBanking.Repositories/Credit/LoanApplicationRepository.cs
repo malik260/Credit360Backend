@@ -1137,6 +1137,8 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
+            // ValidateLoanApplicationLimits(loan); // always
+
             if (loan.relationshipOfficerId != 0)
             {
                 var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
@@ -1219,7 +1221,7 @@ namespace FintrakBanking.Repositories.Credit
             response = 0;
             int loanId = 0;
 
-            ValidateLoanApplicationLimits(loan); // TODO
+            // ValidateLoanApplicationLimits(loan); // init only
 
             if (loan.loanTypeId == (int)LoanTypeEnum.CustomerGroup)
             {
@@ -3945,19 +3947,20 @@ namespace FintrakBanking.Repositories.Credit
 
         public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
         {
+            var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
 
             var branchValidation = creditLimitValidationsRepository.ValidateNPLByBranch((short)branchId);
             
             decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
           
-            decimal applicationAmount = application.details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+            decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
 
             var branch = context.TBL_BRANCH.Find(branchId);
             if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
 
-            List<int> sectorIds = new List<int>();
-            sectorIds.Add(application.subSectorId); // or sectorId. TODO inspect!
+            List<short> sectorIds = details.Select(x => x.sectorId).ToList(); // new List<int>();
+            // sectorIds.Add(application.subSectorId); // or sectorId. TODO inspect!
 
             foreach (var sectorId in sectorIds)
             {
