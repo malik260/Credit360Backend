@@ -81,6 +81,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public Array emailList { get; set; }
         public List<MessageLogViewModel> mailData { get; set; }
         public List<JobRequestDetailViewModel> jobDetail { get; set; }
+
+        public IEnumerable<RequestDocumentViewModel> jobDocuments { get; set; }
     }
 
     public  class JobRequestMessageViewModel : GeneralEntity
