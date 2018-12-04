@@ -5503,6 +5503,8 @@ namespace FintrakBanking.Repositories.Credit
                     operationId = (short)OperationsEnum.RevolvingLoanBooking;
                 if (productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
                     operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+                if (productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                    operationId = (short)OperationsEnum.ContigentLoanBooking;
 
                 try
                 {

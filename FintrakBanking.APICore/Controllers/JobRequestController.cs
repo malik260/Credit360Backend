@@ -213,10 +213,10 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.PlaceChargeOnCustomerForCollateralSearch(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Account has been debitted Successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to debit account " });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to Perform Operation " });
             }
             catch (ConditionNotMetException ce)
             {
