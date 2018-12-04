@@ -981,12 +981,12 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         var gracePeriod = item.gracePeriod.Value;
                         var gracePeriodEndDate = item.pastDueDate.Value.AddDays(gracePeriod);
-                        if (applicationDate < gracePeriodEndDate)
+                        if (applicationDate <= gracePeriodEndDate)
                         {
                             dailyAccrual.DAILYACCURALAMOUNT = 0;
                             dailyAccrual.DAILYACCURALAMOUNT2 = accuralAmount;
                         }
-                        if (applicationDate == gracePeriodEndDate)
+                        if (applicationDate == gracePeriodEndDate.AddDays(1))
                         {
                             DateTime gracePeriodStartDate = applicationDate.AddDays(gracePeriod * -1);
 
@@ -1132,12 +1132,12 @@ namespace FintrakBanking.Repositories.Credit
                     {
                         var gracePeriod = item.gracePeriod.Value;
                         var gracePeriodEndDate = item.pastDueDate.Value.AddDays(gracePeriod);
-                        if (applicationDate < gracePeriodEndDate)
+                        if (applicationDate <= gracePeriodEndDate)
                         {
                             dailyAccrual.DAILYACCURALAMOUNT = 0;
                             dailyAccrual.DAILYACCURALAMOUNT2 = accuralAmount;
                         }
-                        if (applicationDate == gracePeriodEndDate)
+                        if (applicationDate == gracePeriodEndDate.AddDays(1))
                         {
                             DateTime gracePeriodStartDate = applicationDate.AddDays(gracePeriod * -1);
 
@@ -14374,20 +14374,27 @@ namespace FintrakBanking.Repositories.Credit
 
                 else if (facilityType == LoanSystemTypeEnum.TermDisbursedFacility)  //(checkForOverDraft == null && facilityType == 0)
                 {
-                    var scheduleMethod = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId).SCHEDULETYPEID;
-                    var operationType = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).OPERATIONTYPEID;
+                    //var scheduleMethod = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId).SCHEDULETYPEID;
+                    //var scheduleMethod = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).Select(x=> x.SCHEDULETYPEID).FirstOrDefault();
+                    //var operationType = context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).OPERATIONTYPEID;
 
+                    var record = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).FirstOrDefault();
+
+                    var scheduleMethod = record.SCHEDULETYPEID;
+                    var operationType = record.OPERATIONTYPEID;
 
                     var model = (
                              from a in context.TBL_LOAN_REVIEW_OPERATION
                              join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
-                             where b.LOANSTATUSID == (short)LoanStatusEnum.Active && a.LOANID == loanId && a.OPERATIONCOMPLETED == false
+                             where 
+                             //b.LOANSTATUSID == (short)LoanStatusEnum.Active && 
+                             a.LOANID == loanId && a.OPERATIONCOMPLETED == false
                              && a.LOANREVIEWOPERATIONID == loanReviewOperationsId
 
                              select new LoanPaymentRestructureScheduleInputViewModel()
                              {
                                  loanId = b.TERMLOANID,
-                                 scheduleMethodId = b.SCHEDULETYPEID,
+                                 scheduleMethodId = (short)a.SCHEDULETYPEID,
                                  principalAmount = (double)b.OUTSTANDINGPRINCIPAL,
                                  principalFrequency = b.PRINCIPALFREQUENCYTYPEID,
                                  interestFrequency = b.INTERESTFREQUENCYTYPEID,
@@ -14871,33 +14878,33 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     else if ((int)OperationsEnum.LoanRecovery == model.operationId)
                     {
-                        if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
-                        {
-                            model.interestRate = model.newInterest;
-                            model.maturityDate = (DateTime)model.newMaturityDate;
-                            model.effectiveDate = model.newEffectiveDate;
-                            model.tenor = model.newTenor;
-                        }
-                        else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
-                        {
-                            model.interestRate = model.newInterest;
-                            model.maturityDate = (DateTime)model.newMaturityDate;
-                            model.effectiveDate = model.newEffectiveDate;
-                            model.tenor = model.newTenor;
-                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
-                            model.interestFrequency = (short)model.newInterestFrequency;
-                        }
-                        else
-                        {
-                            model.interestRate = model.newInterest;
-                            model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
-                            model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
-                            model.maturityDate = (DateTime)model.newMaturityDate;
-                            model.effectiveDate = model.newEffectiveDate;
-                            model.tenor = model.newTenor;
-                            model.interestFrequency = (short)model.newInterestFrequency;
-                            model.principalFrequency = (short)model.newPrincipalFrequency;
-                        }
+                        //if (scheduleMethod == (short)LoanScheduleTypeEnum.BallonPayment)
+                        //{
+                        //    model.interestRate = model.newInterest;
+                        //    model.maturityDate = (DateTime)model.newMaturityDate;
+                        //    model.effectiveDate = model.newEffectiveDate;
+                        //    model.tenor = model.newTenor;
+                        //}
+                        //else if (scheduleMethod == (short)LoanScheduleTypeEnum.BulletPayment)
+                        //{
+                        //    model.interestRate = model.newInterest;
+                        //    model.maturityDate = (DateTime)model.newMaturityDate;
+                        //    model.effectiveDate = model.newEffectiveDate;
+                        //    model.tenor = model.newTenor;
+                        //    model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;
+                        //    model.interestFrequency = (short)model.newInterestFrequency;
+                        //}
+                        //else
+                        //{
+                        //    model.interestRate = model.newInterest;
+                        //    model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
+                        //    model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
+                        //    model.maturityDate = (DateTime)model.newMaturityDate;
+                        //    model.effectiveDate = model.newEffectiveDate;
+                        //    model.tenor = model.newTenor;
+                        //    model.interestFrequency = (short)model.newInterestFrequency;
+                        //    model.principalFrequency = (short)model.newPrincipalFrequency;
+                        //}
 
                         result = LoanRecovery(loanId, model, twoFactorAuth, applicationDate, staffId);
 
