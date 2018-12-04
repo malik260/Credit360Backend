@@ -360,6 +360,51 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost] //[ClaimsAuthorization]
+        [Route("logout-idle")]
+        public IHttpActionResult LogOutIdle()
+        {
+            //try
+            //{
+            _repo.ClearLoginToken(token.GetUsername);
+            var staffDetails = _repo.GetSingleUserByUserName(token.GetUsername);
+
+            if (staffDetails == null)
+            {
+                return this.Ok(new { success = false, message = "User Not Found" });
+            }
+
+
+            Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
+
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
+                STAFFID = token.GetStaffId,
+                BRANCHID = (short)token.GetBranchId,
+                DETAIL = $"{token.GetUsername} logged out due to system idle timeout",
+                IPADDRESS = CommonHelpers.GetUserIP(),
+                URL = Request.RequestUri.AbsoluteUri,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+                TARGETID = -1
+            };
+
+            _auditTrail.AddAuditTrail(audit);
+
+            _context.SaveChanges();
+
+            return this.Ok(new { success = true, message = "User Logged Off" });
+
+            //}
+            //catch (SecureException ex)
+            //{
+            //    _errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+            //    return this.Ok(new { success = false, message = $"An unknown error occured {ex.Message}" });
+            //}
+
+        }
+        [HttpPost] //[ClaimsAuthorization]
         [Route("passwordchange")]
         public IHttpActionResult PasswordChange(PasswordChangeViewModel pwdChange)
         {

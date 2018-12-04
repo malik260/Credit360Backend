@@ -8,6 +8,10 @@ namespace FintrakBanking.Interfaces.WorkFlow
 {
     public interface IJobRequestRepository
     {
+        IEnumerable<HubStaffViewModel> GetHubStaffByHubId(short jobTypeHubId);
+        IEnumerable<HubStaffViewModel> GetHubStaffByHubTypeUnitId(short jobTypeUnitId);
+        IEnumerable<JobTypeUnitViewModel> GetAllJobTypeUnit(short jobTypeId);
+        IEnumerable<JobTypeHubViewModel> GetAllJobTypeHub(short jobTypeId);
         // bool ChargeCustomerJob(CollateralViewModel model, string actionName, string actionType, int loanApplicationDetailId);
         bool AddJobDocumentOnly(RequestDocumentViewModel model, byte[] file);
         IEnumerable<JobRequestViewModel> GetJobRequestByFilter(int staffId, int branchId, string filter);

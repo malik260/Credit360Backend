@@ -40,9 +40,9 @@ namespace FintrakBanking.Entities.Models
 
         public int TARGETID { get; set; }
 
-        public short DEPARTMENTID { get; set; }
+        public short? DEPARTMENTID { get; set; }
 
-        public short DEPARTMENTUNITID { get; set; }
+        public short? DEPARTMENTUNITID { get; set; }
 
         public int OPERATIONSID { get; set; }
 
@@ -58,6 +58,12 @@ namespace FintrakBanking.Entities.Models
 
         [StringLength(2000)]
         public string RESPONSECOMMENT { get; set; }
+
+        public short? JOBTYPEHUBID { get; set; }
+
+        public short? JOBTYPEUNITID { get; set; }
+
+        public int? BRANCHID { get; set; }
 
         //[Column(TypeName = "date")]
         public DateTime ARRIVALDATE { get; set; }

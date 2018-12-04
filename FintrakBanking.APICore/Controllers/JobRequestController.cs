@@ -213,10 +213,10 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.PlaceChargeOnCustomerForCollateralSearch(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Account has been debitted Successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to debit account " });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to Perform Operation " });
             }
             catch (ConditionNotMetException ce)
             {
@@ -610,6 +610,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.physicalFileNumber = provider.FormData["physicalFileNumber"];
                 entity.physicalLocation = provider.FormData["physicalLocation"];
                 entity.comment = provider.FormData["responseComment"];
+                entity.statusId = (short)Convert.ToInt32(provider.FormData["statusId"]);
 
                 if (!provider.FileStreams.Any())
                 {
@@ -662,21 +663,23 @@ namespace FintrakBanking.APICore.Controllers
                 MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
                 await Request.Content.ReadAsMultipartAsync(provider);
 
-                int uploadType;
-                if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
-                {
-                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
-                }
+                //int uploadType;
+                //if (!Int32.TryParse(provider.FormData["documentTypeId"], out uploadType))
+                //{
+                //    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                //}
 
                 var entity = new RequestDocumentViewModel();
                 entity.jobRequestCode = provider.FormData["jobRequestCode"];
                 entity.documentTitle = provider.FormData["documentTitle"];
-                entity.documentTypeId = (short)uploadType;
+                entity.documentTypeId = 1; // (short)uploadType;
                 entity.fileName = provider.FormData["fileName"];
                 entity.fileExtension = provider.FormData["fileExtension"];
                 entity.physicalFileNumber = provider.FormData["physicalFileNumber"];
                 entity.physicalLocation = provider.FormData["physicalLocation"];
                // entity.comment = provider.FormData["responseComment"];
+
+                if(entity.jobRequestCode =="undefined") return Request.CreateResponse(HttpStatusCode.BadRequest, "upload failed");
 
                 if (!provider.FileStreams.Any())
                 {
@@ -695,10 +698,10 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Document uploaded successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error occured while uploaded document" });
             }
             catch (ConditionNotMetException ce)
             {
@@ -726,7 +729,44 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-type-hub/{jobTypeId}")]
+        public HttpResponseMessage GetAllJobTypeHub(short jobTypeId)
+        {
+            var data = repo.GetAllJobTypeHub(jobTypeId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        } 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-type-unit/{jobTypeId}")]
+        public HttpResponseMessage GetAllJobTypeUnit(short jobTypeId)
+        {
+            var data = repo.GetAllJobTypeUnit(jobTypeId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-hub-staff/{hubId}")]
+        public HttpResponseMessage GetHubStaffByHubId(short hubId)
+        {
+            var data = repo.GetHubStaffByHubId(hubId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-unit-hub-staff/{unitId}")]
+        public HttpResponseMessage GetHubStaffByHubTypeUnitId(short unitId)
+        {
+            var data = repo.GetHubStaffByHubTypeUnitId(unitId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("job-sub-type/{jobId}")]
         public HttpResponseMessage GetJobSubType(short jobId)
         {

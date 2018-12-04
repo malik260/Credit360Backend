@@ -694,12 +694,13 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from pen in context.TBL_LOAN_PRELIMINARY_EVALUATN
                         join coy in context.TBL_COMPANY on pen.COMPANYID equals coy.COMPANYID
                         join br in context.TBL_BRANCH on pen.BRANCHID equals br.BRANCHID
-                        join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
-                        where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-                            && pen.ISCURRENT == true
-                            && pen.LOANPRELIMINARYEVALUATIONID == applicationPenId
-                            && atrail.RESPONSESTAFFID == null
-                            && atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation
+                        //join atrail in context.TBL_APPROVAL_TRAIL on pen.LOANPRELIMINARYEVALUATIONID equals atrail.TARGETID
+                        where 
+                        //(atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+                            //&& pen.ISCURRENT == true
+                             pen.LOANPRELIMINARYEVALUATIONID == applicationPenId
+                            //&& atrail.RESPONSESTAFFID == null
+                            //&& atrail.OPERATIONID == (int)OperationsEnum.LoanPreliminaryEvaluation
                         orderby pen.LOANPRELIMINARYEVALUATIONID descending
                         select new LoanPreliminaryEvaluationViewModel()
                         {
