@@ -69,19 +69,19 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         fieldInfo.SetValue(extension, false);
                     }
 
-                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+                    //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/RunningFacilities.rdlc");
-                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+                    //ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)
                 {
-                    //    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //    this.ReportViewer.LocalReport.Refresh();
-                    //    return;
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.ReportViewer.LocalReport.Refresh();
+                    return;
                 }
             }
 
