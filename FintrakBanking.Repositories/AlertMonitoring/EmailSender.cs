@@ -75,6 +75,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             Console.WriteLine("");
             Console.WriteLine("Send Excetion Email");
             Console.WriteLine("");
+            
 
 
             using (SmtpClient client = new SmtpClient())

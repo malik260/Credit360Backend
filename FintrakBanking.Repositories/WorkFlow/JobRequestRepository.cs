@@ -1622,14 +1622,124 @@ namespace FintrakBanking.Repositories.WorkFlow
                            {
                                staffId = x.STAFFID,
                                jobTypeId = x.JOBTYPEID,
-                               staffName = (from i in context.TBL_STAFF where i.STAFFID == x.STAFFID select i.FIRSTNAME + " " + " " + i.MIDDLENAME + i.LASTNAME).FirstOrDefault(),
-                               jobTypeName = (from i in context.TBL_JOB_TYPE where i.JOBTYPEID == x.JOBTYPEID select i.JOBTYPENAME).FirstOrDefault(),
                                dateTimeCreated = x.DATETIMECREATED,
                            }).ToList();
 
             return details;
         }
+        public List<jobReasignment> GetJobTypeReasignment(int companyId)
+        {
+            var details = (from x in context.TBL_JOB_TYPE_REASSIGNMENT
+                           where  x.COMPANYID == companyId && x.DELETED == false
+                           select new jobReasignment
+                           {
+                               staffId = x.STAFFID,
+                               dateTimeDeleted = x.DATETIMECREATED,
+                               jobTypeId = x.JOBTYPEID,
+                               dateTimeCreated = x.DATETIMECREATED,
+                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                               JobType = context.TBL_JOB_TYPE.Where(o => o.JOBTYPEID == x.JOBTYPEID).Select(o => o.JOBTYPENAME).FirstOrDefault(),
 
+                           }).ToList();
+
+            return details;
+        }
+        public bool AssignJobTypeToStaff(jobReasignment model)
+        {
+            if (context.TBL_JOB_TYPE_REASSIGNMENT.Any(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId))
+                throw new ConditionNotMetException("This job type exist for this staff");
+
+            var newType = new TBL_JOB_TYPE_REASSIGNMENT
+            {
+                STAFFID = model.staffId,
+                JOBTYPEID = (short)model.jobTypeId,
+                COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = model.dateTimeCreated,
+                DELETED = false,
+                
+            };
+            context.TBL_JOB_TYPE_REASSIGNMENT.Add(newType);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
+        public bool DeleteJobTypeForAStaff(jobReasignment model)
+        {
+            var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
+            if(data==null) throw new ConditionNotMetException("Staff does not exist");
+
+
+            data.STAFFID = model.staffId;
+            data.JOBTYPEID = (short)model.jobTypeId;
+            data.COMPANYID = model.companyId;
+            data.DATETIMEDELETED = model.dateTimeDeleted;
+            data.DELETED = true;
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
+        public bool UpdateAsignedJobTypeToStaff(jobReasignment model)
+        {
+          var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
+            if (data!=null)
+            {
+                data.STAFFID = model.staffId;
+                data.JOBTYPEID = (short)model.jobTypeId;
+                data.COMPANYID = model.companyId;
+                data.CREATEDBY = model.createdBy;
+                data.DATETIMECREATED = model.dateTimeCreated;
+                data.DELETED = false;
+
+            }
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been edited to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
         public List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId)
         {
             var jobTypeAdminStaff = GetJobTypeReasignmentAdminStaff(companyId).Where(x => x.staffId == staffId).ToList();
