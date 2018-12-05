@@ -14374,13 +14374,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 else if (facilityType == LoanSystemTypeEnum.TermDisbursedFacility)  //(checkForOverDraft == null && facilityType == 0)
                 {
-                    //var scheduleMethod = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId).SCHEDULETYPEID;
-                    //var scheduleMethod = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).Select(x=> x.SCHEDULETYPEID).FirstOrDefault();
-                    //var operationType = context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).OPERATIONTYPEID;
-
+                    var scheduleMethod = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId).SCHEDULETYPEID;
                     var record = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).FirstOrDefault();
-
-                    var scheduleMethod = record.SCHEDULETYPEID;
                     var operationType = record.OPERATIONTYPEID;
 
                     var model = (
@@ -14394,7 +14389,7 @@ namespace FintrakBanking.Repositories.Credit
                              select new LoanPaymentRestructureScheduleInputViewModel()
                              {
                                  loanId = b.TERMLOANID,
-                                 scheduleMethodId = (short)a.SCHEDULETYPEID,
+                                 scheduleMethodId = (short)b.SCHEDULETYPEID,
                                  principalAmount = (double)b.OUTSTANDINGPRINCIPAL,
                                  principalFrequency = b.PRINCIPALFREQUENCYTYPEID,
                                  interestFrequency = b.INTERESTFREQUENCYTYPEID,
