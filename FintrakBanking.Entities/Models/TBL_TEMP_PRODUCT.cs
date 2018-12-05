@@ -123,6 +123,8 @@ namespace FintrakBanking.Entities.Models
         public short? RISKRATINGID { get; set; }
 
         public int? PENALCHARGEGL { get; set; }
+        public decimal? PENALCHARGERATE { get; set; }
+        public bool USEDBYLOS { get; set; }
 
         public DateTime? DATETIMEDELETED { get; set; }
 
