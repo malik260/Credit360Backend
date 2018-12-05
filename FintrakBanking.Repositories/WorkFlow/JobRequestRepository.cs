@@ -896,67 +896,71 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
         public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
         {
-            var requests = this.context.TBL_JOB_REQUEST.Find(applicationDetailId);
+            var requests = this.context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId);
 
-            if (requests == null) return null;
+            if (requests.Count() < 0) return null;
 
-            var jobDocumentsList = GetJobRequestDocuments(requests.JOBREQUESTCODE).AsEnumerable();
-            TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
             var requestsList = new List<JobRequestViewModel>();
-
-            feedback = context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Where(c => c.JOB_STATUS_FEEDBACKID == requests.JOB_STATUS_FEEDBACKID).FirstOrDefault();
-            var requestModel = new JobRequestViewModel
+            foreach ( var request in requests)
             {
-                jobRequestId = requests.JOBREQUESTID,
-                requestTitle = requests.JOB_TITLE,
-                jobRequestCode = requests.JOBREQUESTCODE,
-                targetId = requests.TARGETID,
-                jobTypeId = requests.JOBTYPEID,
-                senderStaffId = requests.SENDERSTAFFID,
-                receiverStaffId = requests.RECEIVERSTAFFID ?? 0,
-                reassignedTo = requests.REASSIGNEDTO,
-                isReassigned = requests.ISREASSIGNED,
-                isAcknowledged = requests.ISACKNOWLEDGED,
-                operationsId = requests.OPERATIONSID,
-                operationName = requests.TBL_OPERATIONS.OPERATIONNAME,
-                requestStatusId = requests.REQUESTSTATUSID,
-                senderComment = requests.SENDERCOMMENT,
-                responseComment = requests.RESPONSECOMMENT,
+                var jobDocumentsList = GetJobRequestDocuments(request.JOBREQUESTCODE).AsEnumerable();
+                TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
+                
+                feedback = context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Where(c => c.JOB_STATUS_FEEDBACKID == request.JOB_STATUS_FEEDBACKID).FirstOrDefault();
+                var requestModel = new JobRequestViewModel
+                {
+                    jobRequestId = request.JOBREQUESTID,
+                    requestTitle = request.JOB_TITLE,
+                    jobRequestCode = request.JOBREQUESTCODE,
+                    targetId = request.TARGETID,
+                    jobTypeId = request.JOBTYPEID,
+                    senderStaffId = request.SENDERSTAFFID,
+                    receiverStaffId = request.RECEIVERSTAFFID ?? 0,
+                    reassignedTo = request.REASSIGNEDTO,
+                    isReassigned = request.ISREASSIGNED,
+                    isAcknowledged = request.ISACKNOWLEDGED,
+                    operationsId = request.OPERATIONSID,
+                    operationName = request.TBL_OPERATIONS.OPERATIONNAME,
+                    requestStatusId = request.REQUESTSTATUSID,
+                    senderComment = request.SENDERCOMMENT,
+                    responseComment = request.RESPONSECOMMENT,
 
-                arrivalDate = requests.ARRIVALDATE,
-                systemArrivalDate = requests.SYSTEMARRIVALDATE,
-                reassignedDate = requests.REASSIGNEDDATE,
-                systemReassignedDate = requests.SYSTEMREASSIGNEDDATE,
-                responseDate = requests.RESPONSEDATE,
-                systemResponseDate = requests.SYSTEMRESPONSEDATE,
-                acknowledgementDate = requests.ACKNOWLEDGEMENTDATE,
-                systemAcknowledgementDate = requests.SYSTEMACKNOWLEDGEMENTDATE,
-                jobStatusFeedBackId = requests.JOB_STATUS_FEEDBACKID ?? 0,
-                jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
-                msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
-                                    where y.JOBREQUESTID == requests.JOBREQUESTID
-                                    select new JobRequestMessageViewModel
-                                    {
-                                        jobRequestMessageId = y.JOBREQUEST_MESSAGEID,
-                                        jobRequestId = y.JOBREQUESTID,
-                                        message = y.MESSAGE,
-                                        staffId = y.STAFFID,
-                                        staffName = y.TBL_STAFF.FIRSTNAME + " " + y.TBL_STAFF.MIDDLENAME + " " + y.TBL_STAFF.LASTNAME,
-                                        datetimeSent = y.DATE_TIME_SENT
-                                    }).ToList(),
-                jobDocuments = jobDocumentsList,
-            };
+                    arrivalDate = request.ARRIVALDATE,
+                    systemArrivalDate = request.SYSTEMARRIVALDATE,
+                    reassignedDate = request.REASSIGNEDDATE,
+                    systemReassignedDate = request.SYSTEMREASSIGNEDDATE,
+                    responseDate = request.RESPONSEDATE,
+                    systemResponseDate = request.SYSTEMRESPONSEDATE,
+                    acknowledgementDate = request.ACKNOWLEDGEMENTDATE,
+                    systemAcknowledgementDate = request.SYSTEMACKNOWLEDGEMENTDATE,
+                    jobStatusFeedBackId = request.JOB_STATUS_FEEDBACKID ?? 0,
+                    jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
+                    msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
+                                        where y.JOBREQUESTID == request.JOBREQUESTID
+                                        select new JobRequestMessageViewModel
+                                        {
+                                            jobRequestMessageId = y.JOBREQUEST_MESSAGEID,
+                                            jobRequestId = y.JOBREQUESTID,
+                                            message = y.MESSAGE,
+                                            staffId = y.STAFFID,
+                                            staffName = y.TBL_STAFF.FIRSTNAME + " " + y.TBL_STAFF.MIDDLENAME + " " + y.TBL_STAFF.LASTNAME,
+                                            datetimeSent = y.DATE_TIME_SENT
+                                        }).ToList(),
+                    jobDocuments = jobDocumentsList,
+                };
 
-            var fromData = context.TBL_STAFF.Where(b => b.STAFFID == requests.SENDERSTAFFID).FirstOrDefault();
-            requestModel.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
+                var fromData = context.TBL_STAFF.Where(b => b.STAFFID == request.SENDERSTAFFID).FirstOrDefault();
+                requestModel.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
 
-            var toData = context.TBL_STAFF.Where(b => b.STAFFID == requests.RECEIVERSTAFFID).FirstOrDefault();
-            requestModel.to = toData != null ? toData.FIRSTNAME + " " + toData.MIDDLENAME + " " + toData.LASTNAME : "n/a";
+                var toData = context.TBL_STAFF.Where(b => b.STAFFID == request.RECEIVERSTAFFID).FirstOrDefault();
+                requestModel.to = toData != null ? toData.FIRSTNAME + " " + toData.MIDDLENAME + " " + toData.LASTNAME : "n/a";
 
-            var asigneeData = context.TBL_STAFF.Where(b => b.STAFFID == requests.REASSIGNEDTO).FirstOrDefault();
-            requestModel.assignee = asigneeData != null ? asigneeData.FIRSTNAME + " " + asigneeData.MIDDLENAME + " " + asigneeData.LASTNAME : "n/a";
+                var asigneeData = context.TBL_STAFF.Where(b => b.STAFFID == request.REASSIGNEDTO).FirstOrDefault();
+                requestModel.assignee = asigneeData != null ? asigneeData.FIRSTNAME + " " + asigneeData.MIDDLENAME + " " + asigneeData.LASTNAME : "n/a";
 
-            requestsList.Add(requestModel);
+                requestsList.Add(requestModel);
+            }
+           
 
             return requestsList;
 
@@ -1137,13 +1141,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                     throw new ConditionNotMetException("The solicitor's account number is not found. No account number has been mapped to this solicitor.");
 
                     accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
-                //var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
 
-                //var casaUnique = casa.FirstOrDefault();
-                //model.casaAccountId = casaUnique.CASAACCOUNTID;
 
                 var witholdingAmount = (double)model.totalChargeAmount / 0.9;
-                //model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
                 var id = (short)jobRequestDetail.FirstOrDefault().CURRENCYID.Value;
                 model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
                 var currency = context.TBL_CURRENCY.Find(model.currencyId);
