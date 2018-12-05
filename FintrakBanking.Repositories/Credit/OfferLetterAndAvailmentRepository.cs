@@ -2110,17 +2110,21 @@ namespace FintrakBanking.Repositories.Credit
         {
             foreach (var item in loanApplicationDetails)
             {
-                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID != (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID != (short)JobTypeEnum.legal && (x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending || x.REQUESTSTATUSID == (short)JobRequestStatusEnum.processing)).Any())
                     throw new ConditionNotMetException("There are pending job request for this application.");
+
+                if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
+                    throw new ConditionNotMetException("There are unapproved middle office request.");
 
                 if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.disapproved).Any())
                     throw new ConditionNotMetException("There are unapproved middle office request.");
 
                 if (item.TBL_LOAN_APPLICATION.PRODUCTCLASSID != (short)ProductClassEnum.BondAndGuarantees)
                 {
-                    if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID == (short)JobTypeEnum.legal && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending).Any())
+                    if (context.TBL_JOB_REQUEST.Where(x => x.TARGETID == item.LOANAPPLICATIONDETAILID && x.JOBTYPEID == (short)JobTypeEnum.legal && (x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending || x.REQUESTSTATUSID == (short)JobRequestStatusEnum.processing)).Any())
                         throw new ConditionNotMetException("There are unattended Legal job request which must be attended to.");
                 }
+
             }
         }
 
