@@ -8,6 +8,8 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CreditBereauViewModel : GeneralEntity
     {
+        public short currencyId { get; set; }
+
         public bool debitBusiness { get; set; }
         public int glAccountId { get; set; }
         public bool debitRequest { get; set; }
