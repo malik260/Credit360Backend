@@ -3384,7 +3384,6 @@ namespace FintrakBanking.Repositories.Credit
                 PostContingentLiabilityPrincipalEntry((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, contingentLoanRecord, contingentLoanRecord.CONTINGENTAMOUNT, basicPostInputs, twoFactorAuthDetails);
                 twoFactorAuthDetails.skipAuthentication = true;
 
-
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
                 loanScheduleModel.operationId = contingentLoanRecord.OPERATIONID;
                 loanScheduleModel.createdBy = contingentLoanRecord.CREATEDBY;
@@ -3397,7 +3396,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
 
                 /*UPDATING STAFF MIS */
-                //this.updateLoanContingentStaffMIS(contingentLoanRecord);
+                this.updateLoanContingentStaffMIS(contingentLoanRecord);
 
                 contingentLoanRecord.LOANSTATUSID = (short)LoanStatusEnum.Active;
                 contingentLoanRecord.ISDISBURSED = true;
@@ -5477,6 +5476,8 @@ namespace FintrakBanking.Repositories.Credit
                     operationId = (short)OperationsEnum.RevolvingLoanBooking;
                 if (productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
                     operationId = (short)OperationsEnum.ForeignExchangeLoanBooking;
+                if (productTypeId == (short)LoanProductTypeEnum.ContingentLiability)
+                    operationId = (short)OperationsEnum.ContigentLoanBooking;
 
                 try
                 {

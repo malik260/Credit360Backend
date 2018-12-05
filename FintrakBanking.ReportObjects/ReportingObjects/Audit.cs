@@ -62,8 +62,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                            join st in context.TBL_STAFF on lg.USERNAME equals st.STAFFCODE
                            join b in context.TBL_BRANCH on st.BRANCHID equals b.BRANCHID
                            where (DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) >= DbFunctions.TruncateTime(startDate) 
-                           && DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) <= DbFunctions.TruncateTime(endDate)
-                           && lg.ISLOCKED == !logingStatus ) //&& (b.BRANCHCODE==branchCode || branchCode=="")
+                           && DbFunctions.TruncateTime((lg.LASTLOGINDATE.Value == null ? defaultDate : lg.LASTLOGINDATE.Value)) <= DbFunctions.TruncateTime(endDate))
+                           && (lg.ISACTIVE == logingStatus) //&& (b.BRANCHCODE==branchCode || branchCode=="")
                           orderby lg.LASTLOGINDATE descending
                            select new LoggingActivities
                            {
@@ -81,7 +81,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                               branchCode = b.BRANCHCODE
 
                            };
-                return data.ToList();
+                var result = data.ToList();
+                return result;
             }
 
         }

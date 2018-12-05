@@ -1026,30 +1026,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var templateLink = GetProductSpecificTemplate(1, 1);
 
-
-            //var applDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE;
-            //var currentDate = DateTime.Now;
-            //var loanApplId = 0;
-            //var facility = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == refNumber);
-            //if (facility == null)
-            //{
-            //    var facility1 = context.TBL_LOAN_REVOLVING.Where(x => x.LOANREFERENCENUMBER == refNumber);
-            //    loanApplId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == facility1.FirstOrDefault().LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
-            //}
-
-            //loanApplId = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == facility.FirstOrDefault().LOANAPPLICATIONDETAILID).LOANAPPLICATIONID;
-
-            //var targetAppl = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == loanApplId);
-
-            //if (targetAppl.PRODUCTCLASSID == null)
-            //{
-            //    targetAppl.PRODUCTCLASSID = 1;
-            //}
-
-            //var productClassProcess = context.TBL_PRODUCT_CLASS.FirstOrDefault(x => x.PRODUCTCLASSID == targetAppl.PRODUCTCLASSID);
-
-            //var templateLink = GetProductSpecificTemplate(productClassProcess.PRODUCT_CLASS_PROCESSID, (short?)targetAppl.PRODUCTCLASSID ?? 1);
-
+          
 
             var conditionPrecedents = (from a in context.TBL_LMSR_APPLICATION
                                        join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
@@ -1120,6 +1097,7 @@ namespace FintrakBanking.Repositories.Credit
                                from d in cg.DefaultIfEmpty()
                                join g in context.TBL_CURRENCY on e.CURRENCYID equals g.CURRENCYID
                                where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
+                               && b.LOANSYSTEMTYPEID == e.LOANSYSTEMTYPEID
                                && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                select new CamProcessedLoanViewModel()
                                {
@@ -1134,6 +1112,66 @@ namespace FintrakBanking.Repositories.Credit
                                    newApplicationDate =a.APPLICATIONDATE
 
                                }).ToList();
+
+            if (loanDetails.Count==0)
+            {
+                 loanDetails = (from a in context.TBL_LMSR_APPLICATION
+                                 join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                                 join e in context.TBL_LOAN_CONTINGENT on b.LOANID equals e.CONTINGENTLOANID
+                                 join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                                 into cc
+                                 from c in cc.DefaultIfEmpty()
+                                 join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID
+                                 into cg
+                                 from d in cg.DefaultIfEmpty()
+                                 join g in context.TBL_CURRENCY on e.CURRENCYID equals g.CURRENCYID
+                                 where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
+                                 && b.LOANSYSTEMTYPEID == e.LOANSYSTEMTYPEID
+                                 && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                                 select new CamProcessedLoanViewModel()
+                                 {
+                                     productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == e.PRODUCTID).PRODUCTNAME,
+                                     tenor = b.APPROVEDTENOR,//(int)(e.MATURITYDATE - e.EFFECTIVEDATE).TotalDays,
+                                                             // interestRate = e.INTERESTRATE,
+                                     purpose = b.REVIEWDETAILS,
+                                     applicationDate = applDate,
+                                     approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
+                                     //approvedAmount = b.APPROVEDAMOUNT
+                                     approvedDate = a.APPROVEDDATE,
+                                     newApplicationDate = a.APPLICATIONDATE
+
+                                 }).ToList();
+            }
+            if (loanDetails.Count==0)
+            {
+                 loanDetails = (from a in context.TBL_LMSR_APPLICATION
+                          join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                          join e in context.TBL_LOAN_REVOLVING on b.LOANID equals e.REVOLVINGLOANID
+                          join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
+                          into cc
+                          from c in cc.DefaultIfEmpty()
+                          join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID
+                          into cg
+                          from d in cg.DefaultIfEmpty()
+                          join g in context.TBL_CURRENCY on e.CURRENCYID equals g.CURRENCYID
+                          where a.APPLICATIONREFERENCENUMBER.ToLower() == applicationRefNumber.ToLower()
+                          && b.LOANSYSTEMTYPEID == e.LOANSYSTEMTYPEID
+                          && b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                          select new CamProcessedLoanViewModel()
+                          {
+                              productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == e.PRODUCTID).PRODUCTNAME,
+                              tenor = b.APPROVEDTENOR,//(int)(e.MATURITYDATE - e.EFFECTIVEDATE).TotalDays,
+                              interestRate = e.INTERESTRATE,
+                              purpose = b.REVIEWDETAILS,
+                              applicationDate = applDate,
+                              approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
+                              //approvedAmount = b.APPROVEDAMOUNT
+                              approvedDate = a.APPROVEDDATE,
+                              newApplicationDate = a.APPLICATIONDATE
+
+                          }).ToList();
+            }
+
 
             var transactionDynamicsDetails = (from a in context.TBL_LMSR_TRANSACTION_DYNAMICS
                                               join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANREVIEWAPPLICATIONID equals b.LOANREVIEWAPPLICATIONID
@@ -1267,7 +1305,9 @@ namespace FintrakBanking.Repositories.Credit
 
                         $"<strong> *Credit Verification Officer&rsquo; s initial for compliance only</strong></td>" +
 
-                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>";
+                        $"<td style='height:31.0pt; vertical-align:top; width:67.5pt'>" +
+
+                        $"<strong> Location of document </strong><strong><em> (Corporate workflow)</em ></strong></td></tr>";
 
                 foreach (var item in productExternalConditions)
                 {
@@ -1277,6 +1317,7 @@ namespace FintrakBanking.Repositories.Credit
                         $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.conditionPrecident}</p></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 100.05pt'><p>{prod.productName}</p></td>" +
                         $"<td style='height: 18.4pt; vertical - align:top; width: 1.0in'><p> &nbsp;</p></td>" +
+                        $"<td style='height:18.4pt; vertical-align:top; width:67.5pt'><p>&nbsp;</p></td>" +
                         $"</tr>";
                 }
 
@@ -1315,7 +1356,7 @@ namespace FintrakBanking.Repositories.Credit
                 conditions = $"<p><strong>Conditions Subsequent (to be satisfied after drawdown) {prod.productName}</strong></p>";
 
                 conditions = conditions +
-                        $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
+                        $"<table border='1' cellpadding='5' cellspacing='2'><tbody>" +
                         $"<tr>" +
                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
                         $"<strong> S/No </strong></td>" +
@@ -1373,22 +1414,23 @@ namespace FintrakBanking.Repositories.Credit
                 finalConditionSubsequents += conditions;
             }
 
-            fee = $"<p><strong> Fee Deatils: </strong></p>";
+            fee = $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" + $"<br/>" +
+                $"<p><strong> Fee Details: </strong></p>";
 
             fee = fee +
-                     $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
-                     $"<tr>" +
-                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                         $"<strong> S/No </strong></td>" +
-                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                     $"<strong> Name </strong></p></td>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Name </strong></p></td>" +
 
-                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                     $"<strong> Rate </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Rate </strong></td>" +
 
 
-                                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                     $"<strong> Product </strong></td></tr>";
+                                        $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Product </strong></td></tr>";
 
 
 
@@ -1413,7 +1455,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
 
-            loanDetail = $" ";//<p><strong> Facility Deatils: </strong></p>
+            loanDetail = $" ";//<p><strong> Facility Details: </strong></p>
 
             loanDetail = loanDetail +
                     $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
@@ -1422,10 +1464,12 @@ namespace FintrakBanking.Repositories.Credit
                     $"<strong> Facility Type </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:130.5pt'><p> &nbsp;</p>" +
                     $"<strong> Purpose </strong></td>" +
-                    $"<td style='height:29.65pt; vertical-align:top; width:49.5pt'><p> &nbsp;</p>" +
+                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
+                    $"<strong> Limits N </strong></p></td>" +
+                    $"<td style='height:29.65pt; vertical-align:top; width:49.51n'><p> &nbsp;</p>" +
                     $"<strong> Tenor </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:119.8pt'><p> &nbsp;</p>" +
-                    $"<strong>  Limits N </strong></p></td>" +
+                    $"<strong> Interest/Margin </strong></p></td>" +
                     $"<td style='height:29.65pt; vertical-align:top; width:.75in'><p> &nbsp;</p>" +
                     $"<strong> Review Date </strong></td></tr>";
 
@@ -1437,8 +1481,9 @@ namespace FintrakBanking.Repositories.Credit
                     $"<tr>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.purpose}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.tenor}</p> Days </td>" +
-                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.approvedAmountCurrency}</p> % p.a </td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.interestRate}</p> % p.a </td>" +
                     $"<td style='height: 18.4pt; vertical - align:top; width: 150.05pt'><p>{item.applicationDate.ToString("dd/MM/yyyy")}</p></td>" +
                     $"</tr>";
             }
@@ -1470,15 +1515,14 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var item in loanCollaterals)
             {
-                //facilityAmount
                 loanCollateral = loanCollateral +
-                 $"<tr>" +
-                 $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfCollaterals}</li></ol></td>" +
-                 $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralDetail}</p></td>" +
-                 $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
-                 $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount.ToString("N", new CultureInfo("en-US"))}</p></td>" +
-                 $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.facilityAmount.ToString("N", new CultureInfo("en-US"))}</p></td>" +
-                 $"</tr>";
+                    $"<tr>" +
+                    $"<td style='height:18.4pt; vertical - align:top; width:40.45pt'>" + $"<ol><li>{++noOfCollaterals}</li></ol></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralDetail}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.collateralValue.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.stapedToCoverAmount.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.facilityAmount.ToString("N", new CultureInfo("en-US"))}</p></td>" +
+                    $"</tr>";
             }
 
             noOfCollaterals = 0;
@@ -1488,6 +1532,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral += loanCollateral;
 
             var loanCollateralData = $"{collateral}";
+
 
 
             ////comments
@@ -1522,19 +1567,20 @@ namespace FintrakBanking.Repositories.Credit
             ////comments end
 
 
+
             loanMonitoringTrigger = $"<p><strong> Monitoring Triggers: </strong></p>";
 
             loanMonitoringTrigger = loanMonitoringTrigger +
-                      $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
-                      $"<tr>" +
-                      $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                          $"<strong> S/No </strong></td>" +
-                      $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                      $"<strong> Monitoring Trigger </strong></td>" +
-                                         $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                          $"<strong> Product Name </strong></td>" +
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Monitoring Trigger </strong></td>" +
+                                       $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                        $"<strong> Product Name </strong></td>" +
 
-                      $"</tr>";
+                    $"</tr>";
 
 
 
@@ -1561,16 +1607,16 @@ namespace FintrakBanking.Repositories.Credit
             loanTransactionDynamics = $"<p><strong> Transaction Dynamics: </strong></p>";
 
             loanTransactionDynamics = loanTransactionDynamics +
-                     $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
-                     $"<tr>" +
-                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                     $"<strong> S/No </strong></td>" +
-                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
-                     $"<strong> Dynamics </strong></p></td>" +
-                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
-                     $"<strong> Credit Verification Officer’s initial for compliance only </strong></p></td>" +
-                     $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
-                     $"<strong> Product Name </strong></td></tr>";
+                    $"<table border='1' cellpadding='5' cellspacing='2' ><tbody>" +
+                    $"<tr>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> S/No </strong></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                    $"<strong> Dynamics </strong></p></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'><p> &nbsp;</p>" +
+                    $"<strong> Credit Verification Officer’s initial for compliance only </strong></p></td>" +
+                    $"<td style='height:31.0pt; vertical-align:top; width:40.45pt'>" +
+                    $"<strong> Product Name </strong></td></tr>";
 
 
 
@@ -1584,6 +1630,7 @@ namespace FintrakBanking.Repositories.Credit
                     $"<td style='height: 18.4pt; vertical - align:top; width: 225.05pt'><p>{item.productName}</p></td>" +
                     $"</tr>";
             }
+
 
             noOfTransactionDynamics = 0;
 
@@ -1974,7 +2021,7 @@ namespace FintrakBanking.Repositories.Credit
             int result = 0;
 
             // CRMS VALIDATION
-            var Record = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId && x.CRMSCOLLATERALTYPEID == null).Count();
+            var Record = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId && x.CRMSCOLLATERALTYPEID == null && x.STATUSID == (int)ApprovalStatusEnum.Approved).Count();
             if (Record > 0)
             {
                 result = 1;
@@ -2180,13 +2227,13 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
+
         private bool PendingBondsAndGuaranteeJobRequest(int applicationdetailId)
         {
             var requests = context.TBL_JOB_REQUEST
                 .Where(x => x.TARGETID == applicationdetailId
                 && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
-                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
             ).ToList();
 
             var test = requests;

@@ -75,7 +75,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
         }
 
-        public List<LoanCovenantDetailViewModel> CovenantsApproachingDueDate(DateTime startDate, DateTime endDate)
+        public List<LoanCovenantDetailViewModel> CovenantsApproachingDueDate(DateTime startDate, DateTime endDate, int companyId)
         {
             List<LoanCovenantDetailViewModel> loanDetails = (from a in context.TBL_LOAN_COVENANT_DETAIL
                                                              join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
@@ -83,26 +83,27 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where a.NEXTCOVENANTDATE >= startDate && a.NEXTCOVENANTDATE<=endDate
+                                                             where DbFunctions.TruncateTime(a.NEXTCOVENANTDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.NEXTCOVENANTDATE)<= DbFunctions.TruncateTime(endDate)
+                                                             && a.COMPANYID == companyId
                                                              select new LoanCovenantDetailViewModel
                                                              {
-                                                                 companyId = a.COMPANYID,
+                                                                 //companyId = a.COMPANYID,
                                                                  covenantAmount = a.COVENANTAMOUNT,
                                                                  covenantDate = a.COVENANTDATE,
                                                                  dueDate = a.NEXTCOVENANTDATE,
                                                                  covenantDetail = a.COVENANTDETAIL,
-                                                                 covenantTypeId = a.COVENANTTYPEID,
+                                                                 //covenantTypeId = a.COVENANTTYPEID,
                                                                  covenantTypeName = g.COVENANTTYPENAME,
-                                                                 frequencyTypeId = a.FREQUENCYTYPEID,
+                                                                 //frequencyTypeId = a.FREQUENCYTYPEID,
                                                                  frequencyTypeName = f.MODE,
-                                                                 loanId = a.LOANID,
+                                                                 //loanId = a.LOANID,
                                                                  loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                                                 relationshipManager = d.FIRSTNAME + " " + d.LASTNAME,
-                                                                 relationshipManagerId = d.STAFFID,
-                                                                 managerEmail = d.EMAIL,
-                                                                 relationshipOfficerId = d.STAFFID,
-                                                                 relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
-                                                                 officerEmail = d.EMAIL,
+                                                                 //relationshipManager = d.FIRSTNAME + " " + d.LASTNAME,
+                                                                 //relationshipManagerId = d.STAFFID,
+                                                                 //managerEmail = d.EMAIL,
+                                                                 //relationshipOfficerId = d.STAFFID,
+                                                                 //relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
+                                                                 //officerEmail = d.EMAIL,
                                                              }).ToList();
 
             return loanDetails;
@@ -205,7 +206,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                            join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                                            join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
                                            where b.EXT_PRUDENT_GUIDELINE_STATUSID == (int)PrudentialGuidelineTypeEnum.NonPerforming
-                                           && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
+                                           && DbFunctions.TruncateTime(b.BOOKINGDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.BOOKINGDATE) <= DbFunctions.TruncateTime(endDate)
                                            select new LoanViewModel
                                            {
                                                applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,

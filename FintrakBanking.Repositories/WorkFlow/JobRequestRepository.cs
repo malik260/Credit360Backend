@@ -896,67 +896,71 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
         public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
         {
-            var requests = this.context.TBL_JOB_REQUEST.Find(applicationDetailId);
+            var requests = this.context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId);
 
-            if (requests == null) return null;
+            if (requests.Count() < 0) return null;
 
-            var jobDocumentsList = GetJobRequestDocuments(requests.JOBREQUESTCODE).AsEnumerable();
-            TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
             var requestsList = new List<JobRequestViewModel>();
-
-            feedback = context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Where(c => c.JOB_STATUS_FEEDBACKID == requests.JOB_STATUS_FEEDBACKID).FirstOrDefault();
-            var requestModel = new JobRequestViewModel
+            foreach ( var request in requests)
             {
-                jobRequestId = requests.JOBREQUESTID,
-                requestTitle = requests.JOB_TITLE,
-                jobRequestCode = requests.JOBREQUESTCODE,
-                targetId = requests.TARGETID,
-                jobTypeId = requests.JOBTYPEID,
-                senderStaffId = requests.SENDERSTAFFID,
-                receiverStaffId = requests.RECEIVERSTAFFID ?? 0,
-                reassignedTo = requests.REASSIGNEDTO,
-                isReassigned = requests.ISREASSIGNED,
-                isAcknowledged = requests.ISACKNOWLEDGED,
-                operationsId = requests.OPERATIONSID,
-                operationName = requests.TBL_OPERATIONS.OPERATIONNAME,
-                requestStatusId = requests.REQUESTSTATUSID,
-                senderComment = requests.SENDERCOMMENT,
-                responseComment = requests.RESPONSECOMMENT,
+                var jobDocumentsList = GetJobRequestDocuments(request.JOBREQUESTCODE).AsEnumerable();
+                TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
+                
+                feedback = context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Where(c => c.JOB_STATUS_FEEDBACKID == request.JOB_STATUS_FEEDBACKID).FirstOrDefault();
+                var requestModel = new JobRequestViewModel
+                {
+                    jobRequestId = request.JOBREQUESTID,
+                    requestTitle = request.JOB_TITLE,
+                    jobRequestCode = request.JOBREQUESTCODE,
+                    targetId = request.TARGETID,
+                    jobTypeId = request.JOBTYPEID,
+                    senderStaffId = request.SENDERSTAFFID,
+                    receiverStaffId = request.RECEIVERSTAFFID ?? 0,
+                    reassignedTo = request.REASSIGNEDTO,
+                    isReassigned = request.ISREASSIGNED,
+                    isAcknowledged = request.ISACKNOWLEDGED,
+                    operationsId = request.OPERATIONSID,
+                    operationName = request.TBL_OPERATIONS.OPERATIONNAME,
+                    requestStatusId = request.REQUESTSTATUSID,
+                    senderComment = request.SENDERCOMMENT,
+                    responseComment = request.RESPONSECOMMENT,
 
-                arrivalDate = requests.ARRIVALDATE,
-                systemArrivalDate = requests.SYSTEMARRIVALDATE,
-                reassignedDate = requests.REASSIGNEDDATE,
-                systemReassignedDate = requests.SYSTEMREASSIGNEDDATE,
-                responseDate = requests.RESPONSEDATE,
-                systemResponseDate = requests.SYSTEMRESPONSEDATE,
-                acknowledgementDate = requests.ACKNOWLEDGEMENTDATE,
-                systemAcknowledgementDate = requests.SYSTEMACKNOWLEDGEMENTDATE,
-                jobStatusFeedBackId = requests.JOB_STATUS_FEEDBACKID ?? 0,
-                jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
-                msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
-                                    where y.JOBREQUESTID == requests.JOBREQUESTID
-                                    select new JobRequestMessageViewModel
-                                    {
-                                        jobRequestMessageId = y.JOBREQUEST_MESSAGEID,
-                                        jobRequestId = y.JOBREQUESTID,
-                                        message = y.MESSAGE,
-                                        staffId = y.STAFFID,
-                                        staffName = y.TBL_STAFF.FIRSTNAME + " " + y.TBL_STAFF.MIDDLENAME + " " + y.TBL_STAFF.LASTNAME,
-                                        datetimeSent = y.DATE_TIME_SENT
-                                    }).ToList(),
-                jobDocuments = jobDocumentsList,
-            };
+                    arrivalDate = request.ARRIVALDATE,
+                    systemArrivalDate = request.SYSTEMARRIVALDATE,
+                    reassignedDate = request.REASSIGNEDDATE,
+                    systemReassignedDate = request.SYSTEMREASSIGNEDDATE,
+                    responseDate = request.RESPONSEDATE,
+                    systemResponseDate = request.SYSTEMRESPONSEDATE,
+                    acknowledgementDate = request.ACKNOWLEDGEMENTDATE,
+                    systemAcknowledgementDate = request.SYSTEMACKNOWLEDGEMENTDATE,
+                    jobStatusFeedBackId = request.JOB_STATUS_FEEDBACKID ?? 0,
+                    jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
+                    msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
+                                        where y.JOBREQUESTID == request.JOBREQUESTID
+                                        select new JobRequestMessageViewModel
+                                        {
+                                            jobRequestMessageId = y.JOBREQUEST_MESSAGEID,
+                                            jobRequestId = y.JOBREQUESTID,
+                                            message = y.MESSAGE,
+                                            staffId = y.STAFFID,
+                                            staffName = y.TBL_STAFF.FIRSTNAME + " " + y.TBL_STAFF.MIDDLENAME + " " + y.TBL_STAFF.LASTNAME,
+                                            datetimeSent = y.DATE_TIME_SENT
+                                        }).ToList(),
+                    jobDocuments = jobDocumentsList,
+                };
 
-            var fromData = context.TBL_STAFF.Where(b => b.STAFFID == requests.SENDERSTAFFID).FirstOrDefault();
-            requestModel.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
+                var fromData = context.TBL_STAFF.Where(b => b.STAFFID == request.SENDERSTAFFID).FirstOrDefault();
+                requestModel.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
 
-            var toData = context.TBL_STAFF.Where(b => b.STAFFID == requests.RECEIVERSTAFFID).FirstOrDefault();
-            requestModel.to = toData != null ? toData.FIRSTNAME + " " + toData.MIDDLENAME + " " + toData.LASTNAME : "n/a";
+                var toData = context.TBL_STAFF.Where(b => b.STAFFID == request.RECEIVERSTAFFID).FirstOrDefault();
+                requestModel.to = toData != null ? toData.FIRSTNAME + " " + toData.MIDDLENAME + " " + toData.LASTNAME : "n/a";
 
-            var asigneeData = context.TBL_STAFF.Where(b => b.STAFFID == requests.REASSIGNEDTO).FirstOrDefault();
-            requestModel.assignee = asigneeData != null ? asigneeData.FIRSTNAME + " " + asigneeData.MIDDLENAME + " " + asigneeData.LASTNAME : "n/a";
+                var asigneeData = context.TBL_STAFF.Where(b => b.STAFFID == request.REASSIGNEDTO).FirstOrDefault();
+                requestModel.assignee = asigneeData != null ? asigneeData.FIRSTNAME + " " + asigneeData.MIDDLENAME + " " + asigneeData.LASTNAME : "n/a";
 
-            requestsList.Add(requestModel);
+                requestsList.Add(requestModel);
+            }
+           
 
             return requestsList;
 
@@ -1137,13 +1141,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                     throw new ConditionNotMetException("The solicitor's account number is not found. No account number has been mapped to this solicitor.");
 
                     accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
-                //var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
 
-                //var casaUnique = casa.FirstOrDefault();
-                //model.casaAccountId = casaUnique.CASAACCOUNTID;
 
                 var witholdingAmount = (double)model.totalChargeAmount / 0.9;
-                //model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
                 var id = (short)jobRequestDetail.FirstOrDefault().CURRENCYID.Value;
                 model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
                 var currency = context.TBL_CURRENCY.Find(model.currencyId);
@@ -1596,13 +1596,124 @@ namespace FintrakBanking.Repositories.WorkFlow
                            {
                                staffId = x.STAFFID,
                                jobTypeId = x.JOBTYPEID,
-                               dateTimeCreated = x.DATETIMECREATED
+                               dateTimeCreated = x.DATETIMECREATED,
+                           }).ToList();
+
+            return details;
+        }
+        public List<jobReasignment> GetJobTypeReasignment(int companyId)
+        {
+            var details = (from x in context.TBL_JOB_TYPE_REASSIGNMENT
+                           where  x.COMPANYID == companyId && x.DELETED == false
+                           select new jobReasignment
+                           {
+                               staffId = x.STAFFID,
+                               dateTimeDeleted = x.DATETIMECREATED,
+                               jobTypeId = x.JOBTYPEID,
+                               dateTimeCreated = x.DATETIMECREATED,
+                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                               JobType = context.TBL_JOB_TYPE.Where(o => o.JOBTYPEID == x.JOBTYPEID).Select(o => o.JOBTYPENAME).FirstOrDefault(),
 
                            }).ToList();
 
             return details;
         }
+        public bool AssignJobTypeToStaff(jobReasignment model)
+        {
+            if (context.TBL_JOB_TYPE_REASSIGNMENT.Any(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId))
+                throw new ConditionNotMetException("This job type exist for this staff");
 
+            var newType = new TBL_JOB_TYPE_REASSIGNMENT
+            {
+                STAFFID = model.staffId,
+                JOBTYPEID = (short)model.jobTypeId,
+                COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = model.dateTimeCreated,
+                DELETED = false,
+                
+            };
+            context.TBL_JOB_TYPE_REASSIGNMENT.Add(newType);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
+        public bool DeleteJobTypeForAStaff(jobReasignment model)
+        {
+            var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
+            if(data==null) throw new ConditionNotMetException("Staff does not exist");
+
+
+            data.STAFFID = model.staffId;
+            data.JOBTYPEID = (short)model.jobTypeId;
+            data.COMPANYID = model.companyId;
+            data.DATETIMEDELETED = model.dateTimeDeleted;
+            data.DELETED = true;
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
+        public bool UpdateAsignedJobTypeToStaff(jobReasignment model)
+        {
+          var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
+            if (data!=null)
+            {
+                data.STAFFID = model.staffId;
+                data.JOBTYPEID = (short)model.jobTypeId;
+                data.COMPANYID = model.companyId;
+                data.CREATEDBY = model.createdBy;
+                data.DATETIMECREATED = model.dateTimeCreated;
+                data.DELETED = false;
+
+            }
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been edited to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
         public IEnumerable<JobTypeViewModel> GetJobSubType(short jobId)
         {
             return this.context.TBL_JOB_TYPE_SUB.Select(x => new JobSubTypeViewModel

@@ -889,7 +889,6 @@ namespace FintrakBanking.Repositories.Credit
                     if (camsolJobRequests.Count > 0)
                         isCamsolJobRequestSent = true;
                         
-
                     /* Collateral Search Job Request */
                     if (application.REQUIRECOLLATERALTYPEID == (int)RequireCollateralTypeEnum.ImmovablePropertyCollateral)
                     {
