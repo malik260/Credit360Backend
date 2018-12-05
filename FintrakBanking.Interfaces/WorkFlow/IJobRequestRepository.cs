@@ -70,6 +70,11 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model);
         List<JobRequestDetailViewModel> GetLegalJobRequestDetails();
 
+        bool AssignJobTypeToStaff(jobReasignment model);
+        bool DeleteJobTypeForAStaff(jobReasignment model);
+        bool UpdateAsignedJobTypeToStaff(jobReasignment model);
+        List<jobReasignment> GetJobTypeReasignment(int companyId);
+
         #region Job Request Feedback
         IEnumerable<LookupViewModel> GetJobRequestStatus();
         IEnumerable<JobRequestStatusFeedbackViewModel> GetAllJobRequestStatusFeedback();

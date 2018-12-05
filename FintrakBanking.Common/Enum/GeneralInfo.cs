@@ -273,6 +273,9 @@ namespace FintrakBanking.Common.Enum
         LoginFailed = 250,
         ContingentLiabilityAmountReduction = 251,
         ContingentLiabilityTenorExtension = 252,
+        StaffJobTypeAdded = 254,
+        StaffJobTypeUpdated = 255,
+        StaffJobTypeDeleted = 256,
     };
    public enum RegulatoryTypeEnum
     {

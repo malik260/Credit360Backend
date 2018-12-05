@@ -354,7 +354,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetCovenantsApproachingDueDateReport(token.GetCompanyId, token.GetStaffId, dateRange);
+                var data = repo.GetCovenantsApproachingDueDateReport(token.GetStaffId, dateRange,token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

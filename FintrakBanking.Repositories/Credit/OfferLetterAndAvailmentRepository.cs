@@ -2180,13 +2180,13 @@ namespace FintrakBanking.Repositories.Credit
             return workflow.Response;
         }
 
+
         private bool PendingBondsAndGuaranteeJobRequest(int applicationdetailId)
         {
             var requests = context.TBL_JOB_REQUEST
                 .Where(x => x.TARGETID == applicationdetailId
                 && x.OPERATIONSID == (short)OperationsEnum.OfferLetterApproval
                 && x.JOBTYPEID == (short)JobTypeEnum.legal
-                && x.REQUESTSTATUSID == (short)JobRequestStatusEnum.pending
             ).ToList();
 
             var test = requests;
