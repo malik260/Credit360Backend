@@ -17,6 +17,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<JobRequestViewModel> GetJobRequestByFilter(int staffId, int branchId, string filter);
         bool UpdateInvoiceStatus(JobRequestInvoiceViewModel model);
         List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId);
+        List<jobReasignment> GetJobTypeReasignmentAdminStaff(int companyId);
         IEnumerable<ApprovalStatusViewModel> GetJobRequestApprovaStatus();
         IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId);
         JobRequestViewModel GetJobRequest(int jobRequestId);

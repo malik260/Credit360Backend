@@ -140,6 +140,9 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class jobReasignment : GeneralEntity
     {
+        public string staffName { get; set; }
+        public string jobTypeName { get; set; }
+
         public int reasignmentId { get; set; }
         public int jobTypeId { get; set; }
     }

@@ -221,11 +221,37 @@ namespace FintrakBanking.Repositories.WorkFlow
                 
 
             var applicationDate = general.GetApplicationDate();
+            
+            if (data.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification)
+            {
+                var hubCordinatorStaffId = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification).FirstOrDefault();
+                var hubCordinatorFullStaffData = hubCordinatorStaffId != null ? context.TBL_STAFF.Find(hubCordinatorStaffId.STAFFID) : null;
+
+                var from = fromStaffData != null ? fromStaffData.FIRSTNAME + " " + fromStaffData.LASTNAME + " (" + fromStaffData.STAFFCODE + ")" : "None";
+                var to = toStaffData != null ? toStaffData.FIRSTNAME + " " + toStaffData.LASTNAME + " (" + toStaffData.STAFFCODE + ")" : "None";
+
+                string messageBoby = $"Attention!, <br /><br />Please note that a job request assignmnet/reassignment occured with the following details:<br /><br /> 'Job Request Code:' " +
+                    $"<br /><br /> {data.JOBREQUESTCODE} <br /><br /> Previously Assigned Staff: {from} " +
+                    $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. <br /><br />";
+                string alertSubject = $"JOB REQUEST ASSIGNMENT NOTICE";
+
+                if (hubCordinatorFullStaffData != null)
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, hubCordinatorFullStaffData.EMAIL);
+
+                var hubTeamLeadEntry = context.TBL_JOB_TYPE_HUB_STAFF.Where(x => x.JOBTYPEUNITID == data.JOBTYPEUNITID && x.ISTEAMLEAD == true).FirstOrDefault();
+                if(hubTeamLeadEntry != null && fromStaffData != null)
+                {
+                    var teamLeadStaff = context.TBL_STAFF.Find(hubTeamLeadEntry.HUBSTAFFID);
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, teamLeadStaff.EMAIL);
+                }
+
+
+            }
 
             data.REASSIGNEDTO = (int)model.reassignedTo;
             data.ISREASSIGNED = true;
             data.ISACKNOWLEDGED = true;
-            data.REQUESTSTATUSID = (short)JobRequestStatusEnum.processing;
+            //data.REQUESTSTATUSID = (short)JobRequestStatusEnum.processing;
             data.REASSIGNEDDATE = applicationDate;
             data.SYSTEMREASSIGNEDDATE = DateTime.Now;
 
@@ -1588,19 +1614,26 @@ namespace FintrakBanking.Repositories.WorkFlow
             }).Where(c => c.jobTypeId == jobTypeId);
         }
 
-        public List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId)
+        public List<jobReasignment> GetJobTypeReasignmentAdminStaff( int companyId)
         {
             var details = (from x in context.TBL_JOB_TYPE_REASSIGNMENT
-                           where x.STAFFID == staffId && x.COMPANYID == companyId && x.DELETED == false
+                           where x.COMPANYID == companyId && x.DELETED == false
                            select new jobReasignment
                            {
                                staffId = x.STAFFID,
                                jobTypeId = x.JOBTYPEID,
-                               dateTimeCreated = x.DATETIMECREATED
-
+                               staffName = (from i in context.TBL_STAFF where i.STAFFID == x.STAFFID select i.FIRSTNAME + " " + " " + i.MIDDLENAME + i.LASTNAME).FirstOrDefault(),
+                               jobTypeName = (from i in context.TBL_JOB_TYPE where i.JOBTYPEID == x.JOBTYPEID select i.JOBTYPENAME).FirstOrDefault(),
+                               dateTimeCreated = x.DATETIMECREATED,
                            }).ToList();
 
             return details;
+        }
+
+        public List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId)
+        {
+            var jobTypeAdminStaff = GetJobTypeReasignmentAdminStaff(companyId).Where(x => x.staffId == staffId).ToList();
+            return jobTypeAdminStaff;
         }
 
         public IEnumerable<JobTypeViewModel> GetJobSubType(short jobId)

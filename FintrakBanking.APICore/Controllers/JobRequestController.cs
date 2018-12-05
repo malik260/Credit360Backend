@@ -85,6 +85,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-type-admin-staff")]
+        public HttpResponseMessage GetJobTypeReasignmentAdminStaff()
+        {
+            var data = repo.GetJobTypeReasignmentAdminStaff(token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/{jobRequestId}")]
@@ -380,6 +389,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.ReassignJobRequest(entity, jobRequestId);
                 if (data)
