@@ -12260,14 +12260,16 @@ namespace FintrakBanking.Repositories.Credit
                                          loanId = ln.CONTINGENTLOANID,
                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
                                          customerId = ln.CUSTOMERID,
-                                         productId = ln.PRODUCTID,
+                                        productId = ln.PRODUCTID,
+                                         productTypeId = pr.PRODUCTTYPEID,
+                                         productTypeName =  context.TBL_PRODUCT_TYPE.Where(x=>x.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(m=>m.PRODUCTTYPENAME).FirstOrDefault(),
                                          casaAccountId = ln.CASAACCOUNTID,
                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                          branchId = ln.BRANCHID,
                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                          applicationReferenceNumber = lp.APPLICATIONREFERENCENUMBER,
                                          relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
-                                         relationshipManagerId = ln.RELATIONSHIPMANAGERID,
+                                         relationshipManagerId =  ln.RELATIONSHIPMANAGERID,
                                          misCode = ln.MISCODE,
                                          teamMiscode = ln.TEAMMISCODE,
                                          //interestRate = ln.INTERESTRATE,
@@ -12295,6 +12297,7 @@ namespace FintrakBanking.Repositories.Credit
                                          loanTypeName = at.LOANAPPLICATIONTYPENAME,
                                          customerName = cu.LASTNAME + " " + cu.FIRSTNAME + " " + cu.MIDDLENAME,
                                          currencyId = ln.CURRENCYID,
+                                         currency = context.TBL_CURRENCY.Where(x=>x.CURRENCYID == ln.CURRENCYID).Select(x=>x.CURRENCYNAME).FirstOrDefault(),
                                          branchName = br.BRANCHNAME,
                                          relationshipOfficerName = st.FIRSTNAME + " " + st.MIDDLENAME + " " + st.LASTNAME,
                                          relationshipManagerName = stm.FIRSTNAME + " " + stm.MIDDLENAME + " " + stm.LASTNAME,
@@ -12326,7 +12329,7 @@ namespace FintrakBanking.Repositories.Credit
                                          newMaturityDate = op.MATURITYDATE,
                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.CONTINGENTLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                          dateTimeCreated = op.DATECREATED,
-
+                                         
 
                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                          productAccountNumber = ch.ACCOUNTCODE,
@@ -14481,13 +14484,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 else if (facilityType == LoanSystemTypeEnum.TermDisbursedFacility)  //(checkForOverDraft == null && facilityType == 0)
                 {
-                    //var scheduleMethod = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId).SCHEDULETYPEID;
-                    //var scheduleMethod = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).Select(x=> x.SCHEDULETYPEID).FirstOrDefault();
-                    //var operationType = context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).OPERATIONTYPEID;
-
+                    var scheduleMethod = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId).SCHEDULETYPEID;
                     var record = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).FirstOrDefault();
-
-                    var scheduleMethod = record.SCHEDULETYPEID;
                     var operationType = record.OPERATIONTYPEID;
 
                     var model = (
@@ -14501,7 +14499,7 @@ namespace FintrakBanking.Repositories.Credit
                              select new LoanPaymentRestructureScheduleInputViewModel()
                              {
                                  loanId = b.TERMLOANID,
-                                 scheduleMethodId = (short)a.SCHEDULETYPEID,
+                                 scheduleMethodId = (short)b.SCHEDULETYPEID,
                                  principalAmount = (double)b.OUTSTANDINGPRINCIPAL,
                                  principalFrequency = b.PRINCIPALFREQUENCYTYPEID,
                                  interestFrequency = b.INTERESTFREQUENCYTYPEID,
