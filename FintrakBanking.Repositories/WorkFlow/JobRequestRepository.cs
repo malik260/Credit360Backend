@@ -1797,7 +1797,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             debitAmount = (decimal)model.totalChargeAmount;
 
                         debit.operationId = (int)model.operationId;
-                        debit.description = model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
+                        debit.description = "Collateral related charge for facility application"; // model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
                         debit.valueDate = general.GetApplicationDate();
                         debit.transactionDate = debit.valueDate;
                         debit.currencyId = model.debitBusiness ? (short)model.currencyId : casa.CURRENCYID;
@@ -1839,7 +1839,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
                         credit.operationId = (int)model.operationId;
-                        credit.description = model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
+                        credit.description = "Collateral related charge for facility application"; // model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
                         credit.valueDate = general.GetApplicationDate();
                         credit.transactionDate = credit.valueDate;
                         credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).CURRENCYID; // (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
