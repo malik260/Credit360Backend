@@ -32,7 +32,7 @@ namespace FintrakBanking.Entities.Models
 
         public int LOCALGOVERNMENTID { get; set; }
 
-        public short CITYCLASSID { get; set; }
+        public short? CITYCLASSID { get; set; }
 
         public bool ALLOWEDFORCOLLATERAL { get; set; }
 

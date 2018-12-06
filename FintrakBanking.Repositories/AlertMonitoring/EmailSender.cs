@@ -236,11 +236,11 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
                             if (newMail.ATTACHMENTTYPEID != null)
                             {
-                                if(newMail.ATTACHMENTTYPEID == 1)
+                                if(newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.JobRequest)
                                 {
                                     List<TBL_MEDIA_JOB_REQUEST_DOCUMENT> requestDoc = new List<TBL_MEDIA_JOB_REQUEST_DOCUMENT>();
-                                    requestDoc = (from a in docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT
-                                                  where a.JOBREQUESTCODE == newMail.ATTACHMENTCODE).ToList();
+                                    
+                                    requestDoc = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.JOBREQUESTCODE == newMail.ATTACHMENTCODE).ToList();
                                     foreach (var binaryFile in requestDoc)
                                     {
                                         MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
