@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Http.Cors;
 using System.Web.Mvc;
 
 namespace FintrakBanking.APICore.Controllers
 {
+    [EnableCors(origins: "*", headers: "*", methods: "*")]
     public class EditorController : Controller
     {
         public ActionResult Index()
@@ -13,10 +15,15 @@ namespace FintrakBanking.APICore.Controllers
             return View();
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpOptions]
+        public ActionResult Upload()
+        {
+            return View();
+        }
+
+        [HttpPost]
         public ActionResult Upload(HttpPostedFileBase upload, string CKEditorFuncNum, string CKEditor, string langCode)
         {
-            //string message;
             var file = upload;
             string path = String.Empty;
             string newFileName = String.Empty;
@@ -40,25 +47,12 @@ namespace FintrakBanking.APICore.Controllers
             ViewBag.FileName = newFileName;
             ViewBag.FuncName = CKEditorFuncNum;
             ViewBag.Message = "Image was saved correctly";
-            Response.AddHeader("Access-Control-Allow-Origin", "*");
+            // Response.AddHeader("Access-Control-Allow-Origin", "*");
 
-            /*
-            return Content(
-                //message
-                $"<html><body>" +
-                $"<script>" +
-                //$"document.domain = \"http://172.0.0.1:88.com\";" +
-                $"var header = new Headers();" +
-                $"header.append(\"Access-Control-Allow-Origin\", \"*\");" +
-                $"alert(\"JAVASCRIPT OK!\");" +
-                $"window.parent.CKEDITOR.tools.callFunction({ CKEditorFuncNum },\"{ path }\",\"{ message }\");" +
-                $"</script>" +
-                $"<font color=\"green\"> Successfull upload!</color>" +
-                $"<img src=\"{ path }\" />" +
-                $"</body></html>"
-                );*/
+            var domain = Request.Url.AbsoluteUri.Replace(Request.Url.AbsolutePath, String.Empty);
+            var src = domain + "/Content/Images/Editor/Uploads/" + newFileName;
 
-            return View();
+            return Json(new { uploaded = 1, fileName = file.FileName, url = src });
         }
 
         private string UniqueFileName(string actualfilename)
@@ -67,5 +61,6 @@ namespace FintrakBanking.APICore.Controllers
             actualfilename = actualfilename.ToLower();
             return guid.ToString() + "-" + actualfilename.Replace(" ", "-");
         }
+
     }
 }
