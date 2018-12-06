@@ -1150,15 +1150,20 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (model.isInitiation)
             {
                 var casa = context.TBL_CASA.Find(model.casaAccountId);
-                if (casa == null)
+                if (casa == null && !model.debitBusiness)
                     throw new ConditionNotMetException("Customer account number is not supplied");
 
                 if (casa != null) accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
 
-                model.casaAccountId = casa.CASAACCOUNTID;
+                if (!model.debitBusiness)
+                {
+                    model.casaAccountId = casa.CASAACCOUNTID;
+                    accountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    auditDetail = $"Customer account number '{casa.PRODUCTACCOUNTNUMBER}' debited with collateral search fees";
+                }
+                else { auditDetail = $"Bank account debited with collateral search fees"; }
+
                 model.operationId = (short)OperationsEnum.CollateralSearchInitiation;
-                accountNumber = casa.PRODUCTACCOUNTNUMBER;
-                auditDetail = $"Customer account number '{casa.PRODUCTACCOUNTNUMBER}' debited with collateral search fees";
             }
             else
             {
@@ -1188,7 +1193,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 item.ACCOUNTNUMBER = model.isInitiation ? accountNumber : null;
             }
 
-            if (model.isInitiation && model.totalChargeAmount > accountBalance)
+            if (model.isInitiation && model.totalChargeAmount > accountBalance && !model.debitBusiness )
                 throw new ConditionNotMetException("The customer's Account is not funded.");
 
             if (model.totalChargeAmount > 0)
@@ -1203,8 +1208,17 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //When RM apply fee on customer's account
                 if (model.isInitiation)
                 {
+                    if (model.debitBusiness)
+                    {
+                        var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short)OtherOperationEnum.ChargeOnBank).FirstOrDefault();
+                        if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
+
+                        model.glAccountId = bizAccount.GLACCOUNTID;
+                        model.casaAccountId = null;
+                        model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
+                        model.currencyCode = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId).CURRENCYCODE;
+                    }
                     inputTransactions.AddRange(BuildCollateralSearchChargeFeesPosting(model));
-                  
                 }
 
                 //When Legal confirms colletral job search
@@ -2263,7 +2277,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         debit.description = model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
                         debit.valueDate = general.GetApplicationDate();
                         debit.transactionDate = debit.valueDate;
-                        debit.currencyId = casa.CURRENCYID;
+                        debit.currencyId = model.debitBusiness ? (short)model.currencyId : casa.CURRENCYID;
                         debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
                         debit.isApproved = true;
                         debit.postedBy = model.createdBy;
@@ -2273,22 +2287,20 @@ namespace FintrakBanking.Repositories.WorkFlow
                         debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                         debit.companyId = model.companyId;
 
-
-
-                        if (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL == null)
+                        if ( !model.debitBusiness && context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL == null )
                             throw new BadLogicException($"No GL is currently mapped to this product code '{casa.TBL_PRODUCT.PRODUCTCODE}'.");
 
-                        debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                        debit.glAccountId = model.debitBusiness ? model.glAccountId : context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                         debit.sourceReferenceNumber = model.requestCode;
                         debit.batchCode = batchCode;
-                        debit.casaAccountId = casa.CASAACCOUNTID;
+                        if(!model.debitBusiness)debit.casaAccountId = casa.CASAACCOUNTID;
                         debit.debitAmount = debitAmount;
                         debit.creditAmount = 0;
                         debit.sourceBranchId = model.userBranchId;
-                        debit.destinationBranchId = casa.BRANCHID;
+                        debit.destinationBranchId = model.debitBusiness ? model.userBranchId : casa.BRANCHID;
                         debit.rateCode = "TTB";
                         debit.rateUnit = string.Empty;
-                        debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                        debit.currencyCrossCode = model.debitBusiness ? model.currencyCode : casa.TBL_CURRENCY.CURRENCYCODE;
 
                         inputTransactions.Add(debit);
                     }
@@ -2326,7 +2338,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                         credit.destinationBranchId = model.userBranchId;
                         credit.rateCode = "TTB";
                         credit.rateUnit = string.Empty;
-                        credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                        credit.currencyCrossCode = model.debitBusiness ? model.currencyCode : casa.TBL_CURRENCY.CURRENCYCODE;
 
                         inputTransactions.Add(credit);
                     }
