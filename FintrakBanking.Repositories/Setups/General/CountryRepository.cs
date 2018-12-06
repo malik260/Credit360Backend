@@ -80,18 +80,19 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<CityViewModel> GetCity()
         {
             var cityEntity = (from a in context.TBL_CITY
+                              join l in context.TBL_LOCALGOVERNMENT on a.LOCALGOVERNMENTID equals l.LOCALGOVERNMENTID
+                              join s in context.TBL_STATE on l.STATEID equals s.STATEID
                               select new CityViewModel
                               {
                                   cityId = a.CITYID,
                                   cityName = a.CITYNAME,
-                                  localGovt = a.TBL_LOCALGOVERNMENT.NAME,
-                                  stateName = a.TBL_LOCALGOVERNMENT.TBL_STATE.STATENAME,
-                                  cityClassId = a.CITYCLASSID,
-                                  cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
+                                  localGovt = context.TBL_LOCALGOVERNMENT.Where(l=>l.LOCALGOVERNMENTID==a.LOCALGOVERNMENTID).Select(l=>l.NAME).FirstOrDefault(),
+                                  stateName = s.STATENAME,
+                                 // cityClassId = a.CITYCLASSID,
+                                  cityClassName = context.TBL_CITY_CLASS.Where(o=>o.CITYCLASSID==a.CITYCLASSID).Select(o=>o.CITYCLASSNAME).FirstOrDefault(),
                                   allowedForCollateral = a.ALLOWEDFORCOLLATERAL,
-                                  stateId = a.TBL_LOCALGOVERNMENT.STATEID,
+                                  stateId = s.STATEID,
                                   localGovernmentId = a.LOCALGOVERNMENTID
-                                 
                               });
             return cityEntity;
         }
