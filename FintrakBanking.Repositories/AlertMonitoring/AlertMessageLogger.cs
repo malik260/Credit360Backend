@@ -3036,7 +3036,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 MESSAGEBODY = bodyContent,
                 MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                 MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                FROMADDRESS = "sendere amail",
+                FROMADDRESS = "sender email",
                 DATETIMERECEIVED = DateTime.Now,
                 SENDONDATETIME = DateTime.Now,
                 TARGETID = targetId,
