@@ -817,6 +817,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 var customChartOfAccount = context.TBL_CUSTOM_CHART_OF_ACCOUNT.FirstOrDefault(c => c.CUSTOMACCOUNTID == chargeModel.glAccountId);
                 chargeModel.referenceNumber = customChartOfAccount != null ? customChartOfAccount.ACCOUNTID : string.Empty;
+
+                chargeModel.currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == customChartOfAccount.CURRENCYCODE).FirstOrDefault().CURRENCYID;
             }
 
             const string DATA_PACKET = "DATAPACKET";
@@ -1314,7 +1316,7 @@ namespace FintrakBanking.Repositories.Credit
                             debit.description = $"Fee charge on {debits.DESCRIPTION}";
                             debit.valueDate = genSetup.GetApplicationDate();
                             debit.transactionDate = debit.valueDate;
-                            debit.currencyId = casa.CURRENCYID;
+                            debit.currencyId = model.debitBusiness ? model.currencyId : casa.CURRENCYID;
                             debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
                             debit.isApproved = true;
                             debit.postedBy = model.createdBy;
@@ -1332,10 +1334,10 @@ namespace FintrakBanking.Repositories.Credit
                             debit.debitAmount = debitAmount;
                             debit.creditAmount = 0;
                             debit.sourceBranchId = model.userBranchId;
-                            debit.destinationBranchId = casa.BRANCHID;
-                            debit.rateCode = "TTB";
-                            debit.rateUnit = string.Empty;
-                            debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            debit.destinationBranchId = model.debitBusiness ? model.userBranchId : casa.BRANCHID;
+                            //debit.rateCode = "TTB";
+                            //debit.rateUnit = string.Empty;
+                            //debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(debit);
                         }
@@ -1371,9 +1373,9 @@ namespace FintrakBanking.Repositories.Credit
                             credit.creditAmount = creditAmount;
                             credit.sourceBranchId = model.userBranchId;
                             credit.destinationBranchId = model.userBranchId;
-                            credit.rateCode = "TTB";
-                            credit.rateUnit = string.Empty;
-                            credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            //credit.rateCode = "TTB";
+                            //credit.rateUnit = string.Empty;
+                            //credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(credit);
                         }
@@ -1412,9 +1414,9 @@ namespace FintrakBanking.Repositories.Credit
                             debit.creditAmount = creditAmount;
                             debit.sourceBranchId = model.userBranchId;
                             debit.destinationBranchId = casa.BRANCHID;
-                            debit.rateCode = "TTB";
-                            debit.rateUnit = string.Empty;
-                            debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            //debit.rateCode = "TTB";
+                            //debit.rateUnit = string.Empty;
+                            //debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(debit);
                         }
@@ -1450,9 +1452,9 @@ namespace FintrakBanking.Repositories.Credit
                             credit.creditAmount = 0;
                             credit.sourceBranchId = model.userBranchId;
                             credit.destinationBranchId = model.userBranchId;
-                            credit.rateCode = "TTB";
-                            credit.rateUnit = string.Empty;
-                            credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            //credit.rateCode = "TTB";
+                            //credit.rateUnit = string.Empty;
+                            //credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(credit);
                         }
