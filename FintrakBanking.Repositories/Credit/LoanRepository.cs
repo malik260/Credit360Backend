@@ -8804,6 +8804,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = d.TBL_PRODUCT1.PRODUCTTYPEID, // 1
                                        productName = d.TBL_PRODUCT1.PRODUCTNAME, // 1
+                                       loanSystemTypeId = (int)LoanSystemTypeEnum.LineFacility,
                                        //writtenOff = a.LOANSTATUSID == 7
 
                                    });
