@@ -997,7 +997,7 @@ namespace FintrakBanking.Repositories.Credit
                         checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                     }
 
-                    //if (isCheckListDone == false) break;
+                    if (isCheckListDone == false) break;
 
                 } // foreach loanApplicationDetails
 
