@@ -7586,8 +7586,7 @@ namespace FintrakBanking.Repositories.Credit
             if (loanType == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 result = GetDisbursedLoanByLoan(loanId);
-                var test = result.operationReview;
-                return result;
+                return result; 
             }
             else if (loanType == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
