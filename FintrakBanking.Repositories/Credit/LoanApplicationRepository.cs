@@ -997,7 +997,7 @@ namespace FintrakBanking.Repositories.Credit
                         checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                     }
 
-                    // if (isCheckListDone == false) break;
+                    //if (isCheckListDone == false) break;
 
                 } // foreach loanApplicationDetails
 
@@ -1586,9 +1586,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("No fee is defined for this product(s)");
                 }
-
-
-
             }
         }
 
@@ -1862,8 +1859,6 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     context.TBL_LOAN_APPLICATION.Remove(dataapplication);
                 }
-
-
             }
             return context.SaveChanges() > 0;
         }
