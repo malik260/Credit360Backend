@@ -9310,8 +9310,11 @@ namespace FintrakBanking.Repositories.Credit
             bool result = false;
             try
             {
-                //decimal pastDueRate = 0;//change to pastdueRate
-                decimal pastDueRate = (decimal)context.TBL_SETUP_COMPANY.Where(x => x.COMPANYID == loanInput.companyId).Select(x => x.PASTDUEINDEFAULT_INTERESTRATE).FirstOrDefault();//change to pastdueRate
+               //decimal pastDueRate = 0;//change to pastdueRate
+              //decimal pastDueRate = (decimal)context.TBL_SETUP_COMPANY.Where(x => x.COMPANYID == loanInput.companyId).Select(x => x.PASTDUEINDEFAULT_INTERESTRATE).FirstOrDefault();//change to pastdueRate
+                decimal pastDueRate = (decimal)context.TBL_PRODUCT.Where(x => x.PRODUCTID == loanInput.productId).Select(x => x.PENALCHARGERATE).FirstOrDefault();//change to pastdueRate
+
+
                 var systemDate = generalSetup.GetApplicationDate();
                 loanInput.date = applicationDate;
                 var loan = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
@@ -13879,10 +13882,10 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-            if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
-            {
-                throw new ConditionNotMetException("The requested operation already exist and going through approval");
-            }
+            //if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
+            //{
+            //    throw new ConditionNotMetException("The requested operation already exist and going through approval");
+            //}
 
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
 
@@ -15106,7 +15109,7 @@ namespace FintrakBanking.Repositories.Credit
                                 {
                                     loanId = b.CONTINGENTLOANID,
                                     principalAmount = (double)b.CONTINGENTAMOUNT,
-
+                                    loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                     //interestRate = b.INTERESTRATE,
                                     effectiveDate = a.EFFECTIVEDATE,
                                     maturityDate = b.MATURITYDATE,
