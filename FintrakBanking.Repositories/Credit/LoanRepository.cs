@@ -2275,7 +2275,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                 applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                 applicationStatusId = m.APPLICATIONSTATUSID,
-                                operationId = (short)OperationsEnum.LoanTrancheBookingRequest,
+                                operationId = atrail.OPERATIONID, //(short)OperationsEnum.LoanTrancheBookingRequest,
                                 requestedAmount = req.AMOUNT_REQUESTED,
                                 customerId = m.CUSTOMERID ?? 0,
                                 customerCode = cust.CUSTOMERCODE,
