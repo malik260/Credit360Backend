@@ -61,20 +61,20 @@ namespace FintrakBanking.MonitoringMessagesSender
                 try
                 {
 
-                    //SEND EMAILS
-                    //bool response = emailSender.SendEmails();
-                    //if (response == true)
-                    //{
-                    //    _log.Info("");
-                    //    _log.Info("==================================================================");
-                    //    _log.Info("Emails has been sent successfully and ends at : " + DateTime.Now);
-                    //}
-                    //else
-                    //{
-                    //    _log.Info("");
-                    //    _log.Info("==================================================================");
-                    //    _log.Info("No email has been sent as at : " + DateTime.Now);
-                    //}
+                   // SEND EMAILS
+                    bool response = emailSender.SendEmails();
+                    if (response == true)
+                    {
+                        _log.Info("");
+                        _log.Info("==================================================================");
+                        _log.Info("Emails has been sent successfully and ends at : " + DateTime.Now);
+                    }
+                    else
+                    {
+                        _log.Info("");
+                        _log.Info("==================================================================");
+                        _log.Info("No email has been sent as at : " + DateTime.Now);
+                    }
 
 
                     //LOG SLA APPROVAL NOTIFICATIONS

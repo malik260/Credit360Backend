@@ -997,7 +997,7 @@ namespace FintrakBanking.Repositories.Credit
                         checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
                     }
 
-                    // if (isCheckListDone == false) break;
+                    if (isCheckListDone == false) break;
 
                 } // foreach loanApplicationDetails
 
@@ -1586,9 +1586,6 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     throw new SecureException("No fee is defined for this product(s)");
                 }
-
-
-
             }
         }
 
@@ -1862,8 +1859,6 @@ namespace FintrakBanking.Repositories.Credit
                     }
                     context.TBL_LOAN_APPLICATION.Remove(dataapplication);
                 }
-
-
             }
             return context.SaveChanges() > 0;
         }
@@ -2193,11 +2188,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanApplicationDetailViewModel> GetAllLoanApplicationsDetailsById(int loanApplicationId, int companyId)
         {
+
             var data = (from a in context.TBL_LOAN_APPLICATION
                         join b in context.TBL_LOAN_APPLICATION_DETAIL
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         where a.LOANAPPLICATIONID == loanApplicationId
                         && a.COMPANYID == companyId && a.DELETED == false
+                        && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new LoanApplicationDetailViewModel()
                         {
                             loanApplicationId = b.LOANAPPLICATIONID,

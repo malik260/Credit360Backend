@@ -1421,8 +1421,9 @@ namespace FintrakBanking.Repositories.Credit
             if (isAvailment)
             {
                 var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                              where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId &&
-                             c.ISSUBSEQUENT == false
+                              join a in context.TBL_LOAN_APPLICATION_DETAIL on c.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                              where a.LOANAPPLICATIONID == loanApplicationId &&
+                             c.ISSUBSEQUENT == false && a.STATUSID == (int)ApprovalStatusEnum.Approved
                               orderby c.ISEXTERNAL descending
                               select new ConditionPrecedentViewModel()
                               {

@@ -382,7 +382,7 @@ namespace FintrakBanking.APICore.Controllers
                 AUDITTYPEID = (short)AuditTypeEnum.LoggedOut,
                 STAFFID = token.GetStaffId,
                 BRANCHID = (short)token.GetBranchId,
-                DETAIL = $"{token.GetUsername} logged out due to system idle timeout",
+                DETAIL = $"{token.GetUsername} logged out due to system idle timeout "+(DateTime.Now).ToLongTimeString(),
                 IPADDRESS = CommonHelpers.GetUserIP(),
                 URL = Request.RequestUri.AbsoluteUri,
                 APPLICATIONDATE = _genSetup.GetApplicationDate(),

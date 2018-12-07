@@ -2275,7 +2275,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                 applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                 applicationStatusId = m.APPLICATIONSTATUSID,
-                                operationId = (short)OperationsEnum.LoanTrancheBookingRequest,
+                                operationId = atrail.OPERATIONID, //(short)OperationsEnum.LoanTrancheBookingRequest,
                                 requestedAmount = req.AMOUNT_REQUESTED,
                                 customerId = m.CUSTOMERID ?? 0,
                                 customerCode = cust.CUSTOMERCODE,
@@ -3298,7 +3298,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
                 /*UPDATING STAFF MIS */
-                //this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
+                this.updateLoanRevolvingStaffMIS(revolvingLoanRecord);
 
                 /* BUILD FEE MODEL & HANDLE FEE POSTING */
                 var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.OverdraftFacility);
@@ -3343,6 +3343,17 @@ namespace FintrakBanking.Repositories.Credit
                 contingentLoanRecord.DATEAPPROVED = DateTime.Now;
                 contingentLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
 
+                var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
+                loanScheduleModel.operationId = contingentLoanRecord.OPERATIONID;
+                loanScheduleModel.createdBy = contingentLoanRecord.CREATEDBY;
+                loanScheduleModel.casaAccountId = contingentLoanRecord.CASAACCOUNTID;
+                loanScheduleModel.companyId = contingentLoanRecord.COMPANYID;
+                loanScheduleModel.loanReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER;
+                loanScheduleModel.branchId = contingentLoanRecord.BRANCHID;
+
+                var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
+                if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
+
                 var loanProductInfo = context.TBL_PRODUCT.Find(contingentLoanRecord.PRODUCTID);
                 var productBehaviour = loanProductInfo.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID);
                 if (loanProductInfo.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees && productBehaviour.Any() && productBehaviour.FirstOrDefault().ALLOWFUNDUSAGE == true)
@@ -3380,20 +3391,8 @@ namespace FintrakBanking.Repositories.Credit
                     userBranchId = (short)user.BranchId,
                     userIPAddress = user.userIPAddress
                 };
-
                 PostContingentLiabilityPrincipalEntry((int)loanProductInfo.PRINCIPALBALANCEGL, (int)loanProductInfo.PRINCIPALBALANCEGL2, contingentLoanRecord, contingentLoanRecord.CONTINGENTAMOUNT, basicPostInputs, twoFactorAuthDetails);
                 twoFactorAuthDetails.skipAuthentication = true;
-
-                var loanScheduleModel = BuildLoanFeeDisbursementModel(loanId, (short)LoanSystemTypeEnum.ContingentLiability);
-                loanScheduleModel.operationId = contingentLoanRecord.OPERATIONID;
-                loanScheduleModel.createdBy = contingentLoanRecord.CREATEDBY;
-                loanScheduleModel.casaAccountId = contingentLoanRecord.CASAACCOUNTID;
-                loanScheduleModel.companyId = contingentLoanRecord.COMPANYID;
-                loanScheduleModel.loanReferenceNumber = contingentLoanRecord.LOANREFERENCENUMBER;
-                loanScheduleModel.branchId = contingentLoanRecord.BRANCHID;
-
-                var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
-                if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
 
                 /*UPDATING STAFF MIS */
                 this.updateLoanContingentStaffMIS(contingentLoanRecord);
@@ -7587,8 +7586,7 @@ namespace FintrakBanking.Repositories.Credit
             if (loanType == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 result = GetDisbursedLoanByLoan(loanId);
-                var test = result.operationReview;
-                return result;
+                return result; 
             }
             else if (loanType == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
@@ -7814,6 +7812,7 @@ namespace FintrakBanking.Repositories.Credit
                                    productId = a.PRODUCTID,
                                    companyId = a.COMPANYID,
                                    casaAccountId = a.CASAACCOUNTID,
+                                   customerType = b.TBL_CUSTOMER_TYPE.NAME,
                                    branchId = a.BRANCHID,
                                    branchName = br.BRANCHNAME,
                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
@@ -8020,6 +8019,7 @@ namespace FintrakBanking.Repositories.Credit
                                    productId = a.PRODUCTID,
                                    companyId = a.COMPANYID,
                                    casaAccountId = a.CASAACCOUNTID,
+                                   customerType = b.TBL_CUSTOMER_TYPE.NAME,
                                    branchId = a.BRANCHID,
                                    branchName = br.BRANCHNAME,
                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
@@ -8804,6 +8804,7 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = d.TBL_PRODUCT1.PRODUCTTYPEID, // 1
                                        productName = d.TBL_PRODUCT1.PRODUCTNAME, // 1
+                                       loanSystemTypeId = (int)LoanSystemTypeEnum.LineFacility,
                                        //writtenOff = a.LOANSTATUSID == 7
 
                                    });

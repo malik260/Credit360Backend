@@ -5,10 +5,10 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using System.Threading.Tasks;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -83,6 +83,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var response = repo.getUploadedDocument(model);
+
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)
@@ -91,10 +92,10 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
         [Route("get-all-document-uploads")]
-        public async Task<HttpResponseMessage> GetAllUploadedDocument(LoanDocumentViewModel model)
+        public HttpResponseMessage GetAllUploadedDocument(LoanDocumentViewModel model)
         {
             try
             {
@@ -106,6 +107,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
+
+
+        //[HttpPost] [ClaimsAuthorization]
+        //[Route("get-all-document-uploads")]
+        //public async Task<HttpResponseMessage> GetAllUploadedDocument(LoanDocumentViewModel model)
+        //{
+        //    try
+        //    {
+        //        var response = repo.getListOfUploadedDocument(model);
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        //    }
+        //    catch (SecureException ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+        //    }
+        //}
 
          [HttpPost] [ClaimsAuthorization]
         [Route("delete-uploaded-document")]

@@ -9,6 +9,9 @@ using System.Configuration;
 using System.Net.Mail;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Common.CustomException;
+using System.IO;
+using FintrakBanking.ViewModels.WorkFlow;
+using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
@@ -29,7 +32,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
         private  string[] Addy = { };
 
         FinTrakBankingContext dbContext = new FinTrakBankingContext();
-
+        FinTrakBankingDocumentsContext docContext = new FinTrakBankingDocumentsContext();
         public EmailSender(IAlertMessagesEngine _logger)
         {
             logger = _logger;
@@ -230,6 +233,24 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                             mail.Subject = newMail.MESSAGESUBJECT;
                             mail.Body = newMail.MESSAGEBODY;
                             mailId = newMail.MESSAGEID;
+
+                            if (newMail.ATTACHMENTTYPEID != null)
+                            {
+                                if(newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.JobRequest)
+                                {
+                                    List<TBL_MEDIA_JOB_REQUEST_DOCUMENT> requestDoc = new List<TBL_MEDIA_JOB_REQUEST_DOCUMENT>();
+                                    
+                                    requestDoc = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.JOBREQUESTCODE == newMail.ATTACHMENTCODE).ToList();
+                                    foreach (var binaryFile in requestDoc)
+                                    {
+                                        MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
+                                        mail.Attachments.Add(new Attachment(memoryStream, binaryFile.FILENAME, binaryFile.FILEEXTENSION));
+                                    }
+
+                                }
+    
+
+                            }
 
                             Console.WriteLine("");
                             Console.WriteLine("Email Sending started ~~~~~~~~");

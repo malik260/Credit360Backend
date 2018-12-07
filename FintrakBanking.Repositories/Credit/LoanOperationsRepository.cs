@@ -12275,6 +12275,7 @@ namespace FintrakBanking.Repositories.Credit
                                          relationshipManagerId =  ln.RELATIONSHIPMANAGERID,
                                          misCode = ln.MISCODE,
                                          teamMiscode = ln.TEAMMISCODE,
+                                         principalAmount = ln.CONTINGENTAMOUNT,
                                          //interestRate = ln.INTERESTRATE,
                                          effectiveDate = ln.EFFECTIVEDATE,
                                          maturityDate = ln.MATURITYDATE,

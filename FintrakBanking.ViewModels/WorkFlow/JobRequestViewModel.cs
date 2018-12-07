@@ -146,12 +146,17 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public int reasignmentId { get; set; }
         public int jobTypeId { get; set; }
 
-        public string JobType { get; set; }
     }
 
     public class JobRequestCollateralSearchViewModel : GeneralEntity
     {
-        public int casaAccountId { get; set; }
+        public string currencyCode { get; set; }
+
+        public int glAccountId { get; set; }
+
+        public bool debitBusiness { get; set; }
+
+        public int? casaAccountId { get; set; }
         public int? jobSubTypeclassId { get; set; }
         public bool requireCharting { get; set; }
         public bool requireVerification { get; set; }
@@ -219,9 +224,15 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobTypeHubViewModel : GeneralEntity
     {
+        public string jobTypeUnitName { get; set; }
+
         public short jobTypeHubId { get; set; }
         public string jobTypeHubName { get; set; }
+        public string staffName { get; set; }
+
         public short jobTypeId { get; set; }
+        public short jobTypeUnitId { get; set; }
+        public bool isTeamLead { get; set; }
     }
 
     public class HubStaffViewModel : GeneralEntity
