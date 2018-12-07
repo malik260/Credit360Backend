@@ -1797,7 +1797,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             debitAmount = (decimal)model.totalChargeAmount;
 
                         debit.operationId = (int)model.operationId;
-                        debit.description = "Collateral related charge for facility application"; // model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
+                        debit.description = "Collateral related charge on facility"; // model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
                         debit.valueDate = general.GetApplicationDate();
                         debit.transactionDate = debit.valueDate;
                         debit.currencyId = model.debitBusiness ? (short)model.currencyId : casa.CURRENCYID;
