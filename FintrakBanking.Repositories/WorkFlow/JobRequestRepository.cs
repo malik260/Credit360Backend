@@ -21,6 +21,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Setups.Finance;
 using System.Configuration;
+using System.ServiceModel;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -980,6 +981,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
         #region ...Collateral Search Job Charges...
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
             // NOTE: THIS METHOD IS USED BY RM & LEGAL IN TWO WAYS
@@ -1839,7 +1841,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
                         credit.operationId = (int)model.operationId;
-                        credit.description = "Collateral related charge for facility application"; // model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
+                        credit.description = "Collateral related charge on facility"; // model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
                         credit.valueDate = general.GetApplicationDate();
                         credit.transactionDate = credit.valueDate;
                         credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).CURRENCYID; // (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
