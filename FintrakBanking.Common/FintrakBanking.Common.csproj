@@ -92,6 +92,7 @@
     <Compile Include="CustomException\TwoFactorAuthenticationException.cs" />
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\ApprovalLevelType.cs" />
+    <Compile Include="Enum\AttachmentTypeEnum.cs" />
     <Compile Include="Enum\OtherOperationEnum.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\AccreditedConsultantTypeEnum.cs" />

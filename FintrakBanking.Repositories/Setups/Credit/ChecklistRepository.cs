@@ -1423,7 +1423,7 @@ namespace FintrakBanking.Repositories.Credit
                 var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
                               join a in context.TBL_LOAN_APPLICATION_DETAIL on c.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
                               where a.LOANAPPLICATIONID == loanApplicationId &&
-                             c.ISSUBSEQUENT == false
+                             c.ISSUBSEQUENT == false && a.STATUSID == (int)ApprovalStatusEnum.Approved
                               orderby c.ISEXTERNAL descending
                               select new ConditionPrecedentViewModel()
                               {
