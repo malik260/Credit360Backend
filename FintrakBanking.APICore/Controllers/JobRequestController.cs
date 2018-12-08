@@ -90,10 +90,18 @@ namespace FintrakBanking.APICore.Controllers
         [Route("job-type-admin-staff")]
         public HttpResponseMessage GetJobTypeReasignmentAdminStaff()
         {
-            var data = repo.GetJobTypeReasignmentAdminStaff(token.GetCompanyId);
+            var data = repo.GetJobTypeReasignmentAdmin(token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-type-hub-staff")]
+        public HttpResponseMessage GetJobTypeHubStaff()
+        {
+            var data = repo.GetJobTypeHubStaff();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/{jobRequestId}")]
@@ -952,7 +960,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("reasigned-job-type")]
         public HttpResponseMessage GetJobTypeReasignment(int staffId)
         {
-            var data = repo.GetJobTypeReasignment(token.GetCompanyId);
+            var data = repo.GetJobTypeReasignmentAdmin(token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
         #endregion job-type
