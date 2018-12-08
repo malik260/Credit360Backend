@@ -52,6 +52,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string purpose { get; set; }
         public short currencyId { get; set; }
         public string productPriceIndex { get; set; }
+        public DateTime? approvedDate { get; set; }
+        public string approvedAmountCurrency { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public string interestRateAndFees { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity

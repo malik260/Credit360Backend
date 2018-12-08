@@ -166,7 +166,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>This letter, it is stressed, does not constitute authority to allow utilization of the facilities until all the conditions precedent are resolved and (CVO) Credit Verification Officer signs-off. Pricing for this facility must be conveyed to the customer as indicated below, along with the proviso that the Bank reserves the right to vary same at anytime during the tenor of the facilities in line with market dictates.</Value>
+                <Value>This letter, it is stressed, does not constitute authority to allow utilization of the facilities until all the conditions precedent are resolved and Credit Verification Officer signs-off (CVO). Pricing for this facility must be conveyed to the customer as indicated below, along with the proviso that the Bank reserves the right to vary same at anytime during the tenor of the facilities in line with market dictates.</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -1490,7 +1490,6 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
