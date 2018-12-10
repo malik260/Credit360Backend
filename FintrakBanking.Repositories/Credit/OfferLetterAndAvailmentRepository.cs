@@ -1999,6 +1999,11 @@ namespace FintrakBanking.Repositories.Credit
             workflow.LogActivity(); // ------------------- LOG ONCE
 
             PendingJobRequestCheck(loanApplicationDetails); // austin!
+
+            var checkListResult = AvailmentChecklistValidation(loanApplication.LOANAPPLICATIONID, entity.staffId);
+            if (!checkListResult.isdone)
+                throw new ConditionNotMetException(checkListResult.messageStr);
+
             int invalids = BeforeAvailmentValidationChecks(loanApplication.LOANAPPLICATIONID);
 
             bool workflowEnded = false;
@@ -2488,11 +2493,11 @@ namespace FintrakBanking.Repositories.Credit
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();
             int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
             bool isCheckListDone = true;
-            var dat = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId).ToList();
+            var applicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId).ToList();
 
-            if (dat != null)
+            if (applicationDetails != null)
             {
-                foreach (var d in dat)
+                foreach (var d in applicationDetails)
                 {
                     var types = from a in context.TBL_CHECKLIST_TYPE select a;
                     foreach (var item in types)
@@ -2509,7 +2514,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
 
 
-                        var detail = (from a in context.TBL_CHECKLIST_DEFINITION
+                        var checklistItems = (from a in context.TBL_CHECKLIST_DEFINITION
                                       join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
                                       equals b.CHECKLISTDEFINITIONID
                                       where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
@@ -2547,7 +2552,8 @@ namespace FintrakBanking.Repositories.Credit
                         //        checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
                         //    }
                         //}
-                        var ab = detail.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null);
+
+                        var ab = checklistItems.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null);
                         if (ab.Any())
                         {
                             isCheckListDone = false;

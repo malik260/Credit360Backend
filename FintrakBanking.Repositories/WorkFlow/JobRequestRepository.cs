@@ -1391,8 +1391,48 @@ namespace FintrakBanking.Repositories.WorkFlow
             return details;
         }
 
+        public bool mapJobTypeHubStaff(JobTypeHubViewModel model)
+        {
+            var applicationDate = general.GetApplicationDate();
+
+            var newJobTypeHubStaff = new TBL_JOB_TYPE_HUB_STAFF
+            {
+                STAFFID = model.staffId,
+                JOBTYPEUNITID = model.jobTypeUnitId,
+                JOBTYPEHUBID = model.jobTypeHubId,
+                ISTEAMLEAD = model.isTeamLead,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = model.dateTimeCreated,
+                DELETED = false,
+
+            };
+            context.TBL_JOB_TYPE_HUB_STAFF.Add(newJobTypeHubStaff);
+
+            var staff = context.TBL_STAFF.Find(model.staffId);
+            var hub = context.TBL_JOB_TYPE_HUB.Find(model.jobTypeHubId);
+            var unit = context.TBL_JOB_TYPE_UNIT.Find(model.jobTypeUnitId);
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.JobRequestHubStaffAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Staff with staff code '{ staff.STAFFCODE }' of '{unit.UNITNAME}' unit was added to '{hub.HUBNAME}' hub  ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = applicationDate,
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() > 0;
+
+        }
+
         public bool AssignJobTypeToStaff(jobReasignment model)
         {
+            var applicationDate = general.GetApplicationDate();
             if (context.TBL_JOB_TYPE_REASSIGNMENT.Any(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId))
                 throw new ConditionNotMetException("This job type exist for this staff");
 
@@ -1408,22 +1448,23 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
             context.TBL_JOB_TYPE_REASSIGNMENT.Add(newType);
 
+            // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
                 STAFFID = model.createdBy,
-                //BRANCHID = (short)model.BranchId,
+                BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = applicationDate,
                 SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
 
-            if (context.SaveChanges() > 0) return true;
+            return context.SaveChanges() > 0;
 
-            return false;
         }
 
         public bool DeleteJobTypeForAStaff(jobReasignment model)
