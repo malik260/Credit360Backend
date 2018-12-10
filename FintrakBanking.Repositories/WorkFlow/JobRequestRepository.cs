@@ -21,6 +21,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Setups.Finance;
 using System.Configuration;
+using System.ServiceModel;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -983,6 +984,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
 
         #region ...Collateral Search Job Charges...
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
             // NOTE: THIS METHOD IS USED BY RM & LEGAL IN TWO WAYS
