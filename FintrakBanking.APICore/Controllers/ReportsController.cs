@@ -805,9 +805,10 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetFCYScheuledLoan(token.GetCompanyId, id, token.GetCompanyId);
+                var data = repo.GetFCYScheuledLoan(token.GetCompanyId, id, token.GetStaffId);
                 if (data == null)
                 {
+                    
                     return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = false, message = "No record found" });
                 }

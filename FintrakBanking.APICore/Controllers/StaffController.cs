@@ -512,6 +512,7 @@ namespace FintrakBanking.APICore.Controllers
         [Route("staff/search/")]
         public HttpResponseMessage SearchStaff(string queryString="")
         {
+            if (queryString == null) queryString = string.Empty;
             var data = repo.SearchStaff(queryString, token.GetCompanyId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList() });
         }

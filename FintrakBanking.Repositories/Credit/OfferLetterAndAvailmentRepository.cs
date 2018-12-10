@@ -2253,6 +2253,7 @@ namespace FintrakBanking.Repositories.Credit
                 var detailids = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == id)
                     .Select(x => x.LOANAPPLICATIONDETAILID)
                     .ToList();
+
                 count = context.TBL_LOAN_CONDITION_PRECEDENT.Where(x => detailids.Contains(x.LOANAPPLICATIONDETAILID)
                         && x.CHECKLISTSTATUSID == (int)CheckListStatusEnum.Deferred
                         && x.ISSUBSEQUENT == false

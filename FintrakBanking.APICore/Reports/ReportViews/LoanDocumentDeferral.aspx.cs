@@ -55,7 +55,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "Defferals";
+                    reportDataSource.Name = "LoanDeferrals";
 
                     ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
                     ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());

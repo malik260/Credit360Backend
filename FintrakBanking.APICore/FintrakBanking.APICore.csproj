@@ -1222,6 +1222,7 @@
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
     <Content Include="Reports\Report\AuditTrailReports.rdlc">
@@ -1232,7 +1233,6 @@
     <EmbeddedResource Include="Reports\Report\FCYScheuledLoan.rdlc" />
     <EmbeddedResource Include="Reports\Report\FinanceTransactions.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanAnniversery.rdlc" />
-    <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentDeferralForMCC.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaived.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanRepayment.rdlc" />

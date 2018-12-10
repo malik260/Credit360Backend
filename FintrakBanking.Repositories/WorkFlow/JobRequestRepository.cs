@@ -452,7 +452,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                             assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                        })).ToList().OrderByDescending(x => x.arrivalDate); ;
+                        })).ToList().OrderByDescending(x => x.arrivalDate);
 
 
             foreach (var item in data)
@@ -461,8 +461,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (detail.Any())
                 {
                     item.hasLegalRecommendedSearch = true;
-                    if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
+                    if (detail.FirstOrDefault().CUSTOMERORBUSINESSCHARGED == true)
                         item.customerCharged = true;
+
+                    if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
+                        item.consultantPaid = true;
                 };
 
                 if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
@@ -1053,7 +1056,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                 //When RM apply fee on customer's account
-                if (model.isInitiation)
+                if(model.isInitiation)
                 {
                     if (model.debitBusiness)
                     {
@@ -1073,10 +1076,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     model.accountNumber = accountNumber;
                     inputTransactions.AddRange(BuildSolicitorFeePaymentPosting(model));
-
                 }
                     
-                
                 if (inputTransactions.Count > 0)
                 {
                     financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
@@ -1099,14 +1100,14 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                     if (model.isInitiation) //When RM apply fee on customer's account
                     {
-                        inputTransactions.AddRange(BuildCollateralSearchChargeFeesPosting(model));
-                        //Sending mail to solicitor
                         if (consultantRecord.Any())
                         {
                             List<string> jobs = new List<string>();
                             foreach (var i in jobRequestDetail)
                             {
                                 jobs.Add(i.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME);
+                                i.CUSTOMERORBUSINESSCHARGED = true;
+                                if (model.debitBusiness) i.DEBITBUSINESS = true;
                             }
                             var solicitor = consultantRecord.FirstOrDefault();
                             string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /><br /> '{jobs}'. <br /><br /> Kindly kindly contact FBN legal department for more info. <br /><br />";
@@ -1389,6 +1390,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return details;
         }
+
         public bool AssignJobTypeToStaff(jobReasignment model)
         {
             if (context.TBL_JOB_TYPE_REASSIGNMENT.Any(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId))
@@ -2182,6 +2184,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                           }).ToList();
             return status;
         }
+
         public IEnumerable<JobRequestStatusFeedbackViewModel> GetAllJobRequestStatusFeedback()
         {
             var feedback = (from x in context.TBL_JOB_REQUEST_STATUS_FEEDBAK
@@ -2247,6 +2250,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 throw ex;
             }
         }
+
         public bool ValidateJobRequestFeedBack(string feedback)
         {
             var isExist = (from a in context.TBL_JOB_REQUEST_STATUS_FEEDBAK
