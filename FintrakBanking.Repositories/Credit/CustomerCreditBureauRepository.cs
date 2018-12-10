@@ -444,8 +444,7 @@ namespace FintrakBanking.Repositories.Credit
         #region Integration 
         public XDSSearchResult GetCustomerXDSCreditMatch(CreditBureauSearchViewModel searchInfoList)
         {
-            XDSSearchResult resultData; // = new XDSSearchResult();
-
+            XDSSearchResult resultData;
 
             if (searchInfoList.dateOfBirth != string.Empty && searchInfoList.dateOfBirth != null)
             {
@@ -460,8 +459,7 @@ namespace FintrakBanking.Repositories.Credit
                 searchInfoList.userName = creditBureau.USERNAME;
                 searchInfoList.password = creditBureau.PASSWORD;
             }
-            else
-                throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin.");
+            else throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin.");
 
             List<string> searchResult = new List<string>();
             var feedBackString = string.Empty;
@@ -541,7 +539,7 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo)
+        private CreditBereauViewModel getBuiltCRCChargeModel(CRCRequestViewModel searchInfo)
         {
             var chargeModel = new CreditBereauViewModel();
             chargeModel.createdBy = searchInfo.createdBy;
@@ -551,25 +549,11 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.username = searchInfo.username;
             chargeModel.passCode = searchInfo.passCode;
 
-            var twoFADetails = new TwoFactorAutheticationViewModel
-            {
-                username = searchInfo.username,
-                passcode = searchInfo.passCode
-            };
+            return chargeModel;
+        }
 
-            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
-            {
-                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
-
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException(authenticated.message);
-            }
-
-            var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
-            searchInfo.userName = creditBureau.USERNAME;
-            searchInfo.password = creditBureau.PASSWORD;
-
-
+        private SearchInput getBuiltCRCSearchInputModel(CRCRequestViewModel searchInfo)
+        {
             var creditBureauInputs = new SearchInput()
             {
                 applicationUrl = searchInfo.applicationUrl,
@@ -593,20 +577,41 @@ namespace FintrakBanking.Repositories.Credit
                 }
             };
 
-            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+            return creditBureauInputs;
+        }
 
+        public CRCSearchResult GetCustomerCRCCreditMatch(CRCRequestViewModel searchInfo)
+        {
+            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
+            var chargeModel = getBuiltCRCChargeModel(searchInfo);
+            var twoFADetails = new TwoFactorAutheticationViewModel();
+            twoFADetails.username = searchInfo.username;
+            twoFADetails.passcode = searchInfo.passCode;
+
+            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+            {
+                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                if (authenticated.authenticated == false)
+                    throw new TwoFactorAuthenticationException(authenticated.message);
+            }
+
+            var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
+            searchInfo.userName = creditBureau.USERNAME;
+            searchInfo.password = creditBureau.PASSWORD;
+
+            var creditBureauInputs = getBuiltCRCSearchInputModel(searchInfo);
             var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
 
-            if (creditBureauInputs.casaAccountId == 0)
+            if (creditBureauInputs.casaAccountId == 0 && !searchInfo.debitBusiness)
                 throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin.");
 
-            if (casa == null) throw new SecureException("Norminated Account Does not Exist");
+            if (casa == null && !searchInfo.debitBusiness) throw new SecureException("Norminated Account Does not Exist");
 
             var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
             creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
 
-            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
-                : creditBureau.CORPORATE_CHARGEAMOUNT;
+            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
 
             if (chargeAmount > accountBalance)
             {
@@ -620,10 +625,21 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.feeAmount = chargeAmount;
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.casaAccountId = casa.CASAACCOUNTID;
+            chargeModel.debitBusiness = searchInfo.debitBusiness;
+            if (searchInfo.debitBusiness)
+            {
+                var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short)OtherOperationEnum.ChargeOnBank).FirstOrDefault();
+                if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
 
+                chargeModel.glAccountId = bizAccount.GLACCOUNTID;
+                chargeModel.casaAccountId = null;
+
+                var customChartOfAccount = context.TBL_CUSTOM_CHART_OF_ACCOUNT.FirstOrDefault(c => c.CUSTOMACCOUNTID == chargeModel.glAccountId);
+                chargeModel.referenceNumber = customChartOfAccount != null ? customChartOfAccount.ACCOUNTID : string.Empty;
+
+            }
 
             CRCSearchResult searchResponse = null;
-
             using (var docTrans = docContext.Database.BeginTransaction())
             using (var trans = context.Database.BeginTransaction())
             {
@@ -722,10 +738,8 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public string GetCRCFullCreditMergeReport(MultiHitRequestViewModel request)
+        private SearchInput getBuiltCRCCreditBureauSearchInputs(MultiHitRequestViewModel request)
         {
-            var creditBureau = context.TBL_CREDIT_BUREAU.Find(request.creditBureauId);
-
             var creditBureauInputs = new SearchInput()
             {
                 applicationUrl = request.applicationUrl,
@@ -743,12 +757,21 @@ namespace FintrakBanking.Repositories.Credit
                     companyDirectorId = request.companyDirectorId,
                     isReportOkay = true,
                     customerId = request.customerId,
-                    chargeAmount = request.companyDirectorId != 0 ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT,
+                   
                     usedIntegration = true,
                     dateCompleted = DateTime.Now,
                     debitBusiness = request.debitBusiness
                 }
             };
+            return creditBureauInputs;
+        }
+
+        public string GetCRCFullCreditMergeReport(MultiHitRequestViewModel request)
+        {
+            var creditBureau = context.TBL_CREDIT_BUREAU.Find(request.creditBureauId);
+
+            var creditBureauInputs = getBuiltCRCCreditBureauSearchInputs(request);
+            creditBureauInputs.customerCreditBureauUploadDetails.chargeAmount = request.companyDirectorId != 0 ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
 
             var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
             if (casa == null && !request.debitBusiness) throw new SecureException("Norminated Account Does not Exist");
@@ -756,16 +779,13 @@ namespace FintrakBanking.Repositories.Credit
             creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa.PRODUCTACCOUNTNUMBER : null;
 
             decimal accountBalance = 0;
-
             if (casa != null) accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
 
-            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
-                : creditBureau.CORPORATE_CHARGEAMOUNT;
+            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
 
             if (chargeAmount > accountBalance)
             {
-                if (!request.debitBusiness)
-                    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                if (!request.debitBusiness) throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
             }
 
             if (creditBureau != null)
@@ -773,8 +793,7 @@ namespace FintrakBanking.Repositories.Credit
                 request.userName = creditBureau.USERNAME;
                 request.password = creditBureau.PASSWORD;
             }
-            else
-                throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin.");
+            else { throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin."); }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
@@ -786,6 +805,21 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.companyId = request.companyId;
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.casaAccountId = casa.CASAACCOUNTID;
+            chargeModel.debitBusiness = request.debitBusiness;
+
+            if (request.debitBusiness)
+            {
+                var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short) OtherOperationEnum.ChargeOnBank).FirstOrDefault();
+                if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
+
+                chargeModel.glAccountId = bizAccount.GLACCOUNTID;
+                chargeModel.casaAccountId = null;
+
+                var customChartOfAccount = context.TBL_CUSTOM_CHART_OF_ACCOUNT.FirstOrDefault(c => c.CUSTOMACCOUNTID == chargeModel.glAccountId);
+                chargeModel.referenceNumber = customChartOfAccount != null ? customChartOfAccount.ACCOUNTID : string.Empty;
+
+                chargeModel.currencyId = context.TBL_CURRENCY.Where(x => x.CURRENCYCODE == customChartOfAccount.CURRENCYCODE).FirstOrDefault().CURRENCYID;
+            }
 
             const string DATA_PACKET = "DATAPACKET";
             const string ERROR = "ERROR_LIST";
@@ -830,10 +864,11 @@ namespace FintrakBanking.Repositories.Credit
                         if (!request.debitBusiness) { DebitCustomer(chargeModel); }
 
                         fileArray = Encoding.ASCII.GetBytes(dataResponse);
+
                         var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
                         if (SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
 
-                            context.SaveChanges();
+                        context.SaveChanges();
                         trans.Commit();
                         docTrans.Commit();
                         return dataResponse;
@@ -845,23 +880,19 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     trans.Rollback();
                     throw new ConditionNotMetException(ex.Message.ToString());
-
                 }
                 catch (APIErrorException ex)
                 {
                     trans.Rollback();
                     throw new APIErrorException(ex.Message.ToString());
-
                 }
                 catch (Exception ex)
                 {
                     trans.Rollback();
                     throw new BadLogicException(ex.Message.ToString());
-
                 }
             }
         }
-
 
         public bool saveCrcPdfFile(CRCRequestViewModel searchInfo, SearchInput creditBureauInputs)
         {
@@ -934,8 +965,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-
-
         public XDSSearchResult GetXDSFullSearchResultInPDF(SearchInput searchInput)
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -944,9 +973,9 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin.");
 
             var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
-            if (casa == null) throw new ConditionNotMetException("Norminated Account Does not Exist");
-
-            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+            if (casa == null && !searchInput.debitBusiness) throw new ConditionNotMetException("Norminated Account Does not Exist");
+            
+            var accountBalance = casa != null ? financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance : 0;
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
 
             var twoFADetails = new TwoFactorAutheticationViewModel
@@ -972,17 +1001,13 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.username = searchInput.username;
             chargeModel.passCode = searchInput.passCode;
 
-
             searchInput.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
             searchInput.userName = creditBureau.USERNAME;
             searchInput.password = creditBureau.PASSWORD;
 
-            var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT
-                : creditBureau.CORPORATE_CHARGEAMOUNT;
+            var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
 
-            var x = searchInput.mergeList.Distinct();
-            if (chargeAmount > accountBalance)
-                throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
+            if (chargeAmount > accountBalance && !searchInput.debitBusiness) throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
             if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
@@ -990,6 +1015,12 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.feeAmount = chargeAmount;
             chargeModel.casaAccountId = casa.CASAACCOUNTID;
+            if (searchInput.debitBusiness)
+            {
+                var customChartOfAccount = context.TBL_CUSTOM_CHART_OF_ACCOUNT.FirstOrDefault(c => c.CUSTOMACCOUNTID == chargeModel.glAccountId);
+                chargeModel.referenceNumber = customChartOfAccount != null ? customChartOfAccount .ACCOUNTID :string.Empty;
+                chargeModel.casaAccountId = null;
+            }
 
             byte[] binaryData = null;
             var response = new XDSSearchResult();
@@ -1285,7 +1316,7 @@ namespace FintrakBanking.Repositories.Credit
                             debit.description = $"Fee charge on {debits.DESCRIPTION}";
                             debit.valueDate = genSetup.GetApplicationDate();
                             debit.transactionDate = debit.valueDate;
-                            debit.currencyId = casa.CURRENCYID;
+                            debit.currencyId = model.debitBusiness ? model.currencyId : casa.CURRENCYID;
                             debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
                             debit.isApproved = true;
                             debit.postedBy = model.createdBy;
@@ -1295,18 +1326,18 @@ namespace FintrakBanking.Repositories.Credit
                             debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
                             debit.companyId = model.companyId;
 
-
-                            debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                            debit.glAccountId = model.debitBusiness ? model.glAccountId : context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
                             debit.sourceReferenceNumber = model.referenceNumber;
                             debit.batchCode = batchCode;
-                            debit.casaAccountId = casa.CASAACCOUNTID;
+
+                            if(!model.debitBusiness) debit.casaAccountId = casa.CASAACCOUNTID ;
                             debit.debitAmount = debitAmount;
                             debit.creditAmount = 0;
                             debit.sourceBranchId = model.userBranchId;
-                            debit.destinationBranchId = casa.BRANCHID;
-                            debit.rateCode = "TTB";
-                            debit.rateUnit = string.Empty;
-                            debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            debit.destinationBranchId = model.debitBusiness ? model.userBranchId : casa.BRANCHID;
+                            //debit.rateCode = "TTB";
+                            //debit.rateUnit = string.Empty;
+                            //debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(debit);
                         }
@@ -1342,9 +1373,9 @@ namespace FintrakBanking.Repositories.Credit
                             credit.creditAmount = creditAmount;
                             credit.sourceBranchId = model.userBranchId;
                             credit.destinationBranchId = model.userBranchId;
-                            credit.rateCode = "TTB";
-                            credit.rateUnit = string.Empty;
-                            credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            //credit.rateCode = "TTB";
+                            //credit.rateUnit = string.Empty;
+                            //credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(credit);
                         }
@@ -1383,9 +1414,9 @@ namespace FintrakBanking.Repositories.Credit
                             debit.creditAmount = creditAmount;
                             debit.sourceBranchId = model.userBranchId;
                             debit.destinationBranchId = casa.BRANCHID;
-                            debit.rateCode = "TTB";
-                            debit.rateUnit = string.Empty;
-                            debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            //debit.rateCode = "TTB";
+                            //debit.rateUnit = string.Empty;
+                            //debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(debit);
                         }
@@ -1421,9 +1452,9 @@ namespace FintrakBanking.Repositories.Credit
                             credit.creditAmount = 0;
                             credit.sourceBranchId = model.userBranchId;
                             credit.destinationBranchId = model.userBranchId;
-                            credit.rateCode = "TTB";
-                            credit.rateUnit = string.Empty;
-                            credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+                            //credit.rateCode = "TTB";
+                            //credit.rateUnit = string.Empty;
+                            //credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
 
                             inputTransactions.Add(credit);
                         }

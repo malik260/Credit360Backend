@@ -1,6 +1,5 @@
 ﻿
 using FintrakBanking.Common.CustomException;
-using GemBox.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -68,25 +67,25 @@ namespace FintrakBanking.Common.Extensions
         public void ExportToExcel(DataTable dt)
         {
             // If using Professional version, put your serial key below.
-            SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
+            //SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
 
-            ExcelFile ef = new ExcelFile();
-            ExcelWorksheet ws = ef.Worksheets.Add("DataTable to Sheet");
+            //ExcelFile ef = new ExcelFile();
+            //ExcelWorksheet ws = ef.Worksheets.Add("DataTable to Sheet");
 
          
-            // Insert DataTable into an Excel worksheet.
-            ws.InsertDataTable(dt,
-                new InsertDataTableOptions()
-                {
-                    ColumnHeaders = true,
-                    StartRow = 2
-                });
+            //// Insert DataTable into an Excel worksheet.
+            //ws.InsertDataTable(dt,
+            //    new InsertDataTableOptions()
+            //    {
+            //        ColumnHeaders = true,
+            //        StartRow = 2
+            //    });
 
-            using (FileStream stream = new FileStream("C:\\Users\\uuser\\Downloads\\Sheet.xlsx", FileMode.CreateNew))
-            {
-                // Saves file to the stream
-                ef.Save(stream, SaveOptions.PdfDefault);
-            }
+            //using (FileStream stream = new FileStream("C:\\Users\\uuser\\Downloads\\Sheet.xlsx", FileMode.CreateNew))
+            //{
+            //    // Saves file to the stream
+            //    ef.Save(stream, SaveOptions.PdfDefault);
+            //}
            // ef.Save(this.Response, "C:\\Users\\uuser\\Downloads\\DataTable to Sheet.xlsx");
         }
         public DataTable ToDataTable<T>(List<T> items)

@@ -8,6 +8,10 @@ namespace FintrakBanking.ViewModels.Credit
 {
     public class CreditBereauViewModel : GeneralEntity
     {
+        public short currencyId { get; set; }
+
+        public bool debitBusiness { get; set; }
+        public int glAccountId { get; set; }
         public bool debitRequest { get; set; }
 
         public bool appliedsearchForLoan { get; set; }
@@ -21,7 +25,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal corporateChargeAmount { get; set; }
         public string referenceNumber { get; set; }
         public int customerId { get; set; }
-        public int casaAccountId { get; set; }
+        public int? casaAccountId { get; set; }
         public int creditGl { get; set; }
         public int debitGl { get; set; }
         public string accountNumber { get; set; }

@@ -8,6 +8,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
 {
     public interface IJobRequestRepository
     {
+        IEnumerable<JobTypeHubViewModel> GetJobTypeHubStaff();
         IEnumerable<HubStaffViewModel> GetHubStaffByHubId(short jobTypeHubId);
         IEnumerable<HubStaffViewModel> GetHubStaffByHubTypeUnitId(short jobTypeUnitId);
         IEnumerable<JobTypeUnitViewModel> GetAllJobTypeUnit(short jobTypeId);
@@ -17,6 +18,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         IEnumerable<JobRequestViewModel> GetJobRequestByFilter(int staffId, int branchId, string filter);
         bool UpdateInvoiceStatus(JobRequestInvoiceViewModel model);
         List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId);
+        //List<jobReasignment> GetJobTypeReasignmentAdminStaff(int companyId);
         IEnumerable<ApprovalStatusViewModel> GetJobRequestApprovaStatus();
         IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId);
         JobRequestViewModel GetJobRequest(int jobRequestId);
@@ -69,6 +71,11 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model);
         List<JobRequestDetailViewModel> GetLegalJobRequestDetails();
+
+        bool AssignJobTypeToStaff(jobReasignment model);
+        bool DeleteJobTypeForAStaff(jobReasignment model);
+        bool UpdateAsignedJobTypeToStaff(jobReasignment model);
+        List<jobReasignment> GetJobTypeReasignmentAdmin(int companyId);
 
         #region Job Request Feedback
         IEnumerable<LookupViewModel> GetJobRequestStatus();

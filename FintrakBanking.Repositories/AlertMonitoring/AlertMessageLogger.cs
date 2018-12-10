@@ -71,6 +71,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             if (loanDetails.Count != 0)
             {
                 SendAlertsForCovenantsApproachingDueDateToRM(loanDetails, alertsetupForCovenantsApproachingDueDate.MESSAGE_TITLE);
+
                 if (alertsetupForCovenantsApproachingDueDate.RECIPIENTEMAILS1.Trim() != string.Empty)
                 {
                     List<LoanCovenantDetailViewModel> escalationLevelOne = (from x in loanDetails
@@ -3035,7 +3036,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 MESSAGEBODY = bodyContent,
                 MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
                 MESSAGETYPEID = (short)MessageTypeEnum.Email,
-                FROMADDRESS = "sendere amail",
+                FROMADDRESS = "sender email",
                 DATETIMERECEIVED = DateTime.Now,
                 SENDONDATETIME = DateTime.Now,
                 TARGETID = targetId,

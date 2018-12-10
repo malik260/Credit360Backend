@@ -21,6 +21,7 @@ using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.Setups.Finance;
 using System.Configuration;
+using System.ServiceModel;
 
 namespace FintrakBanking.Repositories.WorkFlow
 {
@@ -221,11 +222,36 @@ namespace FintrakBanking.Repositories.WorkFlow
                 
 
             var applicationDate = general.GetApplicationDate();
+            
+            if (data.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification)
+            {
+                var hubCordinatorStaffId = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification).FirstOrDefault();
+                var hubCordinatorFullStaffData = hubCordinatorStaffId != null ? context.TBL_STAFF.Find(hubCordinatorStaffId.STAFFID) : null;
+
+                var from = fromStaffData != null ? fromStaffData.FIRSTNAME + " " + fromStaffData.LASTNAME + " (" + fromStaffData.STAFFCODE + ")" : "None";
+                var to = toStaffData != null ? toStaffData.FIRSTNAME + " " + toStaffData.LASTNAME + " (" + toStaffData.STAFFCODE + ")" : "None";
+
+                string messageBoby = $"Attention!, <br /><br />Please note that a job request assignmnet/reassignment occured with the following details:<br /><br /> 'Job Request Code:' " +
+                    $"<br /><br /> {data.JOBREQUESTCODE} <br /><br /> Previously Assigned Staff: {from} " +
+                    $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. <br /><br />";
+                string alertSubject = $"JOB REQUEST ASSIGNMENT NOTICE";
+
+                if (hubCordinatorFullStaffData != null)
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, hubCordinatorFullStaffData.EMAIL, data.JOBREQUESTCODE);
+
+                var hubTeamLeadEntry = context.TBL_JOB_TYPE_HUB_STAFF.Where(x => x.JOBTYPEUNITID == data.JOBTYPEUNITID && x.ISTEAMLEAD == true).FirstOrDefault();
+                if(hubTeamLeadEntry != null && fromStaffData != null)
+                {
+                    var teamLeadStaff = context.TBL_STAFF.Find(hubTeamLeadEntry.HUBSTAFFID);
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, teamLeadStaff.EMAIL, data.JOBREQUESTCODE);
+                }
+
+
+            }
 
             data.REASSIGNEDTO = (int)model.reassignedTo;
             data.ISREASSIGNED = true;
             data.ISACKNOWLEDGED = true;
-            data.REQUESTSTATUSID = (short)JobRequestStatusEnum.processing;
             data.REASSIGNEDDATE = applicationDate;
             data.SYSTEMREASSIGNEDDATE = DateTime.Now;
 
@@ -263,7 +289,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return context.SaveChanges() != 0;
         }
-
 
         public IEnumerable<ApplicationJobRequest> GetLoanApplicationJobsById(int loanApplicationId, int companyId)
         {
@@ -352,7 +377,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                 i.invoiceDiscountDetail = invoiceDiscountDetail;
                 i.firstEducationtDetail = firstEducationtDetail;
-                //i.loanCollateral = loanCollateral;
                 i.allJobsCount = allJobsCount;
                 i.allPendingJobsCount = allPendingJobsCount;
                 i.allApprovedJobsCount = allApprovedJobsCount;
@@ -376,7 +400,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             var data = (from x in context.TBL_JOB_REQUEST
                         join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
                         join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-                        //where x.ISREASSIGNED == false
                         orderby x.ARRIVALDATE descending
                         select (
                         new JobRequestViewModel
@@ -477,170 +500,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 else { return data.Where(x => x.senderStaffId == staffId || x.receiverStaffId == staffId || x.reassignedTo == staffId); }
             }
         }
-
-
-
-        //private IEnumerable<JobRequestViewModel> GetAllGlobalJobRequest(int staffId, int branchId)
-        //{
-        //    var thisStaff = this.context.TBL_STAFF.Find(staffId);
-        //    var staffHub = this.context.TBL_JOB_TYPE_HUB_STAFF.Where(x => x.STAFFID == staffId);
-        //    var staffAdmin = this.context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.STAFFID == staffId);
-
-        //    var data = new List<JobRequestViewModel>();
-        //    if (!staffHub.Any() && !staffAdmin.Any())
-        //    {
-        //       //STAFF HAS NO JOB REQUEST/SENT NO JOB REQUEST/NOT ADMIN
-        //        return data;
-        //    }
-
-        //    if (staffAdmin.Any())
-        //    {
-        //        //STAFF IS ADMIN
-        //         data = (from x in context.TBL_JOB_REQUEST
-        //                    join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
-        //                    join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-        //                    where x.ISREASSIGNED == false
-        //                    orderby x.ARRIVALDATE descending
-        //                    select (
-        //                    new JobRequestViewModel
-        //                    {
-        //                        jobRequestId = x.JOBREQUESTID,
-        //                        requestTitle = x.JOB_TITLE,
-        //                        jobRequestCode = x.JOBREQUESTCODE,
-        //                        targetId = x.TARGETID,
-        //                        jobTypeId = t.JOBTYPEID,
-        //                        jobSubTypeId = s.JOB_SUB_TYPEID,
-        //                        jobTypeName = t.JOBTYPENAME,
-        //                        jobSubTypeName = s.JOB_SUB_TYPE_NAME,
-        //                        jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
-        //                        jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
-        //                        senderStaffId = x.SENDERSTAFFID,
-        //                        senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-        //                        senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
-        //                        departmentUnitId = x.DEPARTMENTUNITID,
-        //                        departmentId = x.DEPARTMENTID,
-
-        //                        receiverStaffId = (int)x.RECEIVERSTAFFID,
-        //                        reassignedTo = x.REASSIGNEDTO,
-        //                        isReassigned = x.ISREASSIGNED,
-        //                        isAcknowledged = x.ISACKNOWLEDGED,
-        //                        operationsId = x.OPERATIONSID,
-        //                        operationName = x.TBL_OPERATIONS.OPERATIONNAME,
-        //                        requestStatusId = x.REQUESTSTATUSID,
-        //                        requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
-
-        //                        senderComment = x.SENDERCOMMENT,
-        //                        responseComment = x.RESPONSECOMMENT,
-        //                        arrivalDate = x.ARRIVALDATE,
-        //                        systemArrivalDate = x.SYSTEMARRIVALDATE,
-        //                        reassignedDate = x.REASSIGNEDDATE,
-        //                        systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
-        //                        responseDate = x.RESPONSEDATE,
-        //                        systemResponseDate = x.SYSTEMRESPONSEDATE,
-        //                        acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
-        //                        systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
-        //                        loggedInStaffId = staffId,
-        //                        jobTypeUnitId = x.JOBTYPEUNITID,
-        //                        jobTypeHubId = x.JOBTYPEHUBID,
-        //                        branchId = x.BRANCHID,
-
-        //                        refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
-        //                             ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
-
-        //                        fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
-        //                        fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
-        //                        to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
-        //                        assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
-
-        //                    })).ToList();
-        //    }
-
-        //    if (!staffAdmin.Any() && staffHub.Any())
-        //    {
-        //        data = (from x in context.TBL_JOB_REQUEST
-        //                    join s in context.TBL_JOB_TYPE_SUB on x.JOB_SUB_TYPEID equals s.JOB_SUB_TYPEID
-        //                    join t in context.TBL_JOB_TYPE on x.JOBTYPEID equals t.JOBTYPEID
-        //                    where (x.JOBTYPEHUBID == staffHub.FirstOrDefault().JOBTYPEHUBID || x.SENDERSTAFFID == staffId || x.REASSIGNEDTO == staffId)
-        //                    orderby x.ARRIVALDATE descending
-        //                    select (
-        //                    new JobRequestViewModel
-        //                    {
-        //                        jobRequestId = x.JOBREQUESTID,
-        //                        requestTitle = x.JOB_TITLE,
-        //                        jobRequestCode = x.JOBREQUESTCODE,
-        //                        targetId = x.TARGETID,
-        //                        jobTypeId = t.JOBTYPEID,
-        //                        jobSubTypeId = s.JOB_SUB_TYPEID,
-        //                        jobTypeName = t.JOBTYPENAME,
-        //                        jobSubTypeName = s.JOB_SUB_TYPE_NAME,
-        //                        jobStatusFeedBackId = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACKID,
-        //                        jobStatusFeedBack = x.TBL_JOB_REQUEST_STATUS_FEEDBAK.JOB_STATUS_FEEDBACK_NAME,
-        //                        senderStaffId = x.SENDERSTAFFID,
-        //                        senderRole = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLENAME,
-        //                        senderRoleCode = x.TBL_STAFF.TBL_STAFF_ROLE.STAFFROLECODE,
-        //                        departmentUnitId = x.DEPARTMENTUNITID,
-        //                        departmentId = x.DEPARTMENTID,
-
-        //                        receiverStaffId = (int)x.RECEIVERSTAFFID,
-        //                        reassignedTo = x.REASSIGNEDTO,
-        //                        isReassigned = x.ISREASSIGNED,
-        //                        isAcknowledged = x.ISACKNOWLEDGED,
-        //                        operationsId = x.OPERATIONSID,
-        //                        operationName = x.TBL_OPERATIONS.OPERATIONNAME,
-        //                        requestStatusId = x.REQUESTSTATUSID,
-        //                        requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
-
-        //                        senderComment = x.SENDERCOMMENT,
-        //                        responseComment = x.RESPONSECOMMENT,
-        //                        arrivalDate = x.ARRIVALDATE,
-        //                        systemArrivalDate = x.SYSTEMARRIVALDATE,
-        //                        reassignedDate = x.REASSIGNEDDATE,
-        //                        systemReassignedDate = x.SYSTEMREASSIGNEDDATE,
-        //                        responseDate = x.RESPONSEDATE,
-        //                        systemResponseDate = x.SYSTEMRESPONSEDATE,
-        //                        acknowledgementDate = x.ACKNOWLEDGEMENTDATE,
-        //                        systemAcknowledgementDate = x.SYSTEMACKNOWLEDGEMENTDATE,
-        //                        loggedInStaffId = staffId,
-        //                        jobTypeUnitId = x.JOBTYPEUNITID,
-        //                        jobTypeHubId = x.JOBTYPEHUBID,
-        //                        branchId = x.BRANCHID,
-
-        //                        refNo = context.TBL_LOAN_APPLICATION_DETAIL.FirstOrDefault(l => l.LOANAPPLICATIONDETAILID == x.TARGETID) != null
-        //                             ? context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.LOANAPPLICATIONDETAILID == x.TARGETID).FirstOrDefault().TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER : "n/a",
-
-        //                        fromSender = x.TBL_STAFF.FIRSTNAME == null ? "n/a" : x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.LASTNAME,
-        //                        fromBranchName = x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.Any() ? x.TBL_STAFF.TBL_BRANCH_REGION.FirstOrDefault().TBL_BRANCH.FirstOrDefault().BRANCHNAME : "n/a" : "n/a",
-        //                        to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
-        //                        assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
-
-        //                    })).ToList();
-        //    }
-
-        //    //var unitId = 0;
-        //    //unitId = thisStaff.TBL_DEPARTMENT_UNIT != null ? thisStaff.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITID : 0;
-
-        //    foreach (var item in data)
-        //    {
-        //        var detail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == item.jobRequestId);
-        //        if (detail.Any())
-        //        {
-        //            item.hasLegalRecommendedSearch = true;
-        //            if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
-        //                item.customerCharged = true;
-        //        };
-
-        //        if(item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
-        //        if(item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfTreasuryBills) item.jobSubTypeName = "Treasury Bill confirm..";
-        //        if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfFBNQUEST) item.jobSubTypeName = "FBN Quest confirm..";
-        //        if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfDealSlip) item.jobSubTypeName = "Deal Slip confirm..";
-        //        if (item.jobSubTypeId == (int)JobSubTypeEnum.ConfirmationOfStock) item.jobSubTypeName = "Stock confirmation";
-        //        if (item.jobSubTypeId == null || item.jobSubTypeId < 1) item.jobSubTypeName = "n/a";
-
-        //    }
-
-        //   // var c = data.ToList();
-        //    return data;
-        //}
 
         public IEnumerable<JobRequestViewModel> GetJobRequestByStaffId(int staffId, int branchId)
         {
@@ -764,7 +623,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                      chargeAmount = chargeAmount + item.AMOUNT.Value;
                     description = item.DESCRIPTION != null ? description + item.DESCRIPTION.ToString() + ", " : string.Empty;
                     jobSubTypeName = item.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME != null ? jobSubTypeName + item.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME.ToString() + ", " : string.Empty;
-                    //jobTypeName = item.TBL_JOB_REQUEST.TBL_JOB_TYPE.TBL_JOB_REQUEST != null ? jobTypeName + item.TBL_JOB_REQUEST.TBL_JOB_TYPE.TBL_JOB_REQUEST.ToString() + ", " : string.Empty;
 
                     var a = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == i.TARGETID);
 
@@ -800,51 +658,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                     
                     jobDetailList.Add(detail);
                 }
-               
-                
             }
 
             return jobDetailList;
-            //var jobDetails = (from d in this.context.TBL_JOB_REQUEST_DETAIL
-            //                 join r in context.TBL_JOB_REQUEST on d.JOBREQUESTID equals r.JOBREQUESTID
-            //                 where d.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalCharting || d.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || d.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || d.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs
-            //                 select new JobRequestDetailViewModel
-            //                 {
-            //                     jobRequestId = d.JOBREQUESTID,
-            //                     jobRequestDetailId = d.JOBREQUEST_DETAILID,
-            //                     accreditedConsultantId = (int)d.ACCREDITEDCONSULTANTID,
-            //                     accreditedConsultantName = d.TBL_ACCREDITEDCONSULTANT.FIRMNAME,
-            //                     jobSubTypeId = d.JOB_SUB_TYPEID,
-            //                     jobRequestCode = r.JOBREQUESTCODE,
-            //                     jobSubTypeName = d.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME,
-            //                     jobTypeId = d.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPEID,
-            //                     jobTypeName = d.TBL_JOB_REQUEST.TBL_JOB_TYPE.JOBTYPENAME,
-            //                     description = d.DESCRIPTION,
-            //                     operationsId = r.OPERATIONSID,
-            //                     operationsName = r.TBL_OPERATIONS.OPERATIONNAME,
-            //                     targetId = r.TARGETID,
-            //                     amount = d.AMOUNT,
-            //                     accountNumber = d.ACCOUNTNUMBER,
-            //                     dateTimeCreated = d.DATETIMECREATED
-            //                 }).ToList();
-            //foreach (var item in jobDetail)
-            //{
-            //    var a = context.TBL_LOAN_APPLICATION_DETAIL.Where(z => z.LOANAPPLICATIONDETAILID == item.targetId);
-
-            //    if (a.Any())
-            //    {
-            //        var t = a.FirstOrDefault();
-            //        item.customerName = (from v in context.TBL_CUSTOMER.Where(c => c.CUSTOMERID == t.CUSTOMERID) select v.FIRSTNAME + " " + v.MIDDLENAME + " " + v.LASTNAME).FirstOrDefault();
-            //        item.applicationReferenceNumber = t.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER;
-            //        item.customerId = t.CUSTOMERID;
-            //    }
-            //};
-            //return jobDetail;
         }
 
         public List<JobRequestViewModel> GetJobRequestLegalJobDetail()
         {
-            //var job = context.TBL_JOB_REQUEST.Where(x => x. == (short)JobSubTypeEnum.LegalCharting || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalSearch || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.LegalVerification || x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.OtherLegalJobs);
             var details = (from x in this.context.TBL_JOB_REQUEST
                            join b in context.TBL_JOB_REQUEST_DETAIL on x.JOBREQUESTID equals b.JOBREQUESTID
                            where b.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated
@@ -896,67 +716,71 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
         public List<JobRequestViewModel> GetApplicationJobRequest(int applicationDetailId)
         {
-            var requests = this.context.TBL_JOB_REQUEST.Find(applicationDetailId);
+            var requests = this.context.TBL_JOB_REQUEST.Where(x => x.TARGETID == applicationDetailId);
 
-            if (requests == null) return null;
+            if (requests.Count() < 0) return null;
 
-            var jobDocumentsList = GetJobRequestDocuments(requests.JOBREQUESTCODE).AsEnumerable();
-            TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
             var requestsList = new List<JobRequestViewModel>();
-
-            feedback = context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Where(c => c.JOB_STATUS_FEEDBACKID == requests.JOB_STATUS_FEEDBACKID).FirstOrDefault();
-            var requestModel = new JobRequestViewModel
+            foreach ( var request in requests)
             {
-                jobRequestId = requests.JOBREQUESTID,
-                requestTitle = requests.JOB_TITLE,
-                jobRequestCode = requests.JOBREQUESTCODE,
-                targetId = requests.TARGETID,
-                jobTypeId = requests.JOBTYPEID,
-                senderStaffId = requests.SENDERSTAFFID,
-                receiverStaffId = requests.RECEIVERSTAFFID ?? 0,
-                reassignedTo = requests.REASSIGNEDTO,
-                isReassigned = requests.ISREASSIGNED,
-                isAcknowledged = requests.ISACKNOWLEDGED,
-                operationsId = requests.OPERATIONSID,
-                operationName = requests.TBL_OPERATIONS.OPERATIONNAME,
-                requestStatusId = requests.REQUESTSTATUSID,
-                senderComment = requests.SENDERCOMMENT,
-                responseComment = requests.RESPONSECOMMENT,
+                var jobDocumentsList = GetJobRequestDocuments(request.JOBREQUESTCODE).AsEnumerable();
+                TBL_JOB_REQUEST_STATUS_FEEDBAK feedback;
+                
+                feedback = context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Where(c => c.JOB_STATUS_FEEDBACKID == request.JOB_STATUS_FEEDBACKID).FirstOrDefault();
+                var requestModel = new JobRequestViewModel
+                {
+                    jobRequestId = request.JOBREQUESTID,
+                    requestTitle = request.JOB_TITLE,
+                    jobRequestCode = request.JOBREQUESTCODE,
+                    targetId = request.TARGETID,
+                    jobTypeId = request.JOBTYPEID,
+                    senderStaffId = request.SENDERSTAFFID,
+                    receiverStaffId = request.RECEIVERSTAFFID ?? 0,
+                    reassignedTo = request.REASSIGNEDTO,
+                    isReassigned = request.ISREASSIGNED,
+                    isAcknowledged = request.ISACKNOWLEDGED,
+                    operationsId = request.OPERATIONSID,
+                    operationName = request.TBL_OPERATIONS.OPERATIONNAME,
+                    requestStatusId = request.REQUESTSTATUSID,
+                    senderComment = request.SENDERCOMMENT,
+                    responseComment = request.RESPONSECOMMENT,
 
-                arrivalDate = requests.ARRIVALDATE,
-                systemArrivalDate = requests.SYSTEMARRIVALDATE,
-                reassignedDate = requests.REASSIGNEDDATE,
-                systemReassignedDate = requests.SYSTEMREASSIGNEDDATE,
-                responseDate = requests.RESPONSEDATE,
-                systemResponseDate = requests.SYSTEMRESPONSEDATE,
-                acknowledgementDate = requests.ACKNOWLEDGEMENTDATE,
-                systemAcknowledgementDate = requests.SYSTEMACKNOWLEDGEMENTDATE,
-                jobStatusFeedBackId = requests.JOB_STATUS_FEEDBACKID ?? 0,
-                jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
-                msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
-                                    where y.JOBREQUESTID == requests.JOBREQUESTID
-                                    select new JobRequestMessageViewModel
-                                    {
-                                        jobRequestMessageId = y.JOBREQUEST_MESSAGEID,
-                                        jobRequestId = y.JOBREQUESTID,
-                                        message = y.MESSAGE,
-                                        staffId = y.STAFFID,
-                                        staffName = y.TBL_STAFF.FIRSTNAME + " " + y.TBL_STAFF.MIDDLENAME + " " + y.TBL_STAFF.LASTNAME,
-                                        datetimeSent = y.DATE_TIME_SENT
-                                    }).ToList(),
-                jobDocuments = jobDocumentsList,
-            };
+                    arrivalDate = request.ARRIVALDATE,
+                    systemArrivalDate = request.SYSTEMARRIVALDATE,
+                    reassignedDate = request.REASSIGNEDDATE,
+                    systemReassignedDate = request.SYSTEMREASSIGNEDDATE,
+                    responseDate = request.RESPONSEDATE,
+                    systemResponseDate = request.SYSTEMRESPONSEDATE,
+                    acknowledgementDate = request.ACKNOWLEDGEMENTDATE,
+                    systemAcknowledgementDate = request.SYSTEMACKNOWLEDGEMENTDATE,
+                    jobStatusFeedBackId = request.JOB_STATUS_FEEDBACKID ?? 0,
+                    jobStatusFeedback = (feedback != null) ? feedback.JOB_STATUS_FEEDBACK_NAME : string.Empty,
+                    msgExchangeTrail = (from y in context.TBL_JOB_REQUEST_MESSAGE
+                                        where y.JOBREQUESTID == request.JOBREQUESTID
+                                        select new JobRequestMessageViewModel
+                                        {
+                                            jobRequestMessageId = y.JOBREQUEST_MESSAGEID,
+                                            jobRequestId = y.JOBREQUESTID,
+                                            message = y.MESSAGE,
+                                            staffId = y.STAFFID,
+                                            staffName = y.TBL_STAFF.FIRSTNAME + " " + y.TBL_STAFF.MIDDLENAME + " " + y.TBL_STAFF.LASTNAME,
+                                            datetimeSent = y.DATE_TIME_SENT
+                                        }).ToList(),
+                    jobDocuments = jobDocumentsList,
+                };
 
-            var fromData = context.TBL_STAFF.Where(b => b.STAFFID == requests.SENDERSTAFFID).FirstOrDefault();
-            requestModel.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
+                var fromData = context.TBL_STAFF.Where(b => b.STAFFID == request.SENDERSTAFFID).FirstOrDefault();
+                requestModel.fromSender = fromData != null ? fromData.FIRSTNAME + " " + fromData.MIDDLENAME + " " + fromData.LASTNAME : "n/a";
 
-            var toData = context.TBL_STAFF.Where(b => b.STAFFID == requests.RECEIVERSTAFFID).FirstOrDefault();
-            requestModel.to = toData != null ? toData.FIRSTNAME + " " + toData.MIDDLENAME + " " + toData.LASTNAME : "n/a";
+                var toData = context.TBL_STAFF.Where(b => b.STAFFID == request.RECEIVERSTAFFID).FirstOrDefault();
+                requestModel.to = toData != null ? toData.FIRSTNAME + " " + toData.MIDDLENAME + " " + toData.LASTNAME : "n/a";
 
-            var asigneeData = context.TBL_STAFF.Where(b => b.STAFFID == requests.REASSIGNEDTO).FirstOrDefault();
-            requestModel.assignee = asigneeData != null ? asigneeData.FIRSTNAME + " " + asigneeData.MIDDLENAME + " " + asigneeData.LASTNAME : "n/a";
+                var asigneeData = context.TBL_STAFF.Where(b => b.STAFFID == request.REASSIGNEDTO).FirstOrDefault();
+                requestModel.assignee = asigneeData != null ? asigneeData.FIRSTNAME + " " + asigneeData.MIDDLENAME + " " + asigneeData.LASTNAME : "n/a";
 
-            requestsList.Add(requestModel);
+                requestsList.Add(requestModel);
+            }
+           
 
             return requestsList;
 
@@ -1104,7 +928,60 @@ namespace FintrakBanking.Repositories.WorkFlow
             });
         }
 
-        #region
+        private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients, string jobReQuestCode)
+        {
+            try
+            {
+                string recipient = recipients.Trim();
+
+                string messageSubject = alertSubject;
+                string messageContent = messageBody;
+                string templateUrl = "~/EmailTemplates/Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now,
+                    ReferenceCode = jobReQuestCode
+                };
+                SaveMessageDetails(messageModel);
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+
+        public void SaveMessageDetails(MessageLogViewModel model)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTCODE = model.ReferenceCode,
+                ATTACHMENTTYPEID = (short)AttachementTypeEnum.JobRequest,
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+
+        }
+
+
+        #region ...Collateral Search Job Charges...
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
             // NOTE: THIS METHOD IS USED BY RM & LEGAL IN TWO WAYS
@@ -1120,15 +997,20 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (model.isInitiation)
             {
                 var casa = context.TBL_CASA.Find(model.casaAccountId);
-                if (casa == null)
+                if (casa == null && !model.debitBusiness)
                     throw new ConditionNotMetException("Customer account number is not supplied");
 
                 if (casa != null) accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
 
-                model.casaAccountId = casa.CASAACCOUNTID;
+                if (!model.debitBusiness)
+                {
+                    model.casaAccountId = casa.CASAACCOUNTID;
+                    accountNumber = casa.PRODUCTACCOUNTNUMBER;
+                    auditDetail = $"Customer account number '{casa.PRODUCTACCOUNTNUMBER}' debited with collateral search fees";
+                }
+                else { auditDetail = $"Bank account debited with collateral search fees"; }
+
                 model.operationId = (short)OperationsEnum.CollateralSearchInitiation;
-                accountNumber = casa.PRODUCTACCOUNTNUMBER;
-                auditDetail = $"Customer account number '{casa.PRODUCTACCOUNTNUMBER}' debited with collateral search fees";
             }
             else
             {
@@ -1137,13 +1019,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                     throw new ConditionNotMetException("The solicitor's account number is not found. No account number has been mapped to this solicitor.");
 
                     accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
-                //var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == accountNumber);
 
-                //var casaUnique = casa.FirstOrDefault();
-                //model.casaAccountId = casaUnique.CASAACCOUNTID;
 
                 var witholdingAmount = (double)model.totalChargeAmount / 0.9;
-                //model.totalChargeAmount = model.totalChargeAmount - (decimal)witholdingAmount;
                 var id = (short)jobRequestDetail.FirstOrDefault().CURRENCYID.Value;
                 model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
                 var currency = context.TBL_CURRENCY.Find(model.currencyId);
@@ -1162,7 +1040,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 item.ACCOUNTNUMBER = model.isInitiation ? accountNumber : null;
             }
 
-            if (model.isInitiation && model.totalChargeAmount > accountBalance)
+            if (model.isInitiation && model.totalChargeAmount > accountBalance && !model.debitBusiness )
                 throw new ConditionNotMetException("The customer's Account is not funded.");
 
             if (model.totalChargeAmount > 0)
@@ -1177,8 +1055,17 @@ namespace FintrakBanking.Repositories.WorkFlow
                 //When RM apply fee on customer's account
                 if (model.isInitiation)
                 {
+                    if (model.debitBusiness)
+                    {
+                        var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short)OtherOperationEnum.ChargeOnBank).FirstOrDefault();
+                        if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
+
+                        model.glAccountId = bizAccount.GLACCOUNTID;
+                        model.casaAccountId = null;
+                        model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
+                        model.currencyCode = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId).CURRENCYCODE;
+                    }
                     inputTransactions.AddRange(BuildCollateralSearchChargeFeesPosting(model));
-                  
                 }
 
                 //When Legal confirms colletral job search
@@ -1224,7 +1111,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             var solicitor = consultantRecord.FirstOrDefault();
                             string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /><br /> '{jobs}'. <br /><br /> Kindly kindly contact FBN legal department for more info. <br /><br />";
                             string alertSubject = $"FBN - Loan Collateral Search";
-                            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS);
+                            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
                         }
                     }
 
@@ -1329,7 +1216,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
             string messageBoby = $"Dear RM, <br /><br />This is to bring your attention that legal has specified that charges for collaral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
             string alertSubject = $"Collateral Search Request";
-            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID));
+            LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID), jobRequest.JOBREQUESTCODE);
             //if (baseApplication != null)
             //{
             //    BasicTrasactionSourceInputModel input = new BasicTrasactionSourceInputModel();
@@ -1394,84 +1281,10 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         }
 
-        private void LogEmailAlertForLoanApplicationCancellation(string messageBody, string alertSubject, string recipients)
-        {
-            try
-            {
-                string recipient = recipients.Trim();
+        #endregion ...End of Collateral Search Job Charges...
 
-                string messageSubject = alertSubject;
-                string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which are approaching their due date. <br /><br />";
-                string templateUrl = "~/EmailTemplates/Monitoring.html";
-                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
-                MessageLogViewModel messageModel = new MessageLogViewModel
-                {
-                    MessageSubject = messageSubject,
-                    MessageBody = mailBody,
-                    MessageStatusId = 1,
-                    MessageTypeId = 1,
-                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                    ToAddress = $"{recipient}",
-                    DateTimeReceived = DateTime.Now,
-                    SendOnDateTime = DateTime.Now
-                };
-                SaveMessageDetails(messageModel);
-            }
-            catch (Exception ex)
-            {
-                throw new SecureException(ex.Message);
-            }
-        }
-
-        public void SaveMessageDetails(MessageLogViewModel model)
-        {
-            var message = new TBL_MESSAGE_LOG()
-            {
-                //MessageId = model.MessageId,
-                MESSAGESUBJECT = model.MessageSubject,
-                MESSAGEBODY = model.MessageBody,
-                MESSAGESTATUSID = model.MessageStatusId,
-                MESSAGETYPEID = model.MessageTypeId,
-                FROMADDRESS = model.FromAddress,
-                TOADDRESS = model.ToAddress,
-                DATETIMERECEIVED = model.DateTimeReceived,
-                SENDONDATETIME = model.SendOnDateTime
-            };
-
-            context.TBL_MESSAGE_LOG.Add(message);
-
-        }
-        #endregion
 
         #region job-type
-
-        public bool AddJobType(JobTypeViewModel model)
-        {
-            var data = new TBL_JOB_TYPE
-            {
-                JOBTYPENAME = model.jobTypeName,
-            };
-
-            context.TBL_JOB_TYPE.Add(data);
-
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.JobTypeAdded,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Added JobType '{ model.jobTypeName }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            return context.SaveChanges() != 0;
-        }
-
         public bool ConfirmLegalCollateralJobSearch(int jobRequestDetailId, bool payStatus, UserInfo model)
         {
             var data = this.context.TBL_JOB_REQUEST_DETAIL.Find(jobRequestDetailId);
@@ -1502,34 +1315,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             return context.SaveChanges() != 0;
         }
 
-        public bool UpdateJobType(JobTypeViewModel model, short jobTypeId)
-        {
-            var data = this.context.TBL_JOB_TYPE.Find(jobTypeId);
-            if (data == null)
-            {
-                return false;
-            }
-
-            data.JOBTYPENAME = model.jobTypeName;
-
-            // Audit Section ---------------------------
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.JobTypeUpdated,
-                STAFFID = model.lastUpdatedBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Updated JobType '{ model.jobTypeName }' ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-            // End of Audit Section ---------------------
-
-            return context.SaveChanges() != 0;
-        }
-
         public IEnumerable<JobTypeViewModel> GetAllJobType()
         {
            return this.context.TBL_JOB_TYPE.Select(x => new JobTypeViewModel
@@ -1540,7 +1325,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 canBeReasigned = x.CANBEREASSIGNED
             }).Where(c=>c.inUse == true);
         }
-
 
         public IEnumerable<JobTypeHubViewModel> GetAllJobTypeHub(short jobTypeId)
         {
@@ -1588,19 +1372,137 @@ namespace FintrakBanking.Repositories.WorkFlow
             }).Where(c => c.jobTypeId == jobTypeId);
         }
 
-        public List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId)
+        public List<jobReasignment> GetJobTypeReasignmentAdmin(int companyId)
         {
             var details = (from x in context.TBL_JOB_TYPE_REASSIGNMENT
-                           where x.STAFFID == staffId && x.COMPANYID == companyId && x.DELETED == false
+                           where  x.COMPANYID == companyId && x.DELETED == false
                            select new jobReasignment
                            {
                                staffId = x.STAFFID,
+                               dateTimeDeleted = x.DATETIMECREATED,
                                jobTypeId = x.JOBTYPEID,
-                               dateTimeCreated = x.DATETIMECREATED
+                               dateTimeCreated = x.DATETIMECREATED,
+                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                               jobTypeName = context.TBL_JOB_TYPE.Where(o => o.JOBTYPEID == x.JOBTYPEID).Select(o => o.JOBTYPENAME).FirstOrDefault(),
 
                            }).ToList();
 
             return details;
+        }
+        public bool AssignJobTypeToStaff(jobReasignment model)
+        {
+            if (context.TBL_JOB_TYPE_REASSIGNMENT.Any(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId))
+                throw new ConditionNotMetException("This job type exist for this staff");
+
+            var newType = new TBL_JOB_TYPE_REASSIGNMENT
+            {
+                STAFFID = model.staffId,
+                JOBTYPEID = (short)model.jobTypeId,
+                COMPANYID = model.companyId,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = model.dateTimeCreated,
+                DELETED = false,
+                
+            };
+            context.TBL_JOB_TYPE_REASSIGNMENT.Add(newType);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
+        public bool DeleteJobTypeForAStaff(jobReasignment model)
+        {
+            var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
+            if(data==null) throw new ConditionNotMetException("Staff does not exist");
+
+
+            data.STAFFID = model.staffId;
+            data.JOBTYPEID = (short)model.jobTypeId;
+            data.COMPANYID = model.companyId;
+            data.DATETIMEDELETED = model.dateTimeDeleted;
+            data.DELETED = true;
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
+        public bool UpdateAsignedJobTypeToStaff(jobReasignment model)
+        {
+          var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
+            if (data!=null)
+            {
+                data.STAFFID = model.staffId;
+                data.JOBTYPEID = (short)model.jobTypeId;
+                data.COMPANYID = model.companyId;
+                data.CREATEDBY = model.createdBy;
+                data.DATETIMECREATED = model.dateTimeCreated;
+                data.DELETED = false;
+
+            }
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                STAFFID = model.createdBy,
+                //BRANCHID = (short)model.BranchId,
+                DETAIL = $"Joy Type has been edited to a staff with ID '{ model.staffId }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
+        public List<jobReasignment> GetJobReasignmentStaffById(int staffId, int companyId)
+        {
+            var jobTypeAdminStaff = GetJobTypeReasignmentAdmin(companyId).Where(x => x.staffId == staffId).ToList();
+            return jobTypeAdminStaff;
+        }
+        public IEnumerable<JobTypeHubViewModel> GetJobTypeHubStaff()
+        {
+            return this.context.TBL_JOB_TYPE_HUB_STAFF.Select(x => new JobTypeHubViewModel
+            {
+                jobTypeHubId = x.JOBTYPEHUBID,
+                staffId = x.STAFFID,
+                jobTypeHubName = context.TBL_JOB_TYPE_HUB.Where(o => o.JOBTYPEHUBID == x.HUBSTAFFID).Select(o => o.HUBNAME).FirstOrDefault(),
+                staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                jobTypeUnitId = x.JOBTYPEUNITID,
+                jobTypeUnitName = context.TBL_JOB_TYPE_UNIT.Where(o => o.JOBTYPEUNITID == x.JOBTYPEUNITID).Select(o => o.UNITNAME).FirstOrDefault(),
+                isTeamLead = x.ISTEAMLEAD
+            });
         }
 
         public IEnumerable<JobTypeViewModel> GetJobSubType(short jobId)
@@ -1615,7 +1517,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         #endregion job-type
 
-        #region Middle Office Updates
+
+        #region ...Middle Office Updates...
         public bool UpdateInvoiceStatus(JobRequestInvoiceViewModel model)
         {
             var job = this.context.TBL_JOB_REQUEST.Find(model.jobRequestId);
@@ -1638,41 +1541,13 @@ namespace FintrakBanking.Repositories.WorkFlow
             else return false;
         }
 
-        public bool chargeCustomerForCollateralJobs(int jobRequestDetailId, JobRequestDetailViewModel model)
-        {
-            var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Find(jobRequestDetailId);
-            var consultant = context.TBL_ACCREDITEDCONSULTANT.Find(jobDetail.ACCREDITEDCONSULTANTID);
-            var casa = context.TBL_CASA.Where(x => x.PRODUCTACCOUNTNUMBER == consultant.ACCOUNTNUMBER).FirstOrDefault();
-
-            if (casa == null)
-                throw new ConditionNotMetException("Accredited consultant account number not found in the system");
+        #endregion ...End of Middle Office Updates...
 
 
-
-            return false;
-        }
-        #endregion End Middle Office Updates
-
-        #region Job-Request Document
+        #region ...Job-Request Document...
 
         public bool AddJobReplyAndDocument(RequestDocumentViewModel model, byte[] file)
         {
-            //var data = new Entities.DocumentModels.TBL_MEDIA_JOB_REQUEST_DOCUMENT
-            //{
-            //    FILEDATA = file,
-            //    JOBREQUESTCODE = model.jobRequestCode,
-            //    DOCUMENTTITLE = model.documentTitle,
-            //    DOCUMENTTYPEID = model.documentTypeId,
-            //    FILENAME = model.fileName,
-            //    FILEEXTENSION = model.fileExtension,
-            //    SYSTEMDATETIME = DateTime.Now,
-            //    PHYSICALFILENUMBER = model.physicalFileNumber,
-            //    PHYSICALLOCATION = model.physicalLocation,
-            //    CREATEDBY = (int)model.createdBy,
-            //};
-
-            //docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Add(data);
-
             if (AddJobDocumentOnly(model, file))
             {
                 JobRequestViewModel jb = new JobRequestViewModel();
@@ -1877,8 +1752,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             return c;
         }
 
-       
-
         public IEnumerable<RequestDocumentViewModel> GetJobRequestDocumentById(int documentId)
         {
             var data =  this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.DOCUMENTID == documentId).Select(x => new RequestDocumentViewModel
@@ -1897,9 +1770,233 @@ namespace FintrakBanking.Repositories.WorkFlow
             return data.ToList();
         }
 
-        #endregion Job-Request Document
+        #endregion ...Job-Request Document...
 
-        #region Account Posting (Debit & Credit)
+
+        #region ...Account Posting (Debit & Credit)...
+        public List<FinanceTransactionViewModel> BuildCollateralSearchChargeFeesPosting(JobRequestCollateralSearchViewModel model)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
+            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
+            if (searchCharges.Any() && model.totalChargeAmount != 0)
+            {
+                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
+                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
+                foreach (var post in postingGroups)
+                {
+                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
+
+                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                    {
+                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                        decimal debitAmount = 0;
+                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
+                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            debitAmount = (decimal)model.totalChargeAmount;
+
+                        debit.operationId = (int)model.operationId;
+                        debit.description = "Collateral related charge on facility"; // model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
+                        debit.valueDate = general.GetApplicationDate();
+                        debit.transactionDate = debit.valueDate;
+                        debit.currencyId = model.debitBusiness ? (short)model.currencyId : casa.CURRENCYID;
+                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                        debit.isApproved = true;
+                        debit.postedBy = model.createdBy;
+                        debit.approvedBy = model.createdBy;
+                        debit.approvedDate = debit.transactionDate;
+                        debit.approvedDateTime = DateTime.Now;
+                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        debit.companyId = model.companyId;
+
+                        if (!model.debitBusiness && context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL == null)
+                            throw new BadLogicException($"No GL is currently mapped to this product code '{casa.TBL_PRODUCT.PRODUCTCODE}'.");
+
+                        debit.glAccountId = model.debitBusiness ? model.glAccountId : context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                        debit.sourceReferenceNumber = model.requestCode;
+                        debit.batchCode = batchCode;
+                        if (!model.debitBusiness) debit.casaAccountId = casa.CASAACCOUNTID;
+                        debit.debitAmount = debitAmount;
+                        debit.creditAmount = 0;
+                        debit.sourceBranchId = model.userBranchId;
+                        debit.destinationBranchId = model.debitBusiness ? model.userBranchId : casa.BRANCHID;
+                        debit.rateCode = "TTB";
+                        debit.rateUnit = string.Empty;
+                        debit.currencyCrossCode = model.debitBusiness ? model.currencyCode : casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(debit);
+                    }
+
+                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                    {
+                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                        decimal creditAmount = 0;
+                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
+                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            creditAmount = (decimal)model.totalChargeAmount;
+
+
+                        credit.operationId = (int)model.operationId;
+                        credit.description = "Collateral related charge on facility"; // model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
+                        credit.valueDate = general.GetApplicationDate();
+                        credit.transactionDate = credit.valueDate;
+                        credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).CURRENCYID; // (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                        credit.isApproved = true;
+                        credit.postedBy = model.createdBy;
+                        credit.approvedBy = model.createdBy;
+                        credit.approvedDate = credit.transactionDate;
+                        credit.approvedDateTime = DateTime.Now;
+                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        credit.companyId = model.companyId;
+                        credit.glAccountId = (int)credits.GLACCOUNTID1;
+                        credit.sourceReferenceNumber = model.requestCode;
+                        credit.batchCode = batchCode;
+                        credit.casaAccountId = null;
+                        credit.debitAmount = 0;
+                        credit.creditAmount = creditAmount;
+                        credit.sourceBranchId = model.userBranchId;
+                        credit.destinationBranchId = model.userBranchId;
+                        credit.rateCode = "TTB";
+                        credit.rateUnit = string.Empty;
+                        credit.currencyCrossCode = model.debitBusiness ? model.currencyCode : casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(credit);
+                    }
+                }
+            }
+
+            return inputTransactions;
+        }
+
+        public List<FinanceTransactionViewModel> BuildSolicitorFeePaymentPosting(JobRequestCollateralSearchViewModel model)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+
+
+            //var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
+            var currency = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
+
+            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
+            if (searchCharges.Any() && model.totalChargeAmount != 0)
+            {
+                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
+                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
+                foreach (var post in postingGroups)
+                {
+                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
+
+                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                    {
+                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                        decimal debitAmount = 0;
+                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
+                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            debitAmount = (decimal)model.totalChargeAmount;
+
+                        debit.operationId = (int)model.operationId;
+                        debit.description = model.feeNarration;
+                        debit.valueDate = general.GetApplicationDate();
+                        debit.transactionDate = debit.valueDate;
+                        debit.currencyId = (short)model.currencyId.Value;
+                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                        debit.isApproved = true;
+                        debit.postedBy = model.createdBy;
+                        debit.approvedBy = model.createdBy;
+                        debit.approvedDate = debit.transactionDate;
+                        debit.approvedDateTime = DateTime.Now;
+                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        debit.companyId = model.companyId;
+
+
+                        debit.glAccountId = debits.GLACCOUNTID1.Value;
+                        debit.sourceReferenceNumber = model.requestCode;
+                        debit.batchCode = batchCode;
+                        debit.casaAccountId = null;
+                        debit.debitAmount = debitAmount;
+                        debit.creditAmount = 0;
+                        debit.sourceBranchId = model.userBranchId;
+                        debit.destinationBranchId = model.userBranchId;
+                        debit.rateCode = "TTB";
+                        debit.rateUnit = string.Empty;
+                        debit.currencyCrossCode = currency.CURRENCYCODE;
+
+                        inputTransactions.Add(debit);
+                    }
+
+                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                    {
+                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                        decimal creditAmount = 0;
+                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
+                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            creditAmount = (decimal)model.totalChargeAmount;
+
+
+                        credit.operationId = (int)model.operationId;
+                        credit.description = model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
+                        credit.valueDate = general.GetApplicationDate();
+                        credit.transactionDate = credit.valueDate;
+
+                        if (credits.DETAILTYPEID != (short)ChargeFeeDetailTypeEnum.Customer)
+                        {
+                            credit.glAccountId = (int)credits.GLACCOUNTID1;
+                            credit.casaAccountId = null;
+                            //credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
+                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, model.currencyId.Value, model.companyId).sellingRate;
+                        }
+                        else
+                        {
+                            credit.accountNumber = model.accountNumber;
+                            credit.useDirectAccount = true;
+                            var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == 1); // .TBL_PRODUCT.Find((short)DefaultProductEnum.CASA);
+                            //credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == (short)DefaultProductEnum.CASA).PRINCIPALBALANCEGL.Value;
+                            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID);
+                            credit.glAccountId = product.PRINCIPALBALANCEGL.Value;
+                            credit.casaAccountId = casa.CASAACCOUNTID;
+                            //credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credit.glAccountId, model.companyId);
+                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, model.currencyId.Value, model.companyId).sellingRate;
+                        }
+
+                        //casa.CURRENCYID;
+                        //credit.glAccountId = (int)credits.GLACCOUNTID1;
+                        credit.currencyId = model.currencyId.Value; //  (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
+                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                        credit.isApproved = true;
+                        credit.postedBy = model.createdBy;
+                        credit.approvedBy = model.createdBy;
+                        credit.approvedDate = credit.transactionDate;
+                        credit.approvedDateTime = DateTime.Now;
+                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        credit.companyId = model.companyId;
+
+                        credit.sourceReferenceNumber = model.requestCode;
+                        credit.batchCode = batchCode;
+
+                        credit.debitAmount = 0;
+                        credit.creditAmount = creditAmount;
+                        credit.sourceBranchId = model.userBranchId;
+                        credit.destinationBranchId = model.userBranchId;
+                        credit.rateCode = "TTB";
+                        credit.rateUnit = string.Empty;
+                        credit.currencyCrossCode = currency.CURRENCYCODE;
+
+                        inputTransactions.Add(credit);
+                    }
+                }
+            }
+
+            return inputTransactions;
+        }
+
         private void DebitCustomer(int glAccountIdCR, TBL_CASA casa, decimal chargeAmount, BasicTrasactionSourceInputModel inputs)
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
@@ -2012,310 +2109,67 @@ namespace FintrakBanking.Repositories.WorkFlow
             inputTransactions.Add(credit);
             financeTransaction.PostTransaction(inputTransactions);
         }
-        #endregion
+        #endregion ...End of Account Posting (Debit & Credit)...
 
 
-
-        //public bool AddJobRequest(JobRequestViewModel model)
-        //{
-
-        //    var date = DateTime.Now;
-        //    var applicationDate = general.GetApplicationDate();
-
-        //    var data = new TBL_JOB_REQUEST
-        //    {
-        //        JOBREQUESTCODE = model.jobTypeId + "" + model.createdBy + "" + model.receiverStaffId + "" + this.RequestCode(),
-        //        JOBTYPEID = model.jobTypeId,
-        //        JOB_TITLE = model.requestTitle,
-        //        SENDERSTAFFID = model.createdBy,
-        //        RECEIVERSTAFFID = model.receiverStaffId,
-        //        DEPARTMENTID = model.departmentId,
-        //        REASSIGNEDTO = model.reassignedTo,
-        //        ISREASSIGNED = model.isReassigned,
-        //        ISACKNOWLEDGED = model.isAcknowledged,
-        //        TARGETID = model.targetId,
-        //        OPERATIONSID = model.operationsId, // cam enum
-        //        REQUESTSTATUSID = model.requestStatusId, // status enum
-        //        SENDERCOMMENT = model.senderComment,
-        //        RESPONSECOMMENT = model.responseComment,
-        //        ARRIVALDATE = applicationDate,
-        //        SYSTEMARRIVALDATE = date,
-        //    };
-
-        //    context.TBL_JOB_REQUEST.Add(data);
-
-        //    Audit Section ---------------------------
-        //   var audit = new TBL_AUDIT
-        //   {
-        //       AUDITTYPEID = (short)AuditTypeEnum.JobRequestAdded,
-        //       STAFFID = model.createdBy,
-        //       BRANCHID = (short)model.userBranchId,
-        //       DETAIL = $"Added JobRequest '{ model.jobRequestCode }' ",
-        //       IPADDRESS = model.userIPAddress,
-        //       URL = model.applicationUrl,
-        //       APPLICATIONDATE = applicationDate,
-        //       SYSTEMDATETIME = DateTime.Now
-        //   };
-        //    this.audit.AddAuditTrail(audit);
-        //    End of Audit Section ---------------------
-
-        //    return context.SaveChanges() != 0;
-        //}
-
-        //public IEnumerable<OperationStaffViewModel> GetOperationStaff(int operationId)
-        //{
-        //    return this.context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId)
-        //         .Select(g => g.TBL_APPROVAL_GROUP)
-        //         .SelectMany(l => l.TBL_APPROVAL_LEVEL)
-        //         .SelectMany(s => s.TBL_APPROVAL_LEVEL_STAFF)
-        //         .Select(s => new OperationStaffViewModel
-        //         {
-        //             id = s.STAFFID,
-        //             name = s.TBL_STAFF.FIRSTNAME,
-        //             groupId = (int)s.TBL_APPROVAL_LEVEL.GROUPID
-        //         }).ToList();
-        //}
-
-        //public IEnumerable<JobRequestViewModel> GetJobRequestByGroupId(int staffId)
-        //{
-        //    var operationId = (int)OperationsEnum.CAM;
-
-        //    var approvalGroupIds = context.TBL_APPROVAL_GROUP_MAPPING
-        //        .Join(context.TBL_APPROVAL_LEVEL,
-        //            a => a.GROUPID, b => b.GROUPID, (a, b) => new { a, b })
-        //        .Join(context.TBL_APPROVAL_LEVEL_STAFF,
-        //            c => c.b.APPROVALLEVELID, d => d.APPROVALLEVELID, (c, d) => new { c, d })
-        //        .Where(x => x.c.a.OPERATIONID == operationId && x.d.STAFFID == staffId)
-        //            .Select(x => x.c.b.GROUPID);
-
-        //    return this.GetAllJobRequest().Where(x => approvalGroupIds.Contains(x.departmentId)).OrderByDescending(x => x.jobRequestId).ToList();
-        //}
-
-
-        public List<FinanceTransactionViewModel> BuildCollateralSearchChargeFeesPosting(JobRequestCollateralSearchViewModel model)
+        #region ...JOB REQUEST SETUPS...
+        public bool UpdateJobType(JobTypeViewModel model, short jobTypeId)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
-            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
-            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
-            if (searchCharges.Any() && model.totalChargeAmount != 0)
+            var data = this.context.TBL_JOB_TYPE.Find(jobTypeId);
+            if (data == null)
             {
-                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
-                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
-                foreach (var post in postingGroups)
-                {
-                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
-
-                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
-                    {
-                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-                        decimal debitAmount = 0;
-                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
-                            debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
-                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
-                            debitAmount = (decimal)model.totalChargeAmount;
-
-                        debit.operationId = (int)model.operationId;
-                        debit.description = model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
-                        debit.valueDate = general.GetApplicationDate();
-                        debit.transactionDate = debit.valueDate;
-                        debit.currencyId = casa.CURRENCYID;
-                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
-                        debit.isApproved = true;
-                        debit.postedBy = model.createdBy;
-                        debit.approvedBy = model.createdBy;
-                        debit.approvedDate = debit.transactionDate;
-                        debit.approvedDateTime = DateTime.Now;
-                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                        debit.companyId = model.companyId;
-
-
-
-                        if (context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL == null)
-                            throw new BadLogicException($"No GL is currently mapped to this product code '{casa.TBL_PRODUCT.PRODUCTCODE}'.");
-
-                        debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
-                        debit.sourceReferenceNumber = model.requestCode;
-                        debit.batchCode = batchCode;
-                        debit.casaAccountId = casa.CASAACCOUNTID;
-                        debit.debitAmount = debitAmount;
-                        debit.creditAmount = 0;
-                        debit.sourceBranchId = model.userBranchId;
-                        debit.destinationBranchId = casa.BRANCHID;
-                        debit.rateCode = "TTB";
-                        debit.rateUnit = string.Empty;
-                        debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
-
-                        inputTransactions.Add(debit);
-                    }
-
-                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
-                    {
-                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-                        decimal creditAmount = 0;
-                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
-                            creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
-                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
-                            creditAmount = (decimal)model.totalChargeAmount;
-
-
-                        credit.operationId = (int)model.operationId;
-                        credit.description = model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
-                        credit.valueDate = general.GetApplicationDate();
-                        credit.transactionDate = credit.valueDate;
-                        credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).CURRENCYID; // (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
-                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
-                        credit.isApproved = true;
-                        credit.postedBy = model.createdBy;
-                        credit.approvedBy = model.createdBy;
-                        credit.approvedDate = credit.transactionDate;
-                        credit.approvedDateTime = DateTime.Now;
-                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                        credit.companyId = model.companyId;
-                        credit.glAccountId = (int)credits.GLACCOUNTID1;
-                        credit.sourceReferenceNumber = model.requestCode;
-                        credit.batchCode = batchCode;
-                        credit.casaAccountId = null;
-                        credit.debitAmount = 0;
-                        credit.creditAmount = creditAmount;
-                        credit.sourceBranchId = model.userBranchId;
-                        credit.destinationBranchId = model.userBranchId;
-                        credit.rateCode = "TTB";
-                        credit.rateUnit = string.Empty;
-                        credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
-
-                        inputTransactions.Add(credit);
-                    }
-                }
+                return false;
             }
 
-            return inputTransactions;
-        }
+            data.JOBTYPENAME = model.jobTypeName;
 
-        public List<FinanceTransactionViewModel> BuildSolicitorFeePaymentPosting(JobRequestCollateralSearchViewModel model)
-        {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
-
-
-
-            //var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
-            var currency = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
-
-            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
-            if (searchCharges.Any() && model.totalChargeAmount != 0)
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
             {
-                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
-                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
-                foreach (var post in postingGroups)
-                {
-                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
+                AUDITTYPEID = (short)AuditTypeEnum.JobTypeUpdated,
+                STAFFID = model.lastUpdatedBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Updated JobType '{ model.jobTypeName }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
 
-                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
-                    {
-                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
-                        decimal debitAmount = 0;
-                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
-                            debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
-                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
-                            debitAmount = (decimal)model.totalChargeAmount;
-
-                        debit.operationId = (int)model.operationId;
-                        debit.description = model.feeNarration;
-                        debit.valueDate = general.GetApplicationDate();
-                        debit.transactionDate = debit.valueDate;
-                        debit.currencyId = (short) model.currencyId.Value;
-                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
-                        debit.isApproved = true;
-                        debit.postedBy = model.createdBy;
-                        debit.approvedBy = model.createdBy;
-                        debit.approvedDate = debit.transactionDate;
-                        debit.approvedDateTime = DateTime.Now;
-                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                        debit.companyId = model.companyId;
-
-
-                        debit.glAccountId = debits.GLACCOUNTID1.Value;
-                        debit.sourceReferenceNumber = model.requestCode;
-                        debit.batchCode = batchCode;
-                        debit.casaAccountId = null;
-                        debit.debitAmount = debitAmount;
-                        debit.creditAmount = 0;
-                        debit.sourceBranchId = model.userBranchId;
-                        debit.destinationBranchId = model.userBranchId;
-                        debit.rateCode = "TTB";
-                        debit.rateUnit = string.Empty;
-                        debit.currencyCrossCode = currency.CURRENCYCODE;
-
-                        inputTransactions.Add(debit);
-                    }
-
-                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
-                    {
-                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
-                        decimal creditAmount = 0;
-                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
-                            creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
-                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
-                            creditAmount = (decimal)model.totalChargeAmount;
-
-
-                        credit.operationId = (int)model.operationId;
-                        credit.description = model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
-                        credit.valueDate = general.GetApplicationDate();
-                        credit.transactionDate = credit.valueDate;
-
-                        if (credits.DETAILTYPEID != (short)ChargeFeeDetailTypeEnum.Customer)
-                        {
-                            credit.glAccountId = (int)credits.GLACCOUNTID1;
-                            credit.casaAccountId = null;
-                            //credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
-                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, model.currencyId.Value, model.companyId).sellingRate;
-                        }
-                        else
-                        {
-                            credit.accountNumber = model.accountNumber;
-                            credit.useDirectAccount = true;
-                            var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == 1); // .TBL_PRODUCT.Find((short)DefaultProductEnum.CASA);
-                            //credit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == (short)DefaultProductEnum.CASA).PRINCIPALBALANCEGL.Value;
-                            var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID);
-                            credit.glAccountId = product.PRINCIPALBALANCEGL.Value;
-                            credit.casaAccountId = casa.CASAACCOUNTID;
-                            //credit.currencyId = (short)chartOfAccount.GetAccountDefaultCurrency((int)credit.glAccountId, model.companyId);
-                            credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, model.currencyId.Value, model.companyId).sellingRate;
-                        }
-
-                        //casa.CURRENCYID;
-                        //credit.glAccountId = (int)credits.GLACCOUNTID1;
-                        credit.currencyId = model.currencyId.Value; //  (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId);
-                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
-                        credit.isApproved = true;
-                        credit.postedBy = model.createdBy;
-                        credit.approvedBy = model.createdBy;
-                        credit.approvedDate = credit.transactionDate;
-                        credit.approvedDateTime = DateTime.Now;
-                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
-                        credit.companyId = model.companyId;
-
-                        credit.sourceReferenceNumber = model.requestCode;
-                        credit.batchCode = batchCode;
-                        
-                        credit.debitAmount = 0;
-                        credit.creditAmount = creditAmount;
-                        credit.sourceBranchId = model.userBranchId;
-                        credit.destinationBranchId = model.userBranchId;
-                        credit.rateCode = "TTB";
-                        credit.rateUnit = string.Empty;
-                        credit.currencyCrossCode = currency.CURRENCYCODE;
-
-                        inputTransactions.Add(credit);
-                    }
-                }
-            }
-
-            return inputTransactions;
+            return context.SaveChanges() != 0;
         }
+
+        public bool AddJobType(JobTypeViewModel model)
+        {
+            var data = new TBL_JOB_TYPE
+            {
+                JOBTYPENAME = model.jobTypeName,
+            };
+
+            context.TBL_JOB_TYPE.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.JobTypeAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added JobType '{ model.jobTypeName }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        #endregion ...END OF JOB REQUEST SETUPS...
+
 
         #region Job Request Feedback
         public IEnumerable<LookupViewModel> GetJobRequestStatus()

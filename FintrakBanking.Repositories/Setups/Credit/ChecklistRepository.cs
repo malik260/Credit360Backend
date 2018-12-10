@@ -171,6 +171,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ChecklistOperation).ToList();
 
+            var checkListItems = new List<ChecklistDefinitionAndDetailViewModel>();
+
             const int BUSINESS_UNIT_GROUP = 1; //Todo: Business unit approval group
 
             if (operationId == (int)OperationsEnum.LoanApplication)
@@ -186,35 +188,71 @@ namespace FintrakBanking.Repositories.Credit
             
           
             List<CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
-            var checkListItems = (from s in context.TBL_CHECKLIST_DETAIL
-                              join k in context.TBL_CHECKLIST_DEFINITION
-                              on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
-                              join l in context.TBL_CHECKLIST_TYPE on k.CHECKLIST_TYPEID equals l.CHECKLIST_TYPEID
-                              where s.TARGETID == loanTargetId && k.CHECKLIST_TYPEID == checkListTypeId
-                                   && s.TARGETID2 == (l.ISPRODUCT_BASED ? null : customerId)
-                              select new ChecklistDefinitionAndDetailViewModel
-                              {
-                                  checkListDetailId = s.CHECKLISTID,
-                                  checkListDefinitionId = s.CHECKLISTDEFINITIONID,
-                                  responseTypeId = k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID,
-                                  requireUpload = k.TBL_CHECKLIST_ITEM.REQUIREUPLOAD,
-                                  checkListTypeId = k.CHECKLIST_TYPEID,
-                                  checkListTypeName = k.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
-                                  checkListItemId = k.CHECKLISTITEMID,
-                                  checkListItemName = k.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
-                                  itemDescription = k.ITEMDESCRIPTION,
-                                  checklistStatusId = s.CHECKLISTSTATUSID,
-                                  approvalLevelId = k.APPROVALLEVELID,
-                                  checklistDate = s.DATETIMECREATED,
-                                  customerId = customerId,
 
-                                  responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
-                            Select(x => new CheckListStatusViewModel()
-                            {
-                                checklistStatusId = x.CHECKLISTSTATUSID,
-                                checklistStatusName = x.CHECKLISTSTATUSNAME,
-                            }).ToList()
-                              });
+            if (checkListTypeId == (int)CheckTypeEnum.CAPChecklist)
+            {
+                 checkListItems = (from s in context.TBL_CHECKLIST_DETAIL
+                                      join k in context.TBL_CHECKLIST_DEFINITION
+                                      on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
+                                      join l in context.TBL_CHECKLIST_TYPE on k.CHECKLIST_TYPEID equals l.CHECKLIST_TYPEID
+                                      where s.TARGETID == loanTargetId && k.CHECKLIST_TYPEID == checkListTypeId
+                                       // && s.TARGETID2 == (l.ISPRODUCT_BASED == true ? null : customerId)
+                                      select new ChecklistDefinitionAndDetailViewModel
+                                      {
+                                          checkListDetailId = s.CHECKLISTID,
+                                          checkListDefinitionId = s.CHECKLISTDEFINITIONID,
+                                          responseTypeId = k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID,
+                                          requireUpload = k.TBL_CHECKLIST_ITEM.REQUIREUPLOAD,
+                                          checkListTypeId = k.CHECKLIST_TYPEID,
+                                          checkListTypeName = k.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+                                          checkListItemId = k.CHECKLISTITEMID,
+                                          checkListItemName = k.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                                          itemDescription = k.ITEMDESCRIPTION,
+                                          checklistStatusId = s.CHECKLISTSTATUSID,
+                                          approvalLevelId = k.APPROVALLEVELID,
+                                          checklistDate = s.DATETIMECREATED,
+                                          customerId = customerId,
+
+                                          responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
+                                    Select(x => new CheckListStatusViewModel()
+                                    {
+                                        checklistStatusId = x.CHECKLISTSTATUSID,
+                                        checklistStatusName = x.CHECKLISTSTATUSNAME,
+                                    }).ToList()
+                                      }).ToList();
+            }
+            else{
+                checkListItems = (from s in context.TBL_CHECKLIST_DETAIL
+                                  join k in context.TBL_CHECKLIST_DEFINITION
+                                  on s.CHECKLISTDEFINITIONID equals k.CHECKLISTDEFINITIONID
+                                  join l in context.TBL_CHECKLIST_TYPE on k.CHECKLIST_TYPEID equals l.CHECKLIST_TYPEID
+                                  where s.TARGETID == loanTargetId && k.CHECKLIST_TYPEID == checkListTypeId
+                                    && s.TARGETID2 == (l.ISPRODUCT_BASED == true ? null : customerId)
+                                  select new ChecklistDefinitionAndDetailViewModel
+                                  {
+                                      checkListDetailId = s.CHECKLISTID,
+                                      checkListDefinitionId = s.CHECKLISTDEFINITIONID,
+                                      responseTypeId = k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID,
+                                      requireUpload = k.TBL_CHECKLIST_ITEM.REQUIREUPLOAD,
+                                      checkListTypeId = k.CHECKLIST_TYPEID,
+                                      checkListTypeName = k.TBL_CHECKLIST_TYPE.CHECKLIST_TYPE_NAME,
+                                      checkListItemId = k.CHECKLISTITEMID,
+                                      checkListItemName = k.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                                      itemDescription = k.ITEMDESCRIPTION,
+                                      checklistStatusId = s.CHECKLISTSTATUSID,
+                                      approvalLevelId = k.APPROVALLEVELID,
+                                      checklistDate = s.DATETIMECREATED,
+                                      customerId = customerId,
+
+                                      responseTypes = context.TBL_CHECKLIST_STATUS.Where(x => x.RESPONSE_TYPEID == k.TBL_CHECKLIST_ITEM.RESPONSE_TYPEID).OrderBy(a => a.CHECKLISTSTATUSID).
+                                Select(x => new CheckListStatusViewModel()
+                                {
+                                    checklistStatusId = x.CHECKLISTSTATUSID,
+                                    checklistStatusName = x.CHECKLISTSTATUSNAME,
+                                }).ToList()
+                                  }).ToList();
+
+            }
             var proposedProductId = (from id in context.TBL_LOAN_APPLICATION_DETAIL where id.LOANAPPLICATIONID == loanTargetId select (short?)id.PROPOSEDPRODUCTID).ToList();
             var isproductBased = context.TBL_CHECKLIST_TYPE.FirstOrDefault(x => x.CHECKLIST_TYPEID == checkListTypeId).ISPRODUCT_BASED;
 
@@ -1421,8 +1459,9 @@ namespace FintrakBanking.Repositories.Credit
             if (isAvailment)
             {
                 var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                              where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId &&
-                             c.ISSUBSEQUENT == false
+                              join a in context.TBL_LOAN_APPLICATION_DETAIL on c.LOANAPPLICATIONDETAILID equals a.LOANAPPLICATIONDETAILID
+                              where a.LOANAPPLICATIONID == loanApplicationId &&
+                             c.ISSUBSEQUENT == false && a.STATUSID == (int)ApprovalStatusEnum.Approved
                               orderby c.ISEXTERNAL descending
                               select new ConditionPrecedentViewModel()
                               {

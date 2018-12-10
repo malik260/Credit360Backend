@@ -608,7 +608,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                    equityContribution = data.EQUITYCONTRIBUTION,
                                    expiryPeriod = data.EXPIRYPERIOD,
                                    scheduleTypeId = data.SCHEDULETYPEID,
-                                   usedByLos = data.USEDBYLOS
+                                   usedByLos = data.USEDBYLOS,
+                                   penalChargeRate = data.PENALCHARGERATE
 
                                });
             var Productdata = productData.ToList();
@@ -857,7 +858,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 }).FirstOrDefault();
 
                 item.productBehaviour = ProductBehaviour;
-
+                
 
                 var currencies = context.TBL_PRODUCT_CURRENCY.Where(curr => curr.PRODUCTID == item.productId && curr.DELETED != false)
                                 .Select(c => new ProductCurrencyViewModel()
@@ -1436,6 +1437,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     var existingProduct = productToUpdate;
                     if (productModel != null)
                     {
+
                         productModel.APPROVALSTATUSID = approvalStatusId;
                         existingProduct.PRODUCTCLASSID = productModel.PRODUCTCLASSID;
                         //existingProduct.PRODUCTCODE = productModel.PRODUCTCODE;
@@ -1445,6 +1447,8 @@ namespace FintrakBanking.Repositories.Setups.General
                         existingProduct.PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL;
                         existingProduct.PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2;
                         existingProduct.PENALCHARGEGL = productModel.PENALCHARGEGL;
+                        existingProduct.PENALCHARGERATE = productModel.PENALCHARGERATE;
+                        existingProduct.USEDBYLOS = productModel.USEDBYLOS;
                         existingProduct.INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL;
                         existingProduct.INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL;
                         existingProduct.DORMANTGL = productModel.DORMANTGL;
@@ -1549,8 +1553,9 @@ namespace FintrakBanking.Repositories.Setups.General
                             PRINCIPALBALANCEGL = productModel.PRINCIPALBALANCEGL,
                             PRINCIPALBALANCEGL2 = productModel.PRINCIPALBALANCEGL2,
                             PENALCHARGEGL = productModel.PENALCHARGEGL,
-
-                            INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL,
+                            PENALCHARGERATE = productModel.PENALCHARGERATE,
+                        USEDBYLOS = productModel.USEDBYLOS,
+                        INTERESTINCOMEEXPENSEGL = productModel.INTERESTINCOMEEXPENSEGL,
                             INTERESTRECEIVABLEPAYABLEGL = productModel.INTERESTRECEIVABLEPAYABLEGL,
                             DORMANTGL = productModel.DORMANTGL,
                             PREMIUMDISCOUNTGL = productModel.PREMIUMDISCOUNTGL,
@@ -1772,6 +1777,8 @@ namespace FintrakBanking.Repositories.Setups.General
 
             var product = new TBL_TEMP_PRODUCT()
             {
+                PENALCHARGERATE = productModel.penalChargeRate,
+                USEDBYLOS = productModel.usedByLos,
                 COMPANYID = productModel.companyId,
                 PRODUCTTYPEID = productModel.productTypeId,
                 PRODUCTCATEGORYID = productModel.productCategoryId,
@@ -2024,7 +2031,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 }
 
                 var tempProductToUpdate = existingTempProduct;
-
+                tempProductToUpdate.PENALCHARGERATE = productModel.penalChargeRate;
+                tempProductToUpdate.USEDBYLOS = productModel.usedByLos;
                 tempProductToUpdate.PRODUCTID = (short)productModel.productId;
                 tempProductToUpdate.PRODUCTCLASSID = (short)productModel.productClassId;
                 tempProductToUpdate.PRODUCTCODE = productModel.productCode;
@@ -2158,6 +2166,8 @@ namespace FintrakBanking.Repositories.Setups.General
                 //End of storing the updated product currencies
                 tempProduct = new TBL_TEMP_PRODUCT()
                 {
+                    PENALCHARGERATE = productModel.penalChargeRate,
+                    USEDBYLOS = productModel.usedByLos,
                     COMPANYID = productModel.companyId,
                     PRODUCTTYPEID = productModel.productTypeId,
                     PRODUCTCATEGORYID = productModel.productCategoryId,
