@@ -49,6 +49,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
 
                     loanId.Text = Request.QueryString["loanId"]; //"252"; 
 
+                    
+
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
                     if (extension != null)

@@ -9050,6 +9050,10 @@ namespace FintrakBanking.Repositories.Credit
                         || l.BRANCHID == param.branchId && l.LOANREFERENCENUMBER == param.param.Trim()
                         || l.BRANCHID == param.branchId && param.param == null
                         || param.param == null && param.branchId == 0
+                        || param.param.Contains(l.TBL_CUSTOMER.MIDDLENAME)
+                        || param.param.Contains(l.TBL_CUSTOMER.LASTNAME)
+                        || param.param.Contains(l.TBL_CUSTOMER.FIRSTNAME)
+
 
                         select new LoanViewModel
                         {

@@ -79,13 +79,13 @@
                   <Width>1.10417in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.2875in</Width>
+                  <Width>1.46458in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.2875in</Width>
+                  <Width>1.52917in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.2875in</Width>
+                  <Width>1.77708in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -660,7 +660,7 @@
             <Top>0.16542in</Top>
             <Left>0.03in</Left>
             <Height>0.75in</Height>
-            <Width>5.96667in</Width>
+            <Width>6.875in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -688,17 +688,17 @@
             <ChartSeriesHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Label>usage</Label>
+                  <Label>balance</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartSeriesHierarchy>
             <ChartData>
               <ChartSeriesCollection>
-                <ChartSeries Name="usage">
+                <ChartSeries Name="balance">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!usage.Value)</Y>
+                        <Y>=Sum(Fields!balance.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -1012,10 +1012,10 @@
               </Style>
             </ChartNoDataMessage>
             <DataSetName>Sectors</DataSetName>
-            <Top>0.125in</Top>
-            <Left>6.24875in</Left>
-            <Height>1.93056in</Height>
-            <Width>3in</Width>
+            <Top>0.16542in</Top>
+            <Left>6.79736in</Left>
+            <Height>1.89014in</Height>
+            <Width>2.84722in</Width>
             <ZIndex>1</ZIndex>
             <Style>
               <Border>
@@ -1047,17 +1047,17 @@
             <ChartSeriesHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Label>usage</Label>
+                  <Label>balance</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartSeriesHierarchy>
             <ChartData>
               <ChartSeriesCollection>
-                <ChartSeries Name="usage">
+                <ChartSeries Name="balance">
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!usage.Value)</Y>
+                        <Y>=Sum(Fields!balance.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
@@ -1372,10 +1372,10 @@
               </Style>
             </ChartNoDataMessage>
             <DataSetName>Sectors</DataSetName>
-            <Top>0.125in</Top>
-            <Left>9.31819in</Left>
-            <Height>1.93056in</Height>
-            <Width>3in</Width>
+            <Top>0.16542in</Top>
+            <Left>9.71402in</Left>
+            <Height>1.89014in</Height>
+            <Width>2.93056in</Width>
             <ZIndex>2</ZIndex>
             <Style>
               <Border>
