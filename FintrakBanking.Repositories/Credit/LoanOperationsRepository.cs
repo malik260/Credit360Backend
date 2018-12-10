@@ -18151,8 +18151,8 @@ namespace FintrakBanking.Repositories.Credit
                 var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
 
                 reviewOperation.LOANID = model.loanId;
-                reviewOperation.LOANSYSTEMTYPEID = model.productTypeId;
-                //reviewOperation.OPERATIONTYPEID = model.operationTypeId;
+                reviewOperation.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+                reviewOperation.OPERATIONTYPEID = model.operationTypeId;
                 reviewOperation.EFFECTIVEDATE = model.proposedEffectiveDate;
                 reviewOperation.REVIEWDETAILS = model.reviewDetails;
                 reviewOperation.INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate;
