@@ -13877,7 +13877,7 @@ namespace FintrakBanking.Repositories.Credit
         private bool ProcessContingentLiabilityRenewal(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
-            if (model.maturityDate < model.effectiveDate)
+            if (model.newMaturityDate < model.newEffectiveDate)
             {
                 throw new ConditionNotMetException("Maturity Date cannot be less than Effective date");
             }
@@ -13890,7 +13890,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
 
-            if (oldContingent.MATURITYDATE > model.effectiveDate)
+            if (oldContingent.MATURITYDATE > model.newEffectiveDate)
             {
                 throw new ConditionNotMetException("Old Maturity Date cannot be more than the New Effective Date");
             }
@@ -15112,7 +15112,7 @@ namespace FintrakBanking.Repositories.Credit
                                     principalAmount = (double)b.CONTINGENTAMOUNT,
                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                     //interestRate = b.INTERESTRATE,
-                                    effectiveDate = a.EFFECTIVEDATE,
+                                    effectiveDate = b.EFFECTIVEDATE,
                                     maturityDate = b.MATURITYDATE,
                                     integralFeeAmount = 0,
                                     newEffectiveDate = a.EFFECTIVEDATE,

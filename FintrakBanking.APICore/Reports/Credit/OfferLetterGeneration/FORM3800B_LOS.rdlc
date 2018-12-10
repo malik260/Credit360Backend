@@ -109,7 +109,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox13</rd:DefaultName>
-        <Top>1.97793in</Top>
+        <Top>2.10293in</Top>
         <Left>0.0533in</Left>
         <Height>0.25in</Height>
         <Width>7.42349in</Width>
@@ -233,7 +233,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Conditions Precedent</Value>
+                <Value>1. Conditions Precedent</Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontWeight>Bold</FontWeight>
@@ -267,7 +267,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Conditions Subsequent (to be satisfied after drawdown) </Value>
+                <Value>2. Conditions Subsequent (to be satisfied after drawdown) </Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontFamily>Lucida Sans Unicode</FontFamily>
@@ -303,7 +303,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Transaction Dynamics</Value>
+                <Value>3. Transaction Dynamics</Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontWeight>Bold</FontWeight>
@@ -338,7 +338,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Monitoring Triggers</Value>
+                <Value>4. Monitoring Triggers</Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontWeight>Bold</FontWeight>
@@ -373,7 +373,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Comments</Value>
+                <Value>5. Comments</Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontWeight>Bold</FontWeight>
@@ -864,6 +864,44 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixColumns>
           <TablixRows>
             <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="groupHead">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!groupHead.Value</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>groupHead</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>None</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                    <ColSpan>2</ColSpan>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell />
+              </TablixCells>
+            </TablixRow>
+            <TablixRow>
               <Height>0.29861in</Height>
               <TablixCells>
                 <TablixCell>
@@ -1083,6 +1121,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 <TablixMember />
                 <TablixMember />
                 <TablixMember />
+                <TablixMember />
               </TablixMembers>
             </TablixMember>
           </TablixMembers>
@@ -1090,7 +1129,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         <DataSetName>CustomerDetails</DataSetName>
         <Top>0.90571in</Top>
         <Left>0.04665in</Left>
-        <Height>0.89583in</Height>
+        <Height>1.14583in</Height>
         <Width>7.406in</Width>
         <ZIndex>20</ZIndex>
         <Style>
@@ -2022,7 +2061,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=RowNumber(nothing)</Value>
+                              <Value>= "3." &amp; RowNumber(nothing)</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -2253,7 +2292,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!SN.Value</Value>
+                              <Value>= "5." &amp; RowNumber(nothing)</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -2458,7 +2497,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=RowNumber(nothing)</Value>
+                              <Value>= "4." &amp; RowNumber(nothing)</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -2765,7 +2804,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=RowNumber(nothing)</Value>
+                              <Value>="1." &amp; RowNumber(nothing)</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -3184,7 +3223,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=RowNumber(nothing)</Value>
+                              <Value>= "2." &amp; RowNumber(nothing)</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -3879,6 +3918,10 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Field>
         <Field Name="customer">
           <DataField>customer</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="groupHead">
+          <DataField>groupHead</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

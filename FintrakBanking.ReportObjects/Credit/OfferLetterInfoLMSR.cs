@@ -8,6 +8,7 @@ using FintrakBanking.Common;
 using System.IO;
 using System.Web.Hosting;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.ReportObjects.Credit
 {
@@ -16,6 +17,7 @@ namespace FintrakBanking.ReportObjects.Credit
         public static OfferLetterViewModel GenerateOfferLetter(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
+            FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
             var customerExist = context.TBL_LMSR_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x=>x.CUSTOMERID).FirstOrDefault();
             //if (customerExist != null)
@@ -816,6 +818,7 @@ namespace FintrakBanking.ReportObjects.Credit
         public List<CusotmerInfoViewModel> Lmsr_Customer(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
+            FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
             var loanComments = (from x in context.TBL_LMSR_APPLICATION
                                 join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
@@ -825,7 +828,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                 {
                                     customer = y.LASTNAME + " " + y.FIRSTNAME + " " + y.MIDDLENAME,
                                     date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
-                                    branch = b.BRANCHNAME
+                                    branch = b.BRANCHNAME,
+                                   // groupHead = staggingCon.STG_STAFFMIS.Where(m => m.STAFFCODE == context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.STAFFCODE).FirstOrDefault()).Select(m => m.GROUP_HUB).FirstOrDefault(),
                                 }).ToList();
 
             return loanComments;
