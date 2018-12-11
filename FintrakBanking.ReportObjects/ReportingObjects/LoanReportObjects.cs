@@ -280,9 +280,9 @@ namespace FintrakBanking.ReportObjects
                          || a.TBL_CUSTOMER.LASTNAME.StartsWith(loanRefNo.Trim()) 
                          || a.TBL_CUSTOMER.MIDDLENAME.StartsWith(loanRefNo.Trim()) 
                          || loanRefNo == null || loanRefNo == "" 
-                         || loanRefNo.Contains(a.TBL_CUSTOMER.MIDDLENAME)
-                         || loanRefNo.Contains(a.TBL_CUSTOMER.LASTNAME)
-                            || loanRefNo.Contains(a.TBL_CUSTOMER.FIRSTNAME)
+                         || loanRefNo.ToLower().Equals(a.TBL_CUSTOMER.MIDDLENAME.ToLower())
+                         || loanRefNo.ToLower().Equals(a.TBL_CUSTOMER.LASTNAME.ToLower())
+                            || loanRefNo.ToLower().Equals(a.TBL_CUSTOMER.FIRSTNAME.ToLower())
                          && (a.BRANCHID == branchId || branchId == null || branchId == 0)
                         && (a.TBL_PRODUCT.PRODUCTCLASSID == productClassId || productClassId == null || productClassId == 0))
                         
