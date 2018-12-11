@@ -930,7 +930,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
-                entity.staffId = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;
                 //entity.dateTimeCreated = 
 
 

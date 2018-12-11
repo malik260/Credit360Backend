@@ -27,7 +27,7 @@
         public DateTime DATETIMECREATED { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
-
+        public int? POSITION { get; set; }
         public virtual TBL_LMSR_APPLICATION_DETAIL TBL_LMSR_APPLICATION_DETAIL { get; set; }
 
         //public virtual TBL_TRANSACTION_DYNAMICS TBL_TRANSACTION_DYNAMICS { get; set; }

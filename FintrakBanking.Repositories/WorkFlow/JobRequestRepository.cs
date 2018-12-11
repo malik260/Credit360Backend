@@ -1213,6 +1213,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 saveJobRequestDetail(detail);
             }
 
+            jobRequest.REQUESTSTATUSID = (short)JobRequestStatusEnum.processing;
+
             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
             string messageBoby = $"Dear RM, <br /><br />This is to bring your attention that legal has specified that charges for collaral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
@@ -1379,6 +1381,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                            where  x.COMPANYID == companyId && x.DELETED == false
                            select new jobReasignment
                            {
+                               reasignmentId = x.REASSIGNMENTID,
                                staffId = x.STAFFID,
                                dateTimeDeleted = x.DATETIMECREATED,
                                jobTypeId = x.JOBTYPEID,
@@ -1467,6 +1470,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         }
 
+       
+
         public bool DeleteJobTypeForAStaff(jobReasignment model)
         {
             var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
@@ -1499,24 +1504,23 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         public bool UpdateAsignedJobTypeToStaff(jobReasignment model)
         {
-          var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
-            if (data!=null)
+          var data = context.TBL_JOB_TYPE_REASSIGNMENT.Find(model.reasignmentId);
+            if (data != null)
             {
                 data.STAFFID = model.staffId;
                 data.JOBTYPEID = (short)model.jobTypeId;
-                data.COMPANYID = model.companyId;
-                data.CREATEDBY = model.createdBy;
-                data.DATETIMECREATED = model.dateTimeCreated;
-                data.DELETED = false;
 
             }
+
+            var jobType = context.TBL_JOB_TYPE.Find(model.jobTypeId);
+            var staff = context.TBL_STAFF.Find(model.staffId);
 
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
                 STAFFID = model.createdBy,
                 //BRANCHID = (short)model.BranchId,
-                DETAIL = $"Joy Type has been edited to a staff with ID '{ model.staffId }' ",
+                DETAIL = $"'{jobType.JOBTYPENAME}' staff admin has been modified. New admin staff code : '{ staff.STAFFCODE }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
