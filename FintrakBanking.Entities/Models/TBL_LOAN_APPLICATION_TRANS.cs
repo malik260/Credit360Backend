@@ -10,9 +10,9 @@
     public partial class TBL_LOAN_APPLICATION_TRANS
     {
         [Key]
-        public short CUSTOMERTRANSACTIONID { get; set; }
-        public short LOANAPPLICATIONID { get; set; }
-        public short CUSTOMERID { get; set; }
+        public int CUSTOMERTRANSACTIONID { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
+        public int CUSTOMERID { get; set; }
         public string CUSTOMERCODE { get; set; }
         public string ACCOUNTNUMBER { get; set; }
         public string PERIOD { get; set; }
@@ -30,7 +30,7 @@
         public decimal? COMMITMENTFEE { get; set; }
         public decimal? CONTINGENTLIABILITYCOMM { get; set; }
         public decimal? LC_COMMISSION { get; set; }
-        public short CREATEDBY { get; set; }
+        public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public int? MONTH { get; set; }
         public int? YEAR { get; set; }
