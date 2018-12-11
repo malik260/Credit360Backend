@@ -2826,6 +2826,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columncustomer;
             
+            private global::System.Data.DataColumn columngroupHead;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public CustomerDetailsDataTable() {
@@ -2885,6 +2887,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn groupHeadColumn {
+                get {
+                    return this.columngroupHead;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -2920,12 +2930,13 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public CustomerDetailsRow AddCustomerDetailsRow(string branch, string date, string customer) {
+            public CustomerDetailsRow AddCustomerDetailsRow(string branch, string date, string customer, string groupHead) {
                 CustomerDetailsRow rowCustomerDetailsRow = ((CustomerDetailsRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         branch,
                         date,
-                        customer};
+                        customer,
+                        groupHead};
                 rowCustomerDetailsRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowCustomerDetailsRow);
                 return rowCustomerDetailsRow;
@@ -2951,6 +2962,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnbranch = base.Columns["branch"];
                 this.columndate = base.Columns["date"];
                 this.columncustomer = base.Columns["customer"];
+                this.columngroupHead = base.Columns["groupHead"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -2962,6 +2974,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columndate);
                 this.columncustomer = new global::System.Data.DataColumn("customer", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columncustomer);
+                this.columngroupHead = new global::System.Data.DataColumn("groupHead", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngroupHead);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5312,6 +5326,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string groupHead {
+                get {
+                    try {
+                        return ((string)(this[this.tableCustomerDetails.groupHeadColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'groupHead\' in table \'CustomerDetails\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCustomerDetails.groupHeadColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsbranchNull() {
                 return this.IsNull(this.tableCustomerDetails.branchColumn);
             }
@@ -5344,6 +5374,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetcustomerNull() {
                 this[this.tableCustomerDetails.customerColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsgroupHeadNull() {
+                return this.IsNull(this.tableCustomerDetails.groupHeadColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetgroupHeadNull() {
+                this[this.tableCustomerDetails.groupHeadColumn] = global::System.Convert.DBNull;
             }
         }
         
