@@ -209,7 +209,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
             }
@@ -930,7 +930,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
-                entity.staffId = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;
                 //entity.dateTimeCreated = 
 
 
