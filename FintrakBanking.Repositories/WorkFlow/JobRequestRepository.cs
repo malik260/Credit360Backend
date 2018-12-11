@@ -452,7 +452,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             to = x.TBL_STAFF2.FIRSTNAME == null ? "n/a" : x.TBL_STAFF2.FIRSTNAME + " " + x.TBL_STAFF2.LASTNAME,
                             assignee = x.TBL_STAFF1.FIRSTNAME == null ? "Assign" : x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.LASTNAME,
 
-                        })).ToList().OrderByDescending(x => x.arrivalDate); ;
+                        })).ToList().OrderByDescending(x => x.arrivalDate);
 
 
             foreach (var item in data)
@@ -461,8 +461,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (detail.Any())
                 {
                     item.hasLegalRecommendedSearch = true;
-                    if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
+                    if (detail.FirstOrDefault().CUSTOMERORBUSINESSCHARGED == true)
                         item.customerCharged = true;
+
+                    if (detail.FirstOrDefault().ACCREDITEDCONSULTANTPAID)
+                        item.consultantPaid = true;
                 };
 
                 if (item.jobSubTypeId != null && item.jobSubTypeId == (int)JobSubTypeEnum.MiddleOfficeVerification) item.jobSubTypeName = "MO Verification";
@@ -1053,7 +1056,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
                 //When RM apply fee on customer's account
-                if (model.isInitiation)
+                if(model.isInitiation)
                 {
                     if (model.debitBusiness)
                     {
@@ -1073,10 +1076,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     model.accountNumber = accountNumber;
                     inputTransactions.AddRange(BuildSolicitorFeePaymentPosting(model));
-
                 }
                     
-                
                 if (inputTransactions.Count > 0)
                 {
                     financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
@@ -1099,14 +1100,14 @@ namespace FintrakBanking.Repositories.WorkFlow
 
                     if (model.isInitiation) //When RM apply fee on customer's account
                     {
-                        inputTransactions.AddRange(BuildCollateralSearchChargeFeesPosting(model));
-                        //Sending mail to solicitor
                         if (consultantRecord.Any())
                         {
                             List<string> jobs = new List<string>();
                             foreach (var i in jobRequestDetail)
                             {
                                 jobs.Add(i.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME);
+                                i.CUSTOMERORBUSINESSCHARGED = true;
+                                if (model.debitBusiness) i.DEBITBUSINESS = true;
                             }
                             var solicitor = consultantRecord.FirstOrDefault();
                             string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /><br /> '{jobs}'. <br /><br /> Kindly kindly contact FBN legal department for more info. <br /><br />";
@@ -1389,8 +1390,49 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return details;
         }
+
+        public bool mapJobTypeHubStaff(JobTypeHubViewModel model)
+        {
+            var applicationDate = general.GetApplicationDate();
+
+            var newJobTypeHubStaff = new TBL_JOB_TYPE_HUB_STAFF
+            {
+                STAFFID = model.staffId,
+                JOBTYPEUNITID = model.jobTypeUnitId,
+                JOBTYPEHUBID = model.jobTypeHubId,
+                ISTEAMLEAD = model.isTeamLead,
+                CREATEDBY = model.createdBy,
+                DATETIMECREATED = model.dateTimeCreated,
+                DELETED = false,
+
+            };
+            context.TBL_JOB_TYPE_HUB_STAFF.Add(newJobTypeHubStaff);
+
+            var staff = context.TBL_STAFF.Find(model.staffId);
+            var hub = context.TBL_JOB_TYPE_HUB.Find(model.jobTypeHubId);
+            var unit = context.TBL_JOB_TYPE_UNIT.Find(model.jobTypeUnitId);
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.JobRequestHubStaffAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Staff with staff code '{ staff.STAFFCODE }' of '{unit.UNITNAME}' unit was added to '{hub.HUBNAME}' hub  ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = applicationDate,
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() > 0;
+
+        }
+
         public bool AssignJobTypeToStaff(jobReasignment model)
         {
+            var applicationDate = general.GetApplicationDate();
             if (context.TBL_JOB_TYPE_REASSIGNMENT.Any(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId))
                 throw new ConditionNotMetException("This job type exist for this staff");
 
@@ -1406,22 +1448,23 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
             context.TBL_JOB_TYPE_REASSIGNMENT.Add(newType);
 
+            // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
                 STAFFID = model.createdBy,
-                //BRANCHID = (short)model.BranchId,
+                BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
+                APPLICATIONDATE = applicationDate,
                 SYSTEMDATETIME = DateTime.Now
             };
             this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
 
-            if (context.SaveChanges() > 0) return true;
+            return context.SaveChanges() > 0;
 
-            return false;
         }
 
         public bool DeleteJobTypeForAStaff(jobReasignment model)
@@ -2182,6 +2225,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                           }).ToList();
             return status;
         }
+
         public IEnumerable<JobRequestStatusFeedbackViewModel> GetAllJobRequestStatusFeedback()
         {
             var feedback = (from x in context.TBL_JOB_REQUEST_STATUS_FEEDBAK
@@ -2247,6 +2291,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 throw ex;
             }
         }
+
         public bool ValidateJobRequestFeedBack(string feedback)
         {
             var isExist = (from a in context.TBL_JOB_REQUEST_STATUS_FEEDBAK

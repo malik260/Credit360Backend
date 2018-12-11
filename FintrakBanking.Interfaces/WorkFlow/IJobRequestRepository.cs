@@ -77,6 +77,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool UpdateAsignedJobTypeToStaff(jobReasignment model);
         List<jobReasignment> GetJobTypeReasignmentAdmin(int companyId);
 
+        bool mapJobTypeHubStaff(JobTypeHubViewModel model);
+
         #region Job Request Feedback
         IEnumerable<LookupViewModel> GetJobRequestStatus();
         IEnumerable<JobRequestStatusFeedbackViewModel> GetAllJobRequestStatusFeedback();

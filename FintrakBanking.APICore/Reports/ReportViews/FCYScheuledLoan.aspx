@@ -32,7 +32,9 @@
                 <asp:ControlParameter ControlID="companyId" DefaultValue="" Name="companyId" PropertyName="Text" Type="Int32" />
           
                 <asp:ControlParameter ControlID="loanId" Name="loanId" PropertyName="Text" Type="Int32" />
-          
+                
+
+
             </SelectParameters>
         </asp:ObjectDataSource>
         </div>

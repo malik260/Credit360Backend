@@ -8,6 +8,7 @@ using FintrakBanking.Common;
 using System.IO;
 using System.Web.Hosting;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.ReportObjects.Credit
 {
@@ -16,9 +17,9 @@ namespace FintrakBanking.ReportObjects.Credit
         public static OfferLetterViewModel GenerateOfferLetter(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
+            FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
-           
-                var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
+            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).CUSTOMERID;
 
                 var offerLetterDetails = (from a in context.TBL_LOAN_APPLICATION
                                           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
@@ -702,7 +703,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        collateralDetail = x.COLLATERALDETAIL,
                                        collateralValue = x.COLLATERALVALUE,
                                        stapedToCoverAmount = x.STAMPEDTOCOVERAMOUNT,
-                                       facilityAmount = y.APPROVEDAMOUNT
+                                       facilityAmount = y.APPROVEDAMOUNT,
                                    }).ToList();
 
             return loanCollaterals;
@@ -750,19 +751,27 @@ namespace FintrakBanking.ReportObjects.Credit
         public List<CusotmerInfoViewModel> Los_Customer(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
+            FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
-            var loanComments = (from x in context.TBL_LOAN_APPLICATION
+            var customers = (from x in context.TBL_LOAN_APPLICATION
                                 join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
                                 join b in context.TBL_BRANCH on y.BRANCHID equals b.BRANCHID
                                 where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
-                                select new CusotmerInfoViewModel()
+                                select new CusotmerInfoViewModel
                                 {
+                                   //
                                     customer = y.LASTNAME + " " + y.FIRSTNAME + " " + y.MIDDLENAME,
                                     date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
-                                    branch = b.BRANCHNAME
+                                    branch = b.BRANCHNAME,
+                                    rmId = x.RELATIONSHIPMANAGERID,
+
                                 }).ToList();
 
-            return loanComments;
+            foreach (var x in customers) {
+                var staffcode = context.TBL_STAFF.Where(o => o.STAFFID == x.rmId).Select(o => o.STAFFCODE).FirstOrDefault();
+                x.groupHead = staggingCon.STG_STAFFMIS.Where(m => m.USERNAME == staffcode).Select(m => m.GROUP_HUB).FirstOrDefault();
+            }
+            return customers;
         }
 
         #endregion

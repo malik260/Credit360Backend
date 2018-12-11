@@ -856,6 +856,40 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost, Route("map-job-type-hub-staff")]
+        public HttpResponseMessage AssignJobTypeToStaff([FromBody] JobTypeHubViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                //entity.dateTimeCreated = 
+
+
+                var data = repo.mapJobTypeHubStaff(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The staff - hub mapping was successful" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
+
+
         [HttpPost, Route("assign-job-type")]
         public HttpResponseMessage AssignJobTypeToStaff([FromBody] jobReasignment entity)
         {
@@ -863,7 +897,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
-                entity.staffId = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;
                 //entity.dateTimeCreated = 
                 
 

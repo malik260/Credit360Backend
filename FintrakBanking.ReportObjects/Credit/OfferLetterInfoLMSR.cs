@@ -8,6 +8,7 @@ using FintrakBanking.Common;
 using System.IO;
 using System.Web.Hosting;
 using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Entities.StagingModels;
 
 namespace FintrakBanking.ReportObjects.Credit
 {
@@ -16,6 +17,7 @@ namespace FintrakBanking.ReportObjects.Credit
         public static OfferLetterViewModel GenerateOfferLetter(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
+            FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
             var customerExist = context.TBL_LMSR_APPLICATION.Where(x => x.APPLICATIONREFERENCENUMBER == applicationRefNumber).Select(x=>x.CUSTOMERID).FirstOrDefault();
             //if (customerExist != null)
@@ -816,8 +818,9 @@ namespace FintrakBanking.ReportObjects.Credit
         public List<CusotmerInfoViewModel> Lmsr_Customer(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
+            FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
-            var loanComments = (from x in context.TBL_LMSR_APPLICATION
+            var customers = (from x in context.TBL_LMSR_APPLICATION
                                 join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
                                 join b in context.TBL_BRANCH on y.BRANCHID equals b.BRANCHID
                                 where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
@@ -825,10 +828,17 @@ namespace FintrakBanking.ReportObjects.Credit
                                 {
                                     customer = y.LASTNAME + " " + y.FIRSTNAME + " " + y.MIDDLENAME,
                                     date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
-                                    branch = b.BRANCHNAME
+                                    branch = b.BRANCHNAME,
+                                    rmId = x.CREATEDBY,
+                                   
                                 }).ToList();
 
-            return loanComments;
+            foreach (var x in customers)
+            {
+                var staffcode = context.TBL_STAFF.Where(o => o.STAFFID == x.rmId).Select(o => o.STAFFCODE).FirstOrDefault();
+                x.groupHead = staggingCon.STG_STAFFMIS.Where(m => m.USERNAME == staffcode).Select(m => m.GROUP_HUB).FirstOrDefault();
+            }
+            return customers;
         }
         #endregion
 
