@@ -13877,7 +13877,7 @@ namespace FintrakBanking.Repositories.Credit
         private bool ProcessContingentLiabilityRenewal(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
-            if (model.maturityDate < model.effectiveDate)
+            if (model.newMaturityDate < model.newEffectiveDate)
             {
                 throw new ConditionNotMetException("Maturity Date cannot be less than Effective date");
             }
@@ -13890,7 +13890,7 @@ namespace FintrakBanking.Repositories.Credit
 
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
 
-            if (oldContingent.MATURITYDATE > model.effectiveDate)
+            if (oldContingent.MATURITYDATE > model.newEffectiveDate)
             {
                 throw new ConditionNotMetException("Old Maturity Date cannot be more than the New Effective Date");
             }
@@ -15112,7 +15112,7 @@ namespace FintrakBanking.Repositories.Credit
                                     principalAmount = (double)b.CONTINGENTAMOUNT,
                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                     //interestRate = b.INTERESTRATE,
-                                    effectiveDate = a.EFFECTIVEDATE,
+                                    effectiveDate = b.EFFECTIVEDATE,
                                     maturityDate = b.MATURITYDATE,
                                     integralFeeAmount = 0,
                                     newEffectiveDate = a.EFFECTIVEDATE,
@@ -18151,8 +18151,8 @@ namespace FintrakBanking.Repositories.Credit
                 var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
 
                 reviewOperation.LOANID = model.loanId;
-                reviewOperation.LOANSYSTEMTYPEID = model.productTypeId;
-                //reviewOperation.OPERATIONTYPEID = model.operationTypeId;
+                reviewOperation.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+                reviewOperation.OPERATIONTYPEID = model.operationTypeId;
                 reviewOperation.EFFECTIVEDATE = model.proposedEffectiveDate;
                 reviewOperation.REVIEWDETAILS = model.reviewDetails;
                 reviewOperation.INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate;

@@ -156,7 +156,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanApplicationUpdateMessage
     {
-        public bool isdone { get; set; }
+        public bool isdone { get; set; } 
         public string messageStr { get; set; }
         public int checkListIndex { get; set; }
     }

@@ -276,6 +276,9 @@ namespace FintrakBanking.Common.Enum
         StaffJobTypeAdded = 254,
         StaffJobTypeUpdated = 255,
         StaffJobTypeDeleted = 256,
+        JobRequestHubStaffAdded = 257,
+        JobRequestHubStaffUpdate = 258,
+        JobRequestHubStaffDeleted = 259,
     };
    public enum RegulatoryTypeEnum
     {
