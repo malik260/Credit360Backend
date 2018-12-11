@@ -753,7 +753,7 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingContext context = new FinTrakBankingContext();
             FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
-            var loans = (from x in context.TBL_LOAN_APPLICATION
+            var customers = (from x in context.TBL_LOAN_APPLICATION
                                 join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
                                 join b in context.TBL_BRANCH on y.BRANCHID equals b.BRANCHID
                                 where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
@@ -764,12 +764,14 @@ namespace FintrakBanking.ReportObjects.Credit
                                     date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                                     branch = b.BRANCHNAME,
                                     rmId = x.RELATIONSHIPMANAGERID,
-                                  // groupHead = staggingCon.STG_STAFFMIS.Where(m=>m.STAFFCODE== context.TBL_STAFF.Where(o => o.STAFFID == x.RELATIONSHIPMANAGERID).Select(o => o.STAFFCODE).FirstOrDefault()).Select(m=>m.GROUP_HUB).FirstOrDefault(),
 
-        }).ToList();
+                                }).ToList();
 
-           
-            return loans;
+            foreach (var x in customers) {
+                var staffcode = context.TBL_STAFF.Where(o => o.STAFFID == x.rmId).Select(o => o.STAFFCODE).FirstOrDefault();
+                x.groupHead = staggingCon.STG_STAFFMIS.Where(m => m.USERNAME == staffcode).Select(m => m.GROUP_HUB).FirstOrDefault();
+            }
+            return customers;
         }
 
         #endregion
