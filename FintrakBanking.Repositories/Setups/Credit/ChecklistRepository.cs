@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
           
             List<CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
 
-            if (checkListTypeId == (int)CheckTypeEnum.CAPChecklist)
+            if (checkListTypeId == (int)CheckTypeEnum.CAPChecklist || checkListTypeId == (int)CheckTypeEnum.AvailmentCheckList)
             {
                  checkListItems = (from s in context.TBL_CHECKLIST_DETAIL
                                       join k in context.TBL_CHECKLIST_DEFINITION
