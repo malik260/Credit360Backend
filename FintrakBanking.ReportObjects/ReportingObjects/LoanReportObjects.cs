@@ -194,8 +194,8 @@ namespace FintrakBanking.ReportObjects
                                                                               productId = a.PRODUCTID,
                                                                               postDate = b.DEMANDDATE,
                                                                               valueDate = b.DEMANDDATE,
-                                                                              creditAmount = b.DAILYACCURALAMOUNT,
-                                                                              debitAmount = 0,
+                                                                              creditAmount = 0,
+                                                                              debitAmount = b.DAILYACCURALAMOUNT,
                                                                               discription = c.CATEGORYNAME,
                                                                               transactionCurrency = b.TBL_CURRENCY.CURRENCYCODE,
                                                                           }).ToList();
@@ -276,13 +276,16 @@ namespace FintrakBanking.ReportObjects
                            where (a.ISDISBURSED
                              && a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate
                          && a.COMPANYID == companyId) && (a.LOANREFERENCENUMBER == loanRefNo 
-                         || a.TBL_CUSTOMER.FIRSTNAME.StartsWith(loanRefNo.Trim()) 
-                         || a.TBL_CUSTOMER.LASTNAME.StartsWith(loanRefNo.Trim()) 
-                         || a.TBL_CUSTOMER.MIDDLENAME.StartsWith(loanRefNo.Trim()) 
+                         || a.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(loanRefNo.ToLower()) 
+                         || a.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(loanRefNo.ToLower()) 
+                         || a.TBL_CUSTOMER.MIDDLENAME.ToLower().StartsWith(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.FIRSTNAME.ToLower().EndsWith(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.LASTNAME.ToLower().EndsWith(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.MIDDLENAME.ToLower().EndsWith(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.LASTNAME.ToLower().Contains(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.MIDDLENAME.ToLower().Contains(loanRefNo.ToLower())
                          || loanRefNo == null || loanRefNo == "" 
-                         || loanRefNo.ToLower().Equals(a.TBL_CUSTOMER.MIDDLENAME.ToLower())
-                         || loanRefNo.ToLower().Equals(a.TBL_CUSTOMER.LASTNAME.ToLower())
-                            || loanRefNo.ToLower().Equals(a.TBL_CUSTOMER.FIRSTNAME.ToLower())
                          && (a.BRANCHID == branchId || branchId == null || branchId == 0)
                         && (a.TBL_PRODUCT.PRODUCTCLASSID == productClassId || productClassId == null || productClassId == 0))
                         

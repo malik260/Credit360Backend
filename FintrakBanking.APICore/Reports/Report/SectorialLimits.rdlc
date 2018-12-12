@@ -688,7 +688,7 @@
             <ChartSeriesHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Label>balance</Label>
+                  <Label>usage</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartSeriesHierarchy>
@@ -698,10 +698,11 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!balance.Value)</Y>
+                        <Y>=Sum(Fields!usage.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />
+                        <UseValueAsLabel>true</UseValueAsLabel>
                       </ChartDataLabel>
                       <Style />
                       <ChartMarker>
@@ -968,6 +969,7 @@
                   <BackgroundGradientType>None</BackgroundGradientType>
                   <FontSize>8pt</FontSize>
                 </Style>
+                <Layout>Column</Layout>
                 <ChartLegendTitle>
                   <Caption />
                   <Style>
@@ -1047,7 +1049,7 @@
             <ChartSeriesHierarchy>
               <ChartMembers>
                 <ChartMember>
-                  <Label>balance</Label>
+                  <Label>usage</Label>
                 </ChartMember>
               </ChartMembers>
             </ChartSeriesHierarchy>
@@ -1057,7 +1059,7 @@
                   <ChartDataPoints>
                     <ChartDataPoint>
                       <ChartDataPointValues>
-                        <Y>=Sum(Fields!balance.Value)</Y>
+                        <Y>=Sum(Fields!usage.Value)</Y>
                       </ChartDataPointValues>
                       <ChartDataLabel>
                         <Style />

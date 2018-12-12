@@ -243,8 +243,12 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                     requestDoc = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.JOBREQUESTCODE == newMail.ATTACHMENTCODE).ToList();
                                     foreach (var binaryFile in requestDoc)
                                     {
-                                        MemoryStream memoryStream = new MemoryStream(binaryFile.FILEDATA);
-                                        mail.Attachments.Add(new Attachment(memoryStream, binaryFile.FILENAME, binaryFile.FILEEXTENSION));
+                                        byte[] file = binaryFile.FILEDATA;
+                                        string strfn = "";
+
+                                        MemoryStream memoryStream = new MemoryStream(file);
+                                        Attachment att = new Attachment(memoryStream, binaryFile.FILENAME);
+                                        mail.Attachments.Add(att);
                                     }
 
                                 }
