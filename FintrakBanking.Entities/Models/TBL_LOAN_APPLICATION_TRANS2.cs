@@ -12,16 +12,16 @@ namespace FintrakBanking.Entities.Models
     {
 
         [Key]
-        public short CUSTOMERTRANSACTIONID2 { get; set; }
-        public short LOANAPPLICATIONID { get; set; }
-        public short CUSTOMERID { get; set; }
+        public int CUSTOMERTRANSACTIONID2 { get; set; }
+        public int LOANAPPLICATIONID { get; set; }
+        public int CUSTOMERID { get; set; }
         public string CUSTOMERCODE { get; set; }
         public string ACCOUNTNUMBER { get; set; }
         public string PERIOD { get; set; }
         public string PRODUCTNAME { get; set; }
         public decimal? FLOATCHARGE { get; set; }
         public decimal? INTEREST { get; set; }
-        public short CREATEDBY { get; set; }
+        public int CREATEDBY { get; set; }
         public DateTime DATETIMECREATED { get; set; }
         public int? MONTH { get; set; }
         public int? YEAR { get; set; }

@@ -189,7 +189,7 @@ namespace FintrakBanking.Repositories.Credit
           
             List<CheckListStatusViewModel> responseTypes = new List<CheckListStatusViewModel>();
 
-            if (checkListTypeId == (int)CheckTypeEnum.CAPChecklist)
+            if (checkListTypeId == (int)CheckTypeEnum.CAPChecklist || checkListTypeId == (int)CheckTypeEnum.AvailmentCheckList)
             {
                  checkListItems = (from s in context.TBL_CHECKLIST_DETAIL
                                       join k in context.TBL_CHECKLIST_DEFINITION
@@ -1436,7 +1436,9 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
                 var condition = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                                 where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false &&
+                                 where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
+                                //&& c.ISEXTERNAL == true 
+                                 && c.ISSUBSEQUENT == false &&
                                   c.CHECKLISTSTATUSID == null
                                  select new ConditionPrecedentViewModel()
                                  {
@@ -2118,7 +2120,9 @@ namespace FintrakBanking.Repositories.Credit
             var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                              join d in context.TBL_LMSR_APPLICATION_DETAIL on c.LOANREVIEWAPPLICATIONID equals d.LOANREVIEWAPPLICATIONID
                              join e in context.TBL_LMSR_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
-                             where e.LOANAPPLICATIONID == loanReviewApplicationId && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false &&
+                             where e.LOANAPPLICATIONID == loanReviewApplicationId 
+                             //&& c.ISEXTERNAL == true 
+                             && c.ISSUBSEQUENT == false &&
                               c.CHECKLISTSTATUSID == null
                              select new ConditionPrecedentViewModel()
                              {

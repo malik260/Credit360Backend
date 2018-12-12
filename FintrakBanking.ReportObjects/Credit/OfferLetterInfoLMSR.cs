@@ -352,6 +352,28 @@ namespace FintrakBanking.ReportObjects.Credit
 
         }
 
+        public IEnumerable<OfferLetterConditionPrecidentViewModel> GetLoanApplicationConditionPrecident(string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var conditionSubsequentData = (from a in context.TBL_LMSR_APPLICATION
+                                           join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
+                                           join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
+                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                           //   && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                           select new OfferLetterConditionPrecidentViewModel()
+                                           {
+                                               conditionPrecident = b.CONDITION,
+                                               loanApplicationId = b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
+                                               isExternal = b.ISEXTERNAL,
+                                               productName = c.TBL_PRODUCT.PRODUCTNAME
+                                           }).ToList();
+
+
+            var forDebugging = conditionSubsequentData.ToList();
+            return conditionSubsequentData;
+        }
+
         public IEnumerable<OfferLetterConditionPrecidentViewModel> GetLoanApplicationConditionSubsequent(string applicationRefNumber)
         {
             FinTrakBankingContext context = new FinTrakBankingContext();
@@ -820,7 +842,7 @@ namespace FintrakBanking.ReportObjects.Credit
             FinTrakBankingContext context = new FinTrakBankingContext();
             FinTrakBankingStagingContext staggingCon = new FinTrakBankingStagingContext();
 
-            var loanComments = (from x in context.TBL_LMSR_APPLICATION
+            var customers = (from x in context.TBL_LMSR_APPLICATION
                                 join y in context.TBL_CUSTOMER on x.CUSTOMERID equals y.CUSTOMERID
                                 join b in context.TBL_BRANCH on y.BRANCHID equals b.BRANCHID
                                 where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
@@ -829,10 +851,16 @@ namespace FintrakBanking.ReportObjects.Credit
                                     customer = y.LASTNAME + " " + y.FIRSTNAME + " " + y.MIDDLENAME,
                                     date = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
                                     branch = b.BRANCHNAME,
-                                   // groupHead = staggingCon.STG_STAFFMIS.Where(m => m.STAFFCODE == context.TBL_STAFF.Where(o => o.STAFFID == x.CREATEDBY).Select(o => o.STAFFCODE).FirstOrDefault()).Select(m => m.GROUP_HUB).FirstOrDefault(),
+                                    rmId = x.CREATEDBY,
+                                   
                                 }).ToList();
 
-            return loanComments;
+            foreach (var x in customers)
+            {
+                var staffcode = context.TBL_STAFF.Where(o => o.STAFFID == x.rmId).Select(o => o.STAFFCODE).FirstOrDefault();
+                x.groupHead = staggingCon.STG_STAFFMIS.Where(m => m.USERNAME == staffcode).Select(m => m.GROUP_HUB).FirstOrDefault();
+            }
+            return customers;
         }
         #endregion
 

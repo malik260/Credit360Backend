@@ -60,6 +60,8 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public int timelineId { get; set; }
         public string timeline { get; set; }
+        public int? duration { get; set; }
+
     }
 
     public class SelectedIdsViewModel : GeneralEntity

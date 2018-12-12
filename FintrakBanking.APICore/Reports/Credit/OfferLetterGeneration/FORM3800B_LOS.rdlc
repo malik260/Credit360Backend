@@ -20,12 +20,12 @@
               </TextRun>
             </TextRuns>
             <Style>
-              <TextAlign>Center</TextAlign>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox4</rd:DefaultName>
-        <Top>0.28586cm</Top>
+        <Top>3.27036cm</Top>
         <Left>0.12301cm</Left>
         <Height>0.67056cm</Height>
         <Width>18.85567cm</Width>
@@ -77,7 +77,7 @@
                 <Value>=First(Fields!newApplicationDate.Value, "Facility")</Value>
                 <Style>
                   <FontWeight>Normal</FontWeight>
-                  <Format>d MMM yyyy</Format>
+                  <Format>d MMMM, yyyy</Format>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -95,7 +95,7 @@
                 <Value>=First(Fields!approvedDate.Value, "Facility")</Value>
                 <Style>
                   <FontWeight>Normal</FontWeight>
-                  <Format>d MMM yyyy</Format>
+                  <Format>d MMMM, yyyy</Format>
                 </Style>
               </TextRun>
               <TextRun>
@@ -109,7 +109,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox13</rd:DefaultName>
-        <Top>2.10293in</Top>
+        <Top>3.35293in</Top>
         <Left>0.0533in</Left>
         <Height>0.25in</Height>
         <Width>7.42349in</Width>
@@ -144,7 +144,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox5</rd:DefaultName>
-        <Top>7.18995cm</Top>
+        <Top>10.36495cm</Top>
         <Left>0.11849cm</Left>
         <Height>1.71734cm</Height>
         <Width>18.86019cm</Width>
@@ -176,7 +176,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>3.73438in</Top>
+        <Top>4.98438in</Top>
         <Left>0.02739in</Left>
         <Height>0.25in</Height>
         <Width>7.42527in</Width>
@@ -211,7 +211,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>5.21771in</Top>
+        <Top>6.46771in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>1.62161in</Width>
@@ -246,7 +246,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>6.47605in</Top>
+        <Top>7.72605in</Top>
         <Height>0.25in</Height>
         <Width>7.39621in</Width>
         <ZIndex>5</ZIndex>
@@ -281,7 +281,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>8.1625in</Top>
+        <Top>9.4125in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.39621in</Width>
@@ -316,7 +316,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>9.79861in</Top>
+        <Top>11.04861in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.38726in</Width>
@@ -351,7 +351,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>10.95146in</Top>
+        <Top>12.20146in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.38726in</Width>
@@ -386,7 +386,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>12.0875in</Top>
+        <Top>13.3375in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.39247in</Width>
@@ -421,7 +421,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>14.45875in</Top>
+        <Top>15.20875in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>2.28936in</Width>
@@ -456,7 +456,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>14.45875in</Top>
+        <Top>15.20875in</Top>
         <Left>3.88535in</Left>
         <Height>0.25in</Height>
         <Width>3.59144in</Width>
@@ -491,7 +491,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>15.35056in</Top>
+        <Top>16.60056in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.34472in</Width>
@@ -527,7 +527,7 @@ cc:   Head, Credit Monitoring Unit, H/O.</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox97</rd:DefaultName>
-        <Top>16.14333in</Top>
+        <Top>17.39333in</Top>
         <Left>0.00895in</Left>
         <Height>0.5625in</Height>
         <Width>7.34472in</Width>
@@ -560,7 +560,7 @@ cc:   Head, Credit Monitoring Unit, H/O.</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox98</rd:DefaultName>
-        <Top>16.98708in</Top>
+        <Top>18.23708in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.34472in</Width>
@@ -596,46 +596,11 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox99</rd:DefaultName>
-        <Top>17.3725in</Top>
+        <Top>18.6225in</Top>
         <Left>0.00895in</Left>
         <Height>0.76042in</Height>
         <Width>7.34472in</Width>
         <ZIndex>15</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-          <PaddingLeft>2pt</PaddingLeft>
-          <PaddingRight>2pt</PaddingRight>
-          <PaddingTop>2pt</PaddingTop>
-          <PaddingBottom>2pt</PaddingBottom>
-        </Style>
-      </Textbox>
-      <Textbox Name="Textbox47">
-        <CanGrow>true</CanGrow>
-        <KeepTogether>true</KeepTogether>
-        <Paragraphs>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>THIS F3800B SUPERCEDES THE ONE DATED 09-Oct-2018</Value>
-                <Style>
-                  <FontStyle>Normal</FontStyle>
-                  <FontWeight>Bold</FontWeight>
-                  <TextDecoration>None</TextDecoration>
-                  <Color>#000000</Color>
-                </Style>
-              </TextRun>
-            </TextRuns>
-            <Style />
-          </Paragraph>
-        </Paragraphs>
-        <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>13.52896in</Top>
-        <Left>0.00895in</Left>
-        <Height>0.25in</Height>
-        <Width>7.38726in</Width>
-        <ZIndex>16</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -667,11 +632,11 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>19.62947in</Top>
+        <Top>20.87947in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.40235in</Width>
-        <ZIndex>17</ZIndex>
+        <ZIndex>16</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -704,11 +669,11 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>20.08781in</Top>
+        <Top>21.33781in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.41277in</Width>
-        <ZIndex>18</ZIndex>
+        <ZIndex>17</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -837,11 +802,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox117</rd:DefaultName>
-        <Top>20.50155in</Top>
+        <Top>21.75155in</Top>
         <Left>0.00895in</Left>
-        <Height>0.54167in</Height>
+        <Height>2.94792in</Height>
         <Width>7.41277in</Width>
-        <ZIndex>19</ZIndex>
+        <ZIndex>18</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -864,7 +829,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixColumns>
           <TablixRows>
             <TablixRow>
-              <Height>0.25in</Height>
+              <Height>0.35417in</Height>
               <TablixCells>
                 <TablixCell>
                   <CellContents>
@@ -1014,7 +979,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                               <Value>=Fields!date.Value</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
-                                <Format>d MMM yyyy</Format>
+                                <Format>d MMMM, yyyy</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -1127,11 +1092,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>CustomerDetails</DataSetName>
-        <Top>0.90571in</Top>
+        <Top>2.04321in</Top>
         <Left>0.04665in</Left>
-        <Height>1.14583in</Height>
+        <Height>1.25in</Height>
         <Width>7.406in</Width>
-        <ZIndex>20</ZIndex>
+        <ZIndex>19</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1556,11 +1521,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Facility</DataSetName>
-        <Top>4.16167in</Top>
+        <Top>5.41167in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
-        <ZIndex>21</ZIndex>
+        <ZIndex>20</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -1855,11 +1820,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>SecurityDetails</DataSetName>
-        <Top>5.52474in</Top>
+        <Top>6.77474in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
-        <ZIndex>22</ZIndex>
+        <ZIndex>21</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2191,11 +2156,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>TransactionDynamics</DataSetName>
-        <Top>10.12474in</Top>
+        <Top>11.37474in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
-        <ZIndex>23</ZIndex>
+        <ZIndex>22</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2362,11 +2327,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Comments</DataSetName>
-        <Top>12.43724in</Top>
+        <Top>13.68724in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46296in</Width>
-        <ZIndex>24</ZIndex>
+        <ZIndex>23</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2597,11 +2562,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>MonitoringTrggers</DataSetName>
-        <Top>11.26805in</Top>
+        <Top>12.51805in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
-        <ZIndex>25</ZIndex>
+        <ZIndex>24</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3005,11 +2970,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>InternalConditionPrecedent</DataSetName>
-        <Top>6.79549in</Top>
+        <Top>8.04549in</Top>
         <Left>0.00895in</Left>
         <Height>1.22917in</Height>
         <Width>7.46784in</Width>
-        <ZIndex>26</ZIndex>
+        <ZIndex>25</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3424,11 +3389,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>InternalConditionSubsequent</DataSetName>
-        <Top>8.44028in</Top>
+        <Top>9.69028in</Top>
         <Left>0.00895in</Left>
         <Height>1.22917in</Height>
         <Width>7.46297in</Width>
-        <ZIndex>27</ZIndex>
+        <ZIndex>26</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3453,11 +3418,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox115</rd:DefaultName>
-        <Top>4.76958in</Top>
+        <Top>6.01958in</Top>
         <Left>0.00915in</Left>
         <Height>0.25in</Height>
         <Width>7.44351in</Width>
-        <ZIndex>28</ZIndex>
+        <ZIndex>27</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3473,11 +3438,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>6.28in</Top>
+        <Top>7.53in</Top>
         <Left>1.46603in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
-        <ZIndex>29</ZIndex>
+        <ZIndex>28</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3489,11 +3454,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>8.05244in</Top>
+        <Top>9.30244in</Top>
         <Left>0.59955in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
-        <ZIndex>30</ZIndex>
+        <ZIndex>29</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3505,11 +3470,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>9.6987in</Top>
+        <Top>10.9487in</Top>
         <Left>0.87829in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
-        <ZIndex>31</ZIndex>
+        <ZIndex>30</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3521,11 +3486,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>13.20911in</Top>
+        <Top>14.45911in</Top>
         <Left>0.77412in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
-        <ZIndex>32</ZIndex>
+        <ZIndex>31</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3537,11 +3502,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>16.84472in</Top>
+        <Top>18.09472in</Top>
         <Left>0.14912in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
-        <ZIndex>33</ZIndex>
+        <ZIndex>32</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3684,11 +3649,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Line>
         </ReportItems>
         <KeepTogether>true</KeepTogether>
-        <Top>18.20236in</Top>
+        <Top>19.45236in</Top>
         <Left>0.04843in</Left>
         <Height>1.15923in</Height>
         <Width>7.30524in</Width>
-        <ZIndex>34</ZIndex>
+        <ZIndex>33</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3712,11 +3677,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox26</rd:DefaultName>
-        <Top>18.29736in</Top>
+        <Top>19.54736in</Top>
         <Left>0.14912in</Left>
         <Height>0.25in</Height>
         <Width>2.75592in</Width>
-        <ZIndex>35</ZIndex>
+        <ZIndex>34</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3744,11 +3709,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox31</rd:DefaultName>
-        <Top>18.54215in</Top>
+        <Top>19.79215in</Top>
         <Left>0.14912in</Left>
         <Height>0.25in</Height>
         <Width>1in</Width>
-        <ZIndex>36</ZIndex>
+        <ZIndex>35</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3784,11 +3749,11 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox13</rd:DefaultName>
-        <Top>0.5in</Top>
+        <Top>1.65in</Top>
         <Left>0.03113in</Left>
         <Height>0.25in</Height>
         <Width>7.42349in</Width>
-        <ZIndex>37</ZIndex>
+        <ZIndex>36</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -3800,7 +3765,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>21.14739in</Height>
+    <Height>25.07447in</Height>
     <Style />
   </Body>
   <Width>7.47679in</Width>
