@@ -1102,15 +1102,17 @@ namespace FintrakBanking.Repositories.WorkFlow
                     {
                         if (consultantRecord.Any())
                         {
-                            List<string> jobs = new List<string>();
+                            var solicitor = consultantRecord.FirstOrDefault();
+                            string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /><br /> <ul";
                             foreach (var i in jobRequestDetail)
                             {
-                                jobs.Add(i.TBL_JOB_TYPE_SUB.JOB_SUB_TYPE_NAME);
+                                if(i.JOB_SUB_TYPE_CLASSID != (short) (JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
+
                                 i.CUSTOMERORBUSINESSCHARGED = true;
                                 if (model.debitBusiness) i.DEBITBUSINESS = true;
                             }
-                            var solicitor = consultantRecord.FirstOrDefault();
-                            string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /><br /> '{jobs}'. <br /><br /> Kindly kindly contact FBN legal department for more info. <br /><br />";
+                            
+                            messageBoby = messageBoby + $@"</ul> <br /><br /> Kindly kindly contact FBN legal department for more info. <br /><br />";
                             string alertSubject = $"FBN - Loan Collateral Search";
                             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
                         }
@@ -1125,6 +1127,34 @@ namespace FintrakBanking.Repositories.WorkFlow
             else return false;
                 
         }
+
+        //private string GetProposedConditionsMarkup()
+        //{
+        //    var conditions = GetProposedConditions(); // new
+
+        //    var result = String.Empty;
+        //    var n = 0;
+        //    result = result + $@"
+        //        <table border=1>
+        //            <tr>
+        //                <th>S/N</th>
+        //                <th>Facility Type</th>
+        //            </tr>
+        //         ";
+        //    foreach (var e in conditions)
+        //    {
+        //        n++;
+        //        result = result + $@"
+        //            <tr>
+        //                <td>{n}</td>
+        //                <td>{e.name}</td>
+        //            </tr>
+        //        ";
+        //    }
+        //    result = result + $"</table>";
+        //    return result;
+
+        //}
 
         public bool EffectLegaCollateralJobs(JobRequestCollateralSearchViewModel model)
         {
@@ -1519,7 +1549,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
                 STAFFID = model.createdBy,
-                //BRANCHID = (short)model.BranchId,
+                BRANCHID = (short)model.userBranchId,
                 DETAIL = $"'{jobType.JOBTYPENAME}' staff admin has been modified. New admin staff code : '{ staff.STAFFCODE }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
@@ -1540,11 +1570,11 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
         public IEnumerable<JobTypeHubViewModel> GetJobTypeHubStaff()
         {
-            return this.context.TBL_JOB_TYPE_HUB_STAFF.Select(x => new JobTypeHubViewModel
+            return this.context.TBL_JOB_TYPE_HUB_STAFF.Where(x=>x.DELETED == false ).Select(x => new JobTypeHubViewModel
             {
                 jobTypeHubId = x.JOBTYPEHUBID,
                 staffId = x.STAFFID,
-                jobTypeHubName = context.TBL_JOB_TYPE_HUB.Where(o => o.JOBTYPEHUBID == x.HUBSTAFFID).Select(o => o.HUBNAME).FirstOrDefault(),
+                jobTypeHubName = context.TBL_JOB_TYPE_HUB.Where(o => o.JOBTYPEHUBID == x.JOBTYPEHUBID).Select(o => o.HUBNAME).FirstOrDefault(),
                 staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
                 jobTypeUnitId = x.JOBTYPEUNITID,
                 jobTypeUnitName = context.TBL_JOB_TYPE_UNIT.Where(o => o.JOBTYPEUNITID == x.JOBTYPEUNITID).Select(o => o.UNITNAME).FirstOrDefault(),
