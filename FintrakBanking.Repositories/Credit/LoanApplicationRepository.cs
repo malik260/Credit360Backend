@@ -1137,7 +1137,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            // ValidateLoanApplicationLimits(loan); // always
+            ValidateLoanApplicationLimits(loan); // always
 
             if (loan.relationshipOfficerId != 0)
             {
@@ -3951,13 +3951,19 @@ namespace FintrakBanking.Repositories.Credit
             int branchId = (int)application.branchId;
             int customerId = (int)application.customerId;
 
-            var overrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
                 .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
                     c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
                 .Select(x => new { id = x.o.OVERRIDE_DETAILID })
                 .FirstOrDefault();
 
-            if (overrideRequest != null)
+            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
+
+            if (branchOverrideRequest != null)
             {
                 //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
                 //request.ISUSED = true;
@@ -3972,15 +3978,23 @@ namespace FintrakBanking.Repositories.Credit
                 if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
             }
 
-            // sector limits
-            // sectorId here is actually the subsectorId
-            List<short> sectorIds = details.Select(x => x.sectorId).ToList();
-            foreach (var sectorId in sectorIds)
+            if (sectorOverrideRequest != null)
             {
-                var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
-                decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                var sector = context.TBL_SECTOR.Find(sectorId);
-                if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
+            }
+            else
+            {
+                // sector limits
+                // sectorId here is actually the subsectorId
+                List<short> sectorIds = details.Select(x => x.sectorId).ToList();
+                foreach (var sectorId in sectorIds)
+                {
+                    var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
+                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                    var sector = context.TBL_SECTOR.Find(sectorId);
+                    if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                }
             }
         }
 

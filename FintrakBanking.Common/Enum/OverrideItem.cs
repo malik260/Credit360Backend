@@ -12,5 +12,7 @@ namespace FintrakBanking.Common.Enum
         CAMSOL_Override = 2,
         TakeFeeAtDisbursement = 3,
         BranchNplLimitOverride = 4,
+        SectorNplLimitOverride = 5,
+        CustomerExposureLimitOverride = 6,
     }
 }
