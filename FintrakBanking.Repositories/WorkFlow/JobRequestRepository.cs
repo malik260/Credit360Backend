@@ -1103,16 +1103,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (consultantRecord.Any())
                         {
                             var solicitor = consultantRecord.FirstOrDefault();
-                            string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /><br /> <ul>";
+                            string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
                             foreach (var i in jobRequestDetail)
                             {
-                                if(i.JOB_SUB_TYPE_CLASSID != (short) (JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
+                                if(i.JOB_SUB_TYPE_CLASSID != (short) (JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
 
                                 i.CUSTOMERORBUSINESSCHARGED = true;
                                 if (model.debitBusiness) i.DEBITBUSINESS = true;
                             }
                             
-                            messageBoby = messageBoby + $"</ul> <br /><br /> Kindly kindly contact FBN legal department for more info. <br /><br />";
+                            messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
                             string alertSubject = $"FBN - Loan Collateral Search";
                             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
                         }
