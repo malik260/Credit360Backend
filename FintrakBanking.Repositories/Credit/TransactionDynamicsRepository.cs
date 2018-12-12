@@ -318,6 +318,7 @@ namespace FintrakBanking.Repositories.Credit
                         CREATEDBY = c.CREATEDBY,
                         LOANREVIEWAPPLICATIONID = entity.detailId,
                         DATETIMECREATED = general.GetApplicationDate(),
+                        POSITION = 1,
                     });
                 }
             }
@@ -371,6 +372,7 @@ namespace FintrakBanking.Repositories.Credit
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.LOANREVIEWAPPLICATIONID = model.loanApplicationDetailId;
             data.DATETIMEUPDATED = DateTime.Now;
+            data.POSITION = model.position;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
 
             context.Entry(data).State = System.Data.Entity.EntityState.Modified;
@@ -399,6 +401,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 DYNAMICS = model.dynamics,
                 CREATEDBY = model.createdBy,
+                POSITION = model.position,
                 //LOANAPPLICATIONID = model.loanApplicationId,
                 LOANREVIEWAPPLICATIONID = model.loanApplicationDetailId,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -426,7 +429,7 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<TransactionDynamicsViewModel> GetTransactionDynamicsByDetailIdLms(int detailId)
         {
-            return this.GetAllTransactionDynamicsLms().Where(x => x.loanApplicationDetailId == detailId); // lms
+            return this.GetAllTransactionDynamicsLms().Where(x => x.loanApplicationDetailId == detailId).OrderBy(a => a.position); // lms
         }
 
         public IEnumerable<TransactionDynamicsViewModel> GetAllTransactionDynamicsLms()
@@ -441,6 +444,7 @@ namespace FintrakBanking.Repositories.Credit
                         loanDynamicsId = c.LOANDYNAMICSID,
                         dynamicsId = c.DYNAMICSID == null ? 0 : (int)c.DYNAMICSID,
                         dynamics = c.DYNAMICS,
+                        position = c.POSITION,
                         staffName = s.FIRSTNAME + " " + s.MIDDLENAME + " " + s.LASTNAME,
                         loanApplicationId = c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID,
                         loanApplicationDetailId = c.LOANREVIEWAPPLICATIONID,

@@ -233,8 +233,8 @@ namespace FintrakBanking.Repositories.Credit
                 ISSUBSEQUENT = model.isSubsequent,
                 PRODUCTID = model.productId,
                 TIMELINEID = model.timelineId,
-                CORPORATE = model.corporate,
-                RETAIL = model.retail,
+                CORPORATE = true,
+                RETAIL = false,
                 RESPONSE_TYPEID = model.responseTypeId,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
@@ -273,8 +273,8 @@ namespace FintrakBanking.Repositories.Credit
             data.ISSUBSEQUENT = model.isSubsequent;
             data.PRODUCTID = (short)model.productId;
             data.TIMELINEID = model.timelineId;
-            data.CORPORATE = model.corporate;
-            data.RETAIL = model.retail;
+            //data.CORPORATE = model.corporate;
+            //data.RETAIL = model.retail;
             data.RESPONSE_TYPEID = model.responseTypeId;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = DateTime.Now;
@@ -337,6 +337,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 timelineId = c.TIMELINEID,
                 timeline = c.TIMELINE,
+                duration = c.DURATIONINDAYS,
                 dateTimeCreated = c.DATETIMECREATED,
                 dateTimeUpdated = c.DATETIMEUPDATED,
             });
@@ -347,6 +348,7 @@ namespace FintrakBanking.Repositories.Credit
             var data = new TBL_COMPLIANCE_TIMELINE
             {
                 TIMELINE = model.timeline,
+                DURATIONINDAYS = model.duration,
                 CREATEDBY = model.createdBy,
                 DATETIMECREATED = general.GetApplicationDate(),
             };
@@ -380,6 +382,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             data.TIMELINE = model.timeline;
+            data.DURATIONINDAYS = model.duration;
             data.LASTUPDATEDBY = model.lastUpdatedBy;
             data.DATETIMEUPDATED = DateTime.Now;
             data.LASTUPDATEDBY = model.lastUpdatedBy;

@@ -1024,7 +1024,7 @@ namespace FintrakBanking.Repositories.Credit
                     LoadCustomerTurnover(
                        applicationId,
                        loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
-                       (short)staffId
+                       staffId
                     );
                 }
 
@@ -3840,7 +3840,7 @@ namespace FintrakBanking.Repositories.Credit
             return result;
         }
 
-        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, short staffId, bool isLms = false) // OBIE (Page 4)
+        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, int staffId, bool isLms = false) // OBIE (Page 4)
         {
             string duration = WebConfigurationManager.AppSettings["AccountStatisticsDurationInMonths"];
             int newDuration = 0;
@@ -3853,7 +3853,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int turnoverDuration = newDuration;
             var apiTransactions = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
-            var itx = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
+            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
 
             //var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL 
             //            join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -3879,8 +3879,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
                     {
-                        LOANAPPLICATIONID = (short)applicationId,
-                        CUSTOMERID = (short)customer.CUSTOMERID,
+                        LOANAPPLICATIONID = applicationId,
+                        CUSTOMERID = customer.CUSTOMERID,
                         CUSTOMERCODE = customer.CUSTOMERCODE,
                         ACCOUNTNUMBER = transaction.accountNumber,
                         PERIOD = transaction.period,
@@ -3911,34 +3911,34 @@ namespace FintrakBanking.Repositories.Credit
             {
                 //Task.Run(async () => { itx = await _customerIntegration.GetCustomerInterestTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
 
+                apiTransactionsOthers = integration.GetCustomerAccountInterestTransactions(customer.CUSTOMERCODE, turnoverDuration);
 
-                itx = integration.GetCustomerAccountInterestTransactions(customer.CUSTOMERCODE, turnoverDuration);
-
-                foreach (var t in itx)
+                foreach (var item in apiTransactionsOthers)
                 {
-
                     context.TBL_LOAN_APPLICATION_TRANS2.Add(new TBL_LOAN_APPLICATION_TRANS2
                     {
-                        LOANAPPLICATIONID = (short)applicationId,
-                        CUSTOMERID = (short)customer.CUSTOMERID,
+                        LOANAPPLICATIONID = applicationId,
+                        CUSTOMERID = customer.CUSTOMERID,
                         CUSTOMERCODE = customer.CUSTOMERCODE,
-                        ACCOUNTNUMBER = t.accountNumber,
-                        PERIOD = t.period,
+                        ACCOUNTNUMBER = item.accountNumber,
+                        PERIOD = item.period,
                         PRODUCTNAME = "n/a",
-                        FLOATCHARGE = t.float_Charge,
-                        INTEREST = t.interest,
+                        FLOATCHARGE = item.float_Charge,
+                        INTEREST = item.interest,
                         CREATEDBY = staffId,
                         DATETIMECREATED = DateTime.Now,
-                        MONTH = t.month,
-                        YEAR = t.year,
+                        MONTH = item.month,
+                        YEAR = item.year,
                         ISLMS = isLms
 
                     });
                 }
             }
 
-            if (context.SaveChanges() == 0) throw new SecureException("Customer turnover failed to load!");
-
+            //if (context.SaveChanges() == 0) throw new SecureException("Customer turnover failed to load!");
+           
+            context.SaveChanges();
+           
         }
 
         public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
