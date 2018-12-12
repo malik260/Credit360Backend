@@ -11505,6 +11505,24 @@ namespace FintrakBanking.Repositories.Credit
             return runningLoan;
         }
 
+
+        public LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo,DateTime effectiveDate)
+        {
+
+            var newEffectiveDate = effectiveDate.AddDays(1);
+
+            var loan = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId && x.LOANSTATUSID == (short)LoanStatusEnum.Active).FirstOrDefault();
+
+            var runningLoan = (from p in context.TBL_LOAN_SCHEDULE_DAILY
+                                   where p.DATE == newEffectiveDate
+                                         && p.LOANID == loan.TERMLOANID
+                               select new LoanViewModel()
+                                   {
+                                       principalAmount = p.OPENINGBALANCE,
+                                   }).FirstOrDefault();
+            return runningLoan;
+        }
+
         public LoanViewModel GetRunningFXLoans(int companyId, string refNo)
         {
             var applicationDate = generalSetup.GetApplicationDate();
@@ -14896,6 +14914,9 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
+                            var refNo = context.TBL_LOAN.Where(x => x.TERMLOANID == model.loanId).FirstOrDefault();
+
+                            model.principalAmount = (double)GetRunningLoanOpeningBalance(model.companyId, refNo.LOANREFERENCENUMBER, model.newEffectiveDate).principalAmount;
                             model.interestRate = model.newInterest;
                             model.interestFirstpaymentDate = (DateTime)model.newInterestFirstpaymentDate;//nextPaymentDate;
                             model.principalFirstpaymentDate = (DateTime)model.newPrincipalFirstpaymentDate;//nextPaymentDate;
@@ -14905,6 +14926,8 @@ namespace FintrakBanking.Repositories.Credit
                             model.interestFrequency = (short)model.newInterestFrequency;
                             model.principalFrequency = (short)model.newPrincipalFrequency;
                         }
+
+
 
                         result = Restructured(loanId, model, applicationDate, staffId);
 
