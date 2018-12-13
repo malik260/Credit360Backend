@@ -55,8 +55,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
             return watchlistresults;
         }
-
-
+        
         public IEnumerable<CustomerEligibilityViewModel> ValidateCustomerEligibility(string customerCode)
         {
             var customerEligibility = (from a in context.TBL_LOAN_CAMSOL
@@ -627,6 +626,7 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             }
             return false;
         }
+
         public bool ValidateRiskRating(string riskRating)
         {
             var isExist = (from x in context.TBL_CUSTOMER_RISK_RATING where x.RISKRATING == riskRating select x).ToList();
