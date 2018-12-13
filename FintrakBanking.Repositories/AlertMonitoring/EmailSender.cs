@@ -12,6 +12,7 @@ using FintrakBanking.Common.CustomException;
 using System.IO;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Entities.DocumentModels;
+using System.Net.Mime;
 
 namespace FintrakBanking.Repositories.AlertMonitoring
 {
@@ -239,35 +240,48 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                                 if(newMail.ATTACHMENTTYPEID == (int)AttachementTypeEnum.JobRequest)
                                 {
                                     List<TBL_MEDIA_JOB_REQUEST_DOCUMENT> requestDoc = new List<TBL_MEDIA_JOB_REQUEST_DOCUMENT>();
-                                    
-                                    requestDoc = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.JOBREQUESTCODE == newMail.ATTACHMENTCODE).ToList();
-                                    foreach (var binaryFile in requestDoc)
-                                    {
-                                        byte[] file = binaryFile.FILEDATA;
-                                        string strfn = "";
 
-                                        MemoryStream memoryStream = new MemoryStream(file);
-                                        Attachment att = new Attachment(memoryStream, binaryFile.FILENAME);
-                                        mail.Attachments.Add(att);
-                                    }
+                                    //requestDoc = docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Where(x => x.JOBREQUESTCODE == newMail.ATTACHMENTCODE).ToList();
+                                    //foreach (var binaryFile in requestDoc)
+                                    //{
+                                    //    byte[] file = binaryFile.FILEDATA;
+                                      // string strfn = "C:\\FirstBank Project\\FintrakBankingAPI462\\FintrakBanking.MonitoringMessagesSender\\ErrorImage.png";
 
+                                    //    var dateTime = DateTime.Now;
+
+                                    //    MemoryStream memoryStream = new MemoryStream(file);
+                                        //Attachment att = new Attachment(strfn);
+                                        //ContentDisposition disposition = att.ContentDisposition;
+                                        //disposition.CreationDate = File.GetCreationTime(strfn);
+                                        //disposition.ModificationDate = File.GetLastWriteTime(strfn);
+                                        //disposition.ReadDate = File.GetLastAccessTime(strfn);
+                                        //disposition.FileName = Path.GetFileName(strfn);
+                                        //disposition.Size = new FileInfo(strfn).Length;
+                                        //disposition.DispositionType = DispositionTypeNames.Attachment;
+
+                                    //    mail.Attachments.Add(att);
+                                    //}
+                                    //mail.Attachments.Add(att);
                                 }
-    
-
                             }
+
+
+
+
 
                             Console.WriteLine("");
                             Console.WriteLine("Email Sending started ~~~~~~~~");
                             Console.WriteLine("");
-
                             try
                             {
                                 client.Send(mail);
 
-                            }catch(Exception ex)
+                            }
+                            catch (Exception ex)
                             {
                                 throw new SecureException("Error : " + ex);
                             }
+
 
                             UpdateMailDeliveryStatus(newMail.MESSAGEID, (int)MessageStatusEnum.Sent, "Email Sent Successfully");
                         }
