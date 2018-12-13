@@ -3,6 +3,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.Setups.Approval;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Interfaces.WorkFlow;
@@ -28,6 +29,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IWorkflow workflow;
+        private ICreditLimitValidationsRepository limitValidation;
 
         //private IApprovalLevelStaffRepository approvalLevel;
         //private ILoanRepository loans;
@@ -37,7 +39,8 @@ namespace FintrakBanking.Repositories.Credit
             IGeneralSetupRepository _genSetup,
             FinTrakBankingContext _context,
             //IApprovalLevelStaffRepository _approvallevel,
-            IWorkflow _workflow
+            IWorkflow _workflow,
+            ICreditLimitValidationsRepository _limitValidation
             //ILoanRepository _loans  
             )
         {
@@ -46,11 +49,13 @@ namespace FintrakBanking.Repositories.Credit
             genSetup = _genSetup;
             //approvalLevel = _approvallevel;
             workflow = _workflow;
+            limitValidation = _limitValidation;
             //loans = _loans;
         }
 
         #region OfferLetter & Availment Process
-                public bool UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model)
+
+        public bool UpdateLoadDetails(int applicationId, ApprovedLoanDetailViewModel model)
         {
             bool output = false;
             var LoanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONDETAILID == applicationId).FirstOrDefault();
@@ -2021,6 +2026,7 @@ namespace FintrakBanking.Repositories.Credit
             return workflowEnded ? 0 : 1;
         }
 
+        // TO BE OPTIMISED LATER!!!
         private int BeforeAvailmentValidationChecks(int applicationId)
         {
             int result = 0;
@@ -2032,6 +2038,26 @@ namespace FintrakBanking.Repositories.Credit
                 result = 1;
                 throw new ConditionNotMetException("Kindly Ensure All Loan Details Have CRMS Collateral Type Attached");
             }
+
+            // LIMIT VALIDATION
+
+            var appl = context.TBL_LOAN_APPLICATION.Find(applicationId);
+            LoanApplicationViewModel application = new LoanApplicationViewModel();
+
+            application.branchId = appl.BRANCHID;
+            application.customerId = appl.CUSTOMERID;
+
+            var details = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId)
+                .Select(x => new LoanApplicationDetailViewModel
+                {
+                    sectorId = x.SUBSECTORID,
+                    approvedAmount = x.APPROVEDAMOUNT
+                })
+                .ToList();
+
+            application.LoanApplicationDetail = details;
+
+            ValidateLoanApplicationLimits(application);
 
             return result;
         }
@@ -2574,7 +2600,58 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
+        public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
+        {
+            var details = application.LoanApplicationDetail;
+            int branchId = (int)application.branchId;
+            int customerId = (int)application.customerId;
 
+            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
+
+            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
+
+            if (branchOverrideRequest != null)
+            {
+                var request = context.TBL_OVERRIDE_DETAIL.Find(branchOverrideRequest.id);
+                request.ISUSED = true;
+            }
+            else
+            {
+                // branch limits
+                var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
+                decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+                decimal applicationAmount = details.Sum(x => x.approvedAmount); // proposedAmount should be approvedAmount after application
+                var branch = context.TBL_BRANCH.Find(branchId);
+                if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+            }
+
+            if (sectorOverrideRequest != null)
+            {
+                var request = context.TBL_OVERRIDE_DETAIL.Find(sectorOverrideRequest.id);
+                request.ISUSED = true;
+            }
+            else
+            {
+                // sector limits
+                // sectorId here is actually the subsectorId
+                List<short> sectorIds = details.Select(x => x.sectorId).ToList();
+                foreach (var sectorId in sectorIds)
+                {
+                    var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
+                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                    var sector = context.TBL_SECTOR.Find(sectorId);
+                    if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                }
+            }
+        }
 
     } 
 }

@@ -226,6 +226,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobTypeHubViewModel : GeneralEntity
     {
+        public short hubStaffId { get; set; }
+
         public string jobTypeUnitName { get; set; }
 
         public short jobTypeHubId { get; set; }
@@ -239,6 +241,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class HubStaffViewModel : GeneralEntity
     {
+        public string jobTypeUnitName { get; set; }
+
         public string hubStaffName { get; set; }
 
         public int hubStaffId { get; set; }

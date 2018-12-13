@@ -35,7 +35,7 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository genSetup;
         private IWorkflow workflow;
         private ICasaRepository casa;
-        private ICreditLimitValidationsRepository creditLimitValidationsRepository;
+        private ICreditLimitValidationsRepository limitValidation;
         private ICustomerCollateralRepository collateral;
         private IFinanceTransactionRepository fina;
         private CustomerDetails _customerIntegration;
@@ -58,7 +58,7 @@ namespace FintrakBanking.Repositories.Credit
             IWorkflow _workflow,
              IIntegrationWithFinacle _integration,
             IFinanceTransactionRepository fina,
-            ICreditLimitValidationsRepository _creditLimitValidationsRepository
+            ICreditLimitValidationsRepository limitValidation
             )
         {
             this.collateral = _collateral;
@@ -71,7 +71,7 @@ namespace FintrakBanking.Repositories.Credit
             approvalLevel = _approvallevel;
             workflow = _workflow;
             this.integration = _integration;
-            this.creditLimitValidationsRepository = _creditLimitValidationsRepository;
+            this.limitValidation = limitValidation;
         }
 
         // public
@@ -1136,11 +1136,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public LoanApplicationViewModel AddLoanApplication(LoanApplicationViewModel loan)
         {
-            // ValidateLoanApplicationLimits(loan); // always
+            ValidateLoanApplicationLimits(loan); // always
 
             if (loan.relationshipOfficerId != 0)
             {
-                var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
                 var loanAmt = loan.LoanApplicationDetail.Sum(x => x.exchangeAmount);
                 loan.applicationAmount = loanAmt;
                 if (limit != 0)
@@ -1179,7 +1179,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                var limit = creditLimitValidationsRepository.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
+                var limit = limitValidation.ValidateCreditLimitByRMBM((short)loan.relationshipOfficerId).limit;
                 var tdata = context.TBL_LOAN_APPLICATION_DETAIL.Where(l => l.TBL_LOAN_APPLICATION.LOANAPPLICATIONID == loan.loanApplicationId);
                 var total = tdata.Sum(o => o.PROPOSEDAMOUNT);
 
@@ -3945,25 +3945,52 @@ namespace FintrakBanking.Repositories.Credit
         {
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
+            int customerId = (int)application.customerId;
 
-            var branchValidation = creditLimitValidationsRepository.ValidateNPLByBranch((short)branchId);
-            
-            decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
-          
-            decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
 
-            var branch = context.TBL_BRANCH.Find(branchId);
-            if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
 
-            List<short> sectorIds = details.Select(x => x.sectorId).ToList(); // new List<int>();
-            // sectorIds.Add(application.subSectorId); // or sectorId. TODO inspect!
-
-            foreach (var sectorId in sectorIds)
+            if (branchOverrideRequest != null)
             {
-                var sectorValidation = creditLimitValidationsRepository.ValidateNPLBySector(sectorId);
-                decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                var sector = context.TBL_SECTOR.Find(sectorId);
-                if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
+            }
+            else
+            {
+                // branch limits
+                var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
+                decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+                decimal applicationAmount = details.Sum(x => x.proposedAmount); // proposedAmount should be approvedAmount after application
+                var branch = context.TBL_BRANCH.Find(branchId);
+                if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+            }
+
+            if (sectorOverrideRequest != null)
+            {
+                //var request = context.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                //request.ISUSED = true;
+            }
+            else
+            {
+                // sector limits
+                // sectorId here is actually the subsectorId
+                List<short> sectorIds = details.Select(x => x.sectorId).ToList();
+                foreach (var sectorId in sectorIds)
+                {
+                    //var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
+                    //decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                    var sector = context.TBL_SECTOR.Find(sectorId);
+                    //if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                }
             }
         }
 
