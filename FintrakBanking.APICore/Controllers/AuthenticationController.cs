@@ -404,6 +404,7 @@ namespace FintrakBanking.APICore.Controllers
             //}
 
         }
+
         [HttpPost] //[ClaimsAuthorization]
         [Route("passwordchange")]
         public IHttpActionResult PasswordChange(PasswordChangeViewModel pwdChange)
