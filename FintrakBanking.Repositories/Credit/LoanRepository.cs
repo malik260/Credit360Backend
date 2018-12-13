@@ -3353,6 +3353,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var feePostings = BuildLoanChargeFeesPosting(loanScheduleModel);
                 if (feePostings.Count() > 0) { financeTransaction.PostTransaction(feePostings, false, twoFactorAuthDetails); }
+                twoFactorAuthDetails.skipAuthentication = true;
 
                 var loanProductInfo = context.TBL_PRODUCT.Find(contingentLoanRecord.PRODUCTID);
                 var productBehaviour = loanProductInfo.TBL_PRODUCT_BEHAVIOUR.Where(x => x.PRODUCTID == loanProductInfo.PRODUCTID);
@@ -8343,7 +8344,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals b.LOANID
                                    join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
-                                   where a.ISDISBURSED == true && (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal) && //(int)LoanSystemTypeEnum.OverdraftFacility &&
+                                   where a.ISDISBURSED == true && (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction) && //(int)LoanSystemTypeEnum.OverdraftFacility &&
                                    e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.OPERATIONPERFORMED == false
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
@@ -9040,19 +9041,22 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)
         {
             var data = (from l in context.TBL_LOAN
-                        where l.LOANREFERENCENUMBER == param.param.Trim() && param.branchId == 0
-                        || l.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
-                        || l.TBL_CUSTOMER.MAIDENNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
-                        || l.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
-                        || l.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
-                        || l.TBL_CUSTOMER.MAIDENNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
-                        || l.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
-                        || l.BRANCHID == param.branchId && l.LOANREFERENCENUMBER == param.param.Trim()
-                        || l.BRANCHID == param.branchId && param.param == null
-                        || param.param == null && param.branchId == 0
-                        || param.param.Contains(l.TBL_CUSTOMER.MIDDLENAME)
-                        || param.param.Contains(l.TBL_CUSTOMER.LASTNAME)
-                        || param.param.Contains(l.TBL_CUSTOMER.FIRSTNAME)
+                        where l.LOANREFERENCENUMBER == param.param.Trim() // && param.branchId == 0 //&& param.branchId == 0
+                        //|| l.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                        // || l.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                        // || l.TBL_CUSTOMER.MIDDLENAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
+                         //|| l.TBL_CUSTOMER.FIRSTNAME.ToLower().EndsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
+                         //|| l.TBL_CUSTOMER.LASTNAME.ToLower().EndsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
+                         //|| l.TBL_CUSTOMER.MAIDENNAME.ToLower().EndsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
+                         || l.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(param.param.Trim().ToLower())  //&& param.branchId == 0
+                         || l.TBL_CUSTOMER.LASTNAME.ToLower().Contains(param.param.Trim().ToLower())  // && param.branchId == 0
+                         || l.TBL_CUSTOMER.MAIDENNAME.ToLower().Contains(param.param.Trim().ToLower()) // && param.branchId == 0
+                         //|| l.BRANCHID == param.branchId && l.LOANREFERENCENUMBER == param.param.Trim()
+                         //|| l.BRANCHID == param.branchId && param.param == null
+                         //|| param.param == null && param.branchId == 0
+                         //|| param.param.Contains(l.TBL_CUSTOMER.MIDDLENAME)
+                         //|| param.param.Contains(l.TBL_CUSTOMER.LASTNAME)
+                         //|| param.param.Contains(l.TBL_CUSTOMER.FIRSTNAME)
 
 
                         select new LoanViewModel

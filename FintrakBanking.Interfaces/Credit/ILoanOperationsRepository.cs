@@ -27,7 +27,9 @@ namespace FintrakBanking.Interfaces.Credit
         bool ProcessContingentLiabilityTerminationAtMaturity(DateTime date);
 
         void ProcessAutomaticInterestRepricing(DateTime applicationDate, int staffId);
-        
+
+        LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo,DateTime effectiveDate);
+
         bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment);
 
         bool ContingentLiabilityAmountReduction(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment);
