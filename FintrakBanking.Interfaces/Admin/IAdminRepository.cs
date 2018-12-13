@@ -75,6 +75,7 @@ namespace FintrakBanking.Interfaces.Admin
         bool UpdateUserStatus(ActiveUserDetails entity, out string message);
         IEnumerable<ActiveUserDetails> GetActiveUsers(int companyId);
 
+        bool StaffHasActivity(int staffId, string activity);
 
         #region Two Factor Authentication
         TwoFactorAutheticationOutputViewModel TwoFactorAuthentication(string staffCode, string passCode);

@@ -359,14 +359,14 @@ namespace FintrakBanking.ReportObjects.ReportCalls
 
         #region Loan Monitoring Reports
 
-        public string GetCovenantsApproachingDueDateReport(int companyId, int staffId, DateRange dateRange)
+        public string GetCovenantsApproachingDueDateReport(int staffId, DateRange dateRange,int companyId)
         {
             try
             {
                 HashProperty hashValue = GetHashedDateValue(dateInfor);
 
                 string path = string.Empty;
-                path = reportPath + "ReportViews/CovenantsApproachingDueDate.aspx?companyId=" + companyId.ToString() + "&staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
+                path = reportPath + "ReportViews/CovenantsApproachingDueDate.aspx?staffId=" + staffId + "&startDate=" + dateRange.startDate.ToString("dd-MM-yyyy") + "&endDate=" + dateRange.endDate.ToString("dd-MM-yyyy") + "&companyId=" + companyId.ToString()   + "&key1=" + dateInfor + "&key2=" + hashValue.hashedDateValue;
                 return path;
             }
             catch (Exception ex)

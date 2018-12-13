@@ -85,6 +85,23 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-type-admin-staff")]
+        public HttpResponseMessage GetJobTypeReasignmentAdminStaff()
+        {
+            var data = repo.GetJobTypeReasignmentAdmin(token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("job-type-hub-staff")]
+        public HttpResponseMessage GetJobTypeHubStaff()
+        {
+            var data = repo.GetJobTypeHubStaff();
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
 
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/{jobRequestId}")]
@@ -192,7 +209,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
             }
@@ -213,10 +230,10 @@ namespace FintrakBanking.APICore.Controllers
                 var data = repo.PlaceChargeOnCustomerForCollateralSearch(entity);
                 if (data)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Account has been debitted Successfully" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
                 }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to debit account " });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to Perform Operation " });
             }
             catch (ConditionNotMetException ce)
             {
@@ -380,6 +397,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.lastUpdatedBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.staffId = token.GetStaffId;
 
                 var data = repo.ReassignJobRequest(entity, jobRequestId);
                 if (data)
@@ -838,6 +856,147 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost, Route("map-job-type-hub-staff")]
+        public HttpResponseMessage AssignJobTypeToStaff([FromBody] JobTypeHubViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                //entity.dateTimeCreated = 
+
+
+                var data = repo.mapJobTypeHubStaff(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The staff - hub mapping was successful" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
+
+
+        [HttpPost, Route("assign-job-type")]
+        public HttpResponseMessage AssignJobTypeToStaff([FromBody] jobReasignment entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                //entity.dateTimeCreated = 
+                
+
+                var data = repo.AssignJobTypeToStaff(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
+
+        [HttpPut, Route("update-assigned-job-type")]
+        public HttpResponseMessage UpdateAssignJobTypeToStaff([FromBody] jobReasignment entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                //entity.dateTimeCreated = 
+
+
+                var data = repo.UpdateAsignedJobTypeToStaff(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
+
+        [HttpPost, Route("delete-assigned-job-type")]
+        public HttpResponseMessage DeleteAssignedJobTypeToStaff([FromBody] jobReasignment entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                //entity.dateTimeCreated = 
+
+
+                var data = repo.DeleteJobTypeForAStaff(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The job type been assigned successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (ConditionNotMetException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (BadLogicException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("reasigned-job-type")]
+        public HttpResponseMessage GetJobTypeReasignment(int staffId)
+        {
+            var data = repo.GetJobTypeReasignmentAdmin(token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
         #endregion job-type
 
 

@@ -75,7 +75,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             }
         }
 
-        public List<LoanCovenantDetailViewModel> CovenantsApproachingDueDate(DateTime startDate, DateTime endDate)
+        public List<LoanCovenantDetailViewModel> CovenantsApproachingDueDate(DateTime startDate, DateTime endDate, int companyId)
         {
             List<LoanCovenantDetailViewModel> loanDetails = (from a in context.TBL_LOAN_COVENANT_DETAIL
                                                              join b in context.TBL_LOAN on a.LOANID equals b.TERMLOANID
@@ -83,26 +83,27 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              join e in context.TBL_LOAN_APPLICATION_DETAIL on b.LOANAPPLICATIONDETAILID equals e.LOANAPPLICATIONDETAILID
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
-                                                             where a.NEXTCOVENANTDATE >= startDate && a.NEXTCOVENANTDATE<=endDate
+                                                             where DbFunctions.TruncateTime(a.NEXTCOVENANTDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.NEXTCOVENANTDATE)<= DbFunctions.TruncateTime(endDate)
+                                                             && a.COMPANYID == companyId
                                                              select new LoanCovenantDetailViewModel
                                                              {
-                                                                 companyId = a.COMPANYID,
+                                                                 //companyId = a.COMPANYID,
                                                                  covenantAmount = a.COVENANTAMOUNT,
                                                                  covenantDate = a.COVENANTDATE,
                                                                  dueDate = a.NEXTCOVENANTDATE,
                                                                  covenantDetail = a.COVENANTDETAIL,
-                                                                 covenantTypeId = a.COVENANTTYPEID,
+                                                                 //covenantTypeId = a.COVENANTTYPEID,
                                                                  covenantTypeName = g.COVENANTTYPENAME,
-                                                                 frequencyTypeId = a.FREQUENCYTYPEID,
+                                                                 //frequencyTypeId = a.FREQUENCYTYPEID,
                                                                  frequencyTypeName = f.MODE,
-                                                                 loanId = a.LOANID,
+                                                                 //loanId = a.LOANID,
                                                                  loanRefNumber = e.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                                                 relationshipManager = d.FIRSTNAME + " " + d.LASTNAME,
-                                                                 relationshipManagerId = d.STAFFID,
-                                                                 managerEmail = d.EMAIL,
-                                                                 relationshipOfficerId = d.STAFFID,
-                                                                 relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
-                                                                 officerEmail = d.EMAIL,
+                                                                 //relationshipManager = d.FIRSTNAME + " " + d.LASTNAME,
+                                                                 //relationshipManagerId = d.STAFFID,
+                                                                 //managerEmail = d.EMAIL,
+                                                                 //relationshipOfficerId = d.STAFFID,
+                                                                 //relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
+                                                                 //officerEmail = d.EMAIL,
                                                              }).ToList();
 
             return loanDetails;
@@ -198,14 +199,15 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
 
         public List<LoanViewModel> NPL(DateTime startDate, DateTime endDate, int classification)
         {
-            if (classification!=null)
-            {
-                List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
+            //if (classification!=null)
+            //{
+                List<LoanViewModel> termloans = (from a in context.TBL_LOAN_APPLICATION
                                            join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                            join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                                           join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                           where b.EXT_PRUDENT_GUIDELINE_STATUSID == (int)PrudentialGuidelineTypeEnum.NonPerforming
-                                           && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
+                                           join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+                                           //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+                                           where e.PRUDENTIALGUIDELINETYPEID  == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
+                                           && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
                                            select new LoanViewModel
                                            {
                                                applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
@@ -216,34 +218,57 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                outstandingInterest = b.OUTSTANDINGINTEREST,
                                                outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
                                                loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                               externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+                                               externalPrudentialGuidelineStatus = e.STATUSNAME,
                                                productName = d.TBL_PRODUCT.PRODUCTNAME
                                            }).ToList();
-                return npl;
-            }
-            else
-            {
-                List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
-                                           join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
-                                           join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
-                                           join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
-                                           where b.INT_PRUDENT_GUIDELINE_STATUSID != (int)LoanPrudentialStatusEnum.Performing
-                                           && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
-                                           select new LoanViewModel
-                                           {
-                                               applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                               loanReferenceNumber = b.LOANREFERENCENUMBER,
-                                               bookingDate = b.BOOKINGDATE,
-                                               disburseDate = b.DISBURSEDATE,
-                                               nplDate = (DateTime?)b.NPLDATE,
-                                               outstandingInterest = b.OUTSTANDINGINTEREST,
-                                               outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
-                                               loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
-                                               externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
-                                               productName = d.TBL_PRODUCT.PRODUCTNAME
-                                           }).ToList();
-                return npl;
-            }
+
+               //List<LoanViewModel> overdraft = (from a in context.TBL_LOAN_APPLICATION
+               //                              join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+               //                                 //join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+               //                                 join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+               //                                 join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on c.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID                                             
+               //                              where e.PRUDENTIALGUIDELINETYPEID == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
+               //                              && DbFunctions.TruncateTime(c.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(c.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
+               //                              select new LoanViewModel
+               //                              {
+               //                                  applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+               //                                  loanReferenceNumber = c.LOANREFERENCENUMBER,
+               //                                  bookingDate = c.BOOKINGDATE,
+               //                                  disburseDate = c.DISBURSEDATE,
+               //                                  nplDate = (DateTime?)c.NPLDATE,
+               //                                  //outstandingInterest = b.OUTSTANDINGINTEREST,
+               //                                  outstandingPrincipal = c.OVERDRAFTLIMIT,
+               //                                  loanTypeName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+               //                                  externalPrudentialGuidelineStatus = c.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+               //                                  productName = d.TBL_PRODUCT.PRODUCTNAME
+               //                              }).ToList();
+
+            return termloans;
+            //}
+            //else
+            //{
+            //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
+            //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+            //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+            //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+            //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+            //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
+            //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
+            //                               select new LoanViewModel
+            //                               {
+            //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+            //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
+            //                                   bookingDate = b.BOOKINGDATE,
+            //                                   disburseDate = b.DISBURSEDATE,
+            //                                   nplDate = (DateTime?)b.NPLDATE,
+            //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
+            //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+            //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+            //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+            //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
+            //                               }).ToList();
+            //    return npl;
+            //}
           
             
         }  //done
@@ -261,7 +286,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
                                                    bookingDate = a.BOOKINGDATE,
-                                                   disburseDate = a.DISBURSEDATE,
+                                                   disburseDate = (a.DISBURSEDATE == null ? default(DateTime) : a.DISBURSEDATE),
                                                    maturityDate = a.MATURITYDATE,
                                                    productName = b.PRODUCTNAME,
                                                    outstandingInterest = a.OUTSTANDINGINTEREST,

@@ -238,7 +238,6 @@ namespace FintrakBanking.Repositories.Finance
 
         [OperationBehavior(TransactionScopeRequired = true)]
         public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false, TwoFactorAutheticationViewModel twoFADetails = null)
-        //public string PostTransaction(List<FinanceTransactionViewModel> inputTransactions, bool isBulkPosting = false)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
 

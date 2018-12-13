@@ -747,6 +747,17 @@ namespace FintrakBanking.Repositories.Admin
                                       }).ToList()
                    };
         }
+        //public IEnumerable<ActivityParent> Get(int staffId)
+        //{
+        //               activities = context.TBL_PROFILE_ACTIVITY
+        //                              .Where(x => x.ACTIVITYPARENTID == p.ACTIVITYPARENTID)
+        //                              .Select(x => new ActivityViewModel
+        //                              {
+        //                                  activityId = x.ACTIVITYID,
+        //                                  activityName = x.ACTIVITYNAME,
+        //                                  activityParentId = x.ACTIVITYPARENTID
+        //                              }).ToList()
+        //}
 
         public IEnumerable<GroupVModel> GetGroupActivities()
         {
@@ -805,6 +816,21 @@ namespace FintrakBanking.Repositories.Admin
                 return true;
             else
                 return false;            
+        }
+        public bool StaffHasActivity(int staffId, string activity)
+        {
+            var userId = (from a in context.TBL_PROFILE_USER
+                          where a.STAFFID == staffId
+                          select a.USERID).FirstOrDefault();
+
+            var userActivities = GetUserActivitiesByUser(userId);
+
+            var findActivity = userActivities.Where(x => x.ToLower() == activity.ToLower()).FirstOrDefault();
+
+            if (findActivity != null)
+                return true;
+            else
+                return false;
         }
 
         public List<string> GetUserActivitiesByUser(int userId)

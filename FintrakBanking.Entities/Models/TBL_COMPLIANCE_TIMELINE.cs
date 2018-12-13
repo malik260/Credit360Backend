@@ -15,6 +15,7 @@ namespace FintrakBanking.Entities.Models
         [Required]
         [StringLength(1000)]
         public string TIMELINE { get; set; }
+        public int? DURATIONINDAYS { get; set; }
 
         public int CREATEDBY { get; set; }
 

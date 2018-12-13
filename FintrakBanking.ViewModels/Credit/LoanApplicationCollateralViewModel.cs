@@ -88,6 +88,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string branch { get; set; }
 
         public DateTime date { get; set; }
-
+        public string groupHead { get; set; }
+        public int rmId { get; set; }
     }
 }

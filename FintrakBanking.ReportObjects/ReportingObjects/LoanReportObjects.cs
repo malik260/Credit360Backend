@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Text;
 
 namespace FintrakBanking.ReportObjects
 {
@@ -193,8 +194,8 @@ namespace FintrakBanking.ReportObjects
                                                                               productId = a.PRODUCTID,
                                                                               postDate = b.DEMANDDATE,
                                                                               valueDate = b.DEMANDDATE,
-                                                                              creditAmount = b.DAILYACCURALAMOUNT,
-                                                                              debitAmount = 0,
+                                                                              creditAmount = 0,
+                                                                              debitAmount = b.DAILYACCURALAMOUNT,
                                                                               discription = c.CATEGORYNAME,
                                                                               transactionCurrency = b.TBL_CURRENCY.CURRENCYCODE,
                                                                           }).ToList();
@@ -269,13 +270,25 @@ namespace FintrakBanking.ReportObjects
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
                 //  var approvedCustomerSentivityLevelId = context.TBL_STAFF.Find(staffId).CUSTOMERSENSITIVITYLEVELID;
+                    StringBuilder sb = new StringBuilder();
                 var data = from a in context.TBL_LOAN
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                            where (a.ISDISBURSED
                              && a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate
-                         && a.COMPANYID == companyId) && (a.LOANREFERENCENUMBER == loanRefNo || a.TBL_CUSTOMER.FIRSTNAME.StartsWith(loanRefNo) || a.TBL_CUSTOMER.LASTNAME.StartsWith(loanRefNo) || a.TBL_CUSTOMER.MIDDLENAME.StartsWith(loanRefNo) || loanRefNo == null || loanRefNo == "")
+                         && a.COMPANYID == companyId) && (a.LOANREFERENCENUMBER == loanRefNo 
+                         || a.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(loanRefNo.ToLower()) 
+                         || a.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(loanRefNo.ToLower()) 
+                         || a.TBL_CUSTOMER.MIDDLENAME.ToLower().StartsWith(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.FIRSTNAME.ToLower().EndsWith(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.LASTNAME.ToLower().EndsWith(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.MIDDLENAME.ToLower().EndsWith(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.LASTNAME.ToLower().Contains(loanRefNo.ToLower())
+                         || a.TBL_CUSTOMER.MIDDLENAME.ToLower().Contains(loanRefNo.ToLower())
+                         || loanRefNo == null || loanRefNo == "" 
                          && (a.BRANCHID == branchId || branchId == null || branchId == 0)
-                        && (a.TBL_PRODUCT.PRODUCTCLASSID == productClassId || productClassId == null || productClassId == 0)
+                        && (a.TBL_PRODUCT.PRODUCTCLASSID == productClassId || productClassId == null || productClassId == 0))
+                        
                            //  && a.TBL_CUSTOMER.CUSTOMERSENSITIVITYLEVELID <= approvedCustomerSentivityLevelId
 
                            select new DisburstLoanViewModel
@@ -556,7 +569,9 @@ namespace FintrakBanking.ReportObjects
                                loanApplicationId = b.LOANAPPLICATIONDETAILID,
                                proposedAmount = d.APPROVEDAMOUNT,
                                dateCreated = a.DATETIMECREATED,
-                               defferalExpiryDate = a.DEFERREDDATE
+                               defferalExpiryDate = a.DEFERREDDATE,
+                               //nameOfBM = context.TBL_STAFF.Where(o=>o.STAFFID == d.RELATIONSHIPMANAGERID).Select(o=>o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                          
 
                            };
                 return data.ToList();
@@ -685,6 +700,7 @@ namespace FintrakBanking.ReportObjects
                 var currdata = from a in context.TBL_LOAN
                                where a.COMPANYID == companyId 
                                && a.TERMLOANID == loanId
+                               
                                //&& a.CURRENCYID != 1
                                select new FCYScheuledLoanViewModel()
                                {

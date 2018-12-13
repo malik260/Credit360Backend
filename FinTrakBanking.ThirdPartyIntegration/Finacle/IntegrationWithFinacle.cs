@@ -990,7 +990,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
                     transPosting.referenceNumber = item.batchCode;  
                 }
 
-                transPosting.sourceReferenceNumber = item.sourceReferenceNumber;
+                transPosting.sourceReferenceNumber = item.sourceReferenceNumber.Trim();
                 transPosting.valueDate = item.valueDate.ToString("dd-MMM-yyyy", null);
                 transPosting.operationId = item.operationId; // != null ? context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.operationId).PRODUCTACCOUNTNUMBER : context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == item.glAccountId).ACCOUNTCODE,
 

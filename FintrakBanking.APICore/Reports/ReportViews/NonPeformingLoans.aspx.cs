@@ -56,7 +56,7 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "CommercialLoan";
+                    reportDataSource.Name = "NonPerformingLoans";
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
                     this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/NonPeformingLoans.rdlc");
@@ -70,10 +70,10 @@ namespace FintrakBanking.APICore.Reports.Credit.Monitoring
                         fieldInfo.SetValue(extension, false);
                     }
 
-                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+                    //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
-                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+                    //ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)

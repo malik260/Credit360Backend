@@ -48,6 +48,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanViewModel : GeneralEntity
     {
+        public string productAccountName2 { get; set; }
+
         public string operationTypeName { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public int approvedTenor { get; set; }
@@ -363,6 +365,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class RevolvingLoanViewModel : GeneralEntity
     {
+        public string productAccountName2 { get; set; }
+
         public string currencyCode { get; set; }
 
         public string revolvingTypeName { get; set; }
@@ -526,6 +530,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string productTypeName { get; set; }
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
+        public string productAccountName2 { get; set; }
         public string loanTypeName { get; set; }
         public string branchName { get; set; }
         public string subSectorName { get; set; }

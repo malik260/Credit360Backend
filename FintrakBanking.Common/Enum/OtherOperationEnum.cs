@@ -2,7 +2,8 @@
 {
     public  enum OtherOperationEnum
     {
-        WriteOffLoanFacilities = 1
+        WriteOffLoanFacilities = 1,
+        ChargeOnBank = 1
     };
 
 }

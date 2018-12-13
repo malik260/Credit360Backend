@@ -30,7 +30,7 @@ namespace FintrakBanking.APICore.Controllers
 
             if (file != null && file.ContentLength > 0)
             {
-                string fileExtension = System.IO.Path.GetExtension(file.FileName); 
+                string fileExtension = System.IO.Path.GetExtension(file.FileName).ToLower();
                 if (fileExtension == ".jpg"
                     || fileExtension == ".jpeg"
                     || fileExtension == ".png"
@@ -43,7 +43,7 @@ namespace FintrakBanking.APICore.Controllers
                     file.SaveAs(path);
                 }
             }
-            
+
             ViewBag.FileName = newFileName;
             ViewBag.FuncName = CKEditorFuncNum;
             ViewBag.Message = "Image was saved correctly";

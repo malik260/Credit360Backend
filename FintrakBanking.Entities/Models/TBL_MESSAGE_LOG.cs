@@ -44,6 +44,10 @@ namespace FintrakBanking.Entities.Models
 
         public int? TARGETID { get; set; }
 
+        public short? ATTACHMENTTYPEID { get; set; }
+
+        public string ATTACHMENTCODE { get; set; }
+
         public virtual TBL_MESSAGE_LOG_STATUS TBL_MESSAGE_LOG_STATUS { get; set; }
 
         public virtual TBL_MESSAGE_LOG_TYPE TBL_MESSAGE_LOG_TYPE { get; set; }
