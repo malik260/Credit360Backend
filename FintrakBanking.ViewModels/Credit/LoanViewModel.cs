@@ -592,6 +592,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public bool isLocalCurrrency { get; set; }
         public int? loanId { get; set; }
         public string productPriceDescription { get; set; }
         public string reviewDetails { get; set; }
