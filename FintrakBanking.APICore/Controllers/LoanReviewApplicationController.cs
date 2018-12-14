@@ -315,5 +315,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("maturityinstruction-operation/loanId/{loanId}/loanSystemTypeId/{loanSystemTypeId}")]
+        public HttpResponseMessage GetMaturityInstruction(int loanId, short loanSystemTypeId)
+        {
+            try
+            {
+                var data = repo.GetMaturityInstruction(loanId, loanSystemTypeId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

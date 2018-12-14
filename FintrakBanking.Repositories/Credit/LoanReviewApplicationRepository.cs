@@ -1025,6 +1025,22 @@ namespace FintrakBanking.Repositories.Credit
             return condition.Count == status.Count;
         }
 
+        public List<LoanReviewOperationViewModel> GetMaturityInstruction(int loanId, short loansystemTypeId)
+        {
+            var ops = (from op in context.TBL_LOAN_MATURITY_INSTRUCTION
+                       where op.LOANID == loanId && op.LOANSYSTEMTYPEID == loansystemTypeId
+                       select new LoanReviewOperationViewModel
+                       {
+                           isUsed = op.ISUSED == false ? "False" : "True",
+                           tenor = op.TENOR,
+                           approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == op.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
+                           instructionType = context.TBL_LOAN_MATURITY_INSTRU_TYPE.Where(x=> x.INSTRUCTIONTYPEID == op.INSTRUCTIONTYPEID).Select(x=> x.INSTRUCTIONTYPENAME).FirstOrDefault(),
+                           actionBy = context.TBL_STAFF.Where(o=> o.STAFFID == op.CREATEDBY).Select( x=> new { Name = x.LASTNAME + ", " + x.FIRSTNAME }).FirstOrDefault().Name,
+                       });
+
+            return ops.ToList();
+        }
+
         public List<LoanReviewOperationViewModel> GetLMSOperation(int loanId, short loansystemTypeId)
         {
             var ops = (from op in context.TBL_LOAN_REVIEW_OPERATION

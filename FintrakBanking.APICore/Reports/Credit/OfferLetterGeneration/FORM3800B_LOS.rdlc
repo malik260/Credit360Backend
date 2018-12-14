@@ -658,7 +658,7 @@ Remarks: ................................................</Value>
 </Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
-                  <FontSize>13pt</FontSize>
+                  <FontSize>12pt</FontSize>
                   <FontWeight>Bold</FontWeight>
                   <TextDecoration>None</TextDecoration>
                   <Color>#000000</Color>
@@ -747,7 +747,7 @@ Remarks: ................................................</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>(a)   If any of the securities become depreciated or reduced in value to any important extent.</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -760,8 +760,8 @@ Remarks: ................................................</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>a. If any of the securities become depreciated or reduced in value to any important extent.
-</Value>
+                <Value>(b)   If the position of the customer alters for the worse to any important extent.
+(c)   If there is evidence of any unusual dormancy on the account the currency of the facility, or</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -774,23 +774,7 @@ Remarks: ................................................</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <ListLevel>1</ListLevel>
-            <Style>
-              <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
-            </Style>
-          </Paragraph>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>b.If the position of the customer alters for the worse to any important extent.
-
-c.If there is evidence of any unusual dormancy on the account the currency of the facility, or
- if you feel that there is any cause for concern regarding these advance.</Value>
+                <Value>       if you feel that there is any cause for concern regarding these advance.</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -804,7 +788,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         <rd:DefaultName>Textbox117</rd:DefaultName>
         <Top>22.05155in</Top>
         <Left>0.00895in</Left>
-        <Height>2.94792in</Height>
+        <Height>2.02084in</Height>
         <Width>7.41277in</Width>
         <ZIndex>18</ZIndex>
         <Style>
@@ -1380,21 +1364,21 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="approvedAmountCurrency">
+                    <Textbox Name="approvedAmount1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!approvedAmountCurrency.Value</Value>
+                              <Value>=First(Fields!currencyCode.Value, "Facility") &amp; " " &amp; Format(Fields!approvedAmount.Value, "#,##0.00")</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>approvedAmountCurrency</rd:DefaultName>
+                      <rd:DefaultName>approvedAmount1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1503,7 +1487,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox42">
+                    <Textbox Name="Textbox53">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1519,7 +1503,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox42</rd:DefaultName>
+                      <rd:DefaultName>Textbox53</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1534,7 +1518,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox44">
+                    <Textbox Name="Textbox55">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1550,7 +1534,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox44</rd:DefaultName>
+                      <rd:DefaultName>Textbox55</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1565,23 +1549,24 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox46">
+                    <Textbox Name="approvedAmount">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Sum(First(Fields!interestRate.Value, "Facility"))</Value>
+                              <Value>=RunningValue(Fields!approvedAmount.Value, Sum, Nothing)</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox46</rd:DefaultName>
+                      <rd:DefaultName>approvedAmount</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1592,42 +1577,12 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox47">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value />
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox47</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox49">
+                    <Textbox Name="Textbox58">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1643,7 +1598,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox49</rd:DefaultName>
+                      <rd:DefaultName>Textbox58</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1658,7 +1613,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox51">
+                    <Textbox Name="Textbox59">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1674,7 +1629,38 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox51</rd:DefaultName>
+                      <rd:DefaultName>Textbox59</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox60">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox60</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1710,8 +1696,10 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
               <Group Name="Details1" />
               <TablixMembers>
                 <TablixMember />
-                <TablixMember />
               </TablixMembers>
+            </TablixMember>
+            <TablixMember>
+              <KeepWithGroup>Before</KeepWithGroup>
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
@@ -1944,7 +1932,9 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!collateralValue.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1973,7 +1963,9 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!stapedToCoverAmount.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -3980,9 +3972,9 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Paragraphs>
         <rd:DefaultName>Textbox2</rd:DefaultName>
         <Top>0.30001in</Top>
-        <Left>0.09256in</Left>
+        <Left>0.03113in</Left>
         <Height>0.41667in</Height>
-        <Width>7.34291in</Width>
+        <Width>7.43678in</Width>
         <ZIndex>37</ZIndex>
         <Style>
           <Border>
@@ -4075,10 +4067,10 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Style>
       </Textbox>
     </ReportItems>
-    <Height>24.99947in</Height>
+    <Height>24.12447in</Height>
     <Style />
   </Body>
-  <Width>7.47679in</Width>
+  <Width>7.49762in</Width>
   <Page>
     <PageHeader>
       <Height>1in</Height>
@@ -4181,6 +4173,14 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Field>
         <Field Name="interestRateAndFees">
           <DataField>interestRateAndFees</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="approvedAmount">
+          <DataField>approvedAmount</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="currencyCode">
+          <DataField>currencyCode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>

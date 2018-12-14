@@ -191,7 +191,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = await repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId);
+               var data = await repo.GetApprovalTrailByOperationIdAndTargetId(operationId, targetId, token.GetCompanyId);
 
                 if (data == null)
                 {
