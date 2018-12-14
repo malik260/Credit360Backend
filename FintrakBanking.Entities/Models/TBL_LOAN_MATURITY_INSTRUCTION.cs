@@ -18,6 +18,8 @@ namespace FintrakBanking.Entities.Models
 
         public int TENOR { get; set; }
 
+        public int APPROVALSTATUSID { get; set; }
+
         public short INSTRUCTIONTYPEID { get; set; }
 
         public bool ISUSED { get; set; }
