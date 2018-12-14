@@ -9,12 +9,6 @@ namespace FintrakBanking.Entities.Models
     [Table("TBL_LOAN_CONTINGENT_ARCHIVE")]
     public partial class TBL_LOAN_CONTINGENT_ARCHIVE
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public TBL_LOAN_CONTINGENT_ARCHIVE()
-        {
-            TBL_LOAN_CONTINGENT_USAGE = new HashSet<TBL_LOAN_CONTINGENT_USAGE>();
-        }
-
         [Key]
         public int CONTINGENTLOANARCHIVEID { get; set; }
 
@@ -138,31 +132,5 @@ namespace FintrakBanking.Entities.Models
 
         public int? LOAN_BOOKING_REQUESTID { get; set; }
 
-        public virtual TBL_BRANCH TBL_BRANCH { get; set; }
-
-        public virtual TBL_CASA TBL_CASA { get; set; }
-
-        public virtual TBL_COMPANY TBL_COMPANY { get; set; }
-
-        public virtual TBL_CURRENCY TBL_CURRENCY { get; set; }
-
-        public virtual TBL_CUSTOMER TBL_CUSTOMER { get; set; }
-
-        public virtual TBL_PRODUCT TBL_PRODUCT { get; set; }
-
-        public virtual TBL_STAFF TBL_STAFF { get; set; }
-
-        public virtual TBL_STAFF TBL_STAFF1 { get; set; }
-
-        public virtual TBL_SUB_SECTOR TBL_SUB_SECTOR { get; set; }
-
-        public virtual TBL_LOAN_APPLICATION_DETAIL TBL_LOAN_APPLICATION_DETAIL { get; set; }
-
-        public virtual TBL_LOAN_STATUS TBL_LOAN_STATUS { get; set; }
-
-        public virtual TBL_LOAN_SYSTEM_TYPE TBL_LOAN_SYSTEM_TYPE { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TBL_LOAN_CONTINGENT_USAGE> TBL_LOAN_CONTINGENT_USAGE { get; set; }
     }
 }

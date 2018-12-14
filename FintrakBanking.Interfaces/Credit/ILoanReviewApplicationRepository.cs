@@ -17,7 +17,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool ValidateSubAllocationOperation(int loanApplicationDetailId, int customerId);
 
         string SubmitLoanReviewApplication(LoanReviewApplicationViewModel entity);
-        
+
+        List<LoanReviewOperationViewModel> GetMaturityInstruction(int loanId, short loansystemTypeId);
 
         //List<LoanViewModel> LoanSearch(int getCompanyId, SearchViewModel search);
 
