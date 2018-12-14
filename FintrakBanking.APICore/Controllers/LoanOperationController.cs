@@ -516,7 +516,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.GetApplicationLineTenorChangeAwaitingApproval(token.GetStaffId);
+                var data = repo.GetApplicationLineTenorChangeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data.ToList(), count = data.Count() });
             }
             catch (SecureException ex)

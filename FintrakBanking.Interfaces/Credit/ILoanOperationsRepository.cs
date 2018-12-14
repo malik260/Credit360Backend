@@ -118,7 +118,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
         int addApplicationLineTenorChange(ApprovalViewModel userModel);
         bool addApplicationLineTenorChangeApproval(LoanReviewViewModel userModel);
-        IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId);
+        IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId, int companyId);
         bool addNonTermLoanLoanRateChangeApprove(LoanReviewViewModel userModel);
 
         bool addNonTermLoanLoanRateChange(LoanReviewViewModel userModel);

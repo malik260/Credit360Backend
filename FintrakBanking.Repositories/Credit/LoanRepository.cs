@@ -7174,10 +7174,14 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraft()
+        public IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraft(int staffId, int companyId)
         {
             try
             {
+
+                var activities = admin.GetUserActivitiesByUser(staffId);
+                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+
                 var currentDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                        join b in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals b.LOANID
@@ -7235,6 +7239,28 @@ namespace FintrakBanking.Repositories.Credit
                                                dateTimeCreated = op.DATECREATED
                                            }).FirstOrDefault(),
                                        }).ToList();
+
+                List<LoanViewModel> lcyLoans = new List<LoanViewModel>();
+                List<LoanViewModel> fcyLoans = new List<LoanViewModel>();
+
+                var isLCYUser = activities.Contains("lcy-user");
+                var isFCYUser = activities.Contains("fcy-user");
+
+                if (isLCYUser == true)
+                {
+                    lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+                    //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
+                }
+
+                if (isFCYUser == true)
+                {
+                    fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+                }
+
+                allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
+
+
                 return allFilteredLoan;
             }
             catch (System.Exception ex)
@@ -7403,10 +7429,12 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId)
+        public IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId, int companyId)
         {
             try
             {
+
+                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
                 var activities = admin.GetUserActivitiesByUser(userId);
                 var applicationDate = generalSetup.GetApplicationDate();
                 var allFilteredLoan = new List<LoanViewModel>();
@@ -7612,7 +7640,25 @@ namespace FintrakBanking.Repositories.Credit
                                        }).ToList();
                 }
 
+                List<LoanViewModel> lcyLoans = new List<LoanViewModel>();
+                List<LoanViewModel> fcyLoans = new List<LoanViewModel>();
 
+                var isLCYUser = activities.Contains("lcy-user");
+                var isFCYUser = activities.Contains("fcy-user");
+
+                if (isLCYUser == true)
+                {
+                    lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+                    //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
+                }
+
+                if (isFCYUser == true)
+                {
+                    fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+                }
+
+                allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
 
                 return allFilteredLoan;
             }
@@ -8433,8 +8479,10 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-        public IEnumerable<LoanViewModel> GetContingentApprovedApplication()
+        public IEnumerable<LoanViewModel> GetContingentApprovedApplication(int staffId, int companyId)
         {
+            var activities = admin.GetUserActivitiesByUser(staffId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
 
             var currentDate = generalSetup.GetApplicationDate();
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
@@ -8493,6 +8541,27 @@ namespace FintrakBanking.Repositories.Credit
                                            dateTimeCreated = op.DATECREATED
                                        }).FirstOrDefault(),
                                    }).ToList();
+
+            List<LoanViewModel> lcyLoans = new List<LoanViewModel>();
+            List<LoanViewModel> fcyLoans = new List<LoanViewModel>();
+
+            var isLCYUser = activities.Contains("lcy-user");
+            var isFCYUser = activities.Contains("fcy-user");
+
+            if (isLCYUser == true)
+            {
+                lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+                //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
+            }
+
+            if (isFCYUser == true)
+            {
+                fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+            }
+
+            allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
+
             return allFilteredLoan;
 
         }
@@ -9435,11 +9504,15 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion
 
-        public IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview()
+        public IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview(int staffId, int companyId)
         {
             var systemDate = generalSetup.GetApplicationDate();
             try
             {
+                var activities = admin.GetUserActivitiesByUser(staffId);
+                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+
+
                 var applicationDate = generalSetup.GetApplicationDate();
                 var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
                             join l in context.TBL_LMSR_APPLICATION_DETAIL on d.LOANAPPLICATIONDETAILID equals l.LOANID
@@ -9517,6 +9590,29 @@ namespace FintrakBanking.Repositories.Credit
                                 lmsApplicationDetailId = l.LOANREVIEWAPPLICATIONID,
 
                             }).ToList();
+
+
+
+                List<CamProcessedLoanViewModel> lcyLoans = new List<CamProcessedLoanViewModel>();
+                List<CamProcessedLoanViewModel> fcyLoans = new List<CamProcessedLoanViewModel>();
+
+                var isLCYUser = activities.Contains("lcy-user");
+                var isFCYUser = activities.Contains("fcy-user");
+
+                if (isLCYUser == true)
+                {
+                    lcyLoans = data.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+                    //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
+                }
+
+                if (isFCYUser == true)
+                {
+                    fcyLoans = data.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+                }
+
+                data = lcyLoans.Union(fcyLoans).ToList();
+
 
                 foreach (var item in data)
                 {
@@ -9783,10 +9879,13 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region Commercial Loan Operations
-        public IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview()
+        public IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview(int staffId, int companyId)
         {
             try
             {
+                var activities = admin.GetUserActivitiesByUser(staffId);
+                var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+
                 var applicationDate = generalSetup.GetApplicationDate();
                 List<short> productTypes = new List<short>();
                 productTypes.Add((short)LoanProductTypeEnum.CommercialLoan);
@@ -9918,6 +10017,26 @@ namespace FintrakBanking.Repositories.Credit
                                            }).FirstOrDefault(),
                                        }).ToList();
 
+                List<LoanViewModel> lcyLoans = new List<LoanViewModel>();
+                List<LoanViewModel> fcyLoans = new List<LoanViewModel>();
+
+                var isLCYUser = activities.Contains("lcy-user");
+                var isFCYUser = activities.Contains("fcy-user");
+
+                if (isLCYUser == true)
+                {
+                    lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+                    //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
+                }
+
+                if (isFCYUser == true)
+                {
+                    fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+                }
+
+                allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
+
                 return allFilteredLoan;
             }
             catch (Exception ex)
@@ -9926,8 +10045,11 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId)
+        public IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId,int companyId)
         {
+            var activities = admin.GetUserActivitiesByUser(staffId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
             var applicationDate = generalSetup.GetApplicationDate();
             var allFilteredLoan = (from a in context.TBL_LOAN
@@ -10046,6 +10168,28 @@ namespace FintrakBanking.Repositories.Credit
                                        systemCurrentDate = applicationDate,
                                        lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                    }).ToList();
+
+
+            List<LoanViewModel> lcyLoans = new List<LoanViewModel>();
+            List<LoanViewModel> fcyLoans = new List<LoanViewModel>();
+
+            var isLCYUser = activities.Contains("lcy-user");
+            var isFCYUser = activities.Contains("fcy-user");
+
+            if (isLCYUser == true)
+            {
+                lcyLoans = allFilteredLoan.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+                //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
+            }
+
+            if (isFCYUser == true)
+            {
+                fcyLoans = allFilteredLoan.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+            }
+
+            allFilteredLoan = lcyLoans.Union(fcyLoans).ToList();
+
             foreach (var i in allFilteredLoan)
             {
                 i.tenorUsed = (applicationDate - i.effectiveDate).Days;
