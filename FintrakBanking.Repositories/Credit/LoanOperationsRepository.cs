@@ -14210,12 +14210,12 @@ namespace FintrakBanking.Repositories.Credit
         public bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
-            if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
-            {
-                throw new ConditionNotMetException("The requested operation already exist and going through approval");
-            }
+            //if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
+            //{
+            //    throw new ConditionNotMetException("The requested operation already exist and going through approval");
+            //}
 
-            var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
+            var oldContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
             oldContingent.MATURITYDATE = (DateTime)model.newMaturityDate;
 
             bool output = false;

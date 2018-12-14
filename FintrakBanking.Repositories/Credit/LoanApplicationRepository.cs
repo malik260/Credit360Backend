@@ -3986,10 +3986,10 @@ namespace FintrakBanking.Repositories.Credit
                 List<short> sectorIds = details.Select(x => x.sectorId).ToList();
                 foreach (var sectorId in sectorIds)
                 {
-                    var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
-                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                    //var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
+                    //decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
                     var sector = context.TBL_SECTOR.Find(sectorId);
-                    if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    //if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
                 }
             }
         }

@@ -549,7 +549,7 @@ namespace FintrakBanking.ReportObjects
                             && DbFunctions.TruncateTime(a.DEFERREDDATE) <= DbFunctions.TruncateTime(endDate)
                            && d.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
                             && d.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
-                            && (c.BRANCHID == branchId || branchId == null)
+                            && (c.BRANCHID == branchId || branchId == null || branchId == 0)
 
 
                            select new LoanDocumentWaivedViewModel()

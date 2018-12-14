@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -1768,6 +1769,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (contextControl == null) contextControl = new FinTrakBankingContext();
                 var request = contextControl.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
                 request.ISUSED = true;
+                contextControl.Entry(request).State = EntityState.Modified;
                 // contextControl.SaveChanges();
                 return;
             }

@@ -555,7 +555,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                    purpose = b.REVIEWDETAILS,
                                    applicationDate = a.APPLICATIONDATE,
                                    approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
-                                   //approvedAmount = b.APPROVEDAMOUNT
+                                   approvedAmount = b.APPROVEDAMOUNT,
                                    approvedDate = a.APPROVEDDATE,
                                    customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                    companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),

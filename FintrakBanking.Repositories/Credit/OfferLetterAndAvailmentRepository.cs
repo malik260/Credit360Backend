@@ -40,7 +40,7 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             //IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
-            ICreditLimitValidationsRepository limitValidation
+            ICreditLimitValidationsRepository _limitValidation
             //ILoanRepository _loans  
             )
         {
@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
             genSetup = _genSetup;
             //approvalLevel = _approvallevel;
             workflow = _workflow;
-            limitValidation = limitValidation;
+            limitValidation = _limitValidation;
             //loans = _loans;
         }
 
