@@ -39,7 +39,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IEnumerable<LoanViewModel> GetApprovedLoanReview();
 
-        IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId);
+        IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId,int companyId);
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
@@ -137,7 +137,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         string GenerateLoanReferenceNumber(int customerId, int productId, int productTypeId);
 
-        IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraft();
+        IEnumerable<LoanViewModel> GetLoanReviewApplicationOverDraft(int staffId, int companyId);
 
         LoanViewModel GetOverdraftDetailsByLoanId(int revolvingLoanId);
 
@@ -172,8 +172,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         int GoForBookingRequestApproval(ApprovalViewModel entity, int loanBookingRequestId);
 
-        IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview();
-        IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId);
+        IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReview(int staffId, int companyId);
+        IEnumerable<LoanViewModel> GetApprovedNonTermLoansForReviewAwaitingApproval(int staffId, int companyId);
 
        // IEnumerable<LoanViewModel> GetApprovedFXRevolvingLoanReview();
        // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
@@ -183,11 +183,11 @@ namespace FintrakBanking.Interfaces.Credit
         List<CurrentCustomerExposure> GetApplicationFacilitySummary(int applicationId);
 
 
-        IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview();
+        IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview(int staffId, int companyId);
 
         IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate, int loanId);
 
-        IEnumerable<LoanViewModel> GetContingentApprovedApplication();
+        IEnumerable<LoanViewModel> GetContingentApprovedApplication(int staffId, int companyId);
 
         LoanViewModel GetContingentByLoanId(int revolvingLoanId);
        // IEnumerable<LookupViewModel> GetAllCRMSRepaymentAgreementType();
