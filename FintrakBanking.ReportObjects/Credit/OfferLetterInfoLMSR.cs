@@ -563,6 +563,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                    loanApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                    newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,//a.APPLICATIONDATE,
+                                   currencyCode = g.CURRENCYNAME
 
                                }).ToList();
 
