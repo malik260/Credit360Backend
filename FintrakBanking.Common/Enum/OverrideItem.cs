@@ -9,7 +9,10 @@ namespace FintrakBanking.Common.Enum
     public enum OverrideItem
     {
         BlackbookOverride = 1,
-        CAMSOL_Override =2,
-        TakeFeeAtDisbursement =3
+        CAMSOL_Override = 2,
+        TakeFeeAtDisbursement = 3,
+        BranchNplLimitOverride = 4,
+        SectorNplLimitOverride = 5,
+        CustomerExposureLimitOverride = 6,
     }
 }

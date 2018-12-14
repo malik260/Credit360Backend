@@ -12,22 +12,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FintrakBanking.Interfaces.CreditLimitValidations;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Credit
 {
     public class AppraisalMemorandumRepository : IAppraisalMemorandumRepository
     {
+
+        private FinTrakBankingContext contextControl = null;
+
         private FinTrakBankingContext context;
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
+        private ICreditLimitValidationsRepository limitValidation;
 
-        public AppraisalMemorandumRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
+        public AppraisalMemorandumRepository(
+            FinTrakBankingContext context, 
+            IGeneralSetupRepository general, 
+            IAuditTrailRepository audit, 
+            IWorkflow workflow,
+            ICreditLimitValidationsRepository limitValidation
+            )
         {
             this.context = context;
             this.general = general;
             this.audit = audit;
             this.workflow = workflow;
+            this.limitValidation = limitValidation;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -276,6 +289,12 @@ namespace FintrakBanking.Repositories.Credit
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
             // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
 
+            decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
+            if (appl.RISKRATINGID != null && model.isBusiness == false)
+            {
+                ValidateCustomerExposure(1, appl.LOANAPPLICATIONID, totalApprovedAmount, appl.CUSTOMERID, appl.CUSTOMERGROUPID);
+            }
+
             // WORKFLOW
             workflow.StaffId = model.createdBy;
             workflow.OperationId = operationId;
@@ -380,13 +399,11 @@ namespace FintrakBanking.Repositories.Credit
                 // MEMORANDUM update
                 var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
                 if (memo != null) { memo.ISCOMPLETED = true; }
+                if (contextControl != null) contextControl.SaveChanges();
             }
 
             // UPDATE APPROVED AMOUNT
-            if (updateApprovedAmount == true && items != null)
-            {
-                appl.APPROVEDAMOUNT = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
-            }
+            if (updateApprovedAmount == true && items != null) appl.APPROVEDAMOUNT = totalApprovedAmount;
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -1739,5 +1756,34 @@ namespace FintrakBanking.Repositories.Credit
             return details;
         }
 
+        private void ValidateCustomerExposure(int scenerio, int applicationId, decimal amount, int? customerId, int? customerGroupId)
+        {
+            var overrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
+                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.CustomerExposureLimitOverride && x.ISUSED == false),
+                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                .FirstOrDefault();
+
+            if (overrideRequest != null)
+            {
+                if (contextControl == null) contextControl = new FinTrakBankingContext();
+                var request = contextControl.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
+                request.ISUSED = true;
+                contextControl.Entry(request).State = EntityState.Modified;
+                // contextControl.SaveChanges();
+                return;
+            }
+
+            var result = limitValidation.ValidateApplicationCustomerRating(new ObligorLimitViewModel
+            {
+                scenerio = scenerio,
+                applicationId = applicationId,
+                customerId = customerId,
+                customerGroupId = customerGroupId
+            });
+
+            if (((result.limit == 0) || ((double)amount + result.outstandingBalance) <= result.outstandingBalance) == false)
+                throw new SecureException("Customer limit validation failed!");
+        }
     }
 }

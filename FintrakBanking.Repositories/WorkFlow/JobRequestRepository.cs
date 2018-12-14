@@ -1103,16 +1103,16 @@ namespace FintrakBanking.Repositories.WorkFlow
                         if (consultantRecord.Any())
                         {
                             var solicitor = consultantRecord.FirstOrDefault();
-                            string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /><br /> <ul>";
+                            string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
                             foreach (var i in jobRequestDetail)
                             {
-                                if(i.JOB_SUB_TYPE_CLASSID != (short) (JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
+                                if(i.JOB_SUB_TYPE_CLASSID != (short) (JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
 
                                 i.CUSTOMERORBUSINESSCHARGED = true;
                                 if (model.debitBusiness) i.DEBITBUSINESS = true;
                             }
                             
-                            messageBoby = messageBoby + $"</ul> <br /><br /> Kindly kindly contact FBN legal department for more info. <br /><br />";
+                            messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
                             string alertSubject = $"FBN - Loan Collateral Search";
                             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
                         }
@@ -1379,6 +1379,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeUnitId = x.JOBTYPEUNITID,
                 isTeamLead = x.ISTEAMLEAD,
                 deleted = x.DELETED,
+                jobTypeUnitName = (from s in context.TBL_JOB_TYPE_UNIT where s.JOBTYPEUNITID == x.JOBTYPEUNITID select s.UNITNAME).FirstOrDefault(),
                 hubStaffName = (from s in context.TBL_STAFF where s.STAFFID == x.STAFFID select s.FIRSTNAME+" "+s.LASTNAME +"("+ s.STAFFCODE+")" ).FirstOrDefault()
             }).Where(c => c.jobTypeHubId == jobTypeHubId && c.deleted == false);
         }
@@ -1389,7 +1390,9 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 hubStaffId = x.STAFFID,
                 jobTypeHubId = x.JOBTYPEHUBID,
+                hubStaffName = (from s in context.TBL_STAFF where s.STAFFID == x.STAFFID select s.FIRSTNAME + " " + s.LASTNAME + "(" + s.STAFFCODE + ")").FirstOrDefault(),
                 jobTypeUnitId = x.JOBTYPEUNITID,
+                jobTypeUnitName = (from s in context.TBL_JOB_TYPE_UNIT where s.JOBTYPEUNITID == x.JOBTYPEUNITID select s.UNITNAME).FirstOrDefault(),
                 isTeamLead = x.ISTEAMLEAD,
                 deleted = x.DELETED,
             }).Where(c => c.jobTypeHubId == jobTypeUnitId && c.deleted == false);
@@ -1463,6 +1466,68 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         }
 
+        public bool UpdatemappedJobTypeHubStaff(JobTypeHubViewModel model)
+        {
+            var data = context.TBL_JOB_TYPE_HUB_STAFF.Find(model.hubStaffId);
+            if (data == null) throw new ConditionNotMetException("Could not find record to update");
+
+            data.STAFFID = model.staffId;
+            data.ISTEAMLEAD = model.isTeamLead;
+            data.JOBTYPEHUBID = model.jobTypeHubId;
+            data.JOBTYPEUNITID = model.jobTypeUnitId;
+            
+
+            var staff = context.TBL_STAFF.Find(model.staffId);
+            var hub = context.TBL_JOB_TYPE_HUB.Find(model.jobTypeHubId);
+            var unit = context.TBL_JOB_TYPE_UNIT.Find(model.jobTypeUnitId);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.JobRequestHubStaffUpdate,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"New update made to 'job type hub staff'  thus: staff code - '{ staff.STAFFCODE }', hub - '{hub.HUBNAME}', unit - '{unit.UNITNAME}'.",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            return context.SaveChanges() > 0;
+
+        }
+
+        public bool DeletemappedJobTypeHubStaff(JobTypeHubViewModel model)
+        {
+            var data = context.TBL_JOB_TYPE_HUB_STAFF.Find(model.hubStaffId);
+            if (data == null) throw new ConditionNotMetException("No record selected.");
+
+            data.DATETIMEDELETED = DateTime.Now;
+            data.DELETED = true;
+
+            var staff = context.TBL_STAFF.Find(data.STAFFID);
+            var hub = context.TBL_JOB_TYPE_HUB.Find(data.JOBTYPEHUBID);
+            var unit = context.TBL_JOB_TYPE_UNIT.Find(data.JOBTYPEUNITID);
+
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.JobRequestHubStaffDeleted,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Deleted mapped job Type hub staff with detail: hub - '{hub.HUBNAME}' staff code '{ staff.STAFFCODE }', unit - '{unit.UNITNAME}'. ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+
+            if (context.SaveChanges() > 0) return true;
+
+            return false;
+        }
+
         public bool AssignJobTypeToStaff(jobReasignment model)
         {
             var applicationDate = general.GetApplicationDate();
@@ -1500,26 +1565,22 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         }
 
-       
-
         public bool DeleteJobTypeForAStaff(jobReasignment model)
         {
-            var data = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == model.jobTypeId && x.STAFFID == model.staffId).Select(x => x).FirstOrDefault();
-            if(data==null) throw new ConditionNotMetException("Staff does not exist");
+            var data = context.TBL_JOB_TYPE_REASSIGNMENT.Find(model.reasignmentId);
+            if(data==null) throw new ConditionNotMetException("No record selected.");
 
-
-            data.STAFFID = model.staffId;
-            data.JOBTYPEID = (short)model.jobTypeId;
-            data.COMPANYID = model.companyId;
             data.DATETIMEDELETED = model.dateTimeDeleted;
             data.DELETED = true;
 
+            var jobType = context.TBL_JOB_TYPE.Find(data.JOBTYPEID);
+            var staff = context.TBL_STAFF.Find(data.STAFFID);
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.StaffJobTypeDeleted,
                 STAFFID = model.createdBy,
-                //BRANCHID = (short)model.BranchId,
-                DETAIL = $"Joy Type has been assigned to a staff with ID '{ model.staffId }' ",
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Deleted job Type admin with detail: JobType - '{jobType.JOBTYPENAME}' staff code '{ staff.STAFFCODE }' ",
                 IPADDRESS = model.userIPAddress,
                 URL = model.applicationUrl,
                 APPLICATIONDATE = general.GetApplicationDate(),
@@ -1568,10 +1629,12 @@ namespace FintrakBanking.Repositories.WorkFlow
             var jobTypeAdminStaff = GetJobTypeReasignmentAdmin(companyId).Where(x => x.staffId == staffId).ToList();
             return jobTypeAdminStaff;
         }
+
         public IEnumerable<JobTypeHubViewModel> GetJobTypeHubStaff()
         {
             return this.context.TBL_JOB_TYPE_HUB_STAFF.Where(x=>x.DELETED == false ).Select(x => new JobTypeHubViewModel
             {
+                hubStaffId = x.HUBSTAFFID,
                 jobTypeHubId = x.JOBTYPEHUBID,
                 staffId = x.STAFFID,
                 jobTypeHubName = context.TBL_JOB_TYPE_HUB.Where(o => o.JOBTYPEHUBID == x.JOBTYPEHUBID).Select(o => o.HUBNAME).FirstOrDefault(),
