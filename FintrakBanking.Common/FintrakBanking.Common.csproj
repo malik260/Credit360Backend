@@ -93,6 +93,7 @@
     <Compile Include="EmailHelpers.cs" />
     <Compile Include="Enum\ApprovalLevelType.cs" />
     <Compile Include="Enum\AttachmentTypeEnum.cs" />
+    <Compile Include="Enum\CurrencyEnum.cs" />
     <Compile Include="Enum\OtherOperationEnum.cs" />
     <Compile Include="Enum\AccountCategoryEnum.cs" />
     <Compile Include="Enum\AccreditedConsultantTypeEnum.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="Enum\SystemStaff.cs" />
     <Compile Include="Enum\MaturityInstructionTypeEnum.cs" />
     <Compile Include="Enum\TenorModeEnum.cs" />
+    <Compile Include="Enum\ProfileActivitiesEnum.cs" />
     <Compile Include="Extensions\DataExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\ExportDataTableToExcel.cs" />

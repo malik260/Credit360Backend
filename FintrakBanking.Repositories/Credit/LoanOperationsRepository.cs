@@ -12022,6 +12022,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
         {
+            var activities = admin.GetUserActivitiesByUser(staffId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+
+
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
             var dataLoan = (from ln in context.TBL_LOAN
@@ -12375,7 +12379,28 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var contingentLoanData = dataContingentLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var unionAll = termLoanData.Union(revolvingLoanData);
+
             var data = unionAll.Union(contingentLoanData);
+
+            List<LoanReviewOperationApprovalViewModel> lcyLoans = new List<LoanReviewOperationApprovalViewModel>();
+            List<LoanReviewOperationApprovalViewModel> fcyLoans = new List<LoanReviewOperationApprovalViewModel>();
+
+            var isLCYUser = activities.Contains("lcy-user");
+            var isFCYUser = activities.Contains("fcy-user");
+
+            if (isLCYUser == true)
+            {
+                lcyLoans = data.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+                //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
+            }
+
+            if (isFCYUser == true)
+            {
+                fcyLoans = data.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+            }
+
+            data = lcyLoans.Union(fcyLoans).ToList();
 
             return data;
         }
@@ -16353,10 +16378,10 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-
-        public IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId)
+        public IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId,int companyId)
         {
-
+            var activities = admin.GetUserActivitiesByUser(staffId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
@@ -16445,6 +16470,25 @@ namespace FintrakBanking.Repositories.Credit
                             // systemCurrentDate = systemDate,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0
                         }).ToList();
+
+            List<CamProcessedLoanViewModel> lcyLoans = new List<CamProcessedLoanViewModel>();
+            List<CamProcessedLoanViewModel> fcyLoans = new List<CamProcessedLoanViewModel>();
+
+            var isLCYUser = activities.Contains("lcy-user");
+            var isFCYUser = activities.Contains("fcy-user");
+
+            if (isLCYUser == true)
+            {
+                lcyLoans = data.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+            }
+
+            if (isFCYUser == true)
+            {
+                fcyLoans = data.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+            }
+
+            data = lcyLoans.Union(fcyLoans).ToList();
 
             return data;
         }
