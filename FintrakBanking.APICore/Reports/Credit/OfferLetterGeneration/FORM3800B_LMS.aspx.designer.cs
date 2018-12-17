@@ -85,15 +85,6 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
         protected global::System.Web.UI.WebControls.ObjectDataSource odsInteralConditionsPrecedent;
         
         /// <summary>
-        /// odsExternalConditionsPrecedent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsExternalConditionsPrecedent;
-        
-        /// <summary>
         /// odsTransactionDynamics control.
         /// </summary>
         /// <remarks>
@@ -110,15 +101,6 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ObjectDataSource odsInternalConditionSubsquent;
-        
-        /// <summary>
-        /// odsExternalConditionSubsquent control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource odsExternalConditionSubsquent;
         
         /// <summary>
         /// odsComments control.

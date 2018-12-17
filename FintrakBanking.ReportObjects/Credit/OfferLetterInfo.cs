@@ -485,7 +485,9 @@ namespace FintrakBanking.ReportObjects.Credit
                                    approvedDate = a.APPROVEDDATE,
                                    newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,//a.APPLICATIONDATE,
                                    applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                   loanApplicationDetailId = b.LOANAPPLICATIONDETAILID
+                                   loanApplicationDetailId = b.LOANAPPLICATIONDETAILID,
+                                   approvedAmount = b.APPROVEDAMOUNT,
+                                   currencyCode = e.CURRENCYNAME
                                }).ToList();
 
 
@@ -533,14 +535,6 @@ namespace FintrakBanking.ReportObjects.Credit
             count = 1;
             FinTrakBankingContext context = new FinTrakBankingContext();
 
-            //var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
-            //                           join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
-            //                           join b in context.TBL_LOAN_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID
-            //                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber
-            //                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationInProgress
-            //                           && a.APPLICATIONSTATUSID != (int)LoanApplicationStatusEnum.CancellationCompleted
-            //                           && b.ISSUBSEQUENT == false
-            //                           select new { b, c }).ToList();
 
             var conditionPrecedents = (from a in context.TBL_LOAN_APPLICATION
                                        join c in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
@@ -581,26 +575,26 @@ namespace FintrakBanking.ReportObjects.Credit
             return externalCondition.Union(internalCondition).ToList();
         }
 
-        public List<OfferLetterConditionPrecidentViewModel> Internal_ConditionPrecedents(string applicationRefNumber)
-        {
-            return Los_ConditionPrecedents(applicationRefNumber).ToList();
-           // return ConditionsPrecedents.Where(x => x.isExternal == false).ToList();
-        }
-        public List<OfferLetterConditionPrecidentViewModel> External_ConditionPrecedents(string applicationRefNumber)
-        {
-            var ConditionsPrecedents = Los_ConditionPrecedents(applicationRefNumber);
-            return ConditionsPrecedents.Where(x => x.isExternal == true).ToList();
-        }
-        public List<OfferLetterConditionPrecidentViewModel> External_ConditionSubsequents(string applicationRefNumber)
-        {
-            var conditionSubsequents = Los_ConditionSubsequents(applicationRefNumber);
-            return conditionSubsequents.Where(x => x.isExternal == true).ToList();
-        }
-        public List<OfferLetterConditionPrecidentViewModel> Internal_ConditionSubsequents(string applicationRefNumber)
-        {
-            return Los_ConditionSubsequents(applicationRefNumber).ToList();
-           // return conditionSubsequents.Where(x => x.isExternal == false).ToList();
-        }
+        //public List<OfferLetterConditionPrecidentViewModel> Internal_ConditionPrecedents(string applicationRefNumber)
+        //{
+        //    return Los_ConditionPrecedents(applicationRefNumber).ToList();
+        //   // return ConditionsPrecedents.Where(x => x.isExternal == false).ToList();
+        //}
+        //public List<OfferLetterConditionPrecidentViewModel> External_ConditionPrecedents(string applicationRefNumber)
+        //{
+        //    var ConditionsPrecedents = Los_ConditionPrecedents(applicationRefNumber);
+        //    return ConditionsPrecedents.Where(x => x.isExternal == true).ToList();
+        //}
+        //public List<OfferLetterConditionPrecidentViewModel> External_ConditionSubsequents(string applicationRefNumber)
+        //{
+        //    var conditionSubsequents = Los_ConditionSubsequents(applicationRefNumber);
+        //    return conditionSubsequents.Where(x => x.isExternal == true).ToList();
+        //}
+        //public List<OfferLetterConditionPrecidentViewModel> Internal_ConditionSubsequents(string applicationRefNumber)
+        //{
+        //    return Los_ConditionSubsequents(applicationRefNumber).ToList();
+        //   // return conditionSubsequents.Where(x => x.isExternal == false).ToList();
+        //}
 
        
         public List<OfferLetterConditionPrecidentViewModel> Los_ConditionSubsequents(string applicationRefNumber)

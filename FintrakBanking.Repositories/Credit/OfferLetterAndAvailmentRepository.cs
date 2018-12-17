@@ -40,7 +40,7 @@ namespace FintrakBanking.Repositories.Credit
             FinTrakBankingContext _context,
             //IApprovalLevelStaffRepository _approvallevel,
             IWorkflow _workflow,
-            ICreditLimitValidationsRepository limitValidation
+            ICreditLimitValidationsRepository _limitValidation
             //ILoanRepository _loans  
             )
         {
@@ -49,7 +49,7 @@ namespace FintrakBanking.Repositories.Credit
             genSetup = _genSetup;
             //approvalLevel = _approvallevel;
             workflow = _workflow;
-            limitValidation = limitValidation;
+            limitValidation = _limitValidation;
             //loans = _loans;
         }
 
@@ -2598,8 +2598,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
                     decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                    var sector = context.TBL_SECTOR.Find(sectorId);
-                    if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    //var sector = context.TBL_SECTOR.Find(sectorId);
+                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
                 }
             }
         }

@@ -25,7 +25,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox4</rd:DefaultName>
-        <Top>3.46086cm</Top>
+        <Top>4.73086cm</Top>
         <Left>0.12301cm</Left>
         <Height>0.67056cm</Height>
         <Width>18.85567cm</Width>
@@ -109,7 +109,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox13</rd:DefaultName>
-        <Top>3.22793in</Top>
+        <Top>3.72793in</Top>
         <Left>0.0533in</Left>
         <Height>0.25in</Height>
         <Width>7.42349in</Width>
@@ -144,7 +144,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox5</rd:DefaultName>
-        <Top>10.36495cm</Top>
+        <Top>11.63495cm</Top>
         <Left>0.11849cm</Left>
         <Height>1.71734cm</Height>
         <Width>18.86019cm</Width>
@@ -166,7 +166,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>This letter, it is stressed, does not constitute authority to allow utilization of the facilities until all the conditions precedent are resolved and Credit Verification Officer signs-off (CVO). Pricing for this facility must be conveyed to the customer as indicated below, along with the proviso that the Bank reserves the right to vary same at anytime during the tenor of the facilities in line with market dictates.</Value>
+                <Value>This letter, it is stressed, does not constitute authority to allow utilization of the facilities until all the conditions precedent are resolved and Credit Verification Officer signs-off. Pricing for this facility must be conveyed to the customer as indicated below, along with the proviso that the Bank reserves the right to vary same at anytime during the tenor of the facilities in line with market dictates.</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -176,7 +176,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>4.98438in</Top>
+        <Top>5.48438in</Top>
         <Left>0.02739in</Left>
         <Height>0.25in</Height>
         <Width>7.42527in</Width>
@@ -211,7 +211,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>6.46771in</Top>
+        <Top>7.46771in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>1.62161in</Width>
@@ -246,8 +246,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>7.72605in</Top>
-        <Left>0in</Left>
+        <Top>8.72605in</Top>
         <Height>0.25in</Height>
         <Width>7.39621in</Width>
         <ZIndex>5</ZIndex>
@@ -282,7 +281,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>9.4125in</Top>
+        <Top>10.4125in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.39621in</Width>
@@ -317,7 +316,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>11.04861in</Top>
+        <Top>12.04861in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.38726in</Width>
@@ -352,7 +351,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>12.20146in</Top>
+        <Top>13.20146in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.38726in</Width>
@@ -387,7 +386,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>13.3375in</Top>
+        <Top>14.3375in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.39247in</Width>
@@ -422,7 +421,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>15.33375in</Top>
+        <Top>16.33375in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>2.28936in</Width>
@@ -457,7 +456,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>15.33375in</Top>
+        <Top>16.33375in</Top>
         <Left>3.88535in</Left>
         <Height>0.25in</Height>
         <Width>3.59144in</Width>
@@ -492,7 +491,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>16.60056in</Top>
+        <Top>17.60056in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.34472in</Width>
@@ -528,7 +527,7 @@ cc:   Head, Credit Monitoring Unit, H/O.</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox97</rd:DefaultName>
-        <Top>17.39333in</Top>
+        <Top>18.39333in</Top>
         <Left>0.00895in</Left>
         <Height>0.5625in</Height>
         <Width>7.34472in</Width>
@@ -561,7 +560,7 @@ cc:   Head, Credit Monitoring Unit, H/O.</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox98</rd:DefaultName>
-        <Top>18.23708in</Top>
+        <Top>19.23708in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.34472in</Width>
@@ -597,7 +596,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox99</rd:DefaultName>
-        <Top>18.6225in</Top>
+        <Top>19.6225in</Top>
         <Left>0.00895in</Left>
         <Height>0.76042in</Height>
         <Width>7.34472in</Width>
@@ -633,7 +632,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>20.87947in</Top>
+        <Top>21.87947in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.40235in</Width>
@@ -670,7 +669,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>21.33781in</Top>
+        <Top>22.33781in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.41277in</Width>
@@ -748,7 +747,7 @@ Remarks: ................................................</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
+                <Value>(a)   If any of the securities become depreciated or reduced in value to any important extent.</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -761,8 +760,8 @@ Remarks: ................................................</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>a. If any of the securities become depreciated or reduced in value to any important extent.
-</Value>
+                <Value>(b)   If the position of the customer alters for the worse to any important extent.
+(c)   If there is evidence of any unusual dormancy on the account the currency of the facility, or</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -775,23 +774,7 @@ Remarks: ................................................</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <ListLevel>1</ListLevel>
-            <Style>
-              <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
-            </Style>
-          </Paragraph>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>b.If the position of the customer alters for the worse to any important extent.
-
-c.If there is evidence of any unusual dormancy on the account the currency of the facility, or
- if you feel that there is any cause for concern regarding these advance.</Value>
+                <Value>       if you feel that there is any cause for concern regarding these advance.</Value>
                 <Style />
               </TextRun>
             </TextRuns>
@@ -803,9 +786,9 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox117</rd:DefaultName>
-        <Top>21.75155in</Top>
+        <Top>22.75155in</Top>
         <Left>0.00895in</Left>
-        <Height>2.66667in</Height>
+        <Height>1.89584in</Height>
         <Width>7.41277in</Width>
         <ZIndex>18</ZIndex>
         <Style>
@@ -1093,7 +1076,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>CustomerDetails</DataSetName>
-        <Top>2.03071in</Top>
+        <Top>2.53071in</Top>
         <Left>0.04665in</Left>
         <Height>1.1875in</Height>
         <Width>7.406in</Width>
@@ -1388,7 +1371,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!approvedAmountCurrency.Value</Value>
+                              <Value>=First(Fields!currencyCode.Value, "Facility") &amp; " " &amp; Format(Fields!approvedAmount.Value, "#,##0.00")</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1499,6 +1482,198 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 </TablixCell>
               </TablixCells>
             </TablixRow>
+            <TablixRow>
+              <Height>0.25in</Height>
+              <TablixCells>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox42">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Total Exposure</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox42</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="approvedAmount">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>approvedAmount</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="approvedAmount1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=RunningValue(Fields!approvedAmount.Value, Sum, Nothing)</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>approvedAmount1</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox47">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox47</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox49">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox49</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox51">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value />
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox51</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+              </TablixCells>
+            </TablixRow>
           </TablixRows>
         </TablixBody>
         <TablixColumnHierarchy>
@@ -1518,13 +1693,19 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
             </TablixMember>
             <TablixMember>
               <Group Name="Details1" />
+              <TablixMembers>
+                <TablixMember />
+              </TablixMembers>
+            </TablixMember>
+            <TablixMember>
+              <KeepWithGroup>Before</KeepWithGroup>
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Facility</DataSetName>
-        <Top>5.41167in</Top>
+        <Top>5.91167in</Top>
         <Left>0.00895in</Left>
-        <Height>0.5in</Height>
+        <Height>0.75in</Height>
         <Width>7.46784in</Width>
         <ZIndex>20</ZIndex>
         <Style>
@@ -1750,7 +1931,9 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!collateralValue.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1779,7 +1962,9 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!stapedToCoverAmount.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1821,7 +2006,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>SecurityDetails</DataSetName>
-        <Top>6.77474in</Top>
+        <Top>7.77474in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
@@ -2157,7 +2342,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>TransactionDynamics</DataSetName>
-        <Top>11.37474in</Top>
+        <Top>12.37474in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
@@ -2328,7 +2513,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Comments</DataSetName>
-        <Top>13.68724in</Top>
+        <Top>14.68724in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46296in</Width>
@@ -2563,7 +2748,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>MonitoringTrggers</DataSetName>
-        <Top>12.51805in</Top>
+        <Top>13.51805in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
@@ -2971,7 +3156,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>InternalConditionPrecedent</DataSetName>
-        <Top>8.04549in</Top>
+        <Top>9.04549in</Top>
         <Left>0.00895in</Left>
         <Height>1.22917in</Height>
         <Width>7.46784in</Width>
@@ -3390,7 +3575,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>InternalConditionSubsequent</DataSetName>
-        <Top>9.69028in</Top>
+        <Top>10.69028in</Top>
         <Left>0.00895in</Left>
         <Height>1.22917in</Height>
         <Width>7.46297in</Width>
@@ -3412,6 +3597,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 <Style>
                   <FontStyle>Italic</FontStyle>
                   <FontSize>9pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
                 </Style>
               </TextRun>
             </TextRuns>
@@ -3419,7 +3605,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox115</rd:DefaultName>
-        <Top>6.01958in</Top>
+        <Top>7.14458in</Top>
         <Height>0.25in</Height>
         <Width>7.44351in</Width>
         <ZIndex>27</ZIndex>
@@ -3438,7 +3624,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>7.53in</Top>
+        <Top>8.53in</Top>
         <Left>1.46603in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3454,7 +3640,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>9.30244in</Top>
+        <Top>10.30244in</Top>
         <Left>0.59955in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3470,7 +3656,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>10.9487in</Top>
+        <Top>11.9487in</Top>
         <Left>0.87829in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3486,7 +3672,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>14.45911in</Top>
+        <Top>15.45911in</Top>
         <Left>0.77412in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3502,7 +3688,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>18.09472in</Top>
+        <Top>19.09472in</Top>
         <Left>0.14912in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3649,7 +3835,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Line>
         </ReportItems>
         <KeepTogether>true</KeepTogether>
-        <Top>19.45236in</Top>
+        <Top>20.45236in</Top>
         <Left>0.04843in</Left>
         <Height>1.15923in</Height>
         <Width>7.30524in</Width>
@@ -3677,7 +3863,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox26</rd:DefaultName>
-        <Top>19.54736in</Top>
+        <Top>20.54736in</Top>
         <Left>0.14912in</Left>
         <Height>0.25in</Height>
         <Width>2.75592in</Width>
@@ -3709,7 +3895,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox31</rd:DefaultName>
-        <Top>19.79215in</Top>
+        <Top>20.79215in</Top>
         <Left>0.14912in</Left>
         <Height>0.25in</Height>
         <Width>1in</Width>
@@ -3749,7 +3935,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox13</rd:DefaultName>
-        <Top>1.75in</Top>
+        <Top>2.25in</Top>
         <Left>0.03113in</Left>
         <Height>0.25in</Height>
         <Width>7.42349in</Width>
@@ -3764,32 +3950,140 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Textbox Name="Textbox2">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>This is "Classified Information" and meant for Internal Use Only. Therefore, this F3800B should NOT be sent or shared with external parties. Please advise the content in an Offer Letter as applicable to the customer</Value>
+                <Style>
+                  <FontStyle>Italic</FontStyle>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Center</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox2</rd:DefaultName>
+        <Top>1.19667in</Top>
+        <Left>0.0533in</Left>
+        <Height>0.41667in</Height>
+        <Width>7.34291in</Width>
+        <ZIndex>37</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Line Name="Line1">
+        <Top>1.6425in</Top>
+        <Left>0.99079in</Left>
+        <Height>0in</Height>
+        <Width>5.24494in</Width>
+        <ZIndex>38</ZIndex>
+        <Style>
+          <Border>
+            <Style>Solid</Style>
+          </Border>
+        </Style>
+      </Line>
+      <Textbox Name="Textbox5">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>INTERNAL USE ONLY</Value>
+                <Style>
+                  <FontSize>15pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
+                  <Color>DarkGray</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox5</rd:DefaultName>
+        <Top>0.90278in</Top>
+        <Left>5.01333in</Left>
+        <Height>0.28556in</Height>
+        <Width>2.36913in</Width>
+        <ZIndex>39</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox22">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>*Indicate if New/Existing/Renewal/Enhancement</Value>
+                <Style>
+                  <FontStyle>Italic</FontStyle>
+                  <FontSize>9pt</FontSize>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox22</rd:DefaultName>
+        <Top>6.93945in</Top>
+        <Height>0.3in</Height>
+        <Width>3.11079in</Width>
+        <ZIndex>40</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Image Name="Image1">
+        <Source>Embedded</Source>
+        <Value>firstbanklogo</Value>
+        <Sizing>FitProportional</Sizing>
+        <Top>0.06944in</Top>
+        <Height>0.625in</Height>
+        <Width>2.02664in</Width>
+        <ZIndex>41</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Image>
     </ReportItems>
-    <Height>24.41822in</Height>
+    <Height>24.64739in</Height>
     <Style />
   </Body>
   <Width>7.47679in</Width>
   <Page>
-    <PageHeader>
-      <Height>1in</Height>
-      <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
-      <Style>
-        <Border>
-          <Style>None</Style>
-        </Border>
-      </Style>
-    </PageHeader>
-    <PageFooter>
-      <Height>1in</Height>
-      <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
-      <Style>
-        <Border>
-          <Style>None</Style>
-        </Border>
-      </Style>
-    </PageFooter>
     <PageHeight>13in</PageHeight>
     <PageWidth>11in</PageWidth>
     <LeftMargin>1in</LeftMargin>
@@ -3853,6 +4147,14 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Field>
         <Field Name="interestRateAndFees">
           <DataField>interestRateAndFees</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="approvedAmount">
+          <DataField>approvedAmount</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="currencyCode">
+          <DataField>currencyCode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -4089,46 +4391,6 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="ExternalConditionPrecedent">
-      <Query>
-        <DataSourceName>FORM3800B</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="conditionPrecident">
-          <DataField>conditionPrecident</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="productName">
-          <DataField>productName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="creditVerificationOfficers">
-          <DataField>creditVerificationOfficers</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="locationOfDocument">
-          <DataField>locationOfDocument</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="SN">
-          <DataField>SN</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="isExternal">
-          <DataField>isExternal</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>FORM3800B</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\FORM3800B.xsd</rd:SchemaPath>
-        <rd:TableName>ExternalConditionsPrecedent</rd:TableName>
-        <rd:TableAdapterFillMethod />
-        <rd:TableAdapterGetDataMethod />
-        <rd:TableAdapterName />
-      </rd:DataSetInfo>
-    </DataSet>
     <DataSet Name="InternalConditionSubsequent">
       <Query>
         <DataSourceName>FORM3800B</DataSourceName>
@@ -4169,47 +4431,21 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="ExternalConditionSubsequent">
-      <Query>
-        <DataSourceName>FORM3800B</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="SN">
-          <DataField>SN</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="conditionPrecident">
-          <DataField>conditionPrecident</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="timeline">
-          <DataField>timeline</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="creditMonitoring">
-          <DataField>creditMonitoring</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="productName">
-          <DataField>productName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="isExternal">
-          <DataField>isExternal</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>FORM3800B</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\FORM3800B.xsd</rd:SchemaPath>
-        <rd:TableName>ExternalConditionSubsquent</rd:TableName>
-        <rd:TableAdapterFillMethod />
-        <rd:TableAdapterGetDataMethod />
-        <rd:TableAdapterName />
-      </rd:DataSetInfo>
-    </DataSet>
   </DataSets>
+  <EmbeddedImages>
+    <EmbeddedImage Name="firstbanklogo">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>
   <rd:ReportID>7ac87adc-f86d-49d4-9586-29b18a37bed5</rd:ReportID>
 </Report>

@@ -765,15 +765,13 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-        [HttpGet]
-        [ClaimsAuthorization]
+        [HttpGet]      [ClaimsAuthorization]
         [Route("job-hub-staff/{hubId}")]
         public HttpResponseMessage GetHubStaffByHubId(short hubId)
         {
             var data = repo.GetHubStaffByHubId(hubId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
-
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -857,14 +855,13 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         [HttpPost, Route("map-job-type-hub-staff")]
-        public HttpResponseMessage AssignJobTypeToStaff([FromBody] JobTypeHubViewModel entity)
+        public HttpResponseMessage mapJobTypeHubStaff([FromBody] JobTypeHubViewModel entity)
         {
             try
             {
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
-                //entity.dateTimeCreated = 
 
 
                 var data = repo.mapJobTypeHubStaff(entity);
@@ -889,6 +886,43 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPut, Route("update-map-job-type-hub-staff")]
+        public HttpResponseMessage UpdatemappedJobTypeHubStaff([FromBody] JobTypeHubViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+
+                if (repo.UpdatemappedJobTypeHubStaff(entity)) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "Update was successful" }); }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
+
+        [HttpPut, Route("delete-map-job-type-hub-staff")]
+        public HttpResponseMessage AssignJobTypeToStaff([FromBody] JobTypeHubViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+
+                if (repo.DeletemappedJobTypeHubStaff(entity)) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The staff - hub mapping was successful" }); }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
 
         [HttpPost, Route("assign-job-type")]
         public HttpResponseMessage AssignJobTypeToStaff([FromBody] jobReasignment entity)
@@ -898,7 +932,6 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
-                //entity.dateTimeCreated = 
                 
 
                 var data = repo.AssignJobTypeToStaff(entity);
@@ -931,7 +964,6 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
-                //entity.dateTimeCreated = 
 
 
                 var data = repo.UpdateAsignedJobTypeToStaff(entity);
@@ -963,7 +995,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
-                entity.staffId = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;
                 //entity.dateTimeCreated = 
 
 
@@ -998,7 +1030,6 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
         #endregion job-type
-
 
         #region Job Request Feedback
         [HttpGet]
