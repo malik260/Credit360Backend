@@ -271,6 +271,15 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("overdraft-account-number/")]
+        public HttpResponseMessage GetOverdraftAccountNumberWithCustomerId(string accountNumberOrName, int customerId)
+        {
+            var data = repo.GetOverdraftAccountNumberWithCustomerId(accountNumberOrName, customerId, token.GetCompanyId);// token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-account/")]
         public HttpResponseMessage SearchForCustomerAccount(string searchQuery, int loanTypeId)
         {
