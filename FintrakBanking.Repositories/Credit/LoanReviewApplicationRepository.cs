@@ -64,6 +64,7 @@ namespace FintrakBanking.Repositories.Credit
             .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
                     && x.RESPONSESTAFFID == null
+                    && x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
             ),
@@ -128,8 +129,8 @@ namespace FintrakBanking.Repositories.Credit
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 .OrderByDescending(x => x.loanReviewApplicationId);
 
-            //var list = applications.ToList();
-            //var count = applications.Count();
+            var list = applications.ToList();
+            var count = applications.Count();
 
             return applications; // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
