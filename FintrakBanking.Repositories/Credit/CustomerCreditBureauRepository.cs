@@ -182,14 +182,10 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             var i = integration.AddCustomerAccounts(item.customerCode);
                         }
-                        catch (APIErrorException ex)
+                        catch (Exception ex)
                         {
                             return allCorporate;
                             //throw new APIErrorException(ex.Message);
-                        }
-                        catch (Exception ex)
-                        {
-                            return allCorporate;  //throw ex; // new SecureException(ex.Message);
                         }
                     }
                 }
