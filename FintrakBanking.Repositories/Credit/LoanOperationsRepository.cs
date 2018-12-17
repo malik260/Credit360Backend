@@ -11509,7 +11509,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo,DateTime effectiveDate)
         {
 
-            var newEffectiveDate = effectiveDate.AddDays(1);
+            var newEffectiveDate = effectiveDate.AddDays(-1);
 
             var loan = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId && x.LOANSTATUSID == (short)LoanStatusEnum.Active).FirstOrDefault();
 
@@ -14326,10 +14326,10 @@ namespace FintrakBanking.Repositories.Credit
         public bool ContingentLiabilityAmountReduction(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
-            if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
-            {
-                throw new ConditionNotMetException("The requested operation already exist and going through approval");
-            }
+            //if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
+            //{
+            //    throw new ConditionNotMetException("The requested operation already exist and going through approval");
+            //}
 
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
             oldContingent.CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT - (decimal)model.principalAmount;
