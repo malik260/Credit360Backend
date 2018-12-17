@@ -91,6 +91,7 @@ namespace FintrakBanking.Repositories.Credit
                 }).ToList();
             return data;
         }
+
         private LoanApplicationViewModel GetLoanApplicationByLoanRefrenceNo(string loanApplicationRef, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
@@ -215,6 +216,7 @@ namespace FintrakBanking.Repositories.Credit
             var test = data.FirstOrDefault();
             return data.FirstOrDefault();
         }
+
         public IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId)
         {
             var data = GetLoanApplications(companyId).Where(c => c.customerId == customerId
@@ -3983,13 +3985,13 @@ namespace FintrakBanking.Repositories.Credit
             {
                 // sector limits
                 // sectorId here is actually the subsectorId
-                List<short> sectorIds = details.Select(x => x.sectorId).ToList();
+                List<short> sectorIds = details.Select(x => x.subSectorId).ToList();
                 foreach (var sectorId in sectorIds)
                 {
                     var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
                     decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                    var sector = context.TBL_SECTOR.Find(sectorId);
-                    if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    //var sector = context.TBL_SECTOR.Find(sectorId);
+                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
                 }
             }
         }

@@ -22,6 +22,7 @@ namespace FintrakBanking.Entities.Models
         public short TARGETTYPEID { get; set; }
 
         public int TARGETID { get; set; }
+
         public int? TARGETID2 { get; set; }
 
         public short ? CHECKLISTSTATUSID { get; set; }

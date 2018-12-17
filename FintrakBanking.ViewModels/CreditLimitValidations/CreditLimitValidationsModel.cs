@@ -9,7 +9,7 @@
         public short? riskRatingId { get; set; }
         public double ratio { get; set; }
 
-        public double maximumAllowedLimit { get; set; }
+        public decimal maximumAllowedLimit { get; set; }
         public double obligorExposure { get; set; }
         public bool validated { get; set; }
     }

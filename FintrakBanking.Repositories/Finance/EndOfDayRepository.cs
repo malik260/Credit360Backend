@@ -71,6 +71,8 @@ namespace FintrakBanking.Repositories.Finance
                     var currentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
                     currentDate.CURRENTDATE = runDate;
 
+                    //begin of day //
+
                     context.SaveChanges();
                 }
                 while (runDate < nextWorkDay);
@@ -79,6 +81,8 @@ namespace FintrakBanking.Repositories.Finance
             var financeCurrentDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault();
             financeCurrentDate.CURRENTDATE = nextWorkDay;
             financeCurrentDate.REFRESHSTATUS = false;
+            //begin of day //
+
 
             var audit = new TBL_AUDIT
             {

@@ -54,6 +54,6 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel entity);
 
-        LoanApplicationUpdateMessage AvailmentChecklistValidation(int applicationId, int staffId);
+        //void AvailmentChecklistValidation(int applicationId, int staffId);
     }
 }

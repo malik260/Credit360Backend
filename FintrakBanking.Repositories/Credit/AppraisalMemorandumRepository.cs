@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using System.Data.Entity;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -288,6 +289,8 @@ namespace FintrakBanking.Repositories.Credit
             var appl = context.TBL_LOAN_APPLICATION.Find(model.applicationId);
             // LoadConditionsAndDynamics(appl.LOANAPPLICATIONID);
 
+            // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
+            items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
             decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
             if (appl.RISKRATINGID != null && model.isBusiness == false)
             {
@@ -337,7 +340,7 @@ namespace FintrakBanking.Repositories.Credit
             if (model.recommendedChanges.Count() > 0) // only approving authority
             {
                 updateApprovedAmount = true;
-                items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
+                // items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
                 foreach (var changed in model.recommendedChanges)
                 {
                     var detail = items.FirstOrDefault(x => x.LOANAPPLICATIONDETAILID == changed.detailId);
@@ -1768,6 +1771,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (contextControl == null) contextControl = new FinTrakBankingContext();
                 var request = contextControl.TBL_OVERRIDE_DETAIL.Find(overrideRequest.id);
                 request.ISUSED = true;
+                contextControl.Entry(request).State = EntityState.Modified;
                 // contextControl.SaveChanges();
                 return;
             }
