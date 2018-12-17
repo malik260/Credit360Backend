@@ -6,6 +6,7 @@ using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.Interfaces.ErrorLogger;
 using FintrakBanking.ViewModels;
 using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
@@ -71,7 +72,24 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("credit-bureau-customer-account")]
+        public HttpResponseMessage AddCustomerAccounts(IEnumerable<CustomerViewModels> models)
+        {
+            try
+            {
+                repo.AddCustomerAccounts(models);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true});
+            }
+            catch(SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-information")]
         public HttpResponseMessage GetCreditBureauInformation()
         {

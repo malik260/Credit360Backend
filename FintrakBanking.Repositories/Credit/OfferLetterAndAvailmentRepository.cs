@@ -1986,12 +1986,17 @@ namespace FintrakBanking.Repositories.Credit
         public int ApproveLoanAvailmentDecision(LoanAvailmentApprovalViewModel entity)
         {
             int operationId = (int)OperationsEnum.LoanAvailment;
-            // var approvalLvlStaff = approvalLevel.GetAllAssignedApprovalLevelStaff(entity.companyId).Where(x => x.operationId == operationId).ToList();
             var loanApplication = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.APPLICATIONREFERENCENUMBER == entity.applicationReferenceNumber);
             var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == loanApplication.LOANAPPLICATIONID && x.STATUSID == (int)ApprovalStatusEnum.Approved);
 
-            var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == loanApplication.LOANAPPLICATIONID).Any();
+            // VALIDATIONS
+            PendingJobRequestCheck(loanApplicationDetails);
+            // AvailmentChecklistValidation(loanApplication.LOANAPPLICATIONID, entity.staffId);
+            //if (!checkListResult.isdone) throw new SecureException(checkListResult.messageStr);
+            BeforeAvailmentValidationChecks(loanApplication.LOANAPPLICATIONID);
 
+
+            var initiated = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId && x.TARGETID == loanApplication.LOANAPPLICATIONID).Any();
             workflow.StaffId = entity.createdBy;
             workflow.OperationId = operationId;
             workflow.TargetId = loanApplication.LOANAPPLICATIONID;
@@ -2002,14 +2007,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.Amount = entity.amount;
             workflow.DeferredExecution = true;
             workflow.LogActivity(); // ------------------- LOG ONCE
-
-            PendingJobRequestCheck(loanApplicationDetails); // austin!
-
-            var checkListResult = AvailmentChecklistValidation(loanApplication.LOANAPPLICATIONID, entity.staffId);
-            if (!checkListResult.isdone)
-                throw new ConditionNotMetException(checkListResult.messageStr);
-
-            int invalids = BeforeAvailmentValidationChecks(loanApplication.LOANAPPLICATIONID);
 
             bool workflowEnded = false;
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -2058,6 +2055,10 @@ namespace FintrakBanking.Repositories.Credit
             application.LoanApplicationDetail = details;
 
             ValidateLoanApplicationLimits(application);
+
+            // CHECKLIST VALIDATION
+
+            ChecklistValidation(applicationId);
 
             return result;
         }
@@ -2507,97 +2508,54 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-        public LoanApplicationUpdateMessage AvailmentChecklistValidation(int applicationId, int staffId)
+        private void ChecklistValidation(int applicationId)
         {
             LoanApplicationUpdateMessage result = new LoanApplicationUpdateMessage();
-            string str = string.Empty;
+            int targetId = 0;
+
             List<int> operations = new List<int>();
             operations.Add((int)OperationsEnum.LoanApplication);
             operations.Add((int)OperationsEnum.CAM);
             operations.Add((int)OperationsEnum.LoanAvailment);
 
-            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.LoanAvailment).ToList();
-            int checkListIndex = (int)ChecklistErrorEnum.GoodChecklist;
-            bool isCheckListDone = true;
-            var applicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId).ToList();
+            var applicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId 
+                    && x.STATUSID == (int)ApprovalStatusEnum.Approved 
+                    && x.DELETED == false
+                ).ToList();
 
-            if (applicationDetails != null)
+            var types = from a in context.TBL_CHECKLIST_TYPE select a;
+
+            // conditions
+            var detailIds = applicationDetails.Select(x => x.LOANAPPLICATIONDETAILID);
+
+            var conditionItems = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                                  where detailIds.Contains(c.LOANAPPLICATIONDETAILID) && c.ISSUBSEQUENT == false && c.CHECKLISTVALIDATED == false
+                                  select c).ToList();
+
+            if (conditionItems.Any()) throw new SecureException($"One or more condition(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
+
+            // checklist
+            foreach (var d in applicationDetails)
             {
-                foreach (var d in applicationDetails)
+                foreach (var item in types)
                 {
-                    var types = from a in context.TBL_CHECKLIST_TYPE select a;
-                    foreach (var item in types)
-                    {
+                    targetId = item.ISPRODUCT_BASED ? d.LOANAPPLICATIONDETAILID : applicationId;
 
-                        int targetId = 0;
-                        if (item.ISPRODUCT_BASED)
-                        {
-                            targetId = d.LOANAPPLICATIONDETAILID;
-                        }
-                        else
-                        {
-                            targetId = applicationId;
-                        }
+                    var checklistItems = (from a in context.TBL_CHECKLIST_DEFINITION
+                                          join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID equals b.CHECKLISTDEFINITIONID
+                                          where b.TARGETID == targetId
+                                                && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
+                                                && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
+                                                && operations.Contains(a.OPERATIONID)
+                                          select b).ToList();
 
+                    var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID2 == false || c.CHECKLISTSTATUSID3 == false);
 
-                        var checklistItems = (from a in context.TBL_CHECKLIST_DEFINITION
-                                      join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
-                                      equals b.CHECKLISTDEFINITIONID
-                                      where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-                                      && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && operations.Contains(a.OPERATIONID)
-                                      select b).ToList();
-                        var PRODUCTID = (item.ISPRODUCT_BASED ? (short?)d.APPROVEDPRODUCTID : null);
+                    if (omission.Any()) throw new SecureException($"One or more {item.CHECKLIST_TYPE_NAME} item(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
 
-                        //if (item.CHECKLIST_TYPEID == (int)CheckTypeEnum.AvailmentCheckList)
-                        //{
-                        //    var availmentDetail = (from a in context.TBL_CHECKLIST_DEFINITION
-                        //                  join b in context.TBL_CHECKLIST_DETAIL on a.CHECKLISTDEFINITIONID
-                        //                  equals b.CHECKLISTDEFINITIONID
-                        //                  where b.TARGETID == targetId && b.TARGETTYPEID == (item.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
-                        //                  && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanAvailment
-                        //                           select b).ToList();
-
-                        //    var definition = (from a in context.TBL_CHECKLIST_DEFINITION
-                        //                      join b in context.TBL_CHECKLIST_ITEM on a.CHECKLISTITEMID equals b.CHECKLISTITEMID
-                        //                      where ids.Contains((int)a.APPROVALLEVELID) && a.CHECKLIST_TYPEID == item.CHECKLIST_TYPEID
-                        //                      && a.OPERATIONID == (int)OperationsEnum.LoanAvailment && a.PRODUCTID == PRODUCTID
-                        //                      select a).ToList();
-
-                        //    if (definition.Count() != availmentDetail.Count())
-                        //    {
-                        //        isCheckListDone = false;
-                        //        str = str + Environment.NewLine + item.CHECKLIST_TYPE_NAME + " " + " is not complete. ";
-                        //        checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
-                        //    }
-                        //    var avail = detail.Where(c => c.CHECKLISTSTATUSID == (int)CheckListStatusEnum.No);
-                        //    if (avail.Any())
-                        //    {
-                        //        isCheckListDone = false;
-                        //        str = str + $"One or more {item.CHECKLIST_TYPE_NAME} item(s) did not meet with the condition. " + Environment.NewLine
-                        //            + " Please check your response to confirm. " + Environment.NewLine;
-                        //        checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
-                        //    }
-                        //}
-
-                        var ab = checklistItems.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null);
-                        if (ab.Any())
-                        {
-                            isCheckListDone = false;
-                            str = str + $"One or more {item.CHECKLIST_TYPE_NAME} item(s) is not validated. " + Environment.NewLine
-                                + " Please check your response to confirm. " + Environment.NewLine;
-                            checkListIndex = (int)ChecklistErrorEnum.NegetiveChecklist;
-                        }
-                    }
                 }
+
             }
-
-            return new LoanApplicationUpdateMessage
-            {
-                isdone = isCheckListDone,
-                messageStr = str,
-                checkListIndex = checkListIndex,
-            };
-
         }
 
         public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
@@ -2622,6 +2580,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var request = context.TBL_OVERRIDE_DETAIL.Find(branchOverrideRequest.id);
                 request.ISUSED = true;
+                context.Entry(request).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
@@ -2637,6 +2596,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var request = context.TBL_OVERRIDE_DETAIL.Find(sectorOverrideRequest.id);
                 request.ISUSED = true;
+                context.Entry(request).State = System.Data.Entity.EntityState.Modified;
             }
             else
             {
@@ -2647,8 +2607,8 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
                     decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                    var sector = context.TBL_SECTOR.Find(sectorId);
-                    if (sector.LOAN_LIMIT > 0 && sector.LOAN_LIMIT <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    //var sector = context.TBL_SECTOR.Find(sectorId);
+                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
                 }
             }
         }

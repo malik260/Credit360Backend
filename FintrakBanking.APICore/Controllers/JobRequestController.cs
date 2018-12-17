@@ -988,6 +988,26 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpDelete, Route("delete-job-request-document/{documentId}")]
+        public HttpResponseMessage deleteJobDocument(int documentId )
+        {
+            try
+            {
+                if (repo.deleteJobDocument(documentId, token.GetStaffId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true,  message = "Document Successfully deleted" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
+            }
+
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+            }
+        }
+
+
         [HttpPost, Route("delete-assigned-job-type")]
         public HttpResponseMessage DeleteAssignedJobTypeToStaff([FromBody] jobReasignment entity)
         {

@@ -14,6 +14,8 @@ namespace FintrakBanking.Interfaces.Credit
         #region CREDIT BUREAU REPORT
         IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId, bool isExternal);
 
+        void AddCustomerAccounts(IEnumerable<CustomerViewModels> customers);
+
         bool VerifyCustomerValidCreditBureau(int customerId);
         int AddCustomerCreditBureauCharge(LoanCreditBureauViewModel entity);
         int AddCustomerCreditBureauUpload(LoanCreditBureauViewModel entity, LoanDocumentViewModel docModel, byte[] file);

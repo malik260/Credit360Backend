@@ -171,31 +171,54 @@ namespace FintrakBanking.Repositories.Credit
                     allCorporate.Add(shareholdersData);
                 }
             }
-            if (isExternal)
+            //if (isExternal)
+            //{
+            //    var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            //    if (setup.USE_THIRD_PARTY_INTEGRATION)
+            //    {
+            //        foreach (var item in customer)
+            //        {
+            //            try
+            //            {
+            //                var i = integration.AddCustomerAccounts(item.customerCode);
+            //            }
+            //            catch (APIErrorException ex)
+            //            {
+            //                return allCorporate;
+            //                //throw new APIErrorException(ex.Message);
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                return allCorporate;  //throw ex; // new SecureException(ex.Message);
+            //            }
+            //        }
+            //    }
+            //}
+
+            return allCorporate;
+        }
+
+        public void AddCustomerAccounts(IEnumerable<CustomerViewModels> customers)
+        {
+            var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            if (setup.USE_THIRD_PARTY_INTEGRATION)
             {
-                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION)
+                foreach (var customer in customers)
                 {
-                    foreach (var item in customer)
+                    try
                     {
-                        try
-                        {
-                            var i = integration.AddCustomerAccounts(item.customerCode);
-                        }
-                        catch (APIErrorException ex)
-                        {
-                            return allCorporate;
-                            //throw new APIErrorException(ex.Message);
-                        }
-                        catch (Exception ex)
-                        {
-                            return allCorporate;  //throw ex; // new SecureException(ex.Message);
-                        }
+                        var i =integration.AddCustomerAccounts(customer.customerCode);
+                    }
+                    catch (APIErrorException ex)
+                    {
+                        throw new APIErrorException(ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ConditionNotMetException("An error occured while get customer account details");
                     }
                 }
             }
-
-            return allCorporate;
         }
 
         public int AddCustomerCreditBureauCharge(LoanCreditBureauViewModel entity)
