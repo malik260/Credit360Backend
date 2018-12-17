@@ -2518,9 +2518,23 @@ namespace FintrakBanking.Repositories.Credit
             operations.Add((int)OperationsEnum.CAM);
             operations.Add((int)OperationsEnum.LoanAvailment);
 
-            var applicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == applicationId).ToList();
+            var applicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == applicationId 
+                    && x.STATUSID == (int)ApprovalStatusEnum.Approved 
+                    && x.DELETED == false
+                ).ToList();
+
             var types = from a in context.TBL_CHECKLIST_TYPE select a;
 
+            // conditions
+            var detailIds = applicationDetails.Select(x => x.LOANAPPLICATIONDETAILID);
+
+            var conditionItems = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
+                                  where detailIds.Contains(c.LOANAPPLICATIONDETAILID) && c.ISSUBSEQUENT == false && c.CHECKLISTVALIDATED == false
+                                  select c).ToList();
+
+            if (conditionItems.Any()) throw new SecureException($"One or more condition(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
+
+            // checklist
             foreach (var d in applicationDetails)
             {
                 foreach (var item in types)
@@ -2541,11 +2555,6 @@ namespace FintrakBanking.Repositories.Credit
 
                 }
 
-                var conditionItems = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                                        where c.LOANAPPLICATIONDETAILID == d.LOANAPPLICATIONDETAILID && c.ISSUBSEQUENT == false && c.CHECKLISTVALIDATED == false 
-                                        select c).ToList();
-
-                if (conditionItems.Any()) throw new SecureException($"One or more condition(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
             }
         }
 
