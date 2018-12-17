@@ -294,7 +294,7 @@
                 catch (Exception ex)
                 {
 
-                    //throw new APIErrorException("Core Banking API Error - " +ex.Message);
+                    throw new APIErrorException("Core Banking API Error - " +ex.Message);
                 }
 
                 finally
