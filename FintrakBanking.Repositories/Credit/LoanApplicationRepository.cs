@@ -91,6 +91,7 @@ namespace FintrakBanking.Repositories.Credit
                 }).ToList();
             return data;
         }
+
         private LoanApplicationViewModel GetLoanApplicationByLoanRefrenceNo(string loanApplicationRef, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION
@@ -215,6 +216,7 @@ namespace FintrakBanking.Repositories.Credit
             var test = data.FirstOrDefault();
             return data.FirstOrDefault();
         }
+
         public IEnumerable<LoanApplicationViewModel> GetLoanApplicationDedubeCheck(int customerId, int companyId)
         {
             var data = GetLoanApplications(companyId).Where(c => c.customerId == customerId

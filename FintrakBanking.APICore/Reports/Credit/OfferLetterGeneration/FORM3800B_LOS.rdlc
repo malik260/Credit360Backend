@@ -86,7 +86,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>(b) Credit Approval Meno (CAM) dated : </Value>
+                <Value>(b) Credit Approval Memo (CAM) dated : </Value>
                 <Style>
                   <FontWeight>Normal</FontWeight>
                 </Style>
@@ -166,7 +166,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>This letter, it is stressed, does not constitute authority to allow utilization of the facilities until all the conditions precedent are resolved and Credit Verification Officer signs-off. Pricing for this facility must be conveyed to the customer as indicated below, along with the proviso that the Bank reserves the right to vary same at anytime during the tenor of the facilities in line with market dictates.</Value>
+                <Value>This letter, it is stressed, does not constitute authority to allow utilization of the facilities until all the conditions precedent are resolved and Credit Verification Officer signs-off. Pricing for this facility must be conveyed to the customer as indicated below, along with the proviso that the Bank reserves the right to vary same at any time during the tenor of the facilities in line with market dictates.</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -691,12 +691,36 @@ Remarks: ................................................</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
+                <Value>1.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
                 <Value>The above limit(s) denote the maximum amount that may be advanced there under.</Value>
-                <Style />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListStyle>Numbered</ListStyle>
-            <ListLevel>1</ListLevel>
             <Style>
               <TextAlign>Left</TextAlign>
               <LineHeight>2pt</LineHeight>
@@ -704,84 +728,288 @@ Remarks: ................................................</Value>
           </Paragraph>
           <Paragraph>
             <TextRuns>
+              <TextRun>
+                <Value>2.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
               <TextRun>
                 <Value>You must satisfy yourself that all securities are in legal order in every detail and relevant to the liability (ies) e.g. stamping, registration, full insurance with the Bank’s interest noted, etc.</Value>
-                <Style />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListStyle>Numbered</ListStyle>
-            <ListLevel>1</ListLevel>
+            <HangingIndent>-0.25in</HangingIndent>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
             </Style>
           </Paragraph>
           <Paragraph>
             <TextRuns>
+              <TextRun>
+                <Value>3.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
               <TextRun>
                 <Value>When Limits are sanctioned against security specified on your CAM and/or detailed overleaf, such security may not be surrendered and/ or other security taken in its place without approval of CAP/RDM.</Value>
-                <Style />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListStyle>Numbered</ListStyle>
-            <ListLevel>1</ListLevel>
+            <HangingIndent>-0.25in</HangingIndent>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
             </Style>
           </Paragraph>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>In any of the following events, you must immediately report to CAP/RDM, incorporating your firm    recommendations and if need be, submitting a fresh Application for Limits.</Value>
-                <Style />
+                <Value>4.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>In any of the following events, you must immediately report to CAP/RDM, incorporating your firm recommendations and if need be, submitting a fresh Application for Limits.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListStyle>Numbered</ListStyle>
-            <ListLevel>1</ListLevel>
+            <HangingIndent>-0.25in</HangingIndent>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
             </Style>
           </Paragraph>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>(a)   If any of the securities become depreciated or reduced in value to any important extent.</Value>
-                <Style />
+                <Value>a.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">       </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>If any of the securities become depreciated or reduced in value to any important extent.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
             <ListLevel>1</ListLevel>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
             </Style>
           </Paragraph>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>(b)   If the position of the customer alters for the worse to any important extent.
-(c)   If there is evidence of any unusual dormancy on the account the currency of the facility, or</Value>
-                <Style />
+                <Value>b.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>If any of the securities become depreciated or reduced in value to any important extent.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
             <ListLevel>1</ListLevel>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
             </Style>
           </Paragraph>
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>       if you feel that there is any cause for concern regarding these advance.</Value>
-                <Style />
+                <Value>c.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">       </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>If the position of the customer alters for the worse to any important extent.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
             <ListLevel>1</ListLevel>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>d.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>If there is evidence of any unusual dormancy on the account the currency of the facility, or if you feel that there is any cause for concern regarding these advance.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
+            <ListLevel>1</ListLevel>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style>
+              <TextAlign>Left</TextAlign>
+              <LineHeight>12pt</LineHeight>
             </Style>
           </Paragraph>
         </Paragraphs>
@@ -2819,7 +3047,7 @@ Remarks: ................................................</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Condition Precident</Value>
+                              <Value>Condition Precedent</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -3076,7 +3304,7 @@ Remarks: ................................................</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter.The RM must ensure compliance with these conditions before drawdown.</Value>
+                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter. The RM must ensure compliance with these conditions before drawdown.</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -3495,7 +3723,7 @@ Remarks: ................................................</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter.The RM must ensure compliance with these conditions before drawdown.</Value>
+                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter. The RM must ensure compliance with these conditions before drawdown.</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
