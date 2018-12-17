@@ -552,22 +552,6 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
             }
         }
-        [HttpGet]
-        [ClaimsAuthorization]
-        [Route("availment-checklist-validation")]
-        public HttpResponseMessage AvailmentChecklistValidation(int loanApplicationId)
-        {
-            try
-            {
-                var response = repo.AvailmentChecklistValidation(loanApplicationId, token.GetStaffId);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
 
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
-            }
-        }
     }
 }
