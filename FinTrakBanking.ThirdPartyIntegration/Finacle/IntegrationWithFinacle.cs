@@ -611,6 +611,9 @@ namespace FinTrakBanking.ThirdPartyIntegration
         }
         public bool AddCustomerAccounts(string customerCode)
         {
+            if (customerCode == null)
+                return false;
+
             var customerId = context.TBL_CUSTOMER.Where(a => a.CUSTOMERCODE == customerCode).Select(b => b.CUSTOMERID).FirstOrDefault();
             //var customerId = this.context.TBL_CUSTOMER.FirstOrDefault(a => a.CUSTOMERCODE == customerCode).CUSTOMERID;
             bool output = false;

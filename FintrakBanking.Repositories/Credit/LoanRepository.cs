@@ -63,6 +63,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private IIntegrationWithFinacle finacle;
         bool USE_THIRD_PARTY_INTEGRATION = false;
+        private DateTime? applicationDate = null;
 
         public LoanRepository(FinTrakBankingContext _context, IGeneralSetupRepository _genSetup,
                                         IAuditTrailRepository _auditTrail, ILoanScheduleRepository _loanSchedule,
@@ -8857,6 +8858,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchTermLoan(string searchQuery)
         {
+            DateTime applicationDate = getApplicationDate();
+
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.ToUpper();
@@ -8869,7 +8872,13 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToUpper().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToUpper().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
+                                   c.PRODUCTACCOUNTNUMBER.ToUpper().Contains(searchQuery.Trim())) 
+                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled 
+                                       || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated 
+                                       || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive
+                                       || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
+                                   ) 
+                                   && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -8898,6 +8907,8 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchRevolvingLoan(string searchQuery)
         {
+            DateTime applicationDate = getApplicationDate();
+
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.ToLower();
@@ -8911,7 +8922,9 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
+                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
+                                   && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.REVOLVINGLOANID,
@@ -8942,6 +8955,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private IQueryable<LoanViewModel> SearchContigentLoan(string searchQuery)
         {
+            DateTime applicationDate = getApplicationDate();
 
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
@@ -8956,7 +8970,9 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
+                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
+                                   && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,
@@ -9202,10 +9218,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> SearchForLoanAndRevolvingLoan(int loanSystemTypeId, string searchQuery)
         {
-            //if (searchQuery == "test1") throw new Exception("Exception 1");
-            //if (searchQuery == "test2") throw new SecureException("SecuredException 2");
-            //if (searchQuery == "test3") throw new BadLogicException("BadLogicException 3");
-
             //bool all = (performanceTypeId != 1) && (performanceTypeId != 2);
             //bool performing = performanceTypeId == 1;
             var applicationDate = generalSetup.GetApplicationDate();
@@ -10490,5 +10502,10 @@ namespace FintrakBanking.Repositories.Credit
         }
         #endregion Commercial loan Operations
 
+        private DateTime getApplicationDate()
+        {
+            if (applicationDate == null) applicationDate = generalSetup.GetApplicationDate();
+            return (DateTime)applicationDate;
+        }
     }
 }
