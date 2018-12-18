@@ -232,7 +232,7 @@ namespace FintrakBanking.ReportObjects.Credit
                 //                       //exchangeRate = b.EXCHANGERATE,
                 //                       //currencyId = b.CURRENCYID,
                 //                       companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
-                //                     //  customerName =  c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
+                //                     //customerName =  c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
                 //                       customerAddress = e.ADDRESS ?? " ", //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
                 //                       applicationDate = a.APPLICATIONDATE,
                 //                       customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
@@ -265,12 +265,13 @@ namespace FintrakBanking.ReportObjects.Credit
                                        purpose = b.REVIEWDETAILS,
                                        applicationDate = a.APPLICATIONDATE,
                                        approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
-                                       //approvedAmount = b.APPROVEDAMOUNT
+                                       loanAmount = b.APPROVEDAMOUNT,
                                        approvedDate = a.APPROVEDDATE,
                                        customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                        companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),
                                        //customerPhoneNumber = g.PHONENUMBER,
-
+                                       applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                     newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
                                    }).ToList();
 
                 if (loanDetails.Count == 0)
@@ -296,12 +297,13 @@ namespace FintrakBanking.ReportObjects.Credit
                                        purpose = b.REVIEWDETAILS,
                                        applicationDate = a.APPLICATIONDATE,
                                        approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
-                                       //approvedAmount = b.APPROVEDAMOUNT
+                                       loanAmount = b.APPROVEDAMOUNT,
                                        approvedDate = a.APPROVEDDATE,
                                        customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                        companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),
                                        //customerPhoneNumber = g.PHONENUMBER,
-
+                                       applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                       newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,//a.APPLICATIONDATE,
                                    }).ToList();
                 }
                 if (loanDetails.Count == 0)
@@ -327,12 +329,13 @@ namespace FintrakBanking.ReportObjects.Credit
                                        purpose = b.REVIEWDETAILS,
                                        applicationDate = a.APPLICATIONDATE,
                                        approvedAmountCurrency = g.CURRENCYNAME + " " + b.APPROVEDAMOUNT,
-                                       //approvedAmount = b.APPROVEDAMOUNT
+                                       loanAmount = b.APPROVEDAMOUNT,
                                        approvedDate = a.APPROVEDDATE,
                                        customerName = c.FIRSTNAME + " " + c.LASTNAME,
                                        companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),
                                        //customerPhoneNumber = g.PHONENUMBER,
-
+                                       applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                                       newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,//a.APPLICATIONDATE,
                                    }).ToList();
                 }
 
