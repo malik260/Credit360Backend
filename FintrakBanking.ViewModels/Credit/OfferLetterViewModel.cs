@@ -26,6 +26,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class OfferLetterDetailViewModel : GeneralEntity
     {
+        public DateTime newApplicationDate;
+
         public string loanApplicationId { get; set; }
         public string productName { get; set; }
         public string customerName { get; set; }
@@ -56,6 +58,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvedAmountCurrency { get; set; }
         public int loanApplicationDetailId { get; set; }
         public string interestRateAndFees { get; set; }
+        public decimal approvedAmount { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity
