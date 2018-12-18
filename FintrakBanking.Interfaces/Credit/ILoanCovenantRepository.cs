@@ -23,6 +23,8 @@ namespace FintrakBanking.Interfaces.Customer
        bool DeleteLoanApplicationCovenant(int covenantId, UserInfo user);
        bool AddLoanApplicationCovenant(LoanCovenantDetailViewModel entity);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationCovenant(int applicationId);
+        bool UpdateLoanApplicationCovenant(DateTime date);
+        DateTime GetFrequencyDate(int frequencyTypeId, DateTime date);
 
         #endregion Loan Covenant Detail
 

@@ -15,12 +15,14 @@ namespace FintrakBanking.ViewModels.Credit
         public string facilityType { get; set; }
         public decimal grantedAmount { get; set; }
         public double interestRate { get; set; }
-        public int tenor { get; set; }
+        public double tenor { get; set; }
         public DateTime effectiveDate { get; set; }
         public int loanId { get; set; }
         public int loanSystemTypeId { get; set; }
         public LoansCount loansCount { get; set; }
         public int? crmsLegalStatusId { get; set; }
+        public string operationName { get; set; }
+
     }
 
     public class CRMSViewModel : GeneralEntity
@@ -32,6 +34,8 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
         public int templateTypeId { get; set; }
+        public bool isLms { get; set; }
+
     }
 
     public class CRMSRecord
@@ -60,8 +64,12 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime EFFECTIVE_DATE { get; set; }
         public double TENOR { get; set; }
         public DateTime EXPIRY_DATE { get; set; }
+        public DateTime? MATURITYDATE { get; set; }
+        public string REFERENCENUMBER { get; set; }
+        public DateTime DATETIMECREATED { get; set; }
+
         public string REPAYMENT_AGREEMENT_MODE { get; set; }
-        public double INTEREST_RATE { get; set; }
+        public double? INTEREST_RATE { get; set; }
         public string BENEFICIARY_ACCOUNT_NUMBER { get; set; }
         public string LOCATION_OF_BENEFICIARY { get; set; }
         public string RELATIONSHIP_TYPE { get; set; }
@@ -100,11 +108,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string GOVERNMENT_CODE   { get; set; }
         public string SPECIALISED_LOAN_PERIOD { get; set; }
         public string REPAYMENT_SOURCE { get; set; }
+        public string OPERATION_NAME { get; set; }
 
 
         //200
         public string GOVERNMENT_MDA_TIN { get; set; }
         public string PERFORMANCE_REPAYMENT_STATUS { get; set; }
+        public string REASON_FOR_RESTRUCTURING { get; set; }
 
 
         //600
@@ -116,5 +126,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal FEE_AMOUNT { get; set; }
         public int CUSTOMERID { get; set; }
         public string CONDITIONPRECIDENT { get; set; }
+        public string CRMSCODE { get; set; }
+
     }
 }

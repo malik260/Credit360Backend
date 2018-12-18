@@ -17056,6 +17056,9 @@ namespace FintrakBanking.Repositories.Credit
             TBL_LOAN_REVIEW_OPERATION op = new TBL_LOAN_REVIEW_OPERATION();
 
             var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == userModel.loanId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).FirstOrDefault();
+
+            var rec = context.TBL_LOAN.Where(x=>x.TERMLOANID == userModel.loanId).FirstOrDefault();
+
             lmsApprovalRecord.OPERATIONPERFORMED = true;
 
 
@@ -17063,6 +17066,8 @@ namespace FintrakBanking.Repositories.Credit
             op.LOANSYSTEMTYPEID = lmsApprovalRecord.LOANSYSTEMTYPEID;
             op.OPERATIONTYPEID = (int)userModel.operationId;
             op.REVIEWDETAILS = "RollOver";
+            op.EFFECTIVEDATE = rec.EFFECTIVEDATE;
+            op.MATURITYDATE = rec.EFFECTIVEDATE.AddDays(userModel.newTenor);
             op.TENOR = userModel.newTenor;
             op.MATURITYINSTRUCTIONTYPEID = (short)userModel.maturityInstructionId;
             op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;
