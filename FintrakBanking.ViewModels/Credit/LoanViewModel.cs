@@ -689,6 +689,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short? productClassProcessId { get; set; }
         public bool undergoingConcession { get; set; }
         public string productPriceIndex { get; set; }
+        public bool isLocalCurrency { get; set; }
         public string proposedTenorString
         {
             get

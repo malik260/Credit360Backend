@@ -236,7 +236,7 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
 
-                var data = loanRepo.GetLoanReviewApplicationOverDraft();
+                var data = loanRepo.GetLoanReviewApplicationOverDraft(token.GetStaffId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -305,7 +305,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.GetApprovedNonTermLoansForReview();
+                var data = loanRepo.GetApprovedNonTermLoansForReview(token.GetStaffId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -328,7 +328,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.GetApprovedNonTermLoansForReviewAwaitingApproval(token.GetStaffId);
+                var data = loanRepo.GetApprovedNonTermLoansForReviewAwaitingApproval(token.GetStaffId,token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -350,7 +350,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.GetApprovedLineReview();
+                var data = loanRepo.GetApprovedLineReview(token.GetStaffId,token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -420,7 +420,7 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var userId = token.GetStaffId;
 
-                var data = loanRepo.GetApprovedLoanReviewRemedial(userId);
+                var data = loanRepo.GetApprovedLoanReviewRemedial(userId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -841,7 +841,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.GetContingentApprovedApplication();
+                var data = loanRepo.GetContingentApprovedApplication(token.GetStaffId, token.GetCompanyId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

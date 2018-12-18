@@ -25,11 +25,9 @@
                         <rsweb:ReportDataSource DataSourceId="odsCustomerDetails" Name="CustomerDetails" />
                         <rsweb:ReportDataSource DataSourceId="odsFeeDetails" Name="FeeDetails" />
 
-                        <rsweb:ReportDataSource DataSourceId="odsExternalConditionsPrecedent" Name="ExternalConditionPrecedent" />
                         <rsweb:ReportDataSource DataSourceId="odsInteralConditionsPrecedent" Name="InternalConditionPrecedent" />
                         <rsweb:ReportDataSource DataSourceId="odsTransactionDynamics" Name="TransactionDynamics" />
                          <rsweb:ReportDataSource DataSourceId="odsInternalConditionSubsquent" Name="InternalConditionSubsequent" />
-                       <rsweb:ReportDataSource DataSourceId="odsExternalConditionSubsquent" Name="ExternalConditionSubsequent" />
                         <rsweb:ReportDataSource DataSourceId="odsComments" Name="Comments" />
                         <rsweb:ReportDataSource DataSourceId="odsMonitoringTrggers" Name="MonitoringTrggers" />
 
@@ -77,11 +75,6 @@
 
 
               <asp:ObjectDataSource ID="odsInternalConditionSubsquent" runat="server" SelectMethod="Los_ConditionSubsequents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
-                <SelectParameters>
-                    <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
-                </SelectParameters>
-            </asp:ObjectDataSource>
-           <asp:ObjectDataSource ID="odsExternalConditionSubsquent" runat="server" SelectMethod="External_ConditionSubsequents" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
                 <SelectParameters>
                     <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
                 </SelectParameters>

@@ -25,7 +25,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox4</rd:DefaultName>
-        <Top>2.50836cm</Top>
+        <Top>4.73086cm</Top>
         <Left>0.12301cm</Left>
         <Height>0.67056cm</Height>
         <Width>18.85567cm</Width>
@@ -86,7 +86,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>(b) Credit Approval Meno (CAM) dated : </Value>
+                <Value>(b) Credit Approval Memo (CAM) dated : </Value>
                 <Style>
                   <FontWeight>Normal</FontWeight>
                 </Style>
@@ -109,7 +109,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox13</rd:DefaultName>
-        <Top>2.85293in</Top>
+        <Top>3.72793in</Top>
         <Left>0.0533in</Left>
         <Height>0.25in</Height>
         <Width>7.42349in</Width>
@@ -144,7 +144,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox5</rd:DefaultName>
-        <Top>9.41245cm</Top>
+        <Top>11.63495cm</Top>
         <Left>0.11849cm</Left>
         <Height>1.71734cm</Height>
         <Width>18.86019cm</Width>
@@ -166,7 +166,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>This letter, it is stressed, does not constitute authority to allow utilization of the facilities until all the conditions precedent are resolved and Credit Verification Officer signs-off. Pricing for this facility must be conveyed to the customer as indicated below, along with the proviso that the Bank reserves the right to vary same at anytime during the tenor of the facilities in line with market dictates.</Value>
+                <Value>This letter, it is stressed, does not constitute authority to allow utilization of the facilities until all the conditions precedent are resolved and Credit Verification Officer signs-off. Pricing for this facility must be conveyed to the customer as indicated below, along with the proviso that the Bank reserves the right to vary same at any time during the tenor of the facilities in line with market dictates.</Value>
                 <Style>
                   <FontWeight>Bold</FontWeight>
                 </Style>
@@ -176,7 +176,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox14</rd:DefaultName>
-        <Top>4.60938in</Top>
+        <Top>5.48438in</Top>
         <Left>0.02739in</Left>
         <Height>0.25in</Height>
         <Width>7.42527in</Width>
@@ -211,7 +211,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>6.59271in</Top>
+        <Top>7.46771in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>1.62161in</Width>
@@ -246,7 +246,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>7.85105in</Top>
+        <Top>8.72605in</Top>
         <Height>0.25in</Height>
         <Width>7.39621in</Width>
         <ZIndex>5</ZIndex>
@@ -281,7 +281,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>9.5375in</Top>
+        <Top>10.4125in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.39621in</Width>
@@ -316,7 +316,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>11.17361in</Top>
+        <Top>12.04861in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.38726in</Width>
@@ -351,7 +351,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>12.32646in</Top>
+        <Top>13.20146in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.38726in</Width>
@@ -386,7 +386,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>13.4625in</Top>
+        <Top>14.3375in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.39247in</Width>
@@ -421,7 +421,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>15.45875in</Top>
+        <Top>16.33375in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>2.28936in</Width>
@@ -456,7 +456,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>15.45875in</Top>
+        <Top>16.33375in</Top>
         <Left>3.88535in</Left>
         <Height>0.25in</Height>
         <Width>3.59144in</Width>
@@ -491,7 +491,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>16.72556in</Top>
+        <Top>17.60056in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.34472in</Width>
@@ -527,7 +527,7 @@ cc:   Head, Credit Monitoring Unit, H/O.</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox97</rd:DefaultName>
-        <Top>17.51833in</Top>
+        <Top>18.39333in</Top>
         <Left>0.00895in</Left>
         <Height>0.5625in</Height>
         <Width>7.34472in</Width>
@@ -560,7 +560,7 @@ cc:   Head, Credit Monitoring Unit, H/O.</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox98</rd:DefaultName>
-        <Top>18.36208in</Top>
+        <Top>19.23708in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.34472in</Width>
@@ -596,7 +596,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox99</rd:DefaultName>
-        <Top>18.7475in</Top>
+        <Top>19.6225in</Top>
         <Left>0.00895in</Left>
         <Height>0.76042in</Height>
         <Width>7.34472in</Width>
@@ -632,7 +632,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>21.00447in</Top>
+        <Top>21.87947in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.40235in</Width>
@@ -669,7 +669,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>21.46281in</Top>
+        <Top>22.33781in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.41277in</Width>
@@ -691,12 +691,36 @@ Remarks: ................................................</Value>
           <Paragraph>
             <TextRuns>
               <TextRun>
+                <Value>1.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
                 <Value>The above limit(s) denote the maximum amount that may be advanced there under.</Value>
-                <Style />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListStyle>Numbered</ListStyle>
-            <ListLevel>1</ListLevel>
             <Style>
               <TextAlign>Left</TextAlign>
               <LineHeight>2pt</LineHeight>
@@ -704,107 +728,295 @@ Remarks: ................................................</Value>
           </Paragraph>
           <Paragraph>
             <TextRuns>
+              <TextRun>
+                <Value>2.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
               <TextRun>
                 <Value>You must satisfy yourself that all securities are in legal order in every detail and relevant to the liability (ies) e.g. stamping, registration, full insurance with the Bank’s interest noted, etc.</Value>
-                <Style />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListStyle>Numbered</ListStyle>
-            <ListLevel>1</ListLevel>
+            <HangingIndent>-0.25in</HangingIndent>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
             </Style>
           </Paragraph>
           <Paragraph>
             <TextRuns>
+              <TextRun>
+                <Value>3.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
               <TextRun>
                 <Value>When Limits are sanctioned against security specified on your CAM and/or detailed overleaf, such security may not be surrendered and/ or other security taken in its place without approval of CAP/RDM.</Value>
-                <Style />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListStyle>Numbered</ListStyle>
-            <ListLevel>1</ListLevel>
+            <HangingIndent>-0.25in</HangingIndent>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
             </Style>
           </Paragraph>
           <Paragraph>
             <TextRuns>
+              <TextRun>
+                <Value>4.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
               <TextRun>
                 <Value>In any of the following events, you must immediately report to CAP/RDM, incorporating your firm recommendations and if need be, submitting a fresh Application for Limits.</Value>
-                <Style />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListStyle>Numbered</ListStyle>
+            <HangingIndent>-0.25in</HangingIndent>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>a.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">       </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>If any of the securities become depreciated or reduced in value to any important extent.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
             <ListLevel>1</ListLevel>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>b.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>If any of the securities become depreciated or reduced in value to any important extent.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
+            <ListLevel>1</ListLevel>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>c.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">       </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>If the position of the customer alters for the worse to any important extent.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
+            <ListLevel>1</ListLevel>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>d.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value xml:space="preserve">      </Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>7pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+              <TextRun>
+                <Value>If there is evidence of any unusual dormancy on the account the currency of the facility, or if you feel that there is any cause for concern regarding these advance.</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
+            <ListLevel>1</ListLevel>
+            <Style>
+              <TextAlign>Left</TextAlign>
             </Style>
           </Paragraph>
           <Paragraph>
             <TextRuns>
               <TextRun>
                 <Value />
-                <Style />
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
               </TextRun>
             </TextRuns>
-            <ListLevel>1</ListLevel>
             <Style>
               <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
-            </Style>
-          </Paragraph>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>a. If any of the securities become depreciated or reduced in value to any important extent.
-</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <ListLevel>1</ListLevel>
-            <Style>
-              <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
-            </Style>
-          </Paragraph>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value />
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <ListLevel>1</ListLevel>
-            <Style>
-              <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
-            </Style>
-          </Paragraph>
-          <Paragraph>
-            <TextRuns>
-              <TextRun>
-                <Value>b.If the position of the customer alters for the worse to any important extent.
-
-c.If there is evidence of any unusual dormancy on the account the currency of the facility, or
- if you feel that there is any cause for concern regarding these advance.</Value>
-                <Style />
-              </TextRun>
-            </TextRuns>
-            <ListLevel>1</ListLevel>
-            <Style>
-              <TextAlign>Left</TextAlign>
-              <LineHeight>2pt</LineHeight>
+              <LineHeight>12pt</LineHeight>
             </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox117</rd:DefaultName>
-        <Top>21.87655in</Top>
+        <Top>22.75155in</Top>
         <Left>0.00895in</Left>
-        <Height>2.66667in</Height>
+        <Height>1.89584in</Height>
         <Width>7.41277in</Width>
         <ZIndex>18</ZIndex>
         <Style>
@@ -1092,7 +1304,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>CustomerDetails</DataSetName>
-        <Top>1.65571in</Top>
+        <Top>2.53071in</Top>
         <Left>0.04665in</Left>
         <Height>1.1875in</Height>
         <Width>7.406in</Width>
@@ -1262,7 +1474,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Interest Magin</Value>
+                              <Value>Interest Margin</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -1387,7 +1599,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!approvedAmountCurrency.Value</Value>
+                              <Value>=First(Fields!currencyCode.Value, "Facility") &amp; " " &amp; Format(Fields!approvedAmount.Value, "#,##0.00")</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -1534,38 +1746,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox44">
-                      <CanGrow>true</CanGrow>
-                      <KeepTogether>true</KeepTogether>
-                      <Paragraphs>
-                        <Paragraph>
-                          <TextRuns>
-                            <TextRun>
-                              <Value>=Sum(First(Fields!interestRate.Value, "Facility"))</Value>
-                              <Style>
-                                <FontWeight>Bold</FontWeight>
-                              </Style>
-                            </TextRun>
-                          </TextRuns>
-                          <Style />
-                        </Paragraph>
-                      </Paragraphs>
-                      <rd:DefaultName>Textbox44</rd:DefaultName>
-                      <Style>
-                        <Border>
-                          <Style>Solid</Style>
-                        </Border>
-                        <PaddingLeft>2pt</PaddingLeft>
-                        <PaddingRight>2pt</PaddingRight>
-                        <PaddingTop>2pt</PaddingTop>
-                        <PaddingBottom>2pt</PaddingBottom>
-                      </Style>
-                    </Textbox>
-                  </CellContents>
-                </TablixCell>
-                <TablixCell>
-                  <CellContents>
-                    <Textbox Name="Textbox46">
+                    <Textbox Name="approvedAmount">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
@@ -1581,7 +1762,39 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <Style />
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox46</rd:DefaultName>
+                      <rd:DefaultName>approvedAmount</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="approvedAmount1">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=RunningValue(Fields!approvedAmount.Value, Sum, Nothing)</Value>
+                              <Style>
+                                <FontWeight>Bold</FontWeight>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style />
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>approvedAmount1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -1710,13 +1923,15 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
               <Group Name="Details1" />
               <TablixMembers>
                 <TablixMember />
-                <TablixMember />
               </TablixMembers>
+            </TablixMember>
+            <TablixMember>
+              <KeepWithGroup>Before</KeepWithGroup>
             </TablixMember>
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Facility</DataSetName>
-        <Top>5.03667in</Top>
+        <Top>5.91167in</Top>
         <Left>0.00895in</Left>
         <Height>0.75in</Height>
         <Width>7.46784in</Width>
@@ -1944,7 +2159,9 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!collateralValue.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1973,7 +2190,9 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!stapedToCoverAmount.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>#,0.00;(#,0.00)</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -2015,7 +2234,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>SecurityDetails</DataSetName>
-        <Top>6.89974in</Top>
+        <Top>7.77474in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
@@ -2351,7 +2570,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>TransactionDynamics</DataSetName>
-        <Top>11.49974in</Top>
+        <Top>12.37474in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
@@ -2522,7 +2741,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>Comments</DataSetName>
-        <Top>13.81224in</Top>
+        <Top>14.68724in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46296in</Width>
@@ -2757,7 +2976,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>MonitoringTrggers</DataSetName>
-        <Top>12.64305in</Top>
+        <Top>13.51805in</Top>
         <Left>0.00895in</Left>
         <Height>0.5in</Height>
         <Width>7.46784in</Width>
@@ -2828,7 +3047,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Condition Precident</Value>
+                              <Value>Condition Precedent</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -2848,6 +3067,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -3085,7 +3305,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter.The RM must ensure compliance with these conditions before drawdown.</Value>
+                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter. The RM must ensure compliance with these conditions before drawdown.</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -3165,7 +3385,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>InternalConditionPrecedent</DataSetName>
-        <Top>8.17049in</Top>
+        <Top>9.04549in</Top>
         <Left>0.00895in</Left>
         <Height>1.22917in</Height>
         <Width>7.46784in</Width>
@@ -3504,7 +3724,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter.The RM must ensure compliance with these conditions before drawdown.</Value>
+                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter. The RM must ensure compliance with these conditions before drawdown.</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>
@@ -3584,7 +3804,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </TablixMembers>
         </TablixRowHierarchy>
         <DataSetName>InternalConditionSubsequent</DataSetName>
-        <Top>9.81528in</Top>
+        <Top>10.69028in</Top>
         <Left>0.00895in</Left>
         <Height>1.22917in</Height>
         <Width>7.46297in</Width>
@@ -3614,7 +3834,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox115</rd:DefaultName>
-        <Top>6.26958in</Top>
+        <Top>7.14458in</Top>
         <Height>0.25in</Height>
         <Width>7.44351in</Width>
         <ZIndex>27</ZIndex>
@@ -3633,7 +3853,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>7.655in</Top>
+        <Top>8.53in</Top>
         <Left>1.46603in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3649,7 +3869,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>9.42744in</Top>
+        <Top>10.30244in</Top>
         <Left>0.59955in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3665,7 +3885,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>11.0737in</Top>
+        <Top>11.9487in</Top>
         <Left>0.87829in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3681,7 +3901,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>14.58411in</Top>
+        <Top>15.45911in</Top>
         <Left>0.77412in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3697,7 +3917,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>18.21972in</Top>
+        <Top>19.09472in</Top>
         <Left>0.14912in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3844,7 +4064,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Line>
         </ReportItems>
         <KeepTogether>true</KeepTogether>
-        <Top>19.57736in</Top>
+        <Top>20.45236in</Top>
         <Left>0.04843in</Left>
         <Height>1.15923in</Height>
         <Width>7.30524in</Width>
@@ -3872,7 +4092,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox26</rd:DefaultName>
-        <Top>19.67236in</Top>
+        <Top>20.54736in</Top>
         <Left>0.14912in</Left>
         <Height>0.25in</Height>
         <Width>2.75592in</Width>
@@ -3904,7 +4124,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox31</rd:DefaultName>
-        <Top>19.91715in</Top>
+        <Top>20.79215in</Top>
         <Left>0.14912in</Left>
         <Height>0.25in</Height>
         <Width>1in</Width>
@@ -3944,7 +4164,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox13</rd:DefaultName>
-        <Top>1.375in</Top>
+        <Top>2.25in</Top>
         <Left>0.03113in</Left>
         <Height>0.25in</Height>
         <Width>7.42349in</Width>
@@ -3978,7 +4198,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox2</rd:DefaultName>
-        <Top>0.32167in</Top>
+        <Top>1.19667in</Top>
         <Left>0.0533in</Left>
         <Height>0.41667in</Height>
         <Width>7.34291in</Width>
@@ -3994,7 +4214,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Style>
       </Textbox>
       <Line Name="Line1">
-        <Top>0.7675in</Top>
+        <Top>1.6425in</Top>
         <Left>0.99079in</Left>
         <Height>0in</Height>
         <Width>5.24494in</Width>
@@ -4026,7 +4246,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox5</rd:DefaultName>
-        <Top>0.02778in</Top>
+        <Top>0.90278in</Top>
         <Left>5.01333in</Left>
         <Height>0.28556in</Height>
         <Width>2.36913in</Width>
@@ -4059,7 +4279,7 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox22</rd:DefaultName>
-        <Top>6.06445in</Top>
+        <Top>6.93945in</Top>
         <Height>0.3in</Height>
         <Width>3.11079in</Width>
         <ZIndex>40</ZIndex>
@@ -4073,48 +4293,26 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
           <PaddingBottom>2pt</PaddingBottom>
         </Style>
       </Textbox>
+      <Image Name="Image1">
+        <Source>Embedded</Source>
+        <Value>firstbanklogo</Value>
+        <Sizing>FitProportional</Sizing>
+        <Top>0.06944in</Top>
+        <Height>0.625in</Height>
+        <Width>2.02664in</Width>
+        <ZIndex>41</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Image>
     </ReportItems>
-    <Height>24.66822in</Height>
+    <Height>24.64739in</Height>
     <Style />
   </Body>
   <Width>7.47679in</Width>
   <Page>
-    <PageHeader>
-      <Height>0.825in</Height>
-      <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
-      <ReportItems>
-        <Image Name="Image1">
-          <Source>Embedded</Source>
-          <Value>firstbanklogo</Value>
-          <Sizing>FitProportional</Sizing>
-          <Top>0.2in</Top>
-          <Left>0.0533in</Left>
-          <Height>0.625in</Height>
-          <Width>2.02664in</Width>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </Image>
-      </ReportItems>
-      <Style>
-        <Border>
-          <Style>None</Style>
-        </Border>
-      </Style>
-    </PageHeader>
-    <PageFooter>
-      <Height>1in</Height>
-      <PrintOnFirstPage>true</PrintOnFirstPage>
-      <PrintOnLastPage>true</PrintOnLastPage>
-      <Style>
-        <Border>
-          <Style>None</Style>
-        </Border>
-      </Style>
-    </PageFooter>
     <PageHeight>13in</PageHeight>
     <PageWidth>11in</PageWidth>
     <LeftMargin>1in</LeftMargin>
@@ -4178,6 +4376,14 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         </Field>
         <Field Name="interestRateAndFees">
           <DataField>interestRateAndFees</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="approvedAmount">
+          <DataField>approvedAmount</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="currencyCode">
+          <DataField>currencyCode</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -4414,46 +4620,6 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         <rd:TableAdapterName />
       </rd:DataSetInfo>
     </DataSet>
-    <DataSet Name="ExternalConditionPrecedent">
-      <Query>
-        <DataSourceName>FORM3800B</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="conditionPrecident">
-          <DataField>conditionPrecident</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="productName">
-          <DataField>productName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="creditVerificationOfficers">
-          <DataField>creditVerificationOfficers</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="locationOfDocument">
-          <DataField>locationOfDocument</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="SN">
-          <DataField>SN</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="isExternal">
-          <DataField>isExternal</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>FORM3800B</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\FORM3800B.xsd</rd:SchemaPath>
-        <rd:TableName>ExternalConditionsPrecedent</rd:TableName>
-        <rd:TableAdapterFillMethod />
-        <rd:TableAdapterGetDataMethod />
-        <rd:TableAdapterName />
-      </rd:DataSetInfo>
-    </DataSet>
     <DataSet Name="InternalConditionSubsequent">
       <Query>
         <DataSourceName>FORM3800B</DataSourceName>
@@ -4489,46 +4655,6 @@ c.If there is evidence of any unusual dormancy on the account the currency of th
         <rd:DataSetName>FORM3800B</rd:DataSetName>
         <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\FORM3800B.xsd</rd:SchemaPath>
         <rd:TableName>InternalConditionSubsquent</rd:TableName>
-        <rd:TableAdapterFillMethod />
-        <rd:TableAdapterGetDataMethod />
-        <rd:TableAdapterName />
-      </rd:DataSetInfo>
-    </DataSet>
-    <DataSet Name="ExternalConditionSubsequent">
-      <Query>
-        <DataSourceName>FORM3800B</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
-      </Query>
-      <Fields>
-        <Field Name="SN">
-          <DataField>SN</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="conditionPrecident">
-          <DataField>conditionPrecident</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="timeline">
-          <DataField>timeline</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="creditMonitoring">
-          <DataField>creditMonitoring</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="productName">
-          <DataField>productName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="isExternal">
-          <DataField>isExternal</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>FORM3800B</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\FORM3800B.xsd</rd:SchemaPath>
-        <rd:TableName>ExternalConditionSubsquent</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
         <rd:TableAdapterName />

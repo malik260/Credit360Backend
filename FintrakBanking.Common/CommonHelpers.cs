@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Data.Entity;
 using FintrakBanking.Entities.Models;
+using FintrakBanking.Common.Enum;
 
 namespace FintrakBanking.Common
 {
@@ -504,6 +505,39 @@ namespace FintrakBanking.Common
             }
 
             return ArrayListString.ToString();
+        }
+
+        public static List<short> GetRolloverOperations()
+        {
+            List<short> operations = new List<short>();
+
+            operations.Add((short)OperationsEnum.ContingentLiabilityRenewal);
+            //operations.Add((short)OperationsEnum.ContingentLiabilityTenorExtension);
+            operations.Add((short)OperationsEnum.CommercialLoanRollOver);
+            operations.Add((short)OperationsEnum.OverdraftRenewal);
+
+            return operations;
+        }
+        public static List<short> GetRestructureOperations()
+        {
+            List<short> operations = new List<short>();
+
+            operations.Add((short)OperationsEnum.Restructured);
+            operations.Add((short)OperationsEnum.ContingentLiabilityTenorExtension);
+            operations.Add((short)OperationsEnum.TenorChange);
+            operations.Add((short)OperationsEnum.OverdraftTenorExtension);
+            operations.Add((short)OperationsEnum.LoanPrepayment);
+            operations.Add((short)OperationsEnum.LoanRecapitilization);
+            operations.Add((short)OperationsEnum.ContingentLiabilityAmountReduction);
+            operations.Add((short)OperationsEnum.ContingentLiabilityUsage);
+            operations.Add((short)OperationsEnum.ContractualInterestRateChange);
+            operations.Add((short)OperationsEnum.FacilityLineAmountChange);
+            operations.Add((short)OperationsEnum.InterestandPrincipalFrequencyChange);
+            operations.Add((short)OperationsEnum.InterestFrequencyChange);
+            operations.Add((short)OperationsEnum.LoanWorkOut);
+            operations.Add((short)OperationsEnum.PrincipalFrequencyChange);
+            operations.Add((short)OperationsEnum.OverdraftInterestRate);
+            return operations;
         }
     }
 }

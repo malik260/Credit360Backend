@@ -11509,7 +11509,7 @@ namespace FintrakBanking.Repositories.Credit
         public LoanViewModel GetRunningLoanOpeningBalance(int companyId, string refNo,DateTime effectiveDate)
         {
 
-            var newEffectiveDate = effectiveDate.AddDays(1);
+            var newEffectiveDate = effectiveDate.AddDays(-1);
 
             var loan = context.TBL_LOAN.Where(x => x.LOANREFERENCENUMBER == refNo && x.COMPANYID == companyId && x.LOANSTATUSID == (short)LoanStatusEnum.Active).FirstOrDefault();
 
@@ -12022,6 +12022,10 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
         {
+            var activities = admin.GetUserActivitiesByUser(staffId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+
+
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
             var dataLoan = (from ln in context.TBL_LOAN
@@ -12375,7 +12379,28 @@ namespace FintrakBanking.Repositories.Credit
             var revolvingLoanData = dataRevolvingLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var contingentLoanData = dataContingentLoan.GroupBy(x => x.loanReviewOperationsId).Select(y => y.FirstOrDefault()).OrderByDescending(x => x.dateTimeCreated);
             var unionAll = termLoanData.Union(revolvingLoanData);
+
             var data = unionAll.Union(contingentLoanData);
+
+            List<LoanReviewOperationApprovalViewModel> lcyLoans = new List<LoanReviewOperationApprovalViewModel>();
+            List<LoanReviewOperationApprovalViewModel> fcyLoans = new List<LoanReviewOperationApprovalViewModel>();
+
+            var isLCYUser = activities.Contains("lcy-user");
+            var isFCYUser = activities.Contains("fcy-user");
+
+            if (isLCYUser == true)
+            {
+                lcyLoans = data.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+                //data = data.Where(x => x.currencyId == company.CURRENCYID).Select(x => x);
+            }
+
+            if (isFCYUser == true)
+            {
+                fcyLoans = data.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+            }
+
+            data = lcyLoans.Union(fcyLoans).ToList();
 
             return data;
         }
@@ -14210,12 +14235,12 @@ namespace FintrakBanking.Repositories.Credit
         public bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
-            if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
-            {
-                throw new ConditionNotMetException("The requested operation already exist and going through approval");
-            }
+            //if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
+            //{
+            //    throw new ConditionNotMetException("The requested operation already exist and going through approval");
+            //}
 
-            var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
+            var oldContingent = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
             oldContingent.MATURITYDATE = (DateTime)model.newMaturityDate;
 
             bool output = false;
@@ -14301,10 +14326,10 @@ namespace FintrakBanking.Repositories.Credit
         public bool ContingentLiabilityAmountReduction(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
-            if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
-            {
-                throw new ConditionNotMetException("The requested operation already exist and going through approval");
-            }
+            //if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
+            //{
+            //    throw new ConditionNotMetException("The requested operation already exist and going through approval");
+            //}
 
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
             oldContingent.CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT - (decimal)model.principalAmount;
@@ -16353,10 +16378,10 @@ namespace FintrakBanking.Repositories.Credit
             return context.SaveChanges() > 0;
         }
 
-
-        public IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId)
+        public IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId,int companyId)
         {
-
+            var activities = admin.GetUserActivitiesByUser(staffId);
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
 
             var data = (from d in context.TBL_LOAN_APPLICATION_DETAIL
@@ -16445,6 +16470,25 @@ namespace FintrakBanking.Repositories.Credit
                             // systemCurrentDate = systemDate,
                             loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0
                         }).ToList();
+
+            List<CamProcessedLoanViewModel> lcyLoans = new List<CamProcessedLoanViewModel>();
+            List<CamProcessedLoanViewModel> fcyLoans = new List<CamProcessedLoanViewModel>();
+
+            var isLCYUser = activities.Contains("lcy-user");
+            var isFCYUser = activities.Contains("fcy-user");
+
+            if (isLCYUser == true)
+            {
+                lcyLoans = data.Where(x => x.currencyId == defaultCurrencyId && x.productTypeId != (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+            }
+
+            if (isFCYUser == true)
+            {
+                fcyLoans = data.Where(x => x.currencyId != defaultCurrencyId || x.productTypeId == (short)LoanProductTypeEnum.CommercialLoan).Select(x => x).ToList();
+
+            }
+
+            data = lcyLoans.Union(fcyLoans).ToList();
 
             return data;
         }
@@ -17012,6 +17056,9 @@ namespace FintrakBanking.Repositories.Credit
             TBL_LOAN_REVIEW_OPERATION op = new TBL_LOAN_REVIEW_OPERATION();
 
             var lmsApprovalRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANID == userModel.loanId && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility).FirstOrDefault();
+
+            var rec = context.TBL_LOAN.Where(x=>x.TERMLOANID == userModel.loanId).FirstOrDefault();
+
             lmsApprovalRecord.OPERATIONPERFORMED = true;
 
 
@@ -17019,6 +17066,8 @@ namespace FintrakBanking.Repositories.Credit
             op.LOANSYSTEMTYPEID = lmsApprovalRecord.LOANSYSTEMTYPEID;
             op.OPERATIONTYPEID = (int)userModel.operationId;
             op.REVIEWDETAILS = "RollOver";
+            op.EFFECTIVEDATE = rec.EFFECTIVEDATE;
+            op.MATURITYDATE = rec.EFFECTIVEDATE.AddDays(userModel.newTenor);
             op.TENOR = userModel.newTenor;
             op.MATURITYINSTRUCTIONTYPEID = (short)userModel.maturityInstructionId;
             op.LOANREVIEWAPPLICATIONID = lmsApprovalRecord.LOANREVIEWAPPLICATIONID;

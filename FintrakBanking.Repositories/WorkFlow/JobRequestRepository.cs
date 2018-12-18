@@ -1870,6 +1870,16 @@ namespace FintrakBanking.Repositories.WorkFlow
             };
         }
 
+        public bool deleteJobDocument(int documentId, int staffId)
+        {
+            var data = this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Find(documentId);
+            if (data.CREATEDBY != staffId)
+                throw new ConditionNotMetException("You did not upload the document you are trying to delete.");
+
+                this.docContext.TBL_MEDIA_JOB_REQUEST_DOCUMENT.Remove(data);
+                return docContext.SaveChanges() > 0;
+        }
+
         public IEnumerable<RequestDocumentViewModel> GetJobRequestDocuments(string jobRequestCode)
         {
 

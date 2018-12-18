@@ -24,6 +24,8 @@
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterSignatory" Name="OfferLetterSignatory" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterCollateral" Name="OfferLetterCollateral" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterBorrowerDetail" Name="OfferLetterBorrowerDetail" />
+                    <rsweb:ReportDataSource DataSourceId="odsOfferLetterTransactionDynamics" Name="OfferLetterConditionDynamics" />
+                    <rsweb:ReportDataSource DataSourceId="odsOfferLetterTransactionDynamics" Name="OfferLetterTransactionDynamics" />
 
                 </DataSources>
             </LocalReport>
@@ -74,7 +76,12 @@
                 <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>
         </asp:ObjectDataSource>
-                   <asp:ObjectDataSource ID="odsOfferLetterBorrowerDetail" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+           <asp:ObjectDataSource ID="odsOfferLetterBorrowerDetail" runat="server" SelectMethod="GenerateOfferLetter" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR">
+            <SelectParameters>
+                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
+            </SelectParameters>
+        </asp:ObjectDataSource>
+        <asp:ObjectDataSource ID="odsOfferLetterTransactionDynamics" runat="server" SelectMethod="Lmsr_ConditionDynamics" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfoLMSR" OldValuesParameterFormatString="original_{0}">
             <SelectParameters>
                 <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>
