@@ -9040,25 +9040,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public IEnumerable<LoanViewModel> GetBookedLoanDetails(int companyId, ReportSearchParamViewModel param)
         {
+            List<short> loanStatus = new List<short>();
+            loanStatus.Add((short) LoanStatusEnum.Inactive);
+            loanStatus.Add((short)LoanStatusEnum.Cancelled);
+
+
             var data = (from l in context.TBL_LOAN
-                        where l.LOANREFERENCENUMBER == param.param.Trim() // && param.branchId == 0 //&& param.branchId == 0
-                        //|| l.TBL_CUSTOMER.FIRSTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
-                        // || l.TBL_CUSTOMER.LASTNAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
-                        // || l.TBL_CUSTOMER.MIDDLENAME.ToLower().StartsWith(param.param.Trim().ToLower()) && param.branchId == 0
-                         //|| l.TBL_CUSTOMER.FIRSTNAME.ToLower().EndsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
-                         //|| l.TBL_CUSTOMER.LASTNAME.ToLower().EndsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
-                         //|| l.TBL_CUSTOMER.MAIDENNAME.ToLower().EndsWith(param.param.Trim().ToLower()) && l.BRANCHID == param.branchId
+                        where (l.LOANREFERENCENUMBER == param.param.Trim()
                          || l.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(param.param.Trim().ToLower())  //&& param.branchId == 0
                          || l.TBL_CUSTOMER.LASTNAME.ToLower().Contains(param.param.Trim().ToLower())  // && param.branchId == 0
-                         || l.TBL_CUSTOMER.MAIDENNAME.ToLower().Contains(param.param.Trim().ToLower()) // && param.branchId == 0
-                         //|| l.BRANCHID == param.branchId && l.LOANREFERENCENUMBER == param.param.Trim()
-                         //|| l.BRANCHID == param.branchId && param.param == null
-                         //|| param.param == null && param.branchId == 0
-                         //|| param.param.Contains(l.TBL_CUSTOMER.MIDDLENAME)
-                         //|| param.param.Contains(l.TBL_CUSTOMER.LASTNAME)
-                         //|| param.param.Contains(l.TBL_CUSTOMER.FIRSTNAME)
-
-
+                         || l.TBL_CUSTOMER.MAIDENNAME.ToLower().Contains(param.param.Trim().ToLower())) // && param.branchId == 0
+                         && !loanStatus.Contains(l.LOANSTATUSID)
                         select new LoanViewModel
                         {
                             loanId = l.TERMLOANID,

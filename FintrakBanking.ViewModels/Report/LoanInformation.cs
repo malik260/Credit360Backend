@@ -114,6 +114,8 @@ namespace FintrakBanking.ViewModels.Reports
         public string crmSCode { get; set; }
         public string loginStatus { get; set; }
         public short loanStatusId { get; set; }
+        public short waivedOrDeferred { get; set; }
+        
     }
 
     public class ReportSearchEntity
@@ -226,6 +228,9 @@ namespace FintrakBanking.ViewModels.Reports
 
     public class LoanDocumentWaivedViewModel
     {
+
+        public string checkListStatusName { get; set; }
+
         public string firstName { get; set; }
         public string lastName { get; set; }
         public string middleName { get; set; }
