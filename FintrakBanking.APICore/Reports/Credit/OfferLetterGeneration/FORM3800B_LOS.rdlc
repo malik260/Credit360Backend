@@ -421,8 +421,8 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>15.63375in</Top>
-        <Left>0.00895in</Left>
+        <Top>16.38375in</Top>
+        <Left>0.02145in</Left>
         <Height>0.25in</Height>
         <Width>2.28936in</Width>
         <ZIndex>10</ZIndex>
@@ -452,14 +452,16 @@
                 </Style>
               </TextRun>
             </TextRuns>
-            <Style />
+            <Style>
+              <TextAlign>Right</TextAlign>
+            </Style>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
         <Top>16.38375in</Top>
         <Left>3.88535in</Left>
         <Height>0.25in</Height>
-        <Width>3.59144in</Width>
+        <Width>3.30985in</Width>
         <ZIndex>11</ZIndex>
         <Style>
           <Border>
@@ -3901,7 +3903,7 @@ Remarks: ................................................</Value>
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>15.63411in</Top>
+        <Top>16.10911in</Top>
         <Left>0.77412in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
@@ -3917,8 +3919,8 @@ Remarks: ................................................</Value>
           <BreakLocation>Start</BreakLocation>
         </PageBreak>
         <KeepTogether>true</KeepTogether>
-        <Top>19.26972in</Top>
-        <Left>0.14912in</Left>
+        <Top>21.88103in</Top>
+        <Left>0.59955in</Left>
         <Height>0.07292in</Height>
         <Width>5.72917in</Width>
         <ZIndex>32</ZIndex>
@@ -4246,11 +4248,54 @@ Remarks: ................................................</Value>
         </Style>
       </Image>
     </ReportItems>
-    <Height>25.24947in</Height>
+    <Height>25.51336in</Height>
     <Style />
   </Body>
   <Width>7.49762in</Width>
   <Page>
+    <PageFooter>
+      <Height>1in</Height>
+      <PrintOnFirstPage>true</PrintOnFirstPage>
+      <PrintOnLastPage>true</PrintOnLastPage>
+      <ReportItems>
+        <Textbox Name="Textbox26">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style>
+                <TextAlign>Right</TextAlign>
+              </Style>
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox1</rd:DefaultName>
+          <Top>0.06944in</Top>
+          <Left>5.19361in</Left>
+          <Height>0.25in</Height>
+          <Width>2.30401in</Width>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+      </ReportItems>
+      <Style>
+        <Border>
+          <Style>None</Style>
+        </Border>
+      </Style>
+    </PageFooter>
     <PageHeight>13in</PageHeight>
     <PageWidth>11in</PageWidth>
     <InteractiveHeight>13in</InteractiveHeight>
