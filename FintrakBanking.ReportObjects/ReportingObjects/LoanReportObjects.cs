@@ -495,42 +495,71 @@ namespace FintrakBanking.ReportObjects
 
         }
 
-        public IList<LoanDocumentWaivedViewModel> LoanDocumentWaived(DateTime startDate, DateTime endDate, int companyId, short? branchId)
+        public IList<LoanDocumentWaivedViewModel> LoanDocumentWaivedOrDeferred(DateTime startDate, DateTime endDate, int companyId, short? branchId, short waivedOrDeferred)
         {
             using (FinTrakBankingContext context = new FinTrakBankingContext())
             {
-                var data = from a in context.TBL_CHECKLIST_DETAIL
-                           join b in context.TBL_LOAN_APPLICATION_DETAIL on a.TARGETID equals b.LOANAPPLICATIONDETAILID
+                //var waivedChecklists = from a in context.TBL_CHECKLIST_DETAIL
+                //            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.TARGETID equals b.LOANAPPLICATIONDETAILID                            
+                //            where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived
+                //            && b.TBL_CUSTOMER.COMPANYID == companyId
+                //            && DbFunctions.TruncateTime(b.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
+                //            && DbFunctions.TruncateTime(b.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                //            //&& b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
+                //            && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                //            && (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null)
+                //           select new LoanDocumentWaivedViewModel()
+                //           {
+                //               firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                //               lastName = b.TBL_CUSTOMER.LASTNAME,
+                //               middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                //               applicationRefrenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                //               waivedDocument = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
+                //               facilityAmount = b.APPROVEDAMOUNT,
+                //               facilityExpirationDate = b.TBL_LOAN.Select(c => c.MATURITYDATE).FirstOrDefault(),
+                //               facilityGrantedDate = b.TBL_LOAN.Select(m => m.EFFECTIVEDATE).FirstOrDefault(),
+                //               companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME, //b.TBL_LOAN.Select(p => p.TBL_COMPANY.NAME).FirstOrDefault(),
+                //               waveredDate = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED,
+                //               branchName = b.TBL_CUSTOMER.TBL_BRANCH.BRANCHNAME,
+                //               facilityType = b.TBL_PRODUCT.PRODUCTNAME,
+                //               loanApplicationId = b.LOANAPPLICATIONDETAILID,
+                //               proposedAmount = b.PROPOSEDAMOUNT
 
-                           where a.CHECKLISTSTATUSID == (short)CheckListStatusEnum.Waived
-                           // && b.TBL_CUSTOMER.COMPANYID == companyId
-                            && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
-                            && DbFunctions.TruncateTime(a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
-                            && b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
-                            && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID != (short)ApprovalStatusEnum.Disapproved
+                //           };
 
-                            && (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null)
+                var waivedConditions = from a in context.TBL_LOAN_CONDITION_PRECEDENT
+                                       join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                                       join c in context.TBL_LOAN_CONDITION_DEFERRAL on a.LOANCONDITIONID equals c.LOANCONDITIONID
+                                       join d in context.TBL_CHECKLIST_STATUS on a.CHECKLISTSTATUSID equals d.CHECKLISTSTATUSID
+                                      where a.CHECKLISTSTATUSID == (short)waivedOrDeferred //CheckListStatusEnum.Waived
+                                       && b.TBL_CUSTOMER.COMPANYID == companyId
+                                       && DbFunctions.TruncateTime(b.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
+                                       && DbFunctions.TruncateTime(b.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate)
+                                       //&& b.TBL_LOAN_APPLICATION.APPLICATIONSTATUSID > (short)LoanApplicationStatusEnum.ApplicationCompleted
+                                       && b.TBL_LOAN_APPLICATION.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                                       && c.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved                                       
+                                       && (b.TBL_CUSTOMER.BRANCHID == branchId || branchId == null || branchId == 0)
+                                      select new LoanDocumentWaivedViewModel()
+                                      {
+                                          firstName = b.TBL_CUSTOMER.FIRSTNAME, 
+                                          lastName = b.TBL_CUSTOMER.LASTNAME,
+                                          middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                                          applicationRefrenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          waivedDocument = a.CONDITION,
+                                          facilityAmount = b.APPROVEDAMOUNT,
+                                          facilityExpirationDate = b.TBL_LOAN.Select(c => c.MATURITYDATE).FirstOrDefault(),
+                                          facilityGrantedDate = b.TBL_LOAN.Select(m => m.EFFECTIVEDATE).FirstOrDefault(),
+                                          companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME, //b.TBL_LOAN.Select(p => p.TBL_COMPANY.NAME).FirstOrDefault(),
+                                          waveredDate = c.DEFERREDDATE,
+                                          branchName = b.TBL_CUSTOMER.TBL_BRANCH.BRANCHNAME,
+                                          facilityType = b.TBL_PRODUCT.PRODUCTNAME,
+                                          loanApplicationId = b.LOANAPPLICATIONDETAILID,
+                                          proposedAmount = b.PROPOSEDAMOUNT,
+                                          checkListStatusName = d.CHECKLISTSTATUSNAME
 
+                                      };
 
-                           select new LoanDocumentWaivedViewModel()
-                           {
-                               firstName = b.TBL_CUSTOMER.FIRSTNAME,
-                               lastName = b.TBL_CUSTOMER.LASTNAME,
-                               middleName = b.TBL_CUSTOMER.MIDDLENAME,
-                               applicationRefrenceNumber = b.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                               waivedDocument = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.CHECKLISTITEMNAME,
-                               facilityAmount = b.APPROVEDAMOUNT,
-                               facilityExpirationDate = b.TBL_LOAN.Select(c => c.MATURITYDATE).FirstOrDefault(),
-                               facilityGrantedDate = b.TBL_LOAN.Select(m => m.EFFECTIVEDATE).FirstOrDefault(),
-                               companyName = b.TBL_CUSTOMER.TBL_COMPANY.NAME, //b.TBL_LOAN.Select(p => p.TBL_COMPANY.NAME).FirstOrDefault(),
-                               waveredDate = a.TBL_CHECKLIST_DEFINITION.TBL_CHECKLIST_ITEM.DATETIMECREATED,
-                               branchName = b.TBL_CUSTOMER.TBL_BRANCH.BRANCHNAME,
-                               facilityType = b.TBL_PRODUCT.PRODUCTNAME,
-                               loanApplicationId = b.LOANAPPLICATIONDETAILID,
-                               proposedAmount = b.PROPOSEDAMOUNT
-
-                           };
-                return data.ToList();
+                return waivedConditions.ToList();
             }
         }
 

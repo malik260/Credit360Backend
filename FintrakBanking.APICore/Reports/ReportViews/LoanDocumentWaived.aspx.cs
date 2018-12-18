@@ -1,4 +1,5 @@
-﻿using FintrakBanking.Common.Extensions;
+﻿using FintrakBanking.Common.Enum;
+using FintrakBanking.Common.Extensions;
 using FintrakBanking.ReportObjects;
 using Microsoft.Reporting.WebForms;
 using System;
@@ -22,9 +23,19 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                     DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
                     int companyId = Int32.Parse(Request.QueryString["companyId"]);
+
+                    //waivedOrDeferred = short.Parse(Request.QueryString["waivedOrDeferred"]);
+                    //CheckListStatusEnum waivedOrDeferred;
+                    //short.Parse(Request.QueryString["waivedOrDeferred"]);
+
+
+                    short waivedOrDeferred = short.Parse(Request.QueryString["waivedOrDeferred"]);
                     short branchId = short.Parse(Request.QueryString["branchId"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
+
+
+
 
                     HashHelper hash = new HashHelper();
 
@@ -50,15 +61,15 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
                     LoanReportObjects dispursement = new LoanReportObjects();
-                    var data = dispursement.LoanDocumentWaived(startDate, endDate, companyId, branchId);
+                    var data = dispursement.LoanDocumentWaivedOrDeferred(startDate, endDate, companyId, branchId, waivedOrDeferred);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "LoanDocumentWaived";
+                    reportDataSource.Name = "LoanDocumentStatus";
 
-                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+                    //ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    //ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     string exportOption = "PDF";
                     RenderingExtension extension = ReportViewer.LocalReport.ListRenderingExtensions().ToList().Find(x => x.Name.Equals(exportOption, StringComparison.CurrentCultureIgnoreCase));
@@ -69,8 +80,8 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     }
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDocumentWaived.rdlc");
-                    ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/LoanDocumentWaivedOrDeferred.rdlc");
+                    //ReportViewer.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
                 catch (Exception ex)

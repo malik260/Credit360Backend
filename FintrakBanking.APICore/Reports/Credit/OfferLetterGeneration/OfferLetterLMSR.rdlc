@@ -538,6 +538,48 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
                     <Value>=First(Fields!rmStaffName.Value, "OfferLetterSignatory")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
@@ -592,7 +634,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Relationship Manager                                                                                    </Value>
+                    <Value>Relationship Manager                                                     Business Manager</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -613,7 +655,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Business Manager</Value>
+                    <Value>Signature:                                                                        Signature:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -634,28 +676,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Signature:                                                                                                      Signature:</Value>
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                  <LineHeight>18pt</LineHeight>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>Date:                                                                                                             Date:</Value>
+                    <Value>Date:                                                                                Date:</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -677,6 +698,46 @@
                 <TextRuns>
                   <TextRun>
                     <Value xml:space="preserve">                         </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -780,7 +841,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Name………………………………….        and,            Name……………………………………</Value>
+                    <Value>Name…………………………………............................      </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -801,7 +862,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Designation………………………….                             Designation……………………………</Value>
+                    <Value>Designation…………………………........................                                </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -822,7 +883,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Signature……………………………..                             Signature………………………………</Value>
+                    <Value>Signature……………………………..........................                                  </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -843,7 +904,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Date……………………………………                         Date……………………………………</Value>
+                    <Value>Date……………………………………...........................                                       </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -927,7 +988,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Name…………………………………</Value>
+                    <Value>Name…………………………………............................      </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -948,7 +1009,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Address……………………………..</Value>
+                    <Value>Designation…………………………........................                                </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -969,7 +1030,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Designation………………………..</Value>
+                    <Value>Signature……………………………..........................                                  </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -990,7 +1051,7 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>Signature……………………………</Value>
+                    <Value>Date……………………………………...........................  </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -1012,27 +1073,6 @@
                 <TextRuns>
                   <TextRun>
                     <Value />
-                    <Style>
-                      <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                      <FontWeight>Normal</FontWeight>
-                      <TextDecoration>None</TextDecoration>
-                      <Color>#000000</Color>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <LeftIndent>0cm</LeftIndent>
-                <RightIndent>0cm</RightIndent>
-                <Style>
-                  <TextAlign>Left</TextAlign>
-                  <LineHeight>14pt</LineHeight>
-                </Style>
-              </Paragraph>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Value>For……………………………………………………………..      (The Borrower)</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Frutiger LT 45 Light</FontFamily>
@@ -5261,7 +5301,7 @@
             </Style>
           </Tablix>
         </ReportItems>
-        <Height>23.11339in</Height>
+        <Height>21.71756in</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -5278,35 +5318,26 @@
           <Height>1.14111in</Height>
           <PrintOnFirstPage>true</PrintOnFirstPage>
           <PrintOnLastPage>true</PrintOnLastPage>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>1.02566in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
           <ReportItems>
-            <Textbox Name="Textbox9">
+            <Textbox Name="Textbox1">
               <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
               <Paragraphs>
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
-                      <Value>Ref:</Value>
-                      <Style>
-                        <FontFamily>Lucida Sans Unicode</FontFamily>
-                        <FontWeight>Bold</FontWeight>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value xml:space="preserve"> </Value>
-                      <Style>
-                        <FontFamily>Lucida Sans Unicode</FontFamily>
-                      </Style>
-                    </TextRun>
-                    <TextRun>
-                      <Value>=First(Fields!loanApplicationId.Value, "OfferLetterLoanDetail")</Value>
-                      <Style>
-                        <FontStyle>Normal</FontStyle>
-                        <FontFamily>Lucida Sans Unicode</FontFamily>
-                        <FontWeight>Bold</FontWeight>
-                        <TextDecoration>None</TextDecoration>
-                        <Color>#000000</Color>
-                      </Style>
+                      <Value>=Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+                      <Style />
                     </TextRun>
                   </TextRuns>
                   <Style>
@@ -5314,11 +5345,11 @@
                   </Style>
                 </Paragraph>
               </Paragraphs>
-              <rd:DefaultName>Textbox9</rd:DefaultName>
-              <Top>0.82167in</Top>
-              <Left>4.94074in</Left>
+              <rd:DefaultName>Textbox1</rd:DefaultName>
+              <Top>0.31717in</Top>
+              <Left>4.48833in</Left>
               <Height>0.25in</Height>
-              <Width>1.94626in</Width>
+              <Width>2.30401in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -5330,16 +5361,6 @@
               </Style>
             </Textbox>
           </ReportItems>
-          <Style>
-            <Border>
-              <Style>None</Style>
-            </Border>
-          </Style>
-        </PageHeader>
-        <PageFooter>
-          <Height>1.02566in</Height>
-          <PrintOnFirstPage>true</PrintOnFirstPage>
-          <PrintOnLastPage>true</PrintOnLastPage>
           <Style>
             <Border>
               <Style>None</Style>

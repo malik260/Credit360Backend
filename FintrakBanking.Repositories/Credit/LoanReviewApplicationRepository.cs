@@ -64,7 +64,7 @@ namespace FintrakBanking.Repositories.Credit
             .Join(context.TBL_APPROVAL_TRAIL.Where(x => operationIds.Contains(x.OPERATIONID)
                     && x.APPROVALSTATEID != (int)ApprovalState.Ended
                     && x.RESPONSESTAFFID == null
-                    && x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2
+                    && (x.TBL_APPROVAL_LEVEL1.LEVELTYPEID != 2 || operationIds.Contains(48))
                     && levelIds.Contains((int)x.TOAPPROVALLEVELID)
                     && (x.TOSTAFFID == null || x.TOSTAFFID == staffId)
             ),
@@ -77,6 +77,7 @@ namespace FintrakBanking.Repositories.Credit
                 approvalState = x.trail == null ? "Pending" : x.trail.TBL_APPROVAL_STATE.APPROVALSTATE,
                 approvalTrailId = x.trail == null ? 0 : x.trail.APPROVALTRAILID,
                 currentApprovalLevel = x.trail == null ? "" : x.trail.TBL_APPROVAL_LEVEL1.LEVELNAME, // pls note! tbl_Approval_Level1<---1
+                // currentApprovalLevelTypeId = x.trail == null ? null : x.trail.TBL_APPROVAL_LEVEL1.LEVELTYPEID, // pls note! tbl_Approval_Level1<---1
                 currentApprovalLevelId = x.trail == null ? 0 : x.trail.TOAPPROVALLEVELID,
                 lastComment = x.trail == null ? "" : x.trail.COMMENT,
                 toStaffId = x.trail == null ? 0 : x.trail.TOSTAFFID,
@@ -125,14 +126,14 @@ namespace FintrakBanking.Repositories.Credit
             .ToList()
             ;
 
-            applications = query.AsQueryable()
+            applications = query.AsQueryable()           
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 .OrderByDescending(x => x.loanReviewApplicationId);
 
             var list = applications.ToList();
-            var count = applications.Count();
+            //var count = applications.Count();
 
-            return applications; // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
+            return applications;//.Where(x => x.currentApprovalLevelTypeId != 2 || operationIds.Contains(48)); // .Where(x => levelIds.Contains((int)x.currentApprovalLevelId) && (x.toStaffId == null || x.toStaffId == staffId));
         }
 
         private bool ProcessInitiator(int staffId, int operationId, int? productClassId, int position)
