@@ -571,7 +571,7 @@ namespace FintrakBanking.Repositories.Credit
             foreach (var collateral in collaterals)
             {
                 usage = 0;
-                var mappings = context.TBL_LOAN_COLLATERAL_MAPPING.Where(m => m.COLLATERALCUSTOMERID == collateral.collateralCustomerId && m.DELETED == false && m.ISRELEASED == false);
+                var mappings = context.TBL_LOAN_COLLATERAL_MAPPING.Where(m => m.COLLATERALCUSTOMERID == collateral.collateralId && m.DELETED == false && m.ISRELEASED == false).ToList();
                 foreach (var mapping in mappings) usage = usage + GetLoanOutstandingBalance(mapping.LOANID,mapping.LOANSYSTEMTYPEID);
                 collateral.availableValue = (decimal)collateral.collateralValue - usage;
                 list.Add(collateral);
@@ -581,17 +581,20 @@ namespace FintrakBanking.Repositories.Credit
 
         private decimal GetLoanOutstandingBalance(int loanId, int loanSystemTypeId)
         {
+            decimal balance = 0;
             switch (loanSystemTypeId)
             {
                 case (int)LoanSystemTypeEnum.TermDisbursedFacility :
+                    balance = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Sum(x => x.OUTSTANDINGPRINCIPAL);
                     break;
                 case (int)LoanSystemTypeEnum.OverdraftFacility :
+                    balance = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId).Sum(x => x.OVERDRAFTLIMIT);
                     break;
                 case  (int)LoanSystemTypeEnum.ContingentLiability :
+                    balance = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).Sum(x => x.CONTINGENTAMOUNT);
                     break;
              }
-
-            return 0;
+            return balance;
         }
 
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
