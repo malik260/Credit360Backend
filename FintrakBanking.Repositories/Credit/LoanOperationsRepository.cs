@@ -15195,7 +15195,7 @@ namespace FintrakBanking.Repositories.Credit
                                 select new LoanPaymentRestructureScheduleInputViewModel()
                                 {
                                     loanId = b.CONTINGENTLOANID,
-                                    principalAmount = (double)b.CONTINGENTAMOUNT,
+                                    principalAmount = (double)a.PREPAYMENT,
                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                     //interestRate = b.INTERESTRATE,
                                     effectiveDate = b.EFFECTIVEDATE,

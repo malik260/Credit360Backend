@@ -282,7 +282,12 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (result == false)
                         throw new ConditionNotMetException("Customer Must Have More Than One Tranch to Proceed With Sub Allocation");
+
                 }
+                //else if(detail.operationId == (int)OperationsEnum.)
+                //{
+
+                //}
 
             }
 
