@@ -3,6 +3,7 @@ using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
+using FintrakBanking.Interfaces.Customer;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.ViewModels.Finance;
@@ -22,10 +23,11 @@ namespace FintrakBanking.Repositories.Finance
         private ILoanOperationsRepository loanOperation;
         private IPublicHolidayRepository publicHoliday;
         private ICustomerCollateralRepository collateralItemPolicy;
+        private ILoanCovenantRepository loanCovenantRepository;
 
         public EndOfDayRepository(FinTrakBankingContext _context, IGeneralSetupRepository _generalSetup,
                                     ILoanOperationsRepository _loanOperation, IPublicHolidayRepository _publicHoliday,
-                                    IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy)
+                                    IAuditTrailRepository _auditTrail, ICustomerCollateralRepository _collateralItemPolicy, ILoanCovenantRepository _loanCovenantRepository)
         {
             this.context = _context;
             this.generalSetup = _generalSetup;
@@ -33,6 +35,7 @@ namespace FintrakBanking.Repositories.Finance
             this.auditTrail = _auditTrail;
             this.loanOperation = _loanOperation;
             this.collateralItemPolicy = _collateralItemPolicy;
+            this.loanCovenantRepository = _loanCovenantRepository;
         }
 
 
@@ -173,6 +176,8 @@ namespace FintrakBanking.Repositories.Finance
             loanOperation.ProcessContingentLiabilityTerminationAtMaturity(date);
 
             loanOperation.CalculateLoanClassification(date);
+
+            loanCovenantRepository.UpdateLoanApplicationCovenant(date);
 
             //loanOperation.GetRepaymentFromStaging();
 

@@ -41,6 +41,8 @@ namespace FintrakBanking.Entities.Models
 
         public DateTime DATETIMECREATED { get; set; }
 
+        public DateTime PREVIOUSCOVENANTDATE { get; set; }
+
         public int? LASTUPDATEDBY { get; set; }
 
         public DateTime? DATETIMEUPDATED { get; set; }
