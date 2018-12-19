@@ -357,6 +357,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string casaAccountNumber2 { get; set; }
         public bool isInEditMode { get; set; }
         public LoanReviewOperationApprovalViewModel operationReview { get; set; }
+        public decimal totalOutstandingAmount { get; set; }
+        public decimal totalExistingLimitAmount { get; set; }
 
 
 
@@ -592,6 +594,8 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
+        public string feeAccountName { get; set; }
+
         public bool isLocalCurrrency { get; set; }
         public int? loanId { get; set; }
         public string productPriceDescription { get; set; }

@@ -176,6 +176,16 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return staff;
         }
+        public List<StaffSensitivityLevelViewModel> GetStaffSensitivityLevel()
+        {
+            var staff = (from c in context.TBL_CUSTOMER_SENSITIVITY_LEVEL
+                         select new StaffSensitivityLevelViewModel()
+                         {
+                             level = c.CUSTOMERSENSITIVITYLEVELID,
+                             description = c.DESCRIPTION,
+                         }).ToList();
+            return staff;
+        }
 
         public StaffInfoViewModel GetStaffById(int staffId)
         {
@@ -816,13 +826,14 @@ namespace FintrakBanking.Repositories.Setups.General
                 };
                 if (temp.CUSTOMERSENSITIVITYLEVELID >= 1) entity.CUSTOMERSENSITIVITYLEVELID = temp.CUSTOMERSENSITIVITYLEVELID;
                 context.TBL_STAFF.Add(entity);
+                var test = context.SaveChanges() > 0;
+
             }
 
             temp.ISCURRENT = false;
             temp.APPROVALSTATUSID = approvalStatusId;
             temp.DATETIMEUPDATED = DateTime.Now;
             temp.LASTUPDATEDBY = user.createdBy;
-
             //if (temp.TEMPSTAFFID != entity.RELIEF_STAFFID) { UpdateDelegateStaff(entity.STAFFID, temp.TEMPSTAFFID); }
 
             // Audit Section ---------------------------

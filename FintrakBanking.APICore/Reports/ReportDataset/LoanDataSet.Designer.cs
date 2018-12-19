@@ -8535,6 +8535,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             private global::System.Data.DataColumn columnsecurityInTheNameOf;
             
+            private global::System.Data.DataColumn columnloanReferenceNumber;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public CashBackedDataTable() {
@@ -8666,6 +8668,14 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn loanReferenceNumberColumn {
+                get {
+                    return this.columnloanReferenceNumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -8701,7 +8711,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public CashBackedRow AddCashBackedRow(string branch, string accountNo, string accountName, string securityType, string depositAccountNo, decimal loanLimit, decimal loanBalance, decimal loanLimitForeignCurrency, decimal loanBalanceForeignCurrency, decimal securityValue, string currencyType, string securityInTheNameOf) {
+            public CashBackedRow AddCashBackedRow(string branch, string accountNo, string accountName, string securityType, string depositAccountNo, decimal loanLimit, decimal loanBalance, decimal loanLimitForeignCurrency, decimal loanBalanceForeignCurrency, decimal securityValue, string currencyType, string securityInTheNameOf, string loanReferenceNumber) {
                 CashBackedRow rowCashBackedRow = ((CashBackedRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         branch,
@@ -8715,7 +8725,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                         loanBalanceForeignCurrency,
                         securityValue,
                         currencyType,
-                        securityInTheNameOf};
+                        securityInTheNameOf,
+                        loanReferenceNumber};
                 rowCashBackedRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowCashBackedRow);
                 return rowCashBackedRow;
@@ -8750,6 +8761,7 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 this.columnsecurityValue = base.Columns["securityValue"];
                 this.columncurrencyType = base.Columns["currencyType"];
                 this.columnsecurityInTheNameOf = base.Columns["securityInTheNameOf"];
+                this.columnloanReferenceNumber = base.Columns["loanReferenceNumber"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -8779,6 +8791,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 base.Columns.Add(this.columncurrencyType);
                 this.columnsecurityInTheNameOf = new global::System.Data.DataColumn("securityInTheNameOf", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnsecurityInTheNameOf);
+                this.columnloanReferenceNumber = new global::System.Data.DataColumn("loanReferenceNumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnloanReferenceNumber);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -20649,6 +20663,22 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string loanReferenceNumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableCashBacked.loanReferenceNumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'loanReferenceNumber\' in table \'CashBacked\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCashBacked.loanReferenceNumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsbranchNull() {
                 return this.IsNull(this.tableCashBacked.branchColumn);
             }
@@ -20789,6 +20819,18 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetsecurityInTheNameOfNull() {
                 this[this.tableCashBacked.securityInTheNameOfColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsloanReferenceNumberNull() {
+                return this.IsNull(this.tableCashBacked.loanReferenceNumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetloanReferenceNumberNull() {
+                this[this.tableCashBacked.loanReferenceNumberColumn] = global::System.Convert.DBNull;
             }
         }
         
