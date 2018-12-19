@@ -285,6 +285,7 @@ namespace FintrakBanking.Repositories.Credit
                 USEDINTEGRATION = entity.usedIntegration,
                 DATECOMPLETED = entity.dateCompleted,
                 DATETIMECREATED = DateTime.Now,
+                BRANCHID = entity.userBranchId,
                 CREATEDBY = entity.createdBy
             };
             // Audit Section ---------------------------

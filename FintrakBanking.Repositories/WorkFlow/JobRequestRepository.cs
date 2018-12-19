@@ -985,7 +985,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         #region ...Collateral Search Job Charges...
         [OperationBehavior(TransactionScopeRequired = true)]
-        public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
+        private bool PlaceChargeOnCustomerForCollateralSearch2(JobRequestCollateralSearchViewModel model)
         {
             // NOTE: THIS METHOD IS USED BY RM & LEGAL IN TWO WAYS
             // 1. THE INITIATION STAGE: RM INITIATES PAYMENT, DEBITS CUSTOMER'S ACCOUNT WITH RECOMMENDED FEE FROM EGAL
@@ -1128,6 +1128,189 @@ namespace FintrakBanking.Repositories.WorkFlow
                 
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
+        {
+            var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated).ToList();
+            var consultantId = jobRequestDetail.FirstOrDefault().ACCREDITEDCONSULTANTID;
+            var consultantRecord = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == consultantId);
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = model.username,
+                passcode = model.passCode
+            };
+            if (model.isInitiation)
+            {
+                return initiateChargeOnCustomerForCollatteralSearch(model, jobRequestDetail, twoFADetails, consultantRecord);
+            }
+            else
+            {
+                return creditSolicitorForCollatteralSearch(model, jobRequestDetail, twoFADetails, consultantRecord);
+            }
+        }
+
+        private bool initiateChargeOnCustomerForCollatteralSearch(JobRequestCollateralSearchViewModel model, 
+            List<TBL_JOB_REQUEST_DETAIL> jobRequestDetail, TwoFactorAutheticationViewModel twoFADetails, IEnumerable<TBL_ACCREDITEDCONSULTANT> consultantRecord)
+        {
+
+            var auditDetail = string.Empty;
+            var accountNumber = string.Empty;
+            decimal accountBalance = 0;
+
+            var casa = context.TBL_CASA.Find(model.casaAccountId);
+            if (casa == null && !model.debitBusiness)
+                throw new ConditionNotMetException("Customer account number is not supplied");
+
+            if (casa != null) accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+
+            if (!model.debitBusiness)
+            {
+                model.casaAccountId = casa.CASAACCOUNTID;
+                accountNumber = casa.PRODUCTACCOUNTNUMBER;
+                auditDetail = $"Customer account number '{casa.PRODUCTACCOUNTNUMBER}' debited with collateral search fees";
+            }
+            else { auditDetail = $"Bank account debited with collateral search fees"; }
+
+            var jobRequestData = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
+            model.operationId = (short)OperationsEnum.CollateralSearchInitiation;
+            model.requestCode = jobRequestData.JOBREQUESTCODE;
+
+            foreach (var item in jobRequestDetail)
+            {
+                model.totalChargeAmount = model.totalChargeAmount + item.AMOUNT.Value;
+                item.ACCREDITEDCONSULTANTPAID = !model.isInitiation ? true : false;
+                item.ACCOUNTNUMBER = model.isInitiation ? accountNumber : null;
+            }
+
+            if(model.totalChargeAmount > accountBalance && !model.debitBusiness)
+                throw new ConditionNotMetException("The customer's Account is not funded.");
+
+            if(model.totalChargeAmount > 0)
+            {
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                if (model.debitBusiness)
+                {
+                    var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short)OtherOperationEnum.ChargeOnBank).FirstOrDefault();
+                    if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
+
+                    model.glAccountId = bizAccount.GLACCOUNTID;
+                    model.casaAccountId = null;
+                    model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
+                    model.currencyCode = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId).CURRENCYCODE;
+                }
+                inputTransactions.AddRange(BuildCollateralSearchChargeFeesPosting(model));
+
+                if (inputTransactions.Count > 0)
+                {
+                    financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
+
+                    if (consultantRecord.Any())
+                    {
+                        var solicitor = consultantRecord.FirstOrDefault();
+                        string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
+                        foreach (var i in jobRequestDetail)
+                        {
+                            if (i.JOB_SUB_TYPE_CLASSID != (short)(JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
+
+                            i.CUSTOMERORBUSINESSCHARGED = true;
+                            if (model.debitBusiness) i.DEBITBUSINESS = true;
+                        }
+
+                        messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
+                        string alertSubject = $"Loan Collateral Search";
+                        LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
+                    }
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CollateralSearchJob,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = auditDetail,
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
+                    
+                    context.SaveChanges();
+                    return true;
+                }
+
+                else return false;
+            }
+            else return false;
+        }
+
+        private bool creditSolicitorForCollatteralSearch(JobRequestCollateralSearchViewModel model,
+            List<TBL_JOB_REQUEST_DETAIL> jobRequestDetail, TwoFactorAutheticationViewModel twoFADetails, IEnumerable<TBL_ACCREDITEDCONSULTANT> consultantRecord)
+        {
+            
+            var auditDetail = string.Empty;
+            var accountNumber = string.Empty;
+
+            var b = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
+            if (b == null || b == string.Empty || b == " ")
+                throw new ConditionNotMetException("The solicitor's account number is not found. No account number has been mapped to this solicitor.");
+
+            accountNumber = consultantRecord.FirstOrDefault().ACCOUNTNUMBER;
+
+
+            var witholdingAmount = (double)model.totalChargeAmount / 0.9;
+            var id = (short)jobRequestDetail.FirstOrDefault().CURRENCYID.Value;
+            var jobRequestData = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
+
+            model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
+            var currency = context.TBL_CURRENCY.Find(model.currencyId);
+
+            model.operationId = (short)OperationsEnum.CollateralSearchCompletion;
+            model.requestCode = jobRequestData.JOBREQUESTCODE;
+            model.feeNarration = $"Payment to solicitor";
+            auditDetail = $"Solicitor account number '{accountNumber}' credited for collateral search job with '{currency.CURRENCYCODE}{witholdingAmount}'";
+
+            foreach (var item in jobRequestDetail)
+            {
+                model.totalChargeAmount = model.totalChargeAmount + item.AMOUNT.Value;
+                item.ACCREDITEDCONSULTANTPAID = !model.isInitiation ? true : false;
+                item.ACCOUNTNUMBER = model.isInitiation ? accountNumber : null;
+            }
+
+            if (model.totalChargeAmount > 0)
+            {
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+                model.accountNumber = accountNumber;
+                inputTransactions.AddRange(BuildSolicitorFeePaymentPosting(model));
+
+                if (inputTransactions.Count > 0)
+                {
+                    financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
+
+                    // Audit Section ---------------------------
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CollateralSearchJob,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = auditDetail,
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
+
+                    context.SaveChanges();
+                    return true;
+                }
+                else return false;
+            }
+            else return false;
+        }
         //private string GetProposedConditionsMarkup()
         //{
         //    var conditions = GetProposedConditions(); // new
@@ -1466,6 +1649,17 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         }
 
+        public bool DeleteMappedJobTypeHubStaff(int hubStaffId, int staffId)
+        {
+            var hubStaffRecord = context.TBL_JOB_TYPE_HUB_STAFF.Find(hubStaffId);
+            hubStaffRecord.DELETED = true;
+            hubStaffRecord.DELETEDBY = staffId;
+            hubStaffRecord.DATETIMEDELETED = DateTime.Now;
+
+            return context.SaveChanges() > 0;
+
+        }
+
         public bool UpdatemappedJobTypeHubStaff(JobTypeHubViewModel model)
         {
             var data = context.TBL_JOB_TYPE_HUB_STAFF.Find(model.hubStaffId);
@@ -1498,35 +1692,6 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         }
 
-        public bool DeletemappedJobTypeHubStaff(JobTypeHubViewModel model)
-        {
-            var data = context.TBL_JOB_TYPE_HUB_STAFF.Find(model.hubStaffId);
-            if (data == null) throw new ConditionNotMetException("No record selected.");
-
-            data.DATETIMEDELETED = DateTime.Now;
-            data.DELETED = true;
-
-            var staff = context.TBL_STAFF.Find(data.STAFFID);
-            var hub = context.TBL_JOB_TYPE_HUB.Find(data.JOBTYPEHUBID);
-            var unit = context.TBL_JOB_TYPE_UNIT.Find(data.JOBTYPEUNITID);
-
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.JobRequestHubStaffDeleted,
-                STAFFID = model.createdBy,
-                BRANCHID = (short)model.userBranchId,
-                DETAIL = $"Deleted mapped job Type hub staff with detail: hub - '{hub.HUBNAME}' staff code '{ staff.STAFFCODE }', unit - '{unit.UNITNAME}'. ",
-                IPADDRESS = model.userIPAddress,
-                URL = model.applicationUrl,
-                APPLICATIONDATE = general.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
-            this.audit.AddAuditTrail(audit);
-
-            if (context.SaveChanges() > 0) return true;
-
-            return false;
-        }
 
         public bool AssignJobTypeToStaff(jobReasignment model)
         {
