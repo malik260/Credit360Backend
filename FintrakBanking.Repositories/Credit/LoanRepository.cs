@@ -6063,6 +6063,7 @@ namespace FintrakBanking.Repositories.Credit
                             applicationStatusId = m.APPLICATIONSTATUSID,
                             casaAccountId = s.CASAACCOUNTID,
                             casaAccountId2 = s.CASAACCOUNTID2,
+                            feeAccountName = (from t in context.TBL_CASA where t.CASAACCOUNTID == s.CASAACCOUNTID select t.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                             customerId = d.CUSTOMERID,
                             customerCode = cust.CUSTOMERCODE,
                             customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,

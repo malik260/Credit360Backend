@@ -905,22 +905,20 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpPut, Route("delete-map-job-type-hub-staff")]
-        public HttpResponseMessage AssignJobTypeToStaff([FromBody] JobTypeHubViewModel entity)
+
+        [HttpDelete, Route("delete-mapped-job-type-hub-staff/{hubStaffId}")]
+        public HttpResponseMessage DeleteMappedJobTypeHubStaff(int hubStaffId)
         {
             try
             {
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.companyId = token.GetCompanyId;
-                entity.createdBy = token.GetStaffId;
 
-                if (repo.DeletemappedJobTypeHubStaff(entity)) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The staff - hub mapping was successful" }); }
+                if (repo.DeleteMappedJobTypeHubStaff(hubStaffId, token.GetStaffId)) { return Request.CreateResponse(HttpStatusCode.OK, new { success = true,  message = "Delete was successful." }); }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error updating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error deleting this record" });
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error updating this record" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error deleting this record" });
             }
         }
 
