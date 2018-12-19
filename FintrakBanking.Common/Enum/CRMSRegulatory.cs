@@ -23,6 +23,7 @@ namespace FintrakBanking.Common.Enum
         Template600 = 6,
         Template400A = 7,
         Template400B = 8,
+        Template400C = 9,
 
 
     }

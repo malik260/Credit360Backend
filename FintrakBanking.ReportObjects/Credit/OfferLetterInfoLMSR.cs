@@ -205,45 +205,7 @@ namespace FintrakBanking.ReportObjects.Credit
 
             try
             {
-                //var loanDetails = (from a in context.TBL_LMSR_APPLICATION
-                //                   join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
-                //                   join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID into cc
-                //                   from c in cc.DefaultIfEmpty()
-                //                   join d in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals d.CUSTOMERGROUPID into cg
-                //                   from d in cg.DefaultIfEmpty()
-                //                   join e in context.TBL_CUSTOMER_ADDRESS on a.CUSTOMERID equals e.CUSTOMERID into dg
-                //                   from e in dg.DefaultIfEmpty()
-                //                   join g in context.TBL_CUSTOMER_PHONECONTACT on a.CUSTOMERID equals g.CUSTOMERID into gg
-                //                   from g in gg.DefaultIfEmpty()
-                //                  // join h in context.TBL_CURRENCY on b.CURRENCYID equals h.CURRENCYID into hh
-                //                 //  from h in hh.DefaultIfEmpty()
-                //                   where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
-                //                        // (b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || b.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
-
-                //                   select new OfferLetterDetailViewModel()
-                //                   {
-                //                       productName = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == b.PRODUCTID).PRODUCTNAME,
-                //                       customerName = c.FIRSTNAME + " " + c.LASTNAME,
-                //                       //customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
-                //                     //  currencyName = h.CURRENCYCODE,//b.TBL_CURRENCY.CURRENCYNAME,
-                //                       tenor = b.APPROVEDTENOR,
-                //                       interestRate = b.APPROVEDINTERESTRATE,
-                //                       loanAmount = b.APPROVEDAMOUNT,
-                //                       //exchangeRate = b.EXCHANGERATE,
-                //                       //currencyId = b.CURRENCYID,
-                //                       companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x=>x.NAME).FirstOrDefault(),
-                //                     //customerName =  c.FIRSTNAME + " " + c.LASTNAME : d.GROUPNAME + " - " + d.GROUPCODE,
-                //                       customerAddress = e.ADDRESS ?? " ", //a.TBL_CUSTOMER.TBL_CUSTOMER_ADDRESS.FirstOrDefault().ADDRESS ?? string.Empty,
-                //                       applicationDate = a.APPLICATIONDATE,
-                //                       customerGroupName = d.GROUPNAME + " - " + d.GROUPCODE,
-                //                       customerEmailAddress = a.TBL_CUSTOMER.EMAILADDRESS,
-                //                       customerPhoneNumber = g.PHONENUMBER,//a.TBL_CUSTOMER.TBL_CUSTOMER_PHONECONTACT.FirstOrDefault().PHONENUMBER,
-                //                       loanApplicationId = applicationRefNumber,
-                //                       repaymentSchedule = b.REPAYMENTSCHEDULE ?? "Not applicable",
-                //                       repaymentTerms = b.REPAYMENTTERMS ?? "Not applicable",
-                //                     //  purpose = b.,
-                //                   }).ToList();
-
+              
                 var loanDetails = (from a in context.TBL_LMSR_APPLICATION
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                                    join e in context.TBL_LOAN on b.LOANID equals e.TERMLOANID
@@ -271,7 +233,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                        companyName = context.TBL_COMPANY.Where(x => x.COMPANYID == a.COMPANYID).Select(x => x.NAME).FirstOrDefault(),
                                        //customerPhoneNumber = g.PHONENUMBER,
                                        applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
-                                     newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE
+                                     newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,
+                                     operarionId = (short)b.OPERATIONID,
                                    }).ToList();
 
                 if (loanDetails.Count == 0)
@@ -304,6 +267,7 @@ namespace FintrakBanking.ReportObjects.Credit
                                        //customerPhoneNumber = g.PHONENUMBER,
                                        applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                        newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,//a.APPLICATIONDATE,
+                                       operarionId = (short)b.OPERATIONID,
                                    }).ToList();
                 }
                 if (loanDetails.Count == 0)
@@ -336,14 +300,29 @@ namespace FintrakBanking.ReportObjects.Credit
                                        //customerPhoneNumber = g.PHONENUMBER,
                                        applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                        newApplicationDate = context.TBL_FINANCECURRENTDATE.FirstOrDefault().CURRENTDATE,//a.APPLICATIONDATE,
+                                       operarionId = (short)b.OPERATIONID,
+                                       offerLetterIntroduction = "",
+                                       isRenewal = true,
                                    }).ToList();
                 }
-
+                foreach (var x in loanDetails)
+                {
+                    if (CommonHelpers.GetRolloverOperations().Contains(x.operarionId))
+                    {
+                        x.offerLetterIntroduction = "We refer to your application for a Credit Facility and are pleased to advise approval of same under the following Terms and Conditions:";
+                        x.isRenewal = true;
+                    }
+                    else if (CommonHelpers.GetRestructureOperations().Contains(x.operarionId))
+                    {
+                        x.offerLetterIntroduction = "We refer to your application for renewal/enhancement of your Credit Facilities and are pleased to advise approval of same under the following Terms and Conditions:";
+                        x.isRenewal = false;
+                    }
+                   
+                }
                 if (loanDetails != null)
                 {
                     return loanDetails;
                 }
-
             }
             catch (Exception ex)
             {

@@ -55,6 +55,8 @@ namespace FintrakBanking.Entities.Models
 
         public bool DEBITBUSINESS { get; set; }
 
+        public int? BRANCHID { get; set; }
+
         public virtual TBL_CUSTOMER_COMPANY_DIRECTOR TBL_CUSTOMER_COMPANY_DIRECTOR { get; set; }
 
         public virtual TBL_CREDIT_BUREAU TBL_CREDIT_BUREAU { get; set; }

@@ -18,7 +18,7 @@ namespace FintrakBanking.Interfaces.Setups.General
         int GoForApproval(ApprovalViewModel entity);
 
         IEnumerable<StaffInfoViewModel> GetAllStaff();
-
+        List<StaffSensitivityLevelViewModel> GetStaffSensitivityLevel();
         IEnumerable<StaffInfoViewModel> GetStaffAwaitingApprovals(int staffId, int companyId);
 
         IEnumerable<StaffViewModel> GetStaffName();
