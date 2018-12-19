@@ -80,7 +80,9 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool mapJobTypeHubStaff(JobTypeHubViewModel model);
         bool UpdatemappedJobTypeHubStaff(JobTypeHubViewModel model);
 
-         bool DeletemappedJobTypeHubStaff(JobTypeHubViewModel model);
+
+        bool deleteJobDocument(int documentId, int staffId);
+        bool DeleteMappedJobTypeHubStaff(int hubStaffId, int staffId);
 
         #region Job Request Feedback
         IEnumerable<LookupViewModel> GetJobRequestStatus();
