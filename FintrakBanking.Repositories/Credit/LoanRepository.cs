@@ -4542,11 +4542,24 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanViewModel> GetLoanApplicationExistingLoans(int applicationId)
         {
             var customerIds = context.TBL_LOAN_APPLICATION_DETAIL
-                                .Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false)
+                              .Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false)
                                 .Select(x => x.CUSTOMERID)
                                 .ToList();
+            //List<CustomerExposure> customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+            //                                   where a.LOANAPPLICATIONID == applicationId && a.DELETED == false
+            //                                   select new CustomerExposure()
+            //                                   {
+            //                                       customerId = a.CUSTOMERID,
+            //                                   }
+            //                                   ).ToList();
 
-            var data = GetAllLoans().Where(l => customerIds.Contains(l.customerId) && l.loanStatusId == (short)LoanStatusEnum.Active).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
+                      var data = GetAllLoans().Where(l => customerIds.Contains(l.customerId) && l.loanStatusId == (short)LoanStatusEnum.Active).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
+            //var limit = GetCurrentCustomerExposure(customers, 1).Where(m=>m.facilityType == "TOTAL").FirstOrDefault();
+            //foreach(var loan in data)
+            //{
+            //    loan.totalOutstandingAmount = limit.proposedLimit;
+            //    loan.totalExistingLimitAmount = limit.existingLimit;
+            //}
             return data.ToList();
         }
 
@@ -6776,7 +6789,8 @@ namespace FintrakBanking.Repositories.Credit
                 facilityType = "TOTAL",
                 existingLimit = exposures.Sum(t => t.existingLimit),
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
-                recommendedLimit = exposure.Sum(t => t.recommendedLimit),
+                recommendedLimit = exposures.Sum(t => t.recommendedLimit),
+                outstandings = exposures.Sum(t=>t.outstandings),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
                 PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,

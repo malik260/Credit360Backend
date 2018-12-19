@@ -496,7 +496,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [ClaimsAuthorization]
         [Route("validate-application-customer-rating")]
         public HttpResponseMessage ValidateApplicationCustomerRating([FromBody] ObligorLimitViewModel entity)

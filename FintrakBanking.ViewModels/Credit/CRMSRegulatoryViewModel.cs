@@ -114,6 +114,20 @@ namespace FintrakBanking.ViewModels.Credit
         //200
         public string GOVERNMENT_MDA_TIN { get; set; }
         public string PERFORMANCE_REPAYMENT_STATUS { get; set; }
+
+
+        public decimal? TOTAL_BANK_INDUCED_DEBIT_BANK_CHARGES { get; set; }
+        public decimal? TOTAL_BANK_INDUCED_CREDIT_WRITEOFF { get; set; }
+        public decimal? TOTAL_BANK_INDUCED_CREDIT_DRAWDOWN { get; set; }
+        public decimal? TOTAL_CUSTOMER_INDUCED_CREDIT { get; set; }
+        public string TOTAL_CUSTOMER_INDUCED_CREDIT_TRN_TYPE { get; set; }
+        public decimal? TOTAL_CUSTOMER_INDUCED_DEBIT_AMT { get; set; }
+        public string TOTAL_CUSTOMER_INDUCED_DEBIT_TRN_TYPE { get; set; }
+        public decimal? UNAMORTIZED_CREDIT_CHARGES { get; set; }
+        public string LIQUIDATION { get; set; }
+
+
+
         public string REASON_FOR_RESTRUCTURING { get; set; }
 
 

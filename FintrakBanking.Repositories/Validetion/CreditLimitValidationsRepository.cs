@@ -693,6 +693,14 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
                 groupCustomer.RISKRATINGID = (short?)entity.riskRatingId;
             }
 
+            //try
+            //{
+            //    var test = context.SaveChanges() > 0;
+            //}
+            //catch (Exception ex)
+            //{
+            //    var err = ex;
+            //}
             return context.SaveChanges() > 0;
         }
 
