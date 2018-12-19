@@ -194,7 +194,11 @@ namespace FintrakBanking.ViewModels.Setups.General
         public int rankId { get; set; }
         public string rankName { get; set; }
     }
-
+    public class StaffSensitivityLevelViewModel
+    {
+        public int level { get; set; }
+        public string description { get; set; }
+    }
     public class SupervisorViewModel : GeneralEntity
     {
         public int statusId { get; set; }

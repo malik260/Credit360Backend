@@ -52,8 +52,29 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("sensitivitylevel")]
+        public HttpResponseMessage GetSensitivityLevel()
+        {
+            try
+            {
+                var data = repo.GetStaffSensitivityLevel().OrderByDescending(a => a.level);
 
-      [HttpGet] [ClaimsAuthorization]  
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = data, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                //errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+        [HttpGet] [ClaimsAuthorization]  
         [Route("staff/approvals/temp")]
         public HttpResponseMessage GetStaffAwaitingApproval()
         {

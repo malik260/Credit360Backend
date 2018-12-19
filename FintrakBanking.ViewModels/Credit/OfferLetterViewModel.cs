@@ -59,6 +59,9 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanApplicationDetailId { get; set; }
         public string interestRateAndFees { get; set; }
         public decimal approvedAmount { get; set; }
+        public short operarionId { get; set; }
+        public string offerLetterIntroduction { get; set; }
+        public bool isRenewal { get; set; }
     }
 
     public class OfferLetterConditionPrecidentViewModel : GeneralEntity
