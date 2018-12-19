@@ -3107,6 +3107,7 @@ namespace FintrakBanking.Repositories.Credit
 
             context.SaveChanges();
         }
+
         public IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate)
         {
             //try
@@ -3115,9 +3116,10 @@ namespace FintrakBanking.Repositories.Credit
 
             List<LoanRepaymentViewModel> model = new List<LoanRepaymentViewModel>();
 
-            var loans = (from b in context.TBL_LOAN
+            var otherLoans = (from b in context.TBL_LOAN
                          where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
                          && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
+                         && b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
                          //&& (b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
                          select new LoanRepaymentViewModel()
                          {
@@ -3140,6 +3142,36 @@ namespace FintrakBanking.Repositories.Credit
                              x.periodInterestAmount = GetPeriodInterestAmountFromAccural(x.loanRefNo, x.companyId);
                              return x;
                          }).ToList();
+
+            var commercialLoanMaturityDate = applicationDate.AddDays(1);
+
+            var commercialLoans = (from b in context.TBL_LOAN
+                              where b.MATURITYDATE  == DbFunctions.TruncateTime(commercialLoanMaturityDate) 
+                              && b.LOANSTATUSID == (short)LoanStatusEnum.Active
+                              && b.ALLOWFORCEDEBITREPAYMENT == true && b.ISDISBURSED == true
+                              && b.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.CommercialLoan
+                              //&& (b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan || b.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.ForeignXRevolving)
+                              select new LoanRepaymentViewModel()
+                              {
+                                  productId = b.PRODUCTID,
+                                  branchId = b.BRANCHID,
+                                  companyId = b.COMPANYID,
+                                  currencyId = b.CURRENCYID,
+                                  exchangeRate = b.EXCHANGERATE,
+                                  //periodInterestAmount = b.OUTSTANDINGINTEREST,
+                                  periodPrincipalAmount = b.OUTSTANDINGPRINCIPAL,
+                                  interestRate = b.INTERESTRATE,
+                                  paymentDate = applicationDate,
+                                  loanId = b.TERMLOANID,
+                                  totalAmount = 0,
+                                  casaAccountId = b.CASAACCOUNTID,
+                                  loanRefNo = b.LOANREFERENCENUMBER,
+                                  casaAccountId2 = b.CASAACCOUNTID2,
+                              }).ToList().Select(x =>
+                              {
+                                  x.periodInterestAmount = GetPeriodInterestAmountFromAccural(x.loanRefNo, x.companyId);
+                                  return x;
+                              }).ToList();
 
             //var commercialLoan = (from b in context.TBL_LOAN
             //                      where b.MATURITYDATE == DbFunctions.TruncateTime(applicationDate) && b.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -3185,7 +3217,7 @@ namespace FintrakBanking.Repositories.Credit
             //                  casaAccountId2 = b.CASAACCOUNTID2,
             //              }).ToList();
 
-            model = loans.ToList(); // scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
+            model = otherLoans.Union(commercialLoans).ToList(); // scheduledLoan.Union(scheduledLoan).Union(fxLoan).ToList();
 
             foreach (var item in model)
             {
