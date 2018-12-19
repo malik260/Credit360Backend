@@ -421,7 +421,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>16.33375in</Top>
+        <Top>15.70875in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>2.28936in</Width>
@@ -458,7 +458,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>16.33375in</Top>
+        <Top>15.70875in</Top>
         <Left>3.88535in</Left>
         <Height>0.25in</Height>
         <Width>3.30985in</Width>
@@ -493,7 +493,7 @@
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>17.22556in</Top>
+        <Top>16.47556in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.34472in</Width>
@@ -529,7 +529,7 @@ cc:   Head, Credit Monitoring Unit, H/O.</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox97</rd:DefaultName>
-        <Top>18.01833in</Top>
+        <Top>17.01833in</Top>
         <Left>0.00895in</Left>
         <Height>0.5625in</Height>
         <Width>7.34472in</Width>
@@ -562,7 +562,7 @@ cc:   Head, Credit Monitoring Unit, H/O.</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox98</rd:DefaultName>
-        <Top>18.86208in</Top>
+        <Top>17.86208in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.34472in</Width>
@@ -598,7 +598,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox99</rd:DefaultName>
-        <Top>19.2475in</Top>
+        <Top>18.2475in</Top>
         <Left>0.00895in</Left>
         <Height>0.76042in</Height>
         <Width>7.34472in</Width>
@@ -634,7 +634,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>21.50447in</Top>
+        <Top>20.50447in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.40235in</Width>
@@ -671,7 +671,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox36</rd:DefaultName>
-        <Top>21.96281in</Top>
+        <Top>20.96281in</Top>
         <Left>0.00895in</Left>
         <Height>0.25in</Height>
         <Width>7.41277in</Width>
@@ -984,7 +984,24 @@ Remarks: ................................................</Value>
                 </Style>
               </TextRun>
               <TextRun>
-                <Value>If there is evidence of any unusual dormancy on the account the currency of the facility, or if you feel that there is any cause for concern regarding these advance.</Value>
+                <Value>If there is evidence of any unusual dormancy on the account the currency of the facility, or if you feel that there</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <HangingIndent>-0.25in</HangingIndent>
+            <ListLevel>1</ListLevel>
+            <Style>
+              <TextAlign>Left</TextAlign>
+            </Style>
+          </Paragraph>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>       is any cause for concern regarding these advance.</Value>
                 <Style>
                   <FontStyle>Normal</FontStyle>
                   <FontWeight>Normal</FontWeight>
@@ -1016,7 +1033,7 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox117</rd:DefaultName>
-        <Top>22.37655in</Top>
+        <Top>21.37655in</Top>
         <Left>0.00895in</Left>
         <Height>1.89584in</Height>
         <Width>7.41277in</Width>
@@ -3897,22 +3914,6 @@ Remarks: ................................................</Value>
           </Border>
         </Style>
       </Rectangle>
-      <Rectangle Name="Rectangle4">
-        <PageBreak>
-          <BreakLocation>Start</BreakLocation>
-        </PageBreak>
-        <KeepTogether>true</KeepTogether>
-        <Top>15.94869in</Top>
-        <Left>0.87829in</Left>
-        <Height>0.07292in</Height>
-        <Width>5.72917in</Width>
-        <ZIndex>31</ZIndex>
-        <Style>
-          <Border>
-            <Style>None</Style>
-          </Border>
-        </Style>
-      </Rectangle>
       <Rectangle Name="Rectangle8">
         <ReportItems>
           <Line Name="Line2">
@@ -4049,11 +4050,11 @@ Remarks: ................................................</Value>
           </Line>
         </ReportItems>
         <KeepTogether>true</KeepTogether>
-        <Top>20.07736in</Top>
+        <Top>19.07736in</Top>
         <Left>0.04843in</Left>
         <Height>1.15923in</Height>
         <Width>7.30524in</Width>
-        <ZIndex>32</ZIndex>
+        <ZIndex>31</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -4077,11 +4078,11 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox26</rd:DefaultName>
-        <Top>20.17236in</Top>
+        <Top>19.17236in</Top>
         <Left>0.14912in</Left>
         <Height>0.25in</Height>
         <Width>2.75592in</Width>
-        <ZIndex>33</ZIndex>
+        <ZIndex>32</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -4109,11 +4110,11 @@ Remarks: ................................................</Value>
           </Paragraph>
         </Paragraphs>
         <rd:DefaultName>Textbox31</rd:DefaultName>
-        <Top>20.41715in</Top>
+        <Top>19.41715in</Top>
         <Left>0.14912in</Left>
         <Height>0.25in</Height>
         <Width>1in</Width>
-        <ZIndex>34</ZIndex>
+        <ZIndex>33</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -4153,7 +4154,7 @@ Remarks: ................................................</Value>
         <Left>0.03113in</Left>
         <Height>0.25in</Height>
         <Width>7.42349in</Width>
-        <ZIndex>35</ZIndex>
+        <ZIndex>34</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -4187,7 +4188,7 @@ Remarks: ................................................</Value>
         <Left>0.0533in</Left>
         <Height>0.41667in</Height>
         <Width>7.34291in</Width>
-        <ZIndex>36</ZIndex>
+        <ZIndex>35</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -4203,7 +4204,7 @@ Remarks: ................................................</Value>
         <Left>0.99079in</Left>
         <Height>0in</Height>
         <Width>5.24494in</Width>
-        <ZIndex>37</ZIndex>
+        <ZIndex>36</ZIndex>
         <Style>
           <Border>
             <Style>Solid</Style>
@@ -4235,7 +4236,7 @@ Remarks: ................................................</Value>
         <Left>5.01333in</Left>
         <Height>0.28556in</Height>
         <Width>2.36913in</Width>
-        <ZIndex>38</ZIndex>
+        <ZIndex>37</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -4267,7 +4268,7 @@ Remarks: ................................................</Value>
         <Top>6.93945in</Top>
         <Height>0.3in</Height>
         <Width>3.11079in</Width>
-        <ZIndex>39</ZIndex>
+        <ZIndex>38</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
@@ -4285,15 +4286,31 @@ Remarks: ................................................</Value>
         <Top>0.06944in</Top>
         <Height>0.625in</Height>
         <Width>2.02664in</Width>
-        <ZIndex>40</ZIndex>
+        <ZIndex>39</ZIndex>
         <Style>
           <Border>
             <Style>None</Style>
           </Border>
         </Style>
       </Image>
+      <Rectangle Name="Rectangle4">
+        <PageBreak>
+          <BreakLocation>Start</BreakLocation>
+        </PageBreak>
+        <KeepTogether>true</KeepTogether>
+        <Top>15.31848in</Top>
+        <Left>0.87829in</Left>
+        <Height>0.07292in</Height>
+        <Width>5.72917in</Width>
+        <ZIndex>40</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Rectangle>
     </ReportItems>
-    <Height>24.64739in</Height>
+    <Height>23.35572in</Height>
     <Style />
   </Body>
   <Width>7.47679in</Width>
