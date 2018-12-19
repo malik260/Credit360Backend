@@ -549,16 +549,49 @@ namespace FintrakBanking.Repositories.Credit
                         approvalStatus = c.c.APPROVALSTATUS,
                         allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
-                        exchangeRate = c.c.EXCHANGERATE
+                        exchangeRate = c.c.EXCHANGERATE,
+                        availableValue = 0
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First())
                     ;
 
+            collaterals = ResolveCollateralValues(collaterals.ToList());
+
             //var count = collaterals.Count();
             //var test = collaterals;
 
             return collaterals;
+        }
+
+        private List<CollateralViewModel> ResolveCollateralValues(List<CollateralViewModel> collaterals)
+        {
+            decimal usage;
+            List<CollateralViewModel> list = new List<CollateralViewModel>();
+            foreach (var collateral in collaterals)
+            {
+                usage = 0;
+                var mappings = context.TBL_LOAN_COLLATERAL_MAPPING.Where(m => m.COLLATERALCUSTOMERID == collateral.collateralCustomerId && m.DELETED == false && m.ISRELEASED == false);
+                foreach (var mapping in mappings) usage = usage + GetLoanOutstandingBalance(mapping.LOANID,mapping.LOANSYSTEMTYPEID);
+                collateral.availableValue = (decimal)collateral.collateralValue - usage;
+                list.Add(collateral);
+            }
+            return list;
+        }
+
+        private decimal GetLoanOutstandingBalance(int loanId, int loanSystemTypeId)
+        {
+            switch (loanSystemTypeId)
+            {
+                case (int)LoanSystemTypeEnum.TermDisbursedFacility :
+                    break;
+                case (int)LoanSystemTypeEnum.OverdraftFacility :
+                    break;
+                case  (int)LoanSystemTypeEnum.ContingentLiability :
+                    break;
+             }
+
+            return 0;
         }
 
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)
