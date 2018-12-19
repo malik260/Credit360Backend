@@ -952,8 +952,8 @@ namespace FintrakBanking.Repositories.Credit
             if (loanInput.irregularPaymentSchedule.Count() == 0)
                 throw new ConditionNotMetException("Specify a repayment schedule");
 
-            if (loanInput.principalAmount != (loanInput.irregularPaymentSchedule.Sum(x => x.paymentAmount)))
-                throw new ConditionNotMetException("Payment Amount is not equal to the principal Amount");
+            //if (loanInput.principalAmount != (loanInput.irregularPaymentSchedule.Sum(x => x.paymentAmount)))
+            //    throw new ConditionNotMetException("Payment Amount is not equal to the principal Amount");
 
             var minimumPaymentDate = loanInput.irregularPaymentSchedule.Min(x => x.paymentDate);
 
