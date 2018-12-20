@@ -128,6 +128,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public short jobSubTypeId { get; set; }
         public int? jobSubTypeclassId { get; set; }
         public string description { get; set; }
+        public string description2 { get; set; }
         public decimal? amount { get; set; }
         public string accountNumber { get; set; }
         public int? currencyId { get; set; }
@@ -152,6 +153,8 @@ namespace FintrakBanking.ViewModels.WorkFlow
 
     public class JobRequestCollateralSearchViewModel : GeneralEntity
     {
+        public string description2 { get; set; }
+
         public string currencyCode { get; set; }
 
         public int glAccountId { get; set; }

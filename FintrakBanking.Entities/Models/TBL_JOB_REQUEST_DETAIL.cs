@@ -23,6 +23,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(2000)]
         public string DESCRIPTION { get; set; }
 
+        public string DESCRIPTION2 { get; set; }
+
         //[Column(TypeName = "money")]
         public decimal? AMOUNT { get; set; }
 
