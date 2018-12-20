@@ -434,6 +434,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>FORM3800B.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportDataset\MiddleOffice1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportDataset\StaffInfoDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -694,11 +699,6 @@
     </Compile>
     <Compile Include="Reports\Credit\TestReport.aspx.designer.cs">
       <DependentUpon>TestReport.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Reports\ReportDataset\CollateralDataSet.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportDataset\LoanDataSet.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -988,9 +988,6 @@
     <Content Include="Reports\ReportDataset\LoanDataSet.xsc">
       <DependentUpon>LoanDataSet.xsd</DependentUpon>
     </Content>
-    <Content Include="Reports\ReportDataset\CollateralDataSet.xsc">
-      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
-    </Content>
     <Content Include="Content\bootstrap.min.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Content\bootstrap-reboot.min.css.map" />
@@ -1009,14 +1006,6 @@
       <LastGenOutput>Credit1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </None>
-    <None Include="Reports\ReportDataset\CollateralDataSet.xsd">
-      <SubType>Designer</SubType>
-      <Generator>MSDataSetGenerator</Generator>
-      <LastGenOutput>CollateralDataSet.Designer.cs</LastGenOutput>
-    </None>
-    <Content Include="Reports\ReportDataset\CollateralDataSet.xss">
-      <DependentUpon>CollateralDataSet.xsd</DependentUpon>
-    </Content>
     <Content Include="Reports\ReportDataset\FORM3800B.xsc">
       <DependentUpon>FORM3800B.xsd</DependentUpon>
     </Content>
@@ -1059,6 +1048,17 @@
     </Content>
     <Content Include="Reports\ReportDataset\StaffInfoDataSet.xsc">
       <DependentUpon>StaffInfoDataSet.xsd</DependentUpon>
+    </Content>
+    <Content Include="Reports\ReportDataset\MiddleOffice.xsc">
+      <DependentUpon>MiddleOffice.xsd</DependentUpon>
+    </Content>
+    <None Include="Reports\ReportDataset\MiddleOffice.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>MiddleOffice1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Reports\ReportDataset\MiddleOffice.xss">
+      <DependentUpon>MiddleOffice.xsd</DependentUpon>
     </Content>
     <None Include="Reports\ReportDataset\StaffInfoDataSet.xsd">
       <Generator>MSDataSetGenerator</Generator>

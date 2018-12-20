@@ -14,10 +14,6 @@
         [Key]
         public short HUBSTAFFID { get; set; }
 
-        //[Required]
-        //[StringLength(200)]
-        //public string HUBNAME { get; set; }
-
         public short JOBTYPEHUBID { get; set; }
 
         public int STAFFID { get; set; }
