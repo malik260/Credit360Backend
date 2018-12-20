@@ -1087,6 +1087,7 @@ namespace FintrakBanking.Repositories.CRMS
                          CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                          OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL + x.PASTDUEPRINCIPAL,
                          FEES = "",
+                         CRMSCODE=x.CRMSCODE,
                          // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                          EXPIRY_DATE = x.MATURITYDATE,
                          REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
@@ -1174,6 +1175,7 @@ namespace FintrakBanking.Repositories.CRMS
                              CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                              OUTSTANDING_AMOUNT = c.AVAILABLEBALANCE < 0 ? Math.Abs(c.AVAILABLEBALANCE) : 0,
                              FEES = "",
+                             CRMSCODE = x.CRMSCODE,
 
                              // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                              EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
@@ -1262,6 +1264,8 @@ namespace FintrakBanking.Repositories.CRMS
                               // OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
                               OUTSTANDING_AMOUNT = x.CONTINGENTAMOUNT,
                               FEES = "",
+                              CRMSCODE = x.CRMSCODE,
+
                               // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                               EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
                               REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
