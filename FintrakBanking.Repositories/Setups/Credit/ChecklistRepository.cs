@@ -25,7 +25,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingContext context;
         private IGeneralSetupRepository _genSetup;
         private IAuditTrailRepository auditTrail;
-        private IWorkflow workFlow;
+        private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
 
         public ChecklistRepository(FinTrakBankingContext _context, IApprovalLevelStaffRepository _level,
@@ -35,7 +35,7 @@ namespace FintrakBanking.Repositories.Credit
             this.context = _context;
             this._genSetup = genSetup;
             this.auditTrail = _auditTrail;
-            this.workFlow = _workFlow;
+            this.workflow = _workFlow;
             this.level = _level;
         }
 
@@ -1726,14 +1726,14 @@ namespace FintrakBanking.Repositories.Credit
                     if (model.checkListStatusId == (int)CheckListStatusEnum.Deferred || model.checkListStatusId == (int)CheckListStatusEnum.Waived)
                     {
 
-                        workFlow.StaffId = model.createdBy;
-                        workFlow.CompanyId = model.companyId;
-                        workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
-                        workFlow.TargetId = loanConditionId;
-                        workFlow.Comment = "LMS Checklist Approval";
-                        workFlow.OperationId = (int)OperationsEnum.ChecklistApproval;
-                        workFlow.ExternalInitialization = true;
-                        workFlow.LogActivity();
+                        workflow.StaffId = model.createdBy;
+                        workflow.CompanyId = model.companyId;
+                        workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                        workflow.TargetId = loanConditionId;
+                        workflow.Comment = "LMS Checklist Approval";
+                        workflow.OperationId = (int)OperationsEnum.ChecklistApproval;
+                        workflow.ExternalInitialization = true;
+                        workflow.LogActivity();
                     }
                     trans.Commit();
                     return output;
@@ -1843,18 +1843,21 @@ namespace FintrakBanking.Repositories.Credit
         {
             entity.externalInitialization = false;
 
+            var appl = context.TBL_LMSR_APPLICATION.Find(entity.loanApplicationId);
+
             using (var trans = context.Database.BeginTransaction())
             {
                 try
                 {
-                    workFlow.StaffId = entity.staffId;
-                    workFlow.CompanyId = entity.companyId;
-                    workFlow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
-                    workFlow.TargetId = entity.targetId;
-                    workFlow.Comment = entity.comment;
-                    workFlow.OperationId = (int)OperationsEnum.ChecklistApproval;
+                    workflow.StaffId = entity.staffId;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workflow.TargetId = entity.targetId;
+                    workflow.Comment = entity.comment;
+                    workflow.OperationId = (int)OperationsEnum.ChecklistApproval;
+                    workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
-                    workFlow.LogActivity();
+                    workflow.LogActivity();
 
 
                     if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
@@ -1879,7 +1882,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     }
 
-                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    if (workflow.NewState == (int)ApprovalState.Ended)
                     {
                         var response = ApproveChecklistDeferral(entity.targetId, entity);
 
@@ -1917,7 +1920,7 @@ namespace FintrakBanking.Repositories.Credit
                                  && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                   select s).FirstOrDefault();
 
-            if (workFlow.NewState != (int)ApprovalState.Ended)
+            if (workflow.NewState != (int)ApprovalState.Ended)
             {
                 if (checklistRecord.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing)
                 {
@@ -1925,7 +1928,7 @@ namespace FintrakBanking.Repositories.Credit
                     deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 }
             }
-            else if (workFlow.NewState == (int)ApprovalState.Ended)
+            else if (workflow.NewState == (int)ApprovalState.Ended)
             {
                 checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                 deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
