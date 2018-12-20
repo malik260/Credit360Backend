@@ -431,6 +431,7 @@ namespace FintrakBanking.Repositories.CRMS
                     ws.Cells[1, 39].Value = "GUARANTOR_UNIQUE_IDENTIFICATION_TYPE";
                     ws.Cells[1, 40].Value = "GUARANTOR_UNIQUE_IDENTIFICATION";
                     ws.Cells[1, 41].Value = "AMOUNT_GUARANTEED";
+                    ws.Cells[1, 42].Value = "LOAN_REFERENCE_NUMBER";
 
                     for (int i = 2; i <= loanInput.Count + 1; i++)
                     {
@@ -485,7 +486,7 @@ namespace FintrakBanking.Repositories.CRMS
                             ws.Cells[i, 41].Value = guarantee.guaranteeValue;// record.AMOUNT_GUARANTEED;
 
                         }
-
+                        ws.Cells[i, 42].Value = record.REFERENCENUMBER; ;
                     }
                     fileBytes = pck.GetAsByteArray();
                     excel.reportData = fileBytes;
@@ -1798,7 +1799,7 @@ namespace FintrakBanking.Repositories.CRMS
                          SYNDICATION_NAME = a.FIELD2,
                          SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                          PARTICIPATING_BANK_CODE = "",
-
+                         REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                      }).ToList();
 
@@ -1875,6 +1876,7 @@ namespace FintrakBanking.Repositories.CRMS
                              SYNDICATION_NAME = a.FIELD2,
                              SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                              PARTICIPATING_BANK_CODE = "",
+                             REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                          }).ToList();
 
@@ -1951,6 +1953,7 @@ namespace FintrakBanking.Repositories.CRMS
                               SYNDICATION_NAME = a.FIELD2,
                               SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                               PARTICIPATING_BANK_CODE = "",
+                              REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                           }).ToList();
 
