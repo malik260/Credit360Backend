@@ -14156,7 +14156,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var item in model)
                 {
-                    item.LOANSTATUSID = (short)LoanStatusEnum.Terminated;
+                    item.LOANSTATUSID = (short)LoanStatusEnum.Completed;
                     item.DATETIMEUPDATED = DateTime.Now.Date;
                     item.LASTUPDATEDBY = item.CREATEDBY;
                 }
