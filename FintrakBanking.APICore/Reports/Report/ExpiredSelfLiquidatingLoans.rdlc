@@ -741,7 +741,7 @@
                                   <Value>=Fields!disburseDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
-                                    <Format>dd-MMM-yyyy</Format>
+                                    <Format>dd/MM/yyyy </Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -762,6 +762,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -776,7 +777,7 @@
                                   <Value>=Fields!maturityDate.Value</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
-                                    <Format>dd-MMM-yyyy</Format>
+                                    <Format>dd/MM/yyyy </Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
