@@ -431,6 +431,7 @@ namespace FintrakBanking.Repositories.CRMS
                     ws.Cells[1, 39].Value = "GUARANTOR_UNIQUE_IDENTIFICATION_TYPE";
                     ws.Cells[1, 40].Value = "GUARANTOR_UNIQUE_IDENTIFICATION";
                     ws.Cells[1, 41].Value = "AMOUNT_GUARANTEED";
+                    ws.Cells[1, 42].Value = "LOAN_REFERENCE_NUMBER";
 
                     for (int i = 2; i <= loanInput.Count + 1; i++)
                     {
@@ -485,7 +486,7 @@ namespace FintrakBanking.Repositories.CRMS
                             ws.Cells[i, 41].Value = guarantee.guaranteeValue;// record.AMOUNT_GUARANTEED;
 
                         }
-
+                        ws.Cells[i, 42].Value = record.REFERENCENUMBER; ;
                     }
                     fileBytes = pck.GetAsByteArray();
                     excel.reportData = fileBytes;
@@ -1087,6 +1088,7 @@ namespace FintrakBanking.Repositories.CRMS
                          CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                          OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL + x.PASTDUEPRINCIPAL,
                          FEES = "",
+                         CRMSCODE = x.CRMSCODE,
                          // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                          EXPIRY_DATE = x.MATURITYDATE,
                          REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
@@ -1174,6 +1176,7 @@ namespace FintrakBanking.Repositories.CRMS
                              CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                              OUTSTANDING_AMOUNT = c.AVAILABLEBALANCE < 0 ? Math.Abs(c.AVAILABLEBALANCE) : 0,
                              FEES = "",
+                             CRMSCODE = x.CRMSCODE,
 
                              // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                              EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
@@ -1262,6 +1265,8 @@ namespace FintrakBanking.Repositories.CRMS
                               // OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
                               OUTSTANDING_AMOUNT = x.CONTINGENTAMOUNT,
                               FEES = "",
+                              CRMSCODE = x.CRMSCODE,
+
                               // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                               EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
                               REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
@@ -1794,7 +1799,7 @@ namespace FintrakBanking.Repositories.CRMS
                          SYNDICATION_NAME = a.FIELD2,
                          SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                          PARTICIPATING_BANK_CODE = "",
-
+                         REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                      }).ToList();
 
@@ -1871,6 +1876,7 @@ namespace FintrakBanking.Repositories.CRMS
                              SYNDICATION_NAME = a.FIELD2,
                              SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                              PARTICIPATING_BANK_CODE = "",
+                             REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                          }).ToList();
 
@@ -1947,6 +1953,7 @@ namespace FintrakBanking.Repositories.CRMS
                               SYNDICATION_NAME = a.FIELD2,
                               SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                               PARTICIPATING_BANK_CODE = "",
+                              REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                           }).ToList();
 
