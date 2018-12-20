@@ -102,6 +102,7 @@ namespace FintrakBanking.Repositories.Customer
                          .Where(x => x.FILENAME == model.fileName
                              && x.FILEEXTENSION == model.fileExtension
                              && x.LOANAPPLICATIONID == model.loanApplicationId
+                             && x.CHECKLISTDEFINITIONID == model.checkListDefinitionId
                              );
 
             if (existing.Count() > 0 && model.overwrite == false) return 3;
