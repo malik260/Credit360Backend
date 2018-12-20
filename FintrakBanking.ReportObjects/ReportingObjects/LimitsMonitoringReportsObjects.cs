@@ -286,7 +286,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
                                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
                                                    bookingDate = a.BOOKINGDATE,
-                                                   disburseDate = (a.DISBURSEDATE == null ? default(DateTime) : a.DISBURSEDATE),
+                                                   disburseDate = a.DISBURSEDATE,
                                                    maturityDate = a.MATURITYDATE,
                                                    productName = b.PRODUCTNAME,
                                                    outstandingInterest = a.OUTSTANDINGINTEREST,
