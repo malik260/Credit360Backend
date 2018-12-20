@@ -40,7 +40,7 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 
                     var dateDifference = currentDate - incomingDate;
 
-                    if (dateDifference.Seconds > 30)
+                    if (dateDifference.Seconds > 60)
                     {
                         this.offerLetterReport.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
                         this.offerLetterReport.LocalReport.Refresh();

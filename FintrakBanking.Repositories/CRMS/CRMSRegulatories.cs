@@ -431,6 +431,7 @@ namespace FintrakBanking.Repositories.CRMS
                     ws.Cells[1, 39].Value = "GUARANTOR_UNIQUE_IDENTIFICATION_TYPE";
                     ws.Cells[1, 40].Value = "GUARANTOR_UNIQUE_IDENTIFICATION";
                     ws.Cells[1, 41].Value = "AMOUNT_GUARANTEED";
+                    ws.Cells[1, 42].Value = "LOAN_REFERENCE_NUMBER";
 
                     for (int i = 2; i <= loanInput.Count + 1; i++)
                     {
@@ -485,7 +486,7 @@ namespace FintrakBanking.Repositories.CRMS
                             ws.Cells[i, 41].Value = guarantee.guaranteeValue;// record.AMOUNT_GUARANTEED;
 
                         }
-
+                        ws.Cells[i, 42].Value = record.REFERENCENUMBER; ;
                     }
                     fileBytes = pck.GetAsByteArray();
                     excel.reportData = fileBytes;
@@ -722,11 +723,13 @@ namespace FintrakBanking.Repositories.CRMS
                      join op in context.TBL_LOAN_REVIEW_OPERATION on x.TERMLOANID equals op.LOANID
                      join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
                      join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                     join a in context.TBL_LMSR_APPLICATION_DETAIL on x.TERMLOANID equals a.LOANID
+                     join a in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals a.LOANREVIEWAPPLICATIONID
                      join l in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                      join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                      join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
+                     join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
+
                      let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
@@ -758,8 +761,8 @@ namespace FintrakBanking.Repositories.CRMS
                          LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                          RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                          COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                         FUNDING_SOURCE_CATEGORY = ld.CRMSFUNDINGSOURCECATEGORY,
-                        ECCI_NUMBER = ld.CRMS_ECCI_NUMBER,
+                         FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
+                         ECCI_NUMBER = ld.CRMS_ECCI_NUMBER,
                         REASON_FOR_RESTRUCTURING = op.REVIEWDETAILS,
                         FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == ld.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                         // LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
@@ -809,11 +812,13 @@ namespace FintrakBanking.Repositories.CRMS
                          join op in context.TBL_LOAN_REVIEW_OPERATION on x.REVOLVINGLOANID equals op.LOANID
                          join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
                          join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                         join a in context.TBL_LMSR_APPLICATION_DETAIL on x.REVOLVINGLOANID equals a.LOANID
+                         join a in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals a.LOANREVIEWAPPLICATIONID
                          join l in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                          join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
+                         join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
+
                          let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
@@ -844,7 +849,7 @@ namespace FintrakBanking.Repositories.CRMS
                              LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                              COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                             FUNDING_SOURCE_CATEGORY = ld.CRMSFUNDINGSOURCECATEGORY,
+                             FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                              ECCI_NUMBER = ld.CRMS_ECCI_NUMBER,
                              REASON_FOR_RESTRUCTURING = op.REVIEWDETAILS,
                              FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == ld.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
@@ -896,10 +901,12 @@ namespace FintrakBanking.Repositories.CRMS
                           join op in context.TBL_LOAN_REVIEW_OPERATION on x.CONTINGENTLOANID equals op.LOANID
                           join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
                           join ld in context.TBL_LOAN_APPLICATION_DETAIL on x.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
-                          join a in context.TBL_LMSR_APPLICATION_DETAIL on x.CONTINGENTLOANID equals a.LOANID
+                          join a in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals a.LOANREVIEWAPPLICATIONID
                           join l in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                           join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                           join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
+                          join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
+
                           join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
                           let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
@@ -931,7 +938,7 @@ namespace FintrakBanking.Repositories.CRMS
                               LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                               RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                               COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                              FUNDING_SOURCE_CATEGORY = ld.CRMSFUNDINGSOURCECATEGORY,
+                              FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                               ECCI_NUMBER = ld.CRMS_ECCI_NUMBER,
                               REASON_FOR_RESTRUCTURING = op.REVIEWDETAILS,
                               FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == ld.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
@@ -1065,6 +1072,7 @@ namespace FintrakBanking.Repositories.CRMS
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                      join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                      join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
+                     join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
                      let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
@@ -1087,13 +1095,14 @@ namespace FintrakBanking.Repositories.CRMS
                          CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                          OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL + x.PASTDUEPRINCIPAL,
                          FEES = "",
+                         CRMSCODE=x.CRMSCODE,
                          // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                          EXPIRY_DATE = x.MATURITYDATE,
                          REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                          LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                          RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                          COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                         FUNDING_SOURCE_CATEGORY = a.CRMSFUNDINGSOURCECATEGORY,
+                         FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                          ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
                          FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                          LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
@@ -1154,6 +1163,8 @@ namespace FintrakBanking.Repositories.CRMS
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                          join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
+                         join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
+
                          let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
@@ -1174,6 +1185,7 @@ namespace FintrakBanking.Repositories.CRMS
                              CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                              OUTSTANDING_AMOUNT = c.AVAILABLEBALANCE < 0 ? Math.Abs(c.AVAILABLEBALANCE) : 0,
                              FEES = "",
+                             CRMSCODE = x.CRMSCODE,
 
                              // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                              EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
@@ -1181,7 +1193,7 @@ namespace FintrakBanking.Repositories.CRMS
                              LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                              COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                             FUNDING_SOURCE_CATEGORY = a.CRMSFUNDINGSOURCECATEGORY,
+                             FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                              ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
                              FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                              LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
@@ -1240,6 +1252,8 @@ namespace FintrakBanking.Repositories.CRMS
                           join l in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                           join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                           join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
+                          join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
+
                           join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
                           let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
@@ -1262,13 +1276,15 @@ namespace FintrakBanking.Repositories.CRMS
                               // OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
                               OUTSTANDING_AMOUNT = x.CONTINGENTAMOUNT,
                               FEES = "",
+                              CRMSCODE = x.CRMSCODE,
+
                               // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                               EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
                               REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                               LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                               RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                               COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                              FUNDING_SOURCE_CATEGORY = a.CRMSFUNDINGSOURCECATEGORY,
+                              FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                               ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
                               FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                               LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
@@ -1725,6 +1741,8 @@ namespace FintrakBanking.Repositories.CRMS
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                      join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                      join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
+                     join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
+
                      let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q=>q.CITYID,ci=>ci.CITYID, (q,ci)=> new { q, ci}).Where(f=>f.q.CUSTOMERID==b.CUSTOMERID)
                      .Select(q=>q.ci.LOCALGOVERNMENTID).FirstOrDefault()
@@ -1754,7 +1772,7 @@ namespace FintrakBanking.Repositories.CRMS
                          LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                          RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                          COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                         FUNDING_SOURCE_CATEGORY = a.CRMSFUNDINGSOURCECATEGORY,
+                         FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                          ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
                          FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                          LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
@@ -1794,7 +1812,7 @@ namespace FintrakBanking.Repositories.CRMS
                          SYNDICATION_NAME = a.FIELD2,
                          SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                          PARTICIPATING_BANK_CODE = "",
-
+                         REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                      }).ToList();
 
@@ -1803,6 +1821,8 @@ namespace FintrakBanking.Repositories.CRMS
                          join l in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                          join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                          join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
+                         join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
+
                          join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
                          let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
@@ -1831,7 +1851,7 @@ namespace FintrakBanking.Repositories.CRMS
                              LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                              COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                             FUNDING_SOURCE_CATEGORY = a.CRMSFUNDINGSOURCECATEGORY,
+                             FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                              ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
                              FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                              LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
@@ -1871,6 +1891,7 @@ namespace FintrakBanking.Repositories.CRMS
                              SYNDICATION_NAME = a.FIELD2,
                              SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                              PARTICIPATING_BANK_CODE = "",
+                             REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                          }).ToList();
 
@@ -1879,6 +1900,8 @@ namespace FintrakBanking.Repositories.CRMS
                           join l in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                           join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                           join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
+                          join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
+
                           join p in context.TBL_PRODUCT on x.PRODUCTID equals p.PRODUCTID
                           let lgaId = context.TBL_CUSTOMER_ADDRESS
                      .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
@@ -1907,7 +1930,7 @@ namespace FintrakBanking.Repositories.CRMS
                               LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
                               RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                               COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
-                              FUNDING_SOURCE_CATEGORY = a.CRMSFUNDINGSOURCECATEGORY,
+                              FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                               ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
                               FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
                               LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
@@ -1947,6 +1970,7 @@ namespace FintrakBanking.Repositories.CRMS
                               SYNDICATION_NAME = a.FIELD2,
                               SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                               PARTICIPATING_BANK_CODE = "",
+                              REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                           }).ToList();
 

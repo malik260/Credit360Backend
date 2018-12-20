@@ -286,6 +286,14 @@ namespace FintrakBanking.ViewModels.Credit
         public bool disAllowCollateral { get; set; }
         public string policyinsuranceType { get; set; }
         public DateTime dateOfManufacture { get; set; }
+
+        public bool available
+        {
+            get
+            {
+                return availableValue > 0 ? true : false;
+            }
+        }
     }
 
     public class crossGarantee
