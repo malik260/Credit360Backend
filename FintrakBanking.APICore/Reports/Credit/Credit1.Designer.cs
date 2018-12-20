@@ -4363,6 +4363,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnproductPriceIndex;
             
+            private global::System.Data.DataColumn columnofferLetterIntroduction;
+            
+            private global::System.Data.DataColumn columnisRenewal;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public OfferLetterDetailDataTable() {
@@ -4558,6 +4562,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn offerLetterIntroductionColumn {
+                get {
+                    return this.columnofferLetterIntroduction;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn isRenewalColumn {
+                get {
+                    return this.columnisRenewal;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -4613,7 +4633,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string repaymentSchedule, 
                         string customerPhoneNumber, 
                         string purpose, 
-                        string productPriceIndex) {
+                        string productPriceIndex, 
+                        string offerLetterIntroduction, 
+                        string isRenewal) {
                 OfferLetterDetailRow rowOfferLetterDetailRow = ((OfferLetterDetailRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         loanApplicationId,
@@ -4635,7 +4657,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         repaymentSchedule,
                         customerPhoneNumber,
                         purpose,
-                        productPriceIndex};
+                        productPriceIndex,
+                        offerLetterIntroduction,
+                        isRenewal};
                 rowOfferLetterDetailRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowOfferLetterDetailRow);
                 return rowOfferLetterDetailRow;
@@ -4678,6 +4702,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columncustomerPhoneNumber = base.Columns["customerPhoneNumber"];
                 this.columnpurpose = base.Columns["purpose"];
                 this.columnproductPriceIndex = base.Columns["productPriceIndex"];
+                this.columnofferLetterIntroduction = base.Columns["offerLetterIntroduction"];
+                this.columnisRenewal = base.Columns["isRenewal"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4723,6 +4749,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnpurpose);
                 this.columnproductPriceIndex = new global::System.Data.DataColumn("productPriceIndex", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnproductPriceIndex);
+                this.columnofferLetterIntroduction = new global::System.Data.DataColumn("offerLetterIntroduction", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnofferLetterIntroduction);
+                this.columnisRenewal = new global::System.Data.DataColumn("isRenewal", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnisRenewal);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -16285,6 +16315,39 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string offerLetterIntroduction {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.offerLetterIntroductionColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'offerLetterIntroduction\' in table \'OfferLetterDetail\' is DB" +
+                                "Null.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.offerLetterIntroductionColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string isRenewal {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetterDetail.isRenewalColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'isRenewal\' in table \'OfferLetterDetail\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetterDetail.isRenewalColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IsloanApplicationIdNull() {
                 return this.IsNull(this.tableOfferLetterDetail.loanApplicationIdColumn);
             }
@@ -16521,6 +16584,30 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetproductPriceIndexNull() {
                 this[this.tableOfferLetterDetail.productPriceIndexColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsofferLetterIntroductionNull() {
+                return this.IsNull(this.tableOfferLetterDetail.offerLetterIntroductionColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetofferLetterIntroductionNull() {
+                this[this.tableOfferLetterDetail.offerLetterIntroductionColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsisRenewalNull() {
+                return this.IsNull(this.tableOfferLetterDetail.isRenewalColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetisRenewalNull() {
+                this[this.tableOfferLetterDetail.isRenewalColumn] = global::System.Convert.DBNull;
             }
         }
         

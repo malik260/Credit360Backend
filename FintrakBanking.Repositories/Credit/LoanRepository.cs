@@ -4532,11 +4532,24 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanViewModel> GetLoanApplicationExistingLoans(int applicationId)
         {
             var customerIds = context.TBL_LOAN_APPLICATION_DETAIL
-                                .Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false)
+                              .Where(x => x.LOANAPPLICATIONID == applicationId && x.DELETED == false)
                                 .Select(x => x.CUSTOMERID)
                                 .ToList();
+            //List<CustomerExposure> customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+            //                                   where a.LOANAPPLICATIONID == applicationId && a.DELETED == false
+            //                                   select new CustomerExposure()
+            //                                   {
+            //                                       customerId = a.CUSTOMERID,
+            //                                   }
+            //                                   ).ToList();
 
-            var data = GetAllLoans().Where(l => customerIds.Contains(l.customerId) && l.loanStatusId == (short)LoanStatusEnum.Active).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
+                      var data = GetAllLoans().Where(l => customerIds.Contains(l.customerId) && l.loanStatusId == (short)LoanStatusEnum.Active).GroupBy(x => x.loanId).Select(g => g.FirstOrDefault());
+            //var limit = GetCurrentCustomerExposure(customers, 1).Where(m=>m.facilityType == "TOTAL").FirstOrDefault();
+            //foreach(var loan in data)
+            //{
+            //    loan.totalOutstandingAmount = limit.proposedLimit;
+            //    loan.totalExistingLimitAmount = limit.existingLimit;
+            //}
             return data.ToList();
         }
 
@@ -6679,7 +6692,8 @@ namespace FintrakBanking.Repositories.Credit
                 facilityType = "TOTAL",
                 existingLimit = exposures.Sum(t => t.existingLimit),
                 proposedLimit = exposures.Sum(t => t.proposedLimit),
-                recommendedLimit = exposure.Sum(t => t.recommendedLimit),
+                recommendedLimit = exposures.Sum(t => t.recommendedLimit),
+                outstandings = exposures.Sum(t=>t.outstandings),
                 PastDueObligationsInterest = exposures.Sum(t => t.PastDueObligationsInterest),
                 PastDueObligationsPrincipal = exposures.Sum(t => t.PastDueObligationsPrincipal),
                 reviewDate = DateTime.Now,
@@ -8574,7 +8588,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join e in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join c in context.TBL_CUSTOMER on a.CUSTOMERID equals c.CUSTOMERID
                                    where a.ISDISBURSED == true && (b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension || b.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction) && //(int)LoanSystemTypeEnum.OverdraftFacility &&
-                                   e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.OPERATIONPERFORMED == false
+                                   e.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved && b.OPERATIONPERFORMED == false && a.LOANSTATUSID != (short)LoanStatusEnum.Terminated
                                    orderby b.DATETIMECREATED descending
                                    select new LoanViewModel
                                    {
@@ -8965,7 +8979,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
-                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
+                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)  //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
                                    && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
@@ -9013,7 +9027,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
-                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed)
+                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)//|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
                                    && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {

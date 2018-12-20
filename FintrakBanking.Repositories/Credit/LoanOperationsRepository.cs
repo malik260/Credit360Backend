@@ -14156,7 +14156,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 foreach (var item in model)
                 {
-                    item.LOANSTATUSID = (short)LoanStatusEnum.Terminated;
+                    item.LOANSTATUSID = (short)LoanStatusEnum.Completed;
                     item.DATETIMEUPDATED = DateTime.Now.Date;
                     item.LASTUPDATEDBY = item.CREATEDBY;
                 }
@@ -15195,7 +15195,7 @@ namespace FintrakBanking.Repositories.Credit
                                 select new LoanPaymentRestructureScheduleInputViewModel()
                                 {
                                     loanId = b.CONTINGENTLOANID,
-                                    principalAmount = (double)b.CONTINGENTAMOUNT,
+                                    principalAmount = (double)a.PREPAYMENT,
                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                     //interestRate = b.INTERESTRATE,
                                     effectiveDate = b.EFFECTIVEDATE,
