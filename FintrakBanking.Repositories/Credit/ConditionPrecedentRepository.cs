@@ -111,6 +111,7 @@ namespace FintrakBanking.Repositories.Credit
                         ISEXTERNAL = (bool)c.ISEXTERNAL,
                         ISSUBSEQUENT = c.ISSUBSEQUENT,
                         CREATEDBY = c.CREATEDBY,
+                        CHECKLISTVALIDATED=false,
                         TIMELINEID = c.TIMELINEID,
                         LOANAPPLICATIONDETAILID = entity.detailId,
                         RESPONSE_TYPEID = c.RESPONSE_TYPEID,
