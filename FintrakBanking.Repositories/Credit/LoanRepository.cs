@@ -2950,6 +2950,7 @@ namespace FintrakBanking.Repositories.Credit
                         trans.Commit();
                         if (workflow.NewState != (int)ApprovalState.Ended)
                         {
+                            
                             if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
                             else return 3;
                         }
@@ -8207,13 +8208,13 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanViewModel> getDisbursedCommercialLoanTrancheDetailsById(int loanId)//GetDisbursedLoanByLoanId
         {
             var applicationDate = generalSetup.GetApplicationDate();
-            var loanRecord = context.TBL_LOAN.Find(loanId);
-            var loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID);
+            TBL_LOAN loanRecord = context.TBL_LOAN.Find(loanId);
+            var relatedLoanRecords = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID && x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.ISDISBURSED == true).ToList();
             LoanViewModel loanDetails;
             List<LoanViewModel> tranches = new List<LoanViewModel>();
-            foreach (var item in loans)
+            foreach (var item in relatedLoanRecords)
             {
-                loanDetails = (from a in context.TBL_LOAN
+                 loanDetails = (from a in context.TBL_LOAN
                                    join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                    join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join f in context.TBL_PRODUCT on a.PRODUCTID equals f.PRODUCTID
@@ -8335,7 +8336,7 @@ namespace FintrakBanking.Repositories.Credit
                                    }).FirstOrDefault();
 
                 if (loanDetails != null) tranches.Add(loanDetails);
-
+                loanDetails = new LoanViewModel();
             };
 
             return tranches;
