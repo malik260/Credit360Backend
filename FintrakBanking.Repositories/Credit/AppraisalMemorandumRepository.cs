@@ -398,7 +398,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
                 {
                     appl.APPROVEDDATE = applicationDate;
-                    appl.FINALAPPROVAL_LEVELID = workflow.StatusId;
+                    appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
                 }
                 if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
                 if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!

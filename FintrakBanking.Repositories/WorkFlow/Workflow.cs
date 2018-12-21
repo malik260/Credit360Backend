@@ -181,7 +181,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             SetResponseInformation();
 
-            if (this.comment == "flow_test") { throw new SecureException("status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
+            if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
             var trail = new TBL_APPROVAL_TRAIL
             {
@@ -263,6 +263,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void SetResponseInformation()
         {
+            response.fromLevelId = this.fromLevelId;
             response.statusId = this.statusId;
             response.stateId = this.newStateId;
             response.nextLevelId = this.nextLevelId;
