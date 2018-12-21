@@ -42,6 +42,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId,int companyId);
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
+
+        List<LoanViewModel> getDisbursedCommercialLoanTrancheDetailsById(int loanId);
+
         LoanViewModel GetDisbursedLoanByLoanId(int loanId);
 
         LoanViewModel GetGroupLoanByLoanId(int loanId);

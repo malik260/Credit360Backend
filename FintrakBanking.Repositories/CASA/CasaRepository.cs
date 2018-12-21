@@ -208,55 +208,59 @@ namespace FintrakBanking.Repositories.CASA
         {
             int customerGroupId = context.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault(x => x.CUSTOMERID == customerId).CUSTOMERGROUPID;
 
-            return (from data in context.TBL_CASA
+            var result = (from data in context.TBL_CASA
                     join cust in context.TBL_CUSTOMER on data.CUSTOMERID equals cust.CUSTOMERID
                     join custGroup in context.TBL_CUSTOMER_GROUP_MAPPING on cust.CUSTOMERID equals custGroup.CUSTOMERID
                     join od in context.TBL_LOAN_REVOLVING on data.CASAACCOUNTID equals od.CASAACCOUNTID
-                    where data.COMPANYID == companyId && custGroup.CUSTOMERGROUPID == customerGroupId && (data.PRODUCTACCOUNTNUMBER.Contains(accountNumberOrName) ||
-                    cust.CUSTOMERCODE.Contains(accountNumberOrName) || cust.FIRSTNAME.Contains(accountNumberOrName) ||
-                    cust.LASTNAME.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
-                    select new CasaViewModel()
+                    where data.COMPANYID == companyId && custGroup.CUSTOMERGROUPID == customerGroupId 
+                    //&& (data.PRODUCTACCOUNTNUMBER.Contains(accountNumberOrName) ||
+                    //cust.CUSTOMERCODE.Contains(accountNumberOrName) || cust.FIRSTNAME.Contains(accountNumberOrName) ||
+                    //cust.LASTNAME.Contains(accountNumberOrName)) //orderby account.AccountCode ascending, account.AccountName ascending
+                    select new CasaViewModel
                     {
                         casaAccountId = data.CASAACCOUNTID,
                         productAccountNumber = data.PRODUCTACCOUNTNUMBER,
                         productAccountName = data.PRODUCTACCOUNTNAME,
                         customerId = data.CUSTOMERID,
-                        customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
-                        customerName = data.TBL_CUSTOMER.FIRSTNAME + " " + data.TBL_CUSTOMER.LASTNAME,
-                        productId = data.PRODUCTID,
-                        productCode = data.TBL_PRODUCT.PRODUCTCODE,
-                        productName = data.TBL_PRODUCT.PRODUCTNAME,
-                        companyId = data.COMPANYID,
-                        branchId = data.BRANCHID,
-                        currency = data.TBL_CURRENCY.CURRENCYNAME,
-                        branchCode = data.TBL_BRANCH.BRANCHCODE,
-                        branchName = data.TBL_BRANCH.BRANCHNAME,
-                        isCurrentAccount = data.ISCURRENTACCOUNT,
-                        tenor = data.TENOR ?? 0,
-                        interestRate = data.INTERESTRATE ?? 0,
-                        effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
-                        terminalDate = data.TERMINALDATE ?? General.DefaultDate,
-                        actionBy = data.ACTIONBY ?? 0,
-                        actionDate = data.ACTIONDATE ?? General.DefaultDate,
-                        accountStatusId = data.ACCOUNTSTATUSID,
-                        operationId = data.OPERATIONID ?? 0,
-                        availableBalance = data.AVAILABLEBALANCE,
-                        ledgerBalance = data.LEDGERBALANCE,
-                        relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
-                        misCode = data.MISCODE,
-                        overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
-                        overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
-                        overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
-                        hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
-                        lienAmount = data.LIENAMOUNT,
-                        hasLien = data.HASLIEN,
-                        postNoStatusId = data.POSTNOSTATUSID,
-                        oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
-                        oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
-                        oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
-                        //aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
-                        aprovalStatusId = data.APROVALSTATUSID,
+                        //customerCode = data.TBL_CUSTOMER.CUSTOMERCODE,
+                        //customerName = data.TBL_CUSTOMER.FIRSTNAME + " " + data.TBL_CUSTOMER.LASTNAME,
+                        //productId = data.PRODUCTID,
+                        //productCode = data.TBL_PRODUCT.PRODUCTCODE,
+                        //productName = data.TBL_PRODUCT.PRODUCTNAME,
+                        //companyId = data.COMPANYID,
+                        //branchId = data.BRANCHID,
+                        //currency = data.TBL_CURRENCY.CURRENCYNAME,
+                        //branchCode = data.TBL_BRANCH.BRANCHCODE,
+                        //branchName = data.TBL_BRANCH.BRANCHNAME,
+                        //isCurrentAccount = data.ISCURRENTACCOUNT,
+                        //tenor = data.TENOR ?? 0,
+                        //interestRate = data.INTERESTRATE ?? 0,
+                        //effectiveDate = data.EFFECTIVEDATE ?? General.DefaultDate,
+                        //terminalDate = data.TERMINALDATE ?? General.DefaultDate,
+                        //actionBy = data.ACTIONBY ?? 0,
+                        //actionDate = data.ACTIONDATE ?? General.DefaultDate,
+                        //accountStatusId = data.ACCOUNTSTATUSID,
+                        //operationId = data.OPERATIONID ?? 0,
+                        //availableBalance = data.AVAILABLEBALANCE,
+                        //ledgerBalance = data.LEDGERBALANCE,
+                        //relationshipOfficerId = data.RELATIONSHIPOFFICERID ?? 0,
+                        //misCode = data.MISCODE,
+                        //overdraftAmount = data.OVERDRAFTAMOUNT ?? 0,
+                        //overdraftInterestRate = data.OVERDRAFTINTERESTRATE ?? 0,
+                        //overdraftExpiryDate = data.OVERDRAFTEXPIRYDATE ?? General.DefaultDate,
+                        //hasOverdraft = data.HASOVERDRAFT.HasValue == true ? data.HASOVERDRAFT.Value : false,
+                        //lienAmount = data.LIENAMOUNT,
+                        //hasLien = data.HASLIEN,
+                        //postNoStatusId = data.POSTNOSTATUSID,
+                        //oldProductAccountNumber1 = data.OLDPRODUCTACCOUNTNUMBER1,
+                        //oldProductAccountNumber2 = data.OLDPRODUCTACCOUNTNUMBER2,
+                        //oldProductAccountNumber3 = data.OLDPRODUCTACCOUNTNUMBER3,
+                        ////aprovalStatusId = data.AprovalStatusId.HasValue == true ? (short) data.AprovalStatusId.Value : (short) 0
+                        //aprovalStatusId = data.APROVALSTATUSID,
                     });
+
+            var test = result.ToList();
+            return result.ToList();
         }
 
         public CasaViewModel GetAccount(int casaAccountId)
