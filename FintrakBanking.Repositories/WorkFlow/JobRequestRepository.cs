@@ -1098,22 +1098,58 @@ namespace FintrakBanking.Repositories.WorkFlow
                     // End of Audit Section ---------------------
 
 
+                    //if (model.isInitiation) //When RM apply fee on customer's account
+                    //{
+                    //    if (consultantRecord.Any())
+                    //    {
+                    //        var solicitor = consultantRecord.FirstOrDefault();
+                    //        string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
+                    //        foreach (var i in jobRequestDetail)
+                    //        {
+                    //            if(i.JOB_SUB_TYPE_CLASSID != (short) (JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
+
+                    //            i.CUSTOMERORBUSINESSCHARGED = true;
+                    //            if (model.debitBusiness) i.DEBITBUSINESS = true;
+                    //        }
+
+                    //        messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
+                    //        string alertSubject = $"FBN - Loan Collateral Search";
+                    //        LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
+                    //    }
+                    //}
+
                     if (model.isInitiation) //When RM apply fee on customer's account
                     {
                         if (consultantRecord.Any())
                         {
                             var solicitor = consultantRecord.FirstOrDefault();
-                            string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
-                            foreach (var i in jobRequestDetail)
-                            {
-                                if(i.JOB_SUB_TYPE_CLASSID != (short) (JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
+                            var stateId = solicitor.TBL_ACCREDITEDCONSULTANT_STATE.FirstOrDefault(x=>x.STATEID != 0)?.STATEID;
+                            var state = context.TBL_STATE.Find(stateId);
 
-                                i.CUSTOMERORBUSINESSCHARGED = true;
-                                if (model.debitBusiness) i.DEBITBUSINESS = true;
-                            }
-                            
-                            messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
-                            string alertSubject = $"FBN - Loan Collateral Search";
+                            string messageBoby = $"Dear {solicitor.FIRMNAME}, " +
+                                $"<br /><br />Kindly conduct a comprehensive search on the title document" +
+                                $" – DEED OF SUB-LEASE REGD AS 22/22/594 IN {state.STATENAME}  and dated July 15, 1994 " + //to work on this dynamic line
+                                $"with a view to determining who is the current holder/owner of the legal estate interest in the property and whether or " +
+                                $"not the title of the said current holder is free from encumbrance(s) and encroachment(s) of any nature and/or " +
+                                $"Government acquisition (please note that for this purpose it is sufficient to state that there is no annotation to " +
+                                $"that effect on the title document/survey plan/land registry file)." +
+                                $"<br /> <br />" +
+                                $"We will be much obliged to receive your report of search and certificate of good title (if applicable) for the attention of the undersigned, within 24 hours." +
+                                $"<br /> <br />" +
+                                $"Where the search report is favourable, kindly proceed to carry out a charting  exercise in respect of the survey plan attached to the title document  at the Surveyor General Office to confirm the following:-" +
+                                $"<ol type= i>" +
+                                $"<li>That the property is free from acquisition or revocation of any kind</li>" +
+                                $"<li>That  the survey plan is within the right coordinates,</li>" +
+                                $"<li>That  the survey plan is within the right coordinates,</li>" +
+                                $"<li>That the survey plan attached to the title document corresponds/matches with the Surveyor General’s copy and the Assignor’s  Survey (where applicable)</li>" +
+                                $"<li>That the address of the Property stated on the Survey Plan is the same with the address stated on the title document.  (here we may state the actual addresses for clarity)</li>" +
+                                $"<li> That the survey plan is without any other defect that may lead to queries which may stall or delay subsequent perfection exercises</li>" +
+                                $"<br /> <br />" +
+                                $"Thank you." +
+                                $"<br /> <br /> <br />" +
+                                $"Please acknowledge receipt of this mail.";
+
+                            string alertSubject = $"Loan Collateral Search";
                             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
                         }
                     }
@@ -1204,19 +1240,30 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
 
+                    //if (consultantRecord.Any())
+                    //{
+                    //    var solicitor = consultantRecord.FirstOrDefault();
+                    //    string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
+                    //    foreach (var i in jobRequestDetail)
+                    //    {
+                    //        if (i.JOB_SUB_TYPE_CLASSID != (short)(JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
+
+                    //        i.CUSTOMERORBUSINESSCHARGED = true;
+                    //        if (model.debitBusiness) i.DEBITBUSINESS = true;
+                    //    }
+
+                    //    messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
+                    //    string alertSubject = $"Loan Collateral Search";
+                    //    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
+                    //}
+
                     if (consultantRecord.Any())
                     {
                         var solicitor = consultantRecord.FirstOrDefault();
-                        string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
-                        foreach (var i in jobRequestDetail)
-                        {
-                            if (i.JOB_SUB_TYPE_CLASSID != (short)(JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
+                        var stateId = solicitor.TBL_ACCREDITEDCONSULTANT_STATE.FirstOrDefault(x => x.STATEID != 0)?.STATEID;
+                        var state = context.TBL_STATE.Find(stateId);
+                        string messageBoby = jobRequestDetail.FirstOrDefault().DESCRIPTION2;
 
-                            i.CUSTOMERORBUSINESSCHARGED = true;
-                            if (model.debitBusiness) i.DEBITBUSINESS = true;
-                        }
-
-                        messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
                         string alertSubject = $"Loan Collateral Search";
                         LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
                     }
@@ -1366,7 +1413,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
                     accountNumber = model.accountNumber,
-                    currencyId = company.CURRENCYID
+                    currencyId = company.CURRENCYID,
+                    description2 = model.description2
                 };
                 saveJobRequestDetail(detail);
             }
@@ -1384,7 +1432,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
                     accountNumber = model.accountNumber,
-                    currencyId = company.CURRENCYID
+                    currencyId = company.CURRENCYID,
+                    description2 = model.description2
                 };
                 saveJobRequestDetail(detail);
             }
@@ -1402,7 +1451,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
                     accountNumber = model.accountNumber,
-                    currencyId = company.CURRENCYID
+                    currencyId = company.CURRENCYID,
+                    description2 = model.description2
                 };
                 saveJobRequestDetail(detail);
             }
@@ -1421,7 +1471,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                     createdBy = model.createdBy,
                     accreditedConsultantId = model.solicitorId,
                     accountNumber = model.accountNumber,
-                    currencyId = company.CURRENCYID
+                    currencyId = company.CURRENCYID,
+                    description2 = model.description2
                 };
                 saveJobRequestDetail(detail);
             }
@@ -1451,6 +1502,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             var jobDetail = new TBL_JOB_REQUEST_DETAIL();
             jobDetail.AMOUNT = model.amount;
             jobDetail.DESCRIPTION = model.description;
+            jobDetail.DESCRIPTION2 = model.description2;
             jobDetail.JOBREQUESTID = model.jobRequestId;
             jobDetail.JOB_SUB_TYPE_CLASSID = model.jobSubTypeclassId;
             jobDetail.JOB_SUB_TYPEID = model.jobSubTypeId;

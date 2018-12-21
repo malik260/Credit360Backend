@@ -140,7 +140,7 @@ namespace FintrakBanking.Entities.Models
         public decimal? FIELD3 { get; set; }
         public bool ISSPECIALISED { get; set; }
         //public int? TENORFREQUENCYTYPEID { get; set; }
-
+        public int? TENORFREQUENCYTYPEID { get; set; }
 
         public virtual TBL_APPROVAL_STATUS TBL_APPROVAL_STATUS { get; set; }
 
@@ -221,6 +221,6 @@ namespace FintrakBanking.Entities.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TBL_TEMP_LOAN> TBL_TEMP_LOAN { get; set; }
-        public int? TENORFREQUENCYTYPEID { get; set; }
+        
     }
 }
