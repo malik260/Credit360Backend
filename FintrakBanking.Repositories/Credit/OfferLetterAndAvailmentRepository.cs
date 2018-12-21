@@ -2058,7 +2058,7 @@ namespace FintrakBanking.Repositories.Credit
 
             // CHECKLIST VALIDATION
 
-            ChecklistValidation(applicationId);
+            // ChecklistValidation(applicationId);
 
             return result;
         }
@@ -2549,7 +2549,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 && operations.Contains(a.OPERATIONID)
                                           select b).ToList();
 
-                    var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID2 == false || c.CHECKLISTSTATUSID3 == false);
+                    var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID3 == false); //c.CHECKLISTSTATUSID2 == false ||
 
                     if (omission.Any()) throw new SecureException($"One or more {item.CHECKLIST_TYPE_NAME} item(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
 

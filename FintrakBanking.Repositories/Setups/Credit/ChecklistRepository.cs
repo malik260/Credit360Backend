@@ -1843,7 +1843,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             entity.externalInitialization = false;
 
-            var appl = context.TBL_LMSR_APPLICATION.Find(entity.loanApplicationId);
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
 
             using (var trans = context.Database.BeginTransaction())
             {
@@ -1907,6 +1907,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             // return false;
         }
+
         private bool ApproveChecklistDeferral(int targetId, ApprovalViewModel user)
         {
             bool output = false;
