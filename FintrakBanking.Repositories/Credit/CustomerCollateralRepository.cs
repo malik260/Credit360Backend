@@ -549,16 +549,52 @@ namespace FintrakBanking.Repositories.Credit
                         approvalStatus = c.c.APPROVALSTATUS,
                         allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
-                        exchangeRate = c.c.EXCHANGERATE
+                        exchangeRate = c.c.EXCHANGERATE,
+                        availableValue = 0
                     })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First())
                     ;
 
+            collaterals = ResolveCollateralValues(collaterals.ToList());
+
             //var count = collaterals.Count();
             //var test = collaterals;
 
             return collaterals;
+        }
+
+        private List<CollateralViewModel> ResolveCollateralValues(List<CollateralViewModel> collaterals)
+        {
+            decimal usage;
+            List<CollateralViewModel> list = new List<CollateralViewModel>();
+            foreach (var collateral in collaterals)
+            {
+                usage = 0;
+                var mappings = context.TBL_LOAN_COLLATERAL_MAPPING.Where(m => m.COLLATERALCUSTOMERID == collateral.collateralId && m.DELETED == false && m.ISRELEASED == false).ToList();
+                foreach (var mapping in mappings) usage = usage + GetLoanOutstandingBalance(mapping.LOANID,mapping.LOANSYSTEMTYPEID);
+                collateral.availableValue = (decimal)collateral.collateralValue - usage;
+                list.Add(collateral);
+            }
+            return list;
+        }
+
+        private decimal GetLoanOutstandingBalance(int loanId, int loanSystemTypeId)
+        {
+            decimal balance = 0;
+            switch (loanSystemTypeId)
+            {
+                case (int)LoanSystemTypeEnum.TermDisbursedFacility :
+                    balance = context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).Sum(x => x.OUTSTANDINGPRINCIPAL);
+                    break;
+                case (int)LoanSystemTypeEnum.OverdraftFacility :
+                    balance = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == loanId).Sum(x => x.OVERDRAFTLIMIT);
+                    break;
+                case  (int)LoanSystemTypeEnum.ContingentLiability :
+                    balance = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).Sum(x => x.CONTINGENTAMOUNT);
+                    break;
+             }
+            return balance;
         }
 
         public IEnumerable<CollateralViewModel> GetCollateralByCollateralTypeIdByCustomerId(int companyId, short collateralTypeId, int customerId, int thirdpartyCustomerId)

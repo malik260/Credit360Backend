@@ -132,7 +132,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.POSTEDBY = "SYSTEM";
                 addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.BRANCHID;
-                addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
+                addStaging.SOURCEREFERENCENUMBER = item.LOANREFERENCENUMBER;
                 addStaging.VALUEDATE = applicationDate;
                 addStaging.TRANSACTIONTYPE = "BP";
                 addStaging.BANKID = "01";

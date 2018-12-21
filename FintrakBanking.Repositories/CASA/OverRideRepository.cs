@@ -297,17 +297,17 @@ namespace FintrakBanking.Repositories.CASA
             return result;
         }
 
-
         public IEnumerable<OverrideDetailVeiwModel> GetOverrideAwaitingApproval(int staffId)
         {
             var ids = _genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OverrideRequest).ToList();
             var data = (from o in _context.TBL_OVERRIDE_DETAIL
                         join a in _context.TBL_APPROVAL_TRAIL on o.OVERRIDE_DETAILID equals a.TARGETID
                         join c in _context.TBL_CUSTOMER on o.CUSTOMERCODE equals c.CUSTOMERCODE
-                        where a.OPERATIONID == (int)OperationsEnum.OverrideRequest &&
-                        (a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
-                         && ids.Contains((int)a.TOAPPROVALLEVELID)  && a.RESPONSESTAFFID == null
-                        select new OverrideDetailVeiwModel()
+                        where a.OPERATIONID == (int)OperationsEnum.OverrideRequest 
+                            && (a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)
+                            && ids.Contains((int)a.TOAPPROVALLEVELID)  
+                            && a.RESPONSESTAFFID == null
+                        select new OverrideDetailVeiwModel
                         {
                             approvedStatusId = o.APPROVALSTATUSID,
                             createdBy = o.CREATEDBY,
