@@ -461,6 +461,29 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("disbursed-loan-tranche-details/{loanId}")]
+        public HttpResponseMessage getDisbursedCommercialLoanTrancheDetailsById(int loanId)
+        {
+            try
+            {
+                var data = loanRepo.getDisbursedCommercialLoanTrancheDetailsById(loanId);
+                if (data.Count < 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("group-customer-loan-details/")]
         public HttpResponseMessage SearchForGroupLoan(int loanId)
         {
