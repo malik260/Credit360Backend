@@ -1239,10 +1239,10 @@ namespace FintrakBanking.ReportObjects
                                       join cas2 in context.TBL_CASA on l.CASAACCOUNTID2 equals cas2.CASAACCOUNTID
                                       join sta in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sta.STAFFID
                                       join prod in context.TBL_PRODUCT on l.PRODUCTID equals prod.PRODUCTID
-                                      join pc in context.TBL_PRODUCT_CLASS on prod.PRODUCTCLASSID equals pc.PRODUCTCLASSID
+                                      //join pc in context.TBL_PRODUCT_CLASS on prod.PRODUCTCLASSID equals pc.PRODUCTCLASSID
                                       where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
                                       DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
-                                      && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active && pc.PRODUCTCLASSID == (short)ProductClassEnum.Commercial
+                                      && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active && prod.PRODUCTTYPEID == (short) LoanProductTypeEnum.CommercialLoan 
                                       select new
                                       {
                                           accountPayTo = cas.PRODUCTACCOUNTNAME,
