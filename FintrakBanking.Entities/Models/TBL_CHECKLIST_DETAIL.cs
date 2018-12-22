@@ -11,8 +11,8 @@ namespace FintrakBanking.Entities.Models
     {
         public TBL_CHECKLIST_DETAIL()
         {
-            CHECKLISTSTATUSID2 = false;
-            CHECKLISTSTATUSID3 = false;
+            //CHECKLISTSTATUSID2 = false;
+            //CHECKLISTSTATUSID3 = false;
         }
 
         [Key]
