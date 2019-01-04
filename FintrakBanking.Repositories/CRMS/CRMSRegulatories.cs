@@ -651,13 +651,13 @@ namespace FintrakBanking.Repositories.CRMS
                             var units = proposedTenor == 1 ? " day" : " days";
                             if (proposedTenor < 15)
                             {
-                                result= proposedTenor.ToString() + units;
+                                result = "1";//proposedTenor.ToString() + units;
                             }
                             else
                             {
                                 var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
                                 units = months == 1 ? " month" : " months";
-                               result = months.ToString() + " " + units;
+                                result = months.ToString(); //+ " " + units;
                             }
                             
 
@@ -673,7 +673,7 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 11].Value = record.REPAYMENT_AGREEMENT_MODE;
                         ws.Cells[i, 12].Value = record.PERFORMANCE_REPAYMENT_STATUS;
                         ws.Cells[i, 13].Value = record.REASON_FOR_RESTRUCTURING;
-                        ws.Cells[i, 14].Value = record.INTEREST_RATE;
+                        ws.Cells[i, 14].Value = (record.INTEREST_RATE/100);
                         ws.Cells[i, 15].Value = record.BENEFICIARY_ACCOUNT_NUMBER;
                         ws.Cells[i, 16].Value = record.LOCATION_OF_BENEFICIARY;
                         ws.Cells[i, 17].Value = record.RELATIONSHIP_TYPE;
@@ -681,10 +681,25 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 19].Value = record.ECCI_NUMBER;
                         ws.Cells[i, 20].Value = record.FUNDING_SOURCE;
                         ws.Cells[i, 21].Value = record.SPECIALISED_LOAN;
-                        ws.Cells[i, 22].Value = record.FIRSTPRINCIPALPAYMENTDATE != null ? ((DateTime)record.FIRSTPRINCIPALPAYMENTDATE - record.EFFECTIVE_DATE).TotalDays : 0;
+                        if(record.SPECIALISED_LOAN=="NO")
+                        {
+                            ws.Cells[i, 22].Value = 0;
+                        }
+                        else
+                        {
+                            ws.Cells[i, 22].Value = record.FIRSTPRINCIPALPAYMENTDATE != null ? ((DateTime)record.FIRSTPRINCIPALPAYMENTDATE - record.EFFECTIVE_DATE).TotalDays : 0;
+                        }
                         ws.Cells[i, 23].Value = record.DIRECTOR_UNIQUE_IDENTIFIER;
                         ws.Cells[i, 24].Value = record.COLLATERAL_PRESENT;
-                        ws.Cells[i, 25].Value = record.COLLATERAL_SECURE;
+
+                        if(record.COLLATERAL_PRESENT == "NO")
+                        {
+                            ws.Cells[i, 25].Value = "NO";
+                        }
+                        else
+                        {
+                            ws.Cells[i, 25].Value = record.COLLATERAL_SECURE;
+                        }
                         ws.Cells[i, 26].Value = record.SECURITY_TYPE;
                         ws.Cells[i, 27].Value = record.ADDRESS_OF_SECURITY;
                         ws.Cells[i, 28].Value = record.OWNER_OF_SECURITY;
@@ -718,7 +733,7 @@ namespace FintrakBanking.Repositories.CRMS
             var revolving = new List<CRMSTemplateViewModel>();
             var contingent = new List<CRMSTemplateViewModel>();
             var operationRestructure = CommonHelpers.GetRestructureOperations();
-
+            var year = DateTime.Parse("01/01/0001");
             tLoan = (from x in context.TBL_LOAN
                      join op in context.TBL_LOAN_REVIEW_OPERATION on x.TERMLOANID equals op.LOANID
                      join opn in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals opn.OPERATIONID
@@ -743,7 +758,9 @@ namespace FintrakBanking.Repositories.CRMS
                      select new CRMSTemplateViewModel
                      {
                          BENEFICIARY_ACCOUNT_NUMBER = c.PRODUCTACCOUNTNUMBER,
-                         EFFECTIVE_DATE = op.EFFECTIVEDATE,
+                         EFFECTIVE_DATE = op.EFFECTIVEDATE == null || op.EFFECTIVEDATE.Year ==  year.Year ? x.EFFECTIVEDATE : op.EFFECTIVEDATE,
+                         MATURITYDATE = op.MATURITYDATE == null || op.MATURITYDATE.Value.Year == year.Year ? x.MATURITYDATE : op.MATURITYDATE,
+
                          CREDIT_LIMIT = x.PRINCIPALAMOUNT,
                          INTEREST_RATE = op.INTERATERATE == null ? x.INTERESTRATE : op.INTERATERATE,
                          UNIQUE_IDENTIFICATION_TYPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
@@ -756,10 +773,9 @@ namespace FintrakBanking.Repositories.CRMS
 
                          FEES = "",
                          //TENOR = (op.MATURITYDATE - op.EFFECTIVEDATE).TotalDays,
-                         MATURITYDATE = op.MATURITYDATE,
                         // REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                         LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                         RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                         LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                         RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                          COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                          FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                          ECCI_NUMBER = ld.CRMS_ECCI_NUMBER,
@@ -796,7 +812,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                          //200
                          GOVERNMENT_MDA_TIN = b.TAXNUMBER,
-                         PERFORMANCE_REPAYMENT_STATUS = "",
+                         PERFORMANCE_REPAYMENT_STATUS = x.USER_PRUDENTIAL_GUIDE_STATUSID == 1 ? "100" : "103",
 
                          //600
                          //SYNDICATION_NAME = a.FIELD2,
@@ -831,7 +847,8 @@ namespace FintrakBanking.Repositories.CRMS
                          select new CRMSTemplateViewModel
                          {
                              BENEFICIARY_ACCOUNT_NUMBER = c.PRODUCTACCOUNTNUMBER,
-                             EFFECTIVE_DATE = op.EFFECTIVEDATE,
+                             EFFECTIVE_DATE = op.EFFECTIVEDATE == null || op.EFFECTIVEDATE.Year == year.Year ? x.EFFECTIVEDATE : op.EFFECTIVEDATE,
+                             MATURITYDATE = op.MATURITYDATE == null || op.MATURITYDATE.Value.Year == year.Year ? x.MATURITYDATE : op.MATURITYDATE,
                              CREDIT_LIMIT = x.OVERDRAFTLIMIT,
                              INTEREST_RATE = op.INTERATERATE == null ? x.INTERESTRATE : op.INTERATERATE,
                              UNIQUE_IDENTIFICATION_TYPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
@@ -844,10 +861,9 @@ namespace FintrakBanking.Repositories.CRMS
 
                              FEES = "",
                              //TENOR = (op.MATURITYDATE - op.EFFECTIVEDATE).TotalDays,
-                             MATURITYDATE = op.MATURITYDATE,
                              // REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                             LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                             RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                             LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                             RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                              COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                              FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                              ECCI_NUMBER = ld.CRMS_ECCI_NUMBER,
@@ -884,7 +900,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                              //200
                              GOVERNMENT_MDA_TIN = b.TAXNUMBER,
-                             PERFORMANCE_REPAYMENT_STATUS = "",
+                             PERFORMANCE_REPAYMENT_STATUS = x.USER_PRUDENTIAL_GUIDE_STATUSID == 1 ? "100" : "103",
 
                              //600
                              //SYNDICATION_NAME = a.FIELD2,
@@ -920,7 +936,8 @@ namespace FintrakBanking.Repositories.CRMS
                           select new CRMSTemplateViewModel
                           {
                               BENEFICIARY_ACCOUNT_NUMBER = c.PRODUCTACCOUNTNUMBER,
-                              EFFECTIVE_DATE = op.EFFECTIVEDATE,
+                              EFFECTIVE_DATE = op.EFFECTIVEDATE == null || op.EFFECTIVEDATE.Year == year.Year ? x.EFFECTIVEDATE : op.EFFECTIVEDATE,
+                              MATURITYDATE = op.MATURITYDATE == null || op.MATURITYDATE.Value.Year == year.Year ? x.MATURITYDATE : op.MATURITYDATE,
                               CREDIT_LIMIT = x.CONTINGENTAMOUNT,
                               INTEREST_RATE = op.INTERATERATE == null ? 0 : op.INTERATERATE,
                               UNIQUE_IDENTIFICATION_TYPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
@@ -933,10 +950,9 @@ namespace FintrakBanking.Repositories.CRMS
 
                               FEES = "",
                               //TENOR = (op.MATURITYDATE - op.EFFECTIVEDATE).TotalDays,
-                              MATURITYDATE = op.MATURITYDATE,
                               // REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                              LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                              LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                               COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                               FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                               ECCI_NUMBER = ld.CRMS_ECCI_NUMBER,
@@ -973,7 +989,7 @@ namespace FintrakBanking.Repositories.CRMS
 
                               //200
                               GOVERNMENT_MDA_TIN = b.TAXNUMBER,
-                              PERFORMANCE_REPAYMENT_STATUS = "",
+                              PERFORMANCE_REPAYMENT_STATUS = "100",
 
                               //600
                               //SYNDICATION_NAME = a.FIELD2,
@@ -1037,7 +1053,14 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 11].Value = record.TOTAL_CUSTOMER_INDUCED_DEBIT_AMT;
                         ws.Cells[i, 12].Value = record.TOTAL_CUSTOMER_INDUCED_DEBIT_TRN_TYPE;
                         ws.Cells[i, 13].Value = record.UNAMORTIZED_CREDIT_CHARGES;
-                        ws.Cells[i, 14].Value = record.LIQUIDATION;
+                        if (record.OUTSTANDING_AMOUNT == 0)
+                        {
+                            ws.Cells[i, 14].Value = "YES";
+                        }
+                        else
+                        {
+                            ws.Cells[i, 14].Value = "NO";
+                        }
                         ws.Cells[i, 15].Value = record.REFERENCENUMBER;
                     }
                     fileBytes = pck.GetAsByteArray();
@@ -1095,12 +1118,13 @@ namespace FintrakBanking.Repositories.CRMS
                          CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                          OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL + x.PASTDUEPRINCIPAL,
                          FEES = "",
-                         CRMSCODE=x.CRMSCODE,
+                         CRMSCODE = x.CRMSCODE,
                          // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                          EXPIRY_DATE = x.MATURITYDATE,
+
                          REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                         LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                         RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                         LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                         RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                          COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                          FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                          ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
@@ -1139,15 +1163,15 @@ namespace FintrakBanking.Repositories.CRMS
                          PERFORMANCE_REPAYMENT_STATUS = x.USER_PRUDENTIAL_GUIDE_STATUSID == 1 ? "100" : "103",
 
                          //PERFORMANCE_REPAYMENT_STATUS = context.TBL_CRMS_REGULATORY.Where(cr=>cr.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(s=>s.DESCRIPTION).FirstOrDefault(),
-                         TOTAL_BANK_INDUCED_DEBIT_BANK_CHARGES =0,
-                         TOTAL_BANK_INDUCED_CREDIT_WRITEOFF =0,
-                         TOTAL_BANK_INDUCED_CREDIT_DRAWDOWN=0,
-                         TOTAL_CUSTOMER_INDUCED_CREDIT=0,
-                         TOTAL_CUSTOMER_INDUCED_CREDIT_TRN_TYPE="TRF",
-                         TOTAL_CUSTOMER_INDUCED_DEBIT_AMT=0,
-                         TOTAL_CUSTOMER_INDUCED_DEBIT_TRN_TYPE="TRF",
-                         UNAMORTIZED_CREDIT_CHARGES=0,
-                         LIQUIDATION="NO",
+                         TOTAL_BANK_INDUCED_DEBIT_BANK_CHARGES = 0,
+                         TOTAL_BANK_INDUCED_CREDIT_WRITEOFF = 0,
+                         TOTAL_BANK_INDUCED_CREDIT_DRAWDOWN = 0,
+                         TOTAL_CUSTOMER_INDUCED_CREDIT = 0,
+                         TOTAL_CUSTOMER_INDUCED_CREDIT_TRN_TYPE = "TRF",
+                         TOTAL_CUSTOMER_INDUCED_DEBIT_AMT = 0,
+                         TOTAL_CUSTOMER_INDUCED_DEBIT_TRN_TYPE = "TRF",
+                         UNAMORTIZED_CREDIT_CHARGES = 0,
+                        //LIQUIDATION = x.OUTSTANDINGPRINCIPAL + x.PASTDUEPRINCIPAL == 0 ? "NO": "YES",
                          REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                          //600
@@ -1190,8 +1214,8 @@ namespace FintrakBanking.Repositories.CRMS
                              // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                              EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
                              REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                             LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                             RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                             LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                             RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                              COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                              FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                              ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
@@ -1243,7 +1267,7 @@ namespace FintrakBanking.Repositories.CRMS
                              TOTAL_CUSTOMER_INDUCED_DEBIT_AMT = 0,
                              TOTAL_CUSTOMER_INDUCED_DEBIT_TRN_TYPE = "TRF",
                              UNAMORTIZED_CREDIT_CHARGES = 0,
-                             LIQUIDATION = "NO",
+                             //LIQUIDATION = x.OUTSTANDINGPRINCIPAL + x.PASTDUEPRINCIPAL == 0 ? "NO" : "YES",
                              REFERENCENUMBER = x.LOANREFERENCENUMBER,
                          }).ToList();
 
@@ -1281,8 +1305,8 @@ namespace FintrakBanking.Repositories.CRMS
                               // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                               EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
                               REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                              LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                              LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                               COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                               FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                               ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
@@ -1332,7 +1356,7 @@ namespace FintrakBanking.Repositories.CRMS
                               TOTAL_CUSTOMER_INDUCED_DEBIT_AMT = 0,
                               TOTAL_CUSTOMER_INDUCED_DEBIT_TRN_TYPE = "TRF",
                               UNAMORTIZED_CREDIT_CHARGES = 0,
-                              LIQUIDATION = "NO",
+                              //LIQUIDATION = x.CONTINGENTAMOUNT == 0 ? "NO" : "YES",
                               REFERENCENUMBER = x.LOANREFERENCENUMBER,
                           }).ToList();
 
@@ -1376,14 +1400,42 @@ namespace FintrakBanking.Repositories.CRMS
                         sheet.Cells[i, 4].Value = facilityRecord.EFFECTIVE_DATE.ToString("dd/MM/yyyy");
                         if (facilityRecord.MATURITYDATE != null)
                         {
-                            sheet.Cells[i, 5].Value = ((DateTime)facilityRecord.MATURITYDATE - facilityRecord.EFFECTIVE_DATE).TotalDays;
-                            sheet.Cells[i, 6].Value = ((DateTime)facilityRecord.MATURITYDATE).ToString("dd/MM/yyyy"); 
+                            var proposedTenor = ((DateTime)facilityRecord.MATURITYDATE - facilityRecord.EFFECTIVE_DATE).TotalDays;
+                            var result = "";
+                            var units = proposedTenor == 1 ? " day" : " days";
+                            if (proposedTenor < 15)
+                            {
+                                result = "1";//proposedTenor.ToString() + units;
+                            }
+                            else
+                            {
+                                var months = Math.Ceiling((Math.Floor(proposedTenor / 15.00)) / 2);
+                                units = months == 1 ? " month" : " months";
+                                result = months.ToString(); //+ " " + units;
+                            }
+
+
+                            sheet.Cells[i, 5].Value = result;
+
+                            sheet.Cells[i, 6].Value = ((DateTime)facilityRecord.MATURITYDATE).ToString("dd/MM/yyyy");
                         }
                         else
                         {
                             sheet.Cells[i, 5].Value = "NULL";
-                            sheet.Cells[i, 6].Value = "NULL";
+                            sheet.Cells[i, 6].Value = "NULL"; ;
                         }
+
+
+                        //if (facilityRecord.MATURITYDATE != null)
+                        //{
+                        //    sheet.Cells[i, 5].Value = ((DateTime)facilityRecord.MATURITYDATE - facilityRecord.EFFECTIVE_DATE).TotalDays;
+                        //    sheet.Cells[i, 6].Value = ((DateTime)facilityRecord.MATURITYDATE).ToString("dd/MM/yyyy"); 
+                        //}
+                        //else
+                        //{
+                        //    sheet.Cells[i, 5].Value = "NULL";
+                        //    sheet.Cells[i, 6].Value = "NULL";
+                        //}
 
                         sheet.Cells[i, 7].Value = facilityRecord.OPERATION_NAME;
                         sheet.Cells[i, 8].Value = facilityRecord.DATETIMECREATED.ToString("dd/MM/yyyy");
@@ -1420,8 +1472,8 @@ namespace FintrakBanking.Repositories.CRMS
                         select new CRMSTemplateViewModel
                        {
                            ACCOUNT = c.PRODUCTACCOUNTNUMBER,
-                            MATURITYDATE = l.MATURITYDATE,
-                           EFFECTIVE_DATE = l.EFFECTIVEDATE,
+                            MATURITYDATE = l.MATURITYDATE == null ? x.MATURITYDATE : l.MATURITYDATE,
+                           EFFECTIVE_DATE = l.EFFECTIVEDATE == null ? x.EFFECTIVEDATE : l.EFFECTIVEDATE,
                            //TENOR = x.EFFECTIVEDATE - x.MATURITYDATE,
                            ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
                            ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
@@ -1448,8 +1500,8 @@ namespace FintrakBanking.Repositories.CRMS
                           ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
                           ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
                           CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
-                          MATURITYDATE = l.MATURITYDATE,
-                          EFFECTIVE_DATE = l.EFFECTIVEDATE,
+                          MATURITYDATE = l.MATURITYDATE == null ? x.MATURITYDATE : l.MATURITYDATE,
+                          EFFECTIVE_DATE = l.EFFECTIVEDATE == null ? x.EFFECTIVEDATE : l.EFFECTIVEDATE,
                           //TENOR = x.EFFECTIVEDATE - x.MATURITYDATE,
                           CRMSCODE = x.CRMSCODE,
                           OPERATION_NAME = opn.OPERATIONNAME,
@@ -1472,8 +1524,8 @@ namespace FintrakBanking.Repositories.CRMS
                                   ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
                                   ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
                                   CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
-                                  MATURITYDATE = l.MATURITYDATE,
-                                  EFFECTIVE_DATE = l.EFFECTIVEDATE,
+                                  MATURITYDATE = l.MATURITYDATE == null ? x.MATURITYDATE : l.MATURITYDATE,
+                                  EFFECTIVE_DATE = l.EFFECTIVEDATE == null ? x.EFFECTIVEDATE : l.EFFECTIVEDATE,
                                   //TENOR = x.EFFECTIVEDATE - x.MATURITYDATE,
                                   CRMSCODE = x.CRMSCODE,
                                   OPERATION_NAME = opn.OPERATIONNAME,
@@ -1769,8 +1821,8 @@ namespace FintrakBanking.Repositories.CRMS
                          // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                          EXPIRY_DATE = x.MATURITYDATE,
                          REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                         LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                         RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                         LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                         RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                          COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                          FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                          ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
@@ -1848,8 +1900,8 @@ namespace FintrakBanking.Repositories.CRMS
                              // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                              EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
                              REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                             LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                             RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                             LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                             RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                              COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                              FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                              ECCI_NUMBER = a.CRMS_ECCI_NUMBER,
@@ -1927,8 +1979,8 @@ namespace FintrakBanking.Repositories.CRMS
                               // TENOR = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
                               EXPIRY_DATE = x.MATURITYDATE,//.ToString("dd/MM/yyyy"),
                               REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSREPAYMENTSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                              LOCATION_OF_BENEFICIARY = context.TBL_STATE.Where(g => g.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(g => g.STATECODE).FirstOrDefault(),
-                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                              LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
+                              RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                               COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                               FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                               ECCI_NUMBER = a.CRMS_ECCI_NUMBER,

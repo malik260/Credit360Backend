@@ -8969,6 +8969,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 searchQuery = searchQuery.ToLower();
             }
+            List<short> loanStatus = new List<short>();
+            loanStatus.Add((short)LoanStatusEnum.Cancelled);
+            loanStatus.Add((short)LoanStatusEnum.Terminated);
+
 
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -8978,9 +8982,12 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
-                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)//|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
-                                   && a.MATURITYDATE > applicationDate
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
+                                   && !loanStatus.Contains(a.LOANSTATUSID)
+                                   //&& (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled)
+                                   //|| (a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)
+                                   //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
+                                  // && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,
@@ -9003,6 +9010,9 @@ namespace FintrakBanking.Repositories.Credit
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID
 
                                    });
+
+            //var test = allFilteredLoan.Where(x=>(x.loanStatusId != (short)LoanStatusEnum.Cancelled) ||( x.loanStatusId != (short)LoanStatusEnum.Terminated)).ToList();
+            //allFilteredLoan = test;
             return allFilteredLoan;
         }
 
