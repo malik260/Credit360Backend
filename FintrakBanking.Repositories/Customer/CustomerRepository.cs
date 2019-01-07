@@ -4576,8 +4576,8 @@ namespace FintrakBanking.Repositories.Customer
                                     ADDRESS = item.ADDRESS,
                                     PHONENUMBER = item.PHONENUMBER,
                                     EMAILADDRESS = item.EMAILADDRESS,
-                                    CREATEDBY = entity.CREATEDBY,
-                                    DATECREATED = entity.DATECREATED,
+                                    CREATEDBY = user.staffId,
+                                    DATECREATED = DateTime.Now,
                                     DELETED = false
                                 };
                                 beneficialList.Add(beneficial);

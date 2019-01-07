@@ -18303,7 +18303,16 @@ namespace FintrakBanking.Repositories.Credit
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
                     DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
                 }
-
+                else if (model.operationTypeId == 96)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
+                    DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == 97)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
+                    DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = _AUDITTYPEID,
