@@ -3151,7 +3151,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (user.operationId == (int)OperationsEnum.CommercialLoanBooking)
                 {
-                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.EFFECTIVEDATE.Date - loanRecord.MATURITYDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
+                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.MATURITYDATE.Date - loanRecord.EFFECTIVEDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
 
                     loanRecord.OUTSTANDINGINTEREST = totalInterest;
 
@@ -3167,7 +3167,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking)
                 {
-                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.EFFECTIVEDATE.Date - loanRecord.MATURITYDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
+                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.MATURITYDATE.Date - loanRecord.EFFECTIVEDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
 
                     loanRecord.OUTSTANDINGINTEREST = totalInterest;
 
