@@ -2,15 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Configuration;
-using FintrakBanking.Common.CustomException;
-using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
-using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Credit;
-using FintrakBanking.Interfaces.Setups.General;
-using FintrakBanking.Interfaces.WorkFlow;
-using FintrakBanking.ViewModels;
-using FintrakBanking.ViewModels.Credit;
 
 
 namespace FintrakBanking.Repositories.Credit
@@ -18,23 +11,14 @@ namespace FintrakBanking.Repositories.Credit
     public class CreditCommonRepository
     {
         private FinTrakBankingContext context;
-        private IGeneralSetupRepository general;
-        private IAuditTrailRepository audit;
-        private IWorkflow workflow;
         private IIntegrationWithFinacle integration;
 
         public CreditCommonRepository(
             FinTrakBankingContext context, 
-            IGeneralSetupRepository general, 
-            IAuditTrailRepository audit, 
-            IWorkflow workflow,
             IIntegrationWithFinacle integration
             )
         {
             this.context = context;
-            this.general = general;
-            this.audit = audit;
-            this.workflow = workflow;
             this.integration = integration;
         }
 
