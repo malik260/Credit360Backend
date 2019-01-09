@@ -28,6 +28,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         private ICustomerCollateralRepository repoCollateral;
         private ICustomerRepository repoCustomer;
         private ILoanScheduleRepository scheduleRepo;
+        private ILoanOperationsRepository loanoperations;
         private IProductRepository productRepo;
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         private ExportDataTableToExcel export = new ExportDataTableToExcel();
@@ -40,13 +41,14 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
                               ICustomerCollateralRepository _repoCollateral,
                               ICustomerRepository _repoCustomer,
                                ILoanScheduleRepository _scheduleRepo,
-                               IProductRepository _productRepo)
+                               IProductRepository _productRepo, ILoanOperationsRepository _loanoperations)
         {
             this.repo = _repo;
             this.repoCollateral = _repoCollateral;
             this.repoCustomer = _repoCustomer;
             this.scheduleRepo = _scheduleRepo;
             this.productRepo = _productRepo;
+            this.loanoperations = _loanoperations;
 
             //this._hostingEnvironment = hostingEnvironment;
         }
@@ -1362,6 +1364,37 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 var data = scheduleRepo.GeneratePeriodicLoanSchedule(loanInput);
+               
+                if (!data.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (BadLogicException be)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {be.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("periodic-prepayment-schedule")]
+        public HttpResponseMessage GeneratePeriodicPrepaymentLoanSchedule([FromBody] LoanPaymentScheduleInputViewModel loanInput)
+        {
+            try
+            {
+                //var data = scheduleRepo.GeneratePeriodicLoanSchedule(loanInput);
+                var data = loanoperations.GeneratePrepaymentSchedule(loanInput);
 
                 if (!data.Any())
                 {

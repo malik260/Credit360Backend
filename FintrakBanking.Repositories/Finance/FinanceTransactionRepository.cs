@@ -2069,6 +2069,7 @@ namespace FintrakBanking.Repositories.Finance
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             
 
+
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
             var casa = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == model.loanId && x.COMPANYID == model.companyId);
@@ -2267,6 +2268,12 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description)
         {
+
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                skipAuthentication = true,
+            };
+
             var loanData = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanId).FirstOrDefault();
 
             //FinanceTransactionViewModel terminateAndRebookTransaction = new FinanceTransactionViewModel();
@@ -2328,7 +2335,8 @@ namespace FintrakBanking.Repositories.Finance
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
 
-            PostTransaction(inputTransactions);
+            //PostTransaction(inputTransactions);
+            PostTransaction(inputTransactions,false, twoFADetails);
 
             return null;
 

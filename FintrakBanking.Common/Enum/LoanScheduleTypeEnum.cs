@@ -1,14 +1,21 @@
 ﻿namespace FintrakBanking.Common.Enum
 {
-    public  enum LoanScheduleTypeEnum
-    { Annuity = 1, ReducingBalance = 2, BulletPayment = 3, AnnuityWithScheduledRepayment = 4, IrregularSchedule = 5, ConstantPrincipalAndInterest = 6,
-      BallonPayment = 7
+    public enum LoanScheduleTypeEnum
+    {
+        Annuity = 1, ReducingBalance = 2, BulletPayment = 3, AnnuityWithScheduledRepayment = 4, IrregularSchedule = 5, ConstantPrincipalAndInterest = 6,
+        BallonPayment = 7
     };
 
     public enum LoanIrregularSchedulePaymentTypeEnum
     {
         PrincipalAndInterest = 1, PrincipalOnly = 2, InterestOnly = 3
     };
+
+    public enum FullAndFinalStatusEnum
+    {
+        None = 1, OnGoing = 2, Cancelled = 3, Completed = 4
+    };
+
 }
 
 //ScheduleTypeId ScheduleTypeName    ScheduleCategoryId
