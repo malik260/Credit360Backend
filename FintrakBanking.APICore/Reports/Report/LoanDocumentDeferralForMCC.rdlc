@@ -557,7 +557,7 @@
                                   <Value>=Fields!defferalExpiryDate.Value</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
-                                    <Format>MM/dd/yyyy</Format>
+                                    <Format>dd/MM/yyyy HH:MM:ss tt</Format>
                                   </Style>
                                 </TextRun>
                               </TextRuns>
@@ -576,6 +576,7 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
+                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>

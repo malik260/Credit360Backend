@@ -40,8 +40,8 @@ namespace FintrakBanking.Repositories.Credit
         private IFinanceTransactionRepository fina;
         private CustomerDetails _customerIntegration;
         private IIntegrationWithFinacle integration;
-        private CreditCommonRepository creditCommon;
         private IApprovalLevelStaffRepository approvalLevel;
+        private CreditCommonRepository creditCommon;
 
         public int response { get; set; }
         public bool isGroupLoan { get; set; }

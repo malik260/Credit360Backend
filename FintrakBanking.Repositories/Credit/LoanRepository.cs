@@ -2063,7 +2063,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 financeTransaction.PostTransaction(disbursementTransactions, false, twoFactorAuthDetails);
             }
-
         }
 
         public void PostLoanFees(LoanViewModel entity)
@@ -2950,6 +2949,7 @@ namespace FintrakBanking.Repositories.Credit
                         trans.Commit();
                         if (workflow.NewState != (int)ApprovalState.Ended)
                         {
+                            
                             if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
                             else return 3;
                         }
@@ -3919,7 +3919,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loan.CURRENCYID != company.CURRENCYID)
                 {   
                     debit.currencyId = loan.CURRENCYID;
-                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;  //loan.NOSTRORATEAMOUNT == null ? (double)loan.NOSTRORATEAMOUNT : 0; 
+                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;  //(double)loan.NOSTRORATEAMOUNT; 
 
                     rateCode = this.context.TBL_CURRENCY_RATECODE.FirstOrDefault(x => x.RATECODEID == loan.NOSTRORATECODEID).RATECODE;
                     customNostro = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == loan.NOSTROACCOUNTID && x.ISNOSTROACCOUNT == true).FirstOrDefault();
@@ -3956,7 +3956,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var item in loanDisbursement)
                 {
                     debit.currencyId = loan.CURRENCYID;
-                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;  //(double)loan.NOSTRORATEAMOUNT; 
+                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;  //(double)loan.NOSTRORATEAMOUNT; //financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
 
                     rateCode = this.context.TBL_CURRENCY_RATECODE.FirstOrDefault(x => x.RATECODEID == loan.NOSTRORATECODEID).RATECODE;
                     customNostro = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == loan.NOSTROACCOUNTID && x.ISNOSTROACCOUNT == true).FirstOrDefault();
@@ -4069,7 +4069,7 @@ namespace FintrakBanking.Repositories.Credit
                     credit.valueDate = debit.valueDate;
                     credit.transactionDate = debit.valueDate;
                     credit.currencyId = (short)loan.NOSTROCURRENCYID; //.CURRENCYID;
-                    credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate; //(double)loan.NOSTRORATEAMOUNT; 
+                    credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;  //(double)loan.NOSTRORATEAMOUNT; // financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
                     credit.isApproved = true;
                     credit.postedBy = model.createdBy;
                     credit.approvedBy = model.createdBy;
@@ -6796,7 +6796,7 @@ namespace FintrakBanking.Repositories.Credit
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 var loans = (from a in context.TBL_LOAN
-                             //join r in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals r.LOANID//
+                             join r in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals r.LOANID
                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                              join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                              where a.ISDISBURSED == true && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (int)LoanStatusEnum.Active
@@ -6812,7 +6812,7 @@ namespace FintrakBanking.Repositories.Credit
                                  loanReferenceNumber = a.LOANREFERENCENUMBER,
                                  principalAmount = a.PRINCIPALAMOUNT,
                                  loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                 //lmsApplicationDetailId = r.LOANREVIEWAPPLICATIONID,//
+                                 lmsApplicationDetailId = r.LOANREVIEWAPPLICATIONID,
                                  productName = a.TBL_PRODUCT.PRODUCTNAME,
                                  productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                  currencyId = a.CURRENCYID,
@@ -6878,6 +6878,49 @@ namespace FintrakBanking.Repositories.Credit
                                  //exchangeRate = a.EXCHANGERATE,
                                  //currencyId = a.CURRENCYID,
                                  //currency = a.TBL_CURRENCY.CURRENCYNAME
+                             });
+
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
+                                                   x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.productAccountName.ToLower().Contains(searchQuery.ToLower()))
+                                   .Take(10).AsQueryable();
+
+            }
+
+            return allFilteredLoan;
+
+        }
+
+        public IQueryable<LoanViewModel> SearchForLoanPrepayment(string searchQuery)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            IQueryable<LoanViewModel> allFilteredLoan = null;
+
+            searchQuery = searchQuery.Trim();
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                var loans = (from a in context.TBL_LOAN
+                             join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                             join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                             where a.ISDISBURSED == true && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                             select new LoanViewModel
+                             {
+                                 loanId = a.TERMLOANID,
+                                 customerId = a.CUSTOMERID,
+                                 customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                 firstName = b.FIRSTNAME,
+                                 lastName = b.LASTNAME,
+                                 customerCode = b.CUSTOMERCODE,
+                                 productAccountName = c.PRODUCTACCOUNTNAME,
+                                 loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                 principalAmount = a.PRINCIPALAMOUNT,
+                                 loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                 productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                 currencyId = a.CURRENCYID,
+                                 currencyCode = a.TBL_CURRENCY.CURRENCYCODE
                              });
 
                 allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
@@ -8207,13 +8250,13 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanViewModel> getDisbursedCommercialLoanTrancheDetailsById(int loanId)//GetDisbursedLoanByLoanId
         {
             var applicationDate = generalSetup.GetApplicationDate();
-            var loanRecord = context.TBL_LOAN.Find(loanId);
-            var loans = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID);
+            TBL_LOAN loanRecord = context.TBL_LOAN.Find(loanId);
+            var relatedLoanRecords = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == loanRecord.LOANAPPLICATIONDETAILID && x.LOANSTATUSID == (short)LoanStatusEnum.Active && x.ISDISBURSED == true).ToList();
             LoanViewModel loanDetails;
             List<LoanViewModel> tranches = new List<LoanViewModel>();
-            foreach (var item in loans)
+            foreach (var item in relatedLoanRecords)
             {
-                loanDetails = (from a in context.TBL_LOAN
+                 loanDetails = (from a in context.TBL_LOAN
                                    join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                    join e in context.TBL_LOAN_APPLICATION on d.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                    join f in context.TBL_PRODUCT on a.PRODUCTID equals f.PRODUCTID
@@ -8335,7 +8378,7 @@ namespace FintrakBanking.Repositories.Credit
                                    }).FirstOrDefault();
 
                 if (loanDetails != null) tranches.Add(loanDetails);
-
+                loanDetails = new LoanViewModel();
             };
 
             return tranches;
@@ -9017,6 +9060,10 @@ namespace FintrakBanking.Repositories.Credit
             {
                 searchQuery = searchQuery.ToLower();
             }
+            List<short> loanStatus = new List<short>();
+            loanStatus.Add((short)LoanStatusEnum.Cancelled);
+            loanStatus.Add((short)LoanStatusEnum.Terminated);
+
 
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
@@ -9026,9 +9073,12 @@ namespace FintrakBanking.Repositories.Credit
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
-                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
-                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)//|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
-                                   && a.MATURITYDATE > applicationDate
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
+                                   && !loanStatus.Contains(a.LOANSTATUSID)
+                                   //&& (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled)
+                                   //|| (a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)
+                                   //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
+                                  // && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.CONTINGENTLOANID,
@@ -9051,6 +9101,9 @@ namespace FintrakBanking.Repositories.Credit
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID
 
                                    });
+
+            //var test = allFilteredLoan.Where(x=>(x.loanStatusId != (short)LoanStatusEnum.Cancelled) ||( x.loanStatusId != (short)LoanStatusEnum.Terminated)).ToList();
+            //allFilteredLoan = test;
             return allFilteredLoan;
         }
 

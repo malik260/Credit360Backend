@@ -359,6 +359,7 @@ namespace FintrakBanking.ViewModels.Credit
         public LoanReviewOperationApprovalViewModel operationReview { get; set; }
         public decimal totalOutstandingAmount { get; set; }
         public decimal totalExistingLimitAmount { get; set; }
+        public string crmsCode { get; set; }
 
 
 

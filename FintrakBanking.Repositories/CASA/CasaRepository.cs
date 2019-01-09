@@ -8,9 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Finance;
-using System.Text;
-using FinTrakBanking.ThirdPartyIntegration.Finacle;
-using System.Threading.Tasks;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Common.CustomException;
 

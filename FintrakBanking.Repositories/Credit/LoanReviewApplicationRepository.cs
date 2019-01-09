@@ -173,7 +173,6 @@ namespace FintrakBanking.Repositories.Credit
             return index == (position - 1);
         }
 
-
         public List<LMSOperationListViewModel> GetApplicationOperations()
         {
 
@@ -379,10 +378,11 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0)
             {
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-                if (setup.USE_THIRD_PARTY_INTEGRATION) creditCommon.LoadCustomerTurnover(application.LOANAPPLICATIONID, customerIds, staffId, true);
+                if (setup.USE_THIRD_PARTY_INTEGRATION) creditCommon.LoadCustomerTurnover(application.LOANAPPLICATIONID,customerIds,staffId, true);
 
                 return "Application with reference number " + referenceNumber + " created.";
             }
+
             throw new SecureException("An error occured while saving the data!");
         }
 
@@ -432,7 +432,6 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-
         public bool ValidateNewSubAllocationOperation(int loanApplicationDetailId, int customerId, int loanSystemTypeId)
         {
 
@@ -479,9 +478,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
         }
-
-
-
+               
         private int GetCamOperation(int performanceTypeId)
         {
             switch (performanceTypeId)

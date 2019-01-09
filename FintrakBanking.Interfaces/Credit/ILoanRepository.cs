@@ -18,6 +18,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface ILoanRepository
     {
+        CasaBalanceViewModel GetCASABalanceById(int casaAccountId, int companyId);
         List<OverrideItemVeiwModel> getBookingOverride(string customerCode);
         LoanViewModel GetReferedBookingFacilityRecordsById(CamProcessedLoanViewModel model);
         bool ReferBackBooking(ApprovalViewModel model);
@@ -34,6 +35,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LookupViewModel> GetLoanApplicationTypes();
 
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
+        IQueryable<LoanViewModel> SearchForLoanPrepayment(string searchQuery);
 
         IQueryable<LoanViewModel> SearchForFXRevolvingLoan(string searchQuery);
 
