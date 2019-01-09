@@ -2063,7 +2063,6 @@ namespace FintrakBanking.Repositories.Credit
             {
                 financeTransaction.PostTransaction(disbursementTransactions, false, twoFactorAuthDetails);
             }
-
         }
 
         public void PostLoanFees(LoanViewModel entity)
@@ -3920,7 +3919,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loan.CURRENCYID != company.CURRENCYID)
                 {   
                     debit.currencyId = loan.CURRENCYID;
-                    debit.currencyRate = (double)loan.NOSTRORATEAMOUNT; 
+                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;  //(double)loan.NOSTRORATEAMOUNT; 
 
                     rateCode = this.context.TBL_CURRENCY_RATECODE.FirstOrDefault(x => x.RATECODEID == loan.NOSTRORATECODEID).RATECODE;
                     customNostro = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == loan.NOSTROACCOUNTID && x.ISNOSTROACCOUNT == true).FirstOrDefault();
@@ -3957,7 +3956,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var item in loanDisbursement)
                 {
                     debit.currencyId = loan.CURRENCYID;
-                    debit.currencyRate = (double)loan.NOSTRORATEAMOUNT; //financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;  //(double)loan.NOSTRORATEAMOUNT; //financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
 
                     rateCode = this.context.TBL_CURRENCY_RATECODE.FirstOrDefault(x => x.RATECODEID == loan.NOSTRORATECODEID).RATECODE;
                     customNostro = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == loan.NOSTROACCOUNTID && x.ISNOSTROACCOUNT == true).FirstOrDefault();
@@ -4034,7 +4033,7 @@ namespace FintrakBanking.Repositories.Credit
                     credit.valueDate = debit.valueDate;
                     credit.transactionDate = debit.valueDate;
                     credit.currencyId = (short)loan.NOSTROCURRENCYID; 
-                    credit.currencyRate = (double)loan.NOSTRORATEAMOUNT;
+                    credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate; //(double)loan.NOSTRORATEAMOUNT;
                     credit.isApproved = true;
                     credit.postedBy = model.createdBy;
                     credit.approvedBy = model.createdBy;
@@ -4070,7 +4069,7 @@ namespace FintrakBanking.Repositories.Credit
                     credit.valueDate = debit.valueDate;
                     credit.transactionDate = debit.valueDate;
                     credit.currencyId = (short)loan.NOSTROCURRENCYID; //.CURRENCYID;
-                    credit.currencyRate = (double)loan.NOSTRORATEAMOUNT; // financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                    credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;  //(double)loan.NOSTRORATEAMOUNT; // financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
                     credit.isApproved = true;
                     credit.postedBy = model.createdBy;
                     credit.approvedBy = model.createdBy;

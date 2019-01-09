@@ -160,6 +160,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-accounts/balance/{casaAccountId}")]
+        public HttpResponseMessage GetCASABalanceById(int casaAccountId)
+        {
+            var data = repo.GetCASABalanceById(casaAccountId,token.GetCompanyId);
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Account Number do not exist" });
+            }
+                
+        }
+
+        [HttpGet]
         [Route("revolving-types")]
         public HttpResponseMessage GetRevolvingLoanTypes()
         {
