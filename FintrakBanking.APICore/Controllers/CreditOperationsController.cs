@@ -141,7 +141,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-search/")]
@@ -164,7 +163,28 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-search-prepayment")]
+        public HttpResponseMessage SearchForLoanPrepayment(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForLoanPrepayment(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("fx-revolving-loan-search/")]
@@ -445,6 +465,29 @@ namespace FintrakBanking.APICore.Controllers
             {
                 var data = loanRepo.GetDisbursedLoanByLoanId(loanId, loanType);
                 if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("disbursed-loan-tranche-details/{loanId}")]
+        public HttpResponseMessage getDisbursedCommercialLoanTrancheDetailsById(int loanId)
+        {
+            try
+            {
+                var data = loanRepo.getDisbursedCommercialLoanTrancheDetailsById(loanId);
+                if (data.Count < 1)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
                        new { success = false, message = "No record found" });

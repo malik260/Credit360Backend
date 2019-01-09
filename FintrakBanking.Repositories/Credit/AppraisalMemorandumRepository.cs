@@ -395,9 +395,13 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended) // cam status
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.CAMCompleted;
-                if (model.forwardAction == (int)ApprovalStatusEnum.Approved) { appl.APPROVEDDATE = applicationDate; }
+                if (workflow.StatusId == (int)ApprovalStatusEnum.Approved)
+                {
+                    appl.APPROVEDDATE = applicationDate;
+                    appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
+                }
                 if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
-                if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; }
+                if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
                 // MEMORANDUM update
                 var memo = this.context.TBL_CREDIT_APPRAISAL_MEMORANDM.Find(model.appraisalMemorandumId);
                 if (memo != null) { memo.ISCOMPLETED = true; }
