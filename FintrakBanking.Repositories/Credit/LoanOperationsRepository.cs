@@ -10130,6 +10130,7 @@ namespace FintrakBanking.Repositories.Credit
                 var sllp = _otherOperationAccount.GLACCOUNTID;
 
                 //List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                
 
                 if (principalOutStandingBalance != 0)
                 {
@@ -10138,6 +10139,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (pastDue != 0)
                 {
+                    twoFactorAuth.skipAuthentication = true;
                     financeTransaction.PostTerminateAndRebookPosting(loanId, loanInput, pastDue, sllp, "past due Write off", twoFactorAuth);
                 }
 

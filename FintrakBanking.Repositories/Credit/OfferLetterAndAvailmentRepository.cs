@@ -2529,7 +2529,7 @@ namespace FintrakBanking.Repositories.Credit
             var detailIds = applicationDetails.Select(x => x.LOANAPPLICATIONDETAILID);
 
             var conditionItems = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                                  where detailIds.Contains(c.LOANAPPLICATIONDETAILID) && c.ISSUBSEQUENT == false && c.CHECKLISTVALIDATED == false
+                                  where detailIds.Contains(c.LOANAPPLICATIONDETAILID) && c.ISSUBSEQUENT == false && (c.CHECKLISTVALIDATED == false || c.CHECKLISTVALIDATED == null) 
                                   select c).ToList();
 
             if (conditionItems.Any()) throw new SecureException($"One or more condition(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
@@ -2549,7 +2549,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 && operations.Contains(a.OPERATIONID)
                                           select b).ToList();
 
-                    var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID2 == false || c.CHECKLISTSTATUSID3 == false);
+                    var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null); //c.CHECKLISTSTATUSID2 == false ||
 
                     if (omission.Any()) throw new SecureException($"One or more {item.CHECKLIST_TYPE_NAME} item(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
 
