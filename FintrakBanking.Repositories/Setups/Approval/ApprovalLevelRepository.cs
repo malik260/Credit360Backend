@@ -1077,7 +1077,12 @@ namespace FintrakBanking.Repositories.Setups.Approval
       
             var allstaff = this.GetAllStaffNames();
 
-            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == entity.operationId && x.TARGETID == entity.targetId);
+            var operationId = entity.operationIds[0];
+
+            //var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == entity.operationId && x.TARGETID == entity.targetId);
+
+            var trail = context.TBL_APPROVAL_TRAIL.Where(x => x.FROMAPPROVALLEVELID != null && x.OPERATIONID == operationId && x.TARGETID == entity.targetId);
+
 
             var data = trail.Select(x => new ApprovalTrailViewModel
             {

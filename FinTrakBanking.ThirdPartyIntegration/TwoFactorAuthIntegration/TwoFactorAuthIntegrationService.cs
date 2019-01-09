@@ -35,21 +35,24 @@ namespace FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration
                 };
 
                 client.Close();
-                var logs = new TBL_CUSTOM_API_LOGS
+                if(staffCode != null)
                 {
-                    APIURL = "http://ho-bespoke07.nigeria.firstbank.local/EntrustWrapper/AuthWrapper.svc",
-                    LOGTYPEID = 15,
-                    REFERENCENUMBER = staffCode,
-                    REQUESTDATETIME = requestDatetime,
-                    REQUESTMESSAGE = $"CustId : {staffCode} , PassCode : {passCode}",
-                    RESPONSEDATETIME = responseDateTime,
-                    RESPONSEMESSAGE = authResponse.Message,
-                };
-                FinTrakBankingContext logContext = new FinTrakBankingContext();
+                    var logs = new TBL_CUSTOM_API_LOGS
+                    {
+                        APIURL = "http://ho-bespoke07.nigeria.firstbank.local/EntrustWrapper/AuthWrapper.svc",
+                        LOGTYPEID = 15,
+                        REFERENCENUMBER = staffCode,
+                        REQUESTDATETIME = requestDatetime,
+                        REQUESTMESSAGE = $"CustId : {staffCode} , PassCode : {passCode}",
+                        RESPONSEDATETIME = responseDateTime,
+                        RESPONSEMESSAGE = authResponse.Message,
+                    };
+                    FinTrakBankingContext logContext = new FinTrakBankingContext();
 
-                logContext.TBL_CUSTOM_API_LOGS.Add(logs);
-
-                logContext.SaveChanges();
+                    logContext.TBL_CUSTOM_API_LOGS.Add(logs);
+                    logContext.SaveChanges();
+                }
+                
                 return output;
             }
             catch (TwoFactorAuthenticationException ex)

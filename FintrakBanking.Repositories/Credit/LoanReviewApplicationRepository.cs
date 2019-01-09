@@ -26,9 +26,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly int classifiedAssetManagementRoleId = 46;
 
         public LoanReviewApplicationRepository(
-            FinTrakBankingContext context, 
-            IGeneralSetupRepository general, 
-            IAuditTrailRepository audit, 
+            FinTrakBankingContext context,
+            IGeneralSetupRepository general,
+            IAuditTrailRepository audit,
             IWorkflow workflow,
             CreditCommonRepository creditCommon
             )

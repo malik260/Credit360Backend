@@ -493,10 +493,10 @@ namespace FintrakBanking.Repositories.Credit
                              });
             var debug = checkType.ToList();
 
-            if (productClassProcessId != 0 && productClassProcessId == (int)ProductClassProcessEnum.CAMBased)
-            {
-                return checkType.Where(x => x.isproductbased != true).GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
-            }
+            //if (productClassProcessId != 0 && productClassProcessId == (int)ProductClassProcessEnum.CAMBased)
+            //{
+            //    return checkType.Where(x => x.isproductbased != true).GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
+            //}
 
             return checkType.GroupBy(x => x.targetTypeId).Select(y => y.FirstOrDefault()).ToList();
         }
@@ -1502,11 +1502,12 @@ namespace FintrakBanking.Repositories.Credit
 
             var condition = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
                              where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
-                             && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
+                             && c.ISSUBSEQUENT == false //&& c.ISEXTERNAL == true 
                              select c).ToList();
+
             var status = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
                           where c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID == loanApplicationId
-                          && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
+                          && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null //&& c.ISEXTERNAL == true
                           select c).ToList();
             var output = condition.Count == status.Count;
             return output;
@@ -1516,11 +1517,11 @@ namespace FintrakBanking.Repositories.Credit
 
             var condition = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                              where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
-                             && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false
+                             && c.ISSUBSEQUENT == false //&& c.ISEXTERNAL == true 
                              select c).ToList();
             var status = (from c in context.TBL_LMSR_CONDITION_PRECEDENT
                           where c.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID == applicationId
-                          && c.ISEXTERNAL == true && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null
+                          && c.ISSUBSEQUENT == false && c.CHECKLISTSTATUSID != null //&& c.ISEXTERNAL == true 
                           select c).ToList();
             var output = condition.Count == status.Count;
             return output;
@@ -1843,7 +1844,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             entity.externalInitialization = false;
 
-            var appl = context.TBL_LMSR_APPLICATION.Find(entity.loanApplicationId);
+            var appl = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
 
             using (var trans = context.Database.BeginTransaction())
             {
@@ -1907,6 +1908,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             // return false;
         }
+
         private bool ApproveChecklistDeferral(int targetId, ApprovalViewModel user)
         {
             bool output = false;

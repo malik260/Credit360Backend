@@ -291,7 +291,12 @@ namespace FintrakBanking.Repositories.Credit
 
             // VALIDATION TODO if (model.recommendedChanges.Count() > 0)
             items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false).ToList();
-            decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
+
+            var test = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).ToList();
+
+            decimal totalApprovedAmount = test.Sum(x => x.APPROVEDAMOUNT);
+
+            //decimal totalApprovedAmount = items.Where(x => x.STATUSID == (short)ApprovalStatusEnum.Approved).Sum(x => x.APPROVEDAMOUNT);
             if (appl.RISKRATINGID != null && model.isBusiness == false)
             {
                 ValidateCustomerExposure(1, appl.LOANAPPLICATIONID, totalApprovedAmount, appl.CUSTOMERID, appl.CUSTOMERGROUPID);
