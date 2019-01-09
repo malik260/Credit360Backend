@@ -425,7 +425,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("region/type/{regionTypeId}")]
         public HttpResponseMessage RegionByType(int regionTypeId)
         {
-            //if (token.GetRoleId == 11111) regionTypeId = 2;
             var data = repo.GetRegionByType(regionTypeId);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, count = data.Count() });
         }

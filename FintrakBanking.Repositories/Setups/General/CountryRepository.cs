@@ -176,14 +176,53 @@ namespace FintrakBanking.Repositories.Setups.General
                                   cityId = a.CITYID,
                                   cityName = a.CITYNAME,
                                   stateId = a.TBL_LOCALGOVERNMENT.STATEID,
+                                  localGovernmentId = a.LOCALGOVERNMENTID,
                                   cityClassId = a.CITYCLASSID,
                                   cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
                                   allowedForCollateral = a.ALLOWEDFORCOLLATERAL
                               });
             return cityEntity.FirstOrDefault();
         }
-
-
+        public IEnumerable<LocalGovtViewModel> GetLGAByStateId(int stateId)
+        {
+            var stateEntity = (from a in context.TBL_LOCALGOVERNMENT
+                               where a.STATEID == stateId
+                               select new LocalGovtViewModel
+                               {
+                                   localGovernmentId = a.LOCALGOVERNMENTID,
+                                   localGovtName = a.NAME,
+                                   stateId = a.STATEID,
+                                   
+                               });
+            return stateEntity;
+        }
+        public IEnumerable<CityViewModel> GetCityByLGAId(int lgaId)
+        {
+            var stateEntity = (from a in context.TBL_CITY
+                               where a.LOCALGOVERNMENTID == lgaId
+                               select new CityViewModel
+                               {
+                                   cityId = a.CITYID,
+                                   cityName = a.CITYNAME,
+                                   stateId = a.TBL_LOCALGOVERNMENT.STATEID,
+                                   localGovernmentId = a.LOCALGOVERNMENTID,
+                                   cityClassId = a.CITYCLASSID,
+                                   cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
+                                   allowedForCollateral = a.ALLOWEDFORCOLLATERAL
+                               });
+            return stateEntity;
+        }
+ public int GetLgaCity(int cityId)
+        {
+            //var stateEntity = (from a in context.TBL_CITY
+            //                   where a.CITYID == cityId
+            //                   select new CityViewModel
+            //                   {
+            //                       localGovernmentId = a.LOCALGOVERNMENTID
+            //                   });
+            var rec = context.TBL_CITY.Where(x => x.CITYID == cityId).Select(m => m.LOCALGOVERNMENTID).FirstOrDefault();
+            return rec;
+        }
         public IEnumerable<CityViewModel> GetCityByStateId(int stateId)
         {
             var stateEntity = (from a in context.TBL_CITY
@@ -193,6 +232,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                    cityId = a.CITYID,
                                    cityName = a.CITYNAME,
                                    stateId = a.TBL_LOCALGOVERNMENT.STATEID,
+                                   localGovernmentId = a.LOCALGOVERNMENTID,
                                    cityClassId = a.CITYCLASSID,
                                    cityClassName = a.TBL_CITY_CLASS.CITYCLASSNAME,
                                    allowedForCollateral = a.ALLOWEDFORCOLLATERAL

@@ -203,6 +203,7 @@ namespace FintrakBanking.Repositories.Customer
                     // {
                     address = context.TBL_CUSTOMER_ADDRESS.Find(entity.addressId);
                     var accountCompleted = context.TBL_CUSTOMER.Find(entity.customerId).ACCOUNTCREATIONCOMPLETE;
+                    entity.homeTown = context.TBL_CITY.Where(x=>x.CITYID == entity.cityId).Select(m=>m.CITYNAME).FirstOrDefault();
                     //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false and entity.canModified equal true, record insert directly to the main table 
                     if (address != null && accountCompleted == false)
                     {

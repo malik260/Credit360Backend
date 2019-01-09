@@ -3150,7 +3150,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (user.operationId == (int)OperationsEnum.CommercialLoanBooking)
                 {
-                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.EFFECTIVEDATE.Date - loanRecord.MATURITYDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
+                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.MATURITYDATE.Date - loanRecord.EFFECTIVEDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
 
                     loanRecord.OUTSTANDINGINTEREST = totalInterest;
 
@@ -3166,7 +3166,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (user.operationId == (int)OperationsEnum.ForeignExchangeLoanBooking)
                 {
-                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.EFFECTIVEDATE.Date - loanRecord.MATURITYDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
+                    var totalInterest = getTotalInterest(loanRecord.PRINCIPALAMOUNT, loanRecord.INTERESTRATE, (loanRecord.MATURITYDATE.Date - loanRecord.EFFECTIVEDATE.Date).Days, DayCountConventionEnum.Actual_Actual);
 
                     loanRecord.OUTSTANDINGINTEREST = totalInterest;
 
@@ -3919,7 +3919,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (loan.CURRENCYID != company.CURRENCYID)
                 {   
                     debit.currencyId = loan.CURRENCYID;
-                    debit.currencyRate = (double)loan.NOSTRORATEAMOUNT; 
+                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;  //loan.NOSTRORATEAMOUNT == null ? (double)loan.NOSTRORATEAMOUNT : 0; 
 
                     rateCode = this.context.TBL_CURRENCY_RATECODE.FirstOrDefault(x => x.RATECODEID == loan.NOSTRORATECODEID).RATECODE;
                     customNostro = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == loan.NOSTROACCOUNTID && x.ISNOSTROACCOUNT == true).FirstOrDefault();
@@ -3956,7 +3956,7 @@ namespace FintrakBanking.Repositories.Credit
                 foreach (var item in loanDisbursement)
                 {
                     debit.currencyId = loan.CURRENCYID;
-                    debit.currencyRate = (double)loan.NOSTRORATEAMOUNT; //financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                    debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;  //(double)loan.NOSTRORATEAMOUNT; 
 
                     rateCode = this.context.TBL_CURRENCY_RATECODE.FirstOrDefault(x => x.RATECODEID == loan.NOSTRORATECODEID).RATECODE;
                     customNostro = context.TBL_CUSTOM_CHART_OF_ACCOUNT.Where(x => x.ACCOUNTID == loan.NOSTROACCOUNTID && x.ISNOSTROACCOUNT == true).FirstOrDefault();
@@ -4033,7 +4033,7 @@ namespace FintrakBanking.Repositories.Credit
                     credit.valueDate = debit.valueDate;
                     credit.transactionDate = debit.valueDate;
                     credit.currencyId = (short)loan.NOSTROCURRENCYID; 
-                    credit.currencyRate = (double)loan.NOSTRORATEAMOUNT;
+                    credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate; //(double)loan.NOSTRORATEAMOUNT;
                     credit.isApproved = true;
                     credit.postedBy = model.createdBy;
                     credit.approvedBy = model.createdBy;
@@ -4069,7 +4069,7 @@ namespace FintrakBanking.Repositories.Credit
                     credit.valueDate = debit.valueDate;
                     credit.transactionDate = debit.valueDate;
                     credit.currencyId = (short)loan.NOSTROCURRENCYID; //.CURRENCYID;
-                    credit.currencyRate = (double)loan.NOSTRORATEAMOUNT; // financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                    credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate; //(double)loan.NOSTRORATEAMOUNT; 
                     credit.isApproved = true;
                     credit.postedBy = model.createdBy;
                     credit.approvedBy = model.createdBy;
@@ -6796,7 +6796,7 @@ namespace FintrakBanking.Repositories.Credit
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 var loans = (from a in context.TBL_LOAN
-                             join r in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals r.LOANID
+                             //join r in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals r.LOANID//
                              join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                              join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
                              where a.ISDISBURSED == true && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (int)LoanStatusEnum.Active
@@ -6812,7 +6812,7 @@ namespace FintrakBanking.Repositories.Credit
                                  loanReferenceNumber = a.LOANREFERENCENUMBER,
                                  principalAmount = a.PRINCIPALAMOUNT,
                                  loanSystemTypeId = a.LOANSYSTEMTYPEID,
-                                 lmsApplicationDetailId = r.LOANREVIEWAPPLICATIONID,
+                                 //lmsApplicationDetailId = r.LOANREVIEWAPPLICATIONID,//
                                  productName = a.TBL_PRODUCT.PRODUCTNAME,
                                  productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
                                  currencyId = a.CURRENCYID,

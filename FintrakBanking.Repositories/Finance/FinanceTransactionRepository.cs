@@ -2067,7 +2067,11 @@ namespace FintrakBanking.Repositories.Finance
         public FinanceTransactionViewModel PostBuildLoanPositiveReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId)
         {
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
-            
+
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                skipAuthentication = true
+            };
 
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
             FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
@@ -2178,7 +2182,8 @@ namespace FintrakBanking.Repositories.Finance
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
-            PostTransaction(inputTransactions);
+            PostTransaction(inputTransactions,false, twoFADetails);
+            
 
             //financeTransaction.PostTransaction(loanTransaction);
 
