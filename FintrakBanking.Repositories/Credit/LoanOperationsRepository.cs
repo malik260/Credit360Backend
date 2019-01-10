@@ -11603,6 +11603,21 @@ namespace FintrakBanking.Repositories.Credit
                                {
                                    principalAmount = p.OPENINGBALANCE,
                                }).FirstOrDefault();
+
+
+            if (runningLoan == null) {
+
+                 runningLoan = (from p in context.TBL_LOAN_SCHEDULE_DAILY
+                                   where p.DATE == effectiveDate
+                                         && p.LOANID == loan.TERMLOANID
+                                   select new LoanViewModel()
+                                   {
+                                       principalAmount = p.OPENINGBALANCE,
+                                   }).FirstOrDefault();
+
+            }
+
+
             return runningLoan;
         }
 
@@ -11960,11 +11975,21 @@ namespace FintrakBanking.Repositories.Credit
                 //}
             }
 
-            if (DoesOperationExist(model.loanId, model.operationTypeId, (short)reviewApplicationDetail.LOANSYSTEMTYPEID))
-            {
-                throw new ConditionNotMetException("The requested operation already exist and going through approval");
-            }
 
+            if ((int)OperationsEnum.Prepayment != model.operationTypeId)
+            {
+                if (DoesOperationExist(model.loanId, model.operationTypeId, (short)reviewApplicationDetail.LOANSYSTEMTYPEID))
+                {
+                    throw new ConditionNotMetException("The requested operation already exist and going through approval");
+                }
+            }
+            else
+            {
+                if (DoesOperationExist(model.loanId, model.operationTypeId, (short)LoanSystemTypeEnum.TermDisbursedFacility))
+                {
+                    throw new ConditionNotMetException("The requested operation already exist and going through approval");
+                }
+            }
 
             List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> irregularSchedules = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
             //Storing the Irregular Schedule Payment Plan
@@ -12015,11 +12040,21 @@ namespace FintrakBanking.Repositories.Credit
 
             if (model.loanReviewOperationsId == 0)
             {
+                int loanSystemTypeId = 0;
+                if (reviewApplicationDetail == null)
+                {
+                    loanSystemTypeId = model.loanSystemTypeId;
+                }
+                else
+                {
+                    loanSystemTypeId = reviewApplicationDetail.LOANSYSTEMTYPEID;
+                }
+
                 reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Add(new TBL_LOAN_REVIEW_OPERATION
                 {
                     LOANID = model.loanId,
                     LOANREVIEWAPPLICATIONID = loanReviewApplicationId,
-                    LOANSYSTEMTYPEID = reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
+                    LOANSYSTEMTYPEID = loanSystemTypeId ,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
                     OPERATIONTYPEID = model.operationTypeId,
                     EFFECTIVEDATE = model.proposedEffectiveDate,
                     REVIEWDETAILS = model.reviewDetails,
