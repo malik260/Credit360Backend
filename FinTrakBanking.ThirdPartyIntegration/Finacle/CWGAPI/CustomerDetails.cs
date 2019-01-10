@@ -163,7 +163,7 @@
 
                         var currencyId = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYCODE == accountAPI.currencyType).CURRENCYID;
                         var account = context.TBL_CASA_ACCOUNTSTATUS.FirstOrDefault(x => x.ACCOUNTSTATUSNAME.ToLower() == accountAPI.accountStatus.ToLower());
-                        var accountStatusId = account.ACCOUNTSTATUSID;
+                        var accountStatusId = account != null  ? account.ACCOUNTSTATUSID : 0;
 
                         accountOutput.accountName = accountAPI.accountName;
                         accountOutput.accountNo = accountAPI.accountNumber;
