@@ -165,21 +165,21 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("job-request/department")]
-        public HttpResponseMessage GetJobRequestByDepartment()
-        {
-            var data = repo.GetJobRequestByDepartment(token.GetStaffId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        }
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("job-request/department")]
+      //  public HttpResponseMessage GetJobRequestByDepartment()
+      //  {
+      //      var data = repo.GetJobRequestByDepartment(token.GetStaffId);
+      //      return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+      //  }
 
-      [HttpGet] [ClaimsAuthorization]  
-        [Route("job-request/department/unit")]
-        public HttpResponseMessage GetJobRequestByDepartmentUnit()
-        {
-            var data = repo.GetJobRequestByDepartment(token.GetStaffId);
-            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-        }
+      //[HttpGet] [ClaimsAuthorization]  
+      //  [Route("job-request/department/unit")]
+      //  public HttpResponseMessage GetJobRequestByDepartmentUnit()
+      //  {
+      //      var data = repo.GetJobRequestByDepartment(token.GetStaffId);
+      //      return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+      //  }
 
         [HttpPost]
         [ClaimsAuthorization]
