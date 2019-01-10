@@ -2529,7 +2529,7 @@ namespace FintrakBanking.Repositories.Credit
             var detailIds = applicationDetails.Select(x => x.LOANAPPLICATIONDETAILID);
 
             var conditionItems = (from c in context.TBL_LOAN_CONDITION_PRECEDENT
-                                  where detailIds.Contains(c.LOANAPPLICATIONDETAILID) && c.ISSUBSEQUENT == false && c.CHECKLISTVALIDATED == false
+                                  where detailIds.Contains(c.LOANAPPLICATIONDETAILID) && c.ISSUBSEQUENT == false && (c.CHECKLISTVALIDATED == false || c.CHECKLISTVALIDATED == null) 
                                   select c).ToList();
 
             if (conditionItems.Any()) throw new SecureException($"One or more condition(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
@@ -2549,7 +2549,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 && operations.Contains(a.OPERATIONID)
                                           select b).ToList();
 
-                    var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID2 == false || c.CHECKLISTSTATUSID3 == false);
+                    var omission = checklistItems.Where(c => c.CHECKLISTSTATUSID3 == false || c.CHECKLISTSTATUSID3 == null); //c.CHECKLISTSTATUSID2 == false ||
 
                     if (omission.Any()) throw new SecureException($"One or more {item.CHECKLIST_TYPE_NAME} item(s) is not validated. " + Environment.NewLine + " Please check your response to confirm. " + Environment.NewLine);
 
@@ -2562,53 +2562,68 @@ namespace FintrakBanking.Repositories.Credit
         {
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
-            int customerId = (int)application.customerId;
+            // int customerId = (int)application.customerId;
+            int? branchOverrideRequestId = null;
+            int? sectorOverrideRequestId = null;
 
-            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x 
+                => x.LOANAPPLICATIONID == application.loanApplicationId
+                && x.DELETED == false 
+                && x.STATUSID == (int)ApprovalStatusEnum.Approved
+                );
 
-            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
+            foreach (var detail in loanApplicationDetails)
+            {
+                var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == detail.CUSTOMERID)
+                    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
+                        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                    .FirstOrDefault();
 
-            if (branchOverrideRequest != null)
-            {
-                var request = context.TBL_OVERRIDE_DETAIL.Find(branchOverrideRequest.id);
-                request.ISUSED = true;
-                context.Entry(request).State = System.Data.Entity.EntityState.Modified;
-            }
-            else
-            {
-                // branch limits
-                var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
-                decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
-                decimal applicationAmount = details.Sum(x => x.approvedAmount); // proposedAmount should be approvedAmount after application
-                var branch = context.TBL_BRANCH.Find(branchId);
-                if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
-            }
+                if (branchOverrideRequest != null) branchOverrideRequestId = branchOverrideRequest.id;
 
-            if (sectorOverrideRequest != null)
-            {
-                var request = context.TBL_OVERRIDE_DETAIL.Find(sectorOverrideRequest.id);
-                request.ISUSED = true;
-                context.Entry(request).State = System.Data.Entity.EntityState.Modified;
-            }
-            else
-            {
-                // sector limits
-                // sectorId here is actually the subsectorId
-                List<short> sectorIds = details.Select(x => x.sectorId).ToList();
-                foreach (var sectorId in sectorIds)
+                var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == detail.CUSTOMERID)
+                    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
+                        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                    .FirstOrDefault();
+
+                if (sectorOverrideRequest != null) sectorOverrideRequestId = sectorOverrideRequest.id;
+
+                if (branchOverrideRequestId != null)
                 {
-                    var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
-                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                    //var sector = context.TBL_SECTOR.Find(sectorId);
-                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    var request = context.TBL_OVERRIDE_DETAIL.Find(branchOverrideRequestId);
+                    request.ISUSED = true;
+                    context.Entry(request).State = System.Data.Entity.EntityState.Modified;
+                }
+                else
+                {
+                    // branch limits
+                    var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
+                    decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+                    decimal applicationAmount = details.Sum(x => x.approvedAmount); // proposedAmount should be approvedAmount after application
+                    var branch = context.TBL_BRANCH.Find(branchId);
+                    if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+                }
+
+                if (sectorOverrideRequestId != null)
+                {
+                    var request = context.TBL_OVERRIDE_DETAIL.Find(sectorOverrideRequestId);
+                    request.ISUSED = true;
+                    context.Entry(request).State = System.Data.Entity.EntityState.Modified;
+                }
+                else
+                {
+                    // sector limits
+                    // sectorId here is actually the subsectorId
+                    List<short> sectorIds = details.Select(x => x.sectorId).ToList();
+                    foreach (var sectorId in sectorIds)
+                    {
+                        var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
+                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                        //var sector = context.TBL_SECTOR.Find(sectorId);
+                        if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    }
                 }
             }
         }

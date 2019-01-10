@@ -86,6 +86,7 @@
     <Compile Include="Setups\Credit\IFXAccountCreationRepository.cs" />
     <Compile Include="Setups\Finance\ICustomChartOfAccountRepository.cs" />
     <Compile Include="Setups\General\IStaffMIS.cs" />
+    <Compile Include="ThridPartyIntegration\IFinacleIntegrationRepository.cs" />
     <Compile Include="Validation\ICreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\IIntegrationWithFinacle.cs" />
     <Compile Include="Credit\ILoanPerformanceRepository.cs" />

@@ -11,6 +11,7 @@ namespace FintrakBanking.ViewModels.Credit
         public Double principalAmount { get; set; }
         public DateTime effectiveDate { get; set; }
         public double interestRate { get; set; }
+        public int? loanId { get; set; }
         public short? principalFrequency { get; set; } 
         public short? interestFrequency { get; set; }
         public int principalFrequencyTypeId { get; set; }

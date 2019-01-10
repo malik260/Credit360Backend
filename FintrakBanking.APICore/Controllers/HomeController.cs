@@ -10,7 +10,7 @@ namespace FintrakBanking.APICore.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
+            ViewBag.Title = "Fintrak Credit360 API";
 
             return View();
         }

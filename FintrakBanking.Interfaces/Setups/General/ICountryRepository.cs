@@ -19,6 +19,10 @@ namespace FintrakBanking.Interfaces.Setups.General
         CityViewModel GetCityById(int cityId);
 
         IEnumerable<CityViewModel> GetCityByStateId(int stateId);
+        IEnumerable<CityViewModel> GetCityByLGAId(int lgaId);
+        int GetLgaCity(int cityId);
+
+        IEnumerable<LocalGovtViewModel> GetLGAByStateId(int stateId);
 
         IEnumerable<Object> GetAllCitiesByContryId(int countryId);
 

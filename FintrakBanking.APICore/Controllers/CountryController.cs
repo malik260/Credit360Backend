@@ -241,8 +241,69 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("city/lga/{Id}")]
+        public HttpResponseMessage GetCityByLGAId(int Id)
+        {
+            try
+            {
+                var rank = repo.GetCityByLGAId(Id).ToList();
 
-      [HttpGet] [ClaimsAuthorization]  
+                if (rank == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("lga/state/{Id}")]
+        public HttpResponseMessage GetLGAByStateId(int Id)
+        {
+            try
+            {
+                var rank = repo.GetLGAByStateId(Id).ToList();
+
+                if (rank == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("city/lgacity/{Id}")]
+        public HttpResponseMessage GetLgaCity(int Id)
+        {
+            try
+            {
+                var rank = repo.GetLgaCity(Id);
+                
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = rank });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("country")]
         public HttpResponseMessage GetCountry()
         {

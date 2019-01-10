@@ -14,7 +14,7 @@ namespace FintrakBanking.Repositories.Credit
         private IIntegrationWithFinacle integration;
 
         public CreditCommonRepository(
-            FinTrakBankingContext context, 
+            FinTrakBankingContext context,
             IIntegrationWithFinacle integration
             )
         {

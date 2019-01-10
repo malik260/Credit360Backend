@@ -26,9 +26,9 @@ namespace FintrakBanking.Repositories.Credit
         private readonly int classifiedAssetManagementRoleId = 46;
 
         public LoanReviewApplicationRepository(
-            FinTrakBankingContext context, 
-            IGeneralSetupRepository general, 
-            IAuditTrailRepository audit, 
+            FinTrakBankingContext context,
+            IGeneralSetupRepository general,
+            IAuditTrailRepository audit,
             IWorkflow workflow,
             CreditCommonRepository creditCommon
             )
@@ -322,7 +322,6 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (var detail in model.applicationDetails)
             {
-                customerIds.Add(loan.customerId);
                 loan = GetLoanInformation(detail.loanSystemTypeId, detail.loanId, applicationDate);
                 int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan.tenor;
 
@@ -352,6 +351,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
+
+                customerIds.Add(loan.customerId);
             }
 
             // ------------AUDIT CODE HERE! -------------

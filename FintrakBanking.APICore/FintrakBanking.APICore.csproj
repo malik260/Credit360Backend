@@ -326,6 +326,7 @@
     <Compile Include="Controllers\ApprovalGroupController.cs" />
     <Compile Include="Controllers\ApprovalLevelController.cs" />
     <Compile Include="Controllers\ApprovalLevelStaffController.cs" />
+    <Compile Include="Controllers\FinacleIntegrationController.cs" />
     <Compile Include="Controllers\ProfileSettingsController.cs" />
     <Compile Include="Controllers\ApprovalReliefController.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
@@ -897,7 +898,6 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Draft.png" />
     <Content Include="Content\first-bank-logo.png" />
     <Content Include="Content\first-bank-new-logo.jpg" />
     <Content Include="Content\firstbank.png" />

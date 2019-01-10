@@ -56,10 +56,10 @@ namespace FintrakBanking.APICore.Reports.Credit.OfferLetterGeneration
 
                 }catch(Exception ex)
                 {
-                    throw new Exception(ex.Message);
-                    //this.offerLetterReport.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
-                    //this.offerLetterReport.LocalReport.Refresh();
-                    //return;
+                    //throw new Exception(ex.Message);
+                    this.offerLetterReport.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/Error.rdlc");
+                    this.offerLetterReport.LocalReport.Refresh();
+                    return;
                 }
             }
         }
