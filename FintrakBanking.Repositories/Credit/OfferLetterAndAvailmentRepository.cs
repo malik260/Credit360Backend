@@ -2589,41 +2589,41 @@ namespace FintrakBanking.Repositories.Credit
                     .FirstOrDefault();
 
                 if (sectorOverrideRequest != null) sectorOverrideRequestId = sectorOverrideRequest.id;
-            }
 
-            if (branchOverrideRequestId != null)
-            {
-                var request = context.TBL_OVERRIDE_DETAIL.Find(branchOverrideRequestId);
-                request.ISUSED = true;
-                context.Entry(request).State = System.Data.Entity.EntityState.Modified;
-            }
-            else
-            {
-                // branch limits
-                var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
-                decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
-                decimal applicationAmount = details.Sum(x => x.approvedAmount); // proposedAmount should be approvedAmount after application
-                var branch = context.TBL_BRANCH.Find(branchId);
-                if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
-            }
-
-            if (sectorOverrideRequestId != null)
-            {
-                var request = context.TBL_OVERRIDE_DETAIL.Find(sectorOverrideRequestId);
-                request.ISUSED = true;
-                context.Entry(request).State = System.Data.Entity.EntityState.Modified;
-            }
-            else
-            {
-                // sector limits
-                // sectorId here is actually the subsectorId
-                List<short> sectorIds = details.Select(x => x.sectorId).ToList();
-                foreach (var sectorId in sectorIds)
+                if (branchOverrideRequestId != null)
                 {
-                    var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
-                    decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
-                    //var sector = context.TBL_SECTOR.Find(sectorId);
-                    if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    var request = context.TBL_OVERRIDE_DETAIL.Find(branchOverrideRequestId);
+                    request.ISUSED = true;
+                    context.Entry(request).State = System.Data.Entity.EntityState.Modified;
+                }
+                else
+                {
+                    // branch limits
+                    var branchValidation = limitValidation.ValidateNPLByBranch((short)branchId);
+                    decimal branchNplAmount = (decimal)branchValidation.outstandingBalance;
+                    decimal applicationAmount = details.Sum(x => x.approvedAmount); // proposedAmount should be approvedAmount after application
+                    var branch = context.TBL_BRANCH.Find(branchId);
+                    if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
+                }
+
+                if (sectorOverrideRequestId != null)
+                {
+                    var request = context.TBL_OVERRIDE_DETAIL.Find(sectorOverrideRequestId);
+                    request.ISUSED = true;
+                    context.Entry(request).State = System.Data.Entity.EntityState.Modified;
+                }
+                else
+                {
+                    // sector limits
+                    // sectorId here is actually the subsectorId
+                    List<short> sectorIds = details.Select(x => x.sectorId).ToList();
+                    foreach (var sectorId in sectorIds)
+                    {
+                        var sectorValidation = limitValidation.ValidateNPLBySector(sectorId);
+                        decimal sectorAmount = (decimal)sectorValidation.outstandingBalance;
+                        //var sector = context.TBL_SECTOR.Find(sectorId);
+                        if (sectorValidation.maximumAllowedLimit > 0 && sectorValidation.maximumAllowedLimit <= sectorAmount) throw new SecureException("Sector Limit exceeded!");
+                    }
                 }
             }
         }
