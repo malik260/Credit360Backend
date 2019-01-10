@@ -2562,23 +2562,38 @@ namespace FintrakBanking.Repositories.Credit
         {
             var details = application.LoanApplicationDetail;
             int branchId = (int)application.branchId;
-            int customerId = (int)application.customerId;
+            // int customerId = (int)application.customerId;
+            int? branchOverrideRequestId = null;
+            int? sectorOverrideRequestId = null;
 
-            var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
+            var loanApplicationDetails = context.TBL_LOAN_APPLICATION_DETAIL.Where(x 
+                => x.LOANAPPLICATIONID == application.loanApplicationId
+                && x.DELETED == false 
+                && x.STATUSID == (int)ApprovalStatusEnum.Approved
+                );
 
-            var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == customerId)
-                .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
-                    c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
-                .Select(x => new { id = x.o.OVERRIDE_DETAILID })
-                .FirstOrDefault();
-
-            if (branchOverrideRequest != null)
+            foreach (var detail in loanApplicationDetails)
             {
-                var request = context.TBL_OVERRIDE_DETAIL.Find(branchOverrideRequest.id);
+                var branchOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == detail.CUSTOMERID)
+                    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.BranchNplLimitOverride && x.ISUSED == false),
+                        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                    .FirstOrDefault();
+
+                if (branchOverrideRequest != null) branchOverrideRequestId = branchOverrideRequest.id;
+
+                var sectorOverrideRequest = context.TBL_CUSTOMER.Where(x => x.CUSTOMERID == detail.CUSTOMERID)
+                    .Join(context.TBL_OVERRIDE_DETAIL.Where(x => x.OVERRIDE_ITEMID == (int)OverrideItem.SectorNplLimitOverride && x.ISUSED == false),
+                        c => c.CUSTOMERCODE, o => o.CUSTOMERCODE, (c, o) => new { c, o })
+                    .Select(x => new { id = x.o.OVERRIDE_DETAILID })
+                    .FirstOrDefault();
+
+                if (sectorOverrideRequest != null) sectorOverrideRequestId = sectorOverrideRequest.id;
+            }
+
+            if (branchOverrideRequestId != null)
+            {
+                var request = context.TBL_OVERRIDE_DETAIL.Find(branchOverrideRequestId);
                 request.ISUSED = true;
                 context.Entry(request).State = System.Data.Entity.EntityState.Modified;
             }
@@ -2592,9 +2607,9 @@ namespace FintrakBanking.Repositories.Credit
                 if (branch.NPL_LIMIT > 0 && branch.NPL_LIMIT < (branchNplAmount + applicationAmount)) throw new SecureException("Branch NPL Limit exceeded!");
             }
 
-            if (sectorOverrideRequest != null)
+            if (sectorOverrideRequestId != null)
             {
-                var request = context.TBL_OVERRIDE_DETAIL.Find(sectorOverrideRequest.id);
+                var request = context.TBL_OVERRIDE_DETAIL.Find(sectorOverrideRequestId);
                 request.ISUSED = true;
                 context.Entry(request).State = System.Data.Entity.EntityState.Modified;
             }
