@@ -9,6 +9,12 @@ namespace FintrakBanking.Entities.Models
     [Table("TBL_CHECKLIST_DETAIL")]
     public partial class TBL_CHECKLIST_DETAIL
     {
+        public TBL_CHECKLIST_DETAIL()
+        {
+            //CHECKLISTSTATUSID2 = false;
+            //CHECKLISTSTATUSID3 = false;
+        }
+
         [Key]
         public long CHECKLISTID { get; set; }
 

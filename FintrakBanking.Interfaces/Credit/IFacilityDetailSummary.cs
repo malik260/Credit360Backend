@@ -10,6 +10,7 @@ namespace FintrakBanking.Interfaces.Credit
 {
    public interface IFacilityDetailSummary
    {
+        List<LoanViewModel> SearchGetotherInformation(int loanId);
         LoanViewModel FacilityDetail(int loanId);
         LoanViewModel LMSFacilityDetail(int loanId);
         LoanViewModel ContingentLMSFacilityDetail(int loanId);

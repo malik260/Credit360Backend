@@ -1008,7 +1008,7 @@ namespace FintrakBanking.Repositories.Credit
                 passcode = searchInput.passCode
             };
 
-            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+            if (twoFADetails.username != null && admin.TwoFactorAuthenticationEnabled())
             {
                 var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 

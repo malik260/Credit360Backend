@@ -19,17 +19,25 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
+        private CreditCommonRepository creditCommon;
 
         private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
 
         private readonly int classifiedAssetManagementRoleId = 46;
 
-        public LoanReviewApplicationRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
+        public LoanReviewApplicationRepository(
+            FinTrakBankingContext context,
+            IGeneralSetupRepository general,
+            IAuditTrailRepository audit,
+            IWorkflow workflow,
+            CreditCommonRepository creditCommon
+            )
         {
             this.context = context;
             this.general = general;
             this.audit = audit;
             this.workflow = workflow;
+            this.creditCommon = creditCommon;
         }
 
         public IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? classId)
@@ -164,7 +172,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return index == (position - 1);
         }
-
 
         public List<LMSOperationListViewModel> GetApplicationOperations()
         {
@@ -310,6 +317,7 @@ namespace FintrakBanking.Repositories.Credit
                 APPLICATIONSTATUSID = (short)1, // -------------------------------------------------- REMOVE COLUMN!!
             });
 
+            List<int> customerIds = new List<int>();
             LoanViewModel loan = new LoanViewModel();
 
             foreach (var detail in model.applicationDetails)
@@ -343,6 +351,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
+
+                customerIds.Add(loan.customerId);
             }
 
             // ------------AUDIT CODE HERE! -------------
@@ -366,7 +376,14 @@ namespace FintrakBanking.Repositories.Credit
                 workflow.NextProcess(model.companyId, staffId, camOperationId, application.LOANAPPLICATIONID, null, "NIL", true, true, true);
             }
 
-            if (context.SaveChanges() > 0) return "Application with reference number " + referenceNumber + " created.";
+            if (context.SaveChanges() > 0)
+            {
+                var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+                if (setup.USE_THIRD_PARTY_INTEGRATION) creditCommon.LoadCustomerTurnover(application.LOANAPPLICATIONID,customerIds,staffId, true);
+
+                return "Application with reference number " + referenceNumber + " created.";
+            }
+
             throw new SecureException("An error occured while saving the data!");
         }
 
@@ -416,7 +433,6 @@ namespace FintrakBanking.Repositories.Credit
 
         }
 
-
         public bool ValidateNewSubAllocationOperation(int loanApplicationDetailId, int customerId, int loanSystemTypeId)
         {
 
@@ -463,9 +479,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
         }
-
-
-
+               
         private int GetCamOperation(int performanceTypeId)
         {
             switch (performanceTypeId)
