@@ -224,7 +224,7 @@ namespace FintrakBanking.Repositories.Customer
                 var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
                                     where ck.CHECKLISTDEFINITIONID == definitionId
                                     // && ck.CHECKLISTSTATUSID == statusId
-                                     && ck.LOANAPPLICATIONID == detailId 
+                                     && ck.LOANDETAILSID == detailId 
                                     select new CheckListDocumentUploadViewModel()
                                     {
                                         fileData = ck.FILEDATA,

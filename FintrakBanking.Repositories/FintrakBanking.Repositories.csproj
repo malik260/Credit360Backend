@@ -109,7 +109,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Users\FINTRAK\Desktop\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -138,6 +138,7 @@
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />
     <Compile Include="Setups\Finance\CustomChartOfAccountRepository.cs" />
+    <Compile Include="ThirdPartyIntegration\FinacleIntegrationRepository.cs" />
     <Compile Include="Validetion\CreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\LoanPerformanceRepository.cs" />
     <Compile Include="Credit\StaffAccountHistoryRepository.cs" />
