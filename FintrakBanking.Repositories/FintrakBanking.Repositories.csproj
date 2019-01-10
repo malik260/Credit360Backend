@@ -137,6 +137,7 @@
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />
     <Compile Include="Setups\Finance\CustomChartOfAccountRepository.cs" />
+    <Compile Include="ThirdPartyIntegration\FinacleIntegrationRepository.cs" />
     <Compile Include="Validetion\CreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\LoanPerformanceRepository.cs" />
     <Compile Include="Credit\StaffAccountHistoryRepository.cs" />

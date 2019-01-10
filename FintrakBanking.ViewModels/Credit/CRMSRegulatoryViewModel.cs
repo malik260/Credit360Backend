@@ -141,6 +141,6 @@ namespace FintrakBanking.ViewModels.Credit
         public int CUSTOMERID { get; set; }
         public string CONDITIONPRECIDENT { get; set; }
         public string CRMSCODE { get; set; }
-
+        public string EMAIL { get; set; }
     }
 }

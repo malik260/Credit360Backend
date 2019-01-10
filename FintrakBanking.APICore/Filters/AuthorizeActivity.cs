@@ -22,15 +22,15 @@ namespace FintrakBanking.APICore.Filters
             this.allowedActivities = activities;
         }
 
-        //protected override bool IsAuthorized(HttpActionContext actionContext)
-        //{
-        //    bool authorize = false;
-        //    int userId = Int32.Parse(new ClaimsIdentity(HttpContext.Current.User.Identity).Claims.First(x => x.Type == "userId").Value);
-        //    var admin = new AuthenticationRepository(context);
-        //    List<String> activities = admin.GetUserActivitiesByUser(userId);
-        //    authorize = allowedActivities.Any(x => activities.Contains(x));
-        //    return authorize;
-        //}
+        protected override bool IsAuthorized(HttpActionContext actionContext)
+        {
+            bool authorize = false;
+            int userId = Int32.Parse(new ClaimsIdentity(HttpContext.Current.User.Identity).Claims.First(x => x.Type == "userId").Value);
+            var admin = new AuthenticationRepository(context,null);
+            List<String> activities = admin.GetUserActivitiesByUser(userId);
+            authorize = allowedActivities.Any(x => activities.Contains(x));
+            return authorize;
+        }
 
         protected override void HandleUnauthorizedRequest(HttpActionContext filterContext)
         {

@@ -2196,7 +2196,7 @@ namespace FintrakBanking.Repositories.Credit
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         where a.LOANAPPLICATIONID == loanApplicationId
                         && a.COMPANYID == companyId && a.DELETED == false
-                        && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                     //   && b.STATUSID == (int)ApprovalStatusEnum.Approved
                         select new LoanApplicationDetailViewModel()
                         {
                             loanApplicationId = b.LOANAPPLICATIONID,

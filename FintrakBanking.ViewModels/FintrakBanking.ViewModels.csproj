@@ -85,6 +85,7 @@
     <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel2.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
+    <Compile Include="Credit\BatchPostingViewModel.cs" />
     <Compile Include="Credit\CallMemoViewModel.cs" />
     <Compile Include="Credit\CashBacked.cs" />
     <Compile Include="Credit\CashBackedBondAndGuarantee.cs" />
