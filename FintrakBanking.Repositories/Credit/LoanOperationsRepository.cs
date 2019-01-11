@@ -15648,19 +15648,30 @@ namespace FintrakBanking.Repositories.Credit
 
             var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
 
-            ArchiveLoan(sourceLoanRecord.TERMLOANID, (int)sourceLoanRecord.OPERATIONID, batchCode,"Sub Allocation");
-            ArchiveLoan(destinationLoanRecord.TERMLOANID, (int)destinationLoanRecord.OPERATIONID, batchCode, "Sub Allocation");
+            using (var trans = context.Database.BeginTransaction())
+            {
+                ArchiveLoan(sourceLoanRecord.TERMLOANID, (int)sourceLoanRecord.OPERATIONID, batchCode, "Sub Allocation");
+                ArchiveLoan(destinationLoanRecord.TERMLOANID, (int)destinationLoanRecord.OPERATIONID, batchCode, "Sub Allocation");
 
-            sourceLoanRecord.PRINCIPALAMOUNT = sourceLoanRecord.PRINCIPALAMOUNT - model.amountDifference;
-            sourceLoanRecord.OUTSTANDINGPRINCIPAL = sourceLoanRecord.PRINCIPALAMOUNT - model.amountDifference;
-            sourceLoanRecord.LASTRESTRUCTUREDATE = application;
+                sourceLoanRecord.PRINCIPALAMOUNT = sourceLoanRecord.PRINCIPALAMOUNT - model.amountDifference;
+                sourceLoanRecord.OUTSTANDINGPRINCIPAL = sourceLoanRecord.PRINCIPALAMOUNT - model.amountDifference;
+                sourceLoanRecord.LASTRESTRUCTUREDATE = application;
 
-            destinationLoanRecord.PRINCIPALAMOUNT = destinationLoanRecord.PRINCIPALAMOUNT + model.amountDifference;
-            destinationLoanRecord.OUTSTANDINGPRINCIPAL = destinationLoanRecord.PRINCIPALAMOUNT + model.amountDifference;
-            destinationLoanRecord.LASTRESTRUCTUREDATE = application;
+                destinationLoanRecord.PRINCIPALAMOUNT = destinationLoanRecord.PRINCIPALAMOUNT + model.amountDifference;
+                destinationLoanRecord.OUTSTANDINGPRINCIPAL = destinationLoanRecord.PRINCIPALAMOUNT + model.amountDifference;
+                destinationLoanRecord.LASTRESTRUCTUREDATE = application;
 
+                var result = context.SaveChanges() > 0;
 
-            return context.SaveChanges() > 0;
+                if (result)
+                {
+                    trans.Commit();
+                }
+                else { trans.Rollback(); }
+
+                return result;
+            }
+                
         }
 
         public void ArchiveLoanApplicationDetails(int loanApplicationDetailId)
@@ -17145,7 +17156,6 @@ namespace FintrakBanking.Repositories.Credit
                 return output;
 
             }
-
         }
 
 
@@ -17206,9 +17216,6 @@ namespace FintrakBanking.Repositories.Credit
                     context.TBL_AUDIT.Add(audit);
 
                     output = context.SaveChanges() > 0;
-
-                    //productBehaviour.TEMP_PRODUCTID = product.TEMP_PRODUCTID;
-
 
                     var entity = new ApprovalViewModel
                     {
