@@ -11925,23 +11925,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool AddOperationReview(LoanReviewOperationViewModel model)
         {
-
-
-            var nextPeriodicPricipalPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == model.loanId && x.PAYMENTDATE >= model.proposedEffectiveDate && x.PERIODPRINCIPALAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
-
-            //model.firstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
-            model.principalFirstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
-
-            var nextPeriodicInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == model.loanId && x.PAYMENTDATE >= model.proposedEffectiveDate && x.PERIODINTERESTAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
-            model.interestFirstPaymentDate = nextPeriodicInterestPaymentDate.PAYMENTDATE;
-
-            var loanInfo = context.TBL_LOAN.Where(x => x.TERMLOANID == model.loanId).FirstOrDefault();
-            model.interestFrequencyTypeId = loanInfo.INTERESTFREQUENCYTYPEID;
-            model.principalFrequencyTypeId = loanInfo.PRINCIPALFREQUENCYTYPEID;
-            //model.maturityDate = loanInfo.MATURITYDATE;
-            //model.interestRate = loanInfo.INTERESTRATE;
-
-
             var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
 
 
@@ -12000,6 +11983,20 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
+                var nextPeriodicPricipalPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == model.loanId && x.PAYMENTDATE >= model.proposedEffectiveDate && x.PERIODPRINCIPALAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+                //model.firstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
+                model.principalFirstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
+
+                var nextPeriodicInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == model.loanId && x.PAYMENTDATE >= model.proposedEffectiveDate && x.PERIODINTERESTAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
+                model.interestFirstPaymentDate = nextPeriodicInterestPaymentDate.PAYMENTDATE;
+
+                var loanInfo = context.TBL_LOAN.Where(x => x.TERMLOANID == model.loanId).FirstOrDefault();
+                model.interestFrequencyTypeId = loanInfo.INTERESTFREQUENCYTYPEID;
+                model.principalFrequencyTypeId = loanInfo.PRINCIPALFREQUENCYTYPEID;
+                //model.maturityDate = loanInfo.MATURITYDATE;
+                //model.interestRate = loanInfo.INTERESTRATE;
+
                 if (model.prepayment >= loanInfo.OUTSTANDINGPRINCIPAL)
                 {
                     throw new ConditionNotMetException("Prepayment amount should not be equal or greater than the outstanding principal");
