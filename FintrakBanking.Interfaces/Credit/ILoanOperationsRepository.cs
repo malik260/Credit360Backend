@@ -96,7 +96,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId);
 
         #region COMMERCIAL PAPER LOANS
-        bool CommercialPaperSubAllocation(List<subAllocationViewModel> models);
+        bool CommercialPaperSubAllocation(subAllocationViewModel models);
         IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
         bool addMaturityInstructionApprove(MaturityIntructionViewModel model);
         bool addMaturityInstruction(MaturityIntructionViewModel model);

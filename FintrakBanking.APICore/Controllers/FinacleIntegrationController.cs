@@ -21,7 +21,7 @@ namespace FintrakBanking.APICore.Controllers
         }
 
         #region
-        [HttpGet]
+        [HttpPost]
         [Route("batch-posting/detail")]
         [ClaimsAuthorization]
         public HttpResponseMessage GetBatchPostingDetail(DateRange model)
@@ -50,7 +50,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("batch-posting/main")]
         [ClaimsAuthorization]
         public HttpResponseMessage GetBatchPostingMain(DateRange model)

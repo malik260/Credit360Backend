@@ -630,20 +630,17 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("commercial-loan-sub-allocation")]
-        public HttpResponseMessage CommercialPaperSubAllocation([FromBody] List<subAllocationViewModel> models)
+        public HttpResponseMessage CommercialPaperSubAllocation([FromBody] subAllocationViewModel model)
         {
             try
             {
                 TokenDecryptionHelper token = new TokenDecryptionHelper();
-                foreach (var entity in models)
-                {
-                    entity.userBranchId = (short)token.GetBranchId;
-                    entity.applicationUrl = HttpContext.Current.Request.Path;
-                    entity.createdBy = token.GetStaffId;
-                    entity.companyId = token.GetCompanyId;
-                }
+                model.userBranchId = (short)token.GetBranchId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
-                var data = repo.CommercialPaperSubAllocation(models);
+                var data = repo.CommercialPaperSubAllocation(model);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Sub-Allocation was successfull." });
