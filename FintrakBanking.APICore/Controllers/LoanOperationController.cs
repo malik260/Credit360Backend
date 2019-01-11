@@ -20,11 +20,11 @@ namespace FintrakBanking.APICore.Controllers
     [RoutePrefix("api/v1/operations")]
     public class LoanOperationController : ApiControllerBase
     {
-        private ILoanOperationsRepository repo;
+        private ILoanOperationsRepository repo;        
         private TokenDecryptionHelper token = new TokenDecryptionHelper();
         public LoanOperationController(ILoanOperationsRepository _repo)
         {
-            this.repo = _repo;
+            this.repo = _repo;           
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -75,7 +75,7 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
+ 
         [HttpGet]
         [ClaimsAuthorization]
         [Route("get-running-fx-revolving-loan/{refNo}")]
