@@ -8,10 +8,10 @@ namespace FintrakBanking.ViewModels.Credit
 {
    public class ChecklistSearchViewModel
     {
-        public int definitionId { get; set; }
-        public int statusId { get; set; }
-        public int detailId { get; set; }
-        public bool isProductBased { get; set; }
+        public int checkListDefinitionId { get; set; }
+        public int checkListStatusId { get; set; }
+        public int targetId { get; set; }
+        public bool isproductbased { get; set; }
         public int? customerId { get; set; }
         public int? checkListItemId { get; set; }
         public int? checkListTypeId { get; set; }
