@@ -8344,8 +8344,8 @@ namespace FintrakBanking.Repositories.Credit
                                                                                                                                                                                               // isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
                                        exchangeRate = a.EXCHANGERATE,
                                        currencyId = a.CURRENCYID,
-                                       currency = cur.CURRENCYNAME,
-                                       currencyCode = cur.CURRENCYCODE,
+                                       currency = a.TBL_CURRENCY.CURRENCYNAME, //cur.CURRENCYNAME,
+                                       currencyCode = a.TBL_CURRENCY.CURRENCYCODE, //cur.CURRENCYCODE,
                                        operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.TERMLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                        {
                                            loanReviewOperationsId = op.LOANREVIEWOPERATIONID,

@@ -6709,7 +6709,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode)
+        public LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode, string changeReason = "Rephasement")
         {
             var systemDate = generalSetup.GetApplicationDate();
             var model = (from a in context.TBL_LOAN
@@ -6798,7 +6798,7 @@ namespace FintrakBanking.Repositories.Credit
 
             addLoanArchive.CHANGEEFFECTIVEDATE = systemDate;
             addLoanArchive.ISAPPLIED = false;
-            addLoanArchive.CHANGEREASON = "Rephasement";
+            addLoanArchive.CHANGEREASON = changeReason; //"Rephasement";
             addLoanArchive.LOANID = model.loanId;
             addLoanArchive.PRODUCTPRICEINDEXRATE = model.productPriceIndexRate;
             addLoanArchive.CUSTOMERRISKRATINGID = model.customerRiskRatingId;
@@ -15646,11 +15646,19 @@ namespace FintrakBanking.Repositories.Credit
             if (sourceLoanRecord.OPERATIONID != (short)OperationsEnum.CommercialLoanBooking)
                 throw new ConditionNotMetException("The source tranche facility is not a type of commercial Loan");
 
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(5);
+
+            ArchiveLoan(sourceLoanRecord.TERMLOANID, (int)sourceLoanRecord.OPERATIONID, batchCode,"Sub Allocation");
+            ArchiveLoan(destinationLoanRecord.TERMLOANID, (int)destinationLoanRecord.OPERATIONID, batchCode, "Sub Allocation");
+
             sourceLoanRecord.PRINCIPALAMOUNT = sourceLoanRecord.PRINCIPALAMOUNT - model.amountDifference;
-            //sourceLoanRecord.LASTRESTRUCTUREDATE = application;
+            sourceLoanRecord.OUTSTANDINGPRINCIPAL = sourceLoanRecord.PRINCIPALAMOUNT - model.amountDifference;
+            sourceLoanRecord.LASTRESTRUCTUREDATE = application;
 
             destinationLoanRecord.PRINCIPALAMOUNT = destinationLoanRecord.PRINCIPALAMOUNT + model.amountDifference;
-            //destinationLoanRecord.LASTRESTRUCTUREDATE = application;
+            destinationLoanRecord.OUTSTANDINGPRINCIPAL = destinationLoanRecord.PRINCIPALAMOUNT + model.amountDifference;
+            destinationLoanRecord.LASTRESTRUCTUREDATE = application;
+
 
             return context.SaveChanges() > 0;
         }
