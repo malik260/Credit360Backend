@@ -936,7 +936,7 @@ namespace FintrakBanking.Repositories.Credit
                                                where b.TARGETID == targetId
                                                && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
                                                && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                                               && b.CHECKLISTSTATUSID != null
+                                               && b.CHECKLISTSTATUSID != null && b.DATETIMEUPDATED !=null
                                                && ids.Contains((int)a.APPROVALLEVELID)
                                                                            select b;
 
