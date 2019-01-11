@@ -221,16 +221,34 @@ namespace FintrakBanking.Repositories.Customer
             }
             else
             {
-                var checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                var checklistDoc = new CheckListDocumentUploadViewModel();
+
+                if (checkListTypeId == (int)CheckTypeEnum.PreLendingCallGrid)
+                {
+                    checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
                                     where ck.CHECKLISTDEFINITIONID == definitionId
-                                    // && ck.CHECKLISTSTATUSID == statusId
-                                     && ck.LOANDETAILSID == detailId 
+                                     // && ck.CHECKLISTSTATUSID == statusId
+                                     && ck.LOANAPPLICATIONID == detailId
                                     select new CheckListDocumentUploadViewModel()
                                     {
                                         fileData = ck.FILEDATA,
                                         fileName = ck.FILENAME,
                                         fileExtension = ck.FILEEXTENSION
                                     }).FirstOrDefault();
+                }
+                else
+                {
+                    checklistDoc = (from ck in context.TBL_MEDIA_CHECKLIST_DOCUMENTS
+                                    where ck.CHECKLISTDEFINITIONID == definitionId
+                                    // && ck.CHECKLISTSTATUSID == statusId
+                                     && ck.LOANDETAILSID == detailId
+                                    select new CheckListDocumentUploadViewModel()
+                                    {
+                                        fileData = ck.FILEDATA,
+                                        fileName = ck.FILENAME,
+                                        fileExtension = ck.FILEEXTENSION
+                                    }).FirstOrDefault();
+                }
                 return checklistDoc;
             }
         }
