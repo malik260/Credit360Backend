@@ -58,13 +58,15 @@ namespace FintrakBanking.Interfaces.Finance
 
         List<FinanceTransactionViewModel> BuildContingentPrincipalPosting(LoanPaymentRestructureScheduleInputViewModel model, string sourceReferenceNumber, decimal postedAmount, string description, int operationId);
 
-        FinanceTransactionViewModel PostBuildLoanPositiveReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId);
+        FinanceTransactionViewModel PostLoanPositiveReversalEntries(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId);
 
         FinanceTransactionViewModel PostBuildLoanNegativeReversalPosting(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, int operationId);
 
         FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
 
-        FinanceTransactionViewModel PostTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, TwoFactorAutheticationViewModel twoFactorAuth);
+        FinanceTransactionViewModel PostTerminateAndRebookEntries(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, TwoFactorAutheticationViewModel twoFactorAuth);
+
+        FinanceTransactionViewModel PostLoanGLEntries(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int debitGL, int creditGL, string description, int operationId);
 
         FinanceTransactionViewModel PostDailyInterestSuspension(DailyInterestAccrualViewModel model, int loanId, DateTime applicationDate, int staffId);
 
