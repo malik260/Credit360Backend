@@ -10,8 +10,8 @@ namespace FintrakBanking.Interfaces.ThridPartyIntegration
   public  interface IFinacleIntegrationRepository
     {
         #region
-        List<BatchPostingViewModel> GetBatchPostingDetail(DateTime startDate, DateTime endDate, string searchItem);
-        List<BatchPostingViewModel> GetBatchPostingMain(DateTime startDate, DateTime endDate, string searchItem);
+        List<BatchPostingViewModel> GetBatchPostingDetail(DateTime startDate, DateTime endDate, string searchInfo);
+        List<BatchPostingViewModel> GetBatchPostingMain(DateTime startDate, DateTime endDate, string searchInfo);
         #endregion
     }
 }

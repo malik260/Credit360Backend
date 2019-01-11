@@ -20,9 +20,13 @@ namespace FintrakBanking.Repositories.ThirdPartyIntegration
         #region Batch Posting Report
         public List<BatchPostingViewModel> GetBatchPostingDetail(DateTime startDate, DateTime endDate, string searchItem)
         {
+            searchItem = searchItem.ToLower();
             return (from x in _stgCon.FINTRAK_TRAN_PROC_DETAILS
                     where DbFunctions.TruncateTime(x.PSTD_DATE) >= DbFunctions.TruncateTime(startDate)
                                                     && DbFunctions.TruncateTime(x.PSTD_DATE) <= DbFunctions.TruncateTime(endDate)
+                                                    && (x.CR_ACCT.ToLower()== searchItem || x.DR_ACCT.ToLower() == searchItem || x.BATCH_ID.ToLower() == searchItem 
+                                                    || x.FLOW_TYPE.ToLower() == searchItem || searchItem.StartsWith( x.NARRATION.ToLower())
+                                                    || x.TRAN_ID.ToLower() == searchItem || x.TRAN_TYPE.ToLower() == searchItem || searchItem ==null || searchItem=="")
                     select new BatchPostingViewModel
                     {
                         amount = x.AMT,
@@ -60,9 +64,12 @@ namespace FintrakBanking.Repositories.ThirdPartyIntegration
 
         public List<BatchPostingViewModel> GetBatchPostingMain(DateTime startDate, DateTime endDate, string searchItem)
         {
+            searchItem = searchItem.ToLower();
+
             return (from x in _stgCon.FINTRAK_TRAN_PROC_MAIN
                     where DbFunctions.TruncateTime(x.PSTD_DATE) >= DbFunctions.TruncateTime(startDate)
                                                     && DbFunctions.TruncateTime(x.PSTD_DATE) <= DbFunctions.TruncateTime(endDate)
+                                                    && (x.BATCH_ID.ToLower()==searchItem || searchItem == null || searchItem == "")
                     select new BatchPostingViewModel
                     {
                         totalAmount = x.TOTAL_AMT,
