@@ -183,7 +183,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
-            var trail = new TBL_APPROVAL_TRAIL
+            context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
                 FROMAPPROVALLEVELID = this.fromLevelId,
                 TOAPPROVALLEVELID = this.nextLevelId,
@@ -199,9 +199,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 SLADATETIME = this.systemDate.AddHours(this.slaInterval),
                 VOTE = this.vote,
                 TOSTAFFID = this.toStaffId,
-            };
-
-            context.TBL_APPROVAL_TRAIL.Add(trail);
+            });
 
             if (this.deferredExecution) { return true; }
             this.saved = context.SaveChanges() > 0;

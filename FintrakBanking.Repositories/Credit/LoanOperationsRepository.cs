@@ -8757,7 +8757,7 @@ namespace FintrakBanking.Repositories.Credit
             context.SaveChanges();
         }
 
-        public bool ProcessLoanPrepayment(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
+        public bool ProcessLoanPrepayment(TwoFactorAutheticationViewModel twoFactorAuth, int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId, int loanReviewOperationsId)
         {
             bool output = false;
             //double penalAmount = 0;
@@ -8765,7 +8765,8 @@ namespace FintrakBanking.Repositories.Credit
 
             {
                 var systemDate = generalSetup.GetApplicationDate();
-                var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == loanId && x.OPERATIONTYPEID == loanInput.operationId && x.OPERATIONCOMPLETED == false).FirstOrDefault();
+                //var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == loanId && x.OPERATIONTYPEID == loanInput.operationId && x.OPERATIONCOMPLETED == false).FirstOrDefault();
+                var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationsId).FirstOrDefault();
                 var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
                 //var penalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.Prepayment);
                 var loan = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
@@ -8860,14 +8861,15 @@ namespace FintrakBanking.Repositories.Credit
                             }
 
                         }
-                        //----------------------------------------------
+                    //----------------------------------------------
 
 
-                        //----------generate and save periodic loan schedule -----------------------------------
+                    //----------generate and save periodic loan schedule -----------------------------------
 
                         //loanInput.principalAmount = loanInput.newAmount;
-
-                        List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
+                        LoanPaymentScheduleInputViewModel loanSheduleInput = loanInput;
+                        loanSheduleInput.loanId = loanId;
+                        List<LoanPaymentSchedulePeriodicViewModel> periodicScheduleTemp = GeneratePrepaymentSchedule(loanSheduleInput);  //loanSchedule.GeneratePeriodicLoanSchedule(loanInput);
 
                         List<TBL_LOAN_SCHEDULE_PERIODIC_TMP> tblPeriodicScheduleTemp = new List<TBL_LOAN_SCHEDULE_PERIODIC_TMP>();
                         foreach (var item in periodicScheduleTemp)
@@ -11579,16 +11581,17 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LoanPaymentSchedulePeriodicViewModel> GeneratePrepaymentSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
+            var loanInfo = context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
 
-            var nextPeriodicPricipalPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanInput.loanId && x.PAYMENTDATE >= loanInput.effectiveDate &&  x.PERIODPRINCIPALAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
+            var nextPeriodicPricipalPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanInput.loanId && x.PAYMENTDATE > loanInput.effectiveDate &&  x.PERIODPRINCIPALAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
             
             loanInput.firstPaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
             loanInput.principalFirstpaymentDate = nextPeriodicPricipalPaymentDate.PAYMENTDATE;
 
-            var nextPeriodicInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanInput.loanId && x.PAYMENTDATE >= loanInput.effectiveDate && x.PERIODINTERESTAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
+            var nextPeriodicInterestPaymentDate = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(x => x.LOANID == loanInput.loanId && x.PAYMENTDATE > loanInput.effectiveDate && x.PERIODINTERESTAMOUNT > 0).OrderBy(x => x.PAYMENTNUMBER).Take(1).FirstOrDefault();
             loanInput.interestFirstpaymentDate = nextPeriodicInterestPaymentDate.PAYMENTDATE;
 
-            var loanInfo = context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
+            
             loanInput.interestFrequency = loanInfo.INTERESTFREQUENCYTYPEID;
             loanInput.principalFrequency = loanInfo.PRINCIPALFREQUENCYTYPEID;
             loanInput.maturityDate = loanInfo.MATURITYDATE;
@@ -14871,7 +14874,7 @@ namespace FintrakBanking.Repositories.Credit
                             model.principalFirstpaymentDate = nextPaymentDate;
                         }
 
-                        result = ProcessLoanPrepayment(twoFactorAuth, loanId, model, applicationDate, staffId);
+                        result = ProcessLoanPrepayment(twoFactorAuth, loanId, model, applicationDate, staffId, loanReviewOperationsId);
 
                         if (result == true)
                         {
