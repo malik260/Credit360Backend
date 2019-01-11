@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -110,6 +111,25 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.CheckListDocumentUploadViewModel(definitionId , statusId, detailId, isProductBased, customerId, checkListItemId, checkListTypeId, checklistDate);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+         [HttpPost] [ClaimsAuthorization]  
+        [Route("checklist-upload-view/")]
+        public HttpResponseMessage GetLoanChecklistDocument(ChecklistSearchViewModel model)
+        {
+            try
+            {
+                var data = repo.CheckListDocumentUploadViewModel(model.definitionId, model.statusId, model.detailId, model.isProductBased, model.customerId, model.checkListItemId, model.checkListTypeId, model.checklistDate);
 
                 if (data == null)
                 {
