@@ -193,7 +193,7 @@ namespace FintrakBanking.Repositories.Customer
                                                   orderby q.CUSTOMERCREDITBUREAUID descending
                                                   select q.CUSTOMERCREDITBUREAUID).FirstOrDefault();
 
-                    var checklistDoc = (from ck in context.TBL_CUSTOMER_CREDIT_BUREAU
+                     var checklistDoc = (from ck in context.TBL_CUSTOMER_CREDIT_BUREAU
                                         where ck.CUSTOMERCREDITBUREAUID == customerCreditBureauId                                        
                                         select new CheckListDocumentUploadViewModel()
                                         {
