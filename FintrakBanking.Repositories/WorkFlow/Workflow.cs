@@ -41,6 +41,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool sameDesk = false;
 
         private int? fromLevelId = null;
+        private int originalStatusId = 0;
         private int? requestLevelId = null;
         private int currentStateId;
         private int newStateId = (int)ApprovalState.Processing;
@@ -118,6 +119,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             InitializeOperation();
             if (Authorization() == false) { return false; }
 
+            this.originalStatusId = this.statusId;
+
             this.trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
                                 && x.OPERATIONID == this.operationId
@@ -183,7 +186,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.comment == "flow_test") { throw new SecureException("from (" + this.fromLevelId + ") to (" + this.nextLevelId + "), status: " + response.statusName + ", level: " + response.nextLevelName + ", person: " + response.nextPersonName); }
 
-            var trail = new TBL_APPROVAL_TRAIL
+            context.TBL_APPROVAL_TRAIL.Add(new TBL_APPROVAL_TRAIL
             {
                 FROMAPPROVALLEVELID = this.fromLevelId,
                 TOAPPROVALLEVELID = this.nextLevelId,
@@ -199,9 +202,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 SLADATETIME = this.systemDate.AddHours(this.slaInterval),
                 VOTE = this.vote,
                 TOSTAFFID = this.toStaffId,
-            };
-
-            context.TBL_APPROVAL_TRAIL.Add(trail);
+            });
 
             if (this.deferredExecution) { return true; }
             this.saved = context.SaveChanges() > 0;
@@ -747,7 +748,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
             {
-                this.EndProcess(this.statusId);
+                if (ActionIsApprovalDecision()) this.EndProcess(originalStatusId);
             }
 
             if (this.keepPending == true) // DEPRECATED!!!

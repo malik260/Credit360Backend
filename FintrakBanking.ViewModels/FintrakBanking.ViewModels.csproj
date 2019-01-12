@@ -90,6 +90,7 @@
     <Compile Include="Credit\CashBacked.cs" />
     <Compile Include="Credit\CashBackedBondAndGuarantee.cs" />
     <Compile Include="Credit\CashCollaterizedCredits.cs" />
+    <Compile Include="Credit\ChecklistSearchViewModel.cs" />
     <Compile Include="Credit\ClassifiedAssetManagementViewModel.cs" />
     <Compile Include="Credit\CollateralPerfectionyettoCommence.cs" />
     <Compile Include="Credit\CommercialLoanReport.cs" />

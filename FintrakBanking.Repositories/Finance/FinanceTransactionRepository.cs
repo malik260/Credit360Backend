@@ -1284,7 +1284,7 @@ namespace FintrakBanking.Repositories.Finance
 
         }
 
-        public FinanceTransactionViewModel PostBuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth, decimal postedAmount, int creditGL, string description, int operationId)
+        public List<FinanceTransactionViewModel> BuildLoanPrepaymentPosting(LoanPaymentRestructureScheduleInputViewModel model, TwoFactorAutheticationViewModel twoFactorAuth, decimal postedAmount, int creditGL, string description, int operationId)
         {
             //FinanceTransactionViewModel loanTransaction = new FinanceTransactionViewModel();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
@@ -1341,14 +1341,15 @@ namespace FintrakBanking.Repositories.Finance
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
             inputTransactions.Add(debit);
             inputTransactions.Add(credit);
-            PostTransaction(inputTransactions, false, twoFactorAuth);
+
+            //PostTransaction(inputTransactions, false, twoFactorAuth);
 
             //financeTransaction.PostTransaction(loanTransaction);
 
             // Audit Section ---------------------------            
 
 
-            return null;
+            return inputTransactions;
 
         }
 

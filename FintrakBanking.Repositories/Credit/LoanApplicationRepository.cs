@@ -922,7 +922,7 @@ namespace FintrakBanking.Repositories.Credit
                             throw new ConditionNotMetException($"Job Request to middle office for product {product.PRODUCTNAME} is required!");
                     }
 
-                    var checklistTypes = from a in context.TBL_CHECKLIST_TYPE select a;
+                    var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
                     foreach (var checklistType in checklistTypes) // through checklist types
                     {
                         if (checklistType.ISPRODUCT_BASED)
@@ -936,7 +936,7 @@ namespace FintrakBanking.Repositories.Credit
                                                where b.TARGETID == targetId
                                                && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
                                                && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                                               && b.CHECKLISTSTATUSID != null
+                                               && b.CHECKLISTSTATUSID != null && b.DATETIMEUPDATED !=null
                                                && ids.Contains((int)a.APPROVALLEVELID)
                                                                            select b;
 
@@ -957,6 +957,9 @@ namespace FintrakBanking.Repositories.Credit
                             var count1 = checklistDefinitions.Count();
                             var count2 = checklistDetails.Count();
 
+                            if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                continue;
+
                             if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
                             {
                                 isCheckListDone = false;
@@ -972,6 +975,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             if (detailsCount != validationCount)
                             {
+                                if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                    continue;
+
                                 isCheckListDone = false;
                                 str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
                                 checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
@@ -2364,7 +2370,7 @@ namespace FintrakBanking.Repositories.Credit
                                     responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
 
                                     applicationStatusId = x.APPLICATIONSTATUSID,
-                                    applicationStatus = x.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME, // <----------------- new 
+                                    applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o=>o.APPLICATIONSTATUSID==x.APPLICATIONSTATUSID).Select(o=>o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
                                     branchName = x.TBL_BRANCH.BRANCHNAME,
                                     relationshipOfficerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
                                     relationshipManagerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
