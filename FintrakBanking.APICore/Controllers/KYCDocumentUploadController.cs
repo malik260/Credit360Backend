@@ -106,7 +106,7 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-upload/")]
-        public HttpResponseMessage GetLoanDocument(int definitionId, int statusId, int detailId, bool isProductBased = false, int? customerId = null, int? checkListItemId = null, int? checkListTypeId = null, DateTime? checklistDate = null)
+        public HttpResponseMessage GetLoanDocument(int definitionId, int statusId, int detailId, bool isProductBased = false, int? customerId = null, int? checkListItemId = null, int? checkListTypeId = null, DateTime? checklistDate=null)
         {
             try
             {

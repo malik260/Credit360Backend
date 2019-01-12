@@ -101,6 +101,7 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -109,7 +110,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\XLeratorDLL-financial.dll</HintPath>
+      <HintPath>..\..\..\Users\CoreBankingDevServer\Desktop\wct\trial\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
