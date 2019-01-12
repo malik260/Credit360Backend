@@ -129,7 +129,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = repo.CheckListDocumentUploadViewModel(model.definitionId, model.statusId, model.detailId, model.isProductBased, model.customerId, model.checkListItemId, model.checkListTypeId, model.checklistDate);
+                var data = repo.CheckListDocumentUploadViewModel(model.checkListDefinitionId, model.checkListStatusId, model.targetId, model.isproductbased, model.customerId, model.checkListItemId, model.checkListTypeId, model.checklistDate);
 
                 if (data == null)
                 {
