@@ -41,6 +41,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool sameDesk = false;
 
         private int? fromLevelId = null;
+        private int originalStatusId = 0;
         private int? requestLevelId = null;
         private int currentStateId;
         private int newStateId = (int)ApprovalState.Processing;
@@ -117,6 +118,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             ValidateCall();
             InitializeOperation();
             if (Authorization() == false) { return false; }
+
+            this.originalStatusId = this.statusId;
 
             this.trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
@@ -745,7 +748,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
             {
-                this.EndProcess(this.statusId);
+                if (ActionIsApprovalDecision()) this.EndProcess(originalStatusId);
             }
 
             if (this.keepPending == true) // DEPRECATED!!!
