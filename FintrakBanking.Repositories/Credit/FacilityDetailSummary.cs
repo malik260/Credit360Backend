@@ -157,6 +157,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanSchedule = (from sch in context.TBL_LOAN_SCHEDULE_PERIODIC
                                 where sch.LOANID == loanId
+                                orderby sch.PAYMENTDATE ascending
                                 select new LoanPaymentSchedulePeriodicViewModel
                                 {
                                     loanId = sch.LOANID,
@@ -182,6 +183,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanSchedule = (from sch in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
                                 where sch.LOANID == data.loanId && sch.ARCHIVEBATCHCODE == data.archiveCode
+                                orderby sch.PAYMENTDATE ascending
                                 select new LoanPaymentSchedulePeriodicViewModel
                                 {
                                     loanId = sch.LOANID,
@@ -540,7 +542,7 @@ namespace FintrakBanking.Repositories.Credit
                                    relationshipManagerName = rm.FIRSTNAME + " " + rm.MIDDLENAME + " " + rm.LASTNAME,
                                    misCode = a.MISCODE,
                                    teamMiscode = a.TEAMMISCODE,
-                                   interestRate = a.INTERESTRATE ,
+                                   interestRate = a.INTERESTRATE,
                                    effectiveDate = a.EFFECTIVEDATE,
                                    maturityDate = a.MATURITYDATE,
                                    bookingDate = a.BOOKINGDATE,
@@ -564,8 +566,8 @@ namespace FintrakBanking.Repositories.Credit
                                    subSectorName = a.TBL_SUB_SECTOR.NAME,
                                    sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                    casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
-                                  // casaAccountNumber1 =context.TBL_CASA.Where(o=>o.CASAACCOUNTID== a.CASAACCOUNTID).Select(o=>o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                                   casaAccountNumber2= context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                   // casaAccountNumber1 =context.TBL_CASA.Where(o=>o.CASAACCOUNTID== a.CASAACCOUNTID).Select(o=>o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                   casaAccountNumber2 = context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                    productAccountName = c.PRODUCTACCOUNTNAME,
                                    customerGroupId = e.CUSTOMERGROUPID,
                                    loanTypeId = e.LOANAPPLICATIONTYPEID,
@@ -603,8 +605,8 @@ namespace FintrakBanking.Repositories.Credit
                                    // internalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.INT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    userPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.USER_PRUDENTIAL_GUIDE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    productPriceIndexName = context.TBL_PRODUCT_PRICE_INDEX.Where(q => q.PRODUCTPRICEINDEXID == context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.PRODUCTID).FirstOrDefault().TBL_PRODUCT_PRICE_INDEX.PRODUCTPRICEINDEXID).Select(q => q.PRICEINDEXNAME).FirstOrDefault(),
-                                   nostroAccountId =  a.NOSTROACCOUNTID,
-                                   nostroRateCode = context.TBL_CURRENCY_RATECODE.Where(x =>x.RATECODEID== a.NOSTRORATECODEID).Select(x=>x.RATECODE).FirstOrDefault(),
+                                   nostroAccountId = a.NOSTROACCOUNTID,
+                                   nostroRateCode = context.TBL_CURRENCY_RATECODE.Where(x => x.RATECODEID == a.NOSTRORATECODEID).Select(x => x.RATECODE).FirstOrDefault(),
                                    nostroRateAmount = a.NOSTRORATEAMOUNT,
                                    notstroCurrency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.NOSTROCURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
                                    productPriceIndex = d.PRODUCTPRICEINDEXID != null ? context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == d.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
