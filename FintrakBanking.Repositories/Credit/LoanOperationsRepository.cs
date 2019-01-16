@@ -9044,7 +9044,7 @@ namespace FintrakBanking.Repositories.Credit
                         foreach (var item in data)
                         {
                             TBL_LOAN_REVIEW_OPRATN_IREG_SC schedule = new TBL_LOAN_REVIEW_OPRATN_IREG_SC();
-                            schedule.LOANREVIEWOPERATIONID = loanId;
+                            schedule.LOANREVIEWOPERATIONID = reviewData.LOANREVIEWOPERATIONID;
                             schedule.PAYMENTDATE = item.paymentDate;
                             schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
                             schedule.CREATEDBY = staffId;
