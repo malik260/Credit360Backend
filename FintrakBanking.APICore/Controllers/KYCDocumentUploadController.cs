@@ -256,12 +256,12 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
       [HttpGet] [ClaimsAuthorization]  
-        [Route("loan-conditions-precedent-upload")]
-        public HttpResponseMessage GetLoanConditionPrecedentUpload(int conditionId)
+        [Route("loan-conditions-precedent-upload/conditionId/{conditionId}/loanApplicationId/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanConditionPrecedentUpload(int conditionId,int loanApplicationId)
         {
             try
             {
-                var data = repo.GetLoanConditionDocumentByConditionId(conditionId);
+                var data = repo.GetLoanConditionDocumentByConditionId(conditionId, loanApplicationId);
 
                 if (data == null)
                 {

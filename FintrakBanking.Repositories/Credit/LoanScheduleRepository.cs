@@ -1602,21 +1602,5 @@ namespace FintrakBanking.Repositories.Credit
             return output;
 
         }
-
-        //private bool GenerateLloanAmortizedScheduleRestructure(LoanPaymentScheduleInputViewModel loanInput)
-        //{
-
-        //    double pv = loanInput.principalAmount;
-        //    DateTime loanDate = loanInput.effectiveDate;
-        //    double rate = loanInput.interestRate;
-        //    DateTime firstPaymentDate = loanInput.firstPaymentDate;
-        //    int numpmts = loanInput.tenor;
-
-
-
-
-        //    return true;
-        //}
-
     }
 }
