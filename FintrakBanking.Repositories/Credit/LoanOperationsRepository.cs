@@ -10264,14 +10264,13 @@ namespace FintrakBanking.Repositories.Credit
             bool output = false;
             try
             {
-                var loan = this.context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
+                var loan = context.TBL_LOAN.Where(x => x.TERMLOANID == loanInput.loanId).FirstOrDefault();
                 loan.FULLANDFINALSTATUSID = (int)FullAndFinalStatusEnum.OnGoing;
-
-                var result = context.SaveChanges() > 0;
-                if (result)
-                {
+               
+                context.SaveChanges();
+               
                     output = true;
-                }
+               
             }
             catch (Exception ex)
             {
