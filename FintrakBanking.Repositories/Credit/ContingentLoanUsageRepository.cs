@@ -226,8 +226,9 @@ namespace FintrakBanking.Repositories.Credit
                                      && atrail.RESPONSESTAFFID == null
                                orderby lcu.CONTINGENTLOANUSAGEID descending
 
-                               select new ContingentLoansViewModel()
+                               select new ContingentLoansViewModel
                                {
+                                   contingentLoanUsageId = lcu.CONTINGENTLOANUSAGEID,
                                    principalName = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
                                    bookingDate = lcu.TBL_LOAN_CONTINGENT.BOOKINGDATE,
                                    casaAccountNumber = lcu.TBL_LOAN_CONTINGENT.TBL_CASA.PRODUCTACCOUNTNUMBER,
@@ -337,7 +338,7 @@ namespace FintrakBanking.Repositories.Credit
 
             workflow.StaffId = entity.staffId;
             workflow.OperationId = (int)OperationsEnum.ContingentLiabilityUsage;
-            workflow.TargetId = entity.contingenliabilityUsageId;
+            workflow.TargetId = entity.targetId; //.contingenliabilityUsageId;
             workflow.CompanyId = entity.companyId;
             workflow.StatusId = entity.approvalStatusId;
             workflow.Comment = entity.comment;
@@ -346,56 +347,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-                decimal newLienAmount = 0;
 
-                string lienReferenceNumber = string.Empty;
-
-                if (contingentLoanRecord.Count() == 0)
-                {
-                    lienReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER;
-                }
-                else
-                {
-                    //lienReferenceNumber =  contingentLoanRecord.OrderByDescending(c=> c.CONTINGENTLOANUSAGEID).FirstOrDefault().LIENREFERENCENUMBER;
-                }
-
-                decimal oldLien = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT;
-
-                var casaAccountId = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.CASAACCOUNTID;
-
-                casaLien.ReleaseLien(new CasaLienViewModel
-                {
-                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
-                    sourceReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
-                    userBranchId = (short)entity.BranchId,
-                    branchId = (short)entity.BranchId,
-                    companyId = entity.companyId,
-                    lienAmount = oldLien,
-                    description = "Release Lien for APS Fund",
-                    lienTypeId = (short)LienTypeEnum.APSRequest,
-                    createdBy = entity.createdBy,
-                    userIPAddress = entity.userIPAddress,
-                    applicationUrl = entity.applicationUrl,
-                });
-
-
-                lienReferenceNumber = string.Concat(lienReferenceNumber, contingentLoanRecord.Count());
-                newLienAmount = oldLien - contingentLoanRecord.FirstOrDefault().AMOUNTREQUESTED;
-
-                casaLien.PlaceLien(new CasaLienViewModel
-                {
-                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
-                    sourceReferenceNumber = contingentLoanRecord.FirstOrDefault().TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
-                    userBranchId = (short)entity.BranchId,
-                    branchId = (short)entity.BranchId,
-                    companyId = entity.companyId,
-                    lienAmount = newLienAmount,
-                    description = "Place Lien on APG Fund",
-                    lienTypeId = (short)LienTypeEnum.APSRequest,
-                    createdBy = entity.createdBy,
-                    userIPAddress = entity.userIPAddress,
-                    applicationUrl = entity.applicationUrl,
-                });
             }
 
             return this.context.SaveChanges() > 0;

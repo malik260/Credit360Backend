@@ -55,6 +55,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string lastName { get; set; }
         public string middleName { get; set; }
         public short productId { get; set; }
+        public int contingentLoanUsageId { get; set; }
     }
 
 
