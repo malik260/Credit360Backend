@@ -117,6 +117,8 @@ namespace FintrakBanking.Repositories.Credit
                 throw;
             }
         }
+
+        // TO REFACOR & REMOVE
         private bool LogForApproval(ApproveAPSRequestViewModel entity)
         {
             bool response = false;
@@ -133,11 +135,6 @@ namespace FintrakBanking.Repositories.Credit
 
         public bool SaveContigentLoans(ContingentLoanUsageViewModel entity, int companyId)
         {
-            //using (var trans = context.Database.BeginTransaction())
-            //{
-
-            //    try
-            //    {
             var data = new TBL_LOAN_CONTINGENT_USAGE
             {
                 AMOUNTREQUESTED = entity.amountRequuested,
@@ -149,10 +146,7 @@ namespace FintrakBanking.Repositories.Credit
                 REMARK = entity.remark
             };
             context.TBL_LOAN_CONTINGENT_USAGE.Add(data);
-
-
-
-
+            
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
@@ -173,7 +167,6 @@ namespace FintrakBanking.Repositories.Credit
             response = context.SaveChanges() > 0;
             if (response)
             {
-
                 // ----------------Drop into CAM-------------------
                 if (data.CONTINGENTLOANUSAGEID > 0)
                 {
@@ -193,16 +186,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
             return response;
-        //}
-        //catch (Exception ex)
-        //{
-        //    trans.Rollback();
-        //    throw new SecureException(ex.Message);
-        //}
     } 
             
-      
-
         public IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId)
         {
             try
@@ -252,6 +237,7 @@ namespace FintrakBanking.Repositories.Credit
             return applications;
         }
 
+        // TO REMOVE
         private bool ApproveAPSRequest(ApproveAPSRequestViewModel entity)
         {
             var contingentLoanRecord = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANUSAGEID == entity.contingenliabilityUsageId);
@@ -334,7 +320,7 @@ namespace FintrakBanking.Repositories.Credit
         
         public bool SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity)
         {
-            var contingentLoanRecord = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANUSAGEID == entity.contingenliabilityUsageId);
+            var contingentLoanRecord = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANUSAGEID == entity.targetId);
 
             workflow.StaffId = entity.staffId;
             workflow.OperationId = (int)OperationsEnum.ContingentLiabilityUsage;
@@ -343,11 +329,11 @@ namespace FintrakBanking.Repositories.Credit
             workflow.StatusId = entity.approvalStatusId;
             workflow.Comment = entity.comment;
             workflow.DeferredExecution = true;
-            workflow.LogActivity();
+            // workflow.LogActivity();
 
             if (workflow.NewState == (int)ApprovalState.Ended)
             {
-
+                // TODO
             }
 
             return this.context.SaveChanges() > 0;
