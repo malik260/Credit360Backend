@@ -77,5 +77,24 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loanusage-approval")]
+        public HttpResponseMessage SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity)
+        {
+            var responseMessage = string.Empty;
+
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+
+            bool response = repo.SaveContigentLoansUsageApproval(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+        }
     }
 }

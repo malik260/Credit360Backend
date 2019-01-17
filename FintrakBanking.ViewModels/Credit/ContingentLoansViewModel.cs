@@ -78,7 +78,6 @@ namespace FintrakBanking.ViewModels.Credit
        
         public int contingenliabilityUsageId { get; set; }       
         public int productId { get; set; }
-       
-
+        public short userBranchId { get; set; }
     }
 }
