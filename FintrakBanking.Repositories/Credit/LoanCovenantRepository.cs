@@ -41,14 +41,14 @@ namespace FintrakBanking.Repositories.Customer
 
             foreach (LoanCovenantDetailViewModel entity in covenantModel)
             {
-                await AddLoanCovenantDetail(entity);
+                AddLoanCovenantDetail(entity);
             }
 
             return 1;
 
         }
 
-        public async Task<bool> AddLoanCovenantDetail(LoanCovenantDetailViewModel entity)
+        public bool AddLoanCovenantDetail(LoanCovenantDetailViewModel entity)
         {
             var convenant = new TBL_LOAN_COVENANT_DETAIL
             {
@@ -58,7 +58,7 @@ namespace FintrakBanking.Repositories.Customer
                 COVENANTDETAIL = entity.covenantDetail,
                 COVENANTTYPEID = entity.covenantTypeId,
                 CREATEDBY = entity.createdBy,
-                DATETIMECREATED = this.genSetup.GetApplicationDate().Date,
+                DATETIMECREATED = this.genSetup.GetApplicationDate(),
                 FREQUENCYTYPEID = entity.frequencyTypeId,
                 LOANID = entity.loanId
             };
@@ -66,20 +66,20 @@ namespace FintrakBanking.Repositories.Customer
 
             var loanRef = context.TBL_LOAN.SingleOrDefault(c => c.TERMLOANID == entity.loanId).LOANREFERENCENUMBER;
 
-            var audit = new TBL_AUDIT
-            {
-                AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailAdd,
-                STAFFID = entity.createdBy,
-                BRANCHID = (short)entity.userBranchId,
-                DETAIL = $"Added loan convent to loan ref: { loanRef } ",
-                IPADDRESS = entity.userIPAddress,
-                URL = entity.applicationUrl,
-                APPLICATIONDATE = genSetup.GetApplicationDate(),
-                SYSTEMDATETIME = DateTime.Now
-            };
+            //var audit = new TBL_AUDIT
+            //{
+            //    AUDITTYPEID = (short)AuditTypeEnum.LoanCovenantDetailAdd,
+            //    STAFFID = entity.createdBy,
+            //    BRANCHID = (short)entity.userBranchId,
+            //    DETAIL = $"Added loan convent to loan ref: { loanRef } ",
+            //    IPADDRESS = entity.userIPAddress,
+            //    URL = entity.applicationUrl,
+            //    APPLICATIONDATE = genSetup.GetApplicationDate(),
+            //    SYSTEMDATETIME = DateTime.Now
+            //};
 
-            this.auditTrail.AddAuditTrail(audit);
-            return await context.SaveChangesAsync() != 0;
+            //this.auditTrail.AddAuditTrail(audit);
+            return context.SaveChanges() != 0;
         }
 
         public async Task<bool> DeleteLoanCovenantDetail(int loanCovenantDetailId, UserInfo user)
@@ -258,6 +258,31 @@ namespace FintrakBanking.Repositories.Customer
 
             return context.TBL_LOAN_APPLICATION_COVENANT.Where(x =>
                     x.DELETED == false && ids.Contains(x.LOANAPPLICATIONDETAILID)
+                ).Select(c => new LoanCovenantDetailViewModel
+                {
+                    loanCovenantDetailId = c.LOANCOVENANTDETAILID,
+                    covenantAmount = c.COVENANTAMOUNT,
+                    covenantDate = c.COVENANTDATE,
+                    covenantDetail = c.COVENANTDETAIL,
+                    covenantTypeId = c.COVENANTTYPEID,
+                    covenantTypeName = c.TBL_LOAN_COVENANT_TYPE.COVENANTTYPENAME,
+                    frequencyTypeId = c.FREQUENCYTYPEID,
+                    frequencyTypeName = c.TBL_FREQUENCY_TYPE.MODE,
+                    loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
+                    isPercentage = c.ISPERCENTAGE,
+                    nextCovenantDate = c.NEXTCOVENANTDATE,
+                    casaAccountId = c.CASAACCOUNTID,
+
+                    companyId = c.COMPANYID,
+                    productCustomerName = c.TBL_LOAN_APPLICATION_DETAIL.TBL_PRODUCT.PRODUCTNAME + " -- " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.MIDDLENAME + " " + c.TBL_LOAN_APPLICATION_DETAIL.TBL_CUSTOMER.LASTNAME
+
+                });
+        }
+
+        public IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenant(int applicationDetailId)
+        {
+            return context.TBL_LOAN_APPLICATION_COVENANT.Where(x =>
+                    x.DELETED == false && x.LOANAPPLICATIONDETAILID == applicationDetailId
                 ).Select(c => new LoanCovenantDetailViewModel
                 {
                     loanCovenantDetailId = c.LOANCOVENANTDETAILID,

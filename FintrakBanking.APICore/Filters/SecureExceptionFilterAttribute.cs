@@ -42,15 +42,62 @@ namespace FintrakBanking.APICore.Filters
                 }
             }
 
-            Task.Run(() => LogUnhandledExceptionAsync(context));
+            //Task.Run(() => LogUnhandledExceptionAsync(context));
+            LogUnhandledException(context);
 
-            //context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
-            context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message + " inner exception " + innerException });
+            context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An error occurred. Try again or contact the system administrator." });
+            // context.Response = context.Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = context.Exception.Message + " inner exception " + innerException });
 
             base.OnException(context);
         }
 
-        private async Task LogUnhandledExceptionAsync(HttpActionExecutedContext httpContext)
+        private void LogUnhandledException(HttpActionExecutedContext httpContext)
+        {
+            var ex = httpContext.Exception;
+            var endPoint = httpContext.Request.RequestUri;
+            var userName = httpContext.ActionContext.RequestContext.Principal.Identity.Name;
+            var errorMessage = ex.Message;
+            if (innerException != null) errorMessage = errorMessage + ", INNER_EXCETION: " + innerException;
+            var time = DateTime.Now;
+            if (String.IsNullOrEmpty(ex.Data["validation_error_message"].ToString())) errorMessage = errorMessage + ", ENTITY_VALIDATION_ERROR: " + ex.Data["validation_error_message"];
+
+            var log = new TBL_ERRORLOG()
+            {
+                USERNAME = userName,
+                APIENDPOINT = endPoint.ToString(),
+                ERRORPATH = ex.TargetSite.ToString(),
+                ERRORSOURCE = ex.Source,
+                ERRORMESSAGE = errorMessage,
+                ERRORTYPE = ex.GetType().Name,
+                STATUSCODE = 500,
+                ALLXML = errorMessage + " " + ex.StackTrace,
+                TIMEUTC = time,
+            };
+
+            context.TBL_ERRORLOG.Add(log);
+
+            string recipients = "anu.omotayo@fintraksoftware.com; osemeke.anyirah@fintraksoftware.com";
+
+            var message = new TBL_MESSAGE_LOG
+            {
+                FROMADDRESS = support,
+                TOADDRESS = recipients,
+                MESSAGESUBJECT = "UNHANDLED EXCEPTION",
+                MESSAGEBODY = "<p><b>USERNAME:</b> " + userName + "</p> <p><b>ENDPOINT:</b> " + endPoint + "</p> <p><b>ERROR MESSAGE:</b> " + errorMessage + "</p> <p>STACKTRACE:</b> " + ex.StackTrace + "</p> <p>TIME:</b> " + time + "</p>", //                MESSAGESTATUSID = (short)MessageStatusEnum.Pending,
+                MESSAGETYPEID = (short)MessageTypeEnum.Email,
+                DATETIMERECEIVED = time,
+                SENDONDATETIME = time,
+                TARGETID = null,
+                OPERATIONID = null,
+                MESSAGESTATUSID = 1
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+
+            context.SaveChanges();
+        }
+
+        private async Task LogUnhandledExceptionAsyncOld(HttpActionExecutedContext httpContext)
         {
             var ex = httpContext.Exception;
             var endPoint = httpContext.Request.RequestUri;

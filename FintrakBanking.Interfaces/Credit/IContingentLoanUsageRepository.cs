@@ -14,5 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool SaveContigentLoans(ContingentLoanUsageViewModel entity, int companyId);
 
         IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId);
+
+        bool SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity);
     }
 }

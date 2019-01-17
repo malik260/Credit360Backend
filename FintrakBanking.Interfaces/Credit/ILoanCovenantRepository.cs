@@ -13,7 +13,7 @@ namespace FintrakBanking.Interfaces.Customer
     {
         #region Loan Covenant Detail
         Task<int> AddMultipleLoanCovenantDetail(List<LoanCovenantDetailViewModel> covenantModel);
-        Task<bool> AddLoanCovenantDetail(LoanCovenantDetailViewModel entity);
+        bool AddLoanCovenantDetail(LoanCovenantDetailViewModel entity);
         Task<bool> DeleteLoanCovenantDetail(int loanCovenantDetailId, UserInfo user );
         Task<bool> UpdateLoanCovenantDetail(int loanCovenantDetailId, LoanCovenantDetailViewModel entity);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanCovenantDetailByCovenantType(int covenantTypeId, int companyId);
@@ -23,6 +23,7 @@ namespace FintrakBanking.Interfaces.Customer
        bool DeleteLoanApplicationCovenant(int covenantId, UserInfo user);
        bool AddLoanApplicationCovenant(LoanCovenantDetailViewModel entity);
         IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationCovenant(int applicationId);
+        IEnumerable<LoanCovenantDetailViewModel> GetLoanApplicationDetailCovenant(int applicationDetailId);
         bool UpdateLoanApplicationCovenant(DateTime date);
         DateTime GetFrequencyDate(int frequencyTypeId, DateTime date);
 
