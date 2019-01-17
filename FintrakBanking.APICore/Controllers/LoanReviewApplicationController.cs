@@ -89,6 +89,8 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+
         [HttpPost] [ClaimsAuthorization]
         [Route("loan-review-application/submit")]
         public HttpResponseMessage SubmitLoanReviewApplication([FromBody] LoanReviewApplicationViewModel entity)

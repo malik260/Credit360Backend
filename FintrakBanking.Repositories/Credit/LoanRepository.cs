@@ -8980,6 +8980,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        loanId = a.TERMLOANID,
                                        customerId = a.CUSTOMERID,
+                                       currencyId = a.CURRENCYID,
                                        productId = a.PRODUCTID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
@@ -9026,6 +9027,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        loanId = a.REVOLVINGLOANID,
                                        customerId = a.CUSTOMERID,
+                                       currencyId = a.CURRENCYID,
                                        productId = a.PRODUCTID,
                                        loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
@@ -9081,6 +9083,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        loanId = a.CONTINGENTLOANID,
                                        customerId = a.CUSTOMERID,
+                                       currencyId = a.CURRENCYID,
                                        productId = a.PRODUCTID,
                                        customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.LOANREFERENCENUMBER,
@@ -9123,6 +9126,7 @@ namespace FintrakBanking.Repositories.Credit
                                    {
                                        loanId = d.LOANAPPLICATIONDETAILID,
                                        customerId = d.CUSTOMERID,
+                                       currencyId = d.CURRENCYID,
                                        productId = d.APPROVEDPRODUCTID,
                                        customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                                        loanReferenceNumber = a.APPLICATIONREFERENCENUMBER,
