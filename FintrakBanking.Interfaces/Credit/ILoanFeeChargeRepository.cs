@@ -15,7 +15,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         string SubmitTakeFee(LoanFeeChargesViewModel entity);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetTakeFeeAwaitingApproval(int staffId, int companyId);
-        ApprovalStatusEnum approveTakeFee(ApprovalViewModel userModel);
+        ApprovalStatusEnum ApproveTakeFee(ApprovalViewModel userModel);
 
     }
 }

@@ -77,7 +77,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 // var data = repo.addApplicationLineTenorChangeApproval(entity);
 
-                var data = repo.approveTakeFee(entity);
+                var data = repo.ApproveTakeFee(entity);
 
                 if (data == ApprovalStatusEnum.Approved)
                 {

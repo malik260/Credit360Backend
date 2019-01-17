@@ -511,7 +511,7 @@ namespace FintrakBanking.Repositories.Credit
                                     loanId = a.LOANAPPLICATIONDETAILID,
                                     companyId = b.COMPANYID,
                                     currencyId = a.CURRENCYID,
-                                    loanReferenceNumber = b.APPLICATIONREFERENCENUMBER,
+                                    loanReferenceNumber = b.APPLICATIONREFERENCENUMBER + "-" + a.LOANAPPLICATIONDETAILID,
                                     branchId = b.BRANCHID,
                                     createdBy = loanFee.CREATEDBY
                                 }).FirstOrDefault();//context.TBL_LOAN_APPLICATION_DETAIL.Find(loanFee.LOANID);
@@ -626,7 +626,7 @@ namespace FintrakBanking.Repositories.Credit
             return inputTransactions;
         }
 
-        public ApprovalStatusEnum approveTakeFee(ApprovalViewModel userModel)
+        public ApprovalStatusEnum ApproveTakeFee(ApprovalViewModel userModel)
         {
             var twoFADetails = new TwoFactorAutheticationViewModel
             {
