@@ -93,6 +93,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class LoanReviewOperationApprovalViewModel
     {
+        public int loanChargeFeeId { get; set; }
+        public string chargeFeeName { get; set; }
+        public decimal feeAmount { get; set; }
+        public string description { get; set; }
+        public int? takeFeeCasaAccountId { get; set; }
+        public string takeFeeCasaAccountName { get; set; }
+
         public int? loanReviewApplicationId { get; set; }
         public string currencyCode { get; set; }
         public bool isBankFormat { get; set; }
@@ -385,6 +392,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public List<DropDownSelect> operationTypes { get; set; }
         public List<DropDownSelect> interestFrequencyTypes { get; set; }
         public List<DropDownSelect> principalFrequencyTypes { get; set; }
+        public List<DropDownSelect> feeCharges { get; set; }
+
     }
 
     public class LoanReviewOperationParentChildViewModel
@@ -446,6 +455,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int id { get; set; }
         public string name { get; set; }
         public int typeId { get; set; }
+        public int currencyId { get; set; }
+
     }
 
     public class MaturityIntructionViewModel : GeneralEntity

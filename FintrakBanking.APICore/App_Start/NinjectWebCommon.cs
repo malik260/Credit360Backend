@@ -234,7 +234,8 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<IAPIErrorLog>().To<APIErrorLog>();
             kernel.Bind<ApplicationOAuthProvider>().To<ApplicationOAuthProvider>();
             kernel.Bind<CreditCommonRepository>().To<CreditCommonRepository>();
-            
+            kernel.Bind<ILoanFeeChargeRepository>().To<LoanFeeChargeRepository>();
+
             kernel.Bind<IFinacleIntegrationRepository>().To<FinacleIntegrationRepository>();
         }
 

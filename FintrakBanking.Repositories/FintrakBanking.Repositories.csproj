@@ -130,6 +130,7 @@
     <Compile Include="CASA\OverRideRepository.cs" />
     <Compile Include="Credit\CreditCommonRepository.cs" />
     <Compile Include="Credit\DashboardRepository.cs" />
+    <Compile Include="Credit\LoanFeeChargeRepository.cs" />
     <Compile Include="Credit\MemorandumRepository.cs" />
     <Compile Include="CRMS\CRMSRegulatories.cs" />
     <Compile Include="Credit\FacilityDetailSummary.cs" />

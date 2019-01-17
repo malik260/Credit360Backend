@@ -327,6 +327,7 @@
     <Compile Include="Controllers\ApprovalLevelController.cs" />
     <Compile Include="Controllers\ApprovalLevelStaffController.cs" />
     <Compile Include="Controllers\FinacleIntegrationController.cs" />
+    <Compile Include="Controllers\LoanFeeChargeController.cs" />
     <Compile Include="Controllers\ProfileSettingsController.cs" />
     <Compile Include="Controllers\ApprovalReliefController.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
