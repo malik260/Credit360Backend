@@ -15,6 +15,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.Interfaces.CASA;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {

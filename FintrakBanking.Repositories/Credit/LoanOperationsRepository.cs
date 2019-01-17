@@ -10121,16 +10121,18 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     accruedInterest = accrued.ACCRUEDINTEREST;
                 }
-                else
-                {
-                    throw new SecureException("Application Date not found in Payment Schedule");
-                }
+                //else
+                //{
+                //    throw new SecureException("Application Date not found in Payment Schedule");
+                //}
+
                 accruedInterest = decimal.Round(accruedInterest, 2, MidpointRounding.AwayFromZero);
 
 
                 principalOutStandingBalance = decimal.Round(principalOutStandingBalance, 2, MidpointRounding.AwayFromZero);
-                decimal pastDue = decimal.Round((loan.PASTDUEINTEREST + loan.INTERESTONPASTDUEINTEREST + loan.INTERESTONPASTDUEPRINCIPAL), 2, MidpointRounding.AwayFromZero);
-                decimal totalamount = (principalOutStandingBalance + pastDue);
+                decimal pastDueInterest = decimal.Round((loan.PASTDUEINTEREST), 2, MidpointRounding.AwayFromZero);
+                decimal totalamount = (principalOutStandingBalance + pastDueInterest);
+                decimal interestOnPastDue = loan.INTERESTONPASTDUEINTEREST + loan.INTERESTONPASTDUEPRINCIPAL;
 
                 //var _otherOperation = context.TBL_OTHER_OPERATION.Where(x => x.OTHEROPERATIONID == (int)OtherOperationEnum.WriteOffLoanFacilities).FirstOrDefault();
 
@@ -10151,10 +10153,16 @@ namespace FintrakBanking.Repositories.Credit
                     financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, principalOutStandingBalance, sllp, "principal Write off", twoFactorAuth);
                 }
 
-                if (pastDue != 0)
+                if (pastDueInterest != 0)
                 {
                     twoFactorAuth.skipAuthentication = true;
-                    financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, pastDue, sllp, "past due Write off", twoFactorAuth);
+                    
+                    //financeTransaction.PostTerminateAndRebookEntries(loanId, loanInput, pastDueInterest, sllp, "past due interest write off", twoFactorAuth);
+
+                    var debitGL = product.INTERESTINCOMEEXPENSEGL.Value;
+                    var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
+
+                    financeTransaction.PostLoanGLEntries(loanInput, pastDueInterest, debitGL, creditGL, "past due interest write off", loanInput.operationId);
                 }
 
                 if (accruedInterest != 0)
@@ -10165,7 +10173,13 @@ namespace FintrakBanking.Repositories.Credit
                     financeTransaction.PostLoanGLEntries(loanInput, accruedInterest, debitGL, creditGL, "Accrued Interest Reversal", loanInput.operationId);
                 }
 
+                if (interestOnPastDue >  0)
+                {                    
+                    var debitGL = product.PENALCHARGEGL.Value;
+                    var creditGL = product.INTERESTRECEIVABLEPAYABLEGL.Value;
 
+                    financeTransaction.PostLoanGLEntries(loanInput, interestOnPastDue, debitGL, creditGL, "interest on past due write off", loanInput.operationId);
+                }
 
 
                 TBL_LOAN results = (from p in context.TBL_LOAN
@@ -18526,6 +18540,17 @@ namespace FintrakBanking.Repositories.Credit
             if (context.SaveChanges() > 0) return true;
 
             return false;
+        }
+
+        public IEnumerable<LoanReviewIrregularScheduleViewModel> GetLoanReviewOperationIrregularSchedule(int loanReviewOperationId)
+        {
+            return context.TBL_LOAN_REVIEW_OPRATN_IREG_SC.Where(x => x.LOANREVIEWOPERATIONID == loanReviewOperationId)
+                .Select(c => new LoanReviewIrregularScheduleViewModel
+                {
+                    PaymentDate = c.PAYMENTDATE,
+                    PaymentAmount = c.PAYMENTAMOUNT
+                })
+                .ToList();
         }
     }
 }

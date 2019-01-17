@@ -30,30 +30,18 @@ namespace FintrakBanking.APICore.Controllers
         }
 
          [HttpPost] [ClaimsAuthorization][Route("covenant-detail")]
-        public async Task<HttpResponseMessage> AddLoanCovenantDetail([FromBody] LoanCovenantDetailViewModel entity)
+        public HttpResponseMessage AddLoanCovenantDetail([FromBody] LoanCovenantDetailViewModel entity)
         {
 
-            try
-            {
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
-                // entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
-                var data = await repo.AddLoanCovenantDetail(entity);
-                if (data)
-                {
+                var data = repo.AddLoanCovenantDetail(entity);
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
-                }
-
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException ex)
-            {
-                //this.errorLogger.LogError(ex, this.Request.Path.Value, token.GetUsername);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
-            }
+        
         }
 
         [HttpDelete] [ClaimsAuthorization][Route("covenant-detail")]
@@ -248,7 +236,8 @@ namespace FintrakBanking.APICore.Controllers
         // application
 
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("covenant/loan-application/{id}")]
         public HttpResponseMessage GetLoanApplicationCovenant(int id)
         {
@@ -263,6 +252,23 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("covenant/loan-application-detail/{id}")]
+        public HttpResponseMessage GetLoanApplicationDetailCovenant(int id)
+        {
+            try
+            {
+                var data = repo.GetLoanApplicationDetailCovenant(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        
          [HttpPost] [ClaimsAuthorization]
         [Route("loan-application-covenant")]
         public HttpResponseMessage AddLoanApplicationCovenant([FromBody] LoanCovenantDetailViewModel entity)
@@ -335,23 +341,12 @@ namespace FintrakBanking.APICore.Controllers
         [Route("lms-loan-application-covenant")]
         public HttpResponseMessage AddLoanApplicationCovenantLms([FromBody] LoanCovenantDetailViewModel entity)
         {
-            try
-            {
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 bool data = repo.AddLoanApplicationCovenantLms(entity);
-                if (data)
-                {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = entity, message = "The record has been created successfully" });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
-            }
         }
 
         [HttpDelete]

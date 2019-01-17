@@ -779,5 +779,15 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-review-irregular-schedule/{loanReviewOperationId}")]
+        public HttpResponseMessage GetLoanReviewOperationIrregularSchedule(int loanReviewOperationId)
+        {
+            var data = repo.GetLoanReviewOperationIrregularSchedule(loanReviewOperationId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+
     }
 }

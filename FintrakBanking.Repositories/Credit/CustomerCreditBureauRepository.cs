@@ -559,7 +559,8 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (Exception ex)
             {
-                throw ex;
+                var msg = ex.InnerException != null ? ex.InnerException : ex;
+                throw msg;
             }
         }
 

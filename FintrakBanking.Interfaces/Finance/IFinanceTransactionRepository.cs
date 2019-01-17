@@ -64,7 +64,7 @@ namespace FintrakBanking.Interfaces.Finance
 
         FinanceTransactionViewModel BuildTerminateAndRebookPosting(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description);
 
-        FinanceTransactionViewModel PostTerminateAndRebookEntries(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int creditGL, string description, TwoFactorAutheticationViewModel twoFactorAuth);
+        FinanceTransactionViewModel PostTerminateAndRebookEntries(int loanId, LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int debitGL, string description, TwoFactorAutheticationViewModel twoFactorAuth);
 
         FinanceTransactionViewModel PostLoanGLEntries(LoanPaymentRestructureScheduleInputViewModel model, decimal postedAmount, int debitGL, int creditGL, string description, int operationId);
 
