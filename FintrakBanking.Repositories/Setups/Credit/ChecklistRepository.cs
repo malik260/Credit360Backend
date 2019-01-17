@@ -1473,10 +1473,14 @@ namespace FintrakBanking.Repositories.Credit
                                   approvalStatus = c.TBL_APPROVAL_STATUS.APPROVALSTATUSNAME,
                                   loanApplicationId = c.TBL_LOAN_APPLICATION_DETAIL.LOANAPPLICATIONID,
                                   validationStatus = c.CHECKLISTVALIDATED,
+                                 // checklistDifinitionId = context.TBL_CHECKLIST_DETAIL.Where(o=>o.TARGETID== a.LOANAPPLICATIONDETAILID).Select(o=>o.CHECKLISTDEFINITIONID).FirstOrDefault(),
                                   isExternal = c.ISEXTERNAL
 
                               }).ToList();
+
+
                 return status;
+
             }
             else
             {

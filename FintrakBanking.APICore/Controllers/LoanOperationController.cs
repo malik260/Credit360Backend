@@ -207,8 +207,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("commercial-loan-maturity-instruction")]
-        public HttpResponseMessage addMaturityInstruction([FromBody] MaturityIntructionViewModel entity)
+        [Route("approve-commercial-loan-maturity-instruction")]
+        public HttpResponseMessage ApproveMaturityInstructionRequest([FromBody] MaturityIntructionViewModel entity)
         {
             try
             {
@@ -223,13 +223,48 @@ namespace FintrakBanking.APICore.Controllers
 
                 //var data = repo.addMaturityInstruction(entity);
 
-                var data = repo.addMaturityInstructionApprove(entity);
+                var data = repo.ApproveMaturityInstructionRequest(entity);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New Maturity Instruction Successfully Sent For Approval " });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("approve-commercial-loan-roll-over")]
+        public HttpResponseMessage ApproveCommercialPaperManualRollOverRequest([FromBody] MaturityIntructionViewModel entity)
+        {
+            try
+            {
+                TokenDecryptionHelper token = new TokenDecryptionHelper();
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.createdBy = token.GetStaffId;
+                entity.companyId = token.GetCompanyId;
+
+                var data = repo.ApproveCommercialPaperManualRollOverRequest(entity, null);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan Rollover process was Sent For Approval." });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing rollover for this record" });
             }
             catch (ConditionNotMetException ce)
             {
@@ -258,7 +293,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
-                var data = repo.addNonTermLoanLoanRateChangeApprove(entity);
+                var data = repo.ApproveNonTermLoanLoanRateChangeRequest(entity);
 
                 //var data = repo.addNonTermLoanLoanRateChange(entity);
                 if (data)
@@ -297,7 +332,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
 
                 //var data = repo.addApplicationLineRateChange(entity);
-                var data = repo.addApplicationLineRateChangeApproval(entity);
+                var data = repo.AproveApplicationLineRateChangeRequest(entity);
 
                 if (data)
                 {
@@ -333,7 +368,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
-                var data = repo.addApplicationLineAmountApproval(entity);
+                var data = repo.ApproveApplicationLineAmountChangeRequest(entity);
 
                 //var data = repo.changeApplicationLineAmount(entity);
                 if (data)
@@ -357,89 +392,55 @@ namespace FintrakBanking.APICore.Controllers
             //}
         }
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("commercial-loan-prepayment/{loanReferenceNumber}")]
-        public HttpResponseMessage CommercialLoanPrepayment([FromBody] loanPrepaymentViewModel entity, string loanReferenceNumber)
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
+        //[HttpPost]
+        //[ClaimsAuthorization]
+        //[Route("commercial-loan-prepayment/{loanReferenceNumber}")]
+        //public HttpResponseMessage CommercialLoanPrepayment([FromBody] loanPrepaymentViewModel entity, string loanReferenceNumber)
+        //{
+        //    try
+        //    {
+        //        TokenDecryptionHelper token = new TokenDecryptionHelper();
 
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;
+        //        entity.userBranchId = (short)token.GetBranchId;
+        //        entity.applicationUrl = HttpContext.Current.Request.Path;
+        //        entity.createdBy = token.GetStaffId;
+        //        entity.companyId = token.GetCompanyId;
 
-                var data = repo.addCommercialLoanPrepayment(loanReferenceNumber,entity);
-                if (data.saveStatus.ToLower() =="saved")
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Payment was successful" });
-                }
-                else if(data.saveStatus == null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New payment result generated" });
-                }
+        //        var data = repo.addCommercialLoanPrepayment(loanReferenceNumber,entity);
+        //        if (data.saveStatus.ToLower() =="saved")
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Payment was successful" });
+        //        }
+        //        else if(data.saveStatus == null)
+        //        {
+        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "New payment result generated" });
+        //        }
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (APIErrorException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-            catch (TwoFactorAuthenticationException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
-        }
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error running this update" });
+        //    }
+        //    catch (ConditionNotMetException ce)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+        //    }
+        //    catch (APIErrorException e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //    catch (TwoFactorAuthenticationException e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+        //    }
+        //    catch (SecureException e)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+        //    }
+        //}
 
-        [HttpPost]
-        [ClaimsAuthorization]
-        [Route("commercial-loan-roll-over")]
-        public HttpResponseMessage ProcessCommercialPaperRollOver([FromBody] MaturityIntructionViewModel entity)
-        {
-            try
-            {
-                TokenDecryptionHelper token = new TokenDecryptionHelper();
-                entity.userBranchId = (short)token.GetBranchId;
-                entity.applicationUrl = HttpContext.Current.Request.Path;
-                entity.createdBy = token.GetStaffId;
-                entity.companyId = token.GetCompanyId;
-
-                var data = repo.ProcessCommercialPaperManualRollOverApproval(entity, null);
-
-                //var data = repo.ProcessCommercialPaperManualRollOver(entity, null);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Loan Rollover process was Sent For Approval." });
-                }
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error processing rollover for this record" });
-            }
-            catch (ConditionNotMetException ce)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
-            }
-            catch (SecureException e)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error in this transaction. " });
-            }
-            catch (Exception ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
-            }
-        }
+       
         [HttpPost]
         [ClaimsAuthorization]
         [Route("application-go-for-approval")]
@@ -454,13 +455,18 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
                 entity.staffId = token.GetStaffId;
 
-                // var data = repo.addApplicationLineTenorChangeApproval(entity);
-
                 var data = repo.addApplicationGoForApproval(entity);
 
                 if (data == 1)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Approved Successfully." });
+                    var message = "Approval was Successfully. The operation has been committed.";
+                    if (entity.operationId == (int)OperationsEnum.CommercialLoanRollOver)
+                    {
+                        if (entity.rollOverType == "autoRollover") message = "Maturity Instruction to rollover was successfully committed.";
+                        else { message = "Rollover approval was successful.";  }
+                    }
+                  
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = message });
                 }
                 else if (data == 2)
                 {
@@ -492,6 +498,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("non-term-loan-tenor-extension")]
@@ -506,7 +513,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = token.GetCompanyId;
 
                 //var data = repo.addNonTermLoanTenorReview(entity);
-                var data = repo.addNonTermLoanTenorReviewApprove(entity);
+                var data = repo.ApproveNonTermLoanTenorReviewRequest(entity);
 
                 if (data)
                 {
@@ -527,6 +534,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: { ab.Message } an error occured" });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("line-operation-awaiting-approval")]
@@ -542,6 +550,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ex.Message}" });
             }
         }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("application-line-tenor-extension")]
@@ -554,7 +563,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.createdBy = token.GetStaffId;
                 entity.companyId = token.GetCompanyId;
-                var data = repo.addApplicationLineTenorChangeApproval(entity);
+                var data = repo.AproveApplicationLineTenorChangeRequest(entity);
 
                 //var data = repo.addApplicationLineTenorChange(entity);
                 if (data)
@@ -580,6 +589,7 @@ namespace FintrakBanking.APICore.Controllers
             //}
 
         }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("application-line-tenor-extension-approve")]
@@ -596,7 +606,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 // var data = repo.addApplicationLineTenorChangeApproval(entity);
 
-                var data = repo.addApplicationLineTenorChange(entity);
+                var data = repo.ReviewApplicationLineTenor(entity);
 
                 if (data == 1)
                 {
@@ -627,6 +637,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+
         [HttpPost]
         [ClaimsAuthorization]
         [Route("commercial-loan-sub-allocation")]
@@ -640,7 +651,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
 
-                var data = repo.CommercialPaperSubAllocation(model);
+                var data = repo.SubAllocateCommercialLoanPrincipal(model);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Sub-Allocation was successfull." });

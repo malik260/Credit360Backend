@@ -62,7 +62,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingForceDebit(DateTime applicationDate);
         IEnumerable<LoanRepaymentViewModel> ProcessLoanRepaymentPostingPastDue(DateTime applicationDate);
         IEnumerable<DailyInterestAccrualViewModel> InterestSuspension(int loanId, DateTime applicationDate, int staffId);
-        LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode);
+        LoanViewModel ArchiveLoan(int loanId, int operationId, string archiveBatchCode, string changeReason);
         IEnumerable<LoanViewModel> BulkArchiveLoan();
         IEnumerable<LoanPaymentSchedulePeriodicViewModel> ArchivePeriodicSchedule(int loanId, string archiveBatchCode);
         IEnumerable<LoanPaymentScheduleDailyViewModel> ArchiveDailySchedule(int loanId, string archiveBatchCode);
@@ -96,41 +96,45 @@ namespace FintrakBanking.Interfaces.Credit
         bool SendEmailToRecoveryAgent(int companyId, int staffId, short branchId, int accreditedConsultantId);
 
         #region COMMERCIAL PAPER LOANS
-        bool CommercialPaperSubAllocation(subAllocationViewModel models);
+        bool SubAllocateCommercialLoanPrincipal(subAllocationViewModel models);
         IEnumerable<MaturityIntructionViewModel> GetMaturityInstructionType();
-        bool addMaturityInstructionApprove(MaturityIntructionViewModel model);
+        bool ApproveMaturityInstructionRequest(MaturityIntructionViewModel model);
         bool addMaturityInstruction(MaturityIntructionViewModel model);
         IEnumerable<MaturityIntructionViewModel> GetLoanMaturityInstructions();
-        bool ProcessCommercialPaperManualRollOverApproval(MaturityIntructionViewModel model, string refNo);
-        bool ProcessCommercialPaperManualRollOver(MaturityIntructionViewModel model, string refNo);
+        bool ApproveCommercialPaperManualRollOverRequest(MaturityIntructionViewModel model, string refNo);
+        bool RolloverCommercialLoanByManualProcess(MaturityIntructionViewModel model, string refNo);
         //void CommercialPaperManualRollOver(DateTime applicationDate);        
         int addApplicationGoForApproval(ApprovalViewModel userModel);
 
-        bool addNonTermLoanTenorReviewApprove(LoanReviewViewModel userModel);
-        bool addNonTermLoanTenorReview(LoanReviewViewModel userModel);
+        bool ApproveNonTermLoanTenorReviewRequest(LoanReviewViewModel userModel);
+        bool ReviewNonTermLoanTenor(LoanReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetRunningCommercialLoanLines(int companyId);
-        bool addApplicationLineRateChangeApproval(LoanReviewViewModel userModel);
-        bool addApplicationLineRateChange(LoanReviewViewModel userModel);
+        bool AproveApplicationLineRateChangeRequest(LoanReviewViewModel userModel);
+        bool ReviewApplicationLineRate(LoanReviewViewModel userModel);
         List<LoanReviewOperationParentChildViewModel> GetCommercialLoansLines(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoans(int companyId);
         List<LoanReviewOperationApprovalViewModel> GetDueCommercialLoansByApplicationDetailId(int companyId, int loanApplicationDetailID);
         //IEnumerable<DailyInterestAccrualViewModel> ProcessDailyCommercialPaperInterestAccrual(DateTime applicationDate);
         void CommercialPaperChangeOperativeAccount(int casaPayAccountId, int newCasaPayAccountId);
         bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
-        loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model);
+        //loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
-        int addApplicationLineTenorChange(ApprovalViewModel userModel);
-        bool addApplicationLineTenorChangeApproval(LoanReviewViewModel userModel);
+        int ReviewApplicationLineTenor(ApprovalViewModel userModel);
+        bool AproveApplicationLineTenorChangeRequest(LoanReviewViewModel userModel);
         IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId, int companyId);
-        bool addNonTermLoanLoanRateChangeApprove(LoanReviewViewModel userModel);
+        bool ApproveNonTermLoanLoanRateChangeRequest(LoanReviewViewModel userModel);
 
-        bool addNonTermLoanLoanRateChange(LoanReviewViewModel userModel);
-        bool addApplicationLineAmountApproval(LoanReviewViewModel userModel);
+        bool ReviewNonTermLoanLoanRate(LoanReviewViewModel userModel);
+        bool ApproveApplicationLineAmountChangeRequest(LoanReviewViewModel userModel);
 
         bool changeApplicationLineAmount(LoanReviewViewModel userModel);
         bool GetRepaymentFromStaging();
 
         IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByContingent();
+
+        IEnumerable<LoanRepaymentViewModel> ProcessLoanDisbursmentRollOver(DateTime applicationDate);
+
+        void ProcessAutomaticCommercialLoanRollover(DateTime applicationDate);
 
         #endregion
 
