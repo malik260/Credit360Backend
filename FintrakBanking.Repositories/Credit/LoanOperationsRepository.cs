@@ -6713,7 +6713,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var model = (from a in context.TBL_LOAN
-                         where a.TERMLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         where a.TERMLOANID == loanId 
+                         //&& a.LOANSTATUSID == (short)LoanStatusEnum.Active
                          select new LoanViewModel()
                          {
                              loanId = a.TERMLOANID,
@@ -11355,6 +11356,9 @@ namespace FintrakBanking.Repositories.Credit
                     ArchivePeriodicSchedule(loanId, archiveBatchCode);
                     ArchiveDailySchedule(loanId, archiveBatchCode);
 
+
+                    DateTime collectionMaturityDate = DateTime.Now;
+
                     //---------------save irregular loan schedule input---------------------------
                     List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
                     LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
@@ -11369,6 +11373,8 @@ namespace FintrakBanking.Repositories.Credit
                             schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
                             schedule.CREATEDBY = staffId;
                             schedule.DATETIMECREATED = applicationDate;
+
+                            collectionMaturityDate = item.paymentDate;
 
                             tblIrregularSchedule.Add(schedule);
                         }
@@ -11464,7 +11470,9 @@ namespace FintrakBanking.Repositories.Credit
                     MergePeriodicSchedule(loanId, applicationDate);
                     //----------update loan details -----------------------------------
                     //var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
-                    loan.MATURITYDATE = (DateTime)reviewData.MATURITYDATE;
+                    //loan.MATURITYDATE = (DateTime)reviewData.MATURITYDATE;
+                    reviewData.MATURITYDATE = collectionMaturityDate;
+                    loan.MATURITYDATE = collectionMaturityDate;
                     loan.PRINCIPALNUMBEROFINSTALLMENT = periodicScheduleTemp.Count() - 1;
                     loan.INTERESTNUMBEROFINSTALLMENT = loan.PRINCIPALNUMBEROFINSTALLMENT;
 
