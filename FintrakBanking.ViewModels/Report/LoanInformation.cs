@@ -94,6 +94,11 @@ namespace FintrakBanking.ViewModels.Reports
         public string businessGroup { get; set; }
         public int loanTenor { get; set; }
         public string cRMSCode { get; set; }
+        public int productClassID { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string middleName { get; set; }
+
     }
 
     public class DateRange

@@ -65,7 +65,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>group Name</Value>
+                              <Value>Group Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -96,7 +96,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>staff Role Name</Value>
+                              <Value>Staff Role Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -127,7 +127,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>created By</Value>
+                              <Value>Created By</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -158,7 +158,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>date Time Created</Value>
+                              <Value>Date Time Created</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -335,7 +335,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>

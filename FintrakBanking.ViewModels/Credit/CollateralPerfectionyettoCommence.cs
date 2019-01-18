@@ -32,8 +32,9 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class SubHead
     {
-       public string subHead { get; set; }
+        public string subHead { get; set; }
         public string staffCode { get; set; }
+        public string teamUnit { get; set; }
     }
 
 
