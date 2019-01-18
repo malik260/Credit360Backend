@@ -630,20 +630,23 @@ namespace FintrakBanking.Repositories.Credit
                 throw new ConditionNotMetException("Please Enter Effective Date");
             if (loanInput.maturityDate == null)
                 throw new ConditionNotMetException("Please Enter Maturity Date");
-            if (loanInput.principalFirstpaymentDate == null)
-                throw new ConditionNotMetException("Please Enter First Principal Payment Date");
+
+            //if (loanInput.principalFirstpaymentDate == null)
+            //    throw new ConditionNotMetException("Please Enter First Principal Payment Date");
+
             if (loanInput.principalAmount <= 0)
                 throw new ConditionNotMetException("Please Enter Loan Amount");
             if (loanInput.interestFrequency <= 0)
                 throw new ConditionNotMetException("Please Select Interest Frequency");
             if (loanInput.effectiveDate >= loanInput.maturityDate)
                 throw new ConditionNotMetException("Effective Date must be less than the maturity date");
-            if (loanInput.principalFirstpaymentDate >= loanInput.maturityDate)
-                throw new ConditionNotMetException("First Principal Payment Date must be less than the maturity date");
-            if (loanInput.effectiveDate > loanInput.principalFirstpaymentDate)
-                throw new ConditionNotMetException("First Principal Payment Date cannot be less than the effective date");
-            if (loanInput.principalFirstpaymentDate < loanInput.interestFirstpaymentDate)
-                throw new ConditionNotMetException("Principal first payment date cannot be less than the interest first payment date");
+
+            //if (loanInput.principalFirstpaymentDate >= loanInput.maturityDate)
+            //    throw new ConditionNotMetException("First Principal Payment Date must be less than the maturity date");
+            //if (loanInput.effectiveDate > loanInput.principalFirstpaymentDate)
+            //    throw new ConditionNotMetException("First Principal Payment Date cannot be less than the effective date");
+            //if (loanInput.principalFirstpaymentDate < loanInput.interestFirstpaymentDate)
+            //    throw new ConditionNotMetException("Principal first payment date cannot be less than the interest first payment date");
 
             List<LoanPaymentSchedulePeriodicViewModel> output = new List<LoanPaymentSchedulePeriodicViewModel>();
 

@@ -17,12 +17,15 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public int LOANCHARGEFEEID { get; set; }
+        public int CASAACCOUNTID { get; set; }
 
         public int LOANID { get; set; }
 
         public short LOANSYSTEMTYPEID { get; set; }
 
         public int CHARGEFEEID { get; set; }
+        public string DESCRIPTION { get; set; }
+        public bool ISMANUAL { get; set; }
 
         public bool ISPOSTED { get; set; }
 

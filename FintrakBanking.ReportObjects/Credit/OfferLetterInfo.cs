@@ -501,7 +501,7 @@ namespace FintrakBanking.ReportObjects.Credit
                     feeVal = feeVal + "  " + fee.feeName + ": " + fee.rateValue + "% flat,";
                 }
 
-                x.interestRateAndFees = "Interest Rate: " + x.interestRate + "% p/a, " + feeVal;
+                x.interestRateAndFees = "Interest Rate: " + x.interestRate + "% p/a " + x.productPriceIndex + ", "  + feeVal;
                 x.interestRateAndFees.Remove(x.interestRateAndFees.Length-1);
             }
 

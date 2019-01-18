@@ -252,6 +252,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 DEBITBUSINESS = entity.debitBusiness,
                 ACCOUNTNUMBER = entity.accountNumber,
+                BRANCHID = entity.userBranchId,
                 CREATEDBY = entity.createdBy
             };
             context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
@@ -487,80 +488,78 @@ namespace FintrakBanking.Repositories.Credit
 
             List<string> searchResult = new List<string>();
             var feedBackString = string.Empty;
-            try
+
+            var task = Task.Run(() => feedBackString = _creditBureau.XDSSearchCreditBureau(searchInfoList));
+            if (task.Wait(TimeSpan.FromSeconds(2000)))
             {
-                var task = Task.Run(() => feedBackString = _creditBureau.XDSSearchCreditBureau(searchInfoList));
-                if (task.Wait(TimeSpan.FromSeconds(2000)))
+                resultData = new XDSSearchResult()
                 {
-                    resultData = new XDSSearchResult()
-                    {
-                        searchResult = feedBackString,
-                        status = 0
-                    };
-                    JObject json = JObject.Parse(feedBackString);
+                    searchResult = feedBackString,
+                    status = 0
+                };
+                JObject json = JObject.Parse(feedBackString);
 
-                    if (json.Count >= 1)
+                if (json.Count >= 1)
+                {
+                    JObject jsonNoResult = json;
+                    Object CommercialID;
+                    if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
                     {
-                        JObject jsonNoResult = json;
-                        Object CommercialID;
-                        if (json["CommercialMatching"] != null || json["ConsumerMtaching"] != null)
+                        if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
                         {
-                            if (searchInfoList.searchType == (short)CreditBureauTypeEnum.CommercialSearch)
-                            {
-                                try { CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString(); } catch { CommercialID = 1; }
-                            }
-                            else
-                            {
-                                try { CommercialID = json["ConsumerMtaching"]["MatchedConsumer"]["ConsumerID"].ToString(); } catch { CommercialID = 1; }
-                            }
-
-                            if (Convert.ToInt32(CommercialID) == 0)
-                            {
-                                resultData.status = 1;
-                            }
-                        }
-                        else if (jsonNoResult["NoResult"] != null)
-                        {
-                            string stringNoResult = "XDS API Response - " + feedBackString; // noResult.ToString();
-                            resultData.errorMessage = stringNoResult;
-                            resultData.errorOccured = true;
-                            resultData.status = 2;
+                            try { CommercialID = json["CommercialMatching"]["MatchedCommercial"]["CommercialID"].ToString(); } catch { CommercialID = 1; }
                         }
                         else
                         {
-                            resultData.errorOccured = true;
-                            resultData.status = 3;
+                            try { CommercialID = json["ConsumerMtaching"]["MatchedConsumer"]["ConsumerID"].ToString(); } catch { CommercialID = 1; }
                         }
+
+                        if (Convert.ToInt32(CommercialID) == 0)
+                        {
+                            resultData.status = 1;
+                        }
+                    }
+                    else if (jsonNoResult["NoResult"] != null)
+                    {
+                        string stringNoResult = "XDS API Response - " + feedBackString; // noResult.ToString();
+                        resultData.errorMessage = stringNoResult;
+                        resultData.errorOccured = true;
+                        resultData.status = 2;
                     }
                     else
                     {
                         resultData.errorOccured = true;
                         resultData.status = 3;
                     }
-
-                    return resultData;
                 }
                 else
                 {
-                    throw new APIErrorException("Credit Bureau search time out");
+                    resultData.errorOccured = true;
+                    resultData.status = 3;
                 }
+
+                return resultData;
             }
-            catch (ConditionNotMetException ex)
+            else
             {
-                throw new ConditionNotMetException(ex.Message);
+                throw new APIErrorException("Credit Bureau search time out");
             }
-            catch (BadLogicException ex)
-            {
-                throw new BadLogicException(ex.Message);
-            }
-            catch (APIErrorException ex)
-            {
-                throw new APIErrorException(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            //try
+            //{
+
+            //}
+            //catch (ConditionNotMetException ex)
+            //{
+            //    throw new ConditionNotMetException(ex.Message);
+            //}
+            //catch (APIErrorException ex)
+            //{
+            //    throw new APIErrorException(ex.Message);
+            //}
+            //catch (Exception ex)
+            //{
+            //    throw ex;
+            //}
         }
 
         private CreditBereauViewModel getBuiltCRCChargeModel(CRCRequestViewModel searchInfo)
@@ -597,7 +596,8 @@ namespace FintrakBanking.Repositories.Credit
                     customerId = searchInfo.customerId,
                     chargeAmount = searchInfo.amount,
                     usedIntegration = true,
-                    dateCompleted = DateTime.Now
+                    dateCompleted = DateTime.Now,
+                    userBranchId = searchInfo.userBranchId
                 }
             };
 
@@ -667,98 +667,102 @@ namespace FintrakBanking.Repositories.Credit
             using (var docTrans = docContext.Database.BeginTransaction())
             using (var trans = context.Database.BeginTransaction())
             {
-                try
+                if (searchInfo.accountOrRegistrationNumber == null)
+                    searchInfo.accountOrRegistrationNumber = string.Empty;
+
+                if (searchInfo.identification == null)
+                    searchInfo.identification = string.Empty;
+
+                var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
+
+                if (task.Wait(TimeSpan.FromSeconds(3500)))
                 {
-                    if (searchInfo.accountOrRegistrationNumber == null)
-                        searchInfo.accountOrRegistrationNumber = string.Empty;
-
-                    if (searchInfo.identification == null)
-                        searchInfo.identification = string.Empty;
-
-                    var task = Task.Run(() => searchResponse = _creditBureau.CRCCreditBureauSearch(searchInfo));
-
-                    if (task.Wait(TimeSpan.FromSeconds(3500)))
+                    if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
                     {
-                        if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchIncomplete)
+                        JObject json = JObject.Parse(searchResponse.SearchResult);
+                        if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
                         {
-                            JObject json = JObject.Parse(searchResponse.SearchResult);
-                            if (json["DATAPACKET"]["BODY"]["ERROR-LIST"] != null)
+                            string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
+                            errorCode.Replace("{", string.Empty);
+                            errorCode.Replace("}", string.Empty);
+                            var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
+                            if (errorLog.Any())
                             {
-                                string errorCode = json["DATAPACKET"]["BODY"]["ERROR-LIST"]["ERROR-CODE"].ToString();
-                                errorCode.Replace("{", string.Empty);
-                                errorCode.Replace("}", string.Empty);
-                                var errorLog = context.TBL_CUSTOM_CREDITBUREAU_ERROR.Where(x => x.ERRORCODE == errorCode && x.BUREAUTYPE == "CRC");
-                                if (errorLog.Any())
-                                {
-                                    searchResponse.SearchResult = errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: " + errorCode;
-                                    searchResponse.SearchCompleted = (int)SearchCompletedStatusEnum.SearchError;
-                                    searchResponse.errorOccured = true;
-                                }
-                            }
-                            return searchResponse;
-                        }
-                        else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
-                        {
-                            byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
-
-                            var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
-                            if (SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
-                            {
-                                searchResponse.fileSaved = true;
-                                searchResponse.file = fileArray;
-                            }
-                            else
-                            {
+                                searchResponse.SearchResult = errorLog.FirstOrDefault().DESCRIPTION + ". ERROR-CODE: " + errorCode;
+                                searchResponse.SearchCompleted = (int)SearchCompletedStatusEnum.SearchError;
                                 searchResponse.errorOccured = true;
-                                throw new ConditionNotMetException("Search could not save the result file");
                             }
+                        }
+                        return searchResponse;
+                    }
+                    else if (searchResponse.SearchCompleted == (int)SearchCompletedStatusEnum.SearchCompleted)
+                    {
+                        byte[] fileArray = Encoding.ASCII.GetBytes(searchResponse.SearchResult);
 
-                            if (!searchInfo.debitBusiness) { DebitCustomer(chargeModel); }
-
-                            context.SaveChanges();
-                            trans.Commit();
-                            docTrans.Commit();
-                            return searchResponse;
+                        var customerCreditBureauId = AddCustomerCreditBureauCharge(creditBureauInputs.customerCreditBureauUploadDetails);
+                        if (SaveCreditBureauReportFile(customerCreditBureauId, fileArray, creditBureauInputs))
+                        {
+                            searchResponse.fileSaved = true;
+                            searchResponse.file = fileArray;
                         }
                         else
                         {
-                            throw new ConditionNotMetException("Search Response -  error occured during search");
+                            searchResponse.errorOccured = true;
+                            throw new ConditionNotMetException("Search could not save the result file");
                         }
+
+                        if (!searchInfo.debitBusiness) { DebitCustomer(chargeModel); }
+
+                        context.SaveChanges();
+                        trans.Commit();
+                        docTrans.Commit();
+                        return searchResponse;
                     }
                     else
                     {
-                        throw new ConditionNotMetException("Search result Timed out");
+                        trans.Rollback();
+                        throw new ConditionNotMetException("Search Response -  error occured during search");
                     }
                 }
-                catch (ConditionNotMetException ex)
+                else
                 {
                     trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message);
+                    throw new ConditionNotMetException("Search result Timed out");
+                }
 
-                }
-                catch (TimeoutException ex)
-                {
-                    trans.Rollback();
-                    throw new CustomTimeoutException(ex.Message);
-                }
-                catch (APIErrorException ex)
-                {
-                    trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message);
+                //try
+                //{
+                    
+                //}
+                //catch (ConditionNotMetException ex)
+                //{
+                //    trans.Rollback();
+                //    throw new ConditionNotMetException(ex.Message);
 
-                }
-                catch (SecureException ex)
-                {
-                    trans.Rollback();
-                    throw new ConditionNotMetException(ex.Message);
+                //}
+                //catch (TimeoutException ex)
+                //{
+                //    trans.Rollback();
+                //    throw new CustomTimeoutException(ex.Message);
+                //}
+                //catch (APIErrorException ex)
+                //{
+                //    trans.Rollback();
+                //    throw new ConditionNotMetException(ex.Message);
 
-                }
-                catch (Exception ex)
-                {
-                    trans.Rollback();
-                    throw new BadLogicException(ex.Message);
+                //}
+                //catch (SecureException ex)
+                //{
+                //    trans.Rollback();
+                //    throw new ConditionNotMetException(ex.Message);
 
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    trans.Rollback();
+                //    throw new BadLogicException(ex.Message);
+
+                //}
             }
         }
 
@@ -781,7 +785,7 @@ namespace FintrakBanking.Repositories.Credit
                     companyDirectorId = request.companyDirectorId,
                     isReportOkay = true,
                     customerId = request.customerId,
-                   
+                    userBranchId = request.userBranchId,
                     usedIntegration = true,
                     dateCompleted = DateTime.Now,
                     debitBusiness = request.debitBusiness

@@ -749,6 +749,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
             {
                 if (ActionIsApprovalDecision()) this.EndProcess(originalStatusId);
+                else this.EndProcess(this.statusId);
             }
 
             if (this.keepPending == true) // DEPRECATED!!!

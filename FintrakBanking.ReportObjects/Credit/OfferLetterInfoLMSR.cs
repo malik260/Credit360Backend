@@ -303,6 +303,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                        operarionId = (short)b.OPERATIONID,
                                        offerLetterIntroduction = "",
                                        isRenewal = true,
+                                      // productPriceIndex = b.PRODUCTPRICEINDEXID != null ? "+ " + context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == b.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
+
                                    }).ToList();
                 }
                 foreach (var x in loanDetails)

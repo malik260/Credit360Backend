@@ -426,7 +426,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             operationsId = x.OPERATIONSID,
                             operationName = x.TBL_OPERATIONS.OPERATIONNAME,
                             requestStatusId = x.REQUESTSTATUSID,
-                            requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+                            requestStatusname = x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved ? "Completed" : x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
                             
                             senderComment = x.SENDERCOMMENT,
                             responseComment = x.RESPONSECOMMENT,

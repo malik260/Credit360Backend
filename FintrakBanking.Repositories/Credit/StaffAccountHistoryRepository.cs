@@ -536,7 +536,7 @@ namespace FintrakBanking.Repositories.Credit
             var misRecord = mis.StaffInformationSystem(entity.newRMStaffId);
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
             var data = context.TBL_LOAN.FirstOrDefault(l => l.TERMLOANID == entity.loanId);
-            loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount, archiveBatchCode);
+            loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount, archiveBatchCode,"Staff MIS Update");
 
             data.RELATIONSHIPOFFICERID = entity.newRMStaffId;
             data.FIELD1 = misRecord.field1;
@@ -556,7 +556,7 @@ namespace FintrakBanking.Repositories.Credit
             var misRecord = mis.StaffInformationSystem(entity.newRMStaffId);
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
             var data = context.TBL_LOAN_REVOLVING.FirstOrDefault(l => l.REVOLVINGLOANID == entity.loanId);
-            loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount, archiveBatchCode);
+            loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount, archiveBatchCode, "Staff MIS Update");
 
             data.RELATIONSHIPOFFICERID = entity.newRMStaffId;
             data.FIELD1 = misRecord.field1;
@@ -577,7 +577,7 @@ namespace FintrakBanking.Repositories.Credit
             var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(7);
 
             var data = context.TBL_LOAN_CONTINGENT.FirstOrDefault(l => l.CONTINGENTLOANID == entity.loanId);
-            loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount, archiveBatchCode);
+            loanOp.ArchiveLoan(entity.targetId, (int)OperationsEnum.ReassigningOfAccount, archiveBatchCode, "Staff MIS Update");
 
             data.RELATIONSHIPOFFICERID = entity.newRMStaffId;
             data.FIELD1 = misRecord.field1;
