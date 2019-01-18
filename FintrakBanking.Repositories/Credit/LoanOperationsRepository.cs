@@ -12229,7 +12229,7 @@ namespace FintrakBanking.Repositories.Credit
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
-                            orderby op.DATECREATED descending
+                            orderby op.DATECREATED descending 
                             
                             select new LoanReviewOperationApprovalViewModel
                             {
@@ -12776,7 +12776,7 @@ namespace FintrakBanking.Repositories.Credit
                 passcode = entity.passCode,
                 username = entity.userName
             };
-
+             
             using (var trans = context.Database.BeginTransaction())
             {
                 try

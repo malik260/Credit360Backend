@@ -98,7 +98,30 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = ex.Message });
             }
         }
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-accounts/customer/{id}/currency/{currencyId}")]
+        public HttpResponseMessage GetAllCustomerAccountByCustomerIdAndCurrency(int id, int currencyId)
+        {
+            try
+            {
+                var data = repo.GetAllCustomerAccountByCustomerIdAndCurrency(id, token.GetCompanyId, currencyId);
+                if (data != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "No record found" });
+                }
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]
