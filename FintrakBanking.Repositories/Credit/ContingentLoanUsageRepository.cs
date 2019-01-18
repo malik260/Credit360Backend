@@ -337,6 +337,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 casaLien.ReleaseLien(new CasaLienViewModel
                 {
+                    sourceReferenceNumber = entity.loanReferenceNumber,
                     productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
                     lienReferenceNumber = lienReferenceNumber,
                     userBranchId = (short)entity.BranchId,
@@ -354,6 +355,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 casaLien.PlaceLien(new CasaLienViewModel
                 {
+                    sourceReferenceNumber = entity.loanReferenceNumber,
                     productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
                     lienReferenceNumber = usage.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
                     userBranchId = (short)entity.BranchId,
