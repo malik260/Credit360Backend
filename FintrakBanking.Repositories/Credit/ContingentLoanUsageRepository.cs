@@ -320,20 +320,64 @@ namespace FintrakBanking.Repositories.Credit
         
         public bool SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity)
         {
-            var contingentLoanRecord = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANUSAGEID == entity.targetId);
-
             workflow.StaffId = entity.staffId;
             workflow.OperationId = (int)OperationsEnum.ContingentLiabilityUsage;
-            workflow.TargetId = entity.targetId; //.contingenliabilityUsageId;
+            workflow.TargetId = entity.targetId;
             workflow.CompanyId = entity.companyId;
             workflow.StatusId = entity.approvalStatusId;
             workflow.Comment = entity.comment;
             workflow.DeferredExecution = true;
-            // workflow.LogActivity();
+            workflow.LogActivity();
 
-            if (workflow.NewState == (int)ApprovalState.Ended)
+            var usage = context.TBL_LOAN_CONTINGENT_USAGE.FirstOrDefault(d => d.CONTINGENTLOANUSAGEID == entity.targetId);
+
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
             {
-                // TODO
+                var lien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == entity.loanReferenceNumber && (x.LIENTYPEID == (int)LienTypeEnum.APGBooking || x.LIENTYPEID == (int)LienTypeEnum.APGBooking));
+                if (lien == null) throw new SecureException("No lien has been placed");
+                string lienReferenceNumber = lien.LIENREFERENCENUMBER;
+
+                decimal oldLien = usage.TBL_LOAN_CONTINGENT.CONTINGENTAMOUNT; // ???? 
+                var casaAccountId = usage.TBL_LOAN_CONTINGENT.CASAACCOUNTID;
+
+                casaLien.ReleaseLien(new CasaLienViewModel
+                {
+                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
+                    lienReferenceNumber = lienReferenceNumber,
+                    userBranchId = (short)entity.BranchId,
+                    branchId = (short)entity.BranchId,
+                    companyId = entity.companyId,
+                    lienAmount = oldLien,
+                    description = "Release Lien for APS Fund",
+                    lienTypeId = (short)LienTypeEnum.APSRequest,
+                    createdBy = entity.createdBy,
+                    userIPAddress = entity.userIPAddress,
+                    applicationUrl = entity.applicationUrl,
+                });
+
+                decimal newLienAmount = oldLien - usage.AMOUNTREQUESTED;
+
+                casaLien.PlaceLien(new CasaLienViewModel
+                {
+                    productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
+                    lienReferenceNumber = usage.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
+                    userBranchId = (short)entity.BranchId,
+                    branchId = (short)entity.BranchId,
+                    companyId = entity.companyId,
+                    lienAmount = newLienAmount,
+                    description = "Place Lien on APG Fund",
+                    lienTypeId = (short)LienTypeEnum.APSRequest,
+                    createdBy = entity.createdBy,
+                    userIPAddress = entity.userIPAddress,
+                    applicationUrl = entity.applicationUrl,
+                });
+
+                usage.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+            }
+
+            if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Disapproved)
+            {
+                usage.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
             }
 
             return this.context.SaveChanges() > 0;
