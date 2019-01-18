@@ -17,19 +17,16 @@ using FintrakBanking.ViewModels.Setups.Finance;
 using FintrakBanking.ViewModels.Setups.General;
 using FintrakBanking.ViewModels.WorkFlow;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using FintrakBanking.ViewModels.Reports;
 using System.Threading.Tasks;
 using FintrakBanking.Repositories.CASA;
 using FintrakBanking.Interfaces.CASA;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using FintrakBanking.ViewModels.Report;
 using FintrakBanking.Common.CustomException;
-using System.Net.Sockets;
 using FintrakBanking.Entities.StagingModels;
 using FinTrakBanking.ThirdPartyIntegration.StagingDatabase.Finacle;
 using FintrakBanking.Interfaces.Setups.Finance;
@@ -57,7 +54,6 @@ namespace FintrakBanking.Repositories.Credit
         private IntegrationWithFinacle integration;
         private FinTrakBankingStagingContext stgCon;
         private IAdminRepository admin;
-        //private ICasaRepository casaRep;
         private IFinanceTransactionRepository transRepo;
 
 
@@ -89,7 +85,6 @@ namespace FintrakBanking.Repositories.Credit
             this.overrider = _overrider;
             this.chartOfAccount = _chartOfAccount;
             this.integration = _integration;
-            //this.casaRep = _casaRep;
             this.finacle = finacle;
             this.stgCon = _stgCon;
             this.transRepo = _transRepo;
@@ -2914,78 +2909,79 @@ namespace FintrakBanking.Repositories.Credit
 
             using (var trans = context.Database.BeginTransaction())
             {
-                try
+                var loan = context.TBL_LOAN.Where(x => x.TERMLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
+                if (loan == null)
                 {
-                    var loan = context.TBL_LOAN.Where(x => x.TERMLOANID == entity.targetId && x.CRMSCODE!=null).Select(x => x).FirstOrDefault();
-                    if (loan == null)
+                    var revolving = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
+                    if (revolving == null)
                     {
-                        var revolving = context.TBL_LOAN_REVOLVING.Where(x => x.REVOLVINGLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
-                        if (revolving == null)
+                        var od = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
+                        if (od == null)
                         {
-                            var od = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == entity.targetId && x.CRMSCODE != null).Select(x => x).FirstOrDefault();
-                            if (od == null)
-                            {
-                                throw new ConditionNotMetException("CRMS Reference Number is missing");
-                            }
+                            throw new ConditionNotMetException("CRMS Reference Number is missing");
                         }
                     }
+                }
 
-                  
-                    workflow.StaffId = entity.createdBy;
-                    workflow.CompanyId = entity.companyId;
-                    workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
-                    workflow.TargetId = loanBookingRequestId;
-                    workflow.Comment = entity.comment;
-                    workflow.OperationId = entity.operationId;
-                    workflow.DeferredExecution = true;
-                    workflow.ExternalInitialization = false;
 
-                    workflow.LogActivity();
+                workflow.StaffId = entity.createdBy;
+                workflow.CompanyId = entity.companyId;
+                workflow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+                workflow.TargetId = loanBookingRequestId;
+                workflow.Comment = entity.comment;
+                workflow.OperationId = entity.operationId;
+                workflow.DeferredExecution = true;
+                workflow.ExternalInitialization = false;
 
-                    context.SaveChanges();
+                workflow.LogActivity();
 
-                    if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
+                context.SaveChanges();
+
+                if (ApproveLoanBooking(entity.targetId, loanBookingRequestId, (short)workflow.StatusId, entity))
+                {
+                    trans.Commit();
+                    if (workflow.NewState != (int)ApprovalState.Ended)
                     {
-                        trans.Commit();
-                        if (workflow.NewState != (int)ApprovalState.Ended)
-                        {
-                            
-                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
-                            else return 3;
-                        }
-                        else
-                        {
-                            if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
-                            else return 3;
-                        }
+
+                        if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 1;
+                        else return 3;
                     }
                     else
                     {
-                        trans.Rollback();
-                        return 0;
+                        if (entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) return 2;
+                        else return 3;
                     }
                 }
-                catch (ConditionNotMetException ce)
+                else
                 {
-                    throw new ConditionNotMetException(ce.Message);
+                    trans.Rollback();
+                    return 0;
                 }
-                catch (BadLogicException be)
-                {
-                    throw new BadLogicException(be.Message);
-                }
-                catch (APIErrorException e)
-                {
-                    throw new APIErrorException(e.Message);
-                }
-                catch (TwoFactorAuthenticationException e)
-                {
-                    throw new TwoFactorAuthenticationException(e.Message);
-                }
-                catch (Exception e)
-                {
-                    //trans.Rollback();
-                    throw new ConditionNotMetException("Approval failed. Operation unsuccessful. " + e.Message);
-                }
+                //try
+                //{
+
+                //}
+                //catch (ConditionNotMetException ce)
+                //{
+                //    throw new ConditionNotMetException(ce.Message);
+                //}
+                //catch (BadLogicException be)
+                //{
+                //    throw new BadLogicException(be.Message);
+                //}
+                //catch (APIErrorException e)
+                //{
+                //    throw new APIErrorException(e.Message);
+                //}
+                //catch (TwoFactorAuthenticationException e)
+                //{
+                //    throw new TwoFactorAuthenticationException(e.Message);
+                //}
+                //catch (Exception e)
+                //{
+                //    //trans.Rollback();
+                //    throw new ConditionNotMetException("Approval failed. Operation unsuccessful. " + e.Message);
+                //}
             }
         }
 
@@ -4344,6 +4340,7 @@ namespace FintrakBanking.Repositories.Credit
 
         private void AddLoanFees(List<LoanChargeFeeViewModel> feeModel, int staffId, int loanId, short loanSystemTypeId, int companyId, bool feeOverride)
         {
+
             foreach (var ent in feeModel)
             {
                 var fee = new TBL_LOAN_FEE
@@ -9041,8 +9038,54 @@ namespace FintrakBanking.Repositories.Credit
                                        loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
                                        productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
                                        productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == 1,
-                                       writtenOff = a.LOANSTATUSID == 7,
+                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == (short)PrudentialGuidelineTypeEnum.Performing,
+                                       writtenOff = a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff,
+                                       loanStatusId = a.LOANSTATUSID,
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID
+                                   });
+
+            var test = allFilteredLoan.ToList();
+
+            return allFilteredLoan;
+        }
+
+        public IQueryable<LoanViewModel> SearchAllOverdraft(string searchQuery)
+        {
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+            }
+
+            var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
+                                   join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                   join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                                   where a.ISDISBURSED == true && 
+                                   (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.CUSTOMERCODE.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.FIRSTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
+                                   c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim()))
+                                   && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive)
+                                   select new LoanViewModel
+                                   {
+                                       loanId = a.REVOLVINGLOANID,
+                                       customerId = a.CUSTOMERID,
+                                       productId = a.PRODUCTID,
+                                       loanApplicationDetailId = a.LOANAPPLICATIONDETAILID,
+                                       customerName = a.TBL_CUSTOMER.FIRSTNAME + " " + a.TBL_CUSTOMER.LASTNAME,
+                                       loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                       applicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER ?? "N/A",
+                                       loanApplicationId = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.LOANAPPLICATIONID,
+                                       interestRate = a.INTERESTRATE,
+                                       principalAmount = a.OVERDRAFTLIMIT,
+                                       effectiveDate = a.EFFECTIVEDATE,
+                                       maturityDate = a.MATURITYDATE,
+                                       loanTypeName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+                                       productTypeId = a.TBL_PRODUCT.PRODUCTTYPEID,
+                                       productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                       isPerforming = a.USER_PRUDENTIAL_GUIDE_STATUSID == (short)PrudentialGuidelineTypeEnum.Performing,
+                                       writtenOff = a.LOANSTATUSID == (short)LoanStatusEnum.WriteOff,
                                        loanStatusId = a.LOANSTATUSID,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID
                                    });

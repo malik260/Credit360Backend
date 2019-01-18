@@ -252,6 +252,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 DEBITBUSINESS = entity.debitBusiness,
                 ACCOUNTNUMBER = entity.accountNumber,
+                BRANCHID = entity.userBranchId,
                 CREATEDBY = entity.createdBy
             };
             context.TBL_CUSTOMER_CREDIT_BUREAU.Add(data);
@@ -595,7 +596,8 @@ namespace FintrakBanking.Repositories.Credit
                     customerId = searchInfo.customerId,
                     chargeAmount = searchInfo.amount,
                     usedIntegration = true,
-                    dateCompleted = DateTime.Now
+                    dateCompleted = DateTime.Now,
+                    userBranchId = searchInfo.userBranchId
                 }
             };
 
@@ -783,7 +785,7 @@ namespace FintrakBanking.Repositories.Credit
                     companyDirectorId = request.companyDirectorId,
                     isReportOkay = true,
                     customerId = request.customerId,
-                   
+                    userBranchId = request.userBranchId,
                     usedIntegration = true,
                     dateCompleted = DateTime.Now,
                     debitBusiness = request.debitBusiness

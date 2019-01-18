@@ -209,7 +209,10 @@ namespace FintrakBanking.Interfaces.Credit
         bool GetChangeLoanStatusOfACompletedLoan(int loanId);
         IEnumerable<LookupViewModel> GetAllLoanStatus();
 
+        IQueryable<LoanViewModel> SearchAllOverdraft(string searchQuery);
 
-       
+
+
+
     }
 }
