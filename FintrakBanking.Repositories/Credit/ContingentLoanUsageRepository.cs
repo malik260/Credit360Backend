@@ -353,7 +353,7 @@ namespace FintrakBanking.Repositories.Credit
                     createdBy = entity.createdBy,
                     userIPAddress = entity.userIPAddress,
                     applicationUrl = entity.applicationUrl,
-                });
+                },null,false);
 
                 decimal newLienAmount = oldLien - usage.AMOUNTREQUESTED;
 
