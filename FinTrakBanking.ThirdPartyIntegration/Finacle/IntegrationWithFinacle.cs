@@ -333,7 +333,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
             else
             {
 
-                throw new SecureException(result.Message.StatusCode + "" + result.Message.ReasonPhrase);
+                throw new SecureException(result.Message.StatusCode + " " + result.Message.ReasonPhrase);
             }
         }
 
