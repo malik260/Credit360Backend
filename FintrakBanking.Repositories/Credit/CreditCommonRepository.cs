@@ -7,21 +7,28 @@ using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Common.Enum;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces.CreditLimitValidations;
+using FintrakBanking.ViewModels.Credit;
+using FintrakBanking.Interfaces.Admin;
 
 namespace FintrakBanking.Repositories.Credit
 {
     public class CreditCommonRepository
     {
         private FinTrakBankingContext context;
+
+        private IAdminRepository admin;
         private IIntegrationWithFinacle integration;
         private ICreditLimitValidationsRepository limitValidation;
 
+
         public CreditCommonRepository(
+            IAdminRepository admin,
             FinTrakBankingContext context,
             IIntegrationWithFinacle integration,
             ICreditLimitValidationsRepository limitValidation
             )
         {
+            this.admin = admin;
             this.context = context;
             this.integration = integration;
             this.limitValidation = limitValidation;
@@ -206,6 +213,14 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-
+        public UserCurrencyViewFilter GetUserCurrencyViewFilter(int companyId, int userId)
+        {
+            UserCurrencyViewFilter result = new UserCurrencyViewFilter();
+            var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var activities = admin.GetUserActivitiesByUser(userId);
+            result.CanSeeLocalCurrency = activities.Contains("lcy-user");
+            result.CanSeeForeignCurrency = activities.Contains("fcy-user");
+            return result;
+        }
     }
 }
