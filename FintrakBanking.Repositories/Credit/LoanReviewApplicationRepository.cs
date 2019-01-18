@@ -19,6 +19,8 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
+        private IAdminRepository admin;
+
         private CreditCommonRepository creditCommon;
 
         private List<int> camOperationIds = new List<int> { 46, 71, 79 }; // RMU(71), CAM(79)
@@ -30,13 +32,16 @@ namespace FintrakBanking.Repositories.Credit
             IGeneralSetupRepository general,
             IAuditTrailRepository audit,
             IWorkflow workflow,
-            CreditCommonRepository creditCommon
+            IAdminRepository admin,
+
+        CreditCommonRepository creditCommon
             )
         {
             this.context = context;
             this.general = general;
             this.audit = audit;
             this.workflow = workflow;
+            this.admin = admin;
             this.creditCommon = creditCommon;
         }
 
@@ -259,7 +264,7 @@ namespace FintrakBanking.Repositories.Credit
                 || x.OPERATIONTYPEID == (int)OperationTypeEnum.Remedial)
                 && x.ISDISABLED == false
             ).Select(x => new DropDownSelect { id = x.OPERATIONID, name = x.OPERATIONNAME, typeId = (int)x.OPERATIONTYPEID }).OrderBy(o => o.name).ToList();
-
+            list.feeCharges = context.TBL_CHARGE_FEE.Select(x => new DropDownSelect { id = x.CHARGEFEEID, name = x.CHARGEFEENAME }).ToList();
             return list;
         }
 

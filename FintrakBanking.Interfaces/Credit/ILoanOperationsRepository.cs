@@ -87,7 +87,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanViewModel> LoanHistory();
         IEnumerable<RevolvingLoanViewModel> OverDraftHistory();
 
-       
+        IEnumerable<LoanReviewIrregularScheduleViewModel> GetLoanReviewOperationIrregularSchedule(int loanReviewOperationId);
 
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
 
