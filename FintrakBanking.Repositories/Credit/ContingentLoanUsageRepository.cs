@@ -190,14 +190,7 @@ namespace FintrakBanking.Repositories.Credit
             
         public IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId)
         {
-            try
-            {
-                return GetRequestWaitingApprovalByOperation(staffId).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return GetRequestWaitingApprovalByOperation(staffId).ToList();
         }
 
         public IQueryable<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation( int staffId)
@@ -232,7 +225,9 @@ namespace FintrakBanking.Repositories.Credit
                                    loanReferenceNumber = lcu.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
                                    maturityDate = lcu.TBL_LOAN_CONTINGENT.MATURITYDATE,
                                    productName = lcu.TBL_LOAN_CONTINGENT.TBL_PRODUCT.PRODUCTNAME,
-                                   loanStatus = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                                   loanStatus = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+
+                                   amountRequested = lcu.AMOUNTREQUESTED,
                                };
             return applications;
         }
