@@ -46,7 +46,11 @@ namespace FintrakBanking.Entities.Models
         public short CURRENCYID { get; set; }
 
         public double EXCHANGERATE { get; set; }
+        
+        public int? FULLANDFINALSTATUSID { get; set; }
 
+        //public double? FULLANDFINALAMOUNT { get; set; }
+        
         [Required]
         [StringLength(50)]
         public string LOANREFERENCENUMBER { get; set; }

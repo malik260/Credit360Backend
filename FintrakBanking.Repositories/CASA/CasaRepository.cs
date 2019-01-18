@@ -8,9 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using FintrakBanking.ViewModels.Finance;
-using System.Text;
-using FinTrakBanking.ThirdPartyIntegration.Finacle;
-using System.Threading.Tasks;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Common.CustomException;
 
@@ -714,7 +711,29 @@ namespace FintrakBanking.Repositories.CASA
 
             return new CasaCustomerSearchViewModel { };
         }
-        
+                public IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerIdAndCurrency(int customerId, int companyId, int currencyId)
+        {
+            var data = (from a in context.TBL_CASA
+                        where a.CUSTOMERID == customerId && a.COMPANYID == companyId && a.CURRENCYID == currencyId //orderby account.AccountCode ascending, account.AccountName ascending
+                        select new CasaBalanceViewModel
+
+                        {
+                            casaAccountId = a.CASAACCOUNTID,
+                            productAccountNumber = a.PRODUCTACCOUNTNUMBER + "(" + a.PRODUCTACCOUNTNAME + " - " + a.TBL_CURRENCY.CURRENCYCODE + ")",
+                            accountNumber = a.PRODUCTACCOUNTNUMBER,
+                            productAccountName = a.PRODUCTACCOUNTNAME,
+                            availableBalance = a.AVAILABLEBALANCE, //transRepo.GetCASABalance(a.CASAACCOUNTID).availableBalance,
+                            currencyId = a.CURRENCYID,
+                            currencyCode = a.TBL_CURRENCY.CURRENCYCODE
+                        });
+            //foreach (var item in data)
+            //{
+            //    item.availableBalance = transRepo.GetCASABalance(item.casaAccountId).availableBalance;
+            //}
+
+            return data.ToList();
+        }
+
         public IEnumerable<CasaBalanceViewModel> GetAllCustomerAccountByCustomerId(int customerId, int companyId)
         {
             var data = (from a in context.TBL_CASA

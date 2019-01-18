@@ -70,6 +70,10 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public decimal newPrincipalAmount { get; set; }
         public string loanReferenceNumber { get; set; }
+        public int toLoanId { get; set; }
+        public decimal amountDifference { get; set; }
+        public int fromLoanId { get; set; }
+
     }
 
     public class loanPrepaymentViewModel : GeneralEntity

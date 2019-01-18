@@ -3377,14 +3377,14 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!interestRate.Value.ToString + " " + First(Fields!productPriceIndex.Value, "OfferLetterLoanDetail")</Value>
+                                  <Value>=Fields!interestRate.Value.ToString + "%  " + First(Fields!productPriceIndex.Value, "OfferLetterLoanDetail")</Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
-                                  <Value>%  </Value>
+                                  <Value xml:space="preserve"> </Value>
                                   <Style>
                                     <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -5012,7 +5012,7 @@
             </Style>
           </Rectangle>
         </ReportItems>
-        <Height>77.9in</Height>
+        <Height>21.0875in</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -5025,7 +5025,7 @@
           </BackgroundImage>
         </Style>
       </Body>
-      <Width>8.887in</Width>
+      <Width>6.887in</Width>
       <Page>
         <PageHeader>
           <Height>1.14111in</Height>

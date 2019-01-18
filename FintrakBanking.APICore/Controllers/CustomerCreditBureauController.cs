@@ -185,6 +185,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 model.staffId = token.GetStaffId;
+                model.userBranchId = (short)token.GetBranchId;
 
                 var result =  repo.AddCustomerCreditBureauCharge(model);
 

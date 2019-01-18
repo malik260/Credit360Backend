@@ -50,6 +50,7 @@ namespace FintrakBanking.Repositories.Credit
             financeTransaction = _financeTransaction;
             transRepo=_transRepo;
         }
+
         public List<CollateralViewModel> Collateral(int loanId)
         {
             var data = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
@@ -78,18 +79,22 @@ namespace FintrakBanking.Repositories.Credit
         {
             return GetLMSLoanByLoan(loanId);
         }
+
         public LoanViewModel FacilityDetailArchive(int archiveId)
         {
             return GetLoanArchive(archiveId);
         }
+
         public LoanViewModel OverdraftFacilityDetail(int loanId)
         {
             return GetDisbursedODByODId(loanId);
         }
+
         public LoanViewModel OverdraftFacilityDetailArchive(int archiveId)
         {
             return GetODByODArchive(archiveId);
         }
+
         public LoanViewModel OverdraftLMSFacilityDetailArchive(int archiveId)
         {
             return GetODByODArchive(archiveId);
@@ -104,6 +109,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             return GetLMSContingent(loanId);
         }
+
         public List<LoanChargeFeeViewModel> GuarantorDetail(int loanId)
         {
             throw new NotImplementedException();
@@ -151,6 +157,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loanSchedule = (from sch in context.TBL_LOAN_SCHEDULE_PERIODIC
                                 where sch.LOANID == loanId
+                                orderby sch.PAYMENTDATE ascending
                                 select new LoanPaymentSchedulePeriodicViewModel
                                 {
                                     loanId = sch.LOANID,
@@ -171,10 +178,12 @@ namespace FintrakBanking.Repositories.Credit
                                 }).ToList();
             return loanSchedule;
         }
+
         public List<LoanPaymentSchedulePeriodicViewModel> ArchivedLoanSchedule(LoanPaymentSchedulePeriodicViewModel data)
         {
             var loanSchedule = (from sch in context.TBL_LOAN_SCHEDULE_PERIODIC_ARC
                                 where sch.LOANID == data.loanId && sch.ARCHIVEBATCHCODE == data.archiveCode
+                                orderby sch.PAYMENTDATE ascending
                                 select new LoanPaymentSchedulePeriodicViewModel
                                 {
                                     loanId = sch.LOANID,
@@ -204,8 +213,7 @@ namespace FintrakBanking.Repositories.Credit
                                 }).ToList();
             return loanSchedule;
         }
-
-
+        
         private LoanViewModel GetDisbursedODByODId(int loanId)
         {
             decimal overDraftLimit = 0;
@@ -318,6 +326,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             return loanDetails;
         }
+
         private LoanViewModel GetODByODArchive(int archiveId)
         {
 
@@ -533,7 +542,7 @@ namespace FintrakBanking.Repositories.Credit
                                    relationshipManagerName = rm.FIRSTNAME + " " + rm.MIDDLENAME + " " + rm.LASTNAME,
                                    misCode = a.MISCODE,
                                    teamMiscode = a.TEAMMISCODE,
-                                   interestRate = a.INTERESTRATE ,
+                                   interestRate = a.INTERESTRATE,
                                    effectiveDate = a.EFFECTIVEDATE,
                                    maturityDate = a.MATURITYDATE,
                                    bookingDate = a.BOOKINGDATE,
@@ -557,8 +566,8 @@ namespace FintrakBanking.Repositories.Credit
                                    subSectorName = a.TBL_SUB_SECTOR.NAME,
                                    sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                                    casaAccountNumber = c.PRODUCTACCOUNTNUMBER,
-                                  // casaAccountNumber1 =context.TBL_CASA.Where(o=>o.CASAACCOUNTID== a.CASAACCOUNTID).Select(o=>o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
-                                   casaAccountNumber2= context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                   // casaAccountNumber1 =context.TBL_CASA.Where(o=>o.CASAACCOUNTID== a.CASAACCOUNTID).Select(o=>o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
+                                   casaAccountNumber2 = context.TBL_CASA.Where(o => o.CASAACCOUNTID == a.CASAACCOUNTID2).Select(o => o.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                    productAccountName = c.PRODUCTACCOUNTNAME,
                                    customerGroupId = e.CUSTOMERGROUPID,
                                    loanTypeId = e.LOANAPPLICATIONTYPEID,
@@ -596,8 +605,8 @@ namespace FintrakBanking.Repositories.Credit
                                    // internalPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.INT_PRUDENT_GUIDELINE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    userPrudentialGuidelineStatus = context.TBL_LOAN_PRUDENTIALGUIDELINE.Where(x => x.PRUDENTIALGUIDELINESTATUSID == a.USER_PRUDENTIAL_GUIDE_STATUSID).Select(x => x.STATUSNAME).FirstOrDefault(),
                                    productPriceIndexName = context.TBL_PRODUCT_PRICE_INDEX.Where(q => q.PRODUCTPRICEINDEXID == context.TBL_PRODUCT.Where(x => x.PRODUCTID == a.PRODUCTID).FirstOrDefault().TBL_PRODUCT_PRICE_INDEX.PRODUCTPRICEINDEXID).Select(q => q.PRICEINDEXNAME).FirstOrDefault(),
-                                   nostroAccountId =  a.NOSTROACCOUNTID,
-                                   nostroRateCode = context.TBL_CURRENCY_RATECODE.Where(x =>x.RATECODEID== a.NOSTRORATECODEID).Select(x=>x.RATECODE).FirstOrDefault(),
+                                   nostroAccountId = a.NOSTROACCOUNTID,
+                                   nostroRateCode = context.TBL_CURRENCY_RATECODE.Where(x => x.RATECODEID == a.NOSTRORATECODEID).Select(x => x.RATECODE).FirstOrDefault(),
                                    nostroRateAmount = a.NOSTRORATEAMOUNT,
                                    notstroCurrency = context.TBL_CURRENCY.Where(x => x.CURRENCYID == a.NOSTROCURRENCYID).Select(x => x.CURRENCYNAME).FirstOrDefault(),
                                    productPriceIndex = d.PRODUCTPRICEINDEXID != null ? context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRODUCTPRICEINDEXID == d.PRODUCTPRICEINDEXID).Select(x => x.PRICEINDEXNAME).FirstOrDefault() : "",
@@ -852,7 +861,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join l in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals l.LOANID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery.ToUpper()) ||
+                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery.ToUpper()) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -889,7 +898,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join l in context.TBL_LMSR_APPLICATION_DETAIL on a.CONTINGENTLOANID equals l.LOANID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -922,7 +931,7 @@ namespace FintrakBanking.Repositories.Credit
                                    join l in context.TBL_LMSR_APPLICATION_DETAIL on a.REVOLVINGLOANID equals l.LOANID
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -1188,7 +1197,20 @@ namespace FintrakBanking.Repositories.Credit
                                    });
             return allFilteredLoan.ToList();
         }
-
+        
+        public List<LoanViewModel> SearchGetotherInformation(int loanId)
+        {
+            var allFilteredLoan = (from a in context.TBL_LOAN_REVIEW_OPERATION
+                                   join b in context.TBL_LOAN_REVIEW_OPRATN_IREG_SC on a.LOANREVIEWOPERATIONID equals b.LOANREVIEWOPERATIONID
+                                   where a.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility && a.LOANID == loanId
+                                   select new LoanViewModel
+                                   {
+                                       paymentDate = b.PAYMENTDATE,
+                                       scheduledPrepaymentAmount = b.PAYMENTAMOUNT,
+                                   });
+            return allFilteredLoan.OrderBy(x=> x.paymentDate).ToList();
+        }
+        
         public List<LoanViewModel> ArchiveRevolvingLoanFacilityDetail(int loanId)
         {
             throw new NotImplementedException();

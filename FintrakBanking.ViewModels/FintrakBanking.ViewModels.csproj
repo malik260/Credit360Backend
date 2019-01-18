@@ -85,10 +85,12 @@
     <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel2.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />
+    <Compile Include="Credit\BatchPostingViewModel.cs" />
     <Compile Include="Credit\CallMemoViewModel.cs" />
     <Compile Include="Credit\CashBacked.cs" />
     <Compile Include="Credit\CashBackedBondAndGuarantee.cs" />
     <Compile Include="Credit\CashCollaterizedCredits.cs" />
+    <Compile Include="Credit\ChecklistSearchViewModel.cs" />
     <Compile Include="Credit\ClassifiedAssetManagementViewModel.cs" />
     <Compile Include="Credit\CollateralPerfectionyettoCommence.cs" />
     <Compile Include="Credit\CommercialLoanReport.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Credit\StalledPerfectionViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
     <Compile Include="Credit\UnearnedLoanInterestReport.cs" />
+    <Compile Include="Credit\UserCurrencyViewFilter.cs" />
     <Compile Include="Credit\WeeklyRecoveryReportFINCON.cs" />
     <Compile Include="CRMS\CRMSCodeBookViewModel.cs" />
     <Compile Include="CustomerKYCITemViewModel.cs" />

@@ -426,7 +426,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             operationsId = x.OPERATIONSID,
                             operationName = x.TBL_OPERATIONS.OPERATIONNAME,
                             requestStatusId = x.REQUESTSTATUSID,
-                            requestStatusname = x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
+                            requestStatusname = x.REQUESTSTATUSID == (short)JobRequestStatusEnum.approved ? "Completed" : x.TBL_JOB_REQUEST_STATUS.STATUSNAME,
                             
                             senderComment = x.SENDERCOMMENT,
                             responseComment = x.RESPONSECOMMENT,
@@ -869,56 +869,56 @@ namespace FintrakBanking.Repositories.WorkFlow
             return data;
         }
 
-        public IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId)
-        {
-            var operationId = (int)OperationsEnum.CAM;
-            var departmentId = 0;
-            var staff = context.TBL_STAFF.Find(staffId);
-            if (staff != null) { departmentId = (int)staff.TBL_DEPARTMENT_UNIT.DEPARTMENTID; }
+        //private IEnumerable<JobRequestViewModel> GetJobRequestByDepartment(int staffId)
+        //{
+        //    var operationId = (int)OperationsEnum.CAM;
+        //    var departmentId = 0;
+        //    var staff = context.TBL_STAFF.Find(staffId);
+        //    if (staff != null) { departmentId = (int)staff.TBL_DEPARTMENT_UNIT.DEPARTMENTID; }
 
-            var allstaff = this.context.TBL_STAFF.Select(s => new
-            {
-                id = s.STAFFID,
-                name = s.LASTNAME + " " + s.FIRSTNAME
-            });
+        //    var allstaff = this.context.TBL_STAFF.Select(s => new
+        //    {
+        //        id = s.STAFFID,
+        //        name = s.LASTNAME + " " + s.FIRSTNAME
+        //    });
 
-            return context.TBL_DEPARTMENT
-                .Join(context.TBL_JOB_REQUEST.Where(x => x.OPERATIONSID == operationId),
-                a => a.DEPARTMENTID, b => b.DEPARTMENTID, (a, b) => new { a, b })
-                .Where(x =>
-                    x.b.SENDERSTAFFID == staffId
-                    || x.b.DEPARTMENTID == departmentId
-                    || x.b.REASSIGNEDTO == staffId
-                )
-                .Select(x => new JobRequestViewModel
-                {
-                    jobRequestId = x.b.JOBREQUESTID,
-                    jobRequestCode = x.b.JOBREQUESTCODE,
-                    jobTypeId = x.b.JOBTYPEID,
-                    senderStaffId = x.b.SENDERSTAFFID,
-                    receiverStaffId = (int)x.b.RECEIVERSTAFFID,
-                    reassignedTo = x.b.REASSIGNEDTO,
-                    isReassigned = x.b.ISREASSIGNED,
-                    isAcknowledged = x.b.ISACKNOWLEDGED,
-                    operationsId = x.b.OPERATIONSID,
-                    requestStatusId = x.b.REQUESTSTATUSID,
-                    senderComment = x.b.SENDERCOMMENT,
-                    responseComment = x.b.RESPONSECOMMENT,
-                    arrivalDate = x.b.ARRIVALDATE,
-                    systemArrivalDate = x.b.SYSTEMARRIVALDATE,
-                    reassignedDate = x.b.REASSIGNEDDATE,
-                    systemReassignedDate = x.b.SYSTEMREASSIGNEDDATE,
-                    responseDate = x.b.RESPONSEDATE,
-                    systemResponseDate = x.b.SYSTEMRESPONSEDATE,
-                    acknowledgementDate = x.b.ACKNOWLEDGEMENTDATE,
-                    systemAcknowledgementDate = x.b.SYSTEMACKNOWLEDGEMENTDATE,
-                    fromSender = allstaff.FirstOrDefault(s => s.id == x.b.SENDERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.SENDERSTAFFID).name,
-                    to = allstaff.FirstOrDefault(s => s.id == x.b.RECEIVERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.RECEIVERSTAFFID).name,
-                    assignee = allstaff.FirstOrDefault(s => s.id == x.b.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.REASSIGNEDTO).name,
-                })
-                .OrderByDescending(x => x.jobRequestId)
-                .Take(100);
-        }
+        //    return context.TBL_DEPARTMENT
+        //        .Join(context.TBL_JOB_REQUEST.Where(x => x.OPERATIONSID == operationId),
+        //        a => a.DEPARTMENTID, b => b.DEPARTMENTID, (a, b) => new { a, b })
+        //        .Where(x =>
+        //            x.b.SENDERSTAFFID == staffId
+        //            || x.b.DEPARTMENTID == departmentId
+        //            || x.b.REASSIGNEDTO == staffId
+        //        )
+        //        .Select(x => new JobRequestViewModel
+        //        {
+        //            jobRequestId = x.b.JOBREQUESTID,
+        //            jobRequestCode = x.b.JOBREQUESTCODE,
+        //            jobTypeId = x.b.JOBTYPEID,
+        //            senderStaffId = x.b.SENDERSTAFFID,
+        //            receiverStaffId = (int)x.b.RECEIVERSTAFFID,
+        //            reassignedTo = x.b.REASSIGNEDTO,
+        //            isReassigned = x.b.ISREASSIGNED,
+        //            isAcknowledged = x.b.ISACKNOWLEDGED,
+        //            operationsId = x.b.OPERATIONSID,
+        //            requestStatusId = x.b.REQUESTSTATUSID,
+        //            senderComment = x.b.SENDERCOMMENT,
+        //            responseComment = x.b.RESPONSECOMMENT,
+        //            arrivalDate = x.b.ARRIVALDATE,
+        //            systemArrivalDate = x.b.SYSTEMARRIVALDATE,
+        //            reassignedDate = x.b.REASSIGNEDDATE,
+        //            systemReassignedDate = x.b.SYSTEMREASSIGNEDDATE,
+        //            responseDate = x.b.RESPONSEDATE,
+        //            systemResponseDate = x.b.SYSTEMRESPONSEDATE,
+        //            acknowledgementDate = x.b.ACKNOWLEDGEMENTDATE,
+        //            systemAcknowledgementDate = x.b.SYSTEMACKNOWLEDGEMENTDATE,
+        //            fromSender = allstaff.FirstOrDefault(s => s.id == x.b.SENDERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.SENDERSTAFFID).name,
+        //            to = allstaff.FirstOrDefault(s => s.id == x.b.RECEIVERSTAFFID) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.RECEIVERSTAFFID).name,
+        //            assignee = allstaff.FirstOrDefault(s => s.id == x.b.REASSIGNEDTO) == null ? "n/a" : allstaff.FirstOrDefault(s => s.id == x.b.REASSIGNEDTO).name,
+        //        })
+        //        .OrderByDescending(x => x.jobRequestId)
+        //        .Take(100);
+        //}
 
         public IEnumerable<JobRequestStatusFeedbackViewModel> GetJobRequestStatusFeedback(short statusId, short jobTypeId)
         {

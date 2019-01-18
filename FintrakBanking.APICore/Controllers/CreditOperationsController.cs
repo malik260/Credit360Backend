@@ -141,7 +141,6 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-search/")]
@@ -164,7 +163,28 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-search-prepayment")]
+        public HttpResponseMessage SearchForLoanPrepayment(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForLoanPrepayment(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("fx-revolving-loan-search/")]
@@ -282,7 +302,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.GetApprovedLoanReview();
+                var data = loanRepo.GetApprovedLoanReview(token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -504,6 +524,23 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("overdraft-search/")]
+        public HttpResponseMessage SearchAllOverdraft(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchAllOverdraft(searchQuery);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-collateral-od/")]

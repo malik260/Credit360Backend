@@ -101,14 +101,14 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="XLeratorDLL-financial, Version=1.16.0.0, Culture=neutral, PublicKeyToken=77a889e42a62600b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="XLeratorDLL-financial">
       <HintPath>..\..\..\Users\FINTRAK\Desktop\XLeratorDLL-financial.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -127,7 +127,9 @@
     <Compile Include="CASA\CasaLienRepository.cs" />
     <Compile Include="CASA\CasaRepository.cs" />
     <Compile Include="CASA\OverRideRepository.cs" />
+    <Compile Include="Credit\CreditCommonRepository.cs" />
     <Compile Include="Credit\DashboardRepository.cs" />
+    <Compile Include="Credit\LoanFeeChargeRepository.cs" />
     <Compile Include="Credit\MemorandumRepository.cs" />
     <Compile Include="CRMS\CRMSRegulatories.cs" />
     <Compile Include="Credit\FacilityDetailSummary.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Setups\Credit\CrmsRegulatoryRepository.cs" />
     <Compile Include="Setups\Credit\FXAccountCreationRepository.cs" />
     <Compile Include="Setups\Finance\CustomChartOfAccountRepository.cs" />
+    <Compile Include="ThirdPartyIntegration\FinacleIntegrationRepository.cs" />
     <Compile Include="Validetion\CreditLimitValidationsRepository.cs" />
     <Compile Include="Credit\LoanPerformanceRepository.cs" />
     <Compile Include="Credit\StaffAccountHistoryRepository.cs" />

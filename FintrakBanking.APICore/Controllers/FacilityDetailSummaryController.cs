@@ -201,6 +201,7 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("all-overdraft-facilty-details-archive/{loanId}")]
@@ -223,6 +224,30 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("otherInformation/{loanId}")]
+        public HttpResponseMessage GetotherInformation(int loanId)
+        {
+            try
+            {
+                var data = repo.SearchGetotherInformation(loanId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (System.Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("overdraft-facilty-details-archive/{archiveId}")]

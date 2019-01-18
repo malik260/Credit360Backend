@@ -353,6 +353,7 @@
                 TransactionPostingViewModel responseApi = new TransactionPostingViewModel();
                 ResponseMessage responseMsg = null;
                 string responseJson = "";
+                string apiUrl = "api/Transactions/PostTransactions";
                 try
                 {
                     var token = new AuthenticationHeaderValue("Authorization", API_KEY);
@@ -370,7 +371,7 @@
                     ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
                     requestDatetime = DateTime.Now;
 
-                    string apiUrl = "api/Transactions/PostTransactions";
+                    
                     if (isCrossCurrency == true)
                     {
                         apiUrl = "api/Transactions/PostCrossCurrencyTransactions";
@@ -439,7 +440,7 @@
 
                     var logs = new TBL_CUSTOM_API_LOGS
                     {
-                        APIURL = "api/Transactions/PostTransactions",
+                        APIURL = apiUrl,
                         LOGTYPEID = model.FirstOrDefault().operationId,
                         REFERENCENUMBER =  model.FirstOrDefault().sourceReferenceNumber,
                         REQUESTDATETIME = requestDatetime,

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.ViewModels.Credit;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -105,11 +106,30 @@ namespace FintrakBanking.APICore.Controllers
 
       [HttpGet] [ClaimsAuthorization]  
         [Route("checklist-upload/")]
-        public HttpResponseMessage GetLoanDocument(int definitionId, int statusId, int detailId, bool isProductBased = false, int? customerId = null, int? checkListItemId = null, int? checkListTypeId = null, DateTime? checklistDate = null)
+        public HttpResponseMessage GetLoanDocument(int definitionId, int statusId, int detailId, bool isProductBased = false, int? customerId = null, int? checkListItemId = null, int? checkListTypeId = null, DateTime? checklistDate=null)
         {
             try
             {
                 var data = repo.CheckListDocumentUploadViewModel(definitionId , statusId, detailId, isProductBased, customerId, checkListItemId, checkListTypeId, checklistDate);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+         [HttpPost] [ClaimsAuthorization]  
+        [Route("checklist-upload-view/")]
+        public HttpResponseMessage GetLoanChecklistDocument(ChecklistSearchViewModel model)
+        {
+            try
+            {
+                var data = repo.CheckListDocumentUploadViewModel(model.checkListDefinitionId, model.checkListStatusId, model.targetId, model.isproductbased, model.customerId, model.checkListItemId, model.checkListTypeId, model.checklistDate);
 
                 if (data == null)
                 {
@@ -236,12 +256,12 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
       [HttpGet] [ClaimsAuthorization]  
-        [Route("loan-conditions-precedent-upload")]
-        public HttpResponseMessage GetLoanConditionPrecedentUpload(int conditionId)
+        [Route("loan-conditions-precedent-upload/conditionId/{conditionId}/loanApplicationId/{loanApplicationId}")]
+        public HttpResponseMessage GetLoanConditionPrecedentUpload(int conditionId,int loanApplicationId)
         {
             try
             {
-                var data = repo.GetLoanConditionDocumentByConditionId(conditionId);
+                var data = repo.GetLoanConditionDocumentByConditionId(conditionId, loanApplicationId);
 
                 if (data == null)
                 {

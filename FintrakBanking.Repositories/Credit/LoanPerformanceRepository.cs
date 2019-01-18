@@ -145,6 +145,7 @@ namespace FintrakBanking.Repositories.Credit
                                    where a.ISDISBURSED == true
                                    select new LoanViewModel
                                    {
+                                       loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                        loanId = a.REVOLVINGLOANID,
                                        customerId = a.CUSTOMERID,
                                        customerName = h.FIRSTNAME + " " + h.LASTNAME,
@@ -324,8 +325,9 @@ namespace FintrakBanking.Repositories.Credit
             //{
 
             //}
-                var prudTypeId = context.TBL_LOAN_PRUDENTIALGUIDELINE.FirstOrDefault(f => f.PRUDENTIALGUIDELINESTATUSID == entity.prudentialGuidelineStatusId).PRUDENTIALGUIDELINETYPEID;
-            if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan)
+            //    var prudTypeId = context.TBL_LOAN_PRUDENTIALGUIDELINE.FirstOrDefault(f => f.PRUDENTIALGUIDELINESTATUSID == entity.prudentialGuidelineStatusId).PRUDENTIALGUIDELINETYPEID;
+            //if (entity.productTypeId == (int)LoanProductTypeEnum.TermLoan)
+            if (entity.loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 var termLoan = GetTermLoan().Where(x => x.loanId == entity.loanId).FirstOrDefault();
                 termLoan.createdBy = entity.createdBy;
@@ -339,7 +341,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
             }
-            else if (entity.productTypeId == (int)LoanProductTypeEnum.RevolvingLoan)
+            else if (entity.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
                 var revolvingLoan = GetRevolvingLoan().Where(x => x.loanId == entity.loanId).FirstOrDefault();
                 revolvingLoan.createdBy = entity.createdBy;

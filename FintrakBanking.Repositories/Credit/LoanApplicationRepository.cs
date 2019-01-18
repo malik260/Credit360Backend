@@ -40,8 +40,8 @@ namespace FintrakBanking.Repositories.Credit
         private IFinanceTransactionRepository fina;
         private CustomerDetails _customerIntegration;
         private IIntegrationWithFinacle integration;
-
         private IApprovalLevelStaffRepository approvalLevel;
+        private CreditCommonRepository creditCommon;
 
         public int response { get; set; }
         public bool isGroupLoan { get; set; }
@@ -58,7 +58,8 @@ namespace FintrakBanking.Repositories.Credit
             IWorkflow _workflow,
              IIntegrationWithFinacle _integration,
             IFinanceTransactionRepository fina,
-            ICreditLimitValidationsRepository limitValidation
+            ICreditLimitValidationsRepository limitValidation,
+            CreditCommonRepository creditCommon
             )
         {
             this.collateral = _collateral;
@@ -72,6 +73,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow = _workflow;
             this.integration = _integration;
             this.limitValidation = limitValidation;
+            this.creditCommon = creditCommon;
         }
 
         // public
@@ -920,7 +922,7 @@ namespace FintrakBanking.Repositories.Credit
                             throw new ConditionNotMetException($"Job Request to middle office for product {product.PRODUCTNAME} is required!");
                     }
 
-                    var checklistTypes = from a in context.TBL_CHECKLIST_TYPE select a;
+                    var checklistTypes = (from a in context.TBL_CHECKLIST_TYPE select a).ToList();
                     foreach (var checklistType in checklistTypes) // through checklist types
                     {
                         if (checklistType.ISPRODUCT_BASED)
@@ -934,7 +936,7 @@ namespace FintrakBanking.Repositories.Credit
                                                where b.TARGETID == targetId
                                                && b.TARGETTYPEID == (checklistType.ISPRODUCT_BASED ? (short)CheckListTargetTypeEnum.LoanApplicationProductChecklist : (short)CheckListTargetTypeEnum.LoanApplicationCustomerChecklist)
                                                && a.CHECKLIST_TYPEID == checklistType.CHECKLIST_TYPEID && a.OPERATIONID == (int)OperationsEnum.LoanApplication
-                                               && b.CHECKLISTSTATUSID != null
+                                               && b.CHECKLISTSTATUSID != null && b.DATETIMEUPDATED !=null
                                                && ids.Contains((int)a.APPROVALLEVELID)
                                                                            select b;
 
@@ -955,6 +957,9 @@ namespace FintrakBanking.Repositories.Credit
                             var count1 = checklistDefinitions.Count();
                             var count2 = checklistDetails.Count();
 
+                            if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                continue;
+
                             if (checklistDefinitions.Count() != checklistDetails.Count()) // checking for completion
                             {
                                 isCheckListDone = false;
@@ -970,6 +975,9 @@ namespace FintrakBanking.Repositories.Credit
 
                             if (detailsCount != validationCount)
                             {
+                                if (checklistType.CHECKLIST_TYPEID == (short)CheckTypeEnum.RegulatoryChecklist)
+                                    continue;
+
                                 isCheckListDone = false;
                                 str = str + Environment.NewLine + checklistType.CHECKLIST_TYPE_NAME + " " + " is not complete";
                                 checkListIndex = (int)ChecklistErrorEnum.IncompleteChecklist;
@@ -1023,7 +1031,7 @@ namespace FintrakBanking.Repositories.Credit
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
                 {
-                    LoadCustomerTurnover(
+                    creditCommon.LoadCustomerTurnover(
                        applicationId,
                        loanApplicationDetails.Select(x => x.CUSTOMERID).Distinct().ToList(),
                        staffId
@@ -2196,7 +2204,8 @@ namespace FintrakBanking.Repositories.Credit
                         on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         where a.LOANAPPLICATIONID == loanApplicationId
                         && a.COMPANYID == companyId && a.DELETED == false
-                        && b.STATUSID == (int)ApprovalStatusEnum.Approved
+                        && (b.STATUSID == (int)ApprovalStatusEnum.Approved
+                        || b.STATUSID == (int)ApprovalStatusEnum.Processing)
                         select new LoanApplicationDetailViewModel()
                         {
                             loanApplicationId = b.LOANAPPLICATIONID,
@@ -2322,7 +2331,7 @@ namespace FintrakBanking.Repositories.Credit
                                 join y in context.TBL_APPROVAL_TRAIL on x.LOANAPPLICATIONID equals y.TARGETID
                                 where y.RESPONSESTAFFID == null
                                 && operations.Contains(y.OPERATIONID)
-                                && y.APPROVALSTATEID != (int)ApprovalState.Ended
+                            //    && y.APPROVALSTATEID != (int)ApprovalState.Ended
                            && (x.APPLICATIONREFERENCENUMBER == searchString
                         || c.FIRSTNAME.ToLower().Contains(searchString)
                         || c.LASTNAME.ToLower().Contains(searchString)
@@ -2361,7 +2370,7 @@ namespace FintrakBanking.Repositories.Credit
                                     responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
 
                                     applicationStatusId = x.APPLICATIONSTATUSID,
-                                    applicationStatus = x.TBL_LOAN_APPLICATION_STATUS.APPLICATIONSTATUSNAME, // <----------------- new 
+                                    applicationStatus = context.TBL_LOAN_APPLICATION_STATUS.Where(o=>o.APPLICATIONSTATUSID==x.APPLICATIONSTATUSID).Select(o=>o.APPLICATIONSTATUSNAME).FirstOrDefault(), // <----------------- new 
                                     branchName = x.TBL_BRANCH.BRANCHNAME,
                                     relationshipOfficerName = x.TBL_STAFF.FIRSTNAME + " " + x.TBL_STAFF.MIDDLENAME + " " + x.TBL_STAFF.LASTNAME,
                                     relationshipManagerName = x.TBL_STAFF1.FIRSTNAME + " " + x.TBL_STAFF1.MIDDLENAME + " " + x.TBL_STAFF1.LASTNAME,
@@ -3840,107 +3849,6 @@ namespace FintrakBanking.Repositories.Credit
             var result = data.ToList();
             // var test = result.Count();
             return result;
-        }
-
-        public void LoadCustomerTurnover(int applicationId, List<int> customerIds, int staffId, bool isLms = false) // OBIE (Page 4)
-        {
-            string duration = WebConfigurationManager.AppSettings["AccountStatisticsDurationInMonths"];
-            int newDuration = 0;
-            if (string.IsNullOrEmpty(duration))
-            {
-                duration = "6";
-            }
-            Int32.TryParse(duration, out newDuration);
-
-
-            int turnoverDuration = newDuration;
-            var apiTransactions = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
-            var apiTransactionsOthers = new List<ViewModels.ThridPartyIntegration.CustomerTurnoverViewModel>();
-
-            //var customers = (from a in context.TBL_LOAN_APPLICATION_DETAIL 
-            //            join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
-            //            where a.LOANAPPLICATIONID == applicationId 
-            //            select new CustomerViewModels
-            //            {
-            //                customerId = a.CUSTOMERID,
-            //                customerCode = b.CUSTOMERCODE
-
-            //            }).Distinct().ToList();
-
-            var customers = context.TBL_CUSTOMER.Where(x => customerIds.Contains(x.CUSTOMERID));//.Select(x => x.CUSTOMERCODE);
-
-            foreach (var customer in customers)
-            {
-
-                //Task.Run(async () => { apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
-                //Task.Run(async () => apiTransactions = await _customerIntegration.GetCustomerTransactions(customer.CUSTOMERCODE, turnoverDuration)).GetAwaiter().GetResult();
-                apiTransactions = integration.GetCustomerAccountTurnover(customer.CUSTOMERCODE, turnoverDuration);
-
-                foreach (var transaction in apiTransactions)
-                {
-
-                    context.TBL_LOAN_APPLICATION_TRANS.Add(new TBL_LOAN_APPLICATION_TRANS
-                    {
-                        LOANAPPLICATIONID = applicationId,
-                        CUSTOMERID = customer.CUSTOMERID,
-                        CUSTOMERCODE = customer.CUSTOMERCODE,
-                        ACCOUNTNUMBER = transaction.accountNumber,
-                        PERIOD = transaction.period,
-                        PRODUCTNAME = transaction.productName,
-                        MINIMUMDEBITBALANCE = transaction.min_Debit_Balance,
-                        MAXIMUMDEBITBALANCE = transaction.max_Debit_Balance,
-                        MINIMUMCREDITBALANCE = transaction.min_Credit_Balance,
-                        MAXIMUMCREDITBALANCE = transaction.max_Credit_Balance,
-                        DEBITTURNOVER = transaction.debit_Turnover,
-                        CREDITTURNOVER = transaction.credit_Turnover,
-                        SMSALERT = transaction.sms_Alert,
-                        AMC = transaction.amc,
-                        VAT = transaction.vat,
-                        MANAGEMENTFEE = transaction.management_Fee,
-                        COMMITMENTFEE = transaction.commitment_Fees,
-                        CONTINGENTLIABILITYCOMM = transaction.com_Contigent_Liab,
-                        LC_COMMISSION = transaction.lc_Commission,
-                        CREATEDBY = staffId,
-                        DATETIMECREATED = DateTime.Now,
-                        MONTH = transaction.month,
-                        YEAR = transaction.year,
-                        ISLMS = isLms
-                    });
-                }
-            }
-
-            foreach (var customer in customers)
-            {
-                //Task.Run(async () => { itx = await _customerIntegration.GetCustomerInterestTransactions(customer.CUSTOMERCODE, turnoverDuration); }).GetAwaiter().GetResult();
-
-                apiTransactionsOthers = integration.GetCustomerAccountInterestTransactions(customer.CUSTOMERCODE, turnoverDuration);
-
-                foreach (var item in apiTransactionsOthers)
-                {
-                    context.TBL_LOAN_APPLICATION_TRANS2.Add(new TBL_LOAN_APPLICATION_TRANS2
-                    {
-                        LOANAPPLICATIONID = applicationId,
-                        CUSTOMERID = customer.CUSTOMERID,
-                        CUSTOMERCODE = customer.CUSTOMERCODE,
-                        ACCOUNTNUMBER = item.accountNumber,
-                        PERIOD = item.period,
-                        PRODUCTNAME = "n/a",
-                        FLOATCHARGE = item.float_Charge,
-                        INTEREST = item.interest,
-                        CREATEDBY = staffId,
-                        DATETIMECREATED = DateTime.Now,
-                        MONTH = item.month,
-                        YEAR = item.year,
-                        ISLMS = isLms
-
-                    });
-                }
-            }
-
-            //if (context.SaveChanges() == 0) throw new SecureException("Customer turnover failed to load!");
-           
-            context.SaveChanges();
-           
         }
 
         public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)

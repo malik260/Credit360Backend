@@ -32,6 +32,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string product { get; set; }
         public int loanConditionId { get; set; }
         public bool isLMSChecklist { get; set; }
+        public int checklistDifinitionId { get; set; }
     }
 
     public class TransactionDynamicsViewModel : GeneralEntity

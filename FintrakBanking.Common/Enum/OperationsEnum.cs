@@ -105,5 +105,7 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityTenorExtension = 96,
         ContingentLiabilityAmountReduction = 97,
         LoanBookingRequest = 98,
+        ManualFeeCharge = 99,
+
     }
 }

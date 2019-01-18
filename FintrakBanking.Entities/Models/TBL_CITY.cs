@@ -30,6 +30,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(150)]
         public string CITYNAME { get; set; }
 
+        [StringLength(50)]
+        public string CRMSCODE { get; set; }
         public int LOCALGOVERNMENTID { get; set; }
 
         public short? CITYCLASSID { get; set; }
