@@ -15,6 +15,7 @@ using FintrakBanking.Interfaces.WorkFlow;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.ViewModels.CASA;
 using FintrakBanking.Interfaces.CASA;
+using FintrakBanking.Common.CustomException;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -25,6 +26,9 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private IAuditTrailRepository auditTrail;
         private ICasaLienRepository casaLien;
+
+        public object entiry { get; private set; }
+
         public ContingentLoanUsageRepository(FinTrakBankingContext context, IGeneralSetupRepository genSetup, IAuditTrailRepository auditTrail, IWorkflow workflow, ICasaLienRepository casaLien)
         {
             this.context = context;
@@ -215,17 +219,16 @@ namespace FintrakBanking.Repositories.Credit
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.ContingentLiabilityUsage).ToList();
 
-
             var applications = from lcu in context.TBL_LOAN_CONTINGENT_USAGE
                                join atrail in context.TBL_APPROVAL_TRAIL on lcu.CONTINGENTLOANUSAGEID equals atrail.TARGETID
-                               where atrail.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending
-                                     && atrail.OPERATIONID == (int)OperationsEnum.ContingentLiabilityUsage
+                               where atrail.OPERATIONID == (int)OperationsEnum.ContingentLiabilityUsage
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                                      && atrail.RESPONSESTAFFID == null
                                orderby lcu.CONTINGENTLOANUSAGEID descending
 
-                               select new ContingentLoansViewModel()
+                               select new ContingentLoansViewModel
                                {
+                                   contingentLoanUsageId = lcu.CONTINGENTLOANUSAGEID,
                                    principalName = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
                                    bookingDate = lcu.TBL_LOAN_CONTINGENT.BOOKINGDATE,
                                    casaAccountNumber = lcu.TBL_LOAN_CONTINGENT.TBL_CASA.PRODUCTACCOUNTNUMBER,
@@ -251,7 +254,6 @@ namespace FintrakBanking.Repositories.Credit
 
         private bool ApproveAPSRequest(ApproveAPSRequestViewModel entity)
         {
-           
             var contingentLoanRecord = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANUSAGEID == entity.contingenliabilityUsageId);
 
             var log = new ApproveAPSRequestViewModel
@@ -329,7 +331,27 @@ namespace FintrakBanking.Repositories.Credit
 
             return this.context.SaveChanges() > 0;
         }
+        
+        public bool SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity)
+        {
+            var contingentLoanRecord = context.TBL_LOAN_CONTINGENT_USAGE.Where(d => d.CONTINGENTLOANUSAGEID == entity.contingenliabilityUsageId);
 
+            workflow.StaffId = entity.staffId;
+            workflow.OperationId = (int)OperationsEnum.ContingentLiabilityUsage;
+            workflow.TargetId = entity.targetId; //.contingenliabilityUsageId;
+            workflow.CompanyId = entity.companyId;
+            workflow.StatusId = entity.approvalStatusId;
+            workflow.Comment = entity.comment;
+            workflow.DeferredExecution = true;
+            workflow.LogActivity();
+
+            if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+
+            }
+
+            return this.context.SaveChanges() > 0;
+        }
 
     }
 }

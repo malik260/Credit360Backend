@@ -299,10 +299,11 @@ namespace FintrakBanking.Repositories.Customer
         #endregion
 
         #region Conditions Precedent Document Upload
-        public ConditionsPrecedentUploadViewModel GetLoanConditionDocumentByConditionId(int conditionId)
+        public ConditionsPrecedentUploadViewModel GetLoanConditionDocumentByConditionId(int conditionId,int loanApplicationId)
         {
             var checklistDoc = (from ck in context.TBL_LOAN_CONDITION_DOCUMENTS
-                                where ck.DOCUMENTID == conditionId
+                                where ck.CONDITIONID == conditionId
+                                && ck.LOANAPPLICATIONID == loanApplicationId
                                 select new ConditionsPrecedentUploadViewModel()
                                 {
                                     fileData = ck.FILEDATA,

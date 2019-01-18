@@ -10,6 +10,7 @@ using FintrakBanking.ViewModels.Credit;
 using System.Web;
 using FintrakBanking.APICore.core;
 using FintrakBanking.Common.CustomException;
+using FintrakBanking.APICore.Filters;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -46,8 +47,6 @@ namespace FintrakBanking.APICore.Controllers
         [Route("loanusage")]
         public HttpResponseMessage SaveContigentLoans(ContingentLoanUsageViewModel entity)
         {              
-            try
-            {
                 var responseMessage = string.Empty;
 
                 entity.applicationUrl = HttpContext.Current.Request.Path;
@@ -60,13 +59,6 @@ namespace FintrakBanking.APICore.Controllers
 
                 var response = repo.SaveContigentLoans(entity, token.GetCompanyId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
-
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = $"Error: {ex.Message}" });
-            }
         }
 
       [HttpGet] [ClaimsAuthorization]  
@@ -84,6 +76,25 @@ namespace FintrakBanking.APICore.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("loanusage-approval")]
+        public HttpResponseMessage SaveContigentLoansUsageApproval(ApproveAPSRequestViewModel entity)
+        {
+            var responseMessage = string.Empty;
+
+            entity.applicationUrl = HttpContext.Current.Request.Path;
+            entity.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+            entity.userBranchId = (short)token.GetBranchId;
+            entity.createdBy = token.GetStaffId;
+            entity.companyId = token.GetCompanyId;
+            entity.staffId = token.GetStaffId;
+
+            bool response = repo.SaveContigentLoansUsageApproval(entity);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
     }
 }

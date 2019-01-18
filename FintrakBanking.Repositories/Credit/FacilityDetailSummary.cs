@@ -1018,7 +1018,7 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN_REVOLVING
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
@@ -1073,7 +1073,7 @@ namespace FintrakBanking.Repositories.Credit
             var allFilteredLoan = (from a in context.TBL_LOAN_CONTINGENT
                                    join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
                                    join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
-                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.ToLower().Contains(searchQuery) ||
+                                   where a.ISDISBURSED == true && (a.LOANREFERENCENUMBER.Contains(searchQuery) ||
                                    b.CUSTOMERCODE.ToLower().Contains(searchQuery) ||
                                    b.FIRSTNAME.ToLower().Contains(searchQuery) ||
                                    b.LASTNAME.ToLower().Contains(searchQuery) ||
