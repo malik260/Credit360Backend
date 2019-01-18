@@ -2199,7 +2199,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 var data = repo.GetChangeLoanStatusOfACompletedLoan(loanid);
-                if (data == null)
+                if (data == false)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }
