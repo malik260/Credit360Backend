@@ -76,6 +76,8 @@ namespace FintrakBanking.Interfaces.Reports
         string GetStaffRoleProfileActivityReport(DateRange dateRange);
         string GetInActiveContigentLiabilityReport(DateRange dateRange);
         string GetLoggingStatus(DateRange dateRange);
+        string GetMiddleOfficeReport(DateRange dateRange);
+        string GetCollateralValuationReport(DateRange dateRange);
 
 
     }

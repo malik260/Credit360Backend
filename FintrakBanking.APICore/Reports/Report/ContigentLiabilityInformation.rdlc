@@ -9,7 +9,7 @@
               <Width>1in</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1in</Width>
+              <Width>1.32292in</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.58333in</Width>
@@ -98,7 +98,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>customer Name</Value>
+                              <Value>Customer Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -129,7 +129,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>branch Name</Value>
+                              <Value>Branch Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -160,7 +160,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>loan Reference Number</Value>
+                              <Value>Loan Reference Number</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -191,7 +191,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>application Reference Number</Value>
+                              <Value>Application Reference Number</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -222,7 +222,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>product Name</Value>
+                              <Value>Product Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -253,7 +253,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>product Type Name</Value>
+                              <Value>Product Type Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -284,7 +284,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>relationship Officer Name</Value>
+                              <Value>Relationship Officer Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -315,7 +315,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>effective Date</Value>
+                              <Value>Effective Date</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -346,7 +346,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>maturity Date</Value>
+                              <Value>Maturity Date</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -377,7 +377,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>booking Date</Value>
+                              <Value>Booking Date</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -408,7 +408,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>date Time Created</Value>
+                              <Value>Date Time Created</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -439,7 +439,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>casa Account Number</Value>
+                              <Value>Casa Account Number</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -470,7 +470,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>product Account Name</Value>
+                              <Value>Product Account Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -501,7 +501,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>currency</Value>
+                              <Value>Currency</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -532,7 +532,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>loan Status</Value>
+                              <Value>Loan Status</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -552,6 +552,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -925,7 +926,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -1086,7 +1086,7 @@
         <Top>0.44667in</Top>
         <Left>1.38417in</Left>
         <Height>0.5in</Height>
-        <Width>28.51625in</Width>
+        <Width>28.83917in</Width>
         <Style>
           <Border>
             <Style>None</Style>
