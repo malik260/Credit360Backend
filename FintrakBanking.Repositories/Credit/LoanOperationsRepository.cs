@@ -6713,7 +6713,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             var systemDate = generalSetup.GetApplicationDate();
             var model = (from a in context.TBL_LOAN
-                         where a.TERMLOANID == loanId && a.LOANSTATUSID == (short)LoanStatusEnum.Active
+                         where a.TERMLOANID == loanId 
+                         //&& a.LOANSTATUSID == (short)LoanStatusEnum.Active
                          select new LoanViewModel()
                          {
                              loanId = a.TERMLOANID,
@@ -11372,6 +11373,9 @@ namespace FintrakBanking.Repositories.Credit
                     ArchivePeriodicSchedule(loanId, archiveBatchCode);
                     ArchiveDailySchedule(loanId, archiveBatchCode);
 
+
+                    DateTime collectionMaturityDate = DateTime.Now;
+
                     //---------------save irregular loan schedule input---------------------------
                     List<TBL_LOAN_REVIEW_OPRATN_IREG_SC> tblIrregularSchedule = new List<TBL_LOAN_REVIEW_OPRATN_IREG_SC>();
                     LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
@@ -11386,6 +11390,8 @@ namespace FintrakBanking.Repositories.Credit
                             schedule.PAYMENTAMOUNT = Convert.ToDecimal(item.paymentAmount);
                             schedule.CREATEDBY = staffId;
                             schedule.DATETIMECREATED = applicationDate;
+
+                            collectionMaturityDate = item.paymentDate;
 
                             tblIrregularSchedule.Add(schedule);
                         }
@@ -11481,7 +11487,9 @@ namespace FintrakBanking.Repositories.Credit
                     MergePeriodicSchedule(loanId, applicationDate);
                     //----------update loan details -----------------------------------
                     //var loan = this.context.TBL_LOAN.FirstOrDefault(x => x.TERMLOANID == loanId);
-                    loan.MATURITYDATE = (DateTime)reviewData.MATURITYDATE;
+                    //loan.MATURITYDATE = (DateTime)reviewData.MATURITYDATE;
+                    reviewData.MATURITYDATE = collectionMaturityDate;
+                    loan.MATURITYDATE = collectionMaturityDate;
                     loan.PRINCIPALNUMBEROFINSTALLMENT = periodicScheduleTemp.Count() - 1;
                     loan.INTERESTNUMBEROFINSTALLMENT = loan.PRINCIPALNUMBEROFINSTALLMENT;
 
@@ -12197,6 +12205,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var activities = admin.GetUserActivitiesByUser(staffId);
             var defaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
 
             var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
@@ -12229,6 +12238,8 @@ namespace FintrakBanking.Repositories.Credit
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
+                            && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId) // currency filter
+
                             orderby op.DATECREATED descending 
                             
                             select new LoanReviewOperationApprovalViewModel
@@ -18689,6 +18700,16 @@ namespace FintrakBanking.Repositories.Credit
                     PaymentAmount = c.PAYMENTAMOUNT
                 })
                 .ToList();
+        }
+
+        private UserCurrencyViewFilter GetUserCurrencyViewFilter(int companyId, int userId)
+        {
+            UserCurrencyViewFilter result = new UserCurrencyViewFilter();
+            result.DefaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var activities = admin.GetUserActivitiesByUser(userId);
+            result.CanSeeLocalCurrency = activities.Contains("lcy-user");
+            result.CanSeeForeignCurrency = activities.Contains("fcy-user");
+            return result;
         }
     }
 }

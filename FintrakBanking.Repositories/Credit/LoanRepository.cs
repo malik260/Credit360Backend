@@ -55,6 +55,7 @@ namespace FintrakBanking.Repositories.Credit
         private FinTrakBankingStagingContext stgCon;
         private IAdminRepository admin;
         private IFinanceTransactionRepository transRepo;
+        //private CreditCommonRepository creditCommon;
 
 
         private IIntegrationWithFinacle finacle;
@@ -68,7 +69,8 @@ namespace FintrakBanking.Repositories.Credit
                                         ICustomerRepository _customers, IWorkflow _workflow, ICasaLienRepository _casaLien,
                                         IChartOfAccountRepository _chartOfAccount, IFinanceTransactionRepository _transRepo,
                                         IOverRideRepository _overrider, IntegrationWithFinacle _integration,
-            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin
+            IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stgCon, IAdminRepository _admin//, CreditCommonRepository creditCommon
+
             )
         {
             this.context = _context;
@@ -89,6 +91,8 @@ namespace FintrakBanking.Repositories.Credit
             this.stgCon = _stgCon;
             this.transRepo = _transRepo;
             this.admin = _admin;
+            //this.creditCommon = creditCommon;
+
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -10077,11 +10081,11 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-        public IEnumerable<LoanViewModel> GetApprovedLoanReview()
+        public IEnumerable<LoanViewModel> GetApprovedLoanReview(int companyId, int staffId)
         {
-            var applicationDate = generalSetup.GetApplicationDate();
-
             List<short> productTypes = new List<short>();
+            var applicationDate = generalSetup.GetApplicationDate();
+            UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
             var allFilteredLoan = (from a in context.TBL_LOAN
                                    join b in context.TBL_LMSR_APPLICATION_DETAIL on a.TERMLOANID equals b.LOANID
@@ -10093,6 +10097,7 @@ namespace FintrakBanking.Repositories.Credit
                                   && b.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
                                   && b.LOANSYSTEMTYPEID != (short)LoanSystemTypeEnum.LineFacility
                                   && a.TBL_PRODUCT.PRODUCTTYPEID != (short)LoanProductTypeEnum.CommercialLoan
+                                  && (cf.CanSeeLocalCurrency && a.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && a.CURRENCYID != cf.DefaultCurrencyId) // currency filter
                                    //&& d.DATE == DbFunctions.TruncateTime(applicationDate)
                                    //orderby b.DATECREATED descending
                                    select new LoanViewModel
@@ -10787,6 +10792,16 @@ namespace FintrakBanking.Repositories.Credit
         {
             if (applicationDate == null) applicationDate = generalSetup.GetApplicationDate();
             return (DateTime)applicationDate;
+        }
+
+        private UserCurrencyViewFilter GetUserCurrencyViewFilter(int companyId, int userId)
+        {
+            UserCurrencyViewFilter result = new UserCurrencyViewFilter();
+            result.DefaultCurrencyId = context.TBL_COMPANY.Where(x => x.CURRENCYID == companyId).Select(x => x).FirstOrDefault().CURRENCYID;
+            var activities = admin.GetUserActivitiesByUser(userId);
+            result.CanSeeLocalCurrency = activities.Contains("lcy-user");
+            result.CanSeeForeignCurrency = activities.Contains("fcy-user");
+            return result;
         }
     }
 }
