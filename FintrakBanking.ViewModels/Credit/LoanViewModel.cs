@@ -1099,6 +1099,80 @@ namespace FintrakBanking.ViewModels.Credit
         public int loanSystemTypeId { get; set; }
         public string loanSystemTypeName { get; set; }
     }
+
+    public class MiddleOfficeViewModel : GeneralEntity
+    {
+        public short? statusFeedbackId;
+
+        public string jobRequestCode { get; set; }
+        public string customerName { get; set; }
+       
+        public string createdByName { get; set; }
+        public string customerAccount { get; set; }
+        public string branchName { get; set; }
+        public string principalName { get; set; }
+        public string invoiceNumber { get; set; }
+        public DateTime invoiceDate { get; set; }
+        public string currencyType { get; set; }
+        public string  loanType { get; set; }
+        public string modVerificationOfficerName { get; set; }
+        public string modVerificationOfficerStaffNo { get; set; }
+        public string middleOfficeComment { get; set; }
+        public string status { get; set; }
+        public int statusId { get; set; }
+        public string businessGroup { get; set; }
+        public string  businessUnit { get; set; }
+        public string staffCode { get; set; }
+        
+
+
+    }
+
+    public class CollateralValuationViewModel : GeneralEntity
+    {
+        public int solId { get; set; }
+        public string  branchName { get; set; }
+        public string groupDescription { get; set; }
+        public string customerName { get; set; }
+        public string accountNumber { get; set; }
+        public string bvn { get; set; }
+        public string tin { get; set; }
+        public string  facilityType { get; set; }
+        public string businessTypes { get; set; }
+        public DateTime dateGranted { get; set; }
+        public DateTime lastCreditDate { get; set; }
+        public DateTime expiryDate { get; set; }
+        public string sanctionLimit { get; set; }
+        public int tenor { get; set; }
+        public Decimal balance { get; set; }
+        public string  currency { get; set; }
+        public string  collateralDetail { get; set; }
+        public Decimal  collateralValue { get; set; }
+        public string perfectionStatus { get; set; }
+        public string titleDocsSighted { get; set; }
+        public string location { get; set; }
+        public string valuationReportSighted { get; set; }
+        public DateTime valuationDate { get; set; }
+        public string  valuationReportLocation { get; set; }
+        public string insuranceDocsSighted { get; set; }
+        public DateTime dateOfInsurance { get; set; }
+        public DateTime dateOfInspection { get; set; }
+        public string stateOfCollateral { get; set; }
+        public string collateralAdequacy { get; set; }
+        public string inspectingStaffNo { get; set; }
+        public string businessDevelopmentManager { get; set; }
+        public string groupHead { get; set; }
+        public int relationshipManagerId { get; set; }
+
+
+    }
+
+    public class SbHead
+    {
+        public string subHead { get; set; }
+        public string staffCode { get; set; }
+        public string teamUnit { get; set; }
+    }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{
     //    public int maturityInstructionId { get; set; }

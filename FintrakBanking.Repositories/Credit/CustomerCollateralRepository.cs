@@ -1820,7 +1820,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
-
             var mapping = context.TBL_LOAN_COLLATERAL_MAPPING.Find(entity.targetId);
 
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId == (int)ApprovalStatusEnum.Approved)
@@ -1853,13 +1852,17 @@ namespace FintrakBanking.Repositories.Credit
                     if (mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.TermDeposit ||
                         mainCollateral.COLLATERALTYPEID == (int)CollateralTypeEnum.CASA)
                     {
+                        var existingLien = context.TBL_CASA_LIEN.FirstOrDefault(x => x.SOURCEREFERENCENUMBER == mainCollateral.COLLATERALCODE && x.LIENTYPEID == (int)LienTypeEnum.CollateralCreation);
+                        if (existingLien == null) throw new SecureException("No lien has been placed");
+                        string lienReferenceNumber = existingLien.LIENREFERENCENUMBER;
+
                         lien.ReleaseLien(new CasaLienViewModel
                         {
                             productAccountNumber = mainCollateral.COLLATERALCODE,
                             lienAmount = securityValue,
                             description = description,
                             lienTypeId = (int)LienTypeEnum.CollateralCreation,
-                            sourceReferenceNumber = mainCollateral.COLLATERALCODE,
+                            lienReferenceNumber = lienReferenceNumber,
                             dateTimeCreated = DateTime.Now,
                             createdBy = user.createdBy,
                             companyId = user.companyId,

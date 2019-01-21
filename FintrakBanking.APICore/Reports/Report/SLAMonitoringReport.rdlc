@@ -364,7 +364,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>approval Status</Value>
+                              <Value>Approval Status</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontSize>11pt</FontSize>

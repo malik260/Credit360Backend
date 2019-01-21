@@ -91,13 +91,13 @@ namespace FintrakBanking.ViewModels.Credit
         public string SECURITY_TYPE { get; set; }
         public string ADDRESS_OF_SECURITY { get; set; }
         public string OWNER_OF_SECURITY { get; set; }
-        public string UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER { get; set; }
+        public short? UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER { get; set; }
         public string UNIQUE_IDENTIFIER_OF_SECURITY_OWNER { get; set; }
         public string GUARANTEE { get; set; }
-        public string GUARANTEE_TYPE { get; set; }
+        public short? GUARANTEE_TYPE { get; set; }
         public string GUARANTOR_UNIQUE_IDENTIFICATION_TYPE { get; set; }
         public string GUARANTOR_UNIQUE_IDENTIFICATION { get; set; }
-        public string AMOUNT_GUARANTEED { get; set; }
+        public decimal? AMOUNT_GUARANTEED { get; set; }
         public DateTime? FIRSTPRINCIPALPAYMENTDATE { get; set; }
         public int LOANID { get; set; }
         public int? CRMSLEGALSTATUSID { get; set; }
@@ -142,5 +142,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string CONDITIONPRECIDENT { get; set; }
         public string CRMSCODE { get; set; }
         public string EMAIL { get; set; }
+        public int LOANREVIEWOPERATIONID { get; set; }
+
     }
+
 }

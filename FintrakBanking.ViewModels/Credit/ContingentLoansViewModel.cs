@@ -56,6 +56,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string middleName { get; set; }
         public short productId { get; set; }
         public int contingentLoanUsageId { get; set; }
+        public decimal amountRequested { get; set; }
     }
 
 
@@ -71,14 +72,15 @@ namespace FintrakBanking.ViewModels.Credit
         public string productName { get; set; }
 
         public short productId { get; set; }
+
         public string remark { get; set; }
     }
 
     public class ApproveAPSRequestViewModel : ApprovalViewModel
     {
-       
         public int contingenliabilityUsageId { get; set; }       
         public int productId { get; set; }
         public short userBranchId { get; set; }
+        public string loanReferenceNumber { get; set; }
     }
 }

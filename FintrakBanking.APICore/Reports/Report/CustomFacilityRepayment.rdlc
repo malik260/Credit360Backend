@@ -200,7 +200,7 @@
                   <Width>1.35417in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.45833in</Width>
+                  <Width>1.96875in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -531,7 +531,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>debit Account</Value>
+                                  <Value>Debit Account</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -566,7 +566,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>credit Account</Value>
+                                  <Value>Credit Account</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -776,7 +776,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Force Debit Account</Value>
+                                  <Value>Force Debit Account(Y/N?)</Value>
                                   <Style>
                                     <FontFamily>Calibri</FontFamily>
                                     <FontSize>11pt</FontSize>
@@ -1394,7 +1394,7 @@
             <Top>0.01389in</Top>
             <Left>0.01885in</Left>
             <Height>0.5in</Height>
-            <Width>32.81052in</Width>
+            <Width>33.32094in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -1405,7 +1405,7 @@
         <Height>0.54042in</Height>
         <Style />
       </Body>
-      <Width>32.82937in</Width>
+      <Width>33.33979in</Width>
       <Page>
         <PageHeader>
           <Height>1in</Height>

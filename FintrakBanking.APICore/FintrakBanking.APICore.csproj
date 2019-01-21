@@ -327,6 +327,7 @@
     <Compile Include="Controllers\ApprovalLevelController.cs" />
     <Compile Include="Controllers\ApprovalLevelStaffController.cs" />
     <Compile Include="Controllers\FinacleIntegrationController.cs" />
+    <Compile Include="Controllers\LoanFeeChargeController.cs" />
     <Compile Include="Controllers\ProfileSettingsController.cs" />
     <Compile Include="Controllers\ApprovalReliefController.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
@@ -520,6 +521,13 @@
     <Compile Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx.designer.cs">
       <DependentUpon>CollateralPropertyRevaluation.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CollateralValuationReport.aspx.cs">
+      <DependentUpon>CollateralValuationReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CollateralValuationReport.aspx.designer.cs">
+      <DependentUpon>CollateralValuationReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CollateralVisitation.aspx.cs">
       <DependentUpon>CollateralVisitation.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -603,6 +611,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\LoggingStatus.aspx.designer.cs">
       <DependentUpon>LoggingStatus.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\MiddleOfficeReport.aspx.cs">
+      <DependentUpon>MiddleOfficeReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\MiddleOfficeReport.aspx.designer.cs">
+      <DependentUpon>MiddleOfficeReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\NonPeformingLoans.aspx.cs">
       <DependentUpon>NonPeformingLoans.aspx</DependentUpon>
@@ -938,6 +953,7 @@
     <Content Include="Reports\ReportViews\CollateralInsurance.aspx" />
     <Content Include="Reports\ReportViews\CollateralPerfectionYetToCommence.aspx" />
     <Content Include="Reports\ReportViews\CollateralPropertyRevaluation.aspx" />
+    <Content Include="Reports\ReportViews\CollateralValuationReport.aspx" />
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityInformation.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
@@ -951,6 +967,7 @@
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
     <Content Include="Reports\ReportViews\LoanInterestReceivableAndPayable.aspx" />
     <Content Include="Reports\ReportViews\LoggingStatus.aspx" />
+    <Content Include="Reports\ReportViews\MiddleOfficeReport.aspx" />
     <Content Include="Reports\ReportViews\NonPeformingLoans.aspx" />
     <Content Include="Reports\ReportViews\OverDraft.aspx" />
     <Content Include="Reports\ReportViews\PostedTransactions.aspx" />
@@ -1212,6 +1229,7 @@
     <EmbeddedResource Include="Reports\Report\CollateralInsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPerfectionYetToCommence.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralPropertyRevaluation.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CollateralValuationReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\ContigentLiabilityInformation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
@@ -1223,6 +1241,7 @@
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDeferrals.rdlc" />
+    <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanDocumentWaivedOrDeferred.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanInterestReceivableAndPayable.rdlc" />
     <EmbeddedResource Include="Reports\Credit\TestReport.rdlc" />
@@ -1238,10 +1257,10 @@
     <EmbeddedResource Include="Reports\Report\LoanRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanScheduleSimulation.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanStatement.rdlc" />
-    <EmbeddedResource Include="Reports\Report\LoanDisbursement.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanSchedule.rdlc" />
     <Content Include="Reports\Report\BranchLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoggingStatus.rdlc" />
+    <EmbeddedResource Include="Reports\Report\MiddleOfficeReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\NonPeformingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\OverDraft.rdlc" />
     <EmbeddedResource Include="Reports\Report\ProfileActivityReport.rdlc" />
