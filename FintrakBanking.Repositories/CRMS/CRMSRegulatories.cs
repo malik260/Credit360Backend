@@ -147,7 +147,7 @@ namespace FintrakBanking.Repositories.CRMS
             var term = from x in context.TBL_LOAN
                        join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                        join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
-                       //join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                       join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
                        where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                        && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                        && x.CRMSCODE == null
@@ -155,46 +155,48 @@ namespace FintrakBanking.Repositories.CRMS
                        {
 
                            ACCOUNT = c.PRODUCTACCOUNTNUMBER,
-                           ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
-                           ID_DETAIL =  b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
-                           CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
+                           ID_TTPE = d.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
+                           ID_DETAIL = d.TAX_NUMBER != null ? d.TAX_NUMBER : d.CUSTOMERBVN,
+                           CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
+                           EMAIL = d.EMAILADDRESS
 
                        };
             var OD = from x in context.TBL_LOAN_REVOLVING
                      join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                     //join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                     join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
                      where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                      && x.CRMSCODE == null
                      select new CRMSTemplateViewModel
                      {
                          ACCOUNT = c.PRODUCTACCOUNTNUMBER,
-                         ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
-                         ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
+                         ID_TTPE = d.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
+                         ID_DETAIL = d.TAX_NUMBER != null ? d.TAX_NUMBER : d.CUSTOMERBVN,
                          CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
-
+                         EMAIL = d.EMAILADDRESS
                      };
             var contingent = from x in context.TBL_LOAN_CONTINGENT
                              join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                             //join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                             join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
                              where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                              && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                              && x.CRMSCODE == null
                              select new CRMSTemplateViewModel
                              {
                                  ACCOUNT = c.PRODUCTACCOUNTNUMBER,
-                                 ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
-                                 ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
-                                 CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
+                                 ID_TTPE = d.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
+                                 ID_DETAIL = d.TAX_NUMBER != null ? d.TAX_NUMBER : d.CUSTOMERBVN,
+                                 CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
+                                 EMAIL = d.EMAILADDRESS
                              };
 
             return term.Union(OD).Union(contingent).OrderBy(x => x.ACCOUNT).ToList();
         }
         public List<CRMSRegulatoryViewModel> GetAllLoansForCRMS(CRMSViewModel param)
         {
-            
+
             List<CRMSRegulatoryViewModel> tLoan = new List<CRMSRegulatoryViewModel>();
             List<CRMSRegulatoryViewModel> revolving = new List<CRMSRegulatoryViewModel>();
 
@@ -286,11 +288,34 @@ namespace FintrakBanking.Repositories.CRMS
             else
             {
                 tLoan = (from x in context.TBL_LOAN
+                         join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                         join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
+                         where x.COMPANYID == param.companyId && x.CRMSCODE == null
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                         select new CRMSRegulatoryViewModel
+                         {
+                             accountNumber = c.PRODUCTACCOUNTNUMBER,
+                             beneficiary = b.FIRSTNAME + " " + b.LASTNAME,
+                             crmsCode = x.CRMSCODE,
+                             crmsDate = x.CRMSDATE,
+                             effectiveDate = x.EFFECTIVEDATE,
+                             facilityType = x.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
+                             grantedAmount = x.PRINCIPALAMOUNT,
+                             interestRate = x.INTERESTRATE,
+                             loanId = x.TERMLOANID,
+                             loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                             crmsLegalStatusId = b.CRMSLEGALSTATUSID,
+                             //tenor = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
+
+                         }).ToList();
+
+                revolving = (from x in context.TBL_LOAN_REVOLVING
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
                              where x.COMPANYID == param.companyId && x.CRMSCODE == null
-                             && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                             && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                              select new CRMSRegulatoryViewModel
                              {
                                  accountNumber = c.PRODUCTACCOUNTNUMBER,
@@ -299,68 +324,45 @@ namespace FintrakBanking.Repositories.CRMS
                                  crmsDate = x.CRMSDATE,
                                  effectiveDate = x.EFFECTIVEDATE,
                                  facilityType = x.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
-                                 grantedAmount = x.PRINCIPALAMOUNT,
+                                 grantedAmount = x.OVERDRAFTLIMIT,
                                  interestRate = x.INTERESTRATE,
-                                 loanId = x.TERMLOANID,
+                                 loanId = x.REVOLVINGLOANID,
                                  loanSystemTypeId = x.LOANSYSTEMTYPEID,
                                  crmsLegalStatusId = b.CRMSLEGALSTATUSID,
-                                //tenor = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
+                                 //tenor = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
 
                              }).ToList();
 
-                 revolving = (from x in context.TBL_LOAN_REVOLVING
-                                 join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                                 join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                                 where x.COMPANYID == param.companyId && x.CRMSCODE == null
-                             && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                             && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
-                                 select new CRMSRegulatoryViewModel
-                                 {
-                                     accountNumber = c.PRODUCTACCOUNTNUMBER,
-                                     beneficiary = b.FIRSTNAME + " " + b.LASTNAME,
-                                     crmsCode = x.CRMSCODE,
-                                     crmsDate = x.CRMSDATE,
-                                     effectiveDate = x.EFFECTIVEDATE,
-                                     facilityType = x.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
-                                     grantedAmount = x.OVERDRAFTLIMIT,
-                                     interestRate = x.INTERESTRATE,
-                                     loanId = x.REVOLVINGLOANID,
-                                     loanSystemTypeId = x.LOANSYSTEMTYPEID,
-                                     crmsLegalStatusId = b.CRMSLEGALSTATUSID,
-                                     //tenor = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
-
-                                 }).ToList();
-
                 contingent = (from x in context.TBL_LOAN_CONTINGENT
-                                  join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                                  join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
-                                  where x.COMPANYID == param.companyId && x.CRMSCODE == null
-                             && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                             && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
-                             && x.CRMSCODE == null
-                                  select new CRMSRegulatoryViewModel
-                                  {
-                                      accountNumber = c.PRODUCTACCOUNTNUMBER,
-                                      beneficiary = b.FIRSTNAME + " " + b.LASTNAME,
-                                      crmsCode = x.CRMSCODE,
-                                      crmsDate = x.CRMSDATE,
-                                      effectiveDate = x.EFFECTIVEDATE,
-                                      facilityType = x.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
-                                      grantedAmount = x.CONTINGENTAMOUNT,
-                                      interestRate = 0,
-                                      loanId = x.CONTINGENTLOANID,
-                                      loanSystemTypeId = x.LOANSYSTEMTYPEID,
-                                      crmsLegalStatusId = b.CRMSLEGALSTATUSID,
-                                      //tenor = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
+                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                              join b in context.TBL_CUSTOMER on c.CUSTOMERID equals b.CUSTOMERID
+                              where x.COMPANYID == param.companyId && x.CRMSCODE == null
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                         && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                         && x.CRMSCODE == null
+                              select new CRMSRegulatoryViewModel
+                              {
+                                  accountNumber = c.PRODUCTACCOUNTNUMBER,
+                                  beneficiary = b.FIRSTNAME + " " + b.LASTNAME,
+                                  crmsCode = x.CRMSCODE,
+                                  crmsDate = x.CRMSDATE,
+                                  effectiveDate = x.EFFECTIVEDATE,
+                                  facilityType = x.TBL_LOAN_SYSTEM_TYPE.LOANSYSTEMTYPENAME,
+                                  grantedAmount = x.CONTINGENTAMOUNT,
+                                  interestRate = 0,
+                                  loanId = x.CONTINGENTLOANID,
+                                  loanSystemTypeId = x.LOANSYSTEMTYPEID,
+                                  crmsLegalStatusId = b.CRMSLEGALSTATUSID,
+                                  //tenor = (x.MATURITYDATE - x.EFFECTIVEDATE).TotalDays,
 
-                                      //loansCount
-                                  }).ToList();
+                                  //loansCount
+                              }).ToList();
             }
-          
+
 
             var loans = tLoan.Union(revolving).Union(contingent).ToList();
 
-            
+
             return loans;
         }
 
@@ -386,7 +388,7 @@ namespace FintrakBanking.Repositories.CRMS
             {
                 using (ExcelPackage pck = new ExcelPackage())
                 {
-                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("SearchReport");
+                    ExcelWorksheet ws = pck.Workbook.Worksheets.Add("FACILITIES");
 
                     // ws.Cells[ws.Dimension.Address].AutoFitColumns();
 
@@ -437,7 +439,7 @@ namespace FintrakBanking.Repositories.CRMS
                     {
                         var record = loanInput[i - 2];
 
-                        var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
+                       // var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
 
                         //ws.Cells[i, 1].Value = i - 1;
                         ws.Cells[i, 1].Value = record.UNIQUE_IDENTIFICATION_TYPE;
@@ -474,113 +476,75 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 32].Value = record.SECURITY_TYPE;
                         ws.Cells[i, 33].Value = record.ADDRESS_OF_SECURITY;
                         ws.Cells[i, 34].Value = record.OWNER_OF_SECURITY;
-                        ws.Cells[i, 35].Value = record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER;
+                        if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 1){  ws.Cells[i, 35].Value = "BVN";}
+                        else if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 2) { ws.Cells[i, 35].Value = "TIN"; }
+                        else {  ws.Cells[i, 35].Value = ""; }
                         ws.Cells[i, 36].Value = record.UNIQUE_IDENTIFIER_OF_SECURITY_OWNER;
-                        ws.Cells[i, 37].Value = guarantee != null ? "YES" : "NO";
-
-                        if (guarantee != null)
-                        {
-                            ws.Cells[i, 38].Value = guarantee.collateralType != null ? guarantee.collateralType : ""; //GUARANTEE_TYPE
-                            ws.Cells[i, 39].Value = guarantee.bvn != null ? "BVN" : "TIN"; //record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE;
-                            ws.Cells[i, 40].Value = guarantee.bvn != null ? guarantee.bvn : guarantee.rcNumber;// record.GUARANTOR_UNIQUE_IDENTIFICATION;
-                            ws.Cells[i, 41].Value = guarantee.guaranteeValue;// record.AMOUNT_GUARANTEED;
-
-                        }
+                        ws.Cells[i, 37].Value = record.GUARANTEE != null ? "YES" : "NO";
+                        if (record.GUARANTEE_TYPE == 1) {  ws.Cells[i, 38].Value = "INDIVIDUAL"; }
+                        else if (record.GUARANTEE_TYPE == 2) {  ws.Cells[i, 38].Value = "NON_INDIVIDUAL"; }
+                        else { ws.Cells[i, 38].Value = "";}
+                        ws.Cells[i, 39].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE != null ? "BVN" : "TIN"; //record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE;
+                        ws.Cells[i, 40].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION ;// record.GUARANTOR_UNIQUE_IDENTIFICATION;
+                        ws.Cells[i, 41].Value = record.AMOUNT_GUARANTEED;// record.AMOUNT_GUARANTEED;
                         ws.Cells[i, 42].Value = record.REFERENCENUMBER; ;
                     }
+
+                    var output = GetFee(param);
+
+                    if (output != null)
+                    {
+                        output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
+
+                        ExcelWorksheet ws2 = pck.Workbook.Worksheets.Add("FEE");
+                        ws2.Cells[1, 1].Value = "ACCOUNT";
+                        ws2.Cells[1, 2].Value = "FEE_TYPE";
+                        ws2.Cells[1, 3].Value = "FEE_AMOUNT";
+
+                        for (int i = 2; i <= output.Count + 1; i++)
+                        {
+                            var feeRecord = output[i - 2];
+
+                            ws2.Cells[i, 1].Value = feeRecord.ACCOUNT;
+                            ws2.Cells[i, 2].Value = feeRecord.FEE_TYPE;
+                            ws2.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
+                        }
+
+
+                    }
+
+                    var directors = GetDirectors(param);
+
+                    if (output != null)
+                    {
+                        directors = directors.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
+
+                        ExcelWorksheet ws3 = pck.Workbook.Worksheets.Add("DIRECTORS");
+                        ws3.Cells[1, 1].Value = "ACCOUNT";
+                        ws3.Cells[1, 2].Value = "ID_TTPE";
+                        ws3.Cells[1, 3].Value = "ID_DETAIL";
+                        ws3.Cells[1, 4].Value = "EMAIL";
+
+                        for (int i = 2; i <= directors.Count + 1; i++)
+                        {
+                            var record = directors[i - 2];
+
+                            ws3.Cells[i, 1].Value = record.ACCOUNT;
+                            ws3.Cells[i, 2].Value = record.ID_TTPE;
+                            ws3.Cells[i, 3].Value = record.ID_DETAIL;
+                            ws3.Cells[i, 4].Value = record.EMAIL;
+                        }
+                    }
+
                     fileBytes = pck.GetAsByteArray();
                     excel.reportData = fileBytes;
                     excel.templateTypeName = "CRMS_T300";
+
                 }
+
             }
 
             return excel;
-        }
-
-        private CRMSRecord GenerateCRMS300Fee(CRMSViewModel param)
-        {
-            Byte[] fileBytes = null;
-            CRMSRecord feeCharge = new CRMSRecord();
-            var output = GetFee(param);
-
-            if (output != null)
-            {
-                output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
-
-                using (ExcelPackage fee = new ExcelPackage())
-                {
-                    ExcelWorksheet sheet = fee.Workbook.Worksheets.Add("FEE");
-                    sheet.Cells[1, 1].Value = "ACCOUNT";
-                    sheet.Cells[1, 2].Value = "FEE_TYPE";
-                    sheet.Cells[1, 3].Value = "FEE_AMOUNT";
-
-                    for (int i = 2; i <= output.Count + 1; i++)
-                    {
-                        var feeRecord = output[i - 2];
-
-                        sheet.Cells[i, 1].Value = feeRecord.ACCOUNT;
-                        sheet.Cells[i, 2].Value = feeRecord.FEE_TYPE;
-                        sheet.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
-                    }
-                    fileBytes = fee.GetAsByteArray();
-
-
-                    feeCharge.reportData = fileBytes;
-                    feeCharge.templateTypeName = "CRMS_T300_FEE";
-                }
-
-            }
-
-
-            return feeCharge;
-        }
-
-        private CRMSRecord GenerateCRMS300Director(CRMSViewModel param)
-        {
-            Byte[] fileBytes = null;
-            CRMSRecord feeCharge = new CRMSRecord();
-            var output = GetDirectors(param);
-            if (output != null)
-            {
-                output = output.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA).Select(x => x).ToList();
-
-                using (ExcelPackage fee = new ExcelPackage())
-                {
-                    ExcelWorksheet sheet = fee.Workbook.Worksheets.Add("FEE");
-                    sheet.Cells[1, 1].Value = "ACCOUNT";
-                    sheet.Cells[1, 2].Value = "FEE_TYPE";
-                    sheet.Cells[1, 3].Value = "FEE_AMOUNT";
-
-                    for (int i = 2; i <= output.Count + 1; i++)
-                    {
-                        var feeRecord = output[i - 2];
-
-                        sheet.Cells[i, 1].Value = feeRecord.ACCOUNT;
-                        sheet.Cells[i, 2].Value = feeRecord.FEE_TYPE;
-                        sheet.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
-                    }
-                    fileBytes = fee.GetAsByteArray();
-
-
-                    feeCharge.reportData = fileBytes;
-                    feeCharge.templateTypeName = "CRMS_T300_DIRECTORS";
-                }
-
-            }
-
-
-            return feeCharge;
-        }
-        private CRMSRecord GenerateCRMS400BTemplate(CRMSViewModel param)
-        {
-           
-
-            var result = GenerateCRMSReport400B(param);
-            result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA);
-            if (result == null)
-                throw new ConditionNotMetException("Record Not Found For T300");
-
-            return GenerateCRMS400BTemplate(result.ToList(), param);
         }
         private CRMSRecord GenerateCRMS400BTemplate(List<CRMSTemplateViewModel> loanInput, CRMSViewModel param)
         {
@@ -635,13 +599,13 @@ namespace FintrakBanking.Repositories.CRMS
                     //ws.Cells[1, 39].Value = "CUSTOMERID";
 
 
-                  
+
 
                     for (int i = 2; i <= loanInput.Count + 1; i++)
                     {
                         var record = loanInput[i - 2];
 
-                        var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
+                      //  var guarantee = CollateralGuarantee(record.LOANID).Select(x => x).FirstOrDefault();
                         ws.Cells[i, 1].Value = record.UNIQUE_IDENTIFICATION_TYPE;
                         ws.Cells[i, 2].Value = record.UNIQUE_IDENTIFICATION_NO;
                         ws.Cells[i, 3].Value = record.CRMSCODE;
@@ -650,7 +614,7 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 6].Value = record.OUTSTANDING_AMOUNT;
                         ws.Cells[i, 7].Value = record.FEES;
                         ws.Cells[i, 8].Value = record.EFFECTIVE_DATE.ToString("dd/MM/yyyy");
-                        if(record.MATURITYDATE != null)
+                        if (record.MATURITYDATE != null)
                         {
                             var proposedTenor = ((DateTime)record.MATURITYDATE - record.EFFECTIVE_DATE).TotalDays;
                             var result = "";
@@ -665,7 +629,7 @@ namespace FintrakBanking.Repositories.CRMS
                                 units = months == 1 ? " month" : " months";
                                 result = months.ToString(); //+ " " + units;
                             }
-                            
+
 
                             ws.Cells[i, 9].Value = result;
 
@@ -679,7 +643,7 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 11].Value = record.REPAYMENT_AGREEMENT_MODE;
                         ws.Cells[i, 12].Value = record.PERFORMANCE_REPAYMENT_STATUS;
                         ws.Cells[i, 13].Value = record.REASON_FOR_RESTRUCTURING;
-                        ws.Cells[i, 14].Value = (record.INTEREST_RATE/100);
+                        ws.Cells[i, 14].Value = (record.INTEREST_RATE / 100);
                         ws.Cells[i, 15].Value = record.BENEFICIARY_ACCOUNT_NUMBER;
                         ws.Cells[i, 16].Value = record.LOCATION_OF_BENEFICIARY;
                         ws.Cells[i, 17].Value = record.RELATIONSHIP_TYPE;
@@ -687,7 +651,7 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 19].Value = record.ECCI_NUMBER;
                         ws.Cells[i, 20].Value = record.FUNDING_SOURCE;
                         ws.Cells[i, 21].Value = record.SPECIALISED_LOAN;
-                        if(record.SPECIALISED_LOAN=="NO")
+                        if (record.SPECIALISED_LOAN == "NO")
                         {
                             ws.Cells[i, 22].Value = 0;
                         }
@@ -698,7 +662,7 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 23].Value = record.DIRECTOR_UNIQUE_IDENTIFIER;
                         ws.Cells[i, 24].Value = record.COLLATERAL_PRESENT;
 
-                        if(record.COLLATERAL_PRESENT == "NO")
+                        if (record.COLLATERAL_PRESENT == "NO")
                         {
                             ws.Cells[i, 25].Value = "NO";
                         }
@@ -709,30 +673,48 @@ namespace FintrakBanking.Repositories.CRMS
                         ws.Cells[i, 26].Value = record.SECURITY_TYPE;
                         ws.Cells[i, 27].Value = record.ADDRESS_OF_SECURITY;
                         ws.Cells[i, 28].Value = record.OWNER_OF_SECURITY;
-                        ws.Cells[i, 29].Value = record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER;
-                        ws.Cells[i, 30].Value = record.UNIQUE_IDENTIFIER_OF_SECURITY_OWNER;
-                        ws.Cells[i, 31].Value = guarantee != null ? "YES" : "NO";
-                        if (guarantee != null)
+                        if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER==1)
                         {
-                            ws.Cells[i, 32].Value = guarantee.collateralType != null ? guarantee.collateralType : ""; //GUARANTEE_TYPE
-                            ws.Cells[i, 33].Value = guarantee.bvn != null ? "BVN" : "TIN"; //record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE;
-                            ws.Cells[i, 34].Value = guarantee.bvn != null ? guarantee.bvn : guarantee.rcNumber;// record.GUARANTOR_UNIQUE_IDENTIFICATION;
+                            ws.Cells[i, 29].Value = "BVN";
                         }
+                        else if (record.UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER == 2)
+                        {
+                            ws.Cells[i, 29].Value = "TIN";
+                        }
+                        else{
+                            ws.Cells[i, 29].Value = "";
+                        }
+                        ws.Cells[i, 30].Value = record.UNIQUE_IDENTIFIER_OF_SECURITY_OWNER;
+                        ws.Cells[i, 31].Value = record.GUARANTEE;
+                        if (record.GUARANTEE_TYPE == 1)
+                        {
+                            ws.Cells[i, 32].Value = "INDIVIDUAL";
+                        }
+                        else if (record.GUARANTEE_TYPE == 2)
+                        {
+                            ws.Cells[i, 32].Value = "NON_INDIVIDUAL";
+                        }
+                        else
+                        {
+                            ws.Cells[i, 32].Value = "";
+                        }
+                        ws.Cells[i, 33].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE; //record.GUARANTOR_UNIQUE_IDENTIFICATION_TYPE;
+                        ws.Cells[i, 34].Value = record.GUARANTOR_UNIQUE_IDENTIFICATION;// record.GUARANTOR_UNIQUE_IDENTIFICATION;
                         ws.Cells[i, 35].Value = record.OPERATION_NAME;
                         ws.Cells[i, 36].Value = record.DATETIMECREATED.ToString("dd/MM/yyyy");
                         ws.Cells[i, 37].Value = record.REFERENCENUMBER;
                         //ws.Cells[i, 38].Value = record.LOANREVIEWOPERATIONID;
                         //ws.Cells[i, 39].Value = record.CUSTOMERID;
 
-                       
+
 
                     }
-                     var director = GetDirectors400B(param);
+                    var director = GetDirectors400B(param);
                     ws2.Cells[1, 1].Value = "ACCOUNT";
                     ws2.Cells[1, 2].Value = "ID_TTPE";
                     ws2.Cells[1, 3].Value = "ID_DETAIL";
                     ws2.Cells[1, 4].Value = "EMAIL";
-                    ws2.Cells[1, 5].Value = "CRMSCODE";
+                    //   ws2.Cells[1, 5].Value = "CRMSCODE";
                     //ws2.Cells[1, 6].Value = "LOANREVIEWOPERATIONID";
                     //ws2.Cells[1, 7].Value = "CUSTOMERID";
 
@@ -744,7 +726,7 @@ namespace FintrakBanking.Repositories.CRMS
                         ws2.Cells[j, 2].Value = directorRecord.ID_TTPE;
                         ws2.Cells[j, 3].Value = directorRecord.ID_DETAIL;
                         ws2.Cells[j, 4].Value = directorRecord.EMAIL;
-                        ws2.Cells[j, 5].Value = directorRecord.CRMSCODE;
+                        //  ws2.Cells[j, 5].Value = directorRecord.CRMSCODE;
                         //ws2.Cells[j, 6].Value = directorRecord.LOANREVIEWOPERATIONID;
                         //ws2.Cells[j, 7].Value = directorRecord.CUSTOMERID;
 
@@ -885,7 +867,7 @@ namespace FintrakBanking.Repositories.CRMS
                     && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
                     && operationRestructure.Contains((short)op.OPERATIONTYPEID)
-                   
+
                      select new CRMSTemplateViewModel
                      {
                          //ACCOUNT = d.CUSTOMERBVN,
@@ -928,7 +910,7 @@ namespace FintrakBanking.Repositories.CRMS
                                  EMAIL = d.EMAILADDRESS,
                                  CRMSCODE = x.CRMSCODE,
                                  LOANREVIEWOPERATIONID = op.LOANREVIEWOPERATIONID,
-                                                          CUSTOMERID = x.CUSTOMERID,
+                                 CUSTOMERID = x.CUSTOMERID,
 
                              };
 
@@ -959,6 +941,16 @@ namespace FintrakBanking.Repositories.CRMS
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
                      let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
                      let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+
+                     let collateralCustomer = context.TBL_LOAN_COLLATERAL_MAPPING.Join(context.TBL_COLLATERAL_CUSTOMER, mp => mp.COLLATERALCUSTOMERID, col => col.COLLATERALCUSTOMERID, (mp, col) =>
+                     new { mp, col }).Where(dd => dd.mp.LOANID == x.TERMLOANID).OrderByDescending(map => map.mp.LOANCOLLATERALMAPPINGID).Select(dd => dd).FirstOrDefault()
+
+                     let collateralMpping = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
+                     let securityOwnerCustomerDetal = context.TBL_CUSTOMER.Where(cus => cus.CUSTOMERID == collateralCustomer.col.CUSTOMERID).Select(cus => cus).FirstOrDefault()
+
+                     let collateralGuarantee = context.TBL_COLLATERAL_GAURANTEE.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
                      where x.COMPANYID == param.companyId && x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
@@ -966,9 +958,9 @@ namespace FintrakBanking.Repositories.CRMS
 
                      select new CRMSTemplateViewModel
                      {
-                         CUSTOMERID =x.CUSTOMERID,
+                         CUSTOMERID = x.CUSTOMERID,
                          BENEFICIARY_ACCOUNT_NUMBER = c.PRODUCTACCOUNTNUMBER,
-                         EFFECTIVE_DATE = op.EFFECTIVEDATE == null || op.EFFECTIVEDATE.Year ==  year.Year ? x.EFFECTIVEDATE : op.EFFECTIVEDATE,
+                         EFFECTIVE_DATE = op.EFFECTIVEDATE == null || op.EFFECTIVEDATE.Year == year.Year ? x.EFFECTIVEDATE : op.EFFECTIVEDATE,
                          MATURITYDATE = op.MATURITYDATE == null || op.MATURITYDATE.Value.Year == year.Year ? x.MATURITYDATE : op.MATURITYDATE,
 
                          CREDIT_LIMIT = x.PRINCIPALAMOUNT,
@@ -976,43 +968,43 @@ namespace FintrakBanking.Repositories.CRMS
                          UNIQUE_IDENTIFICATION_TYPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
                          UNIQUE_IDENTIFICATION_NO = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
                          CREDIT_TYPE = context.TBL_CRMS_REGULATORY.Where(s => s.CRMSREGULATORYID == p.TBL_PRODUCT_BEHAVIOUR.Where(o => o.PRODUCTID == p.PRODUCTID).Select(o => o.CRMSREGULATORYID).FirstOrDefault()).Select(s => s.CODE).FirstOrDefault(),
-                        // CREDIT_PURPOSE_BY_BUSINESSLINES = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SECTORID).Select(o => o.CODE).FirstOrDefault(),
-                        // CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
+                         // CREDIT_PURPOSE_BY_BUSINESSLINES = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SECTORID).Select(o => o.CODE).FirstOrDefault(),
+                         // CREDIT_PURPOSE_BY_BUSINESSLINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
                          OUTSTANDING_AMOUNT = x.OUTSTANDINGPRINCIPAL,
                          CRMSCODE = x.CRMSCODE,
 
                          FEES = "",
                          //TENOR = (op.MATURITYDATE - op.EFFECTIVEDATE).TotalDays,
-                       REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
+                         REPAYMENT_AGREEMENT_MODE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(o => o.CODE).FirstOrDefault(),
                          LOCATION_OF_BENEFICIARY = context.TBL_CITY.Where(g => g.CITYID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CITYID).FirstOrDefault()).Select(g => g.CRMSCODE).FirstOrDefault(),
                          RELATIONSHIP_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSRELATIONSHIPTYPEID).Select(o => o.CODE).FirstOrDefault(),
                          COMPANY_SIZE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSCOMPANYSIZEID).Select(o => o.CODE).FirstOrDefault(),
                          FUNDING_SOURCE_CATEGORY = co.CURRENCYID == x.CURRENCYID ? "LCY" : "FCY",//a.CRMSFUNDINGSOURCECATEGORY,
                          ECCI_NUMBER = ld.CRMS_ECCI_NUMBER,
-                        REASON_FOR_RESTRUCTURING = op.REVIEWDETAILS,
-                        FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == ld.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
-                        // LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
-                        // CLASSIFICATION_BY_BUSINESS_LINES = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
-                        // CLASSIFICATION_BY_BUSINESS_LINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
-                        SPECIALISED_LOAN = ld.ISSPECIALISED ? "YES" : "NO",                                                                        // pending
-                                                                                                                                                   // SPECIALISED_LOAN_MORATORIUM_PERIOD =  ((DateTime)x.FIRSTPRINCIPALPAYMENTDATE - x.EFFECTIVEDATE).TotalDays,    // pending
+                         REASON_FOR_RESTRUCTURING = op.REVIEWDETAILS,
+                         FUNDING_SOURCE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == ld.CRMSFUNDINGSOURCEID).Select(o => o.CODE).FirstOrDefault(),
+                         // LEGAL_STATUS = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == b.CRMSLEGALSTATUSID).Select(o => o.CODE).FirstOrDefault(),
+                         // CLASSIFICATION_BY_BUSINESS_LINES = context.TBL_SECTOR.Where(o => o.SECTORID == a.TBL_SUB_SECTOR.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
+                         // CLASSIFICATION_BY_BUSINESS_LINES_SUB_SECTOR = context.TBL_SUB_SECTOR.Where(o => o.SUBSECTORID == a.SUBSECTORID).Select(o => o.CODE).FirstOrDefault(),
+                         SPECIALISED_LOAN = ld.ISSPECIALISED ? "YES" : "NO",                                                                        // pending
+                                                                                                                                                    // SPECIALISED_LOAN_MORATORIUM_PERIOD =  ((DateTime)x.FIRSTPRINCIPALPAYMENTDATE - x.EFFECTIVEDATE).TotalDays,    // pending
                          DIRECTOR_UNIQUE_IDENTIFIER = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CUSTOMERBVN).FirstOrDefault(),
-                       
+
                          //SYNDICATION = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "YES" : "NO",
                          //SYNDICATION_STATUS = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "MEMBER" : "NIL",//"IF(product tye is syndicationa by the product type (Austine))",
-                        // SYNDICATION_REF_NUMBER = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",// Pending,
+                         // SYNDICATION_REF_NUMBER = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",// Pending,
                          COLLATERAL_PRESENT = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANID == x.TERMLOANID).Any() ? "YES" : "NO",
                          COLLATERAL_SECURE = ld.SECUREDBYCOLLATERAL ? "YES" : "NO",
                          SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == context.TBL_LOAN_APPLICATION_DETAIL.Where(y => y.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(y => y.CRMSCOLLATERALTYPEID).FirstOrDefault()).Select(o => o.CODE).FirstOrDefault(),
-                         ADDRESS_OF_SECURITY = "",
-                         OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                         UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
-                         UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
-                         GUARANTEE = "", //if has collteral guarantee
-                         GUARANTEE_TYPE = "", //if has collteral guarantee
-                         GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
-                         GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                         AMOUNT_GUARANTEED = "", //amount
+                         ADDRESS_OF_SECURITY = collateralMpping.PROPERTYADDRESS,
+                         OWNER_OF_SECURITY = securityOwnerCustomerDetal.FIRSTNAME + " " + securityOwnerCustomerDetal.LASTNAME + "" + securityOwnerCustomerDetal.MIDDLENAME,
+                         UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID,
+                         UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID == 1 ? securityOwnerCustomerDetal.CUSTOMERBVN : securityOwnerCustomerDetal.TAXNUMBER,
+                         GUARANTEE = collateralGuarantee != null ? "YES" : "NO",
+                         GUARANTEE_TYPE = securityOwnerCustomerDetal.CUSTOMERTYPEID, //if has collteral guarantee
+                         GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = collateralGuarantee.BVN != null ? "BVN" : "TIN",
+                         GUARANTOR_UNIQUE_IDENTIFICATION = collateralGuarantee.BVN != null ? collateralGuarantee.BVN : collateralGuarantee.TAXNUMBER,
+                         AMOUNT_GUARANTEED = context.TBL_COLLATERAL_CUSTOMER.Where(p => p.COLLATERALCUSTOMERID == collateralGuarantee.COLLATERALCUSTOMERID).Select(p => p.COLLATERALVALUE).FirstOrDefault(),
                          FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
                          LOANID = x.TERMLOANID,
                          CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
@@ -1051,6 +1043,16 @@ namespace FintrakBanking.Repositories.CRMS
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
                          let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
                          let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+
+                         let collateralCustomer = context.TBL_LOAN_COLLATERAL_MAPPING.Join(context.TBL_COLLATERAL_CUSTOMER, mp => mp.COLLATERALCUSTOMERID, col => col.COLLATERALCUSTOMERID, (mp, col) =>
+                    new { mp, col }).Where(dd => dd.mp.LOANID == x.REVOLVINGLOANID).OrderByDescending(map => map.mp.LOANCOLLATERALMAPPINGID).Select(dd => dd).FirstOrDefault()
+
+                         let collateralMpping = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
+                         let securityOwnerCustomerDetal = context.TBL_CUSTOMER.Where(cus => cus.CUSTOMERID == collateralCustomer.col.CUSTOMERID).Select(cus => cus).FirstOrDefault()
+
+                         let collateralGuarantee = context.TBL_COLLATERAL_GAURANTEE.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
                          where x.COMPANYID == param.companyId && x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
                          && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
@@ -1088,23 +1090,23 @@ namespace FintrakBanking.Repositories.CRMS
                              SPECIALISED_LOAN = ld.ISSPECIALISED ? "YES" : "NO",                                                                        // pending
                                                                                                                                                         // SPECIALISED_LOAN_MORATORIUM_PERIOD =  ((DateTime)x.FIRSTPRINCIPALPAYMENTDATE - x.EFFECTIVEDATE).TotalDays,    // pending
                              DIRECTOR_UNIQUE_IDENTIFIER = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CUSTOMERBVN).FirstOrDefault(),
-                            
+
                              //SYNDICATION = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "YES" : "NO",
                              //SYNDICATION_STATUS = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "MEMBER" : "NIL",//"IF(product tye is syndicationa by the product type (Austine))",
                              // SYNDICATION_REF_NUMBER = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",// Pending,
                              COLLATERAL_PRESENT = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANID == x.REVOLVINGLOANID).Any() ? "YES" : "NO",
                              COLLATERAL_SECURE = ld.SECUREDBYCOLLATERAL ? "YES" : "NO",
-                             //SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
-                             ADDRESS_OF_SECURITY = "",
-                             OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                             UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
-                             UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
-                             GUARANTEE = "", //if has collteral guarantee
-                             GUARANTEE_TYPE = "", //if has collteral guarantee
-                             GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
-                             GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                             AMOUNT_GUARANTEED = "", //amount
-                                                     // FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
+                             SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == context.TBL_LOAN_APPLICATION_DETAIL.Where(y => y.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(y => y.CRMSCOLLATERALTYPEID).FirstOrDefault()).Select(o => o.CODE).FirstOrDefault(),
+                             ADDRESS_OF_SECURITY = collateralMpping.PROPERTYADDRESS,
+                             OWNER_OF_SECURITY = securityOwnerCustomerDetal.FIRSTNAME + " " + securityOwnerCustomerDetal.LASTNAME + "" + securityOwnerCustomerDetal.MIDDLENAME,
+                             UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID,
+                             UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID == 1 ? securityOwnerCustomerDetal.CUSTOMERBVN : securityOwnerCustomerDetal.TAXNUMBER,
+                             GUARANTEE = collateralGuarantee != null ? "YES" : "NO",
+                             GUARANTEE_TYPE = securityOwnerCustomerDetal.CUSTOMERTYPEID, //if has collteral guarantee
+                             GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = collateralGuarantee.BVN != null ? "BVN" : "TIN",
+                             GUARANTOR_UNIQUE_IDENTIFICATION = collateralGuarantee.BVN != null ? collateralGuarantee.BVN : collateralGuarantee.TAXNUMBER,
+                             AMOUNT_GUARANTEED = context.TBL_COLLATERAL_CUSTOMER.Where(p => p.COLLATERALCUSTOMERID == collateralGuarantee.COLLATERALCUSTOMERID).Select(p => p.COLLATERALVALUE).FirstOrDefault(),
+                             // FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
                              LOANID = x.REVOLVINGLOANID,
                              CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
 
@@ -1144,6 +1146,16 @@ namespace FintrakBanking.Repositories.CRMS
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
                           let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
                           let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+
+                          let collateralCustomer = context.TBL_LOAN_COLLATERAL_MAPPING.Join(context.TBL_COLLATERAL_CUSTOMER, mp => mp.COLLATERALCUSTOMERID, col => col.COLLATERALCUSTOMERID, (mp, col) =>
+                    new { mp, col }).Where(dd => dd.mp.LOANID == x.CONTINGENTLOANID).OrderByDescending(map => map.mp.LOANCOLLATERALMAPPINGID).Select(dd => dd).FirstOrDefault()
+
+                          let collateralMpping = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
+                          let securityOwnerCustomerDetal = context.TBL_CUSTOMER.Where(cus => cus.CUSTOMERID == collateralCustomer.col.CUSTOMERID).Select(cus => cus).FirstOrDefault()
+
+                          let collateralGuarantee = context.TBL_COLLATERAL_GAURANTEE.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
                           where x.COMPANYID == param.companyId && x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility
                           && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
@@ -1181,23 +1193,23 @@ namespace FintrakBanking.Repositories.CRMS
                               SPECIALISED_LOAN = ld.ISSPECIALISED ? "YES" : "NO",                                                                        // pending
                                                                                                                                                          // SPECIALISED_LOAN_MORATORIUM_PERIOD =  ((DateTime)x.FIRSTPRINCIPALPAYMENTDATE - x.EFFECTIVEDATE).TotalDays,    // pending
                               DIRECTOR_UNIQUE_IDENTIFIER = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.CUSTOMERBVN).FirstOrDefault(),
-                             
+
                               //SYNDICATION = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "YES" : "NO",
                               //SYNDICATION_STATUS = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? "MEMBER" : "NIL",//"IF(product tye is syndicationa by the product type (Austine))",
                               // SYNDICATION_REF_NUMBER = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",// Pending,
                               COLLATERAL_PRESENT = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANID == x.CONTINGENTLOANID).Any() ? "YES" : "NO",
                               COLLATERAL_SECURE = ld.SECUREDBYCOLLATERAL ? "YES" : "NO",
-                              //SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
-                              ADDRESS_OF_SECURITY = "",
-                              OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                              UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
-                              UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
-                              GUARANTEE = "", //if has collteral guarantee
-                              GUARANTEE_TYPE = "", //if has collteral guarantee
-                              GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
-                              GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                              AMOUNT_GUARANTEED = "", //amount
-                                                      // FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
+                              SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == context.TBL_LOAN_APPLICATION_DETAIL.Where(y => y.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(y => y.CRMSCOLLATERALTYPEID).FirstOrDefault()).Select(o => o.CODE).FirstOrDefault(),
+                              ADDRESS_OF_SECURITY = collateralMpping.PROPERTYADDRESS,
+                              OWNER_OF_SECURITY = securityOwnerCustomerDetal.FIRSTNAME + " " + securityOwnerCustomerDetal.LASTNAME + "" + securityOwnerCustomerDetal.MIDDLENAME,
+                              UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID,
+                              UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID == 1 ? securityOwnerCustomerDetal.CUSTOMERBVN : securityOwnerCustomerDetal.TAXNUMBER,
+                              GUARANTEE = collateralGuarantee != null ? "YES" : "NO",
+                              GUARANTEE_TYPE = securityOwnerCustomerDetal.CUSTOMERTYPEID, //if has collteral guarantee
+                              GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = collateralGuarantee.BVN != null ? "BVN" : "TIN",
+                              GUARANTOR_UNIQUE_IDENTIFICATION = collateralGuarantee.BVN != null ? collateralGuarantee.BVN : collateralGuarantee.TAXNUMBER,
+                              AMOUNT_GUARANTEED = context.TBL_COLLATERAL_CUSTOMER.Where(p => p.COLLATERALCUSTOMERID == collateralGuarantee.COLLATERALCUSTOMERID).Select(p => p.COLLATERALVALUE).FirstOrDefault(),
+                              // FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
                               LOANID = x.CONTINGENTLOANID,
                               CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
 
@@ -1219,7 +1231,7 @@ namespace FintrakBanking.Repositories.CRMS
                               LOANREVIEWOPERATIONID = op.LOANREVIEWOPERATIONID
 
                           }).ToList();
-                               
+
 
             var data = tLoan.Union(revolving).Union(contingent).AsQueryable();
 
@@ -1362,13 +1374,13 @@ namespace FintrakBanking.Repositories.CRMS
                          SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
                          ADDRESS_OF_SECURITY = "",
                          OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                         UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
+                                                 //  UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
                          UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
                          GUARANTEE = "", //if has collteral guarantee
-                         GUARANTEE_TYPE = "", //if has collteral guarantee
+                         GUARANTEE_TYPE = null, //if has collteral guarantee
                          GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
                          GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                         AMOUNT_GUARANTEED = "", //amount
+                         AMOUNT_GUARANTEED = null, //amount
                          FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
                          LOANID = x.TERMLOANID,
                          CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
@@ -1390,7 +1402,7 @@ namespace FintrakBanking.Repositories.CRMS
                          TOTAL_CUSTOMER_INDUCED_DEBIT_AMT = 0,
                          TOTAL_CUSTOMER_INDUCED_DEBIT_TRN_TYPE = "TRF",
                          UNAMORTIZED_CREDIT_CHARGES = 0,
-                        //LIQUIDATION = x.OUTSTANDINGPRINCIPAL + x.PASTDUEPRINCIPAL == 0 ? "NO": "YES",
+                         //LIQUIDATION = x.OUTSTANDINGPRINCIPAL + x.PASTDUEPRINCIPAL == 0 ? "NO": "YES",
                          REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
                          //600
@@ -1453,13 +1465,13 @@ namespace FintrakBanking.Repositories.CRMS
                              SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
                              ADDRESS_OF_SECURITY = "",
                              OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                             UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
+                                                     // UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
                              UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
                              GUARANTEE = "", //if has collteral guarantee
-                             GUARANTEE_TYPE = "", //if has collteral guarantee
+                             GUARANTEE_TYPE = null, //if has collteral guarantee
                              GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
                              GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                             AMOUNT_GUARANTEED = "", //amount
+                             AMOUNT_GUARANTEED = null, //amount
                              //FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
                              LOANID = x.REVOLVINGLOANID,
                              CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
@@ -1475,7 +1487,7 @@ namespace FintrakBanking.Repositories.CRMS
                              SYNDICATION_NAME = a.FIELD2,
                              SYNDICATION_TOTAL_AMOUNT = a.FIELD3,
                              PARTICIPATING_BANK_CODE = "",
-                             PERFORMANCE_REPAYMENT_STATUS = x.USER_PRUDENTIAL_GUIDE_STATUSID == 1 ? "100" : "103" ,
+                             PERFORMANCE_REPAYMENT_STATUS = x.USER_PRUDENTIAL_GUIDE_STATUSID == 1 ? "100" : "103",
 
                              //PERFORMANCE_REPAYMENT_STATUS = context.TBL_CRMS_REGULATORY.Where(cr => cr.CRMSREGULATORYID == x.CRMSREPAYMENTAGREEMENTID).Select(s => s.DESCRIPTION).FirstOrDefault(),
                              TOTAL_BANK_INDUCED_DEBIT_BANK_CHARGES = 0,
@@ -1503,7 +1515,7 @@ namespace FintrakBanking.Repositories.CRMS
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
                           let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
                           let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
-                          where  x.COMPANYID == param.companyId
+                          where x.COMPANYID == param.companyId
 
                           select new CRMSTemplateViewModel
                           {
@@ -1544,13 +1556,13 @@ namespace FintrakBanking.Repositories.CRMS
                               SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
                               ADDRESS_OF_SECURITY = "",
                               OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                              UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
+                                                      //  UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
                               UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
                               GUARANTEE = "", //if has collteral guarantee
-                              GUARANTEE_TYPE = "", //if has collteral guarantee
+                              GUARANTEE_TYPE = null, //if has collteral guarantee
                               GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
                               GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                              AMOUNT_GUARANTEED = "", //amount
+                              AMOUNT_GUARANTEED = null, //amount
                               //FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
                               LOANID = x.CONTINGENTLOANID,
                               CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
@@ -1583,8 +1595,6 @@ namespace FintrakBanking.Repositories.CRMS
 
             return data;
         }
-
-     
 
         private CRMSRecord GenerateCRMS400A(CRMSViewModel param)
         {
@@ -1679,43 +1689,43 @@ namespace FintrakBanking.Repositories.CRMS
         {
             var operationRollOver = CommonHelpers.GetRolloverOperations();
             var term = (from x in context.TBL_LOAN
-                       join l in context.TBL_LOAN_REVIEW_OPERATION on x.TERMLOANID equals l.LOANID
-                       join opn in context.TBL_OPERATIONS on l.OPERATIONTYPEID equals opn.OPERATIONID
-                       join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                       join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
-                       //join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
-                       where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                       && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
-                       && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
-                       && operationRollOver.Contains((short)l.OPERATIONTYPEID)
+                        join l in context.TBL_LOAN_REVIEW_OPERATION on x.TERMLOANID equals l.LOANID
+                        join opn in context.TBL_OPERATIONS on l.OPERATIONTYPEID equals opn.OPERATIONID
+                        join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                        join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
+                        //join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                        where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                        && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                        && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility
+                        && operationRollOver.Contains((short)l.OPERATIONTYPEID)
                         select new CRMSTemplateViewModel
-                       {
-                           ACCOUNT = c.PRODUCTACCOUNTNUMBER,
+                        {
+                            ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                             MATURITYDATE = l.MATURITYDATE == null ? x.MATURITYDATE : l.MATURITYDATE,
-                           EFFECTIVE_DATE = l.EFFECTIVEDATE == null ? x.EFFECTIVEDATE : l.EFFECTIVEDATE,
-                           //TENOR = x.EFFECTIVEDATE - x.MATURITYDATE,
-                           ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
-                           ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
-                           CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
-                           CRMSCODE = x.CRMSCODE,
-                           OPERATION_NAME = opn.OPERATIONNAME,
-                           DATETIMECREATED = l.DATECREATED,
-                           REFERENCENUMBER = x.LOANREFERENCENUMBER,
+                            EFFECTIVE_DATE = l.EFFECTIVEDATE == null ? x.EFFECTIVEDATE : l.EFFECTIVEDATE,
+                            //TENOR = x.EFFECTIVEDATE - x.MATURITYDATE,
+                            ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
+                            ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
+                            CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
+                            CRMSCODE = x.CRMSCODE,
+                            OPERATION_NAME = opn.OPERATIONNAME,
+                            DATETIMECREATED = l.DATECREATED,
+                            REFERENCENUMBER = x.LOANREFERENCENUMBER,
 
-                       }).ToList();
+                        }).ToList();
             var OD = (from x in context.TBL_LOAN_REVOLVING
-                     join l in context.TBL_LOAN_REVIEW_OPERATION on x.REVOLVINGLOANID equals l.LOANID
+                      join l in context.TBL_LOAN_REVIEW_OPERATION on x.REVOLVINGLOANID equals l.LOANID
                       join opn in context.TBL_OPERATIONS on l.OPERATIONTYPEID equals opn.OPERATIONID
                       join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
-                     join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                    // join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
-                     where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                     && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
-                       && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
-                      && operationRollOver.Contains((short)l.OPERATIONTYPEID)
+                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                      // join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                      where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                        && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.OverdraftFacility
+                       && operationRollOver.Contains((short)l.OPERATIONTYPEID)
                       select new CRMSTemplateViewModel
-                     {
-                         ACCOUNT = c.PRODUCTACCOUNTNUMBER,
+                      {
+                          ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                           ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
                           ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
                           CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
@@ -1728,18 +1738,18 @@ namespace FintrakBanking.Repositories.CRMS
                           REFERENCENUMBER = x.LOANREFERENCENUMBER,
                       }).ToList();
             var contingent = (from x in context.TBL_LOAN_CONTINGENT
-                             join l in context.TBL_LOAN_REVIEW_OPERATION on x.CONTINGENTLOANID equals l.LOANID
+                              join l in context.TBL_LOAN_REVIEW_OPERATION on x.CONTINGENTLOANID equals l.LOANID
                               join opn in context.TBL_OPERATIONS on l.OPERATIONTYPEID equals opn.OPERATIONID
                               join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
-                             join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
-                            // join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
-                             where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
-                             && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
-                             && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
-                             && operationRollOver.Contains((short)l.OPERATIONTYPEID)
+                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
+                              // join d in context.TBL_CUSTOMER_COMPANY_DIRECTOR on x.CUSTOMERID equals d.CUSTOMERID
+                              where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
+                              && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                              && x.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.ContingentLiability
+                              && operationRollOver.Contains((short)l.OPERATIONTYPEID)
                               select new CRMSTemplateViewModel
-                             {
-                                 ACCOUNT = c.PRODUCTACCOUNTNUMBER,
+                              {
+                                  ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                                   ID_TTPE = b.CUSTOMERTYPEID == 2 ? "TIN" : "BVN",
                                   ID_DETAIL = b.TAXNUMBER != null ? b.TAXNUMBER : b.CUSTOMERBVN,
                                   CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
@@ -2015,10 +2025,20 @@ namespace FintrakBanking.Repositories.CRMS
                      join co in context.TBL_COMPANY on x.COMPANYID equals co.COMPANYID
 
                      let lgaId = context.TBL_CUSTOMER_ADDRESS
-                     .Join(context.TBL_CITY, q=>q.CITYID,ci=>ci.CITYID, (q,ci)=> new { q, ci}).Where(f=>f.q.CUSTOMERID==b.CUSTOMERID)
-                     .Select(q=>q.ci.LOCALGOVERNMENTID).FirstOrDefault()
-                     let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa=>aa.LOCALGOVERNMENTID==lgaId).Select(aa=>aa.LGACODE).FirstOrDefault()
+                     .Join(context.TBL_CITY, q => q.CITYID, ci => ci.CITYID, (q, ci) => new { q, ci }).Where(f => f.q.CUSTOMERID == b.CUSTOMERID)
+                     .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
+                     let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
                      let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+
+                     let collateralCustomer = context.TBL_LOAN_COLLATERAL_MAPPING.Join(context.TBL_COLLATERAL_CUSTOMER, mp => mp.COLLATERALCUSTOMERID, col => col.COLLATERALCUSTOMERID, (mp, col) =>
+                   new { mp, col }).Where(dd => dd.mp.LOANID == x.TERMLOANID).OrderByDescending(map => map.mp.LOANCOLLATERALMAPPINGID).Select(dd => dd).FirstOrDefault()
+
+                     let collateralMpping = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
+                     let securityOwnerCustomerDetal = context.TBL_CUSTOMER.Where(cus => cus.CUSTOMERID == collateralCustomer.col.CUSTOMERID).Select(cus => cus).FirstOrDefault()
+
+                     let collateralGuarantee = context.TBL_COLLATERAL_GAURANTEE.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
                      where x.CRMSCODE == null && x.COMPANYID == param.companyId
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
@@ -2057,16 +2077,16 @@ namespace FintrakBanking.Repositories.CRMS
                          SYNDICATION_REF_NUMBER = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",// Pending,
                          COLLATERAL_PRESENT = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANID == x.TERMLOANID).Any() ? "YES" : "NO",
                          COLLATERAL_SECURE = a.SECUREDBYCOLLATERAL ? "YES" : "NO",
-                         SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
-                         ADDRESS_OF_SECURITY = "",
-                         OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                         UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
-                         UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
-                         GUARANTEE = "", //if has collteral guarantee
-                         GUARANTEE_TYPE = "", //if has collteral guarantee
-                         GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
-                         GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                         AMOUNT_GUARANTEED = "", //amount
+                         SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == context.TBL_LOAN_APPLICATION_DETAIL.Where(y => y.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(y => y.CRMSCOLLATERALTYPEID).FirstOrDefault()).Select(o => o.CODE).FirstOrDefault(),
+                         ADDRESS_OF_SECURITY = collateralMpping.PROPERTYADDRESS,
+                         OWNER_OF_SECURITY = securityOwnerCustomerDetal.FIRSTNAME + " " + securityOwnerCustomerDetal.LASTNAME + "" + securityOwnerCustomerDetal.MIDDLENAME,
+                         UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID,
+                         UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID == 1 ? securityOwnerCustomerDetal.CUSTOMERBVN : securityOwnerCustomerDetal.TAXNUMBER,
+                         GUARANTEE = collateralGuarantee != null ? "YES" : "NO",
+                         GUARANTEE_TYPE = securityOwnerCustomerDetal.CUSTOMERTYPEID, //if has collteral guarantee
+                         GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = collateralGuarantee.BVN != null ? "BVN" : "TIN",
+                         GUARANTOR_UNIQUE_IDENTIFICATION = collateralGuarantee.BVN != null ? collateralGuarantee.BVN : collateralGuarantee.TAXNUMBER,
+                         AMOUNT_GUARANTEED = context.TBL_COLLATERAL_CUSTOMER.Where(p => p.COLLATERALCUSTOMERID == collateralGuarantee.COLLATERALCUSTOMERID).Select(p => p.COLLATERALVALUE).FirstOrDefault(),
                          FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
                          LOANID = x.TERMLOANID,
                          CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
@@ -2100,6 +2120,15 @@ namespace FintrakBanking.Repositories.CRMS
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
                          let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
                          let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+                         let collateralCustomer = context.TBL_LOAN_COLLATERAL_MAPPING.Join(context.TBL_COLLATERAL_CUSTOMER, mp => mp.COLLATERALCUSTOMERID, col => col.COLLATERALCUSTOMERID, (mp, col) =>
+                   new { mp, col }).Where(dd => dd.mp.LOANID == x.REVOLVINGLOANID).OrderByDescending(map => map.mp.LOANCOLLATERALMAPPINGID).Select(dd => dd).FirstOrDefault()
+
+                         let collateralMpping = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
+                         let securityOwnerCustomerDetal = context.TBL_CUSTOMER.Where(cus => cus.CUSTOMERID == collateralCustomer.col.CUSTOMERID).Select(cus => cus).FirstOrDefault()
+
+                         let collateralGuarantee = context.TBL_COLLATERAL_GAURANTEE.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
                          where x.CRMSCODE == null && x.COMPANYID == param.companyId
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
@@ -2136,18 +2165,16 @@ namespace FintrakBanking.Repositories.CRMS
                              SYNDICATION_REF_NUMBER = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",// Pending,
                              COLLATERAL_PRESENT = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANID == x.REVOLVINGLOANID).Any() ? "YES" : "NO",
                              COLLATERAL_SECURE = a.SECUREDBYCOLLATERAL ? "YES" : "NO",
-                             SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
-                             ADDRESS_OF_SECURITY = "",
-                             OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                             UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
-                             UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
-                             GUARANTEE = "", //if has collteral guarantee
-                             GUARANTEE_TYPE = "", //if has collteral guarantee
-                             GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
-                             GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                             AMOUNT_GUARANTEED = "", //amount
-                             //FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
-                             LOANID = x.REVOLVINGLOANID,
+                             SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == context.TBL_LOAN_APPLICATION_DETAIL.Where(y => y.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(y => y.CRMSCOLLATERALTYPEID).FirstOrDefault()).Select(o => o.CODE).FirstOrDefault(),
+                             ADDRESS_OF_SECURITY = collateralMpping.PROPERTYADDRESS,
+                             OWNER_OF_SECURITY = securityOwnerCustomerDetal.FIRSTNAME + " " + securityOwnerCustomerDetal.LASTNAME + "" + securityOwnerCustomerDetal.MIDDLENAME,
+                             UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID,
+                             UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID == 1 ? securityOwnerCustomerDetal.CUSTOMERBVN : securityOwnerCustomerDetal.TAXNUMBER,
+                             GUARANTEE = collateralGuarantee != null ? "YES" : "NO",
+                             GUARANTEE_TYPE = securityOwnerCustomerDetal.CUSTOMERTYPEID , //if has collteral guarantee
+                             GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = collateralGuarantee.BVN != null ? "BVN" : "TIN",
+                             GUARANTOR_UNIQUE_IDENTIFICATION = collateralGuarantee.BVN != null ? collateralGuarantee.BVN : collateralGuarantee.TAXNUMBER,
+                             AMOUNT_GUARANTEED = context.TBL_COLLATERAL_CUSTOMER.Where(p => p.COLLATERALCUSTOMERID == collateralGuarantee.COLLATERALCUSTOMERID).Select(p => p.COLLATERALVALUE).FirstOrDefault(),
                              CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
 
                              //100
@@ -2179,6 +2206,16 @@ namespace FintrakBanking.Repositories.CRMS
                      .Select(q => q.ci.LOCALGOVERNMENTID).FirstOrDefault()
                           let lgaCode = context.TBL_LOCALGOVERNMENT.Where(aa => aa.LOCALGOVERNMENTID == lgaId).Select(aa => aa.LGACODE).FirstOrDefault()
                           let stateCode = context.TBL_STATE.Where(x => x.STATEID == context.TBL_CUSTOMER_ADDRESS.Where(o => o.CUSTOMERID == b.CUSTOMERID).Select(o => o.STATEID).FirstOrDefault()).Select(x => x.STATECODE).FirstOrDefault()
+
+                          let collateralCustomer = context.TBL_LOAN_COLLATERAL_MAPPING.Join(context.TBL_COLLATERAL_CUSTOMER, mp => mp.COLLATERALCUSTOMERID, col => col.COLLATERALCUSTOMERID, (mp, col) =>
+                                             new { mp, col }).Where(dd => dd.mp.LOANID == x.CONTINGENTLOANID).OrderByDescending(map => map.mp.LOANCOLLATERALMAPPINGID).Select(dd => dd).FirstOrDefault()
+
+                          let collateralMpping = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
+                          let securityOwnerCustomerDetal = context.TBL_CUSTOMER.Where(cus => cus.CUSTOMERID == collateralCustomer.col.CUSTOMERID).Select(cus => cus).FirstOrDefault()
+
+                          let collateralGuarantee = context.TBL_COLLATERAL_GAURANTEE.Where(mo => mo.COLLATERALCUSTOMERID == collateralCustomer.mp.COLLATERALCUSTOMERID).Select(mo => mo).FirstOrDefault()
+
                           where x.CRMSCODE == null && x.COMPANYID == param.companyId
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
@@ -2215,16 +2252,16 @@ namespace FintrakBanking.Repositories.CRMS
                               SYNDICATION_REF_NUMBER = (a.PROPOSEDPRODUCTID == (int)LoanProductTypeEnum.SyndicatedTermLoan) ? a.FIELD1 : "NIL",// Pending,
                               COLLATERAL_PRESENT = context.TBL_LOAN_COLLATERAL_MAPPING.Where(o => o.LOANID == x.CONTINGENTLOANID).Any() ? "YES" : "NO",
                               COLLATERAL_SECURE = a.SECUREDBYCOLLATERAL ? "YES" : "NO",
-                              SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == a.CRMSCOLLATERALTYPEID).Select(o => o.CODE).FirstOrDefault(),
-                              ADDRESS_OF_SECURITY = "",
-                              OWNER_OF_SECURITY = "", //cusmerId map to collateral - highest value
-                              UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = "", //tin/bvn
-                              UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = "", //tin/bvn
-                              GUARANTEE = "", //if has collteral guarantee
-                              GUARANTEE_TYPE = "", //if has collteral guarantee
-                              GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = "", //TIN/BVN
-                              GUARANTOR_UNIQUE_IDENTIFICATION = "", //TIN/BVN
-                              AMOUNT_GUARANTEED = "", //amount
+                              SECURITY_TYPE = context.TBL_CRMS_REGULATORY.Where(o => o.CRMSREGULATORYID == context.TBL_LOAN_APPLICATION_DETAIL.Where(y => y.LOANAPPLICATIONDETAILID == x.LOANAPPLICATIONDETAILID).Select(y => y.CRMSCOLLATERALTYPEID).FirstOrDefault()).Select(o => o.CODE).FirstOrDefault(),
+                              ADDRESS_OF_SECURITY = collateralMpping.PROPERTYADDRESS,
+                              OWNER_OF_SECURITY = securityOwnerCustomerDetal.FIRSTNAME + " " + securityOwnerCustomerDetal.LASTNAME + "" + securityOwnerCustomerDetal.MIDDLENAME,
+                              UNIQUE_IDENTIFICATION_TYPE_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID,
+                              UNIQUE_IDENTIFIER_OF_SECURITY_OWNER = securityOwnerCustomerDetal.CUSTOMERTYPEID == 1 ? securityOwnerCustomerDetal.CUSTOMERBVN : securityOwnerCustomerDetal.TAXNUMBER,
+                              GUARANTEE = collateralGuarantee != null ? "YES" : "NO",
+                              GUARANTEE_TYPE = securityOwnerCustomerDetal.CUSTOMERTYPEID, //if has collteral guarantee
+                              GUARANTOR_UNIQUE_IDENTIFICATION_TYPE = collateralGuarantee.BVN != null ? "BVN" : "TIN",
+                              GUARANTOR_UNIQUE_IDENTIFICATION = collateralGuarantee.BVN != null ? collateralGuarantee.BVN : collateralGuarantee.TAXNUMBER,
+                              AMOUNT_GUARANTEED = context.TBL_COLLATERAL_CUSTOMER.Where(p => p.COLLATERALCUSTOMERID == collateralGuarantee.COLLATERALCUSTOMERID).Select(p => p.COLLATERALVALUE).FirstOrDefault(),
                               //FIRSTPRINCIPALPAYMENTDATE = x.FIRSTPRINCIPALPAYMENTDATE,
                               LOANID = x.CONTINGENTLOANID,
                               CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID,
@@ -2248,6 +2285,18 @@ namespace FintrakBanking.Repositories.CRMS
             var data = tLoan.Union(revolving).Union(contingent).AsQueryable();
 
             return data;
+        }
+        private CRMSRecord GenerateCRMS400BTemplate(CRMSViewModel param)
+        {
+
+
+            var result = GenerateCRMSReport400B(param);
+            result = result.Where(x => x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Government && x.CRMSLEGALSTATUSID != (int)CRMSRegulatory.Parastatals_MDA);
+            if (result == null)
+                throw new ConditionNotMetException("Record Not Found For T300");
+
+            return GenerateCRMS400BTemplate(result.ToList(), param);
+
         }
 
         private CRMSRecord GenerateCRMS300Template(CRMSViewModel param)
@@ -2286,16 +2335,7 @@ namespace FintrakBanking.Repositories.CRMS
 
             return GenerateCRMS600Template(result.ToList());
         }
-        private CRMSRecord GenerateCRMS300Fees(CRMSViewModel param)
-        {
-            return GenerateCRMS300Fee(param);
-        }
-        private CRMSRecord GenerateCRMS300Directors(CRMSViewModel param)
-        {
-            return GenerateCRMS300Director(param);
-        }
-
-        public CRMSRecord GenerateCBNReport(CRMSViewModel param)
+         public CRMSRecord GenerateCBNReport(CRMSViewModel param)
         {
             if (param.templateTypeId == (int)CRMSTemplate.Template100)
             {
@@ -2312,14 +2352,6 @@ namespace FintrakBanking.Repositories.CRMS
             else if (param.templateTypeId == (int)CRMSTemplate.Template600)
             {
                 return GenerateCRMS600Template(param);
-            }
-            else if (param.templateTypeId == (int)CRMSTemplate.Template300Fee)
-            {
-                return GenerateCRMS300Fee(param);
-            }
-            else if (param.templateTypeId == (int)CRMSTemplate.Template300Directors)
-            {
-                return GenerateCRMS300Director(param);
             }
             else if (param.templateTypeId == (int)CRMSTemplate.Template400A)
             {
