@@ -64,6 +64,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool DeleteProductPriceIndexCurrency(int priceIndexCurrencyId, UserInfo user);
         List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId);
 
+        List<ProductPriceIndexViewModel> GetProductPriceIndexByCurrencyId( int currencyId);
+
         #endregion Product Price Index
 
         #region Product Group
