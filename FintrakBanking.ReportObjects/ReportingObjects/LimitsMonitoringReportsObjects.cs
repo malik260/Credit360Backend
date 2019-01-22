@@ -271,6 +271,38 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
             
         }  //done
 
+
+        
+            //}
+            //else
+            //{
+            //    List<LoanViewModel> npl = (from a in context.TBL_LOAN_APPLICATION
+            //                               join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
+            //                               join b in context.TBL_LOAN on d.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+            //                               join e in context.TBL_LOAN_PRUDENTIALGUIDELINE on b.EXT_PRUDENT_GUIDELINE_STATUSID equals e.PRUDENTIALGUIDELINESTATUSID
+            //                               //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
+            //                               where e.PRUDENTIALGUIDELINETYPEID != (int)LoanPrudentialStatusEnum.Performing //b.INT_PRUDENT_GUIDELINE_STATUSID
+            //                               && b.BOOKINGDATE >= startDate && b.BOOKINGDATE <= endDate
+            //                               select new LoanViewModel
+            //                               {
+            //                                   applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+            //                                   loanReferenceNumber = b.LOANREFERENCENUMBER,
+            //                                   bookingDate = b.BOOKINGDATE,
+            //                                   disburseDate = b.DISBURSEDATE,
+            //                                   nplDate = (DateTime?)b.NPLDATE,
+            //                                   outstandingInterest = b.OUTSTANDINGINTEREST,
+            //                                   outstandingPrincipal = b.OUTSTANDINGPRINCIPAL,
+            //                                   loanTypeName = b.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.TBL_LOAN_APPLICATION_TYPE.LOANAPPLICATIONTYPENAME,
+            //                                   externalPrudentialGuidelineStatus = b.TBL_LOAN_PRUDENTIALGUIDELINE.STATUSNAME,
+            //                                   productName = d.TBL_PRODUCT.PRODUCTNAME
+            //                               }).ToList();
+            //    return npl;
+            //}
+
+
+       
+
+
         public List<LoanViewModel> SelfLiquidatingLoan(DateTime startDate, DateTime endDate)
         {
             List<LoanViewModel> selfLiquidatingLoan = (from a in context.TBL_LOAN
