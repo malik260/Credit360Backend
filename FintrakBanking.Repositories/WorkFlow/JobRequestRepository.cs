@@ -1654,7 +1654,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                dateTimeDeleted = x.DATETIMECREATED,
                                jobTypeId = x.JOBTYPEID,
                                dateTimeCreated = x.DATETIMECREATED,
-                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME + " - (" +o.STAFFCODE +")" ).FirstOrDefault(),
                                jobTypeName = context.TBL_JOB_TYPE.Where(o => o.JOBTYPEID == x.JOBTYPEID).Select(o => o.JOBTYPENAME).FirstOrDefault(),
 
                            }).ToList();
@@ -2587,10 +2587,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {
+                    int position = (short) context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Count() ;
                     jobFeedback = new TBL_JOB_REQUEST_STATUS_FEEDBAK()
                     {
                         JOBTYPEID = feedback.jobTypeId,
-                        JOB_STATUS_FEEDBACKID = feedback.jobStatusFeedbackId,
+                        JOB_STATUS_FEEDBACKID = (short)position++,
                         JOB_STATUS_FEEDBACK_NAME = feedback.jobStatusFeedbackName,
                         REQUESTSTATUSID = feedback.requestStatusId,
                     };

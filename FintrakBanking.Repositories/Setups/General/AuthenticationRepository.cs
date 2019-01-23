@@ -149,7 +149,10 @@ namespace FintrakBanking.Repositories.Setups.General
                     })
                     .FirstOrDefault();
 
-            if (user == null) throw new SecureException("1001 Login Failure.");
+            if (user == null) throw new SecureException("The user is not registered in the application. Contact the system administrator."); 
+            
+
+            //if (user.password != password) throw new SecureException("1001 Login Failure.");
 
             result.grantMessage = "valid";
             if (!user.isActive) result.grantMessage = "This account is INACTIVE";

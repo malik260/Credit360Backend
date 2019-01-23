@@ -100,7 +100,8 @@ namespace FintrakBanking.APICore.Providers
                     }
                     else
                     {
-                        context.SetError("invalid_grant", "The user is not registered in the application. Contact the system administrator.");
+                        
+                        context.SetError("1001 Login Failure.");
                         return;
                     }
                 }
