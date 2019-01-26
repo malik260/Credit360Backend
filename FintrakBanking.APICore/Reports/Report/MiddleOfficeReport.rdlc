@@ -465,7 +465,6 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
-                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -668,7 +667,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!dateTimeCreated.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>dd/MM/yyyy HH:MM:ss tt</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -968,7 +969,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!invoiceDate.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>dd/MM/yyyy HH:MM:ss tt</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1148,7 +1151,9 @@
                           <TextRuns>
                             <TextRun>
                               <Value>=Fields!dateTimeUpdated.Value</Value>
-                              <Style />
+                              <Style>
+                                <Format>dd/MM/yyyy HH:MM:ss tt</Format>
+                              </Style>
                             </TextRun>
                           </TextRuns>
                           <Style />
@@ -1208,7 +1213,7 @@
         <Top>0.80083in</Top>
         <Left>0.4675in</Left>
         <Height>0.5in</Height>
-        <Width>26.20833in</Width>
+        <Width>26.20832in</Width>
         <Style>
           <Border>
             <Style>None</Style>

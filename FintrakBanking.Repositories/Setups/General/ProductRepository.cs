@@ -2634,14 +2634,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+            bool status;
 
-            var status = this.SaveAll();
-
-            if (status)
+            try
             {
-                return prodPriceIndexCurrency;
+                 status = this.context.SaveChanges() > 0;
+                if (status) { return prodPriceIndexCurrency; }
+                else
+                    return null;
             }
-            else
+            catch (Exception ex)
+            {
+                var det = ex;
+            }
+            //var status = this.SaveAll();
+
+            //if (status)
+            //{
+                
+            //}
+            //else
                 return null;
         }
 

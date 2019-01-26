@@ -149,7 +149,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     })
                     .FirstOrDefault();
 
-            if (user == null) throw new SecureException("1001 Login Failure.");
+            if (user == null) throw new SecureException("The user is not registered in the application. Contact the system administrator.");
 
             result.grantMessage = "valid";
             if (!user.isActive) result.grantMessage = "This account is INACTIVE";
@@ -354,6 +354,12 @@ namespace FintrakBanking.Repositories.Setups.General
             FinTrakBankingContext db = new FinTrakBankingContext();
             TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
             prosett = db.TBL_PROFILE_SETTING.FirstOrDefault();
+            var AD = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+
+            if (AD.USE_ACTIVE_DIRECTORY == true)
+            {
+                return false;
+            }
 
             if ((bool)prosett.ENABLEPASSWORDRESET)
             {
@@ -363,6 +369,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 if (duration >= prosett.EXPIREPASSWORDAFTER)
                     return true;
             }
+
             return false;
         }
 
@@ -560,7 +567,33 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             var profile = context.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == username.ToLower());// && c.PASSWORD == password);
 
-            if (profile != null && profile.PASSWORD == password)
+            if (profile != null && context.TBL_SETUP_GLOBAL.FirstOrDefault().USE_ACTIVE_DIRECTORY)
+            {
+                var staff1 = context.TBL_STAFF.Find(profile.STAFFID);
+                var userInfo = new UserViewModel();
+
+                userInfo.companyId = staff1.COMPANYID;
+                userInfo.staffId = profile.STAFFID;
+                userInfo.user_id = profile.USERID;
+                userInfo.username = profile.USERNAME;
+                userInfo.staffName = staff1.FIRSTNAME + " " + staff1.MIDDLENAME + " " + staff1.LASTNAME;
+                userInfo.branchId = staff1.BRANCHID;
+                userInfo.countryId = staff1.TBL_COMPANY.COUNTRYID;
+                userInfo.branchName = context.TBL_BRANCH.FirstOrDefault(d => d.BRANCHID == staff1.BRANCHID)?.BRANCHNAME;
+                userInfo.companyName = staff1.TBL_COMPANY.NAME;
+                userInfo.logincode = profile.LOGINCODE;
+                userInfo.lastLoginDate = profile.LASTLOGINDATE;
+
+                profile.LASTLOGINDATE = DateTime.Now;
+                profile.LOGINCODE = LogCode;
+                profile.FAILEDLOGONATTEMPT = 0;
+
+                context.Entry(profile).State = EntityState.Modified;
+                context.SaveChanges();
+
+                return userInfo;
+            }
+            else if (profile != null && profile.PASSWORD == password)
             {
                 var staff = context.TBL_STAFF.Find(profile.STAFFID);
                 var userInfo = new UserViewModel();

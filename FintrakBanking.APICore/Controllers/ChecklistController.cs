@@ -1566,6 +1566,31 @@ namespace FintrakBanking.APICore.Controllers
               new { success = false, message = $"There was an error fetching this record {ex.Message}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("esg-checklist-definition/delete/{esgChecklistDefinitionId}")]
+        public HttpResponseMessage DeleteESGChecklistDefinition(int esgChecklistDefinitionId)
+        {
+            try
+            {
+                var data = repo.DeleteESGChecklistDefinition(esgChecklistDefinitionId);
+                if (data == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = data });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                  new { success = false, message = "No Record Found" });
+            }
+            catch (SecureException ex)
+            {
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+              new { success = false, message = $"There was an error fetching this record {ex.Message}" });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("esg-checklist-status")]

@@ -1807,7 +1807,7 @@ namespace FintrakBanking.ReportObjects
                                         join ld in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals ld.LOANAPPLICATIONDETAILID
                                         join cu in context.TBL_CUSTOMER on ld.CUSTOMERID equals cu.CUSTOMERID
                                         join pr in context.TBL_LOAN_PRINCIPAL on a.PRINCIPALID equals pr.PRINCIPALID
-                                        join cb in context.TBL_STAFF on a.CREATEDBY equals cb.CREATEDBY
+                                        join cb in context.TBL_STAFF on a.CREATEDBY equals cb.STAFFID
                                         join jb in context.TBL_JOB_REQUEST on ld.LOANAPPLICATIONDETAILID equals jb.TARGETID
                                         join cas in context.TBL_CASA on cu.CUSTOMERID equals cas.CUSTOMERID
                                         //join br in context.TBL_BRANCH on jb.BRANCHID equals br.BRANCHID
@@ -1822,7 +1822,7 @@ namespace FintrakBanking.ReportObjects
                                             statusId = jb.REQUESTSTATUSID,
                                             status = jb.TBL_JOB_REQUEST_STATUS.STATUSNAME,
                                             statusFeedbackId = jb.JOB_STATUS_FEEDBACKID,
-                                            branchName = "",
+                                            branchName = context.TBL_BRANCH.Where(u => u.BRANCHID == jb.BRANCHID).Select(x => x.BRANCHNAME).FirstOrDefault(),
                                             customerName = cu.FIRSTNAME + " " + " " + cu.MAIDENNAME + " " + " " + cu.LASTNAME,
                                             modVerificationOfficerName = cb.FIRSTNAME + " " + " " + cb.MIDDLENAME + " " + " " + cb.LASTNAME,
                                             modVerificationOfficerStaffNo = cb.STAFFCODE,
@@ -1841,6 +1841,7 @@ namespace FintrakBanking.ReportObjects
                                         }).ToList().Select(x =>
                                         {
                                             var checkForBusinessGroup = subList.Where(f => f.staffCode == x.staffCode).Select(f=>f.subHead).FirstOrDefault();
+                                            
                                             if (checkForBusinessGroup == null)
                                             {
                                                 x.businessGroup = "";
