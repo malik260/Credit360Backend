@@ -2360,6 +2360,96 @@ namespace FintrakBanking.Repositories.Setups.General
         #endregion tbl_Product Region
 
         #region product Price Index
+        public int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)OperationsEnum.GlobalInterestRateChange;
+
+            entity.externalInitialization = false;
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // workFlow.LogForApproval(entity);
+                    // var b = workFlow.NextLevelId ?? 0;
+
+                    workFlow.StaffId = entity.staffId;
+                    workFlow.CompanyId = entity.companyId;
+                    workFlow.StatusId = ((int)entity.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)entity.approvalStatusId;
+                    workFlow.TargetId = entity.targetId;
+                    workFlow.Comment = entity.comment;
+                    workFlow.OperationId = entity.operationId;
+                    workFlow.DeferredExecution = true;
+                    workFlow.ExternalInitialization = false;
+
+                    workFlow.LogActivity();
+
+                    //context.savechanges();
+                    //if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    //{
+                    //    trans.Rollback();
+                    //    throw new SecureException("Approval Failed");
+                    //}
+
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
+                        globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 2;
+                    }
+                    if (workFlow.NewState != (int)ApprovalState.Ended)
+                    {
+                        var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
+                        globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Processing;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 3;
+
+                    }
+                        if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var globalPriceIndex = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Find(entity.targetId);
+                        var appDate = genSetup.GetApplicationDate();
+                        if (globalPriceIndex.EFFECTIVEDATE == appDate)
+                        {
+                            var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(globalPriceIndex.PRODUCTPRICEINDEXID);
+                            priceIndex.PRICEINDEXRATE = globalPriceIndex.NEWRATE;
+                            priceIndex.DATETIMEUPDATED = DateTime.Now;
+                            priceIndex.LASTUPDATEDBY = entity.createdBy;
+                        }
+                        globalPriceIndex.APPROVALSTATUSID = (short)ApprovalStatusEnum.Approved;
+                        globalPriceIndex.DATETIMEUPDATED = DateTime.Now;
+                        globalPriceIndex.LASTUPDATEDBY = entity.createdBy;
+
+                       
+                            try
+                            {
+                                context.SaveChanges();
+                                trans.Commit();
+                            }
+                            catch (Exception ex)
+                            {
+                                var EXE = ex;
+                            }
+                       
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return 0;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+            }
+        }
+
         public List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId)
         {
 
@@ -2393,10 +2483,58 @@ namespace FintrakBanking.Repositories.Setups.General
                         dateTimeUpdated = data.DATETIMEUPDATED,
                         deleted = data.DELETED,
                         deletedBy = data.DELETEDBY,
-                        dateTimeDeleted = data.DATETIMEDELETED
+                        dateTimeDeleted = data.DATETIMEDELETED,
+                        currencyId = data.CURRENCYID,
+                    });
+        }
+        private IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalApprovalList(int staffId)
+        {
+           
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.GlobalInterestRateChange).ToList();
+
+            return (from data in context.TBL_PRODUCT_PRICE_INDEX_GLOBAL
+                    join atrail in context.TBL_APPROVAL_TRAIL on data.PRODUCTPRICEINDEXGLOBALID equals atrail.TARGETID 
+                   // where  data.DELETED == false && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                    where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending 
+                    && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                    && atrail.RESPONSESTAFFID == null
+                    && atrail.OPERATIONID == (int)OperationsEnum.GlobalInterestRateChange
+                    //&& atrail.TOAPPROVALLEVELID == staffApprovalLevelId
+                    && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                    select new ProductPriceIndexGlobalViewModel()
+                    {
+                        productPriceIndexGlobalId = data.PRODUCTPRICEINDEXGLOBALID,
+                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
+                        productPriceIndexName = context.TBL_PRODUCT_PRICE_INDEX.Where(x=>x.PRODUCTPRICEINDEXID==data.PRODUCTPRICEINDEXID).Select(m=>m.PRICEINDEXNAME).FirstOrDefault(),
+                        oldRate = data.OLDRATE,
+                        newRate = data.NEWRATE,
+                        effectiveDate = data.EFFECTIVEDATE,
+                        approvalStatusId = data.APPROVALSTATUSID,
+                        hasBeenApplied = data.HASBEENAPPLIED,
+                       
                     });
         }
 
+        private IEnumerable<ProductPriceIndexGlobalViewModel> GetAllProductPriceIndexGlobal()
+        {
+            return (from data in context.TBL_PRODUCT_PRICE_INDEX_GLOBAL
+                    where data.DELETED == false && data.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                    select new ProductPriceIndexGlobalViewModel()
+                    {
+                        productPriceIndexGlobalId = data.PRODUCTPRICEINDEXGLOBALID,
+                        productPriceIndexId = data.PRODUCTPRICEINDEXID,
+                        productPriceIndexName = context.TBL_PRODUCT_PRICE_INDEX.Where(x=>x.PRODUCTPRICEINDEXID==data.PRODUCTPRICEINDEXID).Select(m=>m.PRICEINDEXNAME).FirstOrDefault(),
+                        oldRate = data.OLDRATE,
+                        newRate = data.NEWRATE,
+                        effectiveDate = data.EFFECTIVEDATE,
+                        approvalStatusId = data.APPROVALSTATUSID,
+                        hasBeenApplied = data.HASBEENAPPLIED,
+                        dateTimeUpdated = data.DATETIMEUPDATED,
+                        deleted = data.DELETED,
+                        deletedBy = data.DELETEDBY,
+                        dateTimeDeleted = data.DATETIMEDELETED
+                    });
+        }
         public IEnumerable<ProductPriceIndexViewModel> GetAllProductPriceIndexByCurrencyId(int currencyId)
         {
             var productIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX
@@ -2410,7 +2548,8 @@ namespace FintrakBanking.Repositories.Setups.General
                                     companyId = a.COMPANYID,
                                     priceIndexName = a.PRICEINDEXNAME,
                                     priceIndexRate = a.PRICEINDEXRATE,
-                                    dateTimeUpdated = a.DATETIMEUPDATED
+                                    dateTimeUpdated = a.DATETIMEUPDATED,
+                                    currencyId = a.CURRENCYID,
                                 }).ToList();
             return productIndex;
         }
@@ -2427,6 +2566,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             companyId = a.COMPANYID,
                             priceIndexName = a.PRICEINDEXNAME,
                             priceIndexRate = a.PRICEINDEXRATE,
+                            currencyId = a.CURRENCYID,
                         }).FirstOrDefault(); ;
 
             return data;
@@ -2434,6 +2574,174 @@ namespace FintrakBanking.Repositories.Setups.General
         public IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId)
         {
             return GetAllProductPriceIndex(companyId);
+        }
+        public IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobal()
+        {
+            return GetAllProductPriceIndexGlobal();
+        }
+        public IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalAwaitingApproval(int staffId)
+        {
+            return GetProductPriceIndexGlobalApprovalList(staffId);
+        }
+        public bool AddProductPriceIndexGlobal(ProductPriceIndexGlobalViewModel prodPriceIndexGlobal)
+        {
+            //var isProductPriceIndexGlobalExist = context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Any(x => x.PRICEINDEXNAME.ToLower() == prodPriceIndex.priceIndexName.ToLower());
+
+            //if (isProductPriceIndexExist)
+            //{
+            //    var indexExists = context.TBL_PRODUCT_PRICE_INDEX.Where(x => x.PRICEINDEXNAME.ToLower() == prodPriceIndex.priceIndexName.ToLower() && x.DELETED == true).FirstOrDefault();
+            //    indexExists.ALLOWAUTOMATICREPRICING = prodPriceIndex.allowAutomaticRepricing;
+            //    indexExists.PRICEINDEXRATE = prodPriceIndex.priceIndexRate;
+            //    indexExists.PRICEINDEXDESCRIPTION = prodPriceIndex.priceIndexDescription;
+            //    indexExists.PRICEINDEXNAME = prodPriceIndex.priceIndexName;
+            //    indexExists.DELETED = false;
+            //}
+            //else
+            //{
+            if (prodPriceIndexGlobal.effectiveDate > genSetup.GetApplicationDate())
+            {
+                throw new ConditionNotMetException("Effective Date Can Not be More than Application Date.");
+            }
+                var data = new TBL_PRODUCT_PRICE_INDEX_GLOBAL()
+                {
+                    PRODUCTPRICEINDEXID = prodPriceIndexGlobal.productPriceIndexId,
+                    OLDRATE = prodPriceIndexGlobal.oldRate,
+                    NEWRATE = prodPriceIndexGlobal.newRate,
+                    EFFECTIVEDATE = prodPriceIndexGlobal.effectiveDate,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                    HASBEENAPPLIED = prodPriceIndexGlobal.hasBeenApplied,
+                    CREATEDBY = prodPriceIndexGlobal.createdBy,
+                    DATETIMECREATED = DateTime.Now,
+                };
+
+                this.context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.Add(data);
+            //}
+
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexGlobalAdded,
+                STAFFID = (int)prodPriceIndexGlobal.createdBy,
+                BRANCHID = (short)prodPriceIndexGlobal.userBranchId,
+                DETAIL = $"Added Price Index Global: '{prodPriceIndexGlobal.productPriceIndexGlobalId}' ",
+                IPADDRESS = prodPriceIndexGlobal.userIPAddress,
+                URL = prodPriceIndexGlobal.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            bool output;
+            var productPriceIndexId = 0;
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+
+                    output = context.SaveChanges() > 0;
+
+                    productPriceIndexId = data.PRODUCTPRICEINDEXGLOBALID;
+
+                    var entity = new ApprovalViewModel
+                    {
+                        staffId = prodPriceIndexGlobal.createdBy,
+                        companyId = prodPriceIndexGlobal.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = productPriceIndexId,
+                        operationId = (int)OperationsEnum.GlobalInterestRateChange,
+                        BranchId = prodPriceIndexGlobal.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
+
+                    if (response)
+                    {
+                        trans.Commit();
+
+                        return output;
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+            }
+
+        }
+        public bool UpdateProductPriceIndexGlobal(int productPriceIndexGlobalId, ProductPriceIndexGlobalViewModel prodPriceIndexGlobal)
+        {
+            TBL_PRODUCT_PRICE_INDEX_GLOBAL globalInterest = new TBL_PRODUCT_PRICE_INDEX_GLOBAL();
+            globalInterest = this.context.TBL_PRODUCT_PRICE_INDEX_GLOBAL.FirstOrDefault(x => x.PRODUCTPRICEINDEXGLOBALID == productPriceIndexGlobalId && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending);
+
+            if (globalInterest != null)
+                throw new SecureException("Record is Undergoing Approval");
+
+            //data.PRODUCTPRICEINDEXID = prodPriceIndexGlobal.productPriceIndexId;
+            globalInterest.OLDRATE = prodPriceIndexGlobal.oldRate;
+            globalInterest.NEWRATE = prodPriceIndexGlobal.newRate;
+            globalInterest.EFFECTIVEDATE = prodPriceIndexGlobal.effectiveDate;
+            globalInterest.HASBEENAPPLIED = prodPriceIndexGlobal.hasBeenApplied;
+            globalInterest.LASTUPDATEDBY = prodPriceIndexGlobal.lastUpdatedBy;
+            globalInterest.DATETIMEUPDATED = DateTime.Now;
+            globalInterest.APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending;
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.ProductPriceIndexUpdated,
+                STAFFID = (int)prodPriceIndexGlobal.createdBy,
+                BRANCHID = (short)prodPriceIndexGlobal.userBranchId,
+                DETAIL = $"Updated Price Index Global: '{prodPriceIndexGlobal.productPriceIndexGlobalId}' ",
+                IPADDRESS = prodPriceIndexGlobal.userIPAddress,
+                URL = prodPriceIndexGlobal.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            bool output;
+            var productPriceIndexId = 0;
+
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    this.auditTrail.AddAuditTrail(audit);
+                    //end of Audit section -------------------------------
+
+                    output = context.SaveChanges() > 0;
+
+                    productPriceIndexId = globalInterest.PRODUCTPRICEINDEXGLOBALID;
+
+                    var entity = new ApprovalViewModel
+                    {
+                        staffId = prodPriceIndexGlobal.createdBy,
+                        companyId = prodPriceIndexGlobal.companyId,
+                        approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                        targetId = productPriceIndexId,
+                        operationId = (int)OperationsEnum.GlobalInterestRateChange,
+                        BranchId = prodPriceIndexGlobal.userBranchId,
+                        externalInitialization = true
+                    };
+                    var response = workFlow.LogForApproval(entity);
+
+                    if (response)
+                    {
+                        trans.Commit();
+
+                        return output;
+                    }
+
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+            }
         }
 
         public ProductPriceIndexViewModel GetProductPriceIndexById(int productPriceIndexId, int companyId)
@@ -2634,14 +2942,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+            bool status;
 
-            var status = this.SaveAll();
-
-            if (status)
+            try
             {
-                return prodPriceIndexCurrency;
+                 status = this.context.SaveChanges() > 0;
+                if (status) { return prodPriceIndexCurrency; }
+                else
+                    return null;
             }
-            else
+            catch (Exception ex)
+            {
+                var det = ex;
+            }
+            //var status = this.SaveAll();
+
+            //if (status)
+            //{
+                
+            //}
+            //else
                 return null;
         }
 

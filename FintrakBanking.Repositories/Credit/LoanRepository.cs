@@ -816,7 +816,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (ConditionNotMetException ce) { throw new ConditionNotMetException(ce.Message); }
 
-            catch (Exception ex) { throw new SecureException(ex.Message); }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private string addContingentLiability(LoanViewModel entity)
@@ -980,10 +980,15 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new APIErrorException(ae.Message);
                 }
+                catch (SecureException ae)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ae.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    throw new Exception(ex.Message);
                 }
             }
         }
@@ -1145,7 +1150,7 @@ namespace FintrakBanking.Repositories.Credit
             //}
             var interestRate = Convert.ToDouble(applicationDetail.APPROVEDINTERESTRATE);
             var priceIndex = new TBL_PRODUCT_PRICE_INDEX();
-            if (entity.productPriceIndexId <= 0)
+            if (entity.productPriceIndexId >  0)
             {
                 priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == entity.productPriceIndexId select a).FirstOrDefault();
                 if (priceIndex != null)
@@ -1190,8 +1195,8 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTNUMBEROFINSTALLMENT = 0,
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
-                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
+                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
+                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID ,
 
                 SUBSECTORID = entity.subSectorId,
                 CURRENCYID = (short)entity.currencyId,
@@ -1211,10 +1216,10 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALFREQUENCYTYPEID = entity.loanScheduleInput.principalFrequency,
                 INTERESTFREQUENCYTYPEID = entity.loanScheduleInput.interestFrequency,
 
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID, //entity.relationshipOfficerId,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID, //entity.relationshipManagerId,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = interestRate,
 
                 PRINCIPALINSTALLMENTLEFT = 0,
@@ -1367,10 +1372,15 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new TwoFactorAuthenticationException(fa.Message);
                 }
+                catch (SecureException fa)
+                {
+                    trans.Rollback();
+                    throw new SecureException(fa.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    throw new Exception(ex.Message);
                 }
             }
         }
@@ -1468,7 +1478,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (ConditionNotMetException ce) { throw new ConditionNotMetException(ce.Message); }
 
-            catch (Exception ex) { throw new SecureException(ex.Message); }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private string AddCommercialLoan(LoanViewModel entity)
@@ -1669,6 +1679,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new TwoFactorAuthenticationException(fa.Message);
                 }
+                catch (SecureException fa)
+                {
+                    trans.Rollback();
+                    throw new SecureException(fa.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
@@ -1773,7 +1788,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (ConditionNotMetException ce) { throw new ConditionNotMetException(ce.Message); }
 
-            catch (Exception ex) { throw new SecureException(ex.Message); }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private string AddFXLoan(LoanViewModel entity)
@@ -5411,7 +5426,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                 applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                 applicationStatusId = m.APPLICATIONSTATUSID,
-                                customerId = m.CUSTOMERID ?? 0,
+                                customerId =  d.CUSTOMERID,
                                 customerCode = cust.CUSTOMERCODE,
                                 customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                                 customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
@@ -7865,6 +7880,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.REVOLVINGLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    loanId = a.REVOLVINGLOANID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
@@ -7974,6 +7990,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanApplicationId = a.LOANAPPLICATIONDETAILID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    customerCode = b.CUSTOMERCODE,
                                    productId = a.PRODUCTID,
                                    companyId = a.COMPANYID,
@@ -8178,6 +8195,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.CONTINGENTLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    loanId = a.CONTINGENTLOANID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
@@ -9889,6 +9907,8 @@ namespace FintrakBanking.Repositories.Credit
                             //&& d.EXPIRYDATE >= systemDate
                             select new CamProcessedLoanViewModel
                             {
+                                loanSystemTypeId = l.LOANSYSTEMTYPEID,
+                                loanId = l.LOANID,
                                 loanReviewApplicationId = e.LOANAPPLICATIONID,
                                 approvalStatusId = (short)m.APPROVALSTATUSID,
                                 loanApplicationId = m.LOANAPPLICATIONID,

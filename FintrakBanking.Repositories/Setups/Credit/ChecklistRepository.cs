@@ -2314,6 +2314,22 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
+        public bool DeleteESGChecklistDefinition(int esgChecklistDefinitionId)
+        {
+            var checklist = context.TBL_ESG_CHECKLIST_DEFINITION.Where(o => o.ESGCHECKLISTDEFINITIONID == esgChecklistDefinitionId).Select(o=>o).FirstOrDefault();
+            if (checklist != null)
+            {
+                checklist.DELETED = true;
+                checklist.DATETIMEUPDATED = DateTime.Now;
+            }
+
+            if (context.SaveChanges() > 0)
+                return true;
+
+            return false;
+           
+        }
+
         public IEnumerable<ESGChecklistDetailViewModel> GetESGChecklistDetail(int loanApplicationDetailId)
         {
             var data = (from a in context.TBL_ESG_CHECKLIST_DETAIL

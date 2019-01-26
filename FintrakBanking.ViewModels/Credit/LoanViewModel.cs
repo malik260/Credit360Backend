@@ -600,8 +600,10 @@ namespace FintrakBanking.ViewModels.Credit
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
         public double approvedInterestRate { get; set; }
+        public List<feeDetails> fees { get; set; }
 
         public string feeAccountName { get; set; }
+        public int? loanSystemTypeId { get; set; }
 
         public bool isLocalCurrrency { get; set; }
         public int? loanId { get; set; }

@@ -78,6 +78,7 @@ namespace FintrakBanking.Interfaces.Reports
         string GetLoggingStatus(DateRange dateRange);
         string GetMiddleOfficeReport(DateRange dateRange);
         string GetCollateralValuationReport(DateRange dateRange);
+        string GetLoanClassificationReport(DateRange dateRange);
 
 
     }
