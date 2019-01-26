@@ -57,7 +57,7 @@ namespace FintrakBanking.APICore.Controllers
             }).ToList();
 
                 var response = _override.AddOverRideRequest(model);
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1, message = "Override Request was successful and undergoing approval." });
 
             }
             catch (SecureException ex)
@@ -83,7 +83,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 var response = _override.ApproveOverride(entity);
 
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Approved successfully", result = response });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Override Approved successfully", result = response });
             }
             catch (SecureException e)
             {

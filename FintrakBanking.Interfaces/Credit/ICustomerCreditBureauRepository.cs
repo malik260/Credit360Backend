@@ -1,5 +1,6 @@
 ﻿using FintrakBanking.ViewModels.Credit;
 using FintrakBanking.ViewModels.Customer;
+using FintrakBanking.ViewModels.Setups.Credit;
 using FintrakBanking.ViewModels.ThridPartyIntegration;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanCreditBureauViewModel> GetCustomerCreditBureauReportLog(int customerId, int? companyDirectorId);
 
         List<CreditBureauDocument> GetCreditBureauDocument(int customerCreditBureauId);
+
+        CompanySetupViewModel GetLoanThirdPartyServiceChargeStatusDetails(int companyId);
 
         #endregion
 

@@ -180,7 +180,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>outstanding Interest</Value>
+                              <Value>Outstanding Interest</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -286,14 +286,14 @@
               <TablixCells>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="LoanRefno">
+                    <Textbox Name="loanRefno">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!LoanRefno.Value</Value>
+                              <Value>=Fields!loanRefno.Value</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -305,7 +305,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>LoanRefno</rd:DefaultName>
+                      <rd:DefaultName>loanRefno</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -321,14 +321,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="CustomerName">
+                    <Textbox Name="customerName">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!CustomerName.Value</Value>
+                              <Value>=Fields!customerName.Value</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -340,7 +340,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>CustomerName</rd:DefaultName>
+                      <rd:DefaultName>customerName</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -356,14 +356,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="OutstandingBalance">
+                    <Textbox Name="outstandingBalance">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!OutstandingBalance.Value</Value>
+                              <Value>=Fields!outstandingBalance.Value</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -375,7 +375,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>OutstandingBalance</rd:DefaultName>
+                      <rd:DefaultName>outstandingBalance</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -433,7 +433,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=((Fields!OutstandingBalance.Value) + (Fields!outstandingInterest))</Value>
+                              <Value>=((Fields!outstandingBalance.Value) + (Fields!outstandingInterest.Value))</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -461,14 +461,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="ReasonsforStalledPerfection">
+                    <Textbox Name="reasonsforStalledPerfection">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Fields!ReasonsforStalledPerfection.Value</Value>
+                              <Value>=Fields!reasonsforStalledPerfection.Value</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -480,7 +480,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>ReasonsforStalledPerfection</rd:DefaultName>
+                      <rd:DefaultName>reasonsforStalledPerfection</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -573,14 +573,14 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
-                    <Textbox Name="Textbox11">
+                    <Textbox Name="outstandingBalance1">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
                       <Paragraphs>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>=Sum(Fields!OutstandingBalance.Value)</Value>
+                              <Value>=Sum(Fields!outstandingBalance.Value)</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -594,7 +594,7 @@
                           </Style>
                         </Paragraph>
                       </Paragraphs>
-                      <rd:DefaultName>Textbox11</rd:DefaultName>
+                      <rd:DefaultName>outstandingBalance1</rd:DefaultName>
                       <Style>
                         <Border>
                           <Color>LightGrey</Color>
@@ -617,7 +617,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value />
+                              <Value>=Sum(Fields!outstandingInterest.Value)</Value>
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
@@ -757,7 +757,7 @@
         </Style>
       </Tablix>
     </ReportItems>
-    <Height>1.4in</Height>
+    <Height>1.41042in</Height>
     <Style />
   </Body>
   <Width>10.14167in</Width>
@@ -805,28 +805,28 @@
         <CommandText>/* Local Query */</CommandText>
       </Query>
       <Fields>
-        <Field Name="CustomerName">
-          <DataField>CustomerName</DataField>
+        <Field Name="customerName">
+          <DataField>customerName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="OutstandingBalance">
-          <DataField>OutstandingBalance</DataField>
+        <Field Name="outstandingBalance">
+          <DataField>outstandingBalance</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
-        <Field Name="ReasonsforStalledPerfection">
-          <DataField>ReasonsforStalledPerfection</DataField>
+        <Field Name="reasonsforStalledPerfection">
+          <DataField>reasonsforStalledPerfection</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="StartDate">
-          <DataField>StartDate</DataField>
+        <Field Name="startDate">
+          <DataField>startDate</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
-        <Field Name="EndDate">
-          <DataField>EndDate</DataField>
+        <Field Name="endDate">
+          <DataField>endDate</DataField>
           <rd:TypeName>System.DateTime</rd:TypeName>
         </Field>
-        <Field Name="LoanRefno">
-          <DataField>LoanRefno</DataField>
+        <Field Name="loanRefno">
+          <DataField>loanRefno</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="outstandingInterest">
@@ -840,7 +840,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>LoanDataSet</rd:DataSetName>
-        <rd:SchemaPath>C:\FintrakProjects\Credit360\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\FintrakProjects\ReportDeveloper\ReportDeveloper\ReportDataset\LoanDataSet.xsd</rd:SchemaPath>
         <rd:TableName>StalledPerfection</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />

@@ -21,9 +21,9 @@ namespace FintrakBanking.Interfaces.Setups.General
         int GoForApproval(ApprovalViewModel entity);
 
         ////Principal
-        //IEnumerable<AccreditedPrincipalsViewModel> GetAccreditedPrincipals(int companyId);
-        //Task<bool> AddAccreditedPrincipals(AccreditedPrincipalsViewModel entity);
-        //Task<bool> UpdateAccreditedPrincipals(AccreditedPrincipalsViewModel entity, int id);
+        IEnumerable<AccreditedPrincipalsViewModel> GetAccreditedPrincipals(int companyId);
+        Task<bool> AddAccreditedPrincipals(AccreditedPrincipalsViewModel entity);
+        Task<bool> UpdateAccreditedPrincipals(AccreditedPrincipalsViewModel entity, int id);
 
         ////Recovery Agent
         //IEnumerable<AccreditedRecoveryAgentViewModel> GetAccreditedRecoveryAgent(int companyId);

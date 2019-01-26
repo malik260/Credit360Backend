@@ -58,7 +58,17 @@ namespace FintrakBanking.Repositories.Setups.General
 
                 };
                 context.TBL_CITY.Add(cityEntity);
-                return context.SaveChanges() != 0;
+                bool res;
+                try
+                {
+                    res = context.SaveChanges() != 0;
+                    return res;
+
+                }
+                catch ( Exception ex) {
+                    var test = ex;
+                }
+                return false;
             }
             else
                 throw new SecureException("Record already exist");

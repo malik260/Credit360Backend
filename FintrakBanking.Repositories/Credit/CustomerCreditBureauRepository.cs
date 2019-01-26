@@ -26,6 +26,7 @@ using FintrakBanking.Interfaces.CASA;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 using System.IO;
 using System.Xml;
+using FintrakBanking.ViewModels.Setups.Credit;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -66,6 +67,19 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         #region Credit Bureau 
+        public CompanySetupViewModel GetLoanThirdPartyServiceChargeStatusDetails(int companyId)
+        {
+            var companyDetails = context.TBL_SETUP_COMPANY.Find(companyId);
+            var loanExternalServiceChargeSetup = new CompanySetupViewModel()
+            {
+                requireCreditBureauModule = companyDetails.REQUIRECREDITBUREAUMODULE,
+                creditBureauSearchTypeId = companyDetails.COLLATERALSEARCHCHARGETYPEID,
+                collateralSearchTypeId = companyDetails.COLLATERALSEARCHCHARGETYPEID
+            };
+
+            return loanExternalServiceChargeSetup;
+        }
+
         public IEnumerable<CustomerViewModels> GetCreditBureauCustomerDetailsByCustomerId(int customerId, bool isExternal)
         {
             var data = context.TBL_CUSTOMER_CREDIT_BUREAU.Where(x => x.CUSTOMERID == customerId && x.DELETED == false
@@ -406,7 +420,6 @@ namespace FintrakBanking.Repositories.Credit
             var customerLoanCreditBureauData = (from a in context.TBL_CUSTOMER_CREDIT_BUREAU
                                                 where a.CUSTOMERID == customerId && a.DELETED == false && a.COMPANYDIRECTORID == directorId
                                                  && (DbFunctions.DiffDays(a.DATETIMECREATED, DateTime.Now).Value <= 30)
-                                                //&& (DbFunctions.DiffDays(DbFunctions.TruncateTime(a.DATETIMECREATED), DbFunctions.TruncateTime(DateTime.Now)).Value <= 30 ) 
                                                 select new LoanCreditBureauViewModel
                                                 {
                                                     companyDirectorId = a.COMPANYDIRECTORID,
@@ -608,49 +621,58 @@ namespace FintrakBanking.Repositories.Credit
         {
             var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
             var chargeModel = getBuiltCRCChargeModel(searchInfo);
+            var companyExternalServiceChargeInfo = GetLoanThirdPartyServiceChargeStatusDetails(searchInfo.companyId);
+
             var twoFADetails = new TwoFactorAutheticationViewModel();
-            twoFADetails.username = searchInfo.username;
-            twoFADetails.passcode = searchInfo.passCode;
-
-            if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+            if (companyExternalServiceChargeInfo.requireCreditBureauModule && companyExternalServiceChargeInfo.creditBureauSearchTypeId != (short)ChargeTypeEnum.NoCharge)
             {
-                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                twoFADetails.username = searchInfo.username;
+                twoFADetails.passcode = searchInfo.passCode;
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException(authenticated.message);
-            }
+                if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                {
+                    var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-            var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
-            searchInfo.userName = creditBureau.USERNAME;
-            searchInfo.password = creditBureau.PASSWORD;
-
-            var creditBureauInputs = getBuiltCRCSearchInputModel(searchInfo);
-            var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
-
-            if (creditBureauInputs.casaAccountId == 0 && !searchInfo.debitBusiness)
-                throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin.");
-
-            if (casa == null && !searchInfo.debitBusiness) throw new SecureException("Norminated Account Does not Exist");
-
-            var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
-            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
-
-            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
-
-            if (chargeAmount > accountBalance)
-            {
-                if (!searchInfo.debitBusiness)
-                    throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException(authenticated.message);
+                }
             }
 
             var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInfo.creditBureauId);
+            searchInfo.userName = creditBureau.USERNAME;
+            searchInfo.password = creditBureau.PASSWORD;
+            
+            var creditBureauInputs = getBuiltCRCSearchInputModel(searchInfo);
+            var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
+            var chargeAmount = (decimal) 0;
+
+            if (companyExternalServiceChargeInfo.creditBureauSearchTypeId != (short)ChargeTypeEnum.NoCharge)
+            {
+                if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomer || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && !searchInfo.debitBusiness))
+                {
+                    if (casa == null) { throw new SecureException("Norminated Account Does not Exist"); }
+                    if (creditBureauInputs.casaAccountId == 0) { throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin."); }
+                }
+          
+                var accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
+                if (chargeAmount > accountBalance)
+                {
+                    if (!searchInfo.debitBusiness)
+                        throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                }
+            }
+
+            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
+            chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
             if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
 
             chargeModel.feeAmount = chargeAmount;
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.casaAccountId = casa.CASAACCOUNTID;
             chargeModel.debitBusiness = searchInfo.debitBusiness;
-            if (searchInfo.debitBusiness)
+
+            if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeBank || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && searchInfo.debitBusiness))
             {
                 var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short)OtherOperationEnum.ChargeOnBank).FirstOrDefault();
                 if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
@@ -711,7 +733,7 @@ namespace FintrakBanking.Repositories.Credit
                             throw new ConditionNotMetException("Search could not save the result file");
                         }
 
-                        if (!searchInfo.debitBusiness) { DebitCustomer(chargeModel); }
+                        if (companyExternalServiceChargeInfo.creditBureauSearchTypeId != (short)ChargeTypeEnum.NoCharge) { DebitCustomer(chargeModel); }
 
                         context.SaveChanges();
                         trans.Commit();
@@ -796,25 +818,13 @@ namespace FintrakBanking.Repositories.Credit
 
         public string GetCRCFullCreditMergeReport(MultiHitRequestViewModel request)
         {
+            var companyExternalServiceChargeInfo = GetLoanThirdPartyServiceChargeStatusDetails(request.companyId);
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(request.creditBureauId);
-
             var creditBureauInputs = getBuiltCRCCreditBureauSearchInputs(request);
-            creditBureauInputs.customerCreditBureauUploadDetails.chargeAmount = request.companyDirectorId != 0 ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
-
             var casa = context.TBL_CASA.Find(creditBureauInputs.casaAccountId);
-            if (casa == null && !request.debitBusiness) throw new SecureException("Norminated Account Does not Exist");
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
 
-            creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa.PRODUCTACCOUNTNUMBER : null;
-
-            decimal accountBalance = 0;
-            if (casa != null) accountBalance = financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance;
-
-            var chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
-
-            if (chargeAmount > accountBalance)
-            {
-                if (!request.debitBusiness) throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
-            }
+            var chargeAmount = (decimal)0;
 
             if (creditBureau != null)
             {
@@ -823,9 +833,24 @@ namespace FintrakBanking.Repositories.Credit
             }
             else { throw new ConditionNotMetException("Could not resolve the selected Credit Bureau item. Contact admin."); }
 
-            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
-            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
+            creditBureauInputs.customerCreditBureauUploadDetails.chargeAmount = request.companyDirectorId != 0 ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
+            chargeAmount = creditBureauInputs.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
 
+            if (companyExternalServiceChargeInfo.creditBureauSearchTypeId != (short)ChargeTypeEnum.NoCharge)
+            {
+                if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomer || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && !request.debitBusiness))
+                {
+                    if (casa == null) { throw new SecureException("Norminated Account Does not Exist"); }
+
+                    if (creditBureauInputs.casaAccountId == 0) { throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin."); }
+
+                    if (chargeAmount > financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance) throw new SecureException("The norminated customer account has insufficient fund to perform this transaction.");
+                }
+
+                creditBureauInputs.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa.PRODUCTACCOUNTNUMBER : null;
+            }
+
+            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
             var chargeModel = new CreditBereauViewModel();
             chargeModel.feeAmount = chargeAmount;
             chargeModel.createdBy = request.createdBy;
@@ -835,7 +860,7 @@ namespace FintrakBanking.Repositories.Credit
             chargeModel.casaAccountId = casa.CASAACCOUNTID;
             chargeModel.debitBusiness = request.debitBusiness;
 
-            if (request.debitBusiness)
+            if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeBank || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && request.debitBusiness))
             {
                 var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short) OtherOperationEnum.ChargeOnBank).FirstOrDefault();
                 if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
@@ -889,7 +914,7 @@ namespace FintrakBanking.Repositories.Credit
                             }
                         }
 
-                        if (!request.debitBusiness) { DebitCustomer(chargeModel); }
+                        if (companyExternalServiceChargeInfo.creditBureauSearchTypeId != (short)ChargeTypeEnum.ChargeBank) { DebitCustomer(chargeModel); }
 
                         fileArray = Encoding.ASCII.GetBytes(dataResponse);
 
@@ -995,55 +1020,59 @@ namespace FintrakBanking.Repositories.Credit
 
         public XDSSearchResult GetXDSFullSearchResultInPDF(SearchInput searchInput)
         {
-            var transactionCode = CommonHelpers.GenerateRandomDigitCode(10);
-
-            if (searchInput.casaAccountId == 0)
-                throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin.");
+            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
+            var companyExternalServiceChargeInfo = GetLoanThirdPartyServiceChargeStatusDetails(searchInput.companyId);
 
             var casa = context.TBL_CASA.Find(searchInput.casaAccountId);
-            if (casa == null && !searchInput.debitBusiness) throw new ConditionNotMetException("Norminated Account Does not Exist");
-            
             var accountBalance = casa != null ? financeTransaction.GetCASABalance(casa.CASAACCOUNTID).availableBalance : 0;
+
             var creditBureau = context.TBL_CREDIT_BUREAU.Find(searchInput.creditBureauId);
+            var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
 
-            var twoFADetails = new TwoFactorAutheticationViewModel
+            var twoFADetails = new TwoFactorAutheticationViewModel();
+
+            if (companyExternalServiceChargeInfo.creditBureauSearchTypeId != (short)ChargeTypeEnum.ChargeBank)
             {
-                username = searchInput.username,
-                passcode = searchInput.passCode
-            };
+                if(companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomer || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && !searchInput.debitBusiness))
+                {
+                    if (searchInput.casaAccountId == 0)
+                        throw new ConditionNotMetException("Missing Charge Account! Specify charge account or contact admin.");
 
-            if (twoFADetails.username != null && admin.TwoFactorAuthenticationEnabled())
-            {
-                var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+                    if (casa == null ) throw new ConditionNotMetException("Norminated Account Does not Exist");
 
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException(authenticated.message);
+                    if (chargeAmount > accountBalance) throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
+                    if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
+
+                    twoFADetails.username = searchInput.username;
+                    twoFADetails.passcode = searchInput.passCode;
+
+                    if (twoFADetails.username != null && admin.TwoFactorAuthenticationEnabled())
+                    {
+                        var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                        if (authenticated.authenticated == false)
+                            throw new TwoFactorAuthenticationException(authenticated.message);
+                    }
+                }
             }
-
+            
             var chargeModel = new CreditBereauViewModel();
-
             chargeModel.createdBy = searchInput.createdBy;
             chargeModel.userBranchId = searchInput.userBranchId;
             chargeModel.companyId = searchInput.companyId;
             chargeModel.casaAccountId = searchInput.casaAccountId;
             chargeModel.username = searchInput.username;
             chargeModel.passCode = searchInput.passCode;
-
-            searchInput.customerCreditBureauUploadDetails.accountNumber = casa.PRODUCTACCOUNTNUMBER;
-            searchInput.userName = creditBureau.USERNAME;
-            searchInput.password = creditBureau.PASSWORD;
-
-            var chargeAmount = searchInput.searchType == (short)CreditBureauTypeEnum.ConsumerSearch ? creditBureau.INDIVIDUAL_CHARGEAMOUNT : creditBureau.CORPORATE_CHARGEAMOUNT;
-
-            if (chargeAmount > accountBalance && !searchInput.debitBusiness) throw new ConditionNotMetException("The norminated customer account has insufficient fund to perform this transaction.");
-
-            var referenceNumber = CommonHelpers.GenerateRandomDigitCode(10);
-            if (casa != null) referenceNumber = casa.PRODUCTACCOUNTNUMBER;
-
             chargeModel.referenceNumber = referenceNumber;
             chargeModel.feeAmount = chargeAmount;
             chargeModel.casaAccountId = casa.CASAACCOUNTID;
-            if (searchInput.debitBusiness)
+
+            searchInput.customerCreditBureauUploadDetails.accountNumber = casa != null ? casa.PRODUCTACCOUNTNUMBER : null;
+            searchInput.customerCreditBureauUploadDetails.userBranchId = searchInput.userBranchId;
+            searchInput.userName = creditBureau.USERNAME;
+            searchInput.password = creditBureau.PASSWORD;
+
+            if (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeBank || (companyExternalServiceChargeInfo.creditBureauSearchTypeId == (short)ChargeTypeEnum.ChargeCustomerORBank && searchInput.debitBusiness))
             {
                 var customChartOfAccount = context.TBL_CUSTOM_CHART_OF_ACCOUNT.FirstOrDefault(c => c.CUSTOMACCOUNTID == chargeModel.glAccountId);
                 chargeModel.referenceNumber = customChartOfAccount != null ? customChartOfAccount .ACCOUNTID :string.Empty;
@@ -1082,7 +1111,7 @@ namespace FintrakBanking.Repositories.Credit
                             response.fileSaved = true;
                         }
 
-                        if (!searchInput.chargeBusiness) { DebitCustomer(chargeModel); }
+                        if (companyExternalServiceChargeInfo.creditBureauSearchTypeId != (short)ChargeTypeEnum.NoCharge) { DebitCustomer(chargeModel); }
 
                         context.SaveChanges();
                         trans.Commit();
@@ -1114,7 +1143,6 @@ namespace FintrakBanking.Repositories.Credit
             }
             else
             {
-                // ReverseDebit(creditBureau, casa, chargeAmount, creditBureauInputs);
                 throw new ConditionNotMetException("Search result Timed out");
             }
           
