@@ -276,18 +276,18 @@ namespace FintrakBanking.Repositories.Setups.General
                         join aa in context.TBL_TEMP_PROFILE_STAFF_ROLE_AA on c.STAFFROLEID equals aa.STAFFROLEID
                        into ca from aa in ca.DefaultIfEmpty()
                         join atrail in context.TBL_APPROVAL_TRAIL on c.STAFFROLEID equals atrail.TARGETID
-                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                        where ((atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending) || (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing))
                           && (gr.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && gr.ISCURRENT == true) ||
                           (aa.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved && aa.ISCURRENT == true)
                               && atrail.RESPONSESTAFFID == null
-                              && atrail.OPERATIONID == (int)OperationsEnum.StaffRoleCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                              && atrail.OPERATIONID == (int)OperationsEnum.StaffRoleCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID) orderby atrail.ARRIVALDATE descending
                         select new StaffRoleViewModel()
                         {
                             staffRoleName = c.STAFFROLENAME,
                             staffRoleCode = c.STAFFROLECODE,
                             staffRoleId = c.STAFFROLEID,
                             operationId = (int)OperationsEnum.StaffRoleCreation,
-                        }).GroupBy(c=> c.staffRoleId).Select(g=>g.FirstOrDefault());
+                        }).GroupBy(c=> c.staffRoleId).Select(g=>g.FirstOrDefault()) ;
 
             var userGroup = (from x in context.TBL_TEMP_PROFILE_STAFF_ROL_GRP
                              select new UserGroup

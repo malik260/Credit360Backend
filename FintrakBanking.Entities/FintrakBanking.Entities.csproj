@@ -87,6 +87,7 @@
     <Compile Include="Models\TBL_OTHER_OPERATION_ACCOUNT.cs" />
     <Compile Include="Models\TBL_OTHER_OPERATION.cs" />
     <Compile Include="Models\TBL_LOAN_REPRICING_MODE.cs" />
+    <Compile Include="Models\TBL_SETUP_CHARGE_TYPE.cs" />
     <Compile Include="Models\TBL_PRODUCT_PRICE_INDEX_GLOBAL.cs" />
     <Compile Include="Models\TBL_TEMP_ACCREDITEDCONSULTANT.cs" />
     <Compile Include="Models\TBL_TEMP_ACCREDITEDCONSULTANT_STATE.cs" />

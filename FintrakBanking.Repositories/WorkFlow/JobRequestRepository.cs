@@ -73,6 +73,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 RESPONSECOMMENT = model.responseComment,
                 ARRIVALDATE = applicationDate,
                 SYSTEMARRIVALDATE = date,
+                BRANCHID = model.branchId
             };
             var job = context.TBL_JOB_REQUEST.Add(data); 
 
@@ -96,6 +97,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             else return string.Empty;
         }
+
         public string AddGlobalJobRequest(JobRequestViewModel model)
         {
             if (model.receiverStaffId == model.createdBy)
@@ -222,7 +224,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 
 
             var applicationDate = general.GetApplicationDate();
-            
+
+            var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(data.TARGETID);
+
+
             if (data.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification)
             {
                 var hubCordinatorStaffId = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification).FirstOrDefault();
@@ -236,6 +241,48 @@ namespace FintrakBanking.Repositories.WorkFlow
                     $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. <br /><br />";
                 string alertSubject = $"JOB REQUEST ASSIGNMENT NOTICE";
 
+                if(loanDetails != null)
+                {
+                    var customerInfo = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
+                    var facilityInfo = context.TBL_PRODUCT.Find(loanDetails.APPROVEDPRODUCTID);
+                    var currencyInfo = context.TBL_CURRENCY.Find(loanDetails.CURRENCYID);
+                    var invoiceInfo = context.TBL_LOAN_APPLICATION_DETL_INV.Find(loanDetails.LOANAPPLICATIONDETAILID);
+                    var casaInfo = context.TBL_CASA.Find(loanDetails.CASAACCOUNTID);
+
+                    var accountLine = casaInfo != null ? $"<br /><br /> 'Account Number:' <br /><br /> {casaInfo.PRODUCTACCOUNTNUMBER}  <br /><br /> " : null;
+                    var customerNameLine = $"<br /><br /> 'Customer Name:' <br /><br /> {customerInfo.FIRSTNAME} ' ' {customerInfo.LASTNAME} <br /><br /> ";
+                    var loantTypeLine = $"<br /><br /> 'Customer Name:' <br /><br /> {customerInfo.FIRSTNAME} ' ' {customerInfo.LASTNAME} <br /><br /> ";
+                    var accountNumberLine = $"<br /><br /> 'Account Number:' <br /><br /> {casaInfo.PRODUCTACCOUNTNUMBER}  <br /><br /> ";
+                    var currencyTypeLine = $"<br /><br /> 'Currency:' <br /><br /> {currencyInfo.CURRENCYCODE}  <br /><br /> ";
+
+                    var principalNameLine = invoiceInfo != null  ? $"<br /><br /> 'Principal Name:' <br /><br /> {invoiceInfo.TBL_LOAN_PRINCIPAL.NAME}  <br /><br /> " : null;
+                    var rmCommentLine = invoiceInfo != null  ? $"<br /><br /> 'Comment:' <br /><br /> {invoiceInfo.APPROVAL_COMMENT}  <br /><br /> " : null;
+                    var NumberLine = string.Empty;
+                    var poAmountLine = invoiceInfo != null  ? $"<br /><br /> 'TotalAmount on the PO/Contract/Invoice:' <br /><br /> {invoiceInfo.INVOICE_AMOUNT}  <br /><br /> " : null;
+                    //if (invoiceInfo != null)
+                    //{
+                    //    var numbers = string.Empty;
+                    //    var amount = string.Empty;
+                    //    foreach (var item in invoiceInfo)
+                    //    {
+                    //        numbers = numbers + item.PURCHASEORDERNUMBER + "/" + item.CONTRACTNO + "/" + item.INVOICENO + ",";
+                    //    }
+
+                    //}
+                    messageBoby = $"Attention!, <br /><br />Please note that a job has been assigned with the following details:" +
+                           //$"<br /><br /> 'Job Request Code:' <br /><br /> {data.JOBREQUESTCODE} <br /><br /> " +
+                           $"{ principalNameLine} " +
+                           $"{ customerNameLine} " +
+                           $"{ loantTypeLine} " +
+                           $"{ accountLine} " +
+                           $"{ currencyTypeLine} " + 
+                           $"{ NumberLine} " +
+                           $"{ rmCommentLine} " +
+                           $"<br /><br />  Regards. <br /><br />";
+
+                    messageBoby = messageBoby + $"<br /><br />Regards.";
+                }
+
                 if (hubCordinatorFullStaffData != null)
                     LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, hubCordinatorFullStaffData.EMAIL, data.JOBREQUESTCODE);
 
@@ -245,8 +292,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var teamLeadStaff = context.TBL_STAFF.Find(hubTeamLeadEntry.HUBSTAFFID);
                     LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, teamLeadStaff.EMAIL, data.JOBREQUESTCODE);
                 }
-
-
+                if (toStaffData != null)
+                {
+                    var toStaff = context.TBL_STAFF.Find(toStaffData.STAFFID);
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, toStaff.EMAIL, data.JOBREQUESTCODE);
+                }
             }
 
             data.REASSIGNEDTO = (int)model.reassignedTo;
@@ -1654,7 +1704,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                dateTimeDeleted = x.DATETIMECREATED,
                                jobTypeId = x.JOBTYPEID,
                                dateTimeCreated = x.DATETIMECREATED,
-                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME + " - (" + o.STAFFCODE + ")").FirstOrDefault(),
                                jobTypeName = context.TBL_JOB_TYPE.Where(o => o.JOBTYPEID == x.JOBTYPEID).Select(o => o.JOBTYPENAME).FirstOrDefault(),
 
                            }).ToList();
@@ -1855,7 +1905,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeHubId = x.JOBTYPEHUBID,
                 staffId = x.STAFFID,
                 jobTypeHubName = context.TBL_JOB_TYPE_HUB.Where(o => o.JOBTYPEHUBID == x.JOBTYPEHUBID).Select(o => o.HUBNAME).FirstOrDefault(),
-                staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME +" ("+o.STAFFCODE+")").FirstOrDefault(),
                 jobTypeUnitId = x.JOBTYPEUNITID,
                 jobTypeUnitName = context.TBL_JOB_TYPE_UNIT.Where(o => o.JOBTYPEUNITID == x.JOBTYPEUNITID).Select(o => o.UNITNAME).FirstOrDefault(),
                 isTeamLead = x.ISTEAMLEAD
@@ -2587,10 +2637,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {
+                    int position = (short)context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Count();
                     jobFeedback = new TBL_JOB_REQUEST_STATUS_FEEDBAK()
                     {
                         JOBTYPEID = feedback.jobTypeId,
-                        JOB_STATUS_FEEDBACKID = feedback.jobStatusFeedbackId,
+                        JOB_STATUS_FEEDBACKID = (short)position++, //feedback.jobStatusFeedbackId,
                         JOB_STATUS_FEEDBACK_NAME = feedback.jobStatusFeedbackName,
                         REQUESTSTATUSID = feedback.requestStatusId,
                     };

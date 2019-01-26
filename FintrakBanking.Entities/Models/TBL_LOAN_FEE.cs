@@ -17,7 +17,7 @@ namespace FintrakBanking.Entities.Models
 
         [Key]
         public int LOANCHARGEFEEID { get; set; }
-        public int CASAACCOUNTID { get; set; }
+        public int? CASAACCOUNTID { get; set; }
 
         public int LOANID { get; set; }
 

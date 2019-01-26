@@ -643,7 +643,24 @@ namespace FintrakBanking.Repositories.Admin
         //}
 
         #endregion Users
-
+        public IEnumerable<GlobalSettingViewModel> GetAllGlobalSettings()
+        {
+            return context.TBL_SETUP_GLOBAL.Select(x => new GlobalSettingViewModel
+            {
+                applicationSetupId =x.APPLICATIONSETUPID,
+                reportPath = x.REPORTPATH,
+                useActiveDirectory = x.USE_ACTIVE_DIRECTORY,
+                activeDirectoryDomainName = x.ACTIVE_DIRECTORY_DOMAIN_NAME,
+                activeDirectoryUserName = x.ACTIVE_DIRECTORY_USERNAME,
+                activeDirectoryUserPassword = x.ACTIVE_DIRECTORY_PASSWORD,
+                requireAdUser = x.REQUIRE_ADUSER,
+                useThirdPArtyIntegration = x.USE_THIRD_PARTY_INTEGRATION,
+                useTwoFactorAuthentication = x.USE_TWO_FACTOR_AUTHENTICATION,
+                maxFileUploadSize = x.MAXIMUMUPLOADFILESIZE,
+                applicationURL = x.APPLICATION_URL,
+                supportEmail = x.SUPPORT_EMAIL,
+        });
+        }
         #region Group
 
         public IEnumerable<AppGroupViewModel> GetAllGroups()

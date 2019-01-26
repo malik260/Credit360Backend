@@ -27,7 +27,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = dashboard.LoanApplicationsBySector(val.startDate, val.endDate, token.GetCompanyId);
+                var data = dashboard.LoanApplicationsBySector(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -43,7 +43,7 @@ namespace FintrakBanking.APICore.Controllers
            
             try
             {
-                var data = dashboard.LoanPerformance(val.startDate, val.endDate, token.GetCompanyId);
+                var data = dashboard.LoanPerformance(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -58,7 +58,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = dashboard.LoanOnThePipeline(val.startDate, val.endDate, token.GetCompanyId);
+                var data = dashboard.LoanOnThePipeline(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = dashboard.ExpotureByRiskRating(val.startDate, val.endDate, token.GetCompanyId);
+                var data = dashboard.ExpotureByRiskRating(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -88,7 +88,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = dashboard.CollateralCoverage(val.startDate, val.endDate, token.GetCompanyId);
+                var data = dashboard.CollateralCoverage(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -103,7 +103,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = dashboard.TotalRiskExposure(val.startDate, val.endDate, token.GetCompanyId);
+                var data = dashboard.TotalRiskExposure(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -118,7 +118,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = dashboard.ApprovedLoan(val.startDate, val.endDate, token.GetCompanyId);
+                var data = dashboard.ApprovedLoan(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
@@ -134,7 +134,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = dashboard.LoanDisbursedByType(val.startDate, val.endDate, token.GetCompanyId);
+                var data = dashboard.LoanDisbursedByType(val.startDate, val.endDate, token.GetCompanyId, token.GetStaffId);
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }

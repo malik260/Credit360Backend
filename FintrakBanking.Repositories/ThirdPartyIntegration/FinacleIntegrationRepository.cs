@@ -20,7 +20,9 @@ namespace FintrakBanking.Repositories.ThirdPartyIntegration
         #region Batch Posting Report
         public List<BatchPostingViewModel> GetBatchPostingDetail(DateTime startDate, DateTime endDate, string searchItem)
         {
-            searchItem = searchItem.ToLower();
+            if (searchItem!=null)
+                searchItem = searchItem.ToLower();
+
             return (from x in _stgCon.FINTRAK_TRAN_PROC_DETAILS
                     where DbFunctions.TruncateTime(x.PSTD_DATE) >= DbFunctions.TruncateTime(startDate)
                                                     && DbFunctions.TruncateTime(x.PSTD_DATE) <= DbFunctions.TruncateTime(endDate)
@@ -64,7 +66,8 @@ namespace FintrakBanking.Repositories.ThirdPartyIntegration
 
         public List<BatchPostingViewModel> GetBatchPostingMain(DateTime startDate, DateTime endDate, string searchItem)
         {
-            searchItem = searchItem.ToLower();
+            if (searchItem != null)
+                searchItem = searchItem.ToLower();
 
             return (from x in _stgCon.FINTRAK_TRAN_PROC_MAIN
                     where DbFunctions.TruncateTime(x.PSTD_DATE) >= DbFunctions.TruncateTime(startDate)

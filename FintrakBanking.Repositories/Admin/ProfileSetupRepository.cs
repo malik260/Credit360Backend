@@ -58,16 +58,16 @@ namespace FintrakBanking.Repositories
             var settings = _context.TBL_PROFILE_SETTING.FirstOrDefault(p => p.PROFILESETTINGID == entity.profileSettingId);
             if (settings != null)
             {
-                settings.ALLOWPASSWORDREUSEAFTER = entity.allowPasswordReuseAfter;
-                settings.ENABLEPASSWORDRESET = entity.enablePasswordReset;
-                settings.ENABLEPASSWORDRETRIEVAL = entity.enablePasswordRetrieval;
+                //settings.ALLOWPASSWORDREUSEAFTER = entity.allowPasswordReuseAfter;
+                //settings.ENABLEPASSWORDRESET = entity.enablePasswordReset;
+                //settings.ENABLEPASSWORDRETRIEVAL = entity.enablePasswordRetrieval;
                 settings.EXPIREPASSWORDAFTER = entity.expirePasswordAfter;
                 settings.MAXINVALIDPASSWORDATTEMPTS = entity.maxInvalidPasswordAttempts;
-                settings.MAXPERIODOFUSERINACTIVITY = entity.maxPeriodOfUserInactivity;
+                //settings.MAXPERIODOFUSERINACTIVITY = entity.maxPeriodOfUserInactivity;
                 settings.MINREQUIREDNONALPHANUMERICCHAR = entity.minrequiredNonAlphanumericChar;
                 settings.MINREQUIREDPASSWORDLENGTH = entity.minRequiredPasswordLength;
                 settings.REQUIRESQUESTIONANDANSWER = entity.requiresQuestionAndAnswer;
-                settings.REQUIRESUNIQUEEMAIL = entity.requiresUniqueEmail;
+                //settings.REQUIRESUNIQUEEMAIL = entity.requiresUniqueEmail;
                 settings.SESSIONTIMEOUT = entity.sessionTimeOut;
                 //     settings.BusinessStartTime = entity.BusinessStartTime;
                 //     settings.BusinessCloseTime = entity.BusinessCloseTime;

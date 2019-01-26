@@ -17,6 +17,7 @@ namespace FintrakBanking.Entities.Models
         public int CUSTOMERID { get; set; }
 
         public int? EMPLOYERID { get; set; }
+        public string EMPLOYERSTATE { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -26,7 +27,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(200)]
         public string EMPLOYERADDRESS { get; set; }
 
-        public int EMPLOYERSTATEID { get; set; }
+        public int? EMPLOYERSTATEID { get; set; }
 
         public int EMPLOYERCOUNTRYID { get; set; }
 

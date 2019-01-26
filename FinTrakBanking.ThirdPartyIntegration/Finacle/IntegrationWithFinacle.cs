@@ -332,8 +332,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
             }
             else
             {
-
-                throw new SecureException(result.Message.StatusCode + " " + result.Message.ReasonPhrase);
+                throw new SecureException("Core Banking API error - Response Code: " + result.Message.StatusCode + ". Response Message: " + result.Message.ReasonPhrase); 
+               // throw new APIErrorException("Cresult.Message.StatusCode + " " + result.Message.ReasonPhrase);
             }
         }
 

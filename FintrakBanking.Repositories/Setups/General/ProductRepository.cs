@@ -2892,6 +2892,23 @@ namespace FintrakBanking.Repositories.Setups.General
                         dateTimeDeleted = data.DATETIMEDELETED
                     });
         }
+
+        public List<ProductPriceIndexViewModel> GetProductPriceIndexByCurrencyId(int currencyId)
+        {
+            return (from p in context.TBL_PRODUCT_PRICE_INDEX
+                    join pc in context.TBL_PRODUCT_PRICE_INDEX_CURNCY on p.PRODUCTPRICEINDEXID equals pc.PRODUCTPRICEINDEXID
+                    where p.DELETED == false && pc.PRICEINDEXCURRENCYID == currencyId  && pc.DELETED == false
+                    select new ProductPriceIndexViewModel
+                    {
+                        priceIndexDescription = p.PRICEINDEXDESCRIPTION,
+                        priceIndexName = p.PRICEINDEXNAME,
+                        priceIndexRate = p.PRICEINDEXRATE,
+                        priceIndexDuration = p.DURATION,
+                        productPriceIndexId = p.PRODUCTPRICEINDEXID,
+                        allowAutomaticRepricing = p.ALLOWAUTOMATICREPRICING,
+                    }).ToList();
+        }
+
         public ProductPriceIndexCurrencyViewModel AddProductPriceIndexCurrency(ProductPriceIndexCurrencyViewModel prodPriceIndexCurrency)
         {
             var isProductPriceIndexCurrencyExist = context.TBL_PRODUCT_PRICE_INDEX_CURNCY.Where(x => x.PRODUCTPRICEINDEXID == prodPriceIndexCurrency.productPriceIndexId && x.CURRENCYID == prodPriceIndexCurrency.currencyId).FirstOrDefault();
@@ -2925,14 +2942,26 @@ namespace FintrakBanking.Repositories.Setups.General
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
+            bool status;
 
-            var status = this.SaveAll();
-
-            if (status)
+            try
             {
-                return prodPriceIndexCurrency;
+                 status = this.context.SaveChanges() > 0;
+                if (status) { return prodPriceIndexCurrency; }
+                else
+                    return null;
             }
-            else
+            catch (Exception ex)
+            {
+                var det = ex;
+            }
+            //var status = this.SaveAll();
+
+            //if (status)
+            //{
+                
+            //}
+            //else
                 return null;
         }
 

@@ -225,70 +225,70 @@ namespace FintrakBanking.APICore.Controllers
 
         #endregion
         #region Principals
-        //[HttpGet, Route("accredited-principals")]
-        //public HttpResponseMessage GetAccreditedPrincipals()
-        //{
-        //    try
-        //    {
-        //        var response = repo.GetAccreditedPrincipals(token.GetCompanyId);
-        //        if (response != null)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
-        //        }
+        [HttpGet, Route("accredited-principals")]
+        public HttpResponseMessage GetAccreditedPrincipals()
+        {
+            try
+            {
+                var response = repo.GetAccreditedPrincipals(token.GetCompanyId);
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-        //    }
-        //}
-        //[HttpPost, Route("accredited-principals")]
-        //public async Task<HttpResponseMessage> AddAccreditedPrincipals([FromBody] AccreditedPrincipalsViewModel entity)
-        //{
-        //    try
-        //    {
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-        //        entity.companyId = token.GetCompanyId;
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+        [HttpPost, Route("accredited-principals")]
+        public async Task<HttpResponseMessage> AddAccreditedPrincipals([FromBody] AccreditedPrincipalsViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
 
-        //        var response = await repo.AddAccreditedPrincipals(entity);
-        //        if (response)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
-        //        }
+                var response = await repo.AddAccreditedPrincipals(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-        //    }
-        //}
-        //[HttpPut, Route("accredited-principlals/{id}")]
-        //public async Task<HttpResponseMessage> UpdateAccreditedPrincipals([FromBody] AccreditedPrincipalsViewModel entity, int id)
-        //{
-        //    try
-        //    {
-        //        entity.createdBy = token.GetStaffId;
-        //        entity.userBranchId = (short)token.GetBranchId;
-        //        entity.applicationUrl = HttpContext.Current.Request.Path;
-        //        entity.companyId = token.GetCompanyId;
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+        [HttpPut, Route("accredited-principals/{id}")]
+        public async Task<HttpResponseMessage> UpdateAccreditedPrincipals([FromBody] AccreditedPrincipalsViewModel entity, int id)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
 
-        //        var response = await repo.UpdateAccreditedPrincipals(entity, id);
-        //        if (response)
-        //        {
-        //            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Updated successfully" });
-        //        }
+                var response = await repo.UpdateAccreditedPrincipals(entity, id);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Updated successfully" });
+                }
 
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
-        //    }
-        //    catch (SecureException ex)
-        //    {
-        //        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
-        //    }
-        //}
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
         #endregion
         #region Auditors
         //[HttpGet, Route("accredited-auditors")]

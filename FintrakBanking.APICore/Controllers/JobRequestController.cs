@@ -296,7 +296,9 @@ namespace FintrakBanking.APICore.Controllers
                 entity.companyId = (int)token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
                 entity.userBranchId = (short)token.GetBranchId;
+                entity.branchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.branchId = (short)token.GetBranchId;
 
                 var code = repo.AddGlobalJobRequest(entity);
                 if (code != null)
@@ -570,6 +572,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.applicationUrl = HttpContext.Current.Request.Path;
 
                 requestModel.userBranchId = (short)token.GetBranchId;
+                requestModel.branchId = (short)token.GetBranchId;
                 requestModel.companyId = token.GetCompanyId;
                 requestModel.createdBy = token.GetStaffId;
                 requestModel.applicationUrl = HttpContext.Current.Request.Path;

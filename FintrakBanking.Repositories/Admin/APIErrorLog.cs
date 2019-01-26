@@ -31,7 +31,7 @@ namespace FintrakBanking.Repositories.Admin
                                  apiUrl = x.APIURL,
                                  referenceNumber = x.REFERENCENUMBER,
                                  requestDateTime = x.REQUESTDATETIME,
-                                 requestMessage = x.RESPONSEMESSAGE,
+                                 requestMessage = x.REQUESTMESSAGE,
                                  responseDateTime = x.RESPONSEDATETIME,
                                  responseMessage = x.RESPONSEMESSAGE,
 

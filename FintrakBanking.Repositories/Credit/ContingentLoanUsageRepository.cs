@@ -190,14 +190,7 @@ namespace FintrakBanking.Repositories.Credit
             
         public IEnumerable<ContingentLoansViewModel> GetPendingRequest(int staffId)
         {
-            try
-            {
-                return GetRequestWaitingApprovalByOperation(staffId).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            return GetRequestWaitingApprovalByOperation(staffId).ToList();
         }
 
         public IQueryable<ContingentLoansViewModel> GetRequestWaitingApprovalByOperation( int staffId)
@@ -232,7 +225,9 @@ namespace FintrakBanking.Repositories.Credit
                                    loanReferenceNumber = lcu.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
                                    maturityDate = lcu.TBL_LOAN_CONTINGENT.MATURITYDATE,
                                    productName = lcu.TBL_LOAN_CONTINGENT.TBL_PRODUCT.PRODUCTNAME,
-                                   loanStatus = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                                   loanStatus = lcu.TBL_LOAN_CONTINGENT.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+
+                                   amountRequested = lcu.AMOUNTREQUESTED,
                                };
             return applications;
         }
@@ -342,6 +337,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 casaLien.ReleaseLien(new CasaLienViewModel
                 {
+                    sourceReferenceNumber = entity.loanReferenceNumber,
                     productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
                     lienReferenceNumber = lienReferenceNumber,
                     userBranchId = (short)entity.BranchId,
@@ -353,12 +349,13 @@ namespace FintrakBanking.Repositories.Credit
                     createdBy = entity.createdBy,
                     userIPAddress = entity.userIPAddress,
                     applicationUrl = entity.applicationUrl,
-                });
+                },null,false);
 
                 decimal newLienAmount = oldLien - usage.AMOUNTREQUESTED;
 
                 casaLien.PlaceLien(new CasaLienViewModel
                 {
+                    sourceReferenceNumber = entity.loanReferenceNumber,
                     productAccountNumber = context.TBL_CASA.FirstOrDefault(c => c.CASAACCOUNTID == casaAccountId).PRODUCTACCOUNTNUMBER,
                     lienReferenceNumber = usage.TBL_LOAN_CONTINGENT.LOANREFERENCENUMBER,
                     userBranchId = (short)entity.BranchId,
