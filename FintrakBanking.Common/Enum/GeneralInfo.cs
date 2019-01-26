@@ -280,6 +280,8 @@ namespace FintrakBanking.Common.Enum
         JobRequestHubStaffUpdate = 258,
         JobRequestHubStaffDeleted = 259,
         LoanChargeFee = 260,
+        ProductPriceIndexGlobalAdded = 261,
+        ProductPriceIndexGlobalUpdated = 262,
 
     };
    public enum RegulatoryTypeEnum

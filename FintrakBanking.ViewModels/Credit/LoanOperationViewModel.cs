@@ -53,6 +53,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short operationId { get; set; }
 
         public int targetId { get; set; }
+        public IEnumerable<feeDetails> fees { get; set; }
 
 
     }

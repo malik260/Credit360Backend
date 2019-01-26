@@ -32,18 +32,24 @@ namespace FintrakBanking.ViewModels.Credit
         public int chargesId { get; set; }
         public string chargesTypeName { get; set; }
         public decimal defaultValue { get; set; }
+        public int? loanOperationReviewId { get; set; }
         public IEnumerable<feeDetails> feeDetails { get; set; }
 
     }
     public class feeDetails
     {
+        public int? loanChargeFeeId { get; set; }
+
         public int chargeFeeId { get; set; }
+        public string chargeFeeName { get; set; }
+
         //public int isPosted { get; set; }
         //public int approvalStatusId { get; set; }
         //public decimal feeRateValue { get; set; }
         //public decimal feeDependantAmount { get; set; }
         public decimal feeAmount { get; set; }
         public int casaAccount { get; set; }
+        public string casaAccountName { get; set; }
 
         //public decimal earnedFeeAmount { get; set; }
         //public decimal taxAmount { get; set; }

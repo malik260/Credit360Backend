@@ -859,6 +859,10 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
                 }
             }
+            catch (ConditionNotMetException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+            }
             catch (SecureException e)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });

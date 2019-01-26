@@ -156,7 +156,8 @@ namespace FintrakBanking.Repositories.Credit
                             where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                             && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeCharge
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                            && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved 
+                            
                             && op.ISPOSTED ==false
                             orderby op.DATETIMECREATED descending
 
@@ -346,7 +347,7 @@ namespace FintrakBanking.Repositories.Credit
                                       where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                              && atrail.OPERATIONID == (int)OperationsEnum.ManualFeeCharge
                              && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                                          && op.ISPOSTED == false
 
                                       orderby op.DATETIMECREATED descending
@@ -447,7 +448,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             data = lcyLoans.Union(fcyLoans).ToList();
-            return data;
+            return data.Where(a=>a.approvalStatusId != (int)ApprovalStatusEnum.Disapproved); 
         }
 
         public List<FinanceTransactionViewModel> BuildLoanManualChargeFeesPosting(int loanChargeFeeId)
@@ -628,6 +629,11 @@ namespace FintrakBanking.Repositories.Credit
 
         public ApprovalStatusEnum ApproveTakeFee(ApprovalViewModel userModel)
         {
+            if(userModel.approvalStatusId <= 0 || string.IsNullOrEmpty(userModel.comment))
+            {
+                throw new ConditionNotMetException("Kindly Enter Comment And Select an Approval Status Before Proceeding..");
+            }
+                       
             var twoFADetails = new TwoFactorAutheticationViewModel
             {
                 passcode = userModel.passCode,

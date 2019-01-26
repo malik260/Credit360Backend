@@ -12139,8 +12139,28 @@ namespace FintrakBanking.Repositories.Credit
                 workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
                 workFlow.ExternalInitialization = true;
                 var response = workFlow.LogActivity();
+               
+                bool result = false;
+                if (model.fees.ToList().Count > 0)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
-                return context.SaveChanges() > 0;
+                    feeDetails.feeDetails = model.fees;
+                    feeDetails.createdBy = model.createdBy;
+                    feeDetails.userIPAddress = model.userIPAddress;
+                    feeDetails.userBranchId = model.userBranchId;
+                    feeDetails.applicationUrl = model.applicationUrl;
+                    feeDetails.companyId = model.companyId;
+                    feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                    result = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    result = context.SaveChanges() == 0;
+                }
+
+
+                return result;
             }
             else
             {
@@ -12184,13 +12204,98 @@ namespace FintrakBanking.Repositories.Credit
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 });
-                return context.SaveChanges() > 0;
+                bool result = false;
+                if (model.fees.ToList().Count > 0)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                    feeDetails.feeDetails = model.fees;
+                    feeDetails.createdBy = model.createdBy;
+                    feeDetails.userIPAddress = model.userIPAddress;
+                    feeDetails.userBranchId = model.userBranchId;
+                    feeDetails.applicationUrl = model.applicationUrl;
+                    feeDetails.companyId = model.companyId;
+                    feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                    result = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    result = context.SaveChanges() == 0;
+                }
+
+
+                return result;
 
             }
 
 
 
 
+        }
+        public bool SubmitTakeFee(LoanFeeChargesViewModel model)
+        {
+            int staffId = model.createdBy;
+            var applicationDate = generalSetup.GetApplicationDate();
+
+
+            List<int> customerIds = new List<int>();
+            LoanViewModel loan = new LoanViewModel();
+            TBL_LOAN_FEE feeCharge = new TBL_LOAN_FEE();
+
+            foreach (var detail in model.feeDetails)
+            {
+                int tenor = detail.loanSystemTypeId == 4 ? loan.tenorUsed : loan.tenor;
+
+                feeCharge = context.TBL_LOAN_FEE.Add(new TBL_LOAN_FEE
+                {
+                    LOANID = detail.loanId,
+                    LOANSYSTEMTYPEID = detail.loanSystemTypeId,/*Term/Disbursed Facility..Overdraft Facility..Contingent Liability*/
+                    CHARGEFEEID = detail.chargeFeeId, // refactor to operationId from ui!
+                    ISPOSTED = false,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,// REMOVE DUPLICATE [STATUSID]
+                    FEERATEVALUE = 0,
+                    FEEDEPENDENTAMOUNT = 0,
+                    FEEAMOUNT = detail.feeAmount,
+                    EARNEDFEEAMOUNT = 0,
+                    TAXAMOUNT = 0,
+                    EARNEDTAXAMOUNT = 0,
+                    ISINTEGRALFEE = false,
+                    ISRECURRING = false,
+                    RECURRINGPAYMENTDAY = 0,
+                    DESCRIPTION = detail.description,
+                    ISMANUAL = true,
+                    CREATEDBY = staffId,
+                    DATETIMECREATED = applicationDate,
+                    CASAACCOUNTID = detail.casaAccount,
+                    LOANREVIEWOPERATIONID = model.loanOperationReviewId,
+
+                });
+                if (context.SaveChanges() == 0) throw new SecureException("An error occured while saving the data!"); // this save is necessary to grab targetid
+                auditTrail.AddAuditTrail(new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.LoanChargeFee,
+                    STAFFID = model.createdBy,
+                    BRANCHID = model.userBranchId,
+                    DETAIL = $"Added to tbl_Loan_Fee '{ feeCharge.LOANCHARGEFEEID}' ",
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                });
+                //workFlow.StaffId = model.createdBy;
+                //workFlow.CompanyId = model.companyId;
+                //workFlow.StatusId = (int)ApprovalStatusEnum.Pending;
+                //workFlow.TargetId = feeCharge.LOANCHARGEFEEID; // model.loanReviewOperationsId;
+                //workFlow.Comment = "Take Fee";
+                //workFlow.OperationId = (int)OperationsEnum.ManualFeeCharge;
+                //workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                //workFlow.ExternalInitialization = true;
+                //var response = workFlow.LogActivity();
+
+
+
+            }
+            return context.SaveChanges() > 0;          
         }
 
         public IEnumerable<LoanReviewOperationApprovalViewModel> GetLoanOperationAwaitingApproval(int staffId, int companyId)
@@ -12203,13 +12308,13 @@ namespace FintrakBanking.Repositories.Credit
 
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
-                            
+
                             //join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
                             //from mp in context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).DefaultIfEmpty() 
 
                             join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID into grpAppDetail
                             from mp in grpAppDetail.Where(x => x.OPERATIONPERFORMED == true).DefaultIfEmpty()
-                            
+
                             join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID into grpApp
                             from e in grpApp.DefaultIfEmpty()
 
@@ -12229,11 +12334,11 @@ namespace FintrakBanking.Repositories.Credit
                             && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                             && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                             && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
-                            orderby op.DATECREATED descending 
-                            
+                            orderby op.DATECREATED descending
+
                             select new LoanReviewOperationApprovalViewModel
                             {
-                               // loanReviewApplicationId = e.LOANAPPLICATIONID,
+                                // loanReviewApplicationId = e.LOANAPPLICATIONID,
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
@@ -12330,8 +12435,18 @@ namespace FintrakBanking.Repositories.Credit
                                 approvedAmount = ld.APPROVEDAMOUNT,
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                                 //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.TERMLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
-                               // lmsLoanReferenceNumber = mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                dateTimeCreated = op.DATECREATED
+                                // lmsLoanReferenceNumber = mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                dateTimeCreated = op.DATECREATED,
+                                fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails {
+                                    chargeFeeId = mp.CHARGEFEEID,
+                                    feeAmount = mp.FEEAMOUNT,
+                                    description = mp.DESCRIPTION,
+                                    casaAccount = mp.CASAACCOUNTID,
+                                    loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                    chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch=>ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc=>rc.CHARGEFEENAME).FirstOrDefault(),
+                                    casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                                }).ToList(),
                             }).ToList();
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
@@ -12437,7 +12552,17 @@ namespace FintrakBanking.Repositories.Credit
                                          productAccountName = ch.ACCOUNTNAME,
                                          approvedAmount = ld.APPROVEDAMOUNT,
                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                         fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                         {
+                                             chargeFeeId = mp.CHARGEFEEID,
+                                             feeAmount = mp.FEEAMOUNT,
+                                             description = mp.DESCRIPTION,
+                                             casaAccount = mp.CASAACCOUNTID,
+                                             loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                             chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                             casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
+                                         }).ToList(),
                                      }).ToList();
             var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
                                       join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
@@ -12547,7 +12672,17 @@ namespace FintrakBanking.Repositories.Credit
                                           productAccountName = ch.ACCOUNTNAME,
                                           approvedAmount = ld.APPROVEDAMOUNT,
                                           creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                          fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                                          {
+                                              chargeFeeId = mp.CHARGEFEEID,
+                                              feeAmount = mp.FEEAMOUNT,
+                                              description = mp.DESCRIPTION,
+                                              casaAccount = mp.CASAACCOUNTID,
+                                              loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                              chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                              casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
 
+                                          }).ToList(),
                                       }).ToList();
             foreach (var can in dataContingentLoan)
             {
@@ -12854,6 +12989,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                         {
+
                             //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
                             if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
                             {
@@ -12863,7 +12999,12 @@ namespace FintrakBanking.Repositories.Credit
                                     throw new TwoFactorAuthenticationException(authenticated.message);
                             }
                             twoFADetails.skipAuthentication = true;
+                            var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
 
+                            foreach (var a in fees)
+                            {
+                                a.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                            }
                             reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
                             reviewRecord.OPERATIONCOMPLETED = true;
                             context.SaveChanges();
@@ -12880,6 +13021,8 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else if (workFlow.NewState == (int)ApprovalState.Ended)
                         {
+                          
+
                             //VALIDATE TWOFACTOR AUTHENTICATION FOR EVERY TRANSACTION AND SKIP FOR SUBSEQUENT CHECKS
                             if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
                             {
@@ -12889,10 +13032,19 @@ namespace FintrakBanking.Repositories.Credit
                                     throw new TwoFactorAuthenticationException(authenticated.message);
                             }
                             twoFADetails.skipAuthentication = true;
+                            var validate = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == 0).ToList();
 
+                            //if (validate.Count > 0)
+                            //{
+                            //    throw new ConditionNotMetException("Kindly Proceed to Approve Pending Fees Attached to This Operation Before Proceeding");
+                            //}
                             result = LoanRephasementProcess(twoFADetails, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
                             if (result == true)
                             {
+                                foreach(var item in validate)
+                                {
+                                    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                }
                                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                                 output = context.SaveChanges() > 0;
                             }
@@ -15874,6 +16026,24 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
+                            if (userModel.fees.ToList().Count > 0)
+                            {
+                                LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                                feeDetails.feeDetails = userModel.fees;
+                                feeDetails.createdBy = userModel.createdBy;
+                                feeDetails.userIPAddress = userModel.userIPAddress;
+                                feeDetails.userBranchId = userModel.userBranchId;
+                                feeDetails.applicationUrl = userModel.applicationUrl;
+                                feeDetails.companyId = userModel.companyId;
+                                feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                                output = SubmitTakeFee(feeDetails);
+                            }
+                            else
+                            {
+                                output = context.SaveChanges() > 0;
+                            }
+
                             trans.Commit();
                             return output;
                         }
@@ -15917,7 +16087,25 @@ namespace FintrakBanking.Repositories.Credit
 
                 context.TBL_AUDIT.Add(audit);
 
-                output = context.SaveChanges() > 0;
+                //output = context.SaveChanges() > 0;
+                if (userModel.fees.ToList().Count > 0)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                    feeDetails.feeDetails = userModel.fees;
+                    feeDetails.createdBy = userModel.createdBy;
+                    feeDetails.userIPAddress = userModel.userIPAddress;
+                    feeDetails.userBranchId = userModel.userBranchId;
+                    feeDetails.applicationUrl = userModel.applicationUrl;
+                    feeDetails.companyId = userModel.companyId;
+                    feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                    output = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    output = context.SaveChanges() > 0;
+                }
+
                 return output;
             }
         }
@@ -16237,7 +16425,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
-            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == userModel.loanId && x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing).FirstOrDefault();
+            var validate = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == userModel.loanId && (x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing || x.APPROVALSTATUSID == (short)ApprovalStatusEnum.Pending)).FirstOrDefault();
 
             if (validate != null)
             {
@@ -16254,7 +16442,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     op.LOANID = lmsApprovalRefRecord.LOANID;
                     op.LOANSYSTEMTYPEID = lmsApprovalRefRecord.LOANSYSTEMTYPEID;
-                    op.OPERATIONTYPEID = userModel.operationId;
+                    op.OPERATIONTYPEID = (int)OperationsEnum.TenorChange; // userModel.operationId;
                     op.REVIEWDETAILS = "TenorChange";
                     op.TENOR = userModel.newTenor;
                     op.LOANREVIEWAPPLICATIONID = lmsApprovalRefRecord.LOANREVIEWAPPLICATIONID;
@@ -16263,6 +16451,7 @@ namespace FintrakBanking.Repositories.Credit
                     op.OPERATIONCOMPLETED = false;
                     op.CREATEDBY = userModel.createdBy;
                     op.DATECREATED = DateTime.Now;
+
 
                     context.TBL_LOAN_REVIEW_OPERATION.Add(op);
                     var audit = new TBL_AUDIT
@@ -16295,7 +16484,7 @@ namespace FintrakBanking.Repositories.Credit
                                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                                 comment = "Please approve this CX/FX Operation",
                                 targetId = op.LOANREVIEWOPERATIONID,
-                                operationId = userModel.operationId,
+                                operationId = (int)OperationsEnum.TenorChange, //userModel.operationId,
                                 BranchId = userModel.userBranchId,
                                 externalInitialization = true
                             };
@@ -16303,6 +16492,24 @@ namespace FintrakBanking.Repositories.Credit
 
                             if (response)
                             {
+                                if (userModel.fees.ToList().Count > 0)
+                                {
+                                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                                    feeDetails.feeDetails = userModel.fees;
+                                    feeDetails.createdBy = userModel.createdBy;
+                                    feeDetails.userIPAddress = userModel.userIPAddress;
+                                    feeDetails.userBranchId = userModel.userBranchId;
+                                    feeDetails.applicationUrl = userModel.applicationUrl;
+                                    feeDetails.companyId = userModel.companyId;
+                                    feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                                    output = SubmitTakeFee(feeDetails);
+                                }
+                                else
+                                {
+                                    output = context.SaveChanges() > 0;
+                                }
+
                                 trans.Commit();
                                 return output;
                             }
@@ -16339,7 +16546,23 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.TBL_AUDIT.Add(audit);
 
-                    output = context.SaveChanges() > 0;
+                    if (userModel.fees.ToList().Count > 0)
+                    {
+                        LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                        feeDetails.feeDetails = userModel.fees;
+                        feeDetails.createdBy = userModel.createdBy;
+                        feeDetails.userIPAddress = userModel.userIPAddress;
+                        feeDetails.userBranchId = userModel.userBranchId;
+                        feeDetails.applicationUrl = userModel.applicationUrl;
+                        feeDetails.companyId = userModel.companyId;
+                        feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                        output = SubmitTakeFee(feeDetails);
+                    }
+                    else
+                    {
+                        output = context.SaveChanges() > 0;
+                    }
                     return output;
 
                 }
@@ -16497,6 +16720,23 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
+                            if (userModel.fees.ToList().Count > 0)
+                            {
+                                LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                                feeDetails.feeDetails = userModel.fees;
+                                feeDetails.createdBy = userModel.createdBy;
+                                feeDetails.userIPAddress = userModel.userIPAddress;
+                                feeDetails.userBranchId = userModel.userBranchId;
+                                feeDetails.applicationUrl = userModel.applicationUrl;
+                                feeDetails.companyId = userModel.companyId;
+                                feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                                output = SubmitTakeFee(feeDetails);
+                            }
+                            else
+                            {
+                                output = context.SaveChanges() > 0;
+                            }
                             trans.Commit();
                             return output;
                         }
@@ -16538,8 +16778,24 @@ namespace FintrakBanking.Repositories.Credit
                 };
                 context.TBL_AUDIT.Add(audit);
 
-                output = context.SaveChanges() > 0;
+                //output = context.SaveChanges() > 0;
+                if (userModel.fees.ToList().Count > 0)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
+                    feeDetails.feeDetails = userModel.fees;
+                    feeDetails.createdBy = userModel.createdBy;
+                    feeDetails.userIPAddress = userModel.userIPAddress;
+                    feeDetails.userBranchId = userModel.userBranchId;
+                    feeDetails.applicationUrl = userModel.applicationUrl;
+                    feeDetails.companyId = userModel.companyId;
+                    feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                    output = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    output = context.SaveChanges() > 0;
+                }
                 return output;
             }
 
@@ -16599,7 +16855,7 @@ namespace FintrakBanking.Repositories.Credit
                          && atrail.OPERATIONID == ln.OPERATIONTYPEID
                         && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                         && atrail.RESPONSESTAFFID == null && ln.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                        && l.OPERATIONPERFORMED == true
+                        //&& l.OPERATIONPERFORMED == true
                         select new CamProcessedLoanViewModel
                         {
                             lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
@@ -16670,7 +16926,19 @@ namespace FintrakBanking.Repositories.Credit
                             newApplicationDate = m.APPLICATIONDATE,
                             dateTimeCreated = d.DATETIMECREATED,
                             // systemCurrentDate = systemDate,
-                            loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0
+                            loanPreliminaryEvaluationId = m.LOANPRELIMINARYEVALUATIONID ?? 0,
+                            fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == ln.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
+                            {
+                                chargeFeeId = mp.CHARGEFEEID,
+                                feeAmount = mp.FEEAMOUNT,
+                                description = mp.DESCRIPTION,
+                                casaAccount = mp.CASAACCOUNTID,
+                                loanChargeFeeId = mp.LOANCHARGEFEEID,
+                                chargeFeeName = mp.CHARGEFEEID < 0 ? "n/a" : context.TBL_CHARGE_FEE.Where(ch => ch.CHARGEFEEID == mp.CHARGEFEEID).Select(rc => rc.CHARGEFEENAME).FirstOrDefault(),
+                                casaAccountName = mp.CASAACCOUNTID < 0 ? "n/a" : context.TBL_CASA.Where(x => x.CASAACCOUNTID == mp.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER + "(" + x.PRODUCTACCOUNTNAME + "-" + x.TBL_CURRENCY.CURRENCYNAME + ")").FirstOrDefault(),
+
+                            }).ToList(),
+
                         }).ToList();
 
             List<CamProcessedLoanViewModel> lcyLoans = new List<CamProcessedLoanViewModel>();
@@ -16934,6 +17202,23 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
+                            if (userModel.fees.ToList().Count > 0)
+                            {
+                                LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                                feeDetails.feeDetails = userModel.fees;
+                                feeDetails.createdBy = userModel.createdBy;
+                                feeDetails.userIPAddress = userModel.userIPAddress;
+                                feeDetails.userBranchId = userModel.userBranchId;
+                                feeDetails.applicationUrl = userModel.applicationUrl;
+                                feeDetails.companyId = userModel.companyId;
+                                feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                                output = SubmitTakeFee(feeDetails);
+                            }
+                            else
+                            {
+                                output = context.SaveChanges() > 0;
+                            }
                             trans.Commit();
                             return output;
                         }
@@ -16974,7 +17259,24 @@ namespace FintrakBanking.Repositories.Credit
                 };
                 context.TBL_AUDIT.Add(audit);
 
-                output = context.SaveChanges() > 0;
+                //output = context.SaveChanges() > 0;
+                if (userModel.fees.ToList().Count > 0)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                    feeDetails.feeDetails = userModel.fees;
+                    feeDetails.createdBy = userModel.createdBy;
+                    feeDetails.userIPAddress = userModel.userIPAddress;
+                    feeDetails.userBranchId = userModel.userBranchId;
+                    feeDetails.applicationUrl = userModel.applicationUrl;
+                    feeDetails.companyId = userModel.companyId;
+                    feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                    output = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    output = context.SaveChanges() > 0;
+                }
                 return output;
 
             }
@@ -16995,7 +17297,8 @@ namespace FintrakBanking.Repositories.Credit
                     workFlow.StatusId = ((int)userModel.approvalStatusId == (int)ApprovalStatusEnum.Approved) ? (int)ApprovalStatusEnum.Processing : (int)userModel.approvalStatusId;
                     workFlow.TargetId = userModel.targetId;
                     workFlow.Comment = userModel.comment;
-                    workFlow.OperationId = (int)OperationsEnum.TenorChange;
+                    workFlow.OperationId = userModel.operationId;
+                    //workFlow.OperationId = (int)OperationsEnum.TenorChange;
                     workFlow.DeferredExecution = true;
                     workFlow.ExternalInitialization = false;
 
@@ -17010,7 +17313,14 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (userModel.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                     {
+
                         var reviewLine = context.TBL_LOAN_REVIEW_OPERATION.Find(userModel.targetId);
+                        var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewLine.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
+
+                        foreach (var a in fees)
+                        {
+                            a.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
+                        }
                         reviewLine.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
                         context.SaveChanges();
                         trans.Commit();
@@ -17066,6 +17376,13 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             try
                             {
+                                var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
+
+                                foreach (var a in fees)
+                                {
+                                    a.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                }
+
                                 op.OPERATIONCOMPLETED = true;
                                 context.SaveChanges();
                                 trans.Commit();
@@ -17191,6 +17508,25 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (response)
                     {
+                        if (model.fees.ToList().Count > 0)
+                        {
+                            LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                            feeDetails.feeDetails = model.fees;
+                            feeDetails.createdBy = model.createdBy;
+                            feeDetails.userIPAddress = model.userIPAddress;
+                            feeDetails.userBranchId = model.userBranchId;
+                            feeDetails.applicationUrl = model.applicationUrl;
+                            feeDetails.companyId = model.companyId;
+                            feeDetails.loanOperationReviewId = op.LOANREVIEWOPERATIONID;
+                            output = SubmitTakeFee(feeDetails);
+                        }
+                        else
+                        {
+                            output = context.SaveChanges() > 0;
+                        }
+
+
                         trans.Commit();
                         return output;
                     }
@@ -17228,7 +17564,24 @@ namespace FintrakBanking.Repositories.Credit
 
                 context.TBL_AUDIT.Add(audit);
 
-                output = context.SaveChanges() > 0;
+                if (model.fees.ToList().Count > 0)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                    feeDetails.feeDetails = model.fees;
+                    feeDetails.createdBy = model.createdBy;
+                    feeDetails.userIPAddress = model.userIPAddress;
+                    feeDetails.userBranchId = model.userBranchId;
+                    feeDetails.applicationUrl = model.applicationUrl;
+                    feeDetails.companyId = model.companyId;
+                    feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                    output = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    output = context.SaveChanges() > 0;
+                }
+
 
                 return output;
 
@@ -18521,7 +18874,28 @@ namespace FintrakBanking.Repositories.Credit
                         var response = workFlow.LogActivity();
                         //}
 
-                        output = context.SaveChanges() > 0;
+                        //output = context.SaveChanges() > 0;
+
+
+                        if (model.fees.ToList().Count > 0)
+                        {
+                            LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                            feeDetails.feeDetails = model.fees;
+                            feeDetails.createdBy = model.createdBy;
+                            feeDetails.userIPAddress = model.userIPAddress;
+                            feeDetails.userBranchId = model.userBranchId;
+                            feeDetails.applicationUrl = model.applicationUrl;
+                            feeDetails.companyId = model.companyId;
+                            feeDetails.loanOperationReviewId = data.LOANREVIEWOPERATIONID;
+                            output = SubmitTakeFee(feeDetails);
+                        }
+                        else
+                        {
+                            output = context.SaveChanges() == 0;
+                        }
+
+
                         trans.Commit();
 
 
@@ -18613,7 +18987,24 @@ namespace FintrakBanking.Repositories.Credit
                 };
                 auditTrail.AddAuditTrail(audit);
 
-                output = context.SaveChanges() > 0;
+                if (model.fees.ToList().Count > 0)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                    feeDetails.feeDetails = model.fees;
+                    feeDetails.createdBy = model.createdBy;
+                    feeDetails.userIPAddress = model.userIPAddress;
+                    feeDetails.userBranchId = model.userBranchId;
+                    feeDetails.applicationUrl = model.applicationUrl;
+                    feeDetails.companyId = model.companyId;
+                    feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                    output = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    output = context.SaveChanges() == 0;
+                }
+                //output = context.SaveChanges() > 0;
 
                 return output;
             }

@@ -7840,6 +7840,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.REVOLVINGLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    loanId = a.REVOLVINGLOANID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
@@ -7949,6 +7950,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanApplicationId = a.LOANAPPLICATIONDETAILID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    customerCode = b.CUSTOMERCODE,
                                    productId = a.PRODUCTID,
                                    companyId = a.COMPANYID,
@@ -8153,6 +8155,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.CONTINGENTLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    loanId = a.CONTINGENTLOANID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
@@ -9862,6 +9865,8 @@ namespace FintrakBanking.Repositories.Credit
                             //&& d.EXPIRYDATE >= systemDate
                             select new CamProcessedLoanViewModel
                             {
+                                loanSystemTypeId = l.LOANSYSTEMTYPEID,
+                                loanId = l.LOANID,
                                 loanReviewApplicationId = e.LOANAPPLICATIONID,
                                 approvalStatusId = (short)m.APPROVALSTATUSID,
                                 loanApplicationId = m.LOANAPPLICATIONID,
