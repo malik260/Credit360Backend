@@ -119,6 +119,8 @@ namespace FintrakBanking.Repositories.AlertMonitoring
 
             logger.SendAlertsForLoanRepayment(title, body, alertSetups);
 
+            logger.SendAlertCustomerForLoanRepaymentApproachingDueDate(title, body, alertSetups);
+
 
             return true;
         }
