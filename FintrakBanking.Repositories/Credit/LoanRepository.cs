@@ -2372,7 +2372,7 @@ namespace FintrakBanking.Repositories.Credit
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-
+                                crmsCode = ln.CRMSCODE,
                                 staffId = staffId,
 
                                 pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION ?? null,
@@ -8997,7 +8997,7 @@ namespace FintrakBanking.Repositories.Credit
                                        || a.LOANSTATUSID != (short)LoanStatusEnum.Inactive
                                        || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
                                    ) 
-                                   && a.MATURITYDATE > applicationDate
+                                  // && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.TERMLOANID,
@@ -9044,7 +9044,7 @@ namespace FintrakBanking.Repositories.Credit
                                    b.LASTNAME.ToLower().Contains(searchQuery.Trim()) ||
                                    c.PRODUCTACCOUNTNUMBER.ToLower().Contains(searchQuery.Trim())) 
                                    && (a.LOANSTATUSID != (short)LoanStatusEnum.Cancelled || a.LOANSTATUSID != (short)LoanStatusEnum.Terminated)  //|| a.LOANSTATUSID != (short)LoanStatusEnum.Inactive || a.LOANSTATUSID != (short)LoanStatusEnum.Completed
-                                   && a.MATURITYDATE > applicationDate
+                                  // && a.MATURITYDATE > applicationDate
                                    select new LoanViewModel
                                    {
                                        loanId = a.REVOLVINGLOANID,

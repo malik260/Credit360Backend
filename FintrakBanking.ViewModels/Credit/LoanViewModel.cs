@@ -152,7 +152,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string archiveCode { get; set; }
         public int contigentAmount {get; set;}
         public string branchCode { get; set; }
-
+        public DateTime? crmsDate { get; set; }
 
         public decimal equityContribution { get; set; }
         public short subSectorId { get; set; }
@@ -432,6 +432,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int? internalPrudentialGuidelineStatusId { get; set; }
         public int? externalPrudentialGuidelineStatusId { get; set; }
         public DateTime? nplDate { get; set; }
+        public DateTime? crmsDate { get; set; }
+        public string crmsCode { get; set; }
 
         //.............Other Attributes................//
         public int productTypeId { get; set; } 
@@ -553,6 +555,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string productAccountNumber { get; set; }
         public string comment { get; set; }
         public int loanBookingRequestId { get; set; }
+        public DateTime? crmsDate { get; set; }
+        public string crmsCode { get; set; }
         // public string SectorName { get; set; }
         //......Loan Relational Table View Mapping Models..............//
         public List<LoanCovenantDetailViewModel> loanCovenant { get; set; }

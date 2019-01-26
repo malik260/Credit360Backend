@@ -2090,6 +2090,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var loan = (from a in context.TBL_LOAN
                        where a.LOANAPPLICATIONDETAILID == loanApplicationDetilId
+                       orderby a.DATETIMECREATED
                        select new LoanViewModel
                        {
                            loanId = a.TERMLOANID,
@@ -2133,6 +2134,8 @@ namespace FintrakBanking.Repositories.Credit
                            profileLoan = a.PROFILELOAN,
                            dischargeLetter = a.DISCHARGELETTER,
                            suspendInterest = a.SUSPENDINTEREST,
+                           crmsCode = a.CRMSCODE,
+                           crmsDate = a.CRMSDATE,
                            createdBy = a.CREATEDBY,
                            dateTimeCreated = a.DATETIMECREATED,
                            isCamsol = context.TBL_LOAN_CAMSOL.Where(x => x.LOANID == a.TERMLOANID).Any(),
@@ -2159,6 +2162,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan = (from a in context.TBL_LOAN_CONTINGENT
                         where a.LOANAPPLICATIONDETAILID == loanApplicationDetilId
+                        orderby a.DATETIMECREATED
                         select new LoanViewModel
                         {
                             loanId = a.CONTINGENTLOANID,
@@ -2181,6 +2185,8 @@ namespace FintrakBanking.Repositories.Credit
                             isDisbursedState = a.ISDISBURSED ? "Yes" : "No",
                             disburserComment = a.DISBURSERCOMMENT,
                             disburseDate = a.DISBURSEDATE,
+                            crmsCode = a.CRMSCODE,
+                            crmsDate = a.CRMSDATE,
                             operationId = a.OPERATIONID,
                             operationName = context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                             subSectorName = a.TBL_SUB_SECTOR.NAME,
@@ -2203,6 +2209,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 loan = (from a in context.TBL_LOAN_REVOLVING
                         where a.LOANAPPLICATIONDETAILID == loanApplicationDetilId
+                        orderby a.DATETIMECREATED
                         select new LoanViewModel
                         {
                             loanId = a.REVOLVINGLOANID,
@@ -2222,6 +2229,8 @@ namespace FintrakBanking.Repositories.Credit
                             dateApproved = a.DATEAPPROVED,
                             loanStatusId = a.LOANSTATUSID,
                             isDisbursed = a.ISDISBURSED,
+                            crmsCode = a.CRMSCODE,
+                            crmsDate = a.CRMSDATE,
                             isDisbursedState = a.ISDISBURSED ? "Yes" : "No",
                             disburserComment = a.DISBURSERCOMMENT,
                             disburseDate = a.DISBURSEDATE,

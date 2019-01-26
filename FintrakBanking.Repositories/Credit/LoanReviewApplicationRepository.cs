@@ -513,9 +513,8 @@ namespace FintrakBanking.Repositories.Credit
             var appl = context.TBL_LMSR_APPLICATION.Find(model.applicationId);
             int lastOperationId = (int)OperationsEnum.LoanReviewApprovalAvailment;
 
-            if (appl.CREATEDBY == model.createdBy
-                && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter
-                && ChecklistCompleted(model.applicationId) == false)
+            var checklistValidation = ChecklistCompleted(model.applicationId);
+            if (appl.CREATEDBY == model.createdBy  && model.operationId == (int)OperationsEnum.LoanReviewApprovalOfferLetter && checklistValidation == false)
             {
                 throw new SecureException("Checklist not complleted!");
             }
@@ -1112,7 +1111,6 @@ namespace FintrakBanking.Repositories.Credit
         public List<LoanReviewOperationViewModel> GetLMSOperation(int loanId, short loansystemTypeId)
         {
             var ops = (from op in context.TBL_LOAN_REVIEW_OPERATION
-                       join at in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals at.TARGETID
                        where op.LOANID == loanId && op.LOANSYSTEMTYPEID == loansystemTypeId
                        select new LoanReviewOperationViewModel
                        {
@@ -1122,7 +1120,6 @@ namespace FintrakBanking.Repositories.Credit
                            approvalStatus = context.TBL_APPROVAL_STATUS.Where(o => o.APPROVALSTATUSID == op.APPROVALSTATUSID).Select(o => o.APPROVALSTATUSNAME).FirstOrDefault(),
                            operationCompleted = op.OPERATIONCOMPLETED,
                            loanApplicationId = 0,
-                           operationId = at.OPERATIONID,
                            loanReviewOperationsId = op.LOANREVIEWOPERATIONID
                        });
 
