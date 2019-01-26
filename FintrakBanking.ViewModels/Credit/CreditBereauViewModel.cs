@@ -75,6 +75,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime dateCompleted { get; set; }
     }
 
+
     public class CreditBureauDocument : GeneralEntity
     {
         public int documentId { get; set; }
