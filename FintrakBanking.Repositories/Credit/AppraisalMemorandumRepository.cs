@@ -1839,28 +1839,33 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = a.RELATEDREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
-                        }).FirstOrDefault();
+                        }).Distinct().ToList();
 
 
-            string referenceNo = data.applicationReferenceNumber;
+            
 
-                var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with ref no. : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
-            string templateUrl = "EmailTemplates\\Monitoring.html";
-            string mailBody = EmailHelpers.PopulateBody(successEmailBody, templateUrl);
-
-            MessageLogViewModel messageModel = new MessageLogViewModel
+            foreach(var customer in data)
             {
-                MessageSubject = "APPROVAL FOR LOAN APPLICATION",
-                MessageBody = mailBody,
-                MessageStatusId = 1,
-                MessageTypeId = 1,
-                FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                ToAddress = $"{data.email}",
-                DateTimeReceived = DateTime.Now,
-                SendOnDateTime = DateTime.Now
-            };
+                string referenceNo = customer.applicationReferenceNumber;
+                var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with ref no. : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(successEmailBody, templateUrl);
 
-           SaveMessageDetails(messageModel);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = "APPROVAL FOR LOAN APPLICATION",
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{customer.email}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+
+                SaveMessageDetails(messageModel);
+            }
+                
         }
         private void SendCustomerLoanDisapprovedEmail(int loanApplicationId, int companyId)
         {
@@ -1875,28 +1880,30 @@ namespace FintrakBanking.Repositories.Credit
                             applicationReferenceNumber = a.RELATEDREFERENCENUMBER,
                             customerId = b.CUSTOMERID,
                             approvalStatusId = a.APPROVALSTATUSID
-                        }).FirstOrDefault();
+                        }).Distinct().ToList();
 
-
-            string referenceNo = data.applicationReferenceNumber;
-
-            var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with ref no. : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
-            string templateUrl = "EmailTemplates\\Monitoring.html";
-            string mailBody = EmailHelpers.PopulateBody(failedEmailBody, templateUrl);
-
-            MessageLogViewModel messageModel = new MessageLogViewModel
+            foreach (var customer in data)
             {
-                MessageSubject = "DISAPPROVAL FOR LOAN APPLICATION",
-                MessageBody = mailBody,
-                MessageStatusId = 1,
-                MessageTypeId = 1,
-                FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                ToAddress = $"{data.email}",
-                DateTimeReceived = DateTime.Now,
-                SendOnDateTime = DateTime.Now
-            };
+                string referenceNo = customer.applicationReferenceNumber;
 
-             SaveMessageDetails(messageModel);
+                var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with ref no. : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(failedEmailBody, templateUrl);
+
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = "DISAPPROVAL FOR LOAN APPLICATION",
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{customer.email}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+                SaveMessageDetails(messageModel);
+            }
+             
         }
 
         public void SaveMessageDetails(MessageLogViewModel model)

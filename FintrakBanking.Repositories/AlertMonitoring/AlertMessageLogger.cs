@@ -2991,7 +2991,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             }
         }
 
-        public bool SendAlertCustomerForLoanRepaymentApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
+        public bool SendAlertToCustomerForLoanRepaymentApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups)
         {
             TBL_MONITORING_ALERT_SETUP alertsetupForLoanRepayment = (from x in alertSetups
                                                                         where x.MONITORING_ITEMID == (int)AlertMessageEnum.CustomerAlertForLoanRepaymentApproachingDueDate
@@ -3042,9 +3042,9 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                         DateTimeReceived = DateTime.Now,
                         SendOnDateTime = DateTime.Now
                     };
-                    return true;
+                    SaveMessageDetails(messageModel);
                 }
-               
+                return true;
             }
             return false;
         }
