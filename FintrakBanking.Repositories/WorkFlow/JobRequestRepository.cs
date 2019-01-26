@@ -73,6 +73,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 RESPONSECOMMENT = model.responseComment,
                 ARRIVALDATE = applicationDate,
                 SYSTEMARRIVALDATE = date,
+                BRANCHID = model.branchId
             };
             var job = context.TBL_JOB_REQUEST.Add(data); 
 
@@ -96,6 +97,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             else return string.Empty;
         }
+
         public string AddGlobalJobRequest(JobRequestViewModel model)
         {
             if (model.receiverStaffId == model.createdBy)
@@ -1855,7 +1857,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeHubId = x.JOBTYPEHUBID,
                 staffId = x.STAFFID,
                 jobTypeHubName = context.TBL_JOB_TYPE_HUB.Where(o => o.JOBTYPEHUBID == x.JOBTYPEHUBID).Select(o => o.HUBNAME).FirstOrDefault(),
-                staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME +" ("+o.STAFFCODE+")").FirstOrDefault(),
                 jobTypeUnitId = x.JOBTYPEUNITID,
                 jobTypeUnitName = context.TBL_JOB_TYPE_UNIT.Where(o => o.JOBTYPEUNITID == x.JOBTYPEUNITID).Select(o => o.UNITNAME).FirstOrDefault(),
                 isTeamLead = x.ISTEAMLEAD

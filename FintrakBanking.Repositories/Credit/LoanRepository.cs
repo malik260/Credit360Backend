@@ -5411,7 +5411,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                 applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                 applicationStatusId = m.APPLICATIONSTATUSID,
-                                customerId = m.CUSTOMERID ?? 0,
+                                customerId =  d.CUSTOMERID,
                                 customerCode = cust.CUSTOMERCODE,
                                 customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                                 customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
