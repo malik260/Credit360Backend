@@ -79,7 +79,27 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-login-company")]
+        public HttpResponseMessage GetLoginCompany()
+        {
+            try
+            {
+                var company = repo.GetCompanyViewModel(token.GetCompanyId);
+                if (company == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = company });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("company/{companyId}")]
