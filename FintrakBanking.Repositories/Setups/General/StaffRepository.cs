@@ -112,6 +112,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var staff = (from c in context.TBL_STAFF
                          join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                          join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                         where c.DELETED == false
                          //join dept in context.TBL_DEPARTMENT on c.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
                          select new StaffInfoViewModel()
                          {
@@ -513,6 +514,13 @@ namespace FintrakBanking.Repositories.Setups.General
             var targetStaff = context.TBL_STAFF.Find(staffId);
 
             targetStaff.DELETED = true;
+            targetStaff.DELETEDBY = user.staffId;
+            targetStaff.DATETIMEDELETED = DateTime.Now;
+
+            var userAccount = context.TBL_PROFILE_USER.Where(x => x.STAFFID == targetStaff.STAFFID).FirstOrDefault();
+            userAccount.ISACTIVE = false;
+            userAccount.ISLOCKED = true;
+
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT

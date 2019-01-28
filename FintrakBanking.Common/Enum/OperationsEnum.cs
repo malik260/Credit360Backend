@@ -106,6 +106,6 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityAmountReduction = 97,
         LoanBookingRequest = 98,
         ManualFeeCharge = 99,
-        GlobalInterestRateChange = 100,
+        GlobalInterestRateChange=100,
     }
 }

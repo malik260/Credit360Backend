@@ -9,13 +9,13 @@ namespace FintrakBanking.Interfaces.Credit
 {
     public interface IDashboardRepository
     {
-        List<DashboardViewModel> LoanApplicationsBySector(DateTime startDate, DateTime endDate,int companyId);
-        List<DashboardReportItem>     LoanPerformance(DateTime startDate, DateTime endDate,int companyId);
-        List<DashboardViewModel> LoanOnThePipeline(DateTime startDate, DateTime endDate, int companyId);
-        List<DashboardViewModel> ExpotureByRiskRating(DateTime startDate, DateTime endDate, int companyId);
-        List<DashboardViewModel> CollateralCoverage(DateTime startDate, DateTime endDate, int companyId);
-        List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId);
-        List<DashboardViewModel> TotalRiskExposure(DateTime startDate, DateTime endDate, int companyId);
-        List<LoanDisburseByType> LoanDisbursedByType(DateTime startDate, DateTime endDate, int companyId);
+        List<DashboardViewModel> LoanApplicationsBySector(DateTime startDate, DateTime endDate,int companyId, int staffId);
+        List<DashboardReportItem>     LoanPerformance(DateTime startDate, DateTime endDate,int companyId, int staffId);
+        List<DashboardViewModel> LoanOnThePipeline(DateTime startDate, DateTime endDate, int companyId, int staffId);
+        List<DashboardViewModel> ExpotureByRiskRating(DateTime startDate, DateTime endDate, int companyId, int staffId);
+        List<DashboardViewModel> CollateralCoverage(DateTime startDate, DateTime endDate, int companyId, int staffId);
+        List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId, int staffId);
+        List<DashboardViewModel> TotalRiskExposure(DateTime startDate, DateTime endDate, int companyId, int staffId);
+        List<LoanDisburseByType> LoanDisbursedByType(DateTime startDate, DateTime endDate, int companyId, int staffId);
     }
 }

@@ -73,6 +73,7 @@
     <Compile Include="Admin\CanGroupViewModel.cs" />
     <Compile Include="Admin\CurrencyRateViewModel.cs" />
     <Compile Include="Admin\IAPIErrorLogViewModel.cs" />
+    <Compile Include="Admin\GlobalSettingViewModel.cs" />
     <Compile Include="Admin\ProfileSettingViewModel.cs" />
     <Compile Include="Admin\UserActions.cs" />
     <Compile Include="AlertMonitoring\SLANotificationViewModel.cs" />
@@ -129,6 +130,7 @@
     <Compile Include="Credit\StalledPerfectionViewModel.cs" />
     <Compile Include="Credit\TemplatesMemoViewModel.cs" />
     <Compile Include="Credit\UnearnedLoanInterestReport.cs" />
+    <Compile Include="Credit\UserCurrencyViewFilter.cs" />
     <Compile Include="Credit\WeeklyRecoveryReportFINCON.cs" />
     <Compile Include="CRMS\CRMSCodeBookViewModel.cs" />
     <Compile Include="CustomerKYCITemViewModel.cs" />
@@ -194,6 +196,7 @@
     <Compile Include="Setups\Credit\FXAccountCreationViewModel.cs" />
     <Compile Include="Setups\Credit\LoanCovenantTypeViewModel.cs" />
     <Compile Include="Setups\Credit\PrudentialGuidelineViewModel.cs" />
+    <Compile Include="Setups\Credit\CompanySetupViewModel.cs" />
     <Compile Include="Setups\Finance\AccountCategoryViewModel.cs" />
     <Compile Include="Setups\Finance\AccountTypeViewModel.cs" />
     <Compile Include="Setups\Finance\ChargeFeeViewModel.cs" />

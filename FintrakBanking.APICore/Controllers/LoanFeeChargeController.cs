@@ -41,6 +41,10 @@ namespace FintrakBanking.APICore.Controllers
                 string response = repo.SubmitTakeFee(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = response, result = response });
             }
+            catch (ConditionNotMetException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = e.Message });
+            }
             catch (SecureException ex)
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, inner = ex.InnerException });

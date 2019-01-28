@@ -48,6 +48,7 @@ namespace FintrakBanking.Interfaces.Admin
         #region Group
 
         IEnumerable<AppGroupViewModel> GetAllGroups();
+        IEnumerable<GlobalSettingViewModel> GetAllGlobalSettings();
 
         AppGroupViewModel GetSingleGroup(int groupId);
 

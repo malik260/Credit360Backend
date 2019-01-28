@@ -302,7 +302,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var data = loanRepo.GetApprovedLoanReview();
+                var data = loanRepo.GetApprovedLoanReview(token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -858,6 +858,10 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
                 }
+            }
+            catch (ConditionNotMetException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
             }
             catch (SecureException e)
             {

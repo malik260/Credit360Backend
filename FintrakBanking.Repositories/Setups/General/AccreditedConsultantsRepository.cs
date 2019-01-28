@@ -714,95 +714,95 @@ namespace FintrakBanking.Repositories.Setups.General
         }
         #endregion
         #region Principals
-        //public IEnumerable<AccreditedPrincipalsViewModel> GetAccreditedPrincipals(int companyId)
-        //{
-        //    return (from p in context.tbl_Collateral_Principals
-        //            where p.CompanyId == companyId
-        //            select new AccreditedPrincipalsViewModel
-        //            {
-        //                principalsId = p.PrincipalsId,
-        //                principalsRegNumber = p.PrincipalsRegNumber,
-        //                accountNumber = p.AccountNumber,
-        //                principalsBVN = p.PrincipalsBVN,
-        //                cityId = p.CityId,
-        //                name = p.Name,
-        //                countryId = p.CountryId,
-        //                emailAddress = p.EmailAddress,
-        //                phoneNumber = p.PhoneNumber,
-        //                address = p.Address
-        //            });
-        //}
-        //public async Task<bool> AddAccreditedPrincipals(AccreditedPrincipalsViewModel entity)
-        //{
-        //    var solicitors = new tbl_Collateral_Principals
-        //    {
-        //        CityId = entity.cityId,
-        //        Name = entity.name,
-        //        PrincipalsBVN = entity.principalsBVN,
-        //        PrincipalsRegNumber = entity.principalsRegNumber,
-        //        AccountNumber = entity.accountNumber,
-        //        CountryId = entity.countryId,
-        //        EmailAddress = entity.emailAddress,
-        //        PhoneNumber = entity.phoneNumber,
-        //        Address = entity.address,
-        //        CompanyId = entity.companyId,
-        //        CreatedBy = entity.createdBy,
-        //        DateTimeCreated = DateTime.Now,
-        //        Deleted = false
-        //    };
-        //    context.tbl_Collateral_Principals.Add(solicitors);
+        public IEnumerable<AccreditedPrincipalsViewModel> GetAccreditedPrincipals(int companyId)
+        {
+            return (from p in context.TBL_LOAN_PRINCIPAL
+                    where p.COMPANYID == companyId orderby p.NAME ascending
+                    select new AccreditedPrincipalsViewModel
+                    {
+                        principalsId = (short)p.PRINCIPALID,
+                        principalsRegNumber = p.PRINCIPALSREGNUMBER,
+                        accountNumber = p.ACCOUNTNUMBER,
+                        //principalsBVN = p.PrincipalsBVN,
+                        //cityId = p.CityId,
+                        name = p.NAME,
+                        //countryId = p.CountryId,
+                        emailAddress = p.EMAILADDRESS,
+                        phoneNumber = p.PHONENUMBER,
+                        address = p.ADDRESS
+                    });
+        }
+        public async Task<bool> AddAccreditedPrincipals(AccreditedPrincipalsViewModel entity)
+        {
+            var solicitors = new TBL_LOAN_PRINCIPAL
+            {
+                //CityId = entity.cityId,
+                NAME = entity.name,
+                //PrincipalsBVN = entity.principalsBVN,
+                PRINCIPALSREGNUMBER = entity.principalsRegNumber,
+                ACCOUNTNUMBER = entity.accountNumber,
+                //CountryId = entity.countryId,
+                EMAILADDRESS = entity.emailAddress,
+                PHONENUMBER = entity.phoneNumber,
+                ADDRESS = entity.address,
+                COMPANYID = entity.companyId,
+                CREATEDBY = entity.createdBy,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false
+            };
+            context.TBL_LOAN_PRINCIPAL.Add(solicitors);
 
-        //    // Audit Section ----------------------------
-        //    var audit = new tbl_Audit
-        //    {
-        //        AuditTypeId = (short)AuditTypeEnum.CollateralValuerAdded,
-        //        StaffId = entity.createdBy,
-        //        BranchId = (short)entity.userBranchId,
-        //        Detail = $"Added tbl_Collateral_Principals with Id: {entity.principalsId} ",
-        //        IPAddress = entity.userIPAddress,
-        //        Url = entity.applicationUrl,
-        //        ApplicationDate = genSetup.GetApplicationDate(),
-        //        SystemDateTime = DateTime.Now,
-        //    };
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralValuerAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Added tbl_Collateral_Principals with Id: {entity.principalsId} ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+            };
 
-        //    auditTrail.AddAuditTrail(audit);
-        //    var response = await context.SaveChangesAsync() != 0;
-        //    return response;
-        //}
-        //public async Task<bool> UpdateAccreditedPrincipals(AccreditedPrincipalsViewModel entity, int id)
-        //{
-        //    var principal = context.tbl_Collateral_Principals.Find(id);
-        //    if (principal != null)
-        //    {
-        //        principal.CityId = entity.cityId;
-        //        principal.Name = entity.name;
-        //        principal.PrincipalsRegNumber = entity.principalsRegNumber;
-        //        principal.PrincipalsBVN = entity.principalsBVN;
-        //        principal.AccountNumber = entity.accountNumber;
-        //        principal.CountryId = entity.countryId;
-        //        principal.EmailAddress = entity.emailAddress;
-        //        principal.PhoneNumber = entity.phoneNumber;
-        //        principal.Address = entity.address;
+            auditTrail.AddAuditTrail(audit);
+            var response = await context.SaveChangesAsync() != 0;
+            return response;
+        }
+        public async Task<bool> UpdateAccreditedPrincipals(AccreditedPrincipalsViewModel entity, int id)
+        {
+            var principal = context.TBL_LOAN_PRINCIPAL.Find(id);
+            if (principal != null)
+            {
+                //principal.CityId = entity.cityId;
+                principal.NAME = entity.name;
+                principal.PRINCIPALSREGNUMBER = entity.principalsRegNumber;
+                //principal.PrincipalsBVN = entity.principalsBVN;
+                principal.ACCOUNTNUMBER = entity.accountNumber;
+                //principal.CountryId = entity.countryId;
+                principal.EMAILADDRESS = entity.emailAddress;
+                principal.PHONENUMBER = entity.phoneNumber;
+                principal.ADDRESS = entity.address;
 
-        //    };
+            };
 
-        //    // Audit Section ----------------------------
-        //    var audit = new tbl_Audit
-        //    {
-        //        AuditTypeId = (short)AuditTypeEnum.CollateralTypeAdded,
-        //        StaffId = entity.createdBy,
-        //        BranchId = (short)entity.userBranchId,
-        //        Detail = $"Updated tbl_Collateral_Principals with Id: {entity.principalsId} ",
-        //        IPAddress = entity.userIPAddress,
-        //        Url = entity.applicationUrl,
-        //        ApplicationDate = genSetup.GetApplicationDate(),
-        //        SystemDateTime = DateTime.Now,
-        //    };
+            // Audit Section ----------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralTypeAdded,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.userBranchId,
+                DETAIL = $"Updated tbl_Collateral_Principals with Id: {entity.principalsId} ",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
+                APPLICATIONDATE = genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now,
+            };
 
-        //    auditTrail.AddAuditTrail(audit);
-        //    var response = await context.SaveChangesAsync() != 0;
-        //    return response;
-        //}
+            auditTrail.AddAuditTrail(audit);
+            var response = await context.SaveChangesAsync() != 0;
+            return response;
+        }
         #endregion
         #region Recovery Agents
         //public IEnumerable<AccreditedRecoveryAgentViewModel> GetAccreditedRecoveryAgent(int companyId)

@@ -412,10 +412,10 @@ namespace FintrakBanking.APICore.Controllers
                 if (staff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = staff, message = "staff has been created successfully" });
+                        new { success = true, result = staff, message = "staff has been deleted successfully" });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "staff not created" });
+                    new { success = false, message = "Deleting staff record failed." });
             }
             catch (SecureException ex)
             {

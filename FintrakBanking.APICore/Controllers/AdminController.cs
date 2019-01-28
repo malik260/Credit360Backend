@@ -308,7 +308,25 @@ namespace FintrakBanking.APICore.Controllers
 
 
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("global-settings")]
+        public HttpResponseMessage GetAllGlobalSettings()
+        {
+            try
+            {
+                var globalSettings = repo.GetAllGlobalSettings().ToList();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = globalSettings });
+            }
+            catch (SecureException ex)
+            {
+                // this.errorLogger.LogError(ex, HttpContext.Current.Request.Path, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"An unhandled error occured while fetching groups - {ex.Message}" });
+            }
 
+
+        }
 
         [HttpPut]
         [ClaimsAuthorization]

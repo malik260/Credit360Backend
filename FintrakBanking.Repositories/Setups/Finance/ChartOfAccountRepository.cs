@@ -308,11 +308,11 @@ namespace FintrakBanking.Repositories.Setups.Finance
 
         public bool AddTempAccount(ChartOfAccountViewModel accountModel)
         {
-            if (USE_THIRD_PARTY_INTEGRATION)
-            {
-                if (cwpAIP.ValidateGLNumber(accountModel.accountCode) == null)
-                    throw new SecureException($"Account Number {accountModel.accountCode} does not exist on the core banking application");
-            }
+            //if (USE_THIRD_PARTY_INTEGRATION)
+            //{
+            //    if (cwpAIP.ValidateGLNumber(accountModel.accountCode) == null)
+            //        throw new SecureException($"Account Number {accountModel.accountCode} does not exist on the core banking application");
+            //}
 
 
             if (accountModel.currencies.Count < 1)

@@ -89,6 +89,31 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("thirdparty-service-charge")]
+        public HttpResponseMessage GetLoanThirdPartyServiceChargeStatusDetails()
+        {
+            try
+            {
+                var test = repo;
+                var data = repo.GetLoanThirdPartyServiceChargeStatusDetails(token.GetCompanyId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, count = data, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
         [HttpGet] [ClaimsAuthorization]  
         [Route("credit-bureau-information")]
         public HttpResponseMessage GetCreditBureauInformation()

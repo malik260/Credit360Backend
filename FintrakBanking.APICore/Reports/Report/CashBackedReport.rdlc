@@ -128,7 +128,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>branch</Value>
+                              <Value>Branch</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -159,7 +159,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>account No</Value>
+                              <Value>Account No</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -190,7 +190,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>account Name</Value>
+                              <Value>Account Name</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -221,7 +221,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>loan Reference Number</Value>
+                              <Value>Loan Reference Number</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -252,7 +252,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>security Type</Value>
+                              <Value>Security Type</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -283,7 +283,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>deposit Account No</Value>
+                              <Value>Deposit Account No</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -314,7 +314,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>loan Limit</Value>
+                              <Value>Loan Limit</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -345,7 +345,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>loan Balance</Value>
+                              <Value>Loan Balance</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -376,7 +376,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>loan Limit Foreign Currency</Value>
+                              <Value>Loan Limit Foreign Currency</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -407,7 +407,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>loan Balance Foreign Currency</Value>
+                              <Value>Loan Balance Foreign Currency</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -438,7 +438,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>security Value</Value>
+                              <Value>Security Value</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -469,7 +469,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>currency Type</Value>
+                              <Value>Currency Type</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>
@@ -500,7 +500,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>security In The Name Of</Value>
+                              <Value>Security In The Name Of</Value>
                               <Style />
                             </TextRun>
                           </TextRuns>

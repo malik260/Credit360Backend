@@ -35,6 +35,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<ProductViewModel> GetProductByTypeAndCategory(short productTypeId, short productCategoryId);
         bool IsProductCodeAlreadyExist(string productCode);
         bool IsProductExist(string productCode);
+        int GoForApprovalGlobalPriceIndex(ApprovalViewModel entity);
+
         int GoForApproval(ApprovalViewModel entity);
         Task<ProductViewModel> AddTempProduct(ProductViewModel product);
         Task<bool> UpdateProduct(int productId, ProductViewModel product);
@@ -48,10 +50,14 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         #region Product Price Index
         IEnumerable<ProductPriceIndexViewModel> GetProductPriceIndex(int companyId);
+        IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobal();
+        IEnumerable<ProductPriceIndexGlobalViewModel> GetProductPriceIndexGlobalAwaitingApproval(int staffId);
 
         ProductPriceIndexViewModel GetProductPriceIndexById(int productPriceIndexId, int companyId);
 
         ProductPriceIndexViewModel AddProductPriceIndex(ProductPriceIndexViewModel prodPriceIndex);
+        bool AddProductPriceIndexGlobal(ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
+        bool UpdateProductPriceIndexGlobal(int prodPriceIndexGlobalId, ProductPriceIndexGlobalViewModel prodPriceIndexGlobal);
 
         bool UpdateProductPriceIndex(int productPriceIndexId, ProductPriceIndexViewModel prodPriceIndex);
 
@@ -63,6 +69,8 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         bool DeleteProductPriceIndexCurrency(int priceIndexCurrencyId, UserInfo user);
         List<ProductPriceIndexDailyViewModel> getProductPriceIndexHistory(DateTime startDate, DateTime endDate, int companyId);
+
+        List<ProductPriceIndexViewModel> GetProductPriceIndexByCurrencyId( int currencyId);
 
         #endregion Product Price Index
 

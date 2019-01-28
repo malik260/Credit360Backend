@@ -422,7 +422,7 @@
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>over Draft Limit</Value>
+                              <Value>Over Draft Limit</Value>
                               <Style>
                                 <FontFamily>Calibri</FontFamily>
                                 <FontWeight>Bold</FontWeight>
@@ -448,6 +448,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
               </TablixCells>
@@ -856,7 +857,7 @@
           <Paragraph>
             <TextRuns>
               <TextRun>
-                <Value>Expiration of FTS Facility</Value>
+                <Value>Expired FTS </Value>
                 <Style>
                   <FontFamily>verdana</FontFamily>
                   <FontSize>12pt</FontSize>
