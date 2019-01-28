@@ -22,6 +22,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
 
+        void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId);
+
         bool ProcessReleaseLien(DateTime applicationDate);
             
         bool ProcessContingentLiabilityTerminationAtMaturity(DateTime date);
