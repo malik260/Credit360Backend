@@ -17,6 +17,7 @@ using System.Data.Entity;
 using FintrakBanking.ViewModels.Setups.General;
 using System.Configuration;
 using FintrakBanking.Common;
+using FintrakBanking.Interfaces.AlertMonitoring;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -30,13 +31,15 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
         private ICreditLimitValidationsRepository limitValidation;
+        private IEmailAlertLogger emailLogger;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
             IGeneralSetupRepository general, 
             IAuditTrailRepository audit, 
             IWorkflow workflow,
-            ICreditLimitValidationsRepository limitValidation
+            ICreditLimitValidationsRepository limitValidation,
+            IEmailAlertLogger _emailLogger
             )
         {
             this.context = context;
@@ -44,6 +47,7 @@ namespace FintrakBanking.Repositories.Credit
             this.audit = audit;
             this.workflow = workflow;
             this.limitValidation = limitValidation;
+            emailLogger = _emailLogger;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -1846,24 +1850,13 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach(var customer in data)
             {
+               
                 string referenceNo = customer.applicationReferenceNumber;
-                var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with ref no. : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
-                string mailBody = EmailHelpers.PopulateBody(successEmailBody, templateUrl);
+                var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                string messageSubject = "APPROVAL FOR LOAN APPLICATION";
 
-                MessageLogViewModel messageModel = new MessageLogViewModel
-                {
-                    MessageSubject = "APPROVAL FOR LOAN APPLICATION",
-                    MessageBody = mailBody,
-                    MessageStatusId = 1,
-                    MessageTypeId = 1,
-                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                    ToAddress = $"{customer.email}",
-                    DateTimeReceived = DateTime.Now,
-                    SendOnDateTime = DateTime.Now
-                };
+                emailLogger.ComposerBody(referenceNo,successEmailBody, messageSubject,customer.email,false);
 
-                SaveMessageDetails(messageModel);
             }
                 
         }
@@ -1886,44 +1879,16 @@ namespace FintrakBanking.Repositories.Credit
             {
                 string referenceNo = customer.applicationReferenceNumber;
 
-                var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with ref no. : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
-                string mailBody = EmailHelpers.PopulateBody(failedEmailBody, templateUrl);
+                var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
 
-                MessageLogViewModel messageModel = new MessageLogViewModel
-                {
-                    MessageSubject = "DISAPPROVAL FOR LOAN APPLICATION",
-                    MessageBody = mailBody,
-                    MessageStatusId = 1,
-                    MessageTypeId = 1,
-                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
-                    ToAddress = $"{customer.email}",
-                    DateTimeReceived = DateTime.Now,
-                    SendOnDateTime = DateTime.Now
-                };
-                SaveMessageDetails(messageModel);
+                emailLogger.ComposerBody(referenceNo, failedEmailBody, messageSubject, customer.email,false);
+
             }
              
         }
 
-        public void SaveMessageDetails(MessageLogViewModel model)
-        {
-            var message = new TBL_MESSAGE_LOG()
-            {
-                //MessageId = model.MessageId,
-                MESSAGESUBJECT = model.MessageSubject,
-                MESSAGEBODY = model.MessageBody,
-                MESSAGESTATUSID = model.MessageStatusId,
-                MESSAGETYPEID = model.MessageTypeId,
-                FROMADDRESS = model.FromAddress,
-                TOADDRESS = model.ToAddress,
-                DATETIMERECEIVED = model.DateTimeReceived,
-                SENDONDATETIME = model.SendOnDateTime
-            };
-
-            context.TBL_MESSAGE_LOG.Add(message);
-
-        }
+      
     }
 
    
