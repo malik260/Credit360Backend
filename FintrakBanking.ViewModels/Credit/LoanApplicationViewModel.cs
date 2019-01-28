@@ -387,6 +387,8 @@ namespace FintrakBanking.ViewModels.Credit
             }
         }
 
+        public string email { get; set; }
+
         // public int? loanreViewApplicationId { get; set; }
     }
 
