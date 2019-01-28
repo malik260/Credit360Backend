@@ -13046,9 +13046,26 @@ namespace FintrakBanking.Repositories.Credit
                                 if (authenticated.authenticated == false)
                                     throw new TwoFactorAuthenticationException(authenticated.message);
                             }
-                            twoFADetails.skipAuthentication = true;
+                            
+
                             var validate = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == reviewRecord.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == 0).ToList();
 
+
+                            foreach (var item in validate)
+                            {
+                                var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
+
+                                if (feePostings.Count() > 0)
+                                {
+                                    twoFADetails.skipAuthentication = true;
+                                    financeTransaction.PostTransaction(feePostings, false, twoFADetails);
+
+                                    
+                                    //financeTransaction.PostTransaction(disbursementTransactions, false, twoFADetails);
+                                }
+                                item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                            }
+                           
                             //if (validate.Count > 0)
                             //{
                             //    throw new ConditionNotMetException("Kindly Proceed to Approve Pending Fees Attached to This Operation Before Proceeding");
@@ -13056,10 +13073,10 @@ namespace FintrakBanking.Repositories.Credit
                             result = LoanRephasementProcess(twoFADetails, reviewRecord.LOANREVIEWOPERATIONID, reviewRecord.LOANID, entity.staffId, (LoanSystemTypeEnum)reviewRecord.LOANSYSTEMTYPEID);
                             if (result == true)
                             {
-                                foreach(var item in validate)
-                                {
-                                    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                                }
+                                //foreach(var item in validate)
+                                //{
+                                //    item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                                //}
                                 reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
                                 output = context.SaveChanges() > 0;
                             }
@@ -13099,6 +13116,181 @@ namespace FintrakBanking.Repositories.Credit
 
             return 0;
 
+        }
+        public List<FinanceTransactionViewModel> BuildLoanOperationsManualChargeFeesPosting(int loanChargeFeeId)
+        {
+            var loanFee = context.TBL_LOAN_FEE.Find(loanChargeFeeId);
+
+            LoanViewModel loanDetails = new LoanViewModel();
+            if (loanFee.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.TermDisbursedFacility)
+            {
+                loanDetails = (from a in context.TBL_LOAN
+                               where a.TERMLOANID == loanFee.LOANID
+                               select new LoanViewModel
+                               {
+                                   loanId = a.TERMLOANID,
+                                   companyId = a.COMPANYID,
+                                   currencyId = a.CURRENCYID,
+                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                   branchId = a.BRANCHID,
+                                   createdBy = loanFee.CREATEDBY
+                               }).FirstOrDefault();//context.TBL_LOAN.Find(loanFee.LOANID);
+
+            }
+            if (loanFee.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability)
+            {
+                loanDetails = (from a in context.TBL_LOAN_CONTINGENT
+                               where a.CONTINGENTLOANID == loanFee.LOANID
+                               select new LoanViewModel
+                               {
+                                   loanId = a.CONTINGENTLOANID,
+                                   companyId = a.COMPANYID,
+                                   currencyId = a.CURRENCYID,
+                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                   branchId = a.BRANCHID,
+                                   createdBy = loanFee.CREATEDBY
+
+                               }).FirstOrDefault();//context.TBL_LOAN_CONTINGENT.Find(loanFee.LOANID);
+
+            }
+            if (loanFee.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.OverdraftFacility)
+            {
+                loanDetails = (from a in context.TBL_LOAN_REVOLVING
+                               where a.REVOLVINGLOANID == loanFee.LOANID
+                               select new LoanViewModel
+                               {
+                                   loanId = a.REVOLVINGLOANID,
+                                   companyId = a.COMPANYID,
+                                   currencyId = a.CURRENCYID,
+                                   loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                   branchId = a.BRANCHID,
+                                   createdBy = loanFee.CREATEDBY
+                               }).FirstOrDefault();//context.TBL_LOAN_REVOLVING.Find(loanFee.LOANID);
+
+            }
+            if (loanFee.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.LineFacility)
+            {
+                loanDetails = (from a in context.TBL_LOAN_APPLICATION_DETAIL
+                               join b in context.TBL_LOAN_APPLICATION on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                               where a.LOANAPPLICATIONDETAILID == loanFee.LOANID
+                               select new LoanViewModel
+                               {
+                                   loanId = a.LOANAPPLICATIONDETAILID,
+                                   companyId = b.COMPANYID,
+                                   currencyId = a.CURRENCYID,
+                                   loanReferenceNumber = b.APPLICATIONREFERENCENUMBER + "-" + a.LOANAPPLICATIONDETAILID,
+                                   branchId = b.BRANCHID,
+                                   createdBy = loanFee.CREATEDBY
+                               }).FirstOrDefault();//context.TBL_LOAN_APPLICATION_DETAIL.Find(loanFee.LOANID);
+
+            }
+
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+            TBL_LOAN loanTable = new TBL_LOAN();
+            //var bookingRequestDetails = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(x => x.LOAN_BOOKING_REQUESTID == loanDetails.loanBookingRequestId);
+
+            var company = context.TBL_COMPANY.Find(loanDetails.companyId);
+            //  foreach (var item in loanDetails.loanChargeFee)
+            // {
+            if (loanFee.LOANSYSTEMTYPEID == (short)LoanSystemTypeEnum.TermDisbursedFacility)
+            {
+                loanTable = context.TBL_LOAN.Find(loanFee.LOANID);
+            }
+
+            if (loanFee.ISPOSTED == false && loanFee.FEEAMOUNT > 0)
+            {
+
+                var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == loanFee.CASAACCOUNTID);
+
+                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == loanFee.CHARGEFEEID select details.POSTINGGROUP).Distinct().ToList();
+
+                foreach (var post in postingGroups)
+                {
+                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == loanFee.CHARGEFEEID && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
+
+                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                    {
+                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                        decimal debitAmount = 0;
+                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            debitAmount = (decimal)loanFee.FEEAMOUNT * (decimal)(debits.VALUE / 100.0);
+                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            debitAmount = (decimal)debits.VALUE;
+
+                        debit.operationId = (int)OperationsEnum.ManualFeeCharge;
+                        debit.description = $"Fee charge on {debits.DESCRIPTION}";
+                        debit.valueDate = generalSetup.GetApplicationDate();
+                        debit.transactionDate = debit.valueDate;
+                        debit.currencyId = casa.CURRENCYID;
+                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, loanDetails.companyId).sellingRate;
+                        debit.isApproved = true;
+                        debit.postedBy = loanDetails.createdBy;
+                        debit.approvedBy = loanDetails.createdBy;
+                        debit.approvedDate = debit.transactionDate;
+                        debit.approvedDateTime = DateTime.Now;
+                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        debit.companyId = loanDetails.companyId;
+
+
+                        debit.glAccountId = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                        debit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                        debit.batchCode = batchCode;
+                        debit.casaAccountId = casa.CASAACCOUNTID;
+                        debit.debitAmount = debitAmount;
+                        debit.creditAmount = 0;
+                        debit.sourceBranchId = loanDetails.branchId;
+                        debit.destinationBranchId = casa.BRANCHID;
+
+                        debit.rateCode = "TTB"; //loanDetails.nostroRateCode;
+                        debit.rateUnit = string.Empty;
+                        debit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(debit);
+                    }
+
+                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                    {
+                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                        decimal creditAmount = 0;
+                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            creditAmount = (decimal)loanFee.FEEAMOUNT * (decimal)(credits.VALUE / 100.0);
+                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            creditAmount = (decimal)credits.VALUE;
+
+
+                        credit.operationId = (int)OperationsEnum.ManualFeeCharge;
+                        credit.description = $"Fee charge on {credits.DESCRIPTION}";
+                        credit.valueDate = generalSetup.GetApplicationDate();
+                        credit.transactionDate = credit.valueDate;
+                        credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanDetails.companyId).CURRENCYID; //(short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
+                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, loanDetails.companyId).sellingRate;
+                        credit.isApproved = true;
+                        credit.postedBy = loanDetails.createdBy;
+                        credit.approvedBy = loanDetails.createdBy;
+                        credit.approvedDate = credit.transactionDate;
+                        credit.approvedDateTime = DateTime.Now;
+                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        credit.companyId = loanDetails.companyId;
+                        credit.glAccountId = (int)credits.GLACCOUNTID1;
+                        credit.sourceReferenceNumber = loanDetails.loanReferenceNumber;
+                        credit.batchCode = batchCode;
+                        credit.casaAccountId = null;
+                        credit.debitAmount = 0;
+                        credit.creditAmount = creditAmount;
+                        credit.sourceBranchId = loanDetails.branchId;
+                        credit.destinationBranchId = loanDetails.branchId;
+                        credit.rateCode = "TTB"; //loanDetails.nostroRateCode;
+                        credit.rateUnit = string.Empty;
+                        credit.currencyCrossCode = casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(credit);
+                    }
+                }
+            }
+
+            //}
+            return inputTransactions;
         }
 
         private int ApproveLoanReview(int loanId, ApprovalViewModel user)
@@ -17298,8 +17490,13 @@ namespace FintrakBanking.Repositories.Credit
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
-        public int ReviewApplicationLineTenor(ApprovalViewModel userModel)
+        public int LineOperationGoForApproval(ApprovalViewModel userModel)
         {
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                passcode = userModel.passCode,
+                username = userModel.userName
+            };
             using (var trans = context.Database.BeginTransaction())
             {
                 try
@@ -17346,6 +17543,21 @@ namespace FintrakBanking.Repositories.Credit
                         loanView.createdBy = userModel.staffId;
                         loanView.companyId = userModel.companyId;
                         loanView.staffId = userModel.staffId;
+
+                        var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
+
+                        foreach (var item in fees)
+                        {
+                            var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
+
+                            if (feePostings.Count() > 0)
+                            {
+                                twoFADetails.skipAuthentication = true;
+                                financeTransaction.PostTransaction(feePostings, false, twoFADetails);
+                            }
+                            item.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                        }
+                                                                     
                         if (userModel.operationId == (int)OperationsEnum.TenorChange)
                         {
                             var result = context.TBL_LOAN_APPLICATION_DETAIL.Find(op.LOANID);
@@ -17384,13 +17596,6 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             try
                             {
-                                var fees = context.TBL_LOAN_FEE.Where(a => a.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending).ToList();
-
-                                foreach (var a in fees)
-                                {
-                                    a.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
-                                }
-
                                 op.OPERATIONCOMPLETED = true;
                                 context.SaveChanges();
                                 trans.Commit();

@@ -19,6 +19,8 @@ using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFa
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Interfaces;
+using System.DirectoryServices;
+using System.DirectoryServices.AccountManagement;
 
 namespace FintrakBanking.Repositories.Admin
 {
@@ -1055,7 +1057,105 @@ namespace FintrakBanking.Repositories.Admin
             return output;
         }
         #endregion
+        public Users GetStaffADDetails(string staffCode)
+        {
+            var record = GetActiveDirectoryDetails(staffCode);
+            return record;
 
+        }
+        public Users GetActiveDirectoryDetails2(string userName)
+        {
+           var appSetup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            Users lstADUsers = new Users();
+
+            if (appSetup != null && appSetup.REQUIRE_ADUSER)
+            {
+                using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
+                {
+                    using (var foundUser = UserPrincipal.FindByIdentity(pc, IdentityType.SamAccountName, userName))
+                    {
+                        if (foundUser != null)
+                        {
+                            try
+                            {
+                                DirectoryEntry directoryEntry = foundUser.GetUnderlyingObject() as DirectoryEntry;
+                                lstADUsers.firstName = directoryEntry.Properties["givenName"].Value.ToString();
+                                lstADUsers.middleName = directoryEntry.Properties["middleName"].Value.ToString();
+                                lstADUsers.lastName = directoryEntry.Properties["sn"].Value.ToString();
+                                lstADUsers.fullName = directoryEntry.Properties["displayName"].Value.ToString();
+
+                                //many details
+
+                           }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (appSetup != null)
+                    using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME))
+                    {
+                        using (var foundUser = Principal.FindByIdentity(pc, IdentityType.SamAccountName, userName))
+                        {
+                            if (foundUser != null)
+                            {
+                                try
+                                {
+                                    DirectoryEntry directoryEntry = foundUser.GetUnderlyingObject() as DirectoryEntry;
+                                    lstADUsers.firstName = directoryEntry.Properties["givenName"].Value.ToString();
+                                    lstADUsers.middleName = directoryEntry.Properties["middleName"].Value.ToString();
+                                    lstADUsers.lastName = directoryEntry.Properties["sn"].Value.ToString();
+                                    lstADUsers.fullName = directoryEntry.Properties["displayName"].Value.ToString();
+                                    //many details
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                }
+                            }
+                        }
+                    }
+            }
+
+            return lstADUsers;
+
+        }
+
+        public Users GetActiveDirectoryDetails(string userName)
+        {
+          var  appSetup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            Users lstADUsers = new Users();
+
+            var domain = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME;
+
+            bool _isValid;
+            using (var pc = new PrincipalContext(ContextType.Domain,domain))
+            {
+                //var usr2 = UserPrincipal.FindByIdentity(pc, userName);
+
+                _isValid = pc.ValidateCredentials("TMP1133", "Helives@12");
+                if (!_isValid)
+                {
+                    var user = UserPrincipal.FindByIdentity(pc, IdentityType.SamAccountName, userName); //domain +"\\" +
+                    if (user == null)
+                    {
+                        //User doesn't exist
+                    }
+                    else
+                    {
+                        //Password is invalid
+                    }
+                }
+            }
+            return lstADUsers;
+
+        }
     }
 
     public enum UserAccountLockStatusEnum

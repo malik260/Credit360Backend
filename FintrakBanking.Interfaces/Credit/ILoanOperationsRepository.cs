@@ -119,7 +119,7 @@ namespace FintrakBanking.Interfaces.Credit
         bool CommercialPaperDetailsCancellation(string refNo, DateTime applicationDate, int staffId);
         //loanPrepaymentViewModel addCommercialLoanPrepayment(string refNo, loanPrepaymentViewModel model);
         IEnumerable<LoanReviewOperationApprovalViewModel> GetRunningCommercialLoans(int companyId, string loanReferenceNumber);
-        int ReviewApplicationLineTenor(ApprovalViewModel userModel);
+        int LineOperationGoForApproval(ApprovalViewModel userModel);
         bool AproveApplicationLineTenorChangeRequest(LoanReviewViewModel userModel);
         IEnumerable<CamProcessedLoanViewModel> GetApplicationLineTenorChangeAwaitingApproval(int staffId, int companyId);
         bool ApproveNonTermLoanLoanRateChangeRequest(LoanReviewViewModel userModel);

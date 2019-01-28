@@ -46,6 +46,7 @@ namespace FintrakBanking.Interfaces.Admin
         #endregion Users
 
         #region Group
+        Users GetStaffADDetails(string staffCode);
 
         IEnumerable<AppGroupViewModel> GetAllGroups();
         IEnumerable<GlobalSettingViewModel> GetAllGlobalSettings();
@@ -84,6 +85,7 @@ namespace FintrakBanking.Interfaces.Admin
         bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId, decimal levelAmount = 0);
        // bool Enable2FAForLastApproval(int staffId, int operationId, int? productClassId, int? productId);
         bool IsSuperAdmin(int staffId);
+
         #endregion
     }
 }
