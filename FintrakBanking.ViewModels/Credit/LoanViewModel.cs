@@ -360,6 +360,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalOutstandingAmount { get; set; }
         public decimal totalExistingLimitAmount { get; set; }
         public string crmsCode { get; set; }
+        public string customerEmail { get; set; }
 
 
 

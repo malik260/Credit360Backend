@@ -100,6 +100,8 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
         void SendAlertsForLoanRepaymentRM(List<LoanPaymentSchedulePeriodicViewModel> loanDetails, string title);
         void SendAlertsForLoanRepaymentTeam(List<LoanPaymentSchedulePeriodicViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups);
 
+        bool SendAlertToCustomerForLoanRepaymentApproachingDueDate(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups);
+
         int SaveMessageDetails(MessageLogViewModel model);
 
         List<TBL_MONITORING_ALERT_SETUP> getAlertMessageSetting();

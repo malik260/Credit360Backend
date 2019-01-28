@@ -123,6 +123,7 @@
     <Compile Include="Admin\ProfileSetupRepository.cs" />
     <Compile Include="AlertMonitoring\AlertMessageLogger.cs" />
     <Compile Include="AlertMonitoring\AlertMessagesEngine.cs" />
+    <Compile Include="AlertMonitoring\EmailAlertLogger.cs" />
     <Compile Include="AlertMonitoring\EmailSender.cs" />
     <Compile Include="AlertMonitoring\SLANotification.cs" />
     <Compile Include="AppEmail\EmailRepository.cs" />

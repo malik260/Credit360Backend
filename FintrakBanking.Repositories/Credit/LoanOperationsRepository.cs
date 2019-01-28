@@ -12153,7 +12153,7 @@ namespace FintrakBanking.Repositories.Credit
                 var response = workFlow.LogActivity();
                
                 bool result = false;
-                if (model.fees.ToList().Count > 0)
+                if (model.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -12216,8 +12216,9 @@ namespace FintrakBanking.Repositories.Credit
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 });
+
                 bool result = false;
-                if (model.fees.ToList().Count > 0)
+                if (model.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -12234,6 +12235,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     result = context.SaveChanges() == 0;
                 }
+
 
 
                 return result;
@@ -16233,7 +16235,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
-                            if (userModel.fees.ToList().Count > 0)
+                            if (userModel.fees != null)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16250,7 +16252,6 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 output = context.SaveChanges() > 0;
                             }
-
                             trans.Commit();
                             return output;
                         }
@@ -16295,7 +16296,7 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_AUDIT.Add(audit);
 
                 //output = context.SaveChanges() > 0;
-                if (userModel.fees.ToList().Count > 0)
+                if (userModel.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16312,6 +16313,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     output = context.SaveChanges() > 0;
                 }
+
 
                 return output;
             }
@@ -16699,7 +16701,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             if (response)
                             {
-                                if (userModel.fees.ToList().Count > 0)
+                                if (userModel.fees != null)
                                 {
                                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16753,7 +16755,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.TBL_AUDIT.Add(audit);
 
-                    if (userModel.fees.ToList().Count > 0)
+                    if (userModel.fees != null)
                     {
                         LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16927,7 +16929,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
-                            if (userModel.fees.ToList().Count > 0)
+                            if (userModel.fees != null)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16986,7 +16988,7 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_AUDIT.Add(audit);
 
                 //output = context.SaveChanges() > 0;
-                if (userModel.fees.ToList().Count > 0)
+                if (userModel.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17409,7 +17411,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
-                            if (userModel.fees.ToList().Count > 0)
+                            if (userModel.fees != null)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17467,7 +17469,7 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_AUDIT.Add(audit);
 
                 //output = context.SaveChanges() > 0;
-                if (userModel.fees.ToList().Count > 0)
+                if (userModel.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17720,7 +17722,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (response)
                     {
-                        if (model.fees.ToList().Count > 0)
+                        if (model.fees != null)
                         {
                             LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17776,7 +17778,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 context.TBL_AUDIT.Add(audit);
 
-                if (model.fees.ToList().Count > 0)
+                if (model.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17798,6 +17800,71 @@ namespace FintrakBanking.Repositories.Credit
                 return output;
 
             }
+        }
+
+        public void ProcessGlobalInterestRepricing(DateTime effectiveDate, int productPriceIndexID, short staffId)
+        {
+            var loans = from a in context.TBL_LOAN
+                        where a.MATURITYDATE <= effectiveDate && a.LOANSTATUSID == (short)LoanStatusEnum.Active && a.PRODUCTPRICEINDEXID == productPriceIndexID
+                        select a;
+
+            LoanPaymentRestructureScheduleInputViewModel loanInput = new LoanPaymentRestructureScheduleInputViewModel();
+
+            foreach (var item in loans)
+            {
+                var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.FirstOrDefault(x => x.PRODUCTPRICEINDEXID == item.PRODUCTPRICEINDEXID);
+                if (priceIndex != null)
+                {
+                    var customerRate = item.INTERESTRATE - item.PRODUCTPRICEINDEXRATE;
+                    var newInterestRate = priceIndex.PRICEINDEXRATE + customerRate;
+
+                    loanInput.operationId = (int)OperationsEnum.InterestRepricing; // item.OPERATIONID;
+                    loanInput.loanId = item.TERMLOANID;
+                    loanInput.interestRate = newInterestRate;
+                    //loanInput.
+
+                    TBL_LOAN_REVIEW_OPERATION reviewOperation = new TBL_LOAN_REVIEW_OPERATION();
+
+                    reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Add(new TBL_LOAN_REVIEW_OPERATION
+                    {
+                        LOANID = item.TERMLOANID,
+                        LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.TermDisbursedFacility,//reviewApplicationDetail.LOANSYSTEMTYPEID, // model.loanSystemTypeId,
+                        OPERATIONTYPEID = (int)OperationsEnum.GlobalInterestRateChange,
+                        EFFECTIVEDATE = effectiveDate,
+                        //REVIEWDETAILS = model.reviewDetails,
+                        INTERATERATE = newInterestRate,
+                        PREPAYMENT = item.OUTSTANDINGPRINCIPAL,
+                        PRINCIPALFREQUENCYTYPEID = item.PRINCIPALFREQUENCYTYPEID,
+                        INTERESTFREQUENCYTYPEID = item.INTERESTFREQUENCYTYPEID,
+                        PRINCIPALFIRSTPAYMENTDATE = item.FIRSTPRINCIPALPAYMENTDATE,
+                        INTERESTFIRSTPAYMENTDATE = item.FIRSTINTERESTPAYMENTDATE,
+                        MATURITYDATE = item.MATURITYDATE,
+                        //TENOR = item.,
+                        //CASA_ACCOUNTID = model.cASA_AccountId,
+                        //OVERDRAFTTOPUP = model.overDraftTopup,
+                        //FEE_CHARGES = model.fee_Charges,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
+                        //ISMANAGEMENTINTERESTRATE = item.,
+                        SCHEDULETYPEID = item.SCHEDULETYPEID,
+                        SCHEDULEDAYINTERESTTYPEID = item.SCHEDULEDAYINTERESTTYPEID,
+                        SCHEDULEDAYCOUNTCONVENTIONID = item.SCHEDULEDAYCOUNTCONVENTIONID,
+                        OPERATIONCOMPLETED = false,
+                        CREATEDBY = staffId,
+                        DATECREATED = DateTime.Now,
+                    });
+
+                    context.SaveChanges();
+
+                    InterestRateReview(loanInput.loanId, loanInput, effectiveDate, staffId);
+
+                    item.PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE;
+
+
+                }
+            }
+
+            if (loans.Count() > 0)
+                context.SaveChanges();
         }
 
 
@@ -18919,7 +18986,7 @@ namespace FintrakBanking.Repositories.Credit
                         //output = context.SaveChanges() > 0;
 
 
-                        if (model.fees.ToList().Count > 0)
+                        if (model.fees != null)
                         {
                             LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -19029,7 +19096,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
                 auditTrail.AddAuditTrail(audit);
 
-                if (model.fees.ToList().Count > 0)
+                if (model.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
