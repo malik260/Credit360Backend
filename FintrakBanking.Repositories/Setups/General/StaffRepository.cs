@@ -524,7 +524,6 @@ namespace FintrakBanking.Repositories.Setups.General
             userAccount.ISACTIVE = false;
             userAccount.ISLOCKED = true;
 
-
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {

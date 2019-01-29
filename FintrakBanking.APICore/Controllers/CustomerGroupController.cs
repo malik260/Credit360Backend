@@ -231,7 +231,38 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("customer-group-mapping/approval")]
+        public HttpResponseMessage GoForGroupMappingApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForGroupMappingApproval(entity);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Customer Group Mapping has been approved successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+            }
+            catch (SecureException ex)
+            {
+                // errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"An error occured: {ex.Message}" });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/search/")]
         public HttpResponseMessage SearchForCustomerGroupRealtime(string searchQuery)
         {
@@ -252,6 +283,17 @@ namespace FintrakBanking.APICore.Controllers
                    new { success = false, message = $"Error: {e}" });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("customer-group-mapping/awaiting-approval")]
+        public HttpResponseMessage GetCustomerGroupMapsAwaitingApprovals()
+        {
+            var data = repo.GetCustomerGroupMapsAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
+            return Request.CreateResponse(HttpStatusCode.OK,
+                new { success = true, result = data.ToList() });
+        }
+
         //   [HttpGet] [ClaimsAuthorization]  
         //[Route("all-customer-group-mapping")]
         //public HttpResponseMessage GetAllCustomerGroupMappingByGroupId(int customerGroupId)
@@ -270,7 +312,7 @@ namespace FintrakBanking.APICore.Controllers
         //           new { success = false, message = $"Error: {e}" });
         //    }
         //}
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet] [ClaimsAuthorization]  
         [Route("customer-group/")]
         public HttpResponseMessage CustomerGroupSearch(string searchQuery)
         {
@@ -346,7 +388,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             
                 var token = new TokenDecryptionHelper();
-                var data = repo.AddMultipleCustomerGroupMapping(customerGroups, token.GetStaffId, (short)token.GetBranchId);
+                var data = repo.AddMultipleCustomerGroupMapping(customerGroups, token.GetStaffId, (short)token.GetBranchId, token.GetCompanyId);
                 if (data)
                 {
                     return Request.CreateResponse(HttpStatusCode.Created, new { success = true, result = data, message = "The record has been created successfully" });

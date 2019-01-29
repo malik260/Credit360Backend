@@ -12168,7 +12168,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    result = context.SaveChanges() == 0;
+                    result = context.SaveChanges() > 0;
+
                 }
 
 
@@ -12233,7 +12234,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    result = context.SaveChanges() == 0;
+                    result = context.SaveChanges() > 0;
                 }
 
 
@@ -17413,6 +17414,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
+                           
                             if (userModel.fees != null)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
@@ -17429,6 +17431,7 @@ namespace FintrakBanking.Repositories.Credit
                             else
                             {
                                 output = context.SaveChanges() > 0;
+
                             }
                             trans.Commit();
                             return output;
