@@ -12153,7 +12153,7 @@ namespace FintrakBanking.Repositories.Credit
                 var response = workFlow.LogActivity();
                
                 bool result = false;
-                if (model.fees.ToList().Count > 0)
+                if (model.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -12216,8 +12216,9 @@ namespace FintrakBanking.Repositories.Credit
                     APPLICATIONDATE = generalSetup.GetApplicationDate(),
                     SYSTEMDATETIME = DateTime.Now
                 });
+
                 bool result = false;
-                if (model.fees.ToList().Count > 0)
+                if (model.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -12234,6 +12235,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     result = context.SaveChanges() == 0;
                 }
+
 
 
                 return result;
@@ -16041,7 +16043,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
-                            if (userModel.fees.ToList().Count > 0)
+                            if (userModel.fees != null)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16058,7 +16060,6 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 output = context.SaveChanges() > 0;
                             }
-
                             trans.Commit();
                             return output;
                         }
@@ -16103,7 +16104,7 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_AUDIT.Add(audit);
 
                 //output = context.SaveChanges() > 0;
-                if (userModel.fees.ToList().Count > 0)
+                if (userModel.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16120,6 +16121,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     output = context.SaveChanges() > 0;
                 }
+
 
                 return output;
             }
@@ -16507,7 +16509,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             if (response)
                             {
-                                if (userModel.fees.ToList().Count > 0)
+                                if (userModel.fees != null)
                                 {
                                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16561,7 +16563,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     context.TBL_AUDIT.Add(audit);
 
-                    if (userModel.fees.ToList().Count > 0)
+                    if (userModel.fees != null)
                     {
                         LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16735,7 +16737,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
-                            if (userModel.fees.ToList().Count > 0)
+                            if (userModel.fees != null)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -16794,7 +16796,7 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_AUDIT.Add(audit);
 
                 //output = context.SaveChanges() > 0;
-                if (userModel.fees.ToList().Count > 0)
+                if (userModel.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17217,7 +17219,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
-                            if (userModel.fees.ToList().Count > 0)
+                            if (userModel.fees != null)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17275,7 +17277,7 @@ namespace FintrakBanking.Repositories.Credit
                 context.TBL_AUDIT.Add(audit);
 
                 //output = context.SaveChanges() > 0;
-                if (userModel.fees.ToList().Count > 0)
+                if (userModel.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17515,7 +17517,7 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (response)
                     {
-                        if (model.fees.ToList().Count > 0)
+                        if (model.fees != null)
                         {
                             LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -17571,7 +17573,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 context.TBL_AUDIT.Add(audit);
 
-                if (model.fees.ToList().Count > 0)
+                if (model.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -18714,7 +18716,7 @@ namespace FintrakBanking.Repositories.Credit
                         //output = context.SaveChanges() > 0;
 
 
-                        if (model.fees.ToList().Count > 0)
+                        if (model.fees != null)
                         {
                             LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
@@ -18824,7 +18826,7 @@ namespace FintrakBanking.Repositories.Credit
                 };
                 auditTrail.AddAuditTrail(audit);
 
-                if (model.fees.ToList().Count > 0)
+                if (model.fees != null)
                 {
                     LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
 
