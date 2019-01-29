@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.Admin
 {
-    public class GlobalSettingViewModel: GeneralEntity
-    { 
+    public class GlobalSettingViewModel : GeneralEntity
+    {
         public short applicationSetupId { get; set; }
 
         public string reportPath { get; set; }
@@ -33,4 +33,5 @@ namespace FintrakBanking.ViewModels.Admin
         public string supportEmail { get; set; }
 
     }
+   
 }
