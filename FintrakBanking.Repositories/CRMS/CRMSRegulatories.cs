@@ -746,7 +746,7 @@ namespace FintrakBanking.Repositories.CRMS
                         var feeRecord = fee[i - 2];
 
                         ws3.Cells[i, 1].Value = feeRecord.ACCOUNT;
-                        ws3.Cells[i, 2].Value = feeRecord.FEE_TYPE;
+                        ws3.Cells[i, 2].Value = feeRecord.FEE_TYPE_NAME;
                         ws3.Cells[i, 3].Value = feeRecord.FEE_AMOUNT;
 
                     }
@@ -764,16 +764,19 @@ namespace FintrakBanking.Repositories.CRMS
                        join op in context.TBL_LOAN_REVIEW_OPERATION on x.TERMLOANID equals op.LOANID
                        join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                        join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
-                       join f in context.TBL_LOAN_FEE on x.TERMLOANID equals f.LOANID
+                       join f in context.TBL_LOAN_FEE on op.LOANREVIEWOPERATIONID equals f.LOANREVIEWOPERATIONID
                        join a in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals a.LOANREVIEWAPPLICATIONID
                        join l in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                        join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
+                       join crms in context.TBL_CRMS_REGULATORY on cf.CRMSREGULATORYID equals crms.CRMSREGULATORYID
                        where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                        && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                       && f.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                        select new CRMSTemplateViewModel
                        {
                            ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                            FEE_TYPE = cf.CRMSREGULATORYID,
+                           FEE_TYPE_NAME = crms.CODE,
                            FEE_AMOUNT = f.FEEAMOUNT,
                            CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
                        };
@@ -781,16 +784,20 @@ namespace FintrakBanking.Repositories.CRMS
                      join op in context.TBL_LOAN_REVIEW_OPERATION on x.REVOLVINGLOANID equals op.LOANID
                      join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                      join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
-                     join f in context.TBL_LOAN_FEE on x.REVOLVINGLOANID equals f.LOANID
+                     join f in context.TBL_LOAN_FEE on op.LOANREVIEWOPERATIONID equals f.LOANREVIEWOPERATIONID
                      join a in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals a.LOANREVIEWAPPLICATIONID
                      join l in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                      join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
+                     join crms in context.TBL_CRMS_REGULATORY on cf.CRMSREGULATORYID equals crms.CRMSREGULATORYID
                      where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                      && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                     && f.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
                      select new CRMSTemplateViewModel
                      {
                          ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                          FEE_TYPE = cf.CRMSREGULATORYID,
+                         FEE_TYPE_NAME = crms.CODE,
                          FEE_AMOUNT = f.FEEAMOUNT,
                          CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
 
@@ -799,16 +806,21 @@ namespace FintrakBanking.Repositories.CRMS
                              join op in context.TBL_LOAN_REVIEW_OPERATION on x.CONTINGENTLOANID equals op.LOANID
                              join c in context.TBL_CASA on x.CASAACCOUNTID equals c.CASAACCOUNTID
                              join b in context.TBL_CUSTOMER on x.CUSTOMERID equals b.CUSTOMERID
-                             join f in context.TBL_LOAN_FEE on x.CONTINGENTLOANID equals f.LOANID
+                             join f in context.TBL_LOAN_FEE on op.LOANREVIEWOPERATIONID equals f.LOANREVIEWOPERATIONID
                              join a in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals a.LOANREVIEWAPPLICATIONID
                              join l in context.TBL_LMSR_APPLICATION on a.LOANAPPLICATIONID equals l.LOANAPPLICATIONID
                              join cf in context.TBL_CHARGE_FEE on f.CHARGEFEEID equals cf.CHARGEFEEID
+                             join crms in context.TBL_CRMS_REGULATORY on cf.CRMSREGULATORYID equals crms.CRMSREGULATORYID
+
                              where DbFunctions.TruncateTime(x.DATETIMECREATED) >= DbFunctions.TruncateTime(param.startDate)
                              && DbFunctions.TruncateTime(x.DATETIMECREATED) <= DbFunctions.TruncateTime(param.endDate)
+                             && f.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+
                              select new CRMSTemplateViewModel
                              {
                                  ACCOUNT = c.PRODUCTACCOUNTNUMBER,
                                  FEE_TYPE = cf.CRMSREGULATORYID,
+                                 FEE_TYPE_NAME = crms.CODE,
                                  FEE_AMOUNT = f.FEEAMOUNT,
                                  CRMSLEGALSTATUSID = b.CRMSLEGALSTATUSID
                              };
