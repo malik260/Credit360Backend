@@ -448,6 +448,24 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             return false;
         }
 
+        public bool GoForGroupMappingApproval(ApprovalViewModel entity)
+        {
+            entity.operationId = (int)OperationsEnum.CustomerGroupCreation;
+
+            entity.externalInitialization = false;
+
+            workFlow.LogForApproval(entity);
+
+            if (workFlow.NewState == (int)ApprovalState.Ended)
+            {
+                return ApproveCustomerGroupMapping(entity.targetId, (short)workFlow.StatusId, entity);
+            }
+
+            return false;
+        }
+
+        
+
         private bool ApproveCustomerGroup(int customerGroupId, short approvalStatusId, UserInfo user)
         {
             var customerGroupModel = context.TBL_TEMP_CUSTOMER_GROUP.Find(customerGroupId);
@@ -641,23 +659,27 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         }
 
         ///TODO: Implement a more efficient method
-        public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups, int createdBy, short userBranchId)
+        public bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups, int createdBy, short userBranchId, int companyId)
         {
             if (customerGroups.Count <= 0)
                 return false;
-            List<TBL_CUSTOMER_GROUP_MAPPING> listOfMappedGroup = new List<TBL_CUSTOMER_GROUP_MAPPING>();
+            List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG> listOfMappedGroup = new List<TBL_TEMP_CUSTOMER_GROUP_MAPPNG>();
+            bool output = false;
             foreach (CustomerGroupMappingViewModel item in customerGroups)
             {
-                var group = this.context.TBL_CUSTOMER_GROUP_MAPPING.FirstOrDefault(x => x.CUSTOMERID == item.customerId && x.CUSTOMERGROUPID == item.customerGroupId);
+                var group = this.context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.FirstOrDefault(x => x.CUSTOMERID == item.customerId && x.CUSTOMERGROUPID == item.customerGroupId);
                 if (group == null)
                 {
-                    var groupMap = new TBL_CUSTOMER_GROUP_MAPPING
+                    var groupMap = new TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                     {
                         CUSTOMERID = item.customerId,
                         CUSTOMERGROUPID = item.customerGroupId,
                         RELATIONSHIPTYPEID = item.relationshipTypeId,
+                        COMPANYID = companyId,
                         CREATEDBY = createdBy,
                         DELETED = false,
+                        ISCURRENT = true,
+                        APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
                         DATETIMECREATED = DateTime.Now
                     };
                     listOfMappedGroup.Add(groupMap);
@@ -681,14 +703,47 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                         APPLICATIONDATE = genSetup.GetApplicationDate(),
                         SYSTEMDATETIME = DateTime.Now
                     };
-                    this.auditTrail.AddAuditTrail(audit);
+                    //this.auditTrail.AddAuditTrail(audit);
                     //end of Audit section -----------------------
 
-                }
-            }
-            context.TBL_CUSTOMER_GROUP_MAPPING.AddRange(listOfMappedGroup);
-            return context.SaveChanges() != 0;
+                    using (var trans = context.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            auditTrail.AddAuditTrail(audit);
+                            context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG.AddRange(listOfMappedGroup);
+                            output = context.SaveChanges() > 0;
+                            if (!output)
+                            {
+                                trans.Rollback(); throw new Exception("Customer Group Mapping failed.");
+                            }
+                            var entity = new ApprovalViewModel
+                            {
+                                staffId = createdBy,
+                                companyId = companyId,
+                                approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                                targetId = groupMap.CUSTOMERGROUPMAPPINGID,
+                                operationId = (int)OperationsEnum.CustomerGroupCreation,
+                                BranchId = userBranchId,
+                                externalInitialization = true
+                            };
+                            var response = workFlow.LogForApproval(entity);
 
+                            if (response)
+                            {
+                                trans.Commit();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            trans.Rollback();
+                            throw new SecureException(ex.Message);
+                        }
+                    }
+                }
+
+            }
+            return output;
         }
 
         public IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapping()
@@ -1024,7 +1079,8 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.CustomerGroupCreation).ToList();
 
-            return (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
+            var data = (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
+                    join g in context.TBL_CUSTOMER_GROUP on c.CUSTOMERGROUPID equals g.CUSTOMERGROUPID
                     join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
@@ -1033,13 +1089,15 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     {
                         companyId = c.COMPANYID,
                         customerGroupId = c.CUSTOMERGROUPID,
+                        customerGroupName = g.GROUPNAME,
                         customerGroupMappingId = c.CUSTOMERGROUPMAPPINGID,
                         customerCode = c.TBL_CUSTOMER.CUSTOMERCODE,
                         customerId = c.CUSTOMERID,
                         relationshipTypeId = c.RELATIONSHIPTYPEID,
                         relationshipTypeName = c.TBL_CUSTOMER_GROUP_RELATN_TYPE.RELATIONSHIPTYPENAME,
                         customerName = c.TBL_CUSTOMER.FIRSTNAME + " " + c.TBL_CUSTOMER.LASTNAME,
-                    });
+                    }).ToList();
+            return data;
         }
 
         public IEnumerable<LookupViewModel> GetCustomerGroupRelationshipTypes()
