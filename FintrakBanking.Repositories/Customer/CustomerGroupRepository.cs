@@ -1089,7 +1089,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     {
                         companyId = c.COMPANYID,
                         customerGroupId = c.CUSTOMERGROUPID,
-                        //customerGroupName = g.GROUPNAME,
+                        customerGroupName = g.GROUPNAME,
                         customerGroupMappingId = c.CUSTOMERGROUPMAPPINGID,
                         customerCode = c.TBL_CUSTOMER.CUSTOMERCODE,
                         customerId = c.CUSTOMERID,
