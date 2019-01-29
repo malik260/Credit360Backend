@@ -622,6 +622,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int requestStaffId { get; set; }
 
         public string approvalStatusName { get; set; }
+        public string lmsOperationName { get; set; }
+        public int? lmsOperationId { get; set; }
 
         public string operationName { get; set; }
 

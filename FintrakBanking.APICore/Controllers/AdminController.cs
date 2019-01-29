@@ -596,8 +596,7 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
-
-
+        
         [HttpGet]
         [ClaimsAuthorization]
         [Route("getprofileconfiguration")]
@@ -809,5 +808,28 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("getStaffactiveDirectoryDetails/{staffCode}")]
+        public HttpResponseMessage GetStaffADDetails(string staffCode)
+        {
+            try
+            {
+                var data = repo.GetStaffADDetails(staffCode);
+
+                if (data == null)
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, result = data, message = $"Record not fund" });
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = false, result = data, message = $"Record not fund" });
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, (new { success = false, message = $"Action Failed" }));
+            }
+
+        }
+
     }
 }
