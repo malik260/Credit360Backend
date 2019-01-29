@@ -446,8 +446,8 @@ namespace FintrakBanking.Repositories.Credit
                 var totalPreviouslyBookedAmount = contingentAmount.FirstOrDefault();
 
                 var totalContingentAmount = totalPreviouslyBookedAmount + contingentLoanInput.contingentAmount;
-
-                if (totalContingentAmount > entity.customerAvailableAmount)
+                // if (totalContingentAmount > entity.customerAvailableAmount)
+                if (totalContingentAmount > applicationDetail.APPROVEDAMOUNT)
                     throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
                 if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
@@ -636,10 +636,10 @@ namespace FintrakBanking.Repositories.Credit
                 LOANREFERENCENUMBER = loanReferenceNumber,
                 RELATED_LOAN_REFERENCE_NUMBER = loanReferenceNumber,
                 SUBSECTORID = model.subSectorId,
-                RELATIONSHIPOFFICERID = model.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = model.relationshipManagerId,
-                MISCODE = model.misCode,
-                TEAMMISCODE = model.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = model.interestRate,
                 EFFECTIVEDATE = revolvingLoanInput.effectiveDate,
                 MATURITYDATE = revolvingLoanInput.maturityDate,
@@ -867,10 +867,10 @@ namespace FintrakBanking.Repositories.Credit
                 LOANREFERENCENUMBER = loanReferenceNumber,
                 RELATED_LOAN_REFERENCE_NUMBER = loanReferenceNumber,
                 SUBSECTORID = entity.subSectorId,
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 EFFECTIVEDATE = contingentLoanInput.effectiveDate,
                 MATURITYDATE = contingentLoanInput.maturityDate,
                 ISBANKFORMAT = isBankFormat,
@@ -1548,10 +1548,10 @@ namespace FintrakBanking.Repositories.Credit
                 CASAACCOUNTID2 = entity.casaAccountId2,
                 BRANCHID = application.BRANCHID, //entity.branchId,
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = Convert.ToInt32(applicationDetail.APPROVEDINTERESTRATE),
                 ALLOWFORCEDEBITREPAYMENT = true,
                 PRINCIPALINSTALLMENTLEFT = 0,
@@ -1860,10 +1860,10 @@ namespace FintrakBanking.Repositories.Credit
                 NOSTROCURRENCYID = nostroCurrencyId,
                 BRANCHID = application.BRANCHID,
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = Convert.ToInt32(applicationDetail.APPROVEDINTERESTRATE),
                 ALLOWFORCEDEBITREPAYMENT = false,
                 PRINCIPALINSTALLMENTLEFT = 0,

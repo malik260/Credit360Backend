@@ -507,6 +507,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             foreach (var item in data)
             {
+                var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(item.targetId);
+                if(applicationDet != null)
+                {
+                    var customer = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == applicationDet.CUSTOMERID);
+                    if (customer != null) item.customerName = customer.FIRSTNAME; // + " " + customer.LASTNAME.Substring(0, 1).ToUpper()+"."; 
+                }
+                
                 var detail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == item.jobRequestId);
                 if (detail.Any())
                 {
