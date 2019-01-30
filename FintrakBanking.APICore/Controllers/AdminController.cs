@@ -16,6 +16,7 @@ using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces;
 using FintrakBanking.ViewModels.Reports;
+using System.Text;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -315,7 +316,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var globalSettings = repo.GetAllGlobalSettings().ToList();
+                var globalSettings = repo.GetAllGlobalSettings();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = globalSettings });
             }
             catch (SecureException ex)
@@ -810,18 +811,28 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("getStaffactiveDirectoryDetails/{staffCode}")]
-        public HttpResponseMessage GetStaffADDetails(string staffCode)
+        [Route("getStaffactiveDirectoryDetails/{staffCode}/{passCode}")]
+        public HttpResponseMessage GetStaffADDetails(string staffCode, string passCode)
         {
             try
             {
-                var data = repo.GetStaffADDetails(staffCode);
+                byte[] pass = Convert.FromBase64String(passCode);
+                string password = Encoding.UTF8.GetString(pass);
+                string loginUser = token.GetUsername;
+
+                var data = repo.GetStaffADDetails(staffCode,loginUser, password);
 
                 if (data == null)
+                {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = false, result = data, message = $"Record not fund" });
-                return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, result = data, message = $"Record not fund" });
+                                            new { success = false, result = data, message = $"Staff Code not fund on Active Directory" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                         new { success = true, result = data, message = $"Success" });
+                }
+
 
             }
             catch (SecureException ex)

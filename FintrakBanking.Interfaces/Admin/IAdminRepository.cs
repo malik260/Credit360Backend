@@ -46,10 +46,10 @@ namespace FintrakBanking.Interfaces.Admin
         #endregion Users
 
         #region Group
-        Users GetStaffADDetails(string staffCode);
+        Users GetStaffADDetails(string staffCode ,string loginUser, string password);
 
         IEnumerable<AppGroupViewModel> GetAllGroups();
-        IEnumerable<GlobalSettingViewModel> GetAllGlobalSettings();
+        GlobalSettingViewModel GetAllGlobalSettings();
 
         AppGroupViewModel GetSingleGroup(int groupId);
 
