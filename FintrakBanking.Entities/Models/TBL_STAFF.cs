@@ -82,7 +82,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string MIDDLENAME { get; set; }
 
-        public int JOBTITLEID { get; set; }
+        public int? JOBTITLEID { get; set; }
 
         public int STAFFROLEID { get; set; }
 
