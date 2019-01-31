@@ -725,7 +725,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 && WithinPoliticallyExposedLimit(level) == true;
         }
 
-        private void SetState()
+        private int SetState()
         {
             if (this.nextLevelId == null)
             {
@@ -737,37 +737,45 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     throw new SecureException("Workflow is missing an approval authority!");
                 }
+                return statusId;
             }
             else
             {
                 if (this.statusId == (int)ApprovalStatusEnum.Escalated)
                 {
                     this.ContinueProcess((int)ApprovalStatusEnum.Processing);
+                    return statusId;
                 }
             }
 
             if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
             {
-                if (ActionIsApprovalDecision()) this.EndProcess(originalStatusId);
-                else this.EndProcess(this.statusId);
+                if (ActionIsApprovalDecision()) EndProcess(originalStatusId);
+                if (this.statusId == (int)ApprovalStatusEnum.Processing) EndProcess((int)ApprovalStatusEnum.Approved);
+                return statusId;
             }
 
             if (this.keepPending == true) // DEPRECATED!!!
             {
                 this.statusId = (int)ApprovalStatusEnum.Pending;
                 this.newStateId = (int)ApprovalState.Processing;
+                return statusId;
             }
 
             if (this.endProcess == true) // PENDING UPDATE (To forcefully end the process at a particular level)
             {
                 this.statusId = (int)ApprovalStatusEnum.Approved;
                 this.EndProcess(this.statusId);
+                return statusId;
             }
 
             if (ActionIsApprovalDecision()) // if its still approval decision end process
             {
                 this.EndProcess(this.statusId);
+                return statusId;
             }
+
+            return statusId;
         }
 
         private void SetReroute()
@@ -914,6 +922,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             $"The {operationName} approval process you initiated have been {status}{level}. <br /><br />" +
                             $"{placeholders.customerName}" +
                             $"{placeholders.referenceNumber}" +
+                            $"{placeholders.facilityType}" +
                             $"{placeholders.operationName}" +
                             $"{placeholders.branchName}" +
                             $"{placeholders.locationName}" +
@@ -924,6 +933,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             $"You have a new pending {operationName} approval request. <br /><br />" +
                             $"{placeholders.customerName}" +
                             $"{placeholders.referenceNumber}" +
+                            $"{placeholders.facilityType}" +
                             $"{placeholders.operationName}" +
                             $"{placeholders.branchName}" +
                             $"{placeholders.locationName}" +
