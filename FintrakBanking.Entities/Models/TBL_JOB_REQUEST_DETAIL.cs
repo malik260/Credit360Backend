@@ -51,6 +51,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool DEBITBUSINESS { get; set; }
 
+        public bool? TRANSACTIONREVERSED { get; set; }
+        public int? CUSTOMERCASAACCOUNTID { get; set; }
+
         public DateTime? DATETIMEDELETED { get; set; }
 
         public virtual TBL_ACCREDITEDCONSULTANT TBL_ACCREDITEDCONSULTANT { get; set; }
