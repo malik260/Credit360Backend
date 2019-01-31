@@ -507,6 +507,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             foreach (var item in data)
             {
+                var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(item.targetId);
+                if(applicationDet != null)
+                {
+                    var customer = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == applicationDet.CUSTOMERID);
+                    if (customer != null) item.customerName = customer.FIRSTNAME; // + " " + customer.LASTNAME.Substring(0, 1).ToUpper()+"."; 
+                }
+                
                 var detail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == item.jobRequestId);
                 if (detail.Any())
                 {
@@ -1215,6 +1222,86 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
+        public bool ReverseChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
+        {
+            var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated).ToList();
+            var consultantId = jobRequestDetail.FirstOrDefault().ACCREDITEDCONSULTANTID;
+            var consultantRecord = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == consultantId);
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = model.username,
+                passcode = model.passCode
+            };
+
+            return ReverseChargeOnCustomerForCollatteralSearch(model, jobRequestDetail, twoFADetails, consultantRecord);
+
+        }
+
+        private bool ReverseChargeOnCustomerForCollatteralSearch(JobRequestCollateralSearchViewModel model,
+           List<TBL_JOB_REQUEST_DETAIL> jobRequestDetail, TwoFactorAutheticationViewModel twoFADetails, IEnumerable<TBL_ACCREDITEDCONSULTANT> consultantRecord)
+        {
+            model.debitBusiness = jobRequestDetail.FirstOrDefault().DEBITBUSINESS;
+            var casa = context.TBL_CASA.Find(model.casaAccountId);
+            if (casa == null && !model.debitBusiness) { throw new ConditionNotMetException("Customer account number missing"); }
+            if (!model.debitBusiness) { model.casaAccountId = casa.CASAACCOUNTID; }
+
+            var jobRequestData = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
+            model.operationId = (short)OperationsEnum.CollateralSearchInitiation;
+            model.requestCode = jobRequestData.JOBREQUESTCODE;
+
+            foreach (var item in jobRequestDetail)
+            {
+                model.totalChargeAmount = model.totalChargeAmount + item.AMOUNT.Value;
+                item.ACCREDITEDCONSULTANTPAID =  false;
+            }
+
+            if (model.totalChargeAmount > 0)
+            {
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                if (model.debitBusiness)
+                {
+                    var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short)OtherOperationEnum.ChargeOnBank).FirstOrDefault();
+                    if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
+
+                    model.glAccountId = bizAccount.GLACCOUNTID;
+                    model.casaAccountId = null;
+                    model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
+                    model.currencyCode = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId).CURRENCYCODE;
+                }
+                inputTransactions.AddRange(BuildCollateralSearchChargeReversalPosting(model));
+
+                if (inputTransactions.Count > 0)
+                {
+                    financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
+
+                    // Audit Section ---------------------------
+                    var auditDetail = !model.debitBusiness ? $"Customer account number '{casa.PRODUCTACCOUNTNUMBER}' credited with collateral search fees" : $"Bank account collateral search fees debit reversal";
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CollateralSearchJob,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = auditDetail,
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
+
+                    context.SaveChanges();
+                    return true;
+                }
+
+                else return false;
+            }
+            else return false;
+        }
+
+
+
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
             var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated).ToList();
@@ -1289,23 +1376,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (inputTransactions.Count > 0)
                 {
                     financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
-
-                    //if (consultantRecord.Any())
-                    //{
-                    //    var solicitor = consultantRecord.FirstOrDefault();
-                    //    string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
-                    //    foreach (var i in jobRequestDetail)
-                    //    {
-                    //        if (i.JOB_SUB_TYPE_CLASSID != (short)(JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
-
-                    //        i.CUSTOMERORBUSINESSCHARGED = true;
-                    //        if (model.debitBusiness) i.DEBITBUSINESS = true;
-                    //    }
-
-                    //    messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
-                    //    string alertSubject = $"Loan Collateral Search";
-                    //    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
-                    //}
 
                     if (consultantRecord.Any())
                     {
@@ -2289,6 +2359,107 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             return inputTransactions;
         }
+
+        public List<FinanceTransactionViewModel> BuildCollateralSearchChargeReversalPosting(JobRequestCollateralSearchViewModel model)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
+            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
+            if (searchCharges.Any() && model.totalChargeAmount != 0)
+            {
+                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
+                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
+                foreach (var post in postingGroups)
+                {
+                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
+
+                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                    {
+                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                        decimal debitAmount = 0;
+                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
+                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            debitAmount = (decimal)model.totalChargeAmount;
+
+                        debit.operationId = (int)model.operationId;
+                        debit.description = "Collateral related charge on facility"; // model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
+                        debit.valueDate = general.GetApplicationDate();
+                        debit.transactionDate = debit.valueDate;
+                        debit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).CURRENCYID; // (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                        debit.isApproved = true;
+                        debit.postedBy = model.createdBy;
+                        debit.approvedBy = model.createdBy;
+                        debit.approvedDate = debit.transactionDate;
+                        debit.approvedDateTime = DateTime.Now;
+                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        debit.companyId = model.companyId;
+                        debit.glAccountId = (int)debit.glAccountId;
+                        debit.sourceReferenceNumber = model.requestCode;
+                        debit.batchCode = batchCode;
+                        debit.casaAccountId = null;
+                        debit.debitAmount = debitAmount;
+                        debit.creditAmount = 0;
+                        debit.sourceBranchId = model.userBranchId;
+                        debit.destinationBranchId = model.userBranchId;
+                        debit.rateCode = "TTB";
+                        debit.rateUnit = string.Empty;
+                        debit.currencyCrossCode = model.debitBusiness ? model.currencyCode : casa.TBL_CURRENCY.CURRENCYCODE;
+
+
+                        inputTransactions.Add(debit);
+                    }
+
+                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                    {
+                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                        decimal creditAmount = 0;
+                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
+                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            creditAmount = (decimal)model.totalChargeAmount;
+
+
+                        credit.operationId = (int)model.operationId;
+                        credit.description = "Collateral related charge on facility"; // model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
+                        credit.valueDate = general.GetApplicationDate();
+                        credit.transactionDate = credit.valueDate;
+                        credit.currencyId = model.debitBusiness ? (short)model.currencyId : casa.CURRENCYID;
+                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                        credit.isApproved = true;
+                        credit.postedBy = model.createdBy;
+                        credit.approvedBy = model.createdBy;
+                        credit.approvedDate = credit.transactionDate;
+                        credit.approvedDateTime = DateTime.Now;
+                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        credit.companyId = model.companyId;
+
+                        if (!model.debitBusiness && context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL == null)
+                            throw new BadLogicException($"No GL is currently mapped to this product code '{casa.TBL_PRODUCT.PRODUCTCODE}'.");
+
+                        credit.glAccountId = model.debitBusiness ? model.glAccountId : context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                        credit.sourceReferenceNumber = model.requestCode;
+                        credit.batchCode = batchCode;
+                        if (!model.debitBusiness) credit.casaAccountId = casa.CASAACCOUNTID;
+                        credit.debitAmount = 0;
+                        credit.creditAmount = creditAmount;
+                        credit.sourceBranchId = model.userBranchId;
+                        credit.destinationBranchId = model.debitBusiness ? model.userBranchId : casa.BRANCHID;
+                        credit.rateCode = "TTB";
+                        credit.rateUnit = string.Empty;
+                        credit.currencyCrossCode = model.debitBusiness ? model.currencyCode : casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(credit);
+                    }
+                }
+            }
+
+            return inputTransactions;
+        }
+
 
         public List<FinanceTransactionViewModel> BuildSolicitorFeePaymentPosting(JobRequestCollateralSearchViewModel model)
         {

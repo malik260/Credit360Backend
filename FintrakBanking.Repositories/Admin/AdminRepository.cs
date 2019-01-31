@@ -645,7 +645,7 @@ namespace FintrakBanking.Repositories.Admin
         //}
 
         #endregion Users
-        public IEnumerable<GlobalSettingViewModel> GetAllGlobalSettings()
+        public GlobalSettingViewModel GetAllGlobalSettings()
         {
             return context.TBL_SETUP_GLOBAL.Select(x => new GlobalSettingViewModel
             {
@@ -661,7 +661,7 @@ namespace FintrakBanking.Repositories.Admin
                 maxFileUploadSize = x.MAXIMUMUPLOADFILESIZE,
                 applicationURL = x.APPLICATION_URL,
                 supportEmail = x.SUPPORT_EMAIL,
-        });
+        }).FirstOrDefault();
         }
         #region Group
 
@@ -1057,20 +1057,20 @@ namespace FintrakBanking.Repositories.Admin
             return output;
         }
         #endregion
-        public Users GetStaffADDetails(string staffCode)
+        public Users GetStaffADDetails(string staffCode,string loginUser, string password)
         {
-            var record = GetActiveDirectoryDetails(staffCode);
+            //var test = ValidateActiveDirectoryCredentials("TMP10004", "!23Helives2");
+            var record = GetActiveDirectoryDetails(staffCode, loginUser, password);
             return record;
 
         }
-        public Users GetActiveDirectoryDetails2(string userName)
+        public Users GetActiveDirectoryDetails(string userName, string loginUser, string password)
         {
            var appSetup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             Users lstADUsers = new Users();
 
-            if (appSetup != null && appSetup.REQUIRE_ADUSER)
-            {
-                using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
+
+                using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, loginUser, password))
                 {
                     using (var foundUser = UserPrincipal.FindByIdentity(pc, IdentityType.SamAccountName, userName))
                     {
@@ -1079,83 +1079,35 @@ namespace FintrakBanking.Repositories.Admin
                             try
                             {
                                 DirectoryEntry directoryEntry = foundUser.GetUnderlyingObject() as DirectoryEntry;
-                                lstADUsers.firstName = directoryEntry.Properties["givenName"].Value.ToString();
-                                lstADUsers.middleName = directoryEntry.Properties["middleName"].Value.ToString();
-                                lstADUsers.lastName = directoryEntry.Properties["sn"].Value.ToString();
-                                lstADUsers.fullName = directoryEntry.Properties["displayName"].Value.ToString();
+                            lstADUsers.firstName = foundUser.GivenName;
+                            lstADUsers.middleName = foundUser.MiddleName;
+                            lstADUsers.lastName = foundUser.Surname;
+                            lstADUsers.fullName = foundUser.DisplayName;
+                            //lstADUsers.firstName = directoryEntry.Properties["givenName"].Value.ToString();
+                            //lstADUsers.middleName = directoryEntry.Properties["middleName"].Value.ToString();
+                            //lstADUsers.lastName = directoryEntry.Properties["sn"].Value.ToString();
+                            //lstADUsers.fullName = directoryEntry.Properties["displayName"].Value.ToString();
 
-                                //many details
+                            //many details
 
-                           }
+                        }
                             catch (Exception ex)
                             {
                                 Console.WriteLine(ex.Message);
                             }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (appSetup != null)
-                    using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME))
-                    {
-                        using (var foundUser = Principal.FindByIdentity(pc, IdentityType.SamAccountName, userName))
-                        {
-                            if (foundUser != null)
-                            {
-                                try
-                                {
-                                    DirectoryEntry directoryEntry = foundUser.GetUnderlyingObject() as DirectoryEntry;
-                                    lstADUsers.firstName = directoryEntry.Properties["givenName"].Value.ToString();
-                                    lstADUsers.middleName = directoryEntry.Properties["middleName"].Value.ToString();
-                                    lstADUsers.lastName = directoryEntry.Properties["sn"].Value.ToString();
-                                    lstADUsers.fullName = directoryEntry.Properties["displayName"].Value.ToString();
-                                    //many details
-
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
-                                }
-                            }
-                        }
-                    }
-            }
-
-            return lstADUsers;
-
-        }
-
-        public Users GetActiveDirectoryDetails(string userName)
-        {
-          var  appSetup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
-            Users lstADUsers = new Users();
-
-            var domain = appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME;
-
-            bool _isValid;
-            using (var pc = new PrincipalContext(ContextType.Domain,domain))
-            {
-                //var usr2 = UserPrincipal.FindByIdentity(pc, userName);
-
-                _isValid = pc.ValidateCredentials("TMP1133", "Helives@12");
-                if (!_isValid)
-                {
-                    var user = UserPrincipal.FindByIdentity(pc, IdentityType.SamAccountName, userName); //domain +"\\" +
-                    if (user == null)
-                    {
-                        //User doesn't exist
                     }
                     else
                     {
-                        //Password is invalid
+                        return null;
+                    }
                     }
                 }
-            }
+
+
             return lstADUsers;
 
         }
+
     }
 
     public enum UserAccountLockStatusEnum

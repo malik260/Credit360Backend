@@ -12168,7 +12168,8 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    result = context.SaveChanges() == 0;
+                    result = context.SaveChanges() > 0;
+
                 }
 
 
@@ -12233,7 +12234,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    result = context.SaveChanges() == 0;
+                    result = context.SaveChanges() > 0;
                 }
 
 
@@ -13057,7 +13058,7 @@ namespace FintrakBanking.Repositories.Credit
                             {
                                 var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
 
-                                if (feePostings.Count() > 0)
+                                if (feePostings != null)
                                 {
                                     twoFADetails.skipAuthentication = true;
                                     financeTransaction.PostTransaction(feePostings, false, twoFADetails);
@@ -17068,6 +17069,8 @@ namespace FintrakBanking.Repositories.Credit
                         select new CamProcessedLoanViewModel
                         {
                             lmsApplicationReferenceNumber = e.APPLICATIONREFERENCENUMBER,
+                            lmsOperationId = atrail.OPERATIONID,
+                            lmsOperationName = atrail.TBL_OPERATIONS.OPERATIONNAME,
                             loanReviewApplicationId = e.LOANAPPLICATIONID,
                             tenor = ln.TENOR ?? 0,
                             reviewDetails = ln.REVIEWDETAILS,
@@ -17411,6 +17414,7 @@ namespace FintrakBanking.Repositories.Credit
 
                         if (response)
                         {
+                           
                             if (userModel.fees != null)
                             {
                                 LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
@@ -17427,6 +17431,7 @@ namespace FintrakBanking.Repositories.Credit
                             else
                             {
                                 output = context.SaveChanges() > 0;
+
                             }
                             trans.Commit();
                             return output;
@@ -17537,6 +17542,16 @@ namespace FintrakBanking.Repositories.Credit
 
                     if (workFlow.NewState == (int)ApprovalState.Ended)
                     {
+                        if (twoFADetails != null && admin.TwoFactorAuthenticationEnabled())
+                        {
+                            var authenticated = twoFactoeAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
+
+                            if (authenticated.authenticated == false)
+                                throw new TwoFactorAuthenticationException(authenticated.message);
+                        }
+                        twoFADetails.skipAuthentication = true;
+
+
                         TBL_LOAN_REVIEW_OPERATION op = new TBL_LOAN_REVIEW_OPERATION();
                         op = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == userModel.targetId).FirstOrDefault();
                         LoanReviewViewModel loanView = new LoanReviewViewModel();
@@ -17552,7 +17567,7 @@ namespace FintrakBanking.Repositories.Credit
                         {
                             var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
 
-                            if (feePostings.Count() > 0)
+                            if (feePostings != null )
                             {
                                 twoFADetails.skipAuthentication = true;
                                 financeTransaction.PostTransaction(feePostings, false, twoFADetails);

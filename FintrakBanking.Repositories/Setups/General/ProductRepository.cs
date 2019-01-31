@@ -2903,7 +2903,7 @@ namespace FintrakBanking.Repositories.Setups.General
         {
             return (from p in context.TBL_PRODUCT_PRICE_INDEX
                     join pc in context.TBL_PRODUCT_PRICE_INDEX_CURNCY on p.PRODUCTPRICEINDEXID equals pc.PRODUCTPRICEINDEXID
-                    where p.DELETED == false && pc.PRICEINDEXCURRENCYID == currencyId && pc.DELETED == false
+                    where p.DELETED == false && pc.CURRENCYID == currencyId && pc.DELETED == false
                     select new ProductPriceIndexViewModel
                     {
                         priceIndexDescription = p.PRICEINDEXDESCRIPTION,
