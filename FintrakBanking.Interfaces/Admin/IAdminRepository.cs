@@ -46,7 +46,7 @@ namespace FintrakBanking.Interfaces.Admin
         #endregion Users
 
         #region Group
-        Users GetStaffADDetails(string staffCode ,string loginUser, string password);
+        Users GetStaffActiveDirectoryDetails(string staffCode ,string loginUser, string password);
 
         IEnumerable<AppGroupViewModel> GetAllGroups();
         GlobalSettingViewModel GetAllGlobalSettings();
