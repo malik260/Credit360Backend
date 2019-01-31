@@ -107,5 +107,7 @@ namespace FintrakBanking.Common.Enum
         LoanBookingRequest = 98,
         ManualFeeCharge = 99,
         GlobalInterestRateChange=100,
+        CustomerGroupMapping = 101,
+        DeleteStaff = 102,
     }
 }

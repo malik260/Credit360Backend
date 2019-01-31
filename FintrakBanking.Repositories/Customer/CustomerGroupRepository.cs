@@ -571,7 +571,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
                 //StaffId = entity.createdBy,
                 //BranchId = (short)entity.userBranchId,
                 DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {entity.customerCode } to group  ( { groupName } ) ",
@@ -613,7 +613,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupAdded,
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
                 STAFFID = model.createdBy,
                 BRANCHID = (short)model.userBranchId,
                 DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {model.customerCode } to group  ( { groupName } ) ",
@@ -637,7 +637,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                         companyId = model.companyId,
                         approvalStatusId = (int)ApprovalStatusEnum.Pending,
                         targetId = groupMap.CUSTOMERGROUPMAPPINGID,
-                        operationId = (int)OperationsEnum.CustomerGroupCreation,
+                        operationId = (int)OperationsEnum.CustomerGroupMapping,
                         BranchId = model.userBranchId,
                         externalInitialization = true
                     };
@@ -1084,7 +1084,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                     join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
                     join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
-                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupCreation && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                          && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupMapping && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                     select new CustomerGroupMappingViewModel()
                     {
                         companyId = c.COMPANYID,

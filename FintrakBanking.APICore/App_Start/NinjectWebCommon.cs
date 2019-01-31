@@ -71,6 +71,8 @@ namespace FintrakBanking.APICore.App_Start
     using FintrakBanking.APICore.Providers;
     using FintrakBanking.Interfaces.ThridPartyIntegration;
     using FintrakBanking.Repositories.ThirdPartyIntegration;
+    using FintrakBanking.Interfaces.AlertMonitoring;
+    using FintrakBanking.Repositories.AlertMonitoring;
 
     public static class NinjectWebCommon
     {
@@ -237,6 +239,10 @@ namespace FintrakBanking.APICore.App_Start
             kernel.Bind<ILoanFeeChargeRepository>().To<LoanFeeChargeRepository>();
 
             kernel.Bind<IFinacleIntegrationRepository>().To<FinacleIntegrationRepository>();
+            kernel.Bind<IEmailAlertLogger>().To<EmailAlertLogger>();
+
+            
+
         }
 
     }

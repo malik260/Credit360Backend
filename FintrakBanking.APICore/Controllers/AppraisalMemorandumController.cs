@@ -147,19 +147,14 @@ namespace FintrakBanking.APICore.Controllers
         [Route("appraisal-memorandum/privilege")]
         public HttpResponseMessage GetUserPrivilege([FromBody] AuthoritySignatureViewModel entity)
         {
-            try
-            {
+         
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 var data = repo.GetUserPrivilege(entity);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
-            }
-            catch (SecureException ex)
-            {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
-            }
+ 
         }
 
         [HttpGet]
