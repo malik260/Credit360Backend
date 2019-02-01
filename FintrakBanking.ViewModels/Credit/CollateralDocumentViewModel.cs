@@ -6,7 +6,7 @@ namespace FintrakBanking.ViewModels.Credit
     public class CollateralDocumentViewModel : GeneralEntity
     {
         public int documentId { get; set; }
-        public int collateralId { get; set; }
+        public int? collateralId { get; set; }
         public string fileName { get; set; }
         public string fileExtension { get; set; }
         public byte[] fileData { get; set; }
@@ -17,6 +17,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? CollateralVisitationID { get; set; }
         public bool isPrimaryDocument { get; set; }
         public int? targetId { get; set; }
+        public string collateralCode { get; set; }
     }
 
     public class CollateralVisitationDocumentViewModel : GeneralEntity
