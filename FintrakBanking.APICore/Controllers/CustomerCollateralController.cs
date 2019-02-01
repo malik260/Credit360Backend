@@ -101,7 +101,7 @@ namespace FintrakBanking.APICore.Controllers
                 var buffer = await file.ReadAsByteArrayAsync();
                 var data = repo.AddCollateral(incomingData, buffer);
 
-                if (data)
+                if (data != 0)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
                 }
@@ -441,6 +441,7 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        
         [HttpGet, Route("temp-collateral-document/{collateralId}")]
         public HttpResponseMessage GetTempCollateralDocumentByCollateral(int collateralId)
         {
@@ -462,6 +463,27 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = document.GetCollateralVisitationDocument(documentId); //CollateralVisitationDocumentViewModel
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpGet] [ClaimsAuthorization]  
+        [Route("temp-collateral-visitation-file/{documentId}")]
+        public HttpResponseMessage GetTempVisitationFile(int documentId)
+        {
+            try
+            {
+                var data = document.GetTempCollateralVisitationDocument(documentId); //CollateralVisitationDocumentViewModel
 
                 if (data == null)
                 {
@@ -503,6 +525,26 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var data = repo.GetPropertyVistation(collateralVisitationId);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet] [ClaimsAuthorization]  
+        [Route("temp-collateral-visitation/{collateralVisitationId}")]
+        public HttpResponseMessage GetTempVisitationDocument(int collateralVisitationId)
+        {
+            try
+            {
+                var data = repo.GetTempPropertyVistation(collateralVisitationId);
 
                 if (data == null)
                 {
@@ -578,6 +620,68 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost] [ClaimsAuthorization]
+        [Route("temp-visitation-document")]
+        public async Task<HttpResponseMessage> AddTempVisitationDocument()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                int collateralCustomerId;
+                if (!Int32.TryParse(provider.FormData["collateralCustomerId"], out collateralCustomerId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                }
+
+                var visitationDate = provider.FormData["lastVisitaionDate"];
+
+                var actualDate = visitationDate.Substring(0, 15);
+                var dateVisited = DateTime.ParseExact(actualDate, "ddd MMM dd yyyy", CultureInfo.InvariantCulture);
+
+                var entity = new CollateralDocumentViewModel
+                {
+                    lastVisitaionDate = dateVisited,
+                    visitationRemark = provider.FormData["visitationRemark"],
+                    collateralCustomerId = Convert.ToInt32(provider.FormData["collateralCustomerId"]),
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.collateralCustomerId = collateralCustomerId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = document.AddTempCollateralVisitation(entity, buffer);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+
         [HttpPost, Route("collateral-visitation")]
         public HttpResponseMessage AddCollateralVisitation([FromBody] CollateralDocumentViewModel entity)
         {
@@ -626,6 +730,7 @@ namespace FintrakBanking.APICore.Controllers
                     documentTitle = provider.FormData["documentTitle"], // document code
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
+                    collateralCode = provider.FormData["collateralCode"],
                 };
 
                 if (!provider.FileStreams.Any())
@@ -642,6 +747,60 @@ namespace FintrakBanking.APICore.Controllers
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();
                 var data = document.AddCollateralDocument(entity, buffer);
+
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "The record has been created successfully" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.InnerException}" });
+            }
+        }
+
+        [HttpPost, Route("temp-collateral-document")]
+        public async Task<HttpResponseMessage> AddTempCollateralDocument()
+        {
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                int collateralId;
+                if (!Int32.TryParse(provider.FormData["collateralId"], out collateralId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                }
+
+                var entity = new CollateralDocumentViewModel
+                {
+                    documentTitle = provider.FormData["documentTitle"], // document code
+                    fileName = provider.FormData["fileName"],
+                    fileExtension = provider.FormData["fileExtension"],
+                    collateralCode = provider.FormData["collateralCode"],
+                };
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.collateralId = collateralId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+                var data = document.AddTempCollateralDocument(entity, buffer);
 
                 if (data)
                 {

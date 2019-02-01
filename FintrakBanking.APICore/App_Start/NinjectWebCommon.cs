@@ -240,9 +240,6 @@ namespace FintrakBanking.APICore.App_Start
 
             kernel.Bind<IFinacleIntegrationRepository>().To<FinacleIntegrationRepository>();
             kernel.Bind<IEmailAlertLogger>().To<EmailAlertLogger>();
-
-            
-
         }
 
     }

@@ -15,7 +15,9 @@ namespace FintrakBanking.Entities.DocumentModels
         [StringLength(100)]
         public string DOCUMENTCODE { get; set; }
 
-        public int COLLATERALCUSTOMERID { get; set; }
+        public string COLLATERALCODE { get; set; }
+
+        public int? COLLATERALCUSTOMERID { get; set; }
 
         public int? TARGETID { get; set; }
 

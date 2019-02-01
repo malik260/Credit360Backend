@@ -13,6 +13,8 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public int COLLATERALCUSTOMERID { get; set; }
 
+        public int APPROVALSTATUSID { get; set; }
+
         public int COLLATERALVISITATIONID { get; set; }
 
         [Required]

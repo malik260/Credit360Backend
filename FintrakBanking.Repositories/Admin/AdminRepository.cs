@@ -21,6 +21,7 @@ using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Interfaces;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.Admin
 {
@@ -31,6 +32,7 @@ namespace FintrakBanking.Repositories.Admin
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IProfileSetupRepository proSetting;
+        private IIntegrationWithFinacle finacle;
         //private IApprovalLevelStaffRepository level;
         private ITwoFactorAuthIntegrationService auth;
         bool USE_THIRD_PARTY_INTEGRATION = false;
@@ -40,6 +42,7 @@ namespace FintrakBanking.Repositories.Admin
             IGeneralSetupRepository _genSetup,
             IWorkflow _workFlow,
             IProfileSetupRepository _proSetting,
+            IIntegrationWithFinacle _finacle,
 
         // IApprovalLevelStaffRepository _level,
         ITwoFactorAuthIntegrationService _auth)
@@ -49,6 +52,7 @@ namespace FintrakBanking.Repositories.Admin
             this.genSetup = _genSetup;
             this.auth = _auth;
             workFlow = _workFlow;
+            finacle = _finacle;
             this.proSetting = _proSetting;
            // level = _level;
 
@@ -1267,13 +1271,39 @@ namespace FintrakBanking.Repositories.Admin
             return output;
         }
         #endregion
-        public Users GetStaffADDetails(string staffCode,string loginUser, string password)
+        public Users GetStaffActiveDirectoryDetails(string staffCode,string loginUser, string password)
         {
             //var test = ValidateActiveDirectoryCredentials("TMP10004", "!23Helives2");
-            var record = GetActiveDirectoryDetails(staffCode, loginUser, password);
-            return record;
+            var user = GetActiveDirectoryDetails(staffCode, loginUser, password);
+
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                var userRole = finacle.GetUserRoleFinacle(staffCode);
+                if (userRole.staffRole != null)
+                {        
+                    if (userRole.staffRole == "RM" || userRole.staffRole == "BM")
+                    {
+                        user.staffRole = userRole.staffRole;
+                        user.staffRoleId = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == user.staffRole).Select(m => m.STAFFROLEID).FirstOrDefault();
+
+                    }
+                    else
+                    {
+                        user.staffRole = null;
+                        user.staffRoleId = null;
+                    }
+                }
+                else
+                {
+                    user.staffRole = null;
+                    user.staffRoleId = null;
+                }
+               
+            }
+            return user;
 
         }
+       
         public Users GetActiveDirectoryDetails(string userName, string loginUser, string password)
         {
            var appSetup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
@@ -1286,9 +1316,8 @@ namespace FintrakBanking.Repositories.Admin
                     {
                         if (foundUser != null)
                         {
-                            try
-                            {
-                                DirectoryEntry directoryEntry = foundUser.GetUnderlyingObject() as DirectoryEntry;
+                           
+                            DirectoryEntry directoryEntry = foundUser.GetUnderlyingObject() as DirectoryEntry;
                             lstADUsers.firstName = foundUser.GivenName;
                             lstADUsers.middleName = foundUser.MiddleName;
                             lstADUsers.lastName = foundUser.Surname;
@@ -1299,17 +1328,9 @@ namespace FintrakBanking.Repositories.Admin
                             //lstADUsers.fullName = directoryEntry.Properties["displayName"].Value.ToString();
 
                             //many details
-
-                        }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                            }
+                                                  
                     }
-                    else
-                    {
-                        return null;
-                    }
+                   
                     }
                 }
 

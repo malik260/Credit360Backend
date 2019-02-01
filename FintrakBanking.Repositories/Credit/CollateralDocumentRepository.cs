@@ -39,10 +39,45 @@ namespace FintrakBanking.Repositories.Credit
                 COLLATERALCUSTOMERID = model.collateralId,
                 SYSTEMDATETIME = DateTime.Now,
                 CREATEDBY = (int)model.createdBy,
-                ISPRIMARYDOCUMENT = model.isPrimaryDocument
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+               // COLLATERALCODE = model.collateralCode,
             };
 
             context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentAdded,
+                STAFFID = model.createdBy,
+                BRANCHID = (short)model.userBranchId,
+                DETAIL = $"Added Collateral Document '{ model.documentTitle }' ",
+                IPADDRESS = model.userIPAddress,
+                URL = model.applicationUrl,
+                APPLICATIONDATE = general.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+        public bool AddTempCollateralDocument(CollateralDocumentViewModel model, byte[] file)
+        {
+            var data = new Entities.DocumentModels.TBL_TEMP_MEDIA_COLLATERAL_DOCS
+            {
+                FILEDATA = file,
+                DOCUMENTCODE = model.documentTitle,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                TEMPCOLLATERALCUSTOMERID = model.collateralId,
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = (int)model.createdBy,
+                ISPRIMARYDOCUMENT = model.isPrimaryDocument,
+               // COLLATERALCODE = model.collateralCode,
+            };
+
+            context.TBL_TEMP_MEDIA_COLLATERAL_DOCS.Add(data);
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
@@ -118,7 +153,7 @@ namespace FintrakBanking.Repositories.Credit
                 fileName = x.FILENAME,
                 fileExtension = x.FILEEXTENSION,
                 targetId = x.TARGETID
-            });
+            }).ToList();
         }
 
         public CollateralDocumentViewModel GetCollateralDocument(int documentId)
@@ -140,9 +175,9 @@ namespace FintrakBanking.Repositories.Credit
             };
         }
 
-        public IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralDocument(int documentId)
+        public IEnumerable<CollateralDocumentViewModel> GetCustomerCollateralDocument(int collateralId)
         {
-          var data = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.COLLATERALCUSTOMERID == documentId).Select(x => new CollateralDocumentViewModel
+          var data = context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Where(x => x.COLLATERALCUSTOMERID == collateralId).Select(x => new CollateralDocumentViewModel
             {
                 collateralId = x.COLLATERALCUSTOMERID,
                 documentId = x.DOCUMENTID,
@@ -154,6 +189,22 @@ namespace FintrakBanking.Repositories.Credit
             });
             return data.ToList();
         }
+
+        public IEnumerable<CollateralDocumentViewModel> GetTempCustomerCollateralDocument(int tempCollateralId)
+        {
+          var data = context.TBL_TEMP_MEDIA_COLLATERAL_DOCS.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).Select(x => new CollateralDocumentViewModel
+            {
+                collateralId = x.TEMPCOLLATERALCUSTOMERID,
+                documentId = x.DOCUMENTID,
+                documentTitle = x.DOCUMENTCODE,
+                fileData = x.FILEDATA,
+                fileName = x.FILENAME,
+                fileExtension = x.FILEEXTENSION,
+                targetId = x.TARGETID
+            });
+            return data.ToList();
+        }
+
         public IEnumerable<CollateralDocumentViewModel> GetCollateralGuaranteeDocument(int targetId)
         {
             return this.GetAllCollateralDocument().Where(x => x.targetId == targetId).ToList();
@@ -165,6 +216,24 @@ namespace FintrakBanking.Repositories.Credit
         {
             var data = (from x in this.context.TBL_DOC_COLLATERAL_VISITATION
                         where x.COLLATERALVISITATIONID == collateralVisitationId
+                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        select new CollateralVisitationDocumentViewModel
+                        {
+                            documentId = x.DOCUMENTID,
+                            collateralCustomerId = x.COLLATERALVISITATIONID,
+                            fileData = x.FILEDATA,
+                            fileName = x.FILENAME,
+                            fileExtension = x.FILEEXTENSION,
+                            CollateralVisitationID = x.COLLATERALVISITATIONID
+                        });
+
+            return data.FirstOrDefault();
+        }
+        public CollateralVisitationDocumentViewModel GetTempCollateralVisitationDocument(int collateralVisitationId)
+        {
+            var data = (from x in this.context.TBL_DOC_COLLATERAL_VISITATION
+                        where x.COLLATERALVISITATIONID == collateralVisitationId
+                        && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                         select new CollateralVisitationDocumentViewModel
                         {
                             documentId = x.DOCUMENTID,
@@ -178,7 +247,6 @@ namespace FintrakBanking.Repositories.Credit
             return data.FirstOrDefault();
         }
 
-       
 
         public bool AddCollateralVisitation(CollateralDocumentViewModel model, byte[] file)
         {
@@ -196,7 +264,46 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = DateTime.Now,
                     CREATEDBY = (int)model.createdBy,
                     COLLATERALVISITATIONID = visitationId,
-                    // COLLATERALCODE ="aaasss",
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
+                };
+
+                context.TBL_DOC_COLLATERAL_VISITATION.Add(data);
+            }
+           // Audit Section ---------------------------
+           var audit = new TBL_AUDIT
+           {
+               AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentAdded,
+               STAFFID = model.createdBy,
+               BRANCHID = (short)model.userBranchId,
+               DETAIL = $"Added Collateral Visitation File '{ model.documentTitle }' ",
+               IPADDRESS = model.userIPAddress,
+               URL = model.applicationUrl,
+               APPLICATIONDATE = general.GetApplicationDate(),
+               SYSTEMDATETIME = DateTime.Now
+           };
+            this.audit.AddAuditTrail(audit);
+            // End of Audit Section ---------------------
+
+            return context.SaveChanges() != 0;
+        }
+
+        public bool AddTempCollateralVisitation(CollateralDocumentViewModel model, byte[] file)
+        {
+          var visitationId =  coll.AddPropertyVistation(model);
+            if (visitationId > 0)
+            {
+
+
+                var data = new Entities.DocumentModels.TBL_DOC_COLLATERAL_VISITATION
+                {
+                    FILEDATA = file,
+                    FILENAME = model.fileName,
+                    FILEEXTENSION = model.fileExtension,
+                    COLLATERALCUSTOMERID = Convert.ToInt32(model.collateralCustomerId),
+                    SYSTEMDATETIME = DateTime.Now,
+                    CREATEDBY = (int)model.createdBy,
+                    COLLATERALVISITATIONID = visitationId,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing,
                 };
 
                 context.TBL_DOC_COLLATERAL_VISITATION.Add(data);

@@ -1858,7 +1858,7 @@ namespace FintrakBanking.Repositories.Credit
                 var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "APPROVAL FOR LOAN APPLICATION";
 
-                emailLogger.ComposerBody(referenceNo,successEmailBody, messageSubject,customer.email,false);
+                emailLogger.ComposeEmail(referenceNo,successEmailBody, messageSubject,customer.email,false);
 
             }
                 
@@ -1885,7 +1885,7 @@ namespace FintrakBanking.Repositories.Credit
                 var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
 
-                emailLogger.ComposerBody(referenceNo, failedEmailBody, messageSubject, customer.email,false);
+                emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);
 
             }             
         }
