@@ -1767,7 +1767,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                             if (setupGlobal.USE_ACTIVE_DIRECTORY)
                             {
-                                getADDetails = adminRepo.GetStaffADDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                getADDetails = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
                                 if (getADDetails == null)
                                 {
                                     rowSuccess = false;
@@ -1823,7 +1823,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         case "E":
                             if(setupGlobal.USE_ACTIVE_DIRECTORY)
                             {
-                                var firstName = adminRepo.GetStaffADDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                var firstName = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
                                 if (firstName == null)
                                 {
                                     rowSuccess = false;
@@ -1847,7 +1847,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         case "F":
                             if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
                             {
-                                var record = adminRepo.GetStaffADDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
                                 if (record == null)
                                 {
                                     rowSuccess = false;
@@ -1871,7 +1871,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         case "G":
                             if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
                             {
-                                var record = adminRepo.GetStaffADDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
                                 if (record != null)
                                 {
                                     staffRowData.MiddleName = record.middleName;

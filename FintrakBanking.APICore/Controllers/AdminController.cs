@@ -820,7 +820,7 @@ namespace FintrakBanking.APICore.Controllers
                 string password = Encoding.UTF8.GetString(pass);
                 string loginUser = token.GetUsername;
 
-                var data = repo.GetStaffADDetails(staffCode,loginUser, password);
+                var data = repo.GetStaffActiveDirectoryDetails(staffCode,loginUser, password);
 
                 if (data == null)
                 {
