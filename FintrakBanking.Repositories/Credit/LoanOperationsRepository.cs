@@ -17431,7 +17431,6 @@ namespace FintrakBanking.Repositories.Credit
                             else
                             {
                                 output = context.SaveChanges() > 0;
-
                             }
                             trans.Commit();
                             return output;

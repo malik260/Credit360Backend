@@ -8,6 +8,6 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
 {
   public  interface IEmailAlertLogger
     {
-        void ComposerBody(string referenceNumber, string emailBody,string emailSubject, string recipientEmail, bool callSaveChanges);
+        void ComposeEmail(string referenceNumber, string emailBody,string emailSubject, string recipientEmail, bool callSaveChanges);
     }
 }

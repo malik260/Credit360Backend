@@ -352,7 +352,7 @@ namespace FintrakBanking.Repositories.Credit
                 emailBody = "There Valuable Customer, <br /><br /> Your facility with Reference Number: " + termLoan.loanReferenceNumber + " has been classified as "+ loanClasssification + ".,<br /> Kindly contact your Relationship Manager for more information.";
                 emailSubject = "LOAN PERFORMANCE STATUS REPORT";
 
-                emailLogger.ComposerBody(termLoan.loanReferenceNumber, emailBody, emailSubject, termLoan.customerEmail,false);
+                emailLogger.ComposeEmail(termLoan.loanReferenceNumber, emailBody, emailSubject, termLoan.customerEmail,false);
             }
             else if (entity.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
@@ -373,7 +373,7 @@ namespace FintrakBanking.Repositories.Credit
                 emailBody = "There Valuable Customer, <br /><br /> Your facility with Reference Number: " + revolvingLoan.loanReferenceNumber + " has been classified as " + loanClasssification + ".,<br /> Kindly contact your Relationship Manager for more information.";
                 emailSubject = "LOAN PERFORMANCE STATUS REPORT";
 
-                emailLogger.ComposerBody(revolvingLoan.loanReferenceNumber, emailBody, emailSubject, revolvingLoan.customerEmail,false);
+                emailLogger.ComposeEmail(revolvingLoan.loanReferenceNumber, emailBody, emailSubject, revolvingLoan.customerEmail,false);
             }
 
             //Send email to customer

@@ -20,12 +20,12 @@ namespace FintrakBanking.Repositories.AlertMonitoring
             context = _context;
         }
 
-        public void ComposerBody(string referenceNumber, string emailBody, string emailSubject, string recipientEmail, bool callSaveChanges)
+        public void ComposeEmail(string referenceNumber, string emailBody, string emailSubject, string recipientEmail, bool callSaveChanges)
         {
             string referenceNo = referenceNumber;
 
             var emailMessageBody = emailBody;
-            string templateUrl = "EmailTemplates\\Monitoring.html";
+            string templateUrl = @"~/EmailTemplates/Monitoring.html";
             string mailBody = EmailHelpers.PopulateBody(emailMessageBody, templateUrl);
 
             MessageLogViewModel messageModel = new MessageLogViewModel
