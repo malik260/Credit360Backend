@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int TEMPUSERID { get; set; }
 
-        public int TEMPSTAFFID { get; set; }
+        public int? TEMPSTAFFID { get; set; }
 
         [Required]
         [StringLength(50)]

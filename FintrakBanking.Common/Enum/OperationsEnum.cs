@@ -109,5 +109,6 @@ namespace FintrakBanking.Common.Enum
         GlobalInterestRateChange=100,
         CustomerGroupMapping = 101,
         DeleteStaff = 102,
+        UserAccountStatusChange = 103,
     }
 }

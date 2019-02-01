@@ -32,7 +32,11 @@ namespace FintrakBanking.Interfaces.Admin
 
         bool GoForApproval(ApprovalViewModel entity);
 
+        int GoForUserAccountStatusApproval(ApprovalViewModel entity);
+        
+
         IEnumerable<UserViewModel> GetUsersAwaitingApproval(int staffId, int companyId);
+        IEnumerable<UserViewModel> GetUsersWithAccountStatusChangeAwaitingApproval(int staffId, int companyId);
         IEnumerable<ApprovalStatusViewModel> GetApprovalStatus();
 
         bool CreateUser(AppUserViewModel user);
@@ -74,7 +78,7 @@ namespace FintrakBanking.Interfaces.Admin
 
         #endregion
 
-        bool UpdateUserStatus(ActiveUserDetails entity, out string message);
+        bool LogUserStatusUpdateRequest(ActiveUserDetails entity, out string message);
         IEnumerable<ActiveUserDetails> GetActiveUsers(int companyId);
 
         bool StaffHasActivity(int staffId, string activity);
