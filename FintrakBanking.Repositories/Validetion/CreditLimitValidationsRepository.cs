@@ -95,12 +95,10 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             result.eligible = blacklist == false && camsol == false && fullfinal == false;
             result.message = String.Empty;
 
-            result.message = "This customer ";
-
             string and = String.Empty;
-            if (camsol) { result.message = result.message + "is in CAMSOL"; and = " and "; }
-            if (fullfinal) { result.message = result.message + and + "has full and final"; and = " and "; }
-            if (blacklist) { result.message = result.message + and + "is in Blacklist"; }
+            if (camsol) { result.message = result.message + " is in CAMSOL"; and = " and"; }
+            if (fullfinal) { result.message = result.message + and + " has full and final"; and = " and"; }
+            if (blacklist) { result.message = result.message + and + " is in Blacklist"; }
 
             return result;
         }
