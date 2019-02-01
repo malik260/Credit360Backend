@@ -19,6 +19,8 @@ namespace FinTrakBanking.ThirdPartyIntegration
     using FintrakBanking.Common.CustomException;
     using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
     using FintrakBanking.Common.Enum;
+    using FintrakBanking.ViewModels.Admin;
+    using FinTrakBanking.ThirdPartyIntegration.StaffInfo;
 
     public class IntegrationWithFinacle : IIntegrationWithFinacle
     {
@@ -27,17 +29,19 @@ namespace FinTrakBanking.ThirdPartyIntegration
         private OverDraft overDraft;
         private ForeignCurrencyAccount account;
         private CustomerDetails customer;
+        private StaffDetails staff;
         private AccountDetail accountDetail;
         private ITwoFactorAuthIntegrationService twoFactorAuth;
         bool USE_TWO_FACTOR_AUTHENTICATION = false;
 
         public IntegrationWithFinacle(FinTrakBankingContext context, TransactionPosting transaction,
-            CustomerDetails customer, OverDraft overDraft, ForeignCurrencyAccount account, AccountDetail accountDetail,
+            CustomerDetails customer, StaffDetails staff, OverDraft overDraft, ForeignCurrencyAccount account, AccountDetail accountDetail,
             ITwoFactorAuthIntegrationService _twoFactorAuth)
         {
             this.context = context;
             this.transaction = transaction;
             this.customer = customer;
+            this.staff = staff;
             this.overDraft = overDraft;
             this.account = account;
             this.accountDetail = accountDetail;
@@ -1045,6 +1049,18 @@ namespace FinTrakBanking.ThirdPartyIntegration
 
             return accountOutput;
         }
+
+        public Users GetUserRoleFinacle(string staffCode)
+        {
+
+            Users module = null;
+            Task.Run(async () => module = await staff.GetStaffRoleByStaffCode(staffCode)).GetAwaiter()
+               .GetResult();
+
+            return module;
+        }
+
+
 
         //private bool LogTemporaryOverDraft(InterestRateInquiryViewModel model)
         //{

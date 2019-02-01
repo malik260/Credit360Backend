@@ -47,6 +47,12 @@ namespace FintrakBanking.ViewModels.Admin
         public string lastName { get; set; }
         public string department { get; set; }
         public string fullName { get; set; }
+        public string staffRole { get; set; }
+        public int? staffRoleId { get; set; }
+
+        public string roleCode { get; set; }
+        public string roleDescription { get; set; }
+        public string solID { get; set; }
 
 
     }

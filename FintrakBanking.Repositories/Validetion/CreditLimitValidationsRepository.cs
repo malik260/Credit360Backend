@@ -68,6 +68,41 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
             return customerEligibility;
         }
 
+        public CustomerEligibility GetCustomerEligibility(string customerCode)
+        {
+            var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE == customerCode);
+
+            var camsol = (from a in context.TBL_LOAN_CAMSOL
+                          join b in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals b.CAMSOLTYPEID
+                          where a.CUSTOMERCODE == customerCode && a.CANTAKELOAN == false
+                          select a).Any();
+
+            bool fullfinal = false;
+            if (customer != null)
+            {
+                fullfinal = (from l in context.TBL_LOAN
+                                 join o in context.TBL_LOAN_REVIEW_OPERATION on l.TERMLOANID equals o.LOANID
+                                 where o.LOANSYSTEMTYPEID == 1 && o.OPERATIONTYPEID == 80 && o.APPROVALSTATUSID == 2
+                                 && o.OPERATIONCOMPLETED == true && l.CUSTOMERID == customer.CUSTOMERID
+                                 select l).Any();
+            }
+
+            var blacklist = (from a in context.TBL_CUSTOMER_BLACKLIST
+                             where a.CUSTOMERCODE == customerCode
+                             select a).Any();
+
+            CustomerEligibility result = new CustomerEligibility();
+            result.eligible = blacklist == false && camsol == false && fullfinal == false;
+            result.message = String.Empty;
+
+            string and = String.Empty;
+            if (camsol) { result.message = result.message + " is in CAMSOL"; and = " and"; }
+            if (fullfinal) { result.message = result.message + and + " has full and final"; and = " and"; }
+            if (blacklist) { result.message = result.message + and + " is in Blacklist"; }
+
+            return result;
+        }
+
         public int ValidateBlackList(string customerCode)
         {
             int blacklistresults = 0;

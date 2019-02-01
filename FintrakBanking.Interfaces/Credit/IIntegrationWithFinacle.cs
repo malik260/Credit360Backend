@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FintrakBanking.ViewModels.Customer;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.ViewModels.CASA;
+using FintrakBanking.ViewModels.Admin;
 
 namespace FintrakBanking.Interfaces.Credit
 {
@@ -42,6 +43,7 @@ namespace FintrakBanking.Interfaces.Credit
         InterestRateInquiryViewModel GetInterestRateInquiry(string accountNumber, string accountType);
         bool AddCustomerAccounts(string customerCode);
         bool AddCustomerAccounts(int customerId, string customerCode);
+        Users GetUserRoleFinacle(string staffCode);
 
     }
 }
