@@ -331,6 +331,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
+            string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
+
             var placeholders = new AlertPlaceholders();
             if (appl.CUSTOMERGROUPID == null)
             {
@@ -341,6 +343,7 @@ namespace FintrakBanking.Repositories.Credit
                 placeholders.customerName = "<br />CUSTOMER NAME: " + appl.TBL_CUSTOMER_GROUP.GROUPNAME;
             }
             placeholders.referenceNumber = "<br />APPLICATION REFERENCENUMBER: " + appl.APPLICATIONREFERENCENUMBER;
+            placeholders.facilityType = "<br />FACILITY INFORMATION: " + facilityInformationMarkup;
             placeholders.operationName = "<br />OPERATION NAME: Loan Origination";
             placeholders.branchName = "<br />BRANCH NAME: " + appl.TBL_BRANCH.BRANCHNAME;
             workflow.Placeholders = placeholders;
@@ -1884,11 +1887,45 @@ namespace FintrakBanking.Repositories.Credit
 
                 emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);
 
-            }
-             
+            }             
         }
 
-      
+        private string GetFacilityInformationMarkup(int applicationId)
+        {
+            var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x
+                    => x.LOANAPPLICATIONID == applicationId
+                    && x.DELETED == false 
+                    && x.STATUSID != (int)ApprovalStatusEnum.Disapproved
+                ).ToList();
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Facility Type</th>
+                        <th>Amount</th>
+                        <th>Rate</th>
+                        <th>Tenor</th>
+                    </tr>
+                 ";
+            foreach (var f in facilities)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{f.TBL_PRODUCT1.PRODUCTNAME}</td>
+                        <td>{f.APPROVEDAMOUNT}</td>
+                        <td>{f.APPROVEDINTERESTRATE}</td>
+                        <td>{f.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+        }
     }
 
    

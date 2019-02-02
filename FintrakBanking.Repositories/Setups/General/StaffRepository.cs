@@ -1285,7 +1285,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
                 STAFFCODE = staffModel.StaffCode,
-                JOBTITLEID = staffModel.JobTitleId,
+                //JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
                 ADDRESS = staffModel.Address,
@@ -1296,7 +1296,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
                 DATEOFBIRTH = staffModel.DateOfBirth,
                 DATETIMECREATED = DateTime.Now,
-                DEPARTMENTUNITID = staffModel.departmentUnitId,
+                //DEPARTMENTUNITID = staffModel.departmentUnitId,
                 EMAIL = staffModel.Email,
                 EMAILOFNOK = staffModel.EmailOfNok,
                 GENDER = staffModel.Gender,
@@ -1330,8 +1330,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
             auditTrail.AddAuditTrail(audit);
             context.TBL_TEMP_STAFF.Add(staff);
-            output = context.SaveChanges() > 0;
-
+            try
+            {
+                output = context.SaveChanges() > 0;
+            }
+            catch(Exception ex)
+            {
+                var cd = ex;
+            }
             user.TEMPSTAFFID = staff.TEMPSTAFFID;
             context.TBL_TEMP_PROFILE_USER.Add(user);
 
@@ -1761,7 +1767,7 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                             if (setupGlobal.USE_ACTIVE_DIRECTORY)
                             {
-                                getADDetails = adminRepo.GetStaffADDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                getADDetails = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
                                 if (getADDetails == null)
                                 {
                                     rowSuccess = false;
@@ -1817,7 +1823,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         case "E":
                             if(setupGlobal.USE_ACTIVE_DIRECTORY)
                             {
-                                var firstName = adminRepo.GetStaffADDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                var firstName = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
                                 if (firstName == null)
                                 {
                                     rowSuccess = false;
@@ -1841,7 +1847,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         case "F":
                             if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
                             {
-                                var record = adminRepo.GetStaffADDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
                                 if (record == null)
                                 {
                                     rowSuccess = false;
@@ -1865,7 +1871,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         case "G":
                             if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
                             {
-                                var record = adminRepo.GetStaffADDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
                                 if (record != null)
                                 {
                                     staffRowData.MiddleName = record.middleName;

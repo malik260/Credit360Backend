@@ -253,6 +253,40 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("job-request/reverse-legal-job-charges")]
+        public HttpResponseMessage ReverseChargeOnCustomerForCollateralSearch([FromBody] JobRequestCollateralSearchViewModel entity)
+        {
+            try
+            {
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+
+                var data = repo.ReverseChargeOnCustomerForCollateralSearch(entity);
+                if (data)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Operation Performed Successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Failure! failed to Perform Operation " });
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {ce.Message}" });
+            }
+            catch (TwoFactorAuthenticationException fa)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{fa.Message}" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record. " });
+            }
+        }
+
         //[HttpPost] [ClaimsAuthorization]
         //[Route("job-request/collateral-customer/job/{actionName}/charge/{actionType}/{loanApplicationDetailId}")]
         //public HttpResponseMessage ChargeCustomerJob([FromBody] CollateralViewModel entity, string actionName, string actionType, int loanApplicationDetailId)
@@ -287,7 +321,7 @@ namespace FintrakBanking.APICore.Controllers
         //}
 
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("global-job-request")]
         public HttpResponseMessage AddGlobalJobRequest([FromBody] JobRequestViewModel entity)
          {
