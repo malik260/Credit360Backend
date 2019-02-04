@@ -85,6 +85,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool deleteJobDocument(int documentId, int staffId);
         bool DeleteMappedJobTypeHubStaff(int hubStaffId, int staffId);
 
+        jobRequestCountViewModel GetJobRequestStatusCount(int staffId, int branchId);
+
         #region Job Request Feedback
         IEnumerable<LookupViewModel> GetJobRequestStatus();
         IEnumerable<JobRequestStatusFeedbackViewModel> GetAllJobRequestStatusFeedback();

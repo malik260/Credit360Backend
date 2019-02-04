@@ -364,13 +364,13 @@ namespace FintrakBanking.Repositories.Admin
         {
             var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.UserCreation).ToList();
 
-            var data = (from c in context.TBL_PROFILE_USER
-                        join temp in context.TBL_TEMP_PROFILE_USER on c.STAFFID equals temp.TEMPSTAFFID
+            var data = (from temp in context.TBL_TEMP_PROFILE_USER
+                        join c in context.TBL_PROFILE_USER on temp.USERNAME equals c.USERNAME
                         join br in context.TBL_BRANCH on c.TBL_STAFF.BRANCHID equals br.BRANCHID
                         join st in context.TBL_STAFF on c.STAFFID equals st.STAFFID
                         join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                        join dept in context.TBL_DEPARTMENT on c.TBL_STAFF.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
-                        join atrail in context.TBL_APPROVAL_TRAIL on c.USERID equals atrail.TARGETID
+                       // join dept in context.TBL_DEPARTMENT on c.TBL_STAFF.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
+                        join atrail in context.TBL_APPROVAL_TRAIL on temp.TEMPUSERID equals atrail.TARGETID
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                               && atrail.RESPONSESTAFFID == null
                               && atrail.OPERATIONID == (int)OperationsEnum.UserAccountStatusChange && ids.Contains((int)atrail.TOAPPROVALLEVELID)
@@ -383,19 +383,19 @@ namespace FintrakBanking.Repositories.Admin
                             companyName = coy.NAME,
                             branchId = br.BRANCHID,
                             branchName = br.BRANCHNAME,
-                            username = c.USERNAME,
+                            username = temp.USERNAME,
                             email = st.EMAIL,
                             staffName = st.FIRSTNAME + " " + st.LASTNAME,
-                            IsFirstLoginAttempt = c.ISFIRSTLOGINATTEMPT,
+                            IsFirstLoginAttempt = temp.ISFIRSTLOGINATTEMPT,
                             isActive = temp.ISACTIVE,
                             isLocked = temp.ISLOCKED,
                             failedLogonAttempt = temp.FAILEDLOGONATTEMPT,
-                            securityQuestion = c.SECURITYQUESTION,
-                            securityAnswer = c.SECURITYANSWER,
-                            createdBy = c.CREATEDBY,
-                            lastUpdatedBy = c.CREATEDBY,
-                            dateTimeCreated = c.DATETIMECREATED,
-                            approvalStatus = c.APPROVALSTATUS,
+                            securityQuestion = temp.SECURITYQUESTION,
+                            securityAnswer = temp.SECURITYANSWER,
+                            createdBy = temp.CREATEDBY,
+                            lastUpdatedBy = temp.CREATEDBY,
+                            dateTimeCreated = temp.DATETIMECREATED,
+                            approvalStatus = temp.APPROVALSTATUS,
                             operationId = atrail.OPERATIONID,
                             groupId = c.TBL_PROFILE_USERGROUP.Where(x => x.USERID == c.USERID).Select(x => new UserGroupId
                             {
@@ -1060,7 +1060,7 @@ namespace FintrakBanking.Repositories.Admin
 
                         if (response)
                         {
-                            returnId = entity.approvalStatusId == (short)ApprovalStatusEnum.Approved ? 1 : 3;
+                            returnId = entity.approvalStatusId == (short)ApprovalStatusEnum.Approved ? 2 : 3;
                             trans.Commit();
                         }
                         return returnId;
@@ -1092,6 +1092,8 @@ namespace FintrakBanking.Repositories.Admin
 
             data.ISLOCKED = tempData.ISLOCKED;
             data.FAILEDLOGONATTEMPT = tempData.FAILEDLOGONATTEMPT;
+            tempData.ISCURRENT = false;
+           // context.TBL_TEMP_PROFILE_USER.Remove(tempData);
 
             return context.SaveChanges() > 0;
         }
@@ -1105,6 +1107,7 @@ namespace FintrakBanking.Repositories.Admin
                 var data = context.TBL_PROFILE_USER.Find(entity.user_id);
                 if (tempData != null)
                 {
+                    if (tempData.ISCURRENT == true) throw new ConditionNotMetException("The User Account is currently undergoing approval");
                     if (entity.lockStatus)
                     {
                         tempData.FAILEDLOGONATTEMPT = 0;
@@ -1123,7 +1126,7 @@ namespace FintrakBanking.Repositories.Admin
                         trans.Rollback();
                         throw new SecureException("");
                     }
-
+                    tempData.ISCURRENT = true;
                     affectedrecord = tempData;
                 }
 
@@ -1150,6 +1153,7 @@ namespace FintrakBanking.Repositories.Admin
                     temProfileUser.LASTLOCKOUTDATE = data.LASTLOCKOUTDATE;
                     temProfileUser.LASTLOGINDATE = data.LASTLOGINDATE;
                     temProfileUser.LASTUPDATEDBY = data.LASTUPDATEDBY;
+                    temProfileUser.ISCURRENT = true;
                     //temProfileUser.TEMPSTAFFID = data.STAFFID;
 
                     if (entity.lockStatus)
@@ -1167,7 +1171,9 @@ namespace FintrakBanking.Repositories.Admin
                     context.TBL_TEMP_PROFILE_USER.Add(temProfileUser);
 
                     message = entity.actionMessage;
-                    if(context.SaveChanges() <= 0)
+
+                    var output = context.SaveChanges() > 0;
+                    if (!output)
                     {
                         trans.Rollback();
                         throw new SecureException("");

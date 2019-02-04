@@ -635,26 +635,27 @@ namespace FintrakBanking.APICore.Controllers
         [Route("accountmanagement")]
         public IHttpActionResult LogUserStatusUpdateRequest([FromBody] ActiveUserDetails entity)
         {
-            try
+            if (entity != null)
             {
-                if (entity != null)
-                {
-                    string message = string.Empty;
-                    entity.lastUpdatedBy = token.GetUserId;
-                    entity.companyId = token.GetCompanyId;
-                    entity.userBranchId = (short) token.GetBranchId;
-                    entity.createdBy = token.GetStaffId;
-                    var data = repo.LogUserStatusUpdateRequest(entity, out message);
-                    if (data)
-                        return Ok(new { success = data, result = data, message = message == string.Empty ? $"Account Status Change was successful and currently undergoing approval." : message });
-                }
+                string message = string.Empty;
+                entity.lastUpdatedBy = token.GetUserId;
+                entity.companyId = token.GetCompanyId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.createdBy = token.GetStaffId;
+                var data = repo.LogUserStatusUpdateRequest(entity, out message);
+                if (data)
+                    return Ok(new { success = true, result = data, message =  $"Account Status Change was successful and currently undergoing approval."  });
+            }
 
-                return Ok(new { success = false, message = $"Account Status Change failed" });
-            }
-            catch (SecureException ex)
-            {
-                return Ok(new { success = false, message = $"Action Failed" });
-            }
+            return Ok(new { success = false, message = $"Account Status Change failed" });
+            //try
+            //{
+                
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Ok(new { success = false, message = $"Action Failed" });
+            //}
 
         }
 
