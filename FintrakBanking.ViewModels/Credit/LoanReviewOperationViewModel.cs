@@ -36,6 +36,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int? tenor { get; set; }
 
+        public int? prepaymentMethodId { get; set; }
+
         public int? cASA_AccountId { get; set; }
 
         public decimal? overDraftTopup { get; set; }

@@ -16,15 +16,15 @@ namespace FintrakBanking.Interfaces.Credit
 
         int GetDaysInAYear(DayCountConventionEnum dayCountId);
 
-        List<TBL_LOAN_SCHEDULE_PERIODIC> PrepaymentWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, double prepaymentAmount, int principalRepaymentFrequency, int interestRepaymentFrequency);
+        List<LoanPaymentSchedulePeriodicViewModel> PrepaymentWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, double prepaymentAmount, int principalRepaymentFrequency, int interestRepaymentFrequency);
 
-        List<TBL_LOAN_SCHEDULE_PERIODIC> InterestRateChangeWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate);
+        List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate);
 
         //List<TBL_LOAN_SCHEDULE_PERIODIC> FrquencyChangeWithNewAnnuity(int loanID, DateTime effectiveDate, int frequencyId);
 
         DateTime CalculateFirstPayDate(DateTime effectiveDate, short frequencyTypeId);
 
-        List<TBL_LOAN_SCHEDULE_PERIODIC> PrepaymentWithNewAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount);
+        List<LoanPaymentSchedulePeriodicViewModel> PrepaymentWithNewAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount);
 
         IEnumerable<LookupViewModel> GetAllLoanScheduleCategory();
 
@@ -46,9 +46,20 @@ namespace FintrakBanking.Interfaces.Credit
 
        byte[] GenerateLoanScheduleExport(LoanPaymentScheduleInputViewModel loanInput);
 
-        List<TBL_LOAN_SCHEDULE_PERIODIC> PrepaymentWithKeepExistingAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount);
+        List<LoanPaymentSchedulePeriodicViewModel> PrepaymentWithKeepExistingAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount);
 
-        List<TBL_LOAN_SCHEDULE_PERIODIC> InterestRateChangeWithKeepExistingAnnuity(int loanID, DateTime effectiveDate, double interestRate);
+        List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithKeepExistingAnnuity(int loanID, DateTime effectiveDate, double interestRate);
 
+        List<LoanPaymentSchedulePeriodicViewModel> EvenPrincipalPaymentsKeepExistingAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount);
+
+        List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingAnnuity(int loanID, DateTime effectiveDate, double interestRate);
+
+        List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, int frequencyId);
+
+        List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, double prepaymentAmount);
+
+        List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate);
+
+        List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, double prepaymentAmount);
     }
 }
