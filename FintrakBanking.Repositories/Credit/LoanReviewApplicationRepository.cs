@@ -541,6 +541,14 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
+            if (model.forwardAction == 11 || model.forwardAction == 12)
+            {
+                workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                var dictionary = GetRepresentStepdownItems(appl.LOANAPPLICATIONID, model.forwardAction,operationId);
+                workflow.NextLevelId = dictionary["levelId"];
+                workflow.ToStaffId = dictionary["staffId"];
+            }
+
             workflow.LogActivity();
 
             context.SaveChanges(); // redundant !
@@ -1196,6 +1204,41 @@ namespace FintrakBanking.Repositories.Credit
             if (result.loanApplicationId < 1) throw new SecureException("Collateral Failed To Map. Error resolving Loan Application Information.");
 
             return result;
+        }
+
+        private Dictionary<string, int> GetRepresentStepdownItems(int applicationId, int action, int operationId)
+        {
+            int levelId;
+            int staffId;
+
+            var trails = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                    && x.TARGETID == applicationId
+                    && x.FROMAPPROVALLEVELID != null
+                    && x.TOAPPROVALLEVELID != null
+                ).OrderBy(x => x.APPROVALTRAILID);
+
+            if (action == 11)
+            {
+                var traill = trails.Join(context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELTYPEID == 2)
+                        , t => t.FROMAPPROVALLEVELID, l => l.APPROVALLEVELID, (t, l) => new { t, l })
+                        .Select(x => new { x.t }).First();
+                staffId = traill.t.REQUESTSTAFFID;
+                levelId = (int)traill.t.FROMAPPROVALLEVELID;
+            }
+            else
+            {
+                var trail = trails.FirstOrDefault();
+                staffId = trail.REQUESTSTAFFID;
+                levelId = (int)trail.FROMAPPROVALLEVELID;
+            }
+
+            if (levelId < 1 || staffId < 1) throw new SecureException("Error while resolving receiving staff.");
+
+            var data = new Dictionary<string, int>();
+            data.Add("levelId", levelId);
+            data.Add("staffId", staffId);
+
+            return data;
         }
     }
 }
