@@ -101,12 +101,11 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         public bool WriteBulkContingentLiabilityTerminationAtMaturityToStaging(List<TBL_LOAN_CONTINGENT> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                                IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
                 //item.date = applicationDate;
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
 
@@ -153,7 +152,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             }
 
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
@@ -161,12 +160,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         public bool WriteBulkDailyTermLoanInterestAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                               IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -212,7 +209,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
@@ -221,12 +218,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         public bool WriteBulkDailyFeeAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                             IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -288,18 +283,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
         public bool WriteBulkDailyTaxAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                     IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
-        {            
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -362,19 +356,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
         public bool WriteBulkDailyAuthorisedOverdraftInterestAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                    IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -420,19 +412,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
         public bool WriteBulkDailyUnauthorisedOverdraftInterestAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                            IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -478,19 +468,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
         public bool WriteBulkDailyPastDueInterestAccrualToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                          IFinanceTransactionRepository financeTransaction, DateTime applicationDate, string description)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -536,19 +524,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
         public bool WriteBulkDailyPastDuePrincipalAccrualToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                  IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -596,20 +582,18 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             }
 
 
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
         public bool WriteBulkLoanRepaymentPostingPastDueToStaging(List<LoanRepaymentViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
              IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
 
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 var addStagingInterest = new TBL_CUSTOM_TRANSACTION_BULK();
                 var addStagingPrincipal = new TBL_CUSTOM_TRANSACTION_BULK();
                 var addStagingPastDueInterest = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -909,14 +893,14 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BL");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BL", batchCode);
         }
 
-        private bool WriteBulkPostingToStagingSub(FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, DateTime applicationDate, string TransactionType)
+        private bool WriteBulkPostingToStagingSub(FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, DateTime applicationDate, string TransactionType, string batchCode)
         {
             bool output = false;
             var data = (from a in context.TBL_CUSTOM_TRANSACTION_BULK
-                        where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) //&& a.BATCHID == batchCode
+                        where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
                         select new FinanceTransactionStagingViewModel()
                         {
                             batchId = a.BATCHID,
@@ -993,7 +977,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
 
             var model = (from a in context.TBL_CUSTOM_TRANSACTION_BULK
-                         where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) //&& a.BATCHID == batchCode
+                         where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
                          group a by new { a.BATCHID } into groupedQ
                          select new FinanceTransactionStagingViewModel()
                          {
@@ -1002,7 +986,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                          }).ToList();
 
             List<FINTRAK_TRAN_PROC_MAIN> main = new List<FINTRAK_TRAN_PROC_MAIN>();
-            var recordCount = context.TBL_CUSTOM_TRANSACTION_BULK.Where(x => x.VALUEDATE == DbFunctions.TruncateTime(applicationDate)).Count();  //&& x.BATCHID == batchCode
+            var recordCount = context.TBL_CUSTOM_TRANSACTION_BULK.Where(x => x.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && x.BATCHID == batchCode).Count();
             foreach (var item in model)
             {
                 FINTRAK_TRAN_PROC_MAIN addMain = new FINTRAK_TRAN_PROC_MAIN();
@@ -1036,11 +1020,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         public bool WriteBulkLoanRepaymentPostingForceDebitToStaging(List<LoanRepaymentViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
        IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
                 
                 var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
                 //var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);
@@ -1163,18 +1146,17 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             }
 
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
         public bool WriteBulkProcessLoanDisbursmentRollOverToStaging(List<LoanRepaymentViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
       IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
-        {            
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
-                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
-
                 if (item.maturityInstructionTypeId == (int)MaturityInstructionTypeEnum.RolloverInterstAndPrincipal)
                 {
                     item.totalAmount = item.periodInterestAmount + item.periodPrincipalAmount;
@@ -1227,8 +1209,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
 
         }
 
