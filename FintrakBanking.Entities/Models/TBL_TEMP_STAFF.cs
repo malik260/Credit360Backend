@@ -77,7 +77,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(100), Column(name: "COMMENT_")]
         public string COMMENT { get; set; }
 
-        public byte[] STAFFSIGNATURE { get; set; }
+        public byte?[] STAFFSIGNATURE { get; set; }
 
         public short? BRANCHID { get; set; }
 

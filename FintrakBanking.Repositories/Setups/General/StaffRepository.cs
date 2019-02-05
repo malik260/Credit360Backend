@@ -317,28 +317,30 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             else
             {
-                user = new TBL_TEMP_PROFILE_USER()
-                {
-                    TEMPSTAFFID = staffModel.staffId,
-                    USERNAME = staffModel.user.username,
-                    PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password, StaticHelpers.EncryptionKey),
-                    ISFIRSTLOGINATTEMPT = false,
-                    ISACTIVE = false,
-                    ISLOCKED = true,
-                    FAILEDLOGONATTEMPT = 0,
-                    SECURITYQUESTION = staffModel.user.securityQuestion,
-                    SECURITYANSWER = staffModel.user.securityAnswer,
-                    NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
-                //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
-                    CREATEDBY = staffModel.createdBy,
-                    LASTUPDATEDBY = staffModel.createdBy,
-                    DATETIMECREATED = DateTime.Now,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                    APPROVALSTATUS = false,
-                    ISCURRENT = true,
-                    TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities,
-                    TBL_TEMP_PROFILE_USERGROUP = userGroups
-                };
+                    user = new TBL_TEMP_PROFILE_USER()
+                    {
+                        TEMPSTAFFID = staffModel.staffId,
+                        USERNAME = staffModel.user.username,
+                        PASSWORD = StaticHelpers.EncryptSha512(staffModel.user.password != null ? staffModel.user.password : context.TBL_PROFILE_USER.Where(x=>x.USERNAME == staffModel.user.username).Select(m=>m.PASSWORD).FirstOrDefault(), StaticHelpers.EncryptionKey),
+                        ISFIRSTLOGINATTEMPT = false,
+                        ISACTIVE = false,
+                        ISLOCKED = true,
+                        FAILEDLOGONATTEMPT = 0,
+                        SECURITYQUESTION = staffModel.user.securityQuestion,
+                        SECURITYANSWER = staffModel.user.securityAnswer,
+                        NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(profile_Setting.EXPIREPASSWORDAFTER),
+                        //NEXTPASSWORDCHANGEDATE = DateTime.Now.AddDays(CommonHelpers.PasswordExpirationDays),
+                        CREATEDBY = staffModel.createdBy,
+                        LASTUPDATEDBY = staffModel.createdBy,
+                        DATETIMECREATED = DateTime.Now,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        APPROVALSTATUS = false,
+                        ISCURRENT = true,
+                        TBL_TEMP_PROFILE_ADTN_ACTIVITY = userActivities,
+                        TBL_TEMP_PROFILE_USERGROUP = userGroups
+                    };
+
+                
             }
             var unApprovedStaffEdit = context.TBL_TEMP_STAFF.Where(x => x.ISCURRENT == true && x.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending &&
                                                                         x.STAFFCODE.ToLower() == staffModel.StaffCode.ToLower());
@@ -363,7 +365,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.MIDDLENAME = staffModel.MiddleName;
                 tempStaffToUpdate.LASTNAME = staffModel.LastName;
                 tempStaffToUpdate.STAFFCODE = staffModel.StaffCode;
-                tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
+                //tempStaffToUpdate.JOBTITLEID = staffModel.JobTitleId;
                 tempStaffToUpdate.COMPANYID = staffModel.companyId;
                 tempStaffToUpdate.STAFFROLEID = staffModel.staffRoleId;
                 tempStaffToUpdate.SUPERVISOR_STAFFID = staffModel.supervisorStaffId;
@@ -376,7 +378,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 tempStaffToUpdate.DATEOFBIRTH = staffModel.DateOfBirth;
                 tempStaffToUpdate.DATETIMEUPDATED = DateTime.Now;
                 //tempStaffToUpdate.DEPARTMENTID = staffModel.DepartmentId;
-                tempStaffToUpdate.DEPARTMENTUNITID = (short)staffModel.departmentUnitId;
+                //tempStaffToUpdate.DEPARTMENTUNITID = (short)staffModel.departmentUnitId;
                 tempStaffToUpdate.EMAIL = staffModel.Email;
                 tempStaffToUpdate.EMAILOFNOK = staffModel.EmailOfNok;
                 tempStaffToUpdate.GENDER = staffModel.Gender;
@@ -398,46 +400,51 @@ namespace FintrakBanking.Repositories.Setups.General
             else
             {
                 var targetStaff = context.TBL_STAFF.Find(staffid);
-
-                tempStaff = new TBL_TEMP_STAFF()
+                try
                 {
-                    FIRSTNAME = staffModel.FirstName,
-                    MIDDLENAME = staffModel.MiddleName,
-                    LASTNAME = staffModel.LastName,
-                    STAFFCODE = staffModel.StaffCode,
-                    JOBTITLEID = staffModel.JobTitleId,
-                    COMPANYID = staffModel.companyId,
-                    STAFFROLEID = staffModel.staffRoleId,
-                    SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
-                    ADDRESS = staffModel.Address,
-                    ADDRESSOFNOK = staffModel.AddressOfNok,
-                    BRANCHID = staffModel.BranchId,
-                    COMMENT = staffModel.Comment,
-                    CREATEDBY = staffModel.createdBy,
-                    CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
-                    DATEOFBIRTH = staffModel.DateOfBirth,
-                    DATETIMECREATED = DateTime.Now,
-                    //DEPARTMENTID = staffModel.DepartmentId,
-                    DEPARTMENTUNITID = (short)staffModel.departmentUnitId,
-                    EMAIL = staffModel.Email,
-                    EMAILOFNOK = staffModel.EmailOfNok,
-                    GENDER = staffModel.Gender,
-                    GENDEROFNOK = staffModel.GenderOfNok,
-                    MISINFOID = staffModel.MisinfoId,
-                    NAMEOFNOK = staffModel.NameOfNok,
-                    NOKRELATIONSHIP = staffModel.NokrelationShip,
-                    PHONE = staffModel.Phone,
-                    PHONEOFNOK = staffModel.PhoneOfNok,
-                    STATEID = staffModel.StateId,
-                    CITYID = staffModel.CityId,
-                    STAFFSIGNATURE = staffModel.StaffSignature,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
-                    LOAN_LIMIT = staffModel.loanLimit,
-                    ISCURRENT = true,
-                    WORKSTARTDURATION = staffModel.workStartDuration,
-                    WORKENDDURATION = staffModel.workEndDuration
-                };
-
+                    tempStaff = new TBL_TEMP_STAFF()
+                    {
+                        FIRSTNAME = staffModel.FirstName,
+                        MIDDLENAME = staffModel.MiddleName,
+                        LASTNAME = staffModel.LastName,
+                        STAFFCODE = staffModel.StaffCode,
+                        //JOBTITLEID = staffModel.JobTitleId,
+                        COMPANYID = staffModel.companyId,
+                        STAFFROLEID = staffModel.staffRoleId,
+                        SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
+                        ADDRESS = staffModel.Address,
+                        ADDRESSOFNOK = staffModel.AddressOfNok,
+                        BRANCHID = staffModel.BranchId,
+                        COMMENT = staffModel.Comment,
+                        CREATEDBY = staffModel.createdBy,
+                        CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
+                        DATEOFBIRTH = staffModel.DateOfBirth,
+                        DATETIMECREATED = DateTime.Now,
+                        //DEPARTMENTID = staffModel.DepartmentId,
+                        //DEPARTMENTUNITID = (short)staffModel.departmentUnitId,
+                        EMAIL = staffModel.Email,
+                        EMAILOFNOK = staffModel.EmailOfNok,
+                        GENDER = staffModel.Gender,
+                        GENDEROFNOK = staffModel.GenderOfNok,
+                        MISINFOID = staffModel.MisinfoId,
+                        NAMEOFNOK = staffModel.NameOfNok,
+                        NOKRELATIONSHIP = staffModel.NokrelationShip,
+                        PHONE = staffModel.Phone,
+                        PHONEOFNOK = staffModel.PhoneOfNok,
+                        STATEID = staffModel.StateId,
+                        CITYID = staffModel.CityId,
+                        STAFFSIGNATURE = staffModel.StaffSignature,
+                        APPROVALSTATUSID = (int)ApprovalStatusEnum.Pending,
+                        LOAN_LIMIT = staffModel.loanLimit,
+                        ISCURRENT = true,
+                        WORKSTARTDURATION = staffModel.workStartDuration,
+                        WORKENDDURATION = staffModel.workEndDuration
+                    };
+                }
+                catch (Exception ex)
+                {
+                    var ext = ex; 
+                }
                 context.TBL_TEMP_STAFF.Add(tempStaff);
             }
 
