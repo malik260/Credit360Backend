@@ -161,8 +161,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
-
-
         public IEnumerable<LookupViewModel> GetLoanScheduleTypeByCategory(short categoryId)
         {
             return (from data in context.TBL_LOAN_SCHEDULE_TYPE
@@ -178,46 +176,86 @@ namespace FintrakBanking.Repositories.Credit
 
         public List<LoanPaymentSchedulePeriodicViewModel> GeneratePeriodicLoanSchedule(LoanPaymentScheduleInputViewModel loanInput)
         {
-            if (loanInput.principalAmount <= 0)
-                throw new ConditionNotMetException("Please Enter Loan Amount");
-            if (loanInput.interestRate < 0)
-                throw new ConditionNotMetException("Please Enter Loan Interest Amount");
-            //if (loanInput.principalFirstpaymentDate < loanInput.effectiveDate)
-            //    throw new ConditionNotMetException("First principal first payment date cannot be less than effective date ");
-            //if (loanInput.interestFirstpaymentDate < loanInput.effectiveDate)
-            //    throw new ConditionNotMetException("First interest first payment date cannot be less than effective date ");
-
-
             List<LoanPaymentSchedulePeriodicViewModel> output = null; // new List<LoanPaymentSchedulePeriodicViewModel>();
+
             LoanScheduleTypeEnum scheduleMethod = (LoanScheduleTypeEnum)loanInput.scheduleMethodId;
 
-            if (scheduleMethod != LoanScheduleTypeEnum.IrregularSchedule)
+            if (loanInput.isExistingFacility == false)
             {
-                if (loanInput.maturityDate < loanInput.effectiveDate)
-                    throw new ConditionNotMetException("Maturity date cannot be less than effective date");
+
+                if (loanInput.principalAmount <= 0)
+                    throw new ConditionNotMetException("Please Enter Loan Amount");
+                if (loanInput.interestRate < 0)
+                    throw new ConditionNotMetException("Please Enter Loan Interest Amount");
+                //if (loanInput.principalFirstpaymentDate < loanInput.effectiveDate)
+                //    throw new ConditionNotMetException("First principal first payment date cannot be less than effective date ");
+                //if (loanInput.interestFirstpaymentDate < loanInput.effectiveDate)
+                //    throw new ConditionNotMetException("First interest first payment date cannot be less than effective date ");
+
+                if (scheduleMethod != LoanScheduleTypeEnum.IrregularSchedule)
+                {
+                    if (loanInput.maturityDate < loanInput.effectiveDate)
+                        throw new ConditionNotMetException("Maturity date cannot be less than effective date");
+                }
+                else
+                {
+
+                }
+
+                if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                    output = GenerateIrregularPeriodicScheduleWithAmortisedCost(loanInput).ToList();
+                else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
+                {
+                    if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
+                        output = GenerateNormalAnnuityPeriodicSchedule(loanInput);
+                    else
+                        output = GenerateMoratoriumAnnuityPeriodicSchedule(loanInput);
+                }
+                else if (scheduleMethod == LoanScheduleTypeEnum.ReducingBalance)
+                    output = GenerateReducingBalancePeriodicSchedule(loanInput);
+                else if (scheduleMethod == LoanScheduleTypeEnum.BulletPayment)
+                    output = GenerateBulletPeriodicScheduleWithAmortisedCost(loanInput);
+                else if (scheduleMethod == LoanScheduleTypeEnum.ConstantPrincipalAndInterest)
+                    output = GenerateConstantPrincipalAndInterestPeriodicScheduleWithAmortisedCost(loanInput);
+                else if (scheduleMethod == LoanScheduleTypeEnum.BallonPayment)
+                    output = GenerateBallonPeriodicSchedule(loanInput);
+
             }
             else
             {
+                if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
+                    output = GenerateIrregularPeriodicScheduleWithAmortisedCost(loanInput).ToList();
+                else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
+                {
+                    if (loanInput.interestFrequencyTypeId == loanInput.principalFrequencyTypeId)
+                    {
+                        if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.MaintainTenor)
+                            output = PrepaymentWithNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
+                        else if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.UseExistingRepayment)
+                            output = PrepaymentWithKeepExistingAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
+                    }
+                    else
+                    {
+                        if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.MaintainTenor)
+                            output = PrepaymentWithNewAnnuityAndUnEqualPayment((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId);
+                        else if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.UseExistingRepayment)
+                            output = PrepaymentWithKeepExistingAnnuityAndUnEqualPayment((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution, (int)loanInput.principalFrequencyTypeId, (int)loanInput.interestFrequencyTypeId);
+                    }
+                }
+                else if (scheduleMethod == LoanScheduleTypeEnum.ReducingBalance)
 
-            }
+                    if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.MaintainTenor)
+                        output = EvenPrincipalPaymentsKeepExistingNewAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
+                    else if (loanInput.prepaymentMethodId == (int)PrepaymentMethodEnum.UseExistingRepayment)
+                        output = EvenPrincipalPaymentsKeepExistingAnnuity((int)loanInput.loanId, loanInput.effectiveDate, (double)loanInput.equityContribution);
 
-            if (scheduleMethod == LoanScheduleTypeEnum.IrregularSchedule)
-                output = GenerateIrregularPeriodicScheduleWithAmortisedCost(loanInput).ToList();
-            else if (scheduleMethod == LoanScheduleTypeEnum.Annuity)
-            {
-                if (loanInput.interestFirstpaymentDate == loanInput.principalFirstpaymentDate && loanInput.interestFrequency == loanInput.principalFrequency)
-                    output = GenerateNormalAnnuityPeriodicSchedule(loanInput);
-                else
-                    output = GenerateMoratoriumAnnuityPeriodicSchedule(loanInput);
+                    else if (scheduleMethod == LoanScheduleTypeEnum.BulletPayment)
+                        output = GenerateBulletPeriodicScheduleWithAmortisedCost(loanInput);
+                    else if (scheduleMethod == LoanScheduleTypeEnum.ConstantPrincipalAndInterest)
+                        output = GenerateConstantPrincipalAndInterestPeriodicScheduleWithAmortisedCost(loanInput);
+                    else if (scheduleMethod == LoanScheduleTypeEnum.BallonPayment)
+                        output = GenerateBallonPeriodicSchedule(loanInput);
             }
-            else if (scheduleMethod == LoanScheduleTypeEnum.ReducingBalance)
-                output = GenerateReducingBalancePeriodicSchedule(loanInput);
-            else if (scheduleMethod == LoanScheduleTypeEnum.BulletPayment)
-                output = GenerateBulletPeriodicScheduleWithAmortisedCost(loanInput);
-            else if (scheduleMethod == LoanScheduleTypeEnum.ConstantPrincipalAndInterest)
-                output = GenerateConstantPrincipalAndInterestPeriodicScheduleWithAmortisedCost(loanInput);
-            else if (scheduleMethod == LoanScheduleTypeEnum.BallonPayment)
-                output = GenerateBallonPeriodicSchedule(loanInput);
 
             return output;
         }
@@ -951,7 +989,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return output;
 
         //}
-
+        
 
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularPeriodicScheduleWithAmortisedCost(LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -1609,7 +1647,7 @@ namespace FintrakBanking.Repositories.Credit
         }
 
 
-        public List<TBL_LOAN_SCHEDULE_PERIODIC> PrepaymentWithKeepExistingAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount)
+        public List<LoanPaymentSchedulePeriodicViewModel> PrepaymentWithKeepExistingAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -1650,8 +1688,7 @@ namespace FintrakBanking.Repositories.Credit
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
-
-            List<TBL_LOAN_SCHEDULE_PERIODIC> loanPeriodic_List = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int initialCounter = 0;
             int finalCounter = 1;
@@ -1662,8 +1699,7 @@ namespace FintrakBanking.Repositories.Credit
 
             if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
             {
-
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculationNew = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -1675,15 +1711,15 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
                 loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
 
-                loanPeriodicCalculationNew.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculationNew.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculationNew.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculationNew.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculationNew.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculationNew.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
@@ -1703,7 +1739,7 @@ namespace FintrakBanking.Repositories.Credit
                     //    nextPaymentDateNew = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);
                     //}
 
-                    TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                     nextPaymentDate = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, nextPaymentDate);
 
@@ -1726,15 +1762,16 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
                         loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                     }
@@ -1750,15 +1787,15 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
                         loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                         finalCounter = initialCounter;
@@ -1782,7 +1819,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -1794,15 +1831,15 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
                 loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
 
-                loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -1812,26 +1849,26 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
             {
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
-                loanPeriodicCalculation.LOANID = _tblPeriodicSchedule.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = _tblPeriodicSchedule.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = _tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = _tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = _tblPeriodicSchedule.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = _tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = _tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = _tblPeriodicSchedule.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = _tblPeriodicSchedule.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
 
-            return loanPeriodic_List.OrderBy(c => c.PAYMENTNUMBER).ToList();
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<TBL_LOAN_SCHEDULE_PERIODIC> PrepaymentWithNewAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount)
+        public List<LoanPaymentSchedulePeriodicViewModel> PrepaymentWithNewAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -1872,13 +1909,21 @@ namespace FintrakBanking.Repositories.Credit
 
             double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount;
 
-            double annuity = PMT(loan.INTERESTRATE, numberOfPayments, nextOpeningBalance, (int)loan.PRINCIPALFREQUENCYTYPEID, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            double annuity = 0;
 
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                annuity = PMT(loan.INTERESTRATE, numberOfPayments, nextOpeningBalance, (int)loan.PRINCIPALFREQUENCYTYPEID, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+            
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
-
-            List<TBL_LOAN_SCHEDULE_PERIODIC> loanPeriodic_List = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int initialCounter = 0;
             int finalCounter = 1;
@@ -1888,27 +1933,45 @@ namespace FintrakBanking.Repositories.Credit
             if (nextOpeningBalance >= annuity)
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculationNew = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
 
-                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
-                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
-                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
-                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
-                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
-                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
-                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
-                loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
-                loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                decimal bal = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
 
-                loanPeriodicCalculationNew.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculationNew.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculationNew.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculationNew.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculationNew.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculationNew.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                if (bal < 0)
+                {
+                    loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                    loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                    loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                    loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)0, 2);
+                    loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                    loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                    loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                }
+                else
+                {
+                    loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                    loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                    loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                    loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                    loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
+                    loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                    loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                }
+
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
@@ -1918,7 +1981,7 @@ namespace FintrakBanking.Repositories.Credit
                 while (initialCounter != finalCounter)
                 {
 
-                    TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                     nextPaymentDate = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, nextPaymentDate);
 
@@ -1941,15 +2004,15 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
                         loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);  //nextPeriodicRepaymentData.PAYMENTDATE;
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                     }
@@ -1965,15 +2028,15 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
                         loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);  //nextPeriodicRepaymentData.PAYMENTDATE;
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                         finalCounter = initialCounter;
@@ -1998,7 +2061,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -2010,15 +2073,15 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
                 loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);
 
-                loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -2028,26 +2091,26 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
             {
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
-                loanPeriodicCalculation.LOANID = _tblPeriodicSchedule.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = _tblPeriodicSchedule.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = _tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = _tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = _tblPeriodicSchedule.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = _tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = _tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = _tblPeriodicSchedule.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = _tblPeriodicSchedule.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
 
-            return loanPeriodic_List.OrderBy(c => c.PAYMENTNUMBER).ToList();
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<TBL_LOAN_SCHEDULE_PERIODIC> PrepaymentWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, double prepaymentAmount, int principalRepaymentFrequency, int interestRepaymentFrequency)
+        public List<LoanPaymentSchedulePeriodicViewModel> PrepaymentWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, double prepaymentAmount, int principalRepaymentFrequency, int interestRepaymentFrequency)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -2113,7 +2176,7 @@ namespace FintrakBanking.Repositories.Credit
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
 
-            List<TBL_LOAN_SCHEDULE_PERIODIC> loanPeriodic_List = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int initialCounter = 0;
             int finalCounter = 1;
@@ -2125,7 +2188,7 @@ namespace FintrakBanking.Repositories.Credit
             if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculationNew = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
 
 
                 if (nextPeriodicRepaymentData.PERIODPRINCIPALAMOUNT == 0)
@@ -2154,15 +2217,15 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-                loanPeriodicCalculationNew.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculationNew.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculationNew.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculationNew.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculationNew.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculationNew.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
@@ -2173,7 +2236,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     counter = counter + 1;
 
-                    TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                     nextPaymentDate = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, nextPaymentDate);
 
@@ -2209,15 +2272,15 @@ namespace FintrakBanking.Repositories.Credit
 
                         }
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                     }
@@ -2264,15 +2327,15 @@ namespace FintrakBanking.Repositories.Credit
                         }
 
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
 
@@ -2297,7 +2360,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -2309,15 +2372,15 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
                 loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
 
-                loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -2327,222 +2390,362 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
             {
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
-                loanPeriodicCalculation.LOANID = _tblPeriodicSchedule.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = _tblPeriodicSchedule.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = _tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = _tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = _tblPeriodicSchedule.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = _tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = _tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = _tblPeriodicSchedule.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = _tblPeriodicSchedule.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
 
-            return loanPeriodic_List.OrderBy(c => c.PAYMENTNUMBER).ToList();
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        //public List<TBL_LOAN_SCHEDULE_PERIODIC> FrquencyChangeWithNewAnnuity(int loanID, DateTime effectiveDate, int frequencyId)
-        //{
+        public List<LoanPaymentSchedulePeriodicViewModel> PrepaymentWithNewAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, double prepaymentAmount, int principalRepaymentFrequency, int interestRepaymentFrequency)
+        {
 
-        //    var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
+            var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
 
-        //    int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
 
-        //    int numberOfPaymentsInAYear = 0;
+            int numberOfPaymentsInAYear = 0;
 
-        //    if (loan.PRINCIPALFREQUENCYTYPEID == 8)
-        //    {
-        //        numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
-        //    }
-        //    else
-        //    {
-        //        numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == loan.PRINCIPALFREQUENCYTYPEID).VALUE;
-        //    }
-
-
-        //    var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
-
-        //    var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
-
-        //    var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
-
-        //    var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
-
-        //    int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)loan.PRINCIPALFREQUENCYTYPEID);
-
-        //    int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
-
-        //    int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
-
-        //    double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
-
-        //    double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
-
-        //    double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
-
-        //    double nextOpeningBalance = (double)previousPeriodicRepaymentData.STARTPRINCIPALAMOUNT - prepaymentAmount;
-
-        //    double annuity = PMT(loan.INTERESTRATE, numberOfPayments, nextOpeningBalance, frequencyId, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
-
-        //    TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
-
-        //    List<TBL_LOAN_SCHEDULE_PERIODIC> loanPeriodic_List = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
-
-        //    int initialCounter = 0;
-        //    int finalCounter = 1;
-        //    DateTime nextPaymentDate = DateTime.Now;
-        //    DateTime nextInterestPaymentDate = DateTime.Now;
-
-        //    if (nextOpeningBalance >= annuity)
-        //    {
-
-        //        TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculationNew = new TBL_LOAN_SCHEDULE_PERIODIC();
-
-        //        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
-        //        loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
-        //        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
-        //        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
-        //        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
-        //        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
-        //        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
-        //        loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
-        //        loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
-
-        //        loanPeriodicCalculationNew.LOANID = loanPeriodic.LOANID;
-        //        loanPeriodicCalculationNew.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-        //        loanPeriodicCalculationNew.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-        //        loanPeriodicCalculationNew.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-        //        loanPeriodicCalculationNew.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-        //        loanPeriodicCalculationNew.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-        //        loanPeriodicCalculationNew.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-        //        loanPeriodicCalculationNew.INTERESTRATE = loanPeriodic.INTERESTRATE;
-        //        loanPeriodicCalculationNew.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+            if (interestRepaymentFrequency == 8)
+            {
+                numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == interestRepaymentFrequency).VALUE;
+            }
 
 
-        //        nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+            var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
 
-        //        loanPeriodic_List.Add(loanPeriodicCalculationNew);
+            var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
 
-        //        while (initialCounter != finalCounter)
-        //        {
+            var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
 
-        //            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
 
-        //            nextPaymentDate = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, nextPaymentDate);
+            int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
 
-        //            if (loanPeriodic.ENDPRINCIPALAMOUNT >= (decimal)annuity)
-        //            {
-        //                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
-        //                loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+            int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
-        //                //if (loanPeriodic.PAYMENTNUMBER == 19)
-        //                //{
-        //                //    string me = string.Empty;
-        //                //}
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
+            double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
 
-        //                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-        //                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
-        //                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-        //                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(((decimal)annuity - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
-        //                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((decimal)annuity - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
-        //                loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
-        //                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(frequencyId, loanPeriodic.PAYMENTDATE);  //nextPeriodicRepaymentData.PAYMENTDATE;
+            double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
 
-        //                loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-        //                loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-        //                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-        //                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-        //                loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-        //                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-        //                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-        //                loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-        //                loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+            double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount;
 
+            int numberOfPayments = 0;
 
-        //            }
-        //            else
-        //            {
-        //                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
-        //                loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
-        //                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-        //                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-        //                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-        //                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
-        //                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
-        //                loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
-        //                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(frequencyId, loanPeriodic.PAYMENTDATE);  //nextPeriodicRepaymentData.PAYMENTDATE;
-
-        //                loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-        //                loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-        //                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-        //                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-        //                loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-        //                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-        //                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-        //                loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-        //                loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
-
-
-        //                finalCounter = initialCounter;
-
-        //            }
-
-
-        //            if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
-        //            {
-        //                finalCounter = initialCounter;
-        //            }
-
-
-        //            loanPeriodic_List.Add(loanPeriodicCalculation);
+            if (principalRepaymentFrequency == 0)
+            {
+                numberOfPayments = 1;
+            }
+            else
+            {
+                numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)principalRepaymentFrequency);
+            }
 
 
 
-        //        }
+            //double annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+
+            DateTime nextPrincipalPeriodicDate = DateTime.Now;
+
+            if (principalRepaymentFrequency != 0)
+            {
+                if (nextPeriodicRepaymentData.PERIODPRINCIPALAMOUNT == 0)
+                {
+                    var nextPrincipalPeriodicData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE <= effectiveDate && c.PERIODPRINCIPALAMOUNT != 0).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+                    if (nextPrincipalPeriodicData != null)
+                    {
+                        nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, nextPrincipalPeriodicData.PAYMENTDATE);
+                    }
+                    else
+                    {
+                        var nextAvailablePrincipalPeriodicData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+                        nextPrincipalPeriodicDate = nextAvailablePrincipalPeriodicData.PAYMENTDATE;
+                    }
+
+                }
+                else
+                {
+                    nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, nextPeriodicRepaymentData.PAYMENTDATE);
+                }
+            }
+            else
+            {
+                nextPrincipalPeriodicDate = loan.MATURITYDATE;
+            }
 
 
-        //    }
-        //    else
-        //    {
+            double annuity = 0;
 
-        //        TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+            if (interestRepaymentFrequency == 8)
+            {
+                annuity = PMT(loan.INTERESTRATE, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
 
-        //        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
-        //        loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
-        //        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
-        //        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
-        //        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
-        //        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
-        //        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
-        //        loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
-        //        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(frequencyId, loanPeriodic.PAYMENTDATE);
-        //        //loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
-        //        //loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);
+            //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, (numberOfPayments * numberOfPaymentsInAYear), numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
-        //        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-        //        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-        //        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-        //        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-        //        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-        //        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-        //        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-        //        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-        //        loanPeriodicCalculation.PAYMENTDATE =  loanPeriodic.PAYMENTDATE;
+           // double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
-        //        loanPeriodic_List.Add(loanPeriodicCalculation);
 
-        //    }
+            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
-        //    return loanPeriodic_List;
-        //}
 
-        public List<TBL_LOAN_SCHEDULE_PERIODIC> InterestRateChangeWithKeepExistingAnnuity(int loanID, DateTime effectiveDate, double interestRate)
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int initialCounter = 0;
+            int finalCounter = 1;
+            DateTime nextPaymentDate = DateTime.Now;
+            DateTime nextInterestPaymentDate = DateTime.Now;
+            int counter = 0;
+            DateTime nextPaymentDateNew = DateTime.Now;
+
+            if (nextOpeningBalance >= annuity)
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
+
+                if (nextPeriodicRepaymentData.PERIODPRINCIPALAMOUNT == 0)
+                {
+                    loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                    loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                    loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                    loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                    loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                    loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                    loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                }
+                else
+                {
+                    loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                    loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                    loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                    loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                    loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
+                    loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                    loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                }
+
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculationNew);
+
+                while (initialCounter != finalCounter)
+                {
+                    counter = counter + 1;
+
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                    nextPaymentDate = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, nextPaymentDate);
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT >= (decimal)annuity)
+                    {
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+
+                        if (nextPrincipalPeriodicDate != nextPaymentDate)
+                        {
+
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                            loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        }
+                        else
+                        {
+
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(((decimal)annuity - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((decimal)annuity - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, loanPeriodic.PAYMENTDATE);
+
+                        }
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                    }
+                    else
+                    {
+
+                        if (nextPrincipalPeriodicDate != nextPaymentDate)
+                        {
+
+                            loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                            loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        }
+                        else
+                        {
+
+                            //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                            //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            //loanPeriodic.INTERESTRATE = interestRate;
+                            //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            //nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, loanPeriodic.PAYMENTDATE);
+
+                            loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                            loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            finalCounter = initialCounter;
+                        }
+
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+
+
+                    }
+
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
+                    {
+                        finalCounter = initialCounter;
+                    }
+
+
+                    loanPeriodic_List.Add(loanPeriodicCalculation);
+
+
+
+                }
+
+
+            }
+            else
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
+                loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            var loanPeriodic_List_New = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).ToList();
+
+            foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
+        }
+
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithKeepExistingAnnuity(int loanID, DateTime effectiveDate, double interestRate)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -2573,7 +2776,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
-            double accruedInterestBeforeEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
@@ -2583,7 +2786,7 @@ namespace FintrakBanking.Repositories.Credit
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
-            List<TBL_LOAN_SCHEDULE_PERIODIC> loanPeriodic_List = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int initialCounter = 0;
             int finalCounter = 1;
@@ -2593,7 +2796,7 @@ namespace FintrakBanking.Repositories.Credit
             if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculationNew = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -2605,15 +2808,15 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.INTERESTRATE = interestRate;
                 loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
 
-                loanPeriodicCalculationNew.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculationNew.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculationNew.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculationNew.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculationNew.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculationNew.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -2621,7 +2824,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 while (initialCounter != finalCounter)
                 {
-                    TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                     nextPaymentDate = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, nextPaymentDate);
 
@@ -2637,15 +2840,15 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodic.INTERESTRATE = interestRate;
                         loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE); //nextPeriodicRepaymentData.PAYMENTDATE;
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
                     }
                     else
@@ -2660,15 +2863,15 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodic.INTERESTRATE = interestRate;
                         loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);   //nextPeriodicRepaymentData.PAYMENTDATE;
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
                         finalCounter = initialCounter;
 
@@ -2691,7 +2894,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -2703,15 +2906,15 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.INTERESTRATE = interestRate;
                 loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);  //nextPeriodicRepaymentData.PAYMENTDATE;
 
-                loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -2721,26 +2924,26 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
             {
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
-                loanPeriodicCalculation.LOANID = _tblPeriodicSchedule.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = _tblPeriodicSchedule.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = _tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = _tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = _tblPeriodicSchedule.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = _tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = _tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = _tblPeriodicSchedule.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = _tblPeriodicSchedule.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
 
-            return loanPeriodic_List.OrderBy(c => c.PAYMENTNUMBER).ToList();
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<TBL_LOAN_SCHEDULE_PERIODIC> InterestRateChangeWithNewAnnuity(int loanID, DateTime effectiveDate, int frequencyId)
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, int frequencyId)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -2775,19 +2978,20 @@ namespace FintrakBanking.Repositories.Credit
 
             double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
-            double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
+            double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
             double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
 
             double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
-            double annuity = PMT(loan.INTERESTRATE, numberOfPayments, nextOpeningBalance, (int)frequencyId, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            //double annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, (int)frequencyId, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
 
+            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
 
-            List<TBL_LOAN_SCHEDULE_PERIODIC> loanPeriodic_List = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int initialCounter = 0;
             int finalCounter = 1;
@@ -2797,7 +3001,7 @@ namespace FintrakBanking.Repositories.Credit
             if (nextOpeningBalance >= annuity)
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculationNew = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -2806,18 +3010,18 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
                 loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
                 loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
-                loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                loanPeriodic.INTERESTRATE = interestRate;
                 loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
 
-                loanPeriodicCalculationNew.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculationNew.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculationNew.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculationNew.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculationNew.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculationNew.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
@@ -2827,7 +3031,7 @@ namespace FintrakBanking.Repositories.Credit
                 while (initialCounter != finalCounter)
                 {
 
-                    TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                     nextPaymentDate = loanCovenant.GetFrequencyDate((int)frequencyId, nextPaymentDate);
 
@@ -2844,21 +3048,21 @@ namespace FintrakBanking.Repositories.Credit
 
                         loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
                         loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
-                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(((decimal)annuity - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
-                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((decimal)annuity - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
-                        loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(((decimal)annuity - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((decimal)annuity - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        loanPeriodic.INTERESTRATE = interestRate;
                         loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)frequencyId, loanPeriodic.PAYMENTDATE);  //nextPeriodicRepaymentData.PAYMENTDATE;
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                     }
@@ -2867,22 +3071,22 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                         loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
                         loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
-                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
-                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
-                        loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        loanPeriodic.INTERESTRATE = interestRate;
                         loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)frequencyId, loanPeriodic.PAYMENTDATE);  //nextPeriodicRepaymentData.PAYMENTDATE;
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                         finalCounter = initialCounter;
@@ -2907,7 +3111,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -2916,18 +3120,18 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
                 loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
                 loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
-                loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                loanPeriodic.INTERESTRATE = interestRate;
                 loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)frequencyId, loanPeriodic.PAYMENTDATE);
 
-                loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -2937,26 +3141,26 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
             {
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
-                loanPeriodicCalculation.LOANID = _tblPeriodicSchedule.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = _tblPeriodicSchedule.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = _tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = _tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = _tblPeriodicSchedule.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = _tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = _tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = _tblPeriodicSchedule.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = _tblPeriodicSchedule.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
 
-            return loanPeriodic_List.OrderBy(c => c.PAYMENTNUMBER).ToList();
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public List<TBL_LOAN_SCHEDULE_PERIODIC> InterestRateChangeWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate)
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithKeepExistingAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate)
         {
 
             var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
@@ -2987,7 +3191,7 @@ namespace FintrakBanking.Repositories.Credit
 
             int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
 
-            double accruedInterestBeforeEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
 
             double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
 
@@ -3022,7 +3226,7 @@ namespace FintrakBanking.Repositories.Credit
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
 
-            List<TBL_LOAN_SCHEDULE_PERIODIC> loanPeriodic_List = new List<TBL_LOAN_SCHEDULE_PERIODIC>();
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
 
             int initialCounter = 0;
             int finalCounter = 1;
@@ -3034,7 +3238,7 @@ namespace FintrakBanking.Repositories.Credit
             if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculationNew = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
 
 
                 if (nextPeriodicRepaymentData.PERIODPRINCIPALAMOUNT == 0)
@@ -3063,15 +3267,15 @@ namespace FintrakBanking.Repositories.Credit
                 }
 
 
-                loanPeriodicCalculationNew.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculationNew.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculationNew.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculationNew.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculationNew.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculationNew.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculationNew.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
@@ -3082,7 +3286,7 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     counter = counter + 1;
 
-                    TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                     nextPaymentDate = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, nextPaymentDate);
 
@@ -3118,15 +3322,15 @@ namespace FintrakBanking.Repositories.Credit
 
                         }
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
                     }
@@ -3173,15 +3377,15 @@ namespace FintrakBanking.Repositories.Credit
                         }
 
 
-                        loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                        loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                        loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                        loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                        loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                        loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                        loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
 
@@ -3206,7 +3410,7 @@ namespace FintrakBanking.Repositories.Credit
             else
             {
 
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
                 loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
                 loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
@@ -3218,15 +3422,15 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodic.INTERESTRATE = interestRate;
                 loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
 
-                loanPeriodicCalculation.LOANID = loanPeriodic.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = loanPeriodic.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = loanPeriodic.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = loanPeriodic.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = loanPeriodic.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = loanPeriodic.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = loanPeriodic.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = loanPeriodic.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -3236,39 +3440,1999 @@ namespace FintrakBanking.Repositories.Credit
 
             foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
             {
-                TBL_LOAN_SCHEDULE_PERIODIC loanPeriodicCalculation = new TBL_LOAN_SCHEDULE_PERIODIC();
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
 
-                loanPeriodicCalculation.LOANID = _tblPeriodicSchedule.LOANID;
-                loanPeriodicCalculation.PAYMENTNUMBER = _tblPeriodicSchedule.PAYMENTNUMBER;
-                loanPeriodicCalculation.STARTPRINCIPALAMOUNT = _tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
-                loanPeriodicCalculation.PERIODPAYMENTAMOUNT = _tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
-                loanPeriodicCalculation.PERIODINTERESTAMOUNT = _tblPeriodicSchedule.PERIODINTERESTAMOUNT;
-                loanPeriodicCalculation.PERIODPRINCIPALAMOUNT = _tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
-                loanPeriodicCalculation.ENDPRINCIPALAMOUNT = _tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
-                loanPeriodicCalculation.INTERESTRATE = _tblPeriodicSchedule.INTERESTRATE;
-                loanPeriodicCalculation.PAYMENTDATE = _tblPeriodicSchedule.PAYMENTDATE;
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
 
-            return loanPeriodic_List.OrderBy(c => c.PAYMENTNUMBER).ToList();
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
         }
 
-        public double PMT(double yearlyInterestRate, int numberOfPayments, double loanAmount, int frequencyID, int dayCountConventionID)
+        public List<LoanPaymentSchedulePeriodicViewModel> EvenPrincipalPaymentsKeepExistingAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount)
         {
 
-            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)dayCountConventionID);
+            var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
+
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
 
             int numberOfPaymentsInAYear = 0;
 
-            if (frequencyID == 8)
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == loan.PRINCIPALFREQUENCYTYPEID).VALUE;
+            }
+
+
+            var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+
+            var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
+
+            var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
+
+            int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
+
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
+
+            double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
+
+            double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount;
+
+            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
+
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int initialCounter = 0;
+            int finalCounter = 1;
+            DateTime nextPaymentDate = DateTime.Now;
+            DateTime nextInterestPaymentDate = DateTime.Now;
+            int counter = 0;
+            DateTime nextPaymentDateNew = DateTime.Now;
+
+            if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount + firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2); //Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculationNew);
+
+                while (initialCounter != finalCounter)
+                {
+                    counter = counter + 1;
+
+                    //if (counter == 1)
+                    //{
+                    //    nextPaymentDateNew = nextPeriodicRepaymentData.PAYMENTDATE;
+                    //}
+                    //else
+                    //{
+                    //    nextPaymentDateNew = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);
+                    //}
+
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                    nextPaymentDate = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, nextPaymentDate);
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT >= firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT)
+                    {
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                    }
+                    else
+                    {
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                        finalCounter = initialCounter;
+
+                    }
+
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
+                    {
+                        finalCounter = initialCounter;
+                    }
+
+
+                    loanPeriodic_List.Add(loanPeriodicCalculation);
+
+
+                }
+
+
+            }
+            else
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount), 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            var loanPeriodic_List_New = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).ToList();
+
+            foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
+        }
+
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingAnnuity(int loanID, DateTime effectiveDate, double interestRate)
+        {
+
+            var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
+
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+
+            int numberOfPaymentsInAYear = 0;
+
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == loan.PRINCIPALFREQUENCYTYPEID).VALUE;
+            }
+
+
+            var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+
+            var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
+
+            var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
+
+            int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
+
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
+
+            double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
+
+            double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
+
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int initialCounter = 0;
+            int finalCounter = 1;
+            DateTime nextPaymentDate = DateTime.Now;
+            DateTime nextInterestPaymentDate = DateTime.Now;
+            int counter = 0;
+            DateTime nextPaymentDateNew = DateTime.Now;
+
+            if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount + firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2); //Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                loanPeriodic.INTERESTRATE = interestRate;
+                loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculationNew);
+
+                while (initialCounter != finalCounter)
+                {
+                    counter = counter + 1;
+
+                    //if (counter == 1)
+                    //{
+                    //    nextPaymentDateNew = nextPeriodicRepaymentData.PAYMENTDATE;
+                    //}
+                    //else
+                    //{
+                    //    nextPaymentDateNew = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);
+                    //}
+
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                    nextPaymentDate = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, nextPaymentDate);
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT >= firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT)
+                    {
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT + (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        loanPeriodic.INTERESTRATE = interestRate;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                    }
+                    else
+                    {
+
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        loanPeriodic.INTERESTRATE = interestRate;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                        finalCounter = initialCounter;
+
+                    }
+
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
+                    {
+                        finalCounter = initialCounter;
+                    }
+
+
+                    loanPeriodic_List.Add(loanPeriodicCalculation);
+
+
+                }
+
+
+            }
+            else
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                loanPeriodic.INTERESTRATE = interestRate;
+                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount), 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            var loanPeriodic_List_New = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).ToList();
+
+            foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
+        }
+
+        public List<LoanPaymentSchedulePeriodicViewModel> EvenPrincipalPaymentsKeepExistingNewAnnuity(int loanID, DateTime effectiveDate, double prepaymentAmount)
+        {
+
+            var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
+
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+
+            int numberOfPaymentsInAYear = 0;
+
+            if ((int)(FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID == 8)
+            {
+                numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == (short)(FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID).VALUE;
+            }
+
+
+            var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+
+            var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
+
+            var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
+
+            int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
+
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            double accruedInterestAfterEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
+
+            double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
+
+            double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount;
+
+            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID);
+
+            double annuity = nextOpeningBalance / numberOfPayments;
+
+            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
+
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int initialCounter = 0;
+            int finalCounter = 1;
+            DateTime nextPaymentDate = DateTime.Now;
+            DateTime nextInterestPaymentDate = DateTime.Now;
+            int counter = 0;
+            DateTime nextPaymentDateNew = DateTime.Now;
+
+            if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount + (decimal)annuity, 2); //Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculationNew);
+
+                while (initialCounter != finalCounter)
+                {
+                    counter = counter + 1;
+
+                    //if (counter == 1)
+                    //{
+                    //    nextPaymentDateNew = nextPeriodicRepaymentData.PAYMENTDATE;
+                    //}
+                    //else
+                    //{
+                    //    nextPaymentDateNew = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);
+                    //}
+
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                    nextPaymentDate = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID, nextPaymentDate);
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT >= firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT)
+                    {
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                    }
+                    else
+                    {
+
+
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                        finalCounter = initialCounter;
+
+                    }
+
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
+                    {
+                        finalCounter = initialCounter;
+                    }
+
+
+                    loanPeriodic_List.Add(loanPeriodicCalculation);
+
+
+                }
+
+
+            }
+            else
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                loanPeriodic.INTERESTRATE = loan.INTERESTRATE;
+                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)loan.INTERESTFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount), 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            var loanPeriodic_List_New = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).ToList();
+
+            foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
+        }
+
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, int frequencyId)
+        {
+
+            var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
+
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+
+            int numberOfPaymentsInAYear = 0;
+
+            if ((int)(FrequencyTypeEnum)frequencyId == 8)
+            {
+                numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == (short)(FrequencyTypeEnum)frequencyId).VALUE;
+            }
+
+
+            var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+
+            var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
+
+            var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
+
+            int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
+
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
+
+            double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
+
+            double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)frequencyId);
+
+            double annuity = nextOpeningBalance / numberOfPayments;
+
+            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
+
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int initialCounter = 0;
+            int finalCounter = 1;
+            DateTime nextPaymentDate = DateTime.Now;
+            DateTime nextInterestPaymentDate = DateTime.Now;
+            int counter = 0;
+            DateTime nextPaymentDateNew = DateTime.Now;
+
+            if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount + (decimal)annuity, 2); //Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                loanPeriodic.INTERESTRATE = interestRate;
+                loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculationNew);
+
+                while (initialCounter != finalCounter)
+                {
+                    counter = counter + 1;
+
+                    //if (counter == 1)
+                    //{
+                    //    nextPaymentDateNew = nextPeriodicRepaymentData.PAYMENTDATE;
+                    //}
+                    //else
+                    //{
+                    //    nextPaymentDateNew = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);
+                    //}
+
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                    nextPaymentDate = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)frequencyId, nextPaymentDate);
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT >= firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT)
+                    {
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        loanPeriodic.INTERESTRATE = interestRate;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)frequencyId, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                    }
+                    else
+                    {
+
+
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        loanPeriodic.INTERESTRATE = interestRate;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)frequencyId, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                        finalCounter = initialCounter;
+
+                    }
+
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
+                    {
+                        finalCounter = initialCounter;
+                    }
+
+
+                    loanPeriodic_List.Add(loanPeriodicCalculation);
+
+
+                }
+
+
+            }
+            else
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                loanPeriodic.INTERESTRATE = interestRate;
+                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)frequencyId, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount), 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            var loanPeriodic_List_New = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).ToList();
+
+            foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
+        }
+
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity(int loanID, DateTime effectiveDate, double interestRate, double prepaymentAmount)
+        {
+
+            var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
+
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+
+            int numberOfPaymentsInAYear = 0;
+
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == loan.PRINCIPALFREQUENCYTYPEID).VALUE;
+            }
+
+
+            var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTNUMBER == 1).FirstOrDefault();
+
+            var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
+
+            var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
+
+            int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
+
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
+
+            double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
+
+            double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount;
+
+            int numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)loan.PRINCIPALFREQUENCYTYPEID);
+
+            double annuity = nextOpeningBalance / numberOfPayments;
+
+            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
+
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int initialCounter = 0;
+            int finalCounter = 1;
+            DateTime nextPaymentDate = DateTime.Now;
+            DateTime nextInterestPaymentDate = DateTime.Now;
+            int counter = 0;
+            DateTime nextPaymentDateNew = DateTime.Now;
+
+            if (nextOpeningBalance >= (double)firstPeriodicScheduleData.PERIODPAYMENTAMOUNT)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount + (decimal)annuity, 2); //Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                loanPeriodic.INTERESTRATE = interestRate;
+                loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculationNew);
+
+                while (initialCounter != finalCounter)
+                {
+                    counter = counter + 1;
+
+                    //if (counter == 1)
+                    //{
+                    //    nextPaymentDateNew = nextPeriodicRepaymentData.PAYMENTDATE;
+                    //}
+                    //else
+                    //{
+                    //    nextPaymentDateNew = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);
+                    //}
+
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                    nextPaymentDate = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)loan.PRINCIPALFREQUENCYTYPEID, nextPaymentDate);
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT >= firstPeriodicScheduleData.PERIODPRINCIPALAMOUNT)
+                    {
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        loanPeriodic.INTERESTRATE = interestRate;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                    }
+                    else
+                    {
+
+
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        loanPeriodic.INTERESTRATE = interestRate;
+                        loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                        //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                        //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                        //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                        //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                        //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                        finalCounter = initialCounter;
+
+                    }
+
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
+                    {
+                        finalCounter = initialCounter;
+                    }
+
+
+                    loanPeriodic_List.Add(loanPeriodicCalculation);
+
+
+                }
+
+
+            }
+            else
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                loanPeriodic.INTERESTRATE = interestRate;
+                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)(FrequencyTypeEnum)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity + (((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)loan.INTERESTRATE / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                //loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                //loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount, 2);
+                //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (decimal)nextRepaymentInterestAmount), 2);
+                //loanPeriodic.INTERESTRATE = nextPeriodicRepaymentData.INTERESTRATE;
+                //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate((int)loan.PRINCIPALFREQUENCYTYPEID, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            var loanPeriodic_List_New = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).ToList();
+
+            foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
+        }
+
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate)
+        {
+
+            var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
+
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+
+            int numberOfPaymentsInAYear = 0;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == interestRepaymentFrequency).VALUE;
+            }
+
+
+            var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
+
+            var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
+
+            int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
+
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT);
+
+            double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
+
+            double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            int numberOfPayments = 0;
+
+            if (principalRepaymentFrequency == 0)
+            {
+                numberOfPayments = 1;
+            }
+            else
+            {
+                numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)principalRepaymentFrequency);
+            }
+
+
+
+            //double annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+
+            DateTime nextPrincipalPeriodicDate = DateTime.Now;
+
+            if (principalRepaymentFrequency != 0)
+            {
+                if (nextPeriodicRepaymentData.PERIODPRINCIPALAMOUNT == 0)
+                {
+                    var nextPrincipalPeriodicData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE <= effectiveDate && c.PERIODPRINCIPALAMOUNT != 0).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+                    if (nextPrincipalPeriodicData != null)
+                    {
+                        nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, nextPrincipalPeriodicData.PAYMENTDATE);
+                    }
+                    else
+                    {
+                        var nextAvailablePrincipalPeriodicData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+                        nextPrincipalPeriodicDate = nextAvailablePrincipalPeriodicData.PAYMENTDATE;
+                    }
+
+                }
+                else
+                {
+                    nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, nextPeriodicRepaymentData.PAYMENTDATE);
+                }
+            }
+            else
+            {
+                nextPrincipalPeriodicDate = loan.MATURITYDATE;
+            }
+
+
+            //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, (numberOfPayments * numberOfPaymentsInAYear), numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+
+            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+
+
+            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
+
+
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int initialCounter = 0;
+            int finalCounter = 1;
+            DateTime nextPaymentDate = DateTime.Now;
+            DateTime nextInterestPaymentDate = DateTime.Now;
+            int counter = 0;
+            DateTime nextPaymentDateNew = DateTime.Now;
+
+            if (nextOpeningBalance >= annuity)
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
+
+                if (nextPeriodicRepaymentData.PERIODPRINCIPALAMOUNT == 0)
+                {
+                    loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                    loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                    loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                    loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                    loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                    loanPeriodic.INTERESTRATE = interestRate;
+                    loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                }
+                else
+                {
+                    loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                    loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                    loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                    loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                    loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
+                    loanPeriodic.INTERESTRATE = interestRate;
+                    loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                }
+
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculationNew);
+
+                while (initialCounter != finalCounter)
+                {
+                    counter = counter + 1;
+
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                    nextPaymentDate = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, nextPaymentDate);
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT >= (decimal)annuity)
+                    {
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+
+                        if (nextPrincipalPeriodicDate != nextPaymentDate)
+                        {
+
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                            loanPeriodic.INTERESTRATE = interestRate;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        }
+                        else
+                        {
+
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(((decimal)annuity - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((decimal)annuity - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.INTERESTRATE = interestRate;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, loanPeriodic.PAYMENTDATE);
+
+                        }
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                    }
+                    else
+                    {
+
+                        if (nextPrincipalPeriodicDate != nextPaymentDate)
+                        {
+
+                            loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                            loanPeriodic.INTERESTRATE = interestRate;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        }
+                        else
+                        {
+
+                            //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                            //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            //loanPeriodic.INTERESTRATE = interestRate;
+                            //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            //nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, loanPeriodic.PAYMENTDATE);
+
+                            loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                            loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.INTERESTRATE = interestRate;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            finalCounter = initialCounter;
+                        }
+
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+
+
+                    }
+
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
+                    {
+                        finalCounter = initialCounter;
+                    }
+
+
+                    loanPeriodic_List.Add(loanPeriodicCalculation);
+
+
+
+                }
+
+
+            }
+            else
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
+                loanPeriodic.INTERESTRATE = interestRate;
+                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            var loanPeriodic_List_New = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).ToList();
+
+            foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
+        }
+
+        public List<LoanPaymentSchedulePeriodicViewModel> InterestRateChangeWithNewAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate, double prepaymentAmount)
+        {
+
+            var loan = context.TBL_LOAN.Where(c => c.TERMLOANID == loanID).FirstOrDefault();
+
+            int daysInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+
+            int numberOfPaymentsInAYear = 0;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == interestRepaymentFrequency).VALUE;
+            }
+
+
+            var firstPeriodicScheduleData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var isExactNextRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE == effectiveDate).FirstOrDefault();
+
+            var previousPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            var nextPeriodicRepaymentData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE > effectiveDate).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+            int daysBeforeEffectiveDate = (effectiveDate - previousPeriodicRepaymentData.PAYMENTDATE).Days;
+
+            int daysAfterEffectiveDate = (nextPeriodicRepaymentData.PAYMENTDATE - effectiveDate).Days + 1;
+
+            double accruedInterestBeforeEffectiveDate = (loan.INTERESTRATE / 100.00000) / daysInAYear * daysBeforeEffectiveDate * (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT;
+
+            double accruedInterestAfterEffectiveDate = (interestRate / 100.00000) / daysInAYear * daysAfterEffectiveDate * ((double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount);
+
+            double nextRepaymentInterestAmount = accruedInterestBeforeEffectiveDate + accruedInterestAfterEffectiveDate;
+
+            double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount;
+
+            int numberOfPayments = 0;
+
+            if (principalRepaymentFrequency == 0)
+            {
+                numberOfPayments = 1;
+            }
+            else
+            {
+                numberOfPayments = CalculateNumberOfInstallments(nextPeriodicRepaymentData.PAYMENTDATE, loan.MATURITYDATE, (FrequencyTypeEnum)principalRepaymentFrequency);
+            }
+
+
+
+            //double annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+
+            DateTime nextPrincipalPeriodicDate = DateTime.Now;
+
+            if (principalRepaymentFrequency != 0)
+            {
+                if (nextPeriodicRepaymentData.PERIODPRINCIPALAMOUNT == 0)
+                {
+                    var nextPrincipalPeriodicData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE <= effectiveDate && c.PERIODPRINCIPALAMOUNT != 0).OrderByDescending(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+                    if (nextPrincipalPeriodicData != null)
+                    {
+                        nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, nextPrincipalPeriodicData.PAYMENTDATE);
+                    }
+                    else
+                    {
+                        var nextAvailablePrincipalPeriodicData = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE >= effectiveDate && c.PERIODPRINCIPALAMOUNT != 0).OrderBy(c => c.PAYMENTNUMBER).Take(1).FirstOrDefault();
+
+                        nextPrincipalPeriodicDate = nextAvailablePrincipalPeriodicData.PAYMENTDATE;
+                    }
+
+                }
+                else
+                {
+                    nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, nextPeriodicRepaymentData.PAYMENTDATE);
+                }
+            }
+            else
+            {
+                nextPrincipalPeriodicDate = loan.MATURITYDATE;
+            }
+
+
+            //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, (numberOfPayments * numberOfPaymentsInAYear), numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+
+            //double annuity = 0;
+
+            //if (principalRepaymentFrequency != 0)
+            //{
+            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            //}
+            //else
+            //{
+            //    annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, ((loan.MATURITYDATE - effectiveDate).Days), GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            //}
+
+            TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
+
+
+            List<LoanPaymentSchedulePeriodicViewModel> loanPeriodic_List = new List<LoanPaymentSchedulePeriodicViewModel>();
+
+            int initialCounter = 0;
+            int finalCounter = 1;
+            DateTime nextPaymentDate = DateTime.Now;
+            DateTime nextInterestPaymentDate = DateTime.Now;
+            int counter = 0;
+            DateTime nextPaymentDateNew = DateTime.Now;
+
+            if (nextOpeningBalance >= annuity)
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculationNew = new LoanPaymentSchedulePeriodicViewModel();
+
+                if (nextPeriodicRepaymentData.PERIODPRINCIPALAMOUNT == 0)
+                {
+                    loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                    loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                    loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                    loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                    loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                    loanPeriodic.INTERESTRATE = interestRate;
+                    loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                }
+                else
+                {
+                    loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                    loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                    loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                    loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                    loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
+                    loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
+                    loanPeriodic.INTERESTRATE = interestRate;
+                    loanPeriodic.PAYMENTDATE = nextPeriodicRepaymentData.PAYMENTDATE;
+                }
+
+
+                loanPeriodicCalculationNew.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculationNew.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculationNew.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculationNew);
+
+                while (initialCounter != finalCounter)
+                {
+                    counter = counter + 1;
+
+                    LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                    nextPaymentDate = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, nextPaymentDate);
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT >= (decimal)annuity)
+                    {
+                        loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                        loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+
+                        if (nextPrincipalPeriodicDate != nextPaymentDate)
+                        {
+
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                            loanPeriodic.INTERESTRATE = interestRate;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        }
+                        else
+                        {
+
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round(((decimal)annuity - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((decimal)annuity - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.INTERESTRATE = interestRate;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, loanPeriodic.PAYMENTDATE);
+
+                        }
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+                    }
+                    else
+                    {
+
+                        if (nextPrincipalPeriodicDate != nextPaymentDate)
+                        {
+
+                            loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = 0;
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.STARTPRINCIPALAMOUNT - loanPeriodic.PERIODPRINCIPALAMOUNT, 2);
+                            loanPeriodic.INTERESTRATE = interestRate;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                        }
+                        else
+                        {
+
+                            //loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            //loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(firstPeriodicScheduleData.PERIODPAYMENTAMOUNT, 2);
+                            //loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            //loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            //loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - (firstPeriodicScheduleData.PERIODPAYMENTAMOUNT - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            //loanPeriodic.INTERESTRATE = interestRate;
+                            //loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            //nextPrincipalPeriodicDate = loanCovenant.GetFrequencyDate(principalRepaymentFrequency, loanPeriodic.PAYMENTDATE);
+
+                            loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                            loanPeriodic.PAYMENTNUMBER = loanPeriodic.PAYMENTNUMBER + 1;
+                            loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODINTERESTAMOUNT = Math.Round(((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT, 2);
+                            loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT), 2);
+                            loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round(loanPeriodic.ENDPRINCIPALAMOUNT - ((loanPeriodic.ENDPRINCIPALAMOUNT + ((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT) - (((decimal)interestRate / 100) / numberOfPaymentsInAYear * loanPeriodic.ENDPRINCIPALAMOUNT)), 2);
+                            loanPeriodic.INTERESTRATE = interestRate;
+                            loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                            finalCounter = initialCounter;
+                        }
+
+
+                        loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                        loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                        loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                        loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+
+
+
+                    }
+
+
+                    if (loanPeriodic.ENDPRINCIPALAMOUNT == 0)
+                    {
+                        finalCounter = initialCounter;
+                    }
+
+
+                    loanPeriodic_List.Add(loanPeriodicCalculation);
+
+
+
+                }
+
+
+            }
+            else
+            {
+
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodic.LOANID = nextPeriodicRepaymentData.LOANID;
+                loanPeriodic.PAYMENTNUMBER = nextPeriodicRepaymentData.PAYMENTNUMBER;
+                loanPeriodic.STARTPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance, 2);
+                loanPeriodic.PERIODPAYMENTAMOUNT = Math.Round((decimal)annuity, 2);
+                loanPeriodic.PERIODINTERESTAMOUNT = Math.Round((decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.PERIODPRINCIPALAMOUNT = Math.Round((decimal)annuity - (decimal)nextRepaymentInterestAmount, 2);
+                loanPeriodic.ENDPRINCIPALAMOUNT = Math.Round((decimal)nextOpeningBalance - ((decimal)annuity - (decimal)nextRepaymentInterestAmount), 2);
+                loanPeriodic.INTERESTRATE = interestRate;
+                loanPeriodic.PAYMENTDATE = loanCovenant.GetFrequencyDate(interestRepaymentFrequency, loanPeriodic.PAYMENTDATE);//nextPeriodicRepaymentData.PAYMENTDATE;
+
+                loanPeriodicCalculation.loanId = loanPeriodic.LOANID;
+                loanPeriodicCalculation.paymentNumber = loanPeriodic.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            var loanPeriodic_List_New = context.TBL_LOAN_SCHEDULE_PERIODIC.Where(c => c.LOANID == loanID && c.PAYMENTDATE < effectiveDate).ToList();
+
+            foreach (TBL_LOAN_SCHEDULE_PERIODIC _tblPeriodicSchedule in loanPeriodic_List_New)
+            {
+                LoanPaymentSchedulePeriodicViewModel loanPeriodicCalculation = new LoanPaymentSchedulePeriodicViewModel();
+
+                loanPeriodicCalculation.loanId = _tblPeriodicSchedule.LOANID;
+                loanPeriodicCalculation.paymentNumber = _tblPeriodicSchedule.PAYMENTNUMBER;
+                loanPeriodicCalculation.startPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.periodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.periodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.periodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
+                loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodic_List.Add(loanPeriodicCalculation);
+
+            }
+
+            return loanPeriodic_List.OrderBy(c => c.paymentDate).ToList();
+        }
+
+        public double PMT(double yearlyInterestRate, int numberOfPayments, double loanAmount, int interestFrequencyId, int dayCountConventionID)
+        {
+
+            //int daysInAYear = GetDaysInAYear((DayCountConventionEnum)dayCountConventionID);
+
+            int numberOfPaymentsInAYear = 0;
+
+            if (interestFrequencyId == 8)
             {
                 numberOfPaymentsInAYear = GetDaysInAYear((DayCountConventionEnum)dayCountConventionID);
             }
             else
             {
-                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == dayCountConventionID).VALUE;
+                numberOfPaymentsInAYear = (int)context.TBL_FREQUENCY_TYPE.FirstOrDefault(x => x.FREQUENCYTYPEID == interestFrequencyId).VALUE;
             }
 
             var rate = (double)yearlyInterestRate / 100 / numberOfPaymentsInAYear;
