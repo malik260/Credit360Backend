@@ -738,6 +738,7 @@ namespace FintrakBanking.Repositories.Credit
                 maturityDate = specifics.MATURITYDATE,
                 maturityAmount = specifics.MATURITYAMOUNT,
                 remark = specifics.REMARK,
+                accountName = specifics.ACCOUNTNAME,
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -1048,6 +1049,7 @@ namespace FintrakBanking.Repositories.Credit
             collateral.LIENAMOUNT = entity.lienAmount;
             collateral.SECURITYVALUE = (decimal)entity.securityValue;
             collateral.REMARK = entity.remark;
+            collateral.ACCOUNTNAME = entity.accountName;
         }
 
         private CollateralViewModel GetCollateralCasa(int collateralId)
@@ -1064,6 +1066,8 @@ namespace FintrakBanking.Repositories.Credit
                 lienAmount = specifics.LIENAMOUNT,
                 securityValue = specifics.SECURITYVALUE,
                 remark = specifics.REMARK,
+                accountName = specifics.ACCOUNTNAME,
+
             };
             details = GetCollateralInsurancePolicy(details);
             return details;
@@ -1335,8 +1339,8 @@ namespace FintrakBanking.Repositories.Credit
             collateral.REMARK = entity.remark;
             collateral.NEARESTLANDMARK = entity.nearestLandMark;
             collateral.NEARESTBUSSTOP = entity.nearestBusStop;
-            //collateral.LONGITUDE = entity.longitude;
-            //collateral.LATITUDE = entity.latitude;
+            collateral.LONGITUDE = entity.longitude;
+            collateral.LATITUDE = entity.latitude;
             collateral.PERFECTIONSTATUSID = (byte)entity.perfectionStatusId;
             collateral.PERFECTIONSTATUSREASON = entity.perfectionStatusReason;
             collateral.VALUATIONAMOUNT = entity.valuationAmount;
@@ -2488,7 +2492,8 @@ namespace FintrakBanking.Repositories.Credit
                 SECURITYVALUE = entity.securityValue,
                 MATURITYDATE = entity.maturityDate,
                 MATURITYAMOUNT = entity.maturityAmount,
-                REMARK = entity.remark
+                REMARK = entity.remark,
+                ACCOUNTNAME = entity.accountName
             });
 
             return collateral;
@@ -2511,7 +2516,8 @@ namespace FintrakBanking.Repositories.Credit
                         securityValue = m.SECURITYVALUE,
                         maturityDate = m.MATURITYDATE,
                         maturityAmount = m.MATURITYAMOUNT,
-                        remark = m.REMARK
+                        remark = m.REMARK,
+                        accountName = m.ACCOUNTNAME
 
                     }).FirstOrDefault();
         }
@@ -2540,7 +2546,8 @@ namespace FintrakBanking.Repositories.Credit
                 EXISTINGLIENAMOUNT = entity.existingLienAmount,
                 LIENAMOUNT = entity.lienAmount,
                 SECURITYVALUE = entity.securityValue,
-                REMARK = entity.remark
+                REMARK = entity.remark,
+                ACCOUNTNAME = entity.accountNumber
             });
 
             return collateral;
@@ -2561,7 +2568,8 @@ namespace FintrakBanking.Repositories.Credit
                         existingLienAmount = m.EXISTINGLIENAMOUNT,
                         lienAmount = m.LIENAMOUNT,
                         securityValue = m.SECURITYVALUE,
-                        remark = m.REMARK
+                        remark = m.REMARK,
+                       accountName =m.ACCOUNTNAME
 
                     }).FirstOrDefault();
         }
@@ -3366,6 +3374,8 @@ namespace FintrakBanking.Repositories.Credit
                                                  lienAmount = x.LIENAMOUNT,
                                                  securityValue = x.SECURITYVALUE,
                                                  remark = x.REMARK,
+                                                 accountName = x.ACCOUNTNAME
+                                                
                                              }).FirstOrDefault();
 
                 }
@@ -3389,6 +3399,7 @@ namespace FintrakBanking.Repositories.Credit
                                                     lienAmount = x.LIENAMOUNT,
                                                     securityValue = x.SECURITYVALUE,
                                                     remark = x.REMARK,
+                                                    accountName = x.ACCOUNTNAME
                                                 }).FirstOrDefault();
 
                 }
@@ -3793,6 +3804,7 @@ namespace FintrakBanking.Repositories.Credit
                         LIENAMOUNT = entity.lienAmount,
                         SECURITYVALUE = (decimal)entity.securityValue,
                         REMARK = entity.remark,
+                        ACCOUNTNAME = entity.accountName
                     });
 
                     workflow.StaffId = entity.createdBy;
@@ -3836,6 +3848,7 @@ namespace FintrakBanking.Repositories.Credit
                         TEMPCOLLATERALCUSTOMERID = collateralId,
                         DEALREFERENCENUMBER = entity.dealReferenceNumber,
                         ACCOUNTNUMBER = entity.collateralCode,
+                        ACCOUNTNAME = entity.accountName,
                         EXISTINGLIENAMOUNT = 0,
                         LIENAMOUNT = entity.lienAmount,
                         AVAILABLEBALANCE = finacleBalance.balance,
@@ -3845,6 +3858,7 @@ namespace FintrakBanking.Repositories.Credit
                         EFFECTIVEDATE = entity.effectiveDate,
                         REMARK = entity.remark,
                         BANK = entity.bank,
+                        
                     });
 
                     workflow.StaffId = entity.createdBy;
@@ -4112,6 +4126,7 @@ namespace FintrakBanking.Repositories.Credit
                             createdBy = ApprovalModel.createdBy,
                             companyId = ApprovalModel.companyId,
                             branchId = branch,
+                            
                         };
 
                         //place lien
@@ -4149,7 +4164,7 @@ namespace FintrakBanking.Repositories.Credit
                             companyId = ApprovalModel.companyId,
                             branchId = branch,
                             isTermDeposit = true,
-
+                           
                         };
 
                         var finacleBalance = finacle.ValidateTDAccountNumber(model.productAccountNumber);
@@ -4441,6 +4456,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainDeposit.MATURITYDATE = tempDeposit.MATURITYDATE;
                     mainDeposit.REMARK = tempDeposit.REMARK;
                     mainDeposit.SECURITYVALUE = tempDeposit.SECURITYVALUE;
+                    mainDeposit.ACCOUNTNAME = tempDeposit.ACCOUNTNAME;
                 }
                 else
                 {
@@ -4458,6 +4474,7 @@ namespace FintrakBanking.Repositories.Credit
                         MATURITYDATE = tempDeposit.MATURITYDATE,
                         REMARK = tempDeposit.REMARK,
                         SECURITYVALUE = tempDeposit.SECURITYVALUE,
+                        ACCOUNTNAME = tempDeposit.ACCOUNTNAME
                     });
                 }
 
@@ -4871,7 +4888,7 @@ namespace FintrakBanking.Repositories.Credit
                     mainCasa.LIENAMOUNT = tempCasa.LIENAMOUNT;
                     mainCasa.REMARK = tempCasa.REMARK;
                     mainCasa.SECURITYVALUE = tempCasa.SECURITYVALUE;
-
+                    mainCasa.ACCOUNTNAME = tempCasa.ACCOUNTNAME;
                 }
                 else
                 {
@@ -4887,6 +4904,7 @@ namespace FintrakBanking.Repositories.Credit
                         LIENAMOUNT = tempCasa.LIENAMOUNT,
                         REMARK = tempCasa.REMARK,
                         SECURITYVALUE = tempCasa.SECURITYVALUE,
+                        ACCOUNTNAME = tempCasa.ACCOUNTNAME,
                     });
                 }
             }
@@ -5039,6 +5057,7 @@ namespace FintrakBanking.Repositories.Credit
                 remark = specifics.REMARK,
                 bank = specifics.BANK,
                 effectiveDate = specifics.EFFECTIVEDATE,
+                accountName = specifics.ACCOUNTNAME
 
             };
             // details = GetTempCollateralInsurancePolicy(details);
@@ -5137,6 +5156,7 @@ namespace FintrakBanking.Repositories.Credit
                 lienAmount = specifics.LIENAMOUNT,
                 securityValue = specifics.SECURITYVALUE,
                 remark = specifics.REMARK,
+                accountName = specifics.ACCOUNTNAME
             };
             //details = GetTempCollateralInsurancePolicy(details);
             return details;
