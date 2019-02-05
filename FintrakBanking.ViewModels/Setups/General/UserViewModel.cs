@@ -11,7 +11,8 @@ namespace FintrakBanking.ViewModels.Setups.General
     }
 
     public class UserViewModel
-    {
+    { 
+
         public UserViewModel()
         {
             groupId = new List<UserGroupId>();
@@ -102,7 +103,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string newPassword { get; set; }
     }
 
-    public class ActiveUserDetails
+    public class ActiveUserDetails : GeneralEntity
     {
         public int companyId { get; set; }
         public int staffId { get; set; }

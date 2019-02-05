@@ -450,7 +450,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
         public bool GoForGroupMappingApproval(ApprovalViewModel entity)
         {
-            entity.operationId = (int)OperationsEnum.CustomerGroupCreation;
+            entity.operationId = (int)OperationsEnum.CustomerGroupMapping;
 
             entity.externalInitialization = false;
 
@@ -694,7 +694,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
 
                     var audit = new TBL_AUDIT
                     {
-                        AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupAdded,
+                        AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
                         STAFFID = createdBy,
                         BRANCHID = userBranchId,
                         DETAIL = $"Added Customer Group Mapping to customer: { customer } with code: {item.customerCode } to group  ( { groupName } ) ",
@@ -723,7 +723,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
                                 companyId = companyId,
                                 approvalStatusId = (int)ApprovalStatusEnum.Pending,
                                 targetId = groupMap.CUSTOMERGROUPMAPPINGID,
-                                operationId = (int)OperationsEnum.CustomerGroupCreation,
+                                operationId = (int)OperationsEnum.CustomerGroupMapping,
                                 BranchId = userBranchId,
                                 externalInitialization = true
                             };
@@ -1059,7 +1059,7 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
-                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupApproved,
+                AUDITTYPEID = (short)AuditTypeEnum.CustomerGroupMappingAdded,
                 STAFFID = user.staffId,
                 BRANCHID = (short)user.BranchId,
                 DETAIL = $"Approved Customer Group Mapping '{customerGroupMapModel.CUSTOMERGROUPMAPPINGID}'",
@@ -1082,14 +1082,17 @@ a.GROUPNAME == groupName || a.GROUPCODE == groupCode
             var data = (from c in context.TBL_TEMP_CUSTOMER_GROUP_MAPPNG
                     join g in context.TBL_CUSTOMER_GROUP on c.CUSTOMERGROUPID equals g.CUSTOMERGROUPID
                     join coy in context.TBL_COMPANY on c.COMPANYID equals coy.COMPANYID
-                    join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPID equals atrail.TARGETID
+                    join atrail in context.TBL_APPROVAL_TRAIL on c.CUSTOMERGROUPMAPPINGID equals atrail.TARGETID
                     where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending && c.ISCURRENT == true
                           && atrail.OPERATIONID == (int)OperationsEnum.CustomerGroupMapping && ids.Contains((int)atrail.TOAPPROVALLEVELID)
                     select new CustomerGroupMappingViewModel()
                     {
                         companyId = c.COMPANYID,
+                        companyName = coy.NAME,
                         customerGroupId = c.CUSTOMERGROUPID,
                         customerGroupName = g.GROUPNAME,
+                        customerGroupCode = g.GROUPCODE,
+                        groupDescription = g.GROUPDESCRIPTION,
                         customerGroupMappingId = c.CUSTOMERGROUPMAPPINGID,
                         customerCode = c.TBL_CUSTOMER.CUSTOMERCODE,
                         customerId = c.CUSTOMERID,
