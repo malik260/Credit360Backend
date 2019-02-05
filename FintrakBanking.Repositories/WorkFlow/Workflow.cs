@@ -831,6 +831,9 @@ namespace FintrakBanking.Repositories.WorkFlow
                                && x.PRODUCTID == this.productId
                            );
 
+            var test1 = mappings.ToList();
+            var test = mappings.Count();
+
             if (mappings.Any() == false)
             {
                 mappings = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.DELETED == false

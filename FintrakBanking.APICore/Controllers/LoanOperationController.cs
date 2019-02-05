@@ -822,16 +822,31 @@ namespace FintrakBanking.APICore.Controllers
                 //double interestRate = 40;
                 //int frequencyId = (int)FrequencyTypeEnum.Quarterly;
 
-                int loanId = 7904;
-                double prepaymentAmount = 8000000;
-                DateTime effectiveDate = DateTime.Parse("01/30/2019");
-                double interestRate = 10;
+                //int loanId = 7904;
+                //double prepaymentAmount = 8000000;
+                //DateTime effectiveDate = DateTime.Parse("01/30/2019");
+                //double interestRate = 60;
 
+                //int loanId = 7949;
+                //double prepaymentAmount = 1500000;
+                //DateTime effectiveDate = DateTime.Parse("12/31/2018");
+                //double interestRate = 10;
+                //int frequencyId = (int)FrequencyTypeEnum.Quarterly;
+
+                int loanId = 7967;
+                double prepaymentAmount = 2000000;
+                DateTime effectiveDate = DateTime.Parse("03/15/2019");
+                double interestRate = 20;
+
+
+                //InterestRateChangeWithNewAnnuityAndUnEqualPayment(int loanID, DateTime effectiveDate, int principalRepaymentFrequency, int interestRepaymentFrequency, double interestRate)
                 //var data = loanScheduleTest.InterestRateChangeWithKeepExistingAnnuityAndUnEqualPayment(loanId, effectiveDate, 3, 5, interestRate);
-                var data = loanScheduleTest.PrepaymentWithKeepExistingAnnuityAndUnEqualPayment(loanId,effectiveDate,prepaymentAmount,3,5);
+                //var data = loanScheduleTest.InterestRateChangeWithNewAnnuityAndUnEqualPayment(loanId,effectiveDate, 3, 5, interestRate);
+                var data = loanScheduleTest.InterestRateChangeWithNewAnnuityAndUnEqualPayment(loanId,effectiveDate, 0,5, interestRate, prepaymentAmount);
                 //var data = loanScheduleTest.PrepaymentWithKeepExistingAnnuity(loanId, effectiveDate, prepaymentAmount);
                 //var data = loanScheduleTest.PrepaymentWithNewAnnuity(loanId, effectiveDate, prepaymentAmount);
                 //var data = loanScheduleTest.InterestRateChangeWithKeepExistingAnnuity(loanId,effectiveDate, interestRate);
+                //var data = loanScheduleTest.InterestRateChangeEvenPrincipalPaymentsKeepExistingNewAnnuity(loanId, effectiveDate, interestRate, prepaymentAmount);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
             }
             catch (SecureException ex)
