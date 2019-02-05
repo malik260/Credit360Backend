@@ -374,6 +374,7 @@ namespace FintrakBanking.Repositories.Admin
                         where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
                               && atrail.RESPONSESTAFFID == null
                               && atrail.OPERATIONID == (int)OperationsEnum.UserAccountStatusChange && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+                              && temp.OPERATION.ToLower() == "update"
 
                         select new UserViewModel()
                         {
@@ -1093,7 +1094,8 @@ namespace FintrakBanking.Repositories.Admin
             data.ISLOCKED = tempData.ISLOCKED;
             data.FAILEDLOGONATTEMPT = tempData.FAILEDLOGONATTEMPT;
             tempData.ISCURRENT = false;
-           // context.TBL_TEMP_PROFILE_USER.Remove(tempData);
+
+           //context.TBL_TEMP_PROFILE_USER.Remove(tempData);
 
             return context.SaveChanges() > 0;
         }
@@ -1103,33 +1105,12 @@ namespace FintrakBanking.Repositories.Admin
             using (var trans = context.Database.BeginTransaction())
             {
                 TBL_TEMP_PROFILE_USER affectedrecord;
-                var tempData = context.TBL_TEMP_PROFILE_USER.Where(p => p.USERNAME == entity.username).FirstOrDefault();
+                var tempData = context.TBL_TEMP_PROFILE_USER.Where(p => p.USERNAME == entity.username && p.ISCURRENT == true && p.OPERATION.ToLower() == "update").FirstOrDefault();
                 var data = context.TBL_PROFILE_USER.Find(entity.user_id);
                 if (tempData != null)
                 {
-                    if (tempData.ISCURRENT == true) throw new ConditionNotMetException("The User Account is currently undergoing approval");
-                    if (entity.lockStatus)
-                    {
-                        tempData.FAILEDLOGONATTEMPT = 0;
-                        tempData.ISLOCKED = entity.isLocked;
-                    }
-
-                    if (entity.accountStatus)
-                    {
-                        tempData.ISACTIVE = entity.isActive;
-                        tempData.DEACTIVATEDDATE = DateTime.Now;
-                    }
-
-                    message = entity.actionMessage;
-                    if (context.SaveChanges() >= 0)
-                    {
-                        trans.Rollback();
-                        throw new SecureException("");
-                    }
-                    tempData.ISCURRENT = true;
-                    affectedrecord = tempData;
+                    throw new ConditionNotMetException("There is already a User Account status update currently undergoing approval");
                 }
-
                 else
                 {
                     var temProfileUser = new TBL_TEMP_PROFILE_USER();
@@ -1154,6 +1135,7 @@ namespace FintrakBanking.Repositories.Admin
                     temProfileUser.LASTLOGINDATE = data.LASTLOGINDATE;
                     temProfileUser.LASTUPDATEDBY = data.LASTUPDATEDBY;
                     temProfileUser.ISCURRENT = true;
+                    temProfileUser.OPERATION = "Update";
                     //temProfileUser.TEMPSTAFFID = data.STAFFID;
 
                     if (entity.lockStatus)
