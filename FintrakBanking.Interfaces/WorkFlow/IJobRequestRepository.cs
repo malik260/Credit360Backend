@@ -70,6 +70,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         bool AcknowledgeJob(JobRequestViewModel entity, int jobRequestId);
 
         bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model);
+        bool ReverseChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model);
         List<JobRequestDetailViewModel> GetLegalJobRequestDetails();
 
         bool AssignJobTypeToStaff(jobReasignment model);
@@ -83,6 +84,8 @@ namespace FintrakBanking.Interfaces.WorkFlow
 
         bool deleteJobDocument(int documentId, int staffId);
         bool DeleteMappedJobTypeHubStaff(int hubStaffId, int staffId);
+
+        jobRequestCountViewModel GetJobRequestStatusCount(int staffId, int branchId);
 
         #region Job Request Feedback
         IEnumerable<LookupViewModel> GetJobRequestStatus();

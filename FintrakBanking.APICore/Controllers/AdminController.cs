@@ -16,6 +16,7 @@ using System.Web.Http;
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.Interfaces;
 using FintrakBanking.ViewModels.Reports;
+using System.Text;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -132,7 +133,40 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("user-account-status-update/approval")]
+        public HttpResponseMessage GoForUserAccountStatusApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
 
+                var data = repo.GoForUserAccountStatusApproval(entity);
+
+                if (data == 1)
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+
+                else if (data == 2)
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "User account Status Change has been approved successfully" });
+
+                else if (data == 3)
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, message = "User account Status Change has been disapproved successfully" });
+
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Operation unsuccessful, an error occured while saving changes. " });
+            }
+            catch (SecureException ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.AbsolutePath, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
 
         [HttpGet]
@@ -143,6 +177,30 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var staffinfo = repo.GetUsersAwaitingApproval(token.GetStaffId, token.GetCompanyId);
+
+                if (!staffinfo.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffinfo.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                //errorLogger.LogError(ex, Request.RequestUri.Host, token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("user/account-status/approvals/temp")]
+        public HttpResponseMessage GetUsersWithAccountStatusChangeAwaitingApproval()
+        {
+            try
+            {
+                var staffinfo = repo.GetUsersWithAccountStatusChangeAwaitingApproval(token.GetStaffId, token.GetCompanyId);
 
                 if (!staffinfo.Any())
                 {
@@ -315,7 +373,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             try
             {
-                var globalSettings = repo.GetAllGlobalSettings().ToList();
+                var globalSettings = repo.GetAllGlobalSettings();
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = globalSettings });
             }
             catch (SecureException ex)
@@ -575,28 +633,33 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPost]
         [ClaimsAuthorization]
         [Route("accountmanagement")]
-        public IHttpActionResult UpdateApplicationUsers([FromBody] ActiveUserDetails entity)
+        public IHttpActionResult LogUserStatusUpdateRequest([FromBody] ActiveUserDetails entity)
         {
-            try
+            if (entity != null)
             {
-                if (entity != null)
-                {
-                    string message = string.Empty;
-                    entity.lastUpdatedBy = token.GetUserId;
-                    var data = repo.UpdateUserStatus(entity, out message);
-                    if (data)
-                        return Ok(new { success = data, result = data, message = message == string.Empty ? $"Account is cleared" : message });
-                }
+                string message = string.Empty;
+                entity.lastUpdatedBy = token.GetUserId;
+                entity.companyId = token.GetCompanyId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.createdBy = token.GetStaffId;
+                var data = repo.LogUserStatusUpdateRequest(entity, out message);
+                if (data)
+                    return Ok(new { success = true, result = data, message =  $"Account Status Change was successful and currently undergoing approval."  });
+            }
 
-                return Ok(new { success = false, message = $"Account not fund" });
-            }
-            catch (SecureException ex)
-            {
-                return Ok(new { success = false, message = $"Action Failed" });
-            }
+            return Ok(new { success = false, message = $"Account Status Change failed" });
+            //try
+            //{
+                
+            //}
+            //catch (SecureException ex)
+            //{
+            //    return Ok(new { success = false, message = $"Action Failed" });
+            //}
 
         }
 
+       
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -809,5 +872,38 @@ namespace FintrakBanking.APICore.Controllers
             }
 
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("getStaffactiveDirectoryDetails/{staffCode}/{passCode}")]
+        public HttpResponseMessage GetStaffADDetails(string staffCode, string passCode)
+        {
+            try
+            {
+                byte[] pass = Convert.FromBase64String(passCode);
+                string password = Encoding.UTF8.GetString(pass);
+                string loginUser = token.GetUsername;
+
+                var data = repo.GetStaffActiveDirectoryDetails(staffCode,loginUser, password);
+
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                            new { success = false, result = data, message = $"Staff Code not fund on Active Directory" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                                         new { success = true, result = data, message = $"Success" });
+                }
+
+
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, (new { success = false, message = $"Action Failed" }));
+            }
+
+        }
+
     }
 }

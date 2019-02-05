@@ -19,6 +19,9 @@ using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFa
 using FintrakBanking.Common.CustomException;
 using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Interfaces;
+using System.DirectoryServices;
+using System.DirectoryServices.AccountManagement;
+using FintrakBanking.Interfaces.Credit;
 
 namespace FintrakBanking.Repositories.Admin
 {
@@ -29,6 +32,7 @@ namespace FintrakBanking.Repositories.Admin
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
         private IProfileSetupRepository proSetting;
+        private IIntegrationWithFinacle finacle;
         //private IApprovalLevelStaffRepository level;
         private ITwoFactorAuthIntegrationService auth;
         bool USE_THIRD_PARTY_INTEGRATION = false;
@@ -38,6 +42,7 @@ namespace FintrakBanking.Repositories.Admin
             IGeneralSetupRepository _genSetup,
             IWorkflow _workFlow,
             IProfileSetupRepository _proSetting,
+            IIntegrationWithFinacle _finacle,
 
         // IApprovalLevelStaffRepository _level,
         ITwoFactorAuthIntegrationService _auth)
@@ -47,6 +52,7 @@ namespace FintrakBanking.Repositories.Admin
             this.genSetup = _genSetup;
             this.auth = _auth;
             workFlow = _workFlow;
+            finacle = _finacle;
             this.proSetting = _proSetting;
            // level = _level;
 
@@ -354,6 +360,58 @@ namespace FintrakBanking.Repositories.Admin
 
             return data;
         }
+        public IEnumerable<UserViewModel> GetUsersWithAccountStatusChangeAwaitingApproval(int staffId, int companyId)
+        {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.UserCreation).ToList();
+
+            var data = (from temp in context.TBL_TEMP_PROFILE_USER
+                        join c in context.TBL_PROFILE_USER on temp.USERNAME equals c.USERNAME
+                        join br in context.TBL_BRANCH on c.TBL_STAFF.BRANCHID equals br.BRANCHID
+                        join st in context.TBL_STAFF on c.STAFFID equals st.STAFFID
+                        join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                       // join dept in context.TBL_DEPARTMENT on c.TBL_STAFF.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
+                        join atrail in context.TBL_APPROVAL_TRAIL on temp.TEMPUSERID equals atrail.TARGETID
+                        where atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                              && atrail.RESPONSESTAFFID == null
+                              && atrail.OPERATIONID == (int)OperationsEnum.UserAccountStatusChange && ids.Contains((int)atrail.TOAPPROVALLEVELID)
+
+                        select new UserViewModel()
+                        {
+                            user_id = temp.TEMPUSERID,
+                            staffId = c.STAFFID,
+                            companyId = coy.COMPANYID,
+                            companyName = coy.NAME,
+                            branchId = br.BRANCHID,
+                            branchName = br.BRANCHNAME,
+                            username = temp.USERNAME,
+                            email = st.EMAIL,
+                            staffName = st.FIRSTNAME + " " + st.LASTNAME,
+                            IsFirstLoginAttempt = temp.ISFIRSTLOGINATTEMPT,
+                            isActive = temp.ISACTIVE,
+                            isLocked = temp.ISLOCKED,
+                            failedLogonAttempt = temp.FAILEDLOGONATTEMPT,
+                            securityQuestion = temp.SECURITYQUESTION,
+                            securityAnswer = temp.SECURITYANSWER,
+                            createdBy = temp.CREATEDBY,
+                            lastUpdatedBy = temp.CREATEDBY,
+                            dateTimeCreated = temp.DATETIMECREATED,
+                            approvalStatus = temp.APPROVALSTATUS,
+                            operationId = atrail.OPERATIONID,
+                            groupId = c.TBL_PROFILE_USERGROUP.Where(x => x.USERID == c.USERID).Select(x => new UserGroupId
+                            {
+                                groupId = x.GROUPID,
+                                groupKey = x.TBL_PROFILE_GROUP.GROUPNAME
+                            }).ToList(),
+                            activities = c.TBL_PROFILE_ADDITIONALACTIVITY.Where(x => x.USERID == c.USERID).Select(a => new UserActivities
+                            {
+                                activityId = a.ACTIVITYID,
+                                userId = a.USERID,
+                                activityName = a.TBL_PROFILE_ACTIVITY.ACTIVITYNAME
+                            }).ToList()
+                        }).GroupBy(x => x.user_id).Select(g => g.FirstOrDefault());
+
+            return data;
+        }
 
         public IEnumerable<ApprovalStatusViewModel> GetApprovalStatus()
         {
@@ -643,7 +701,7 @@ namespace FintrakBanking.Repositories.Admin
         //}
 
         #endregion Users
-        public IEnumerable<GlobalSettingViewModel> GetAllGlobalSettings()
+        public GlobalSettingViewModel GetAllGlobalSettings()
         {
             return context.TBL_SETUP_GLOBAL.Select(x => new GlobalSettingViewModel
             {
@@ -659,7 +717,7 @@ namespace FintrakBanking.Repositories.Admin
                 maxFileUploadSize = x.MAXIMUMUPLOADFILESIZE,
                 applicationURL = x.APPLICATION_URL,
                 supportEmail = x.SUPPORT_EMAIL,
-        });
+        }).FirstOrDefault();
         }
         #region Group
 
@@ -946,38 +1004,202 @@ namespace FintrakBanking.Repositories.Admin
             return data;
         }
 
-        public bool UpdateUserStatus(ActiveUserDetails entity, out string message)
+        //public bool UpdateUserStatus(ActiveUserDetails entity, out string message)
+        //{
+        //    // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
+        //    string str = string.Empty;
+        //    var data = context.TBL_PROFILE_USER.Find(entity.user_id);
+
+        //    if (data != null)
+        //    {
+        //        if (entity.lockStatus)
+        //        {
+        //            data.FAILEDLOGONATTEMPT = 0;
+        //            data.ISLOCKED = entity.isLocked;
+        //        }
+
+
+        //        if (entity.accountStatus)
+        //        {
+        //            data.ISACTIVE = entity.isActive;
+        //            data.DEACTIVATEDDATE = DateTime.Now;
+        //        }
+
+        //        data.LASTUPDATEDBY = entity.lastUpdatedBy;
+        //        entity.actionMessage = "Operation Successful";
+
+        //    }
+
+        //    message = entity.actionMessage;
+        //    StaticHelpers.RestartService();
+        //    return context.SaveChanges() > 0;
+        //}
+
+        public int GoForUserAccountStatusApproval(ApprovalViewModel entity)
         {
-            // var data = context.TBL_PROFILE_USER.Where(p => p.USERID == entity.user_id && p.TBL_STAFF.DELETED).FirstOrDefault();
-            string str = string.Empty;
-            var data = context.TBL_PROFILE_USER.Find(entity.user_id);
+            entity.operationId = (int)OperationsEnum.UserAccountStatusChange;
 
-            if (data != null)
+            entity.externalInitialization = false;
+
+            using (var trans = context.Database.BeginTransaction())
             {
-                if (entity.lockStatus)
+                try
                 {
-                    data.FAILEDLOGONATTEMPT = 0;
-                    data.ISLOCKED = entity.isLocked;
+                    int returnId = 0;
+                    workFlow.LogForApproval(entity);
+                    var b = workFlow.NextLevelId ?? 0;
+                    if (b == 0 && workFlow.NewState != (int)ApprovalState.Ended) // check if this is the last level
+                    {
+                        trans.Rollback();
+                        throw new SecureException("Approval Failed");
+                    }
+                   
+                    if (workFlow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = UpdateUserAccountStatus(entity.targetId, (short)workFlow.StatusId, entity);
+
+                        if (response)
+                        {
+                            returnId = entity.approvalStatusId == (short)ApprovalStatusEnum.Approved ? 2 : 3;
+                            trans.Commit();
+                        }
+                        return returnId;
+                    }
+                    else
+                    {
+                        returnId = 1;
+                        trans.Commit();
+                    }
+
+                    return returnId;
                 }
-
-
-                if (entity.accountStatus)
+                catch (Exception ex)
                 {
-                    data.ISACTIVE = entity.isActive;
-                    data.DEACTIVATEDDATE = DateTime.Now;
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
                 }
-
-                data.LASTUPDATEDBY = entity.lastUpdatedBy;
-                entity.actionMessage = "Operation Successful";
-
             }
+        }
 
-            message = entity.actionMessage;
-            StaticHelpers.RestartService();
+        public bool UpdateUserAccountStatus(int userId, short approvalStatusId, UserInfo user)
+        {
+            var tempData = context.TBL_TEMP_PROFILE_USER.Find(userId);
+            if (tempData == null) throw new ConditionNotMetException("Could not resolve user account status update.");
+
+            var data = context.TBL_PROFILE_USER.FirstOrDefault(x=>x.USERNAME == tempData.USERNAME);
+            data.ISACTIVE = tempData.ISACTIVE;
+            data.DEACTIVATEDDATE = tempData.DEACTIVATEDDATE;
+
+            data.ISLOCKED = tempData.ISLOCKED;
+            data.FAILEDLOGONATTEMPT = tempData.FAILEDLOGONATTEMPT;
+            tempData.ISCURRENT = false;
+           // context.TBL_TEMP_PROFILE_USER.Remove(tempData);
+
             return context.SaveChanges() > 0;
         }
 
-       
+        public bool LogUserStatusUpdateRequest(ActiveUserDetails entity, out string message)
+        {
+            using (var trans = context.Database.BeginTransaction())
+            {
+                TBL_TEMP_PROFILE_USER affectedrecord;
+                var tempData = context.TBL_TEMP_PROFILE_USER.Where(p => p.USERNAME == entity.username).FirstOrDefault();
+                var data = context.TBL_PROFILE_USER.Find(entity.user_id);
+                if (tempData != null)
+                {
+                    if (tempData.ISCURRENT == true) throw new ConditionNotMetException("The User Account is currently undergoing approval");
+                    if (entity.lockStatus)
+                    {
+                        tempData.FAILEDLOGONATTEMPT = 0;
+                        tempData.ISLOCKED = entity.isLocked;
+                    }
+
+                    if (entity.accountStatus)
+                    {
+                        tempData.ISACTIVE = entity.isActive;
+                        tempData.DEACTIVATEDDATE = DateTime.Now;
+                    }
+
+                    message = entity.actionMessage;
+                    if (context.SaveChanges() >= 0)
+                    {
+                        trans.Rollback();
+                        throw new SecureException("");
+                    }
+                    tempData.ISCURRENT = true;
+                    affectedrecord = tempData;
+                }
+
+                else
+                {
+                    var temProfileUser = new TBL_TEMP_PROFILE_USER();
+                    temProfileUser.USERNAME = data.USERNAME;
+                    temProfileUser.SECURITYQUESTION = data.SECURITYQUESTION;
+                    temProfileUser.SECURITYANSWER = data.SECURITYANSWER;
+                    temProfileUser.PASSWORD = data.PASSWORD;
+                    temProfileUser.NEXTPASSWORDCHANGEDATE = data.NEXTPASSWORDCHANGEDATE;
+                    temProfileUser.LOGINCODE = data.LOGINCODE;
+                    temProfileUser.APPROVALSTATUS = data.APPROVALSTATUS;
+                    temProfileUser.APPROVALSTATUSID = data.APPROVALSTATUSID;
+                    temProfileUser.CREATEDBY = data.CREATEDBY;
+                    temProfileUser.DATEAPPROVED = data.DATEAPPROVED;
+                    temProfileUser.DATETIMECREATED = data.DATETIMECREATED;
+                    temProfileUser.DATETIMEUPDATED = data.DATETIMEUPDATED;
+                    temProfileUser.DEACTIVATEDDATE = data.DEACTIVATEDDATE;
+                    temProfileUser.FAILEDLOGONATTEMPT = data.FAILEDLOGONATTEMPT;
+                    temProfileUser.ISACTIVE = data.ISACTIVE;
+                    temProfileUser.ISFIRSTLOGINATTEMPT = data.ISFIRSTLOGINATTEMPT;
+                    temProfileUser.ISLOCKED = data.ISLOCKED;
+                    temProfileUser.LASTLOCKOUTDATE = data.LASTLOCKOUTDATE;
+                    temProfileUser.LASTLOGINDATE = data.LASTLOGINDATE;
+                    temProfileUser.LASTUPDATEDBY = data.LASTUPDATEDBY;
+                    temProfileUser.ISCURRENT = true;
+                    //temProfileUser.TEMPSTAFFID = data.STAFFID;
+
+                    if (entity.lockStatus)
+                    {
+                        temProfileUser.FAILEDLOGONATTEMPT = 0;
+                        temProfileUser.ISLOCKED = entity.isLocked;
+                    }
+
+                    if (entity.accountStatus)
+                    {
+                        temProfileUser.ISACTIVE = entity.isActive;
+                        temProfileUser.DEACTIVATEDDATE = DateTime.Now;
+                    }
+
+                    context.TBL_TEMP_PROFILE_USER.Add(temProfileUser);
+
+                    message = entity.actionMessage;
+
+                    var output = context.SaveChanges() > 0;
+                    if (!output)
+                    {
+                        trans.Rollback();
+                        throw new SecureException("");
+                    }
+                    affectedrecord = temProfileUser;
+                }
+
+                var model = new ApprovalViewModel
+                {
+                    staffId = entity.createdBy,
+                    companyId = entity.companyId,
+                    approvalStatusId = (int)ApprovalStatusEnum.Pending,
+                    targetId = affectedrecord.TEMPUSERID,
+                    operationId = (int)OperationsEnum.UserAccountStatusChange,
+                    BranchId = entity.userBranchId,
+                    externalInitialization = true
+                };
+                var response = workFlow.LogForApproval(model);
+                if (response)
+                {
+                    trans.Commit();
+                    return true;
+                }
+                else { return false; trans.Rollback(); }
+            }
+        }
 
         #endregion
 
@@ -1055,6 +1277,73 @@ namespace FintrakBanking.Repositories.Admin
             return output;
         }
         #endregion
+        public Users GetStaffActiveDirectoryDetails(string staffCode,string loginUser, string password)
+        {
+            //var test = ValidateActiveDirectoryCredentials("TMP10004", "!23Helives2");
+            var user = GetActiveDirectoryDetails(staffCode, loginUser, password);
+
+            if (USE_THIRD_PARTY_INTEGRATION)
+            {
+                var userRole = finacle.GetUserRoleFinacle(staffCode);
+                if (userRole.staffRole != null)
+                {        
+                    if (userRole.staffRole == "RM" || userRole.staffRole == "BM")
+                    {
+                        user.staffRole = userRole.staffRole;
+                        user.staffRoleId = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == user.staffRole).Select(m => m.STAFFROLEID).FirstOrDefault();
+
+                    }
+                    else
+                    {
+                        user.staffRole = null;
+                        user.staffRoleId = null;
+                    }
+                }
+                else
+                {
+                    user.staffRole = null;
+                    user.staffRoleId = null;
+                }
+               
+            }
+            return user;
+
+        }
+       
+        public Users GetActiveDirectoryDetails(string userName, string loginUser, string password)
+        {
+           var appSetup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
+            Users lstADUsers = new Users();
+
+
+                using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, loginUser, password))
+                {
+                    using (var foundUser = UserPrincipal.FindByIdentity(pc, IdentityType.SamAccountName, userName))
+                    {
+                        if (foundUser != null)
+                        {
+                           
+                            DirectoryEntry directoryEntry = foundUser.GetUnderlyingObject() as DirectoryEntry;
+                            lstADUsers.firstName = foundUser.GivenName;
+                            lstADUsers.middleName = foundUser.MiddleName;
+                            lstADUsers.lastName = foundUser.Surname;
+                            lstADUsers.fullName = foundUser.DisplayName;
+                            //lstADUsers.firstName = directoryEntry.Properties["givenName"].Value.ToString();
+                            //lstADUsers.middleName = directoryEntry.Properties["middleName"].Value.ToString();
+                            //lstADUsers.lastName = directoryEntry.Properties["sn"].Value.ToString();
+                            //lstADUsers.fullName = directoryEntry.Properties["displayName"].Value.ToString();
+
+                            //many details
+                                                  
+                    }
+                   
+                    }
+                }
+
+
+            return lstADUsers;
+
+        }
 
     }
 

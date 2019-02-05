@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
+using System.Text;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -723,6 +724,10 @@ namespace FintrakBanking.APICore.Controllers
                 //{
                 //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
                 //}
+                
+
+                byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
+                string password = Encoding.UTF8.GetString(pass);
 
                 var entity = new StaffDocumentViewModel
                 {
@@ -730,7 +735,9 @@ namespace FintrakBanking.APICore.Controllers
                     documentTitle = provider.FormData["documentTitle"],
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
-                };
+                    loginStaffPassword= password,
+                    loginStaffCode = token.GetUsername
+                 };
 
                 if (!provider.FileStreams.Any())
                 {
@@ -744,6 +751,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.branchId = (short)token.GetBranchId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+                
 
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();

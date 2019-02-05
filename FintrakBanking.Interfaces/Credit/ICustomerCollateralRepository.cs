@@ -14,7 +14,7 @@ namespace FintrakBanking.Interfaces.Credit
     {
         #region Collateral
 
-        bool AddCollateral(CollateralViewModel entity, byte[] file);
+        int AddCollateral(CollateralViewModel entity, byte[] file);
      //   bool AddCollateral(CollateralViewModel entity);
 
         Task<bool> UpdateCollateral(CollateralViewModel entity, int collateralId);
@@ -99,6 +99,7 @@ namespace FintrakBanking.Interfaces.Credit
         int GoForPolicyApproval(ApprovalViewModel model);
 
         List<CollateralDocumentViewModel> GetPropertyVistation(int collateralId);
+        List<CollateralDocumentViewModel> GetTempPropertyVistation(int collateralId);
         List<InsurancePolicies> GetTempCollateralInsurancePolicy(int collateralId);
 
         CasaLienViewModel GetAccountLienDetail(string AccountNumber);

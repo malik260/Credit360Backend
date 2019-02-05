@@ -99,9 +99,17 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public DateTime datetimeSent { get; set; }
     }
 
-    //public int JOB_SUB_TYPE_CLASSID { get; set; }
+    public class jobRequestCountViewModel
+    {
+        public int pendingCount { get; set; }
+        public int finishedCount { get; set; }
+        public int assignedCount { get; set; }
+        public int unAssignedCount { get; set; }
+        public int inProgresCount { get; set; }
+        public int allCount { get; set; }
+        public int cancelledCount { get; set; }
+    }
 
-   
     public class JobRequestDetailViewModel : GeneralEntity
     {
         public string jobSubTypeClassName;

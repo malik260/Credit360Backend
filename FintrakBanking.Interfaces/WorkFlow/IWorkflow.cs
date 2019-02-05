@@ -73,6 +73,7 @@ namespace FintrakBanking.Interfaces.WorkFlow
         public string customerName { get; set; }
         public string referenceNumber { get; set; }
         public string operationName { get; set; }
+        public string facilityType { get; set; }
         public string branchName { get; set; }
         public string locationName { get; set; }
     }

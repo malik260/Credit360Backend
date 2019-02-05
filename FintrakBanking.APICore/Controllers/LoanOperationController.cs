@@ -597,8 +597,8 @@ namespace FintrakBanking.APICore.Controllers
 
         [HttpPost]
         [ClaimsAuthorization]
-        [Route("application-line-tenor-extension-approve")]
-        public HttpResponseMessage LineTenorChangeGoForApproval([FromBody] ApprovalViewModel entity)
+        [Route("application-line-operation-go-for-approval")]
+        public HttpResponseMessage LineGoForApproval([FromBody] ApprovalViewModel entity)
         {
             try
             {
@@ -611,7 +611,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 // var data = repo.addApplicationLineTenorChangeApproval(entity);
 
-                var data = repo.ReviewApplicationLineTenor(entity);
+                var data = repo.LineOperationGoForApproval(entity);
 
                 if (data == 1)
                 {

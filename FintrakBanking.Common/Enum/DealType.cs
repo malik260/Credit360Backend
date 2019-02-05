@@ -9,4 +9,12 @@ namespace FintrakBanking.Common.Enum
         Backend = 1,
         Upfront = 2,
     }
+
+    public enum ChargeFeeDealTypeEnum
+    {
+        Customer = 1,
+        Primary = 2,
+        Tax = 3,
+        Others = 4,
+    }
 }

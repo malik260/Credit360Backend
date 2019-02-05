@@ -67,6 +67,25 @@ namespace FintrakBanking.APICore.Controllers
            
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("refresh-loan-classification")]
+        public HttpResponseMessage RefreshLoanClassification()
+        {
+
+           
+            var data = repoEOD.RefreshLoanClassification();
+
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, message = "Refresh Finacle Bulk Posting Transaction Completed Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "Refresh Finacle Bulk Posting Transaction Failed" });
+
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

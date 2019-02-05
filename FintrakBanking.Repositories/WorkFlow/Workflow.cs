@@ -41,11 +41,10 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool sameDesk = false;
 
         private int? fromLevelId = null;
-        private int originalStatusId = 0;
         private int? requestLevelId = null;
         private int currentStateId;
         private int newStateId = (int)ApprovalState.Processing;
-        private int tenor = 0;
+        private int? tenor = null;
         private decimal amount = 0;
         private bool investmentGrade = false;
         private bool untenored = false;
@@ -118,8 +117,6 @@ namespace FintrakBanking.Repositories.WorkFlow
             ValidateCall();
             InitializeOperation();
             if (Authorization() == false) { return false; }
-
-            this.originalStatusId = this.statusId;
 
             this.trailLog = context.TBL_APPROVAL_TRAIL.Where(x =>
                                 x.COMPANYID == this.companyId
@@ -258,7 +255,28 @@ namespace FintrakBanking.Repositories.WorkFlow
                     staffRoleId = l.STAFFROLEID,
                     levelTypeId = l.LEVELTYPEID,
                 }).FirstOrDefault();
-            if (level == null) throw new SecureException("User is not setup to reroute process!");
+
+            if (level == null)
+            {
+                var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
+                    .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
+                    .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false && x.LEVELTYPEID == 2)
+                        , mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg,l})
+                    .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == user.STAFFID), mgl => mgl.l.APPROVALLEVELID, ls => ls.APPROVALLEVELID, (mgl, ls) => new ApprovalLevelInfo
+                    {
+                        groupId = mgl.l.GROUPID,
+                        groupPosition = mgl.mg.m.POSITION,
+                        levelPosition = mgl.l.POSITION,
+                        levelId = mgl.l.APPROVALLEVELID,
+                        levelName = mgl.l.LEVELNAME,
+                        staffRoleId = mgl.l.STAFFROLEID,
+                        levelTypeId = mgl.l.LEVELTYPEID,
+                    }).FirstOrDefault();
+
+                if (levels == null) throw new SecureException("User is not setup to reroute process!");
+                return levels.levelId;
+            }
+
             return level.levelId;
         }
 
@@ -659,7 +677,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 return;
             }
 
-            if (this.skipLimitsCheck == true) { return; }
+            if (this.skipLimitsCheck == true || IsPresetFinalLevel()) { return; }
+
             if (this.nextLevelId != null && this.amount > 0 && ActionIsApprovalDecision())
             {
                 if (WithinAllLimits() == true)
@@ -673,6 +692,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
         }
 
+        private bool IsPresetFinalLevel()
+        {
+            return this.fromLevelId == this.finalLevel;
+        }
+
         private int GroupRole()
         {
             if (this.fromLevelId == null) return 1;
@@ -683,10 +707,12 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private bool WithinTenorLimit(TBL_APPROVAL_LEVEL level)
         {
+            if (tenor == null) return true;
             if (this.untenored == true) { return level.CANAPPROVEUNTENORED == true ? true : false; }
             if (tenor == 0 && level.TENOR == 0) { return true; } // setup
             if (tenor == 0 && level.TENOR == null) { return true; } // setup
             if (tenor > 0 && level.TENOR >= tenor) { return true; } // gen cam
+
             return false;
         }
 
@@ -725,7 +751,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 && WithinPoliticallyExposedLimit(level) == true;
         }
 
-        private void SetState()
+        private int SetState()
         {
             if (this.nextLevelId == null)
             {
@@ -737,37 +763,53 @@ namespace FintrakBanking.Repositories.WorkFlow
                 {
                     throw new SecureException("Workflow is missing an approval authority!");
                 }
+                return statusId;
             }
             else
             {
                 if (this.statusId == (int)ApprovalStatusEnum.Escalated)
                 {
                     this.ContinueProcess((int)ApprovalStatusEnum.Processing);
+                    return statusId;
                 }
             }
 
-            if (this.fromLevelId != null && this.fromLevelId == this.finalLevel)
+            if (this.fromLevelId != null && IsPresetFinalLevel())
             {
-                if (ActionIsApprovalDecision()) this.EndProcess(originalStatusId);
-                else this.EndProcess(this.statusId);
+                if (this.statusId == (int)ApprovalStatusEnum.Approved 
+                    || this.statusId == (int)ApprovalStatusEnum.Authorised
+                    || this.statusId == (int)ApprovalStatusEnum.Processing
+                    )
+                {
+                    EndProcess((int)ApprovalStatusEnum.Approved);
+                } else if (this.statusId == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    EndProcess((int)ApprovalStatusEnum.Disapproved);
+                }
+                return statusId;
             }
 
             if (this.keepPending == true) // DEPRECATED!!!
             {
                 this.statusId = (int)ApprovalStatusEnum.Pending;
                 this.newStateId = (int)ApprovalState.Processing;
+                return statusId;
             }
 
             if (this.endProcess == true) // PENDING UPDATE (To forcefully end the process at a particular level)
             {
                 this.statusId = (int)ApprovalStatusEnum.Approved;
                 this.EndProcess(this.statusId);
+                return statusId;
             }
 
             if (ActionIsApprovalDecision()) // if its still approval decision end process
             {
                 this.EndProcess(this.statusId);
+                return statusId;
             }
+
+            return statusId;
         }
 
         private void SetReroute()
@@ -914,6 +956,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             $"The {operationName} approval process you initiated have been {status}{level}. <br /><br />" +
                             $"{placeholders.customerName}" +
                             $"{placeholders.referenceNumber}" +
+                            $"{placeholders.facilityType}" +
                             $"{placeholders.operationName}" +
                             $"{placeholders.branchName}" +
                             $"{placeholders.locationName}" +
@@ -924,6 +967,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                             $"You have a new pending {operationName} approval request. <br /><br />" +
                             $"{placeholders.customerName}" +
                             $"{placeholders.referenceNumber}" +
+                            $"{placeholders.facilityType}" +
                             $"{placeholders.operationName}" +
                             $"{placeholders.branchName}" +
                             $"{placeholders.locationName}" +

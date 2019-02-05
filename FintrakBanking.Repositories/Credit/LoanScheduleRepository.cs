@@ -1909,9 +1909,17 @@ namespace FintrakBanking.Repositories.Credit
 
             double nextOpeningBalance = (double)previousPeriodicRepaymentData.ENDPRINCIPALAMOUNT - prepaymentAmount;
 
-            //double annuity = PMT(loan.INTERESTRATE, numberOfPayments, nextOpeningBalance, (int)loan.PRINCIPALFREQUENCYTYPEID, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            double annuity = 0;
 
-            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            if (loan.PRINCIPALFREQUENCYTYPEID == 8)
+            {
+                annuity = PMT(loan.INTERESTRATE, numberOfPayments, nextOpeningBalance, (int)loan.PRINCIPALFREQUENCYTYPEID, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+            
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
@@ -2486,9 +2494,20 @@ namespace FintrakBanking.Repositories.Credit
             }
 
 
+            double annuity = 0;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                annuity = PMT(loan.INTERESTRATE, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+
             //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, (numberOfPayments * numberOfPaymentsInAYear), numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
-            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+           // double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();

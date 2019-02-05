@@ -26,6 +26,7 @@ namespace FintrakBanking.Repositories.Admin
                              || x.REQUESTMESSAGE.ToLower().Contains(searchInfo.ToLower())
                              || x.RESPONSEMESSAGE.ToLower().Contains(searchInfo.ToLower())
                              || searchInfo == "" || searchInfo == null)
+                             orderby x.APILOGID descending
                              select new APILogViewModel
                              {
                                  apiUrl = x.APIURL,
@@ -45,6 +46,7 @@ namespace FintrakBanking.Repositories.Admin
             var errorLog = from x in _context.TBL_ERRORLOG
                            where DbFunctions.TruncateTime( x.TIMEUTC) >= DbFunctions.TruncateTime(startDate) 
                            && DbFunctions.TruncateTime(x.TIMEUTC) <= DbFunctions.TruncateTime(endDate)
+                           orderby x.ERRORLOGID descending
                            select new ErroLogViewModel
                            {
                                allXml = x.ALLXML,

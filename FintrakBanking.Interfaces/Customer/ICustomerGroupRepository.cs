@@ -31,8 +31,11 @@ namespace FintrakBanking.Interfaces.Customer
         IEnumerable<CustomerGroupViewModel> GetCustomerGroupsAwaitingApprovals(int staffId, int companyId);
 
         bool GoForApproval(ApprovalViewModel entity);
+        bool GoForGroupMappingApproval(ApprovalViewModel entity);
 
         IEnumerable<CustomerGroupViewModel> CustomerGroupSearch(string search);
+
+        IEnumerable<CustomerGroupMappingViewModel> GetCustomerGroupMapsAwaitingApprovals(int staffId, int companyId);
 
         #endregion tbl_Customer Group Repository
 
@@ -44,7 +47,7 @@ namespace FintrakBanking.Interfaces.Customer
         bool AddTempCustomerGroupMapping(CustomerGroupMappingViewModel entity);
 
         //bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups);
-        bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups, int createdBy, short userBranchId);
+        bool AddMultipleCustomerGroupMapping(List<CustomerGroupMappingViewModel> customerGroups, int createdBy, short userBranchId, int companyId);
 
         bool AddCustomerGroupRelationshipTypes(LookupViewModel model);
 

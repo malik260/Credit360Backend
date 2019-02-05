@@ -243,7 +243,7 @@ namespace FintrakBanking.Repositories.Finance
 
             var transactionCount = (inputTransactions.Count());
 
-            if (transactionCount < 2) //transaction.transactionDetails.Count() < 2
+            if (transactionCount < 2) 
                 throw new ConditionNotMetException("Specify both debit and credit transactions");
 
             List<TBL_FINANCE_TRANSACTION> transactions = new List<TBL_FINANCE_TRANSACTION>();

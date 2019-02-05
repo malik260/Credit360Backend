@@ -315,7 +315,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            // workflow.Disputed = appl.DISPUTED; // buggy
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
@@ -330,6 +329,17 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+            // workflow.Disputed = appl.DISPUTED; // buggy
+
+            if (model.forwardAction == 11 || model.forwardAction == 12)
+            {
+                workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
+                workflow.NextLevelId = dictionary["levelId"];
+                workflow.ToStaffId = dictionary["staffId"];
+            }
+
+            string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
 
             var placeholders = new AlertPlaceholders();
             if (appl.CUSTOMERGROUPID == null)
@@ -341,6 +351,7 @@ namespace FintrakBanking.Repositories.Credit
                 placeholders.customerName = "<br />CUSTOMER NAME: " + appl.TBL_CUSTOMER_GROUP.GROUPNAME;
             }
             placeholders.referenceNumber = "<br />APPLICATION REFERENCENUMBER: " + appl.APPLICATIONREFERENCENUMBER;
+            placeholders.facilityType = "<br />FACILITY INFORMATION: " + facilityInformationMarkup;
             placeholders.operationName = "<br />OPERATION NAME: Loan Origination";
             placeholders.branchName = "<br />BRANCH NAME: " + appl.TBL_BRANCH.BRANCHNAME;
             workflow.Placeholders = placeholders;
@@ -479,6 +490,41 @@ namespace FintrakBanking.Repositories.Credit
 
             //workflow.Response.success = true;
             return workflow.Response;
+        }
+
+        private Dictionary<string, int> GetRepresentStepdownItems(int applicationId, int action, int operationId)
+        {
+            int levelId;
+            int staffId;
+
+            var trails = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                    && x.TARGETID == applicationId
+                    && x.FROMAPPROVALLEVELID != null
+                    && x.TOAPPROVALLEVELID != null
+                ).OrderBy(x => x.APPROVALTRAILID);
+
+            if (action == 11)
+            {
+                var traill = trails.Join(context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELTYPEID == 2)
+                        , t => t.FROMAPPROVALLEVELID, l => l.APPROVALLEVELID, (t, l) => new { t, l })
+                        .Select(x => new { x.t }).First();
+                staffId = traill.t.REQUESTSTAFFID;
+                levelId = (int)traill.t.FROMAPPROVALLEVELID;
+            }
+            else
+            {
+                var trail = trails.FirstOrDefault();
+                staffId = trail.REQUESTSTAFFID;
+                levelId = (int)trail.FROMAPPROVALLEVELID;
+            }
+
+            if (levelId < 1 || staffId < 1) throw new SecureException("Error while resolving receiving staff.");
+
+            var data = new Dictionary<string, int>();
+            data.Add("levelId", levelId);
+            data.Add("staffId", staffId);
+
+            return data;
         }
 
         private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date, short? decision, short status)
@@ -1734,7 +1780,6 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion LMS APPROVAL
 
-
         public LoanApplicationDetailsViewModel GetLMSLoanApplicationDetail(int applicationId)
         {
             var details = new LoanApplicationDetailsViewModel();
@@ -1855,7 +1900,7 @@ namespace FintrakBanking.Repositories.Credit
                 var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "APPROVAL FOR LOAN APPLICATION";
 
-                emailLogger.ComposerBody(referenceNo,successEmailBody, messageSubject,customer.email,false);
+                emailLogger.ComposeEmail(referenceNo,successEmailBody, messageSubject,customer.email,false);
 
             }
                 
@@ -1882,13 +1927,47 @@ namespace FintrakBanking.Repositories.Credit
                 var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
 
-                emailLogger.ComposerBody(referenceNo, failedEmailBody, messageSubject, customer.email,false);
+                emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);
 
-            }
-             
+            }             
         }
 
-      
+        private string GetFacilityInformationMarkup(int applicationId)
+        {
+            var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x
+                    => x.LOANAPPLICATIONID == applicationId
+                    && x.DELETED == false 
+                    && x.STATUSID != (int)ApprovalStatusEnum.Disapproved
+                ).ToList();
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Facility Type</th>
+                        <th>Amount</th>
+                        <th>Rate</th>
+                        <th>Tenor</th>
+                    </tr>
+                 ";
+            foreach (var f in facilities)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{f.TBL_PRODUCT1.PRODUCTNAME}</td>
+                        <td>{f.APPROVEDAMOUNT}</td>
+                        <td>{f.APPROVEDINTERESTRATE}</td>
+                        <td>{f.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+        }
     }
 
    
