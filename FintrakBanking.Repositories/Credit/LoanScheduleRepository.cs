@@ -989,7 +989,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return output;
 
         //}
-        
+
 
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularPeriodicScheduleWithAmortisedCost(LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -1919,7 +1919,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
             }
-            
+
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
@@ -2507,7 +2507,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, (numberOfPayments * numberOfPaymentsInAYear), numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
-           // double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            // double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
@@ -2986,7 +2986,17 @@ namespace FintrakBanking.Repositories.Credit
 
             //double annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, (int)frequencyId, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
 
-            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            double annuity = 0;
+
+            if (frequencyId == 8)
+            {
+                annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, (int)frequencyId, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
@@ -4848,7 +4858,17 @@ namespace FintrakBanking.Repositories.Credit
 
             //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, (numberOfPayments * numberOfPaymentsInAYear), numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
-            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            double annuity = 0;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+
 
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
@@ -5177,12 +5197,24 @@ namespace FintrakBanking.Repositories.Credit
 
             //if (principalRepaymentFrequency != 0)
             //{
-            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
             //}
             //else
             //{
             //    annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, ((loan.MATURITYDATE - effectiveDate).Days), GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
             //}
+
+            double annuity = 0;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
