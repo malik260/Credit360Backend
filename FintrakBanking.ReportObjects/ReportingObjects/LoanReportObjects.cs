@@ -1855,7 +1855,7 @@ namespace FintrakBanking.ReportObjects
                                             statusId = jb.REQUESTSTATUSID,
                                             status = jb.TBL_JOB_REQUEST_STATUS.STATUSNAME,
                                             statusFeedbackId = jb.JOB_STATUS_FEEDBACKID,
-                                            branchName = "",
+                                            branchName = context.TBL_BRANCH.Where(u => u.BRANCHID == jb.BRANCHID).Select(x => x.BRANCHNAME).FirstOrDefault(),
                                             customerName = cu.FIRSTNAME + " " + " " + cu.MAIDENNAME + " " + " " + cu.LASTNAME,
                                             modVerificationOfficerName = cb.FIRSTNAME + " " + " " + cb.MIDDLENAME + " " + " " + cb.LASTNAME,
                                             modVerificationOfficerStaffNo = cb.STAFFCODE,
@@ -1873,7 +1873,8 @@ namespace FintrakBanking.ReportObjects
                                             createdByName = cb.FIRSTNAME + " " + " " + cb.MIDDLENAME + " " + " " + cb.LASTNAME,
                                         }).ToList().Select(x =>
                                         {
-                                            var checkForBusinessGroup = subList.Where(f => f.staffCode == x.staffCode).Select(f => f.subHead).FirstOrDefault();
+                                            var checkForBusinessGroup = subList.Where(f => f.staffCode == x.staffCode).Select(f=>f.subHead).FirstOrDefault();
+                                            
                                             if (checkForBusinessGroup == null)
                                             {
                                                 x.businessGroup = "";

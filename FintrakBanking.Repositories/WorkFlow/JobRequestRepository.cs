@@ -73,6 +73,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 RESPONSECOMMENT = model.responseComment,
                 ARRIVALDATE = applicationDate,
                 SYSTEMARRIVALDATE = date,
+                BRANCHID = model.branchId
             };
             var job = context.TBL_JOB_REQUEST.Add(data); 
 
@@ -96,6 +97,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             }
             else return string.Empty;
         }
+
         public string AddGlobalJobRequest(JobRequestViewModel model)
         {
             if (model.receiverStaffId == model.createdBy)
@@ -222,7 +224,10 @@ namespace FintrakBanking.Repositories.WorkFlow
                 
 
             var applicationDate = general.GetApplicationDate();
-            
+
+            var loanDetails = context.TBL_LOAN_APPLICATION_DETAIL.Find(data.TARGETID);
+
+
             if (data.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification)
             {
                 var hubCordinatorStaffId = context.TBL_JOB_TYPE_REASSIGNMENT.Where(x => x.JOBTYPEID == (short)JobTypeEnum.middleOfficeVerification).FirstOrDefault();
@@ -236,6 +241,48 @@ namespace FintrakBanking.Repositories.WorkFlow
                     $"<br /><br />  Current Staff Assigned: {to} <br /><br />  Regards. <br /><br />";
                 string alertSubject = $"JOB REQUEST ASSIGNMENT NOTICE";
 
+                if(loanDetails != null)
+                {
+                    var customerInfo = context.TBL_CUSTOMER.Find(loanDetails.CUSTOMERID);
+                    var facilityInfo = context.TBL_PRODUCT.Find(loanDetails.APPROVEDPRODUCTID);
+                    var currencyInfo = context.TBL_CURRENCY.Find(loanDetails.CURRENCYID);
+                    var invoiceInfo = context.TBL_LOAN_APPLICATION_DETL_INV.Find(loanDetails.LOANAPPLICATIONDETAILID);
+                    var casaInfo = context.TBL_CASA.Find(loanDetails.CASAACCOUNTID);
+
+                    var accountLine = casaInfo != null ? $"<br /><br /> 'Account Number:' <br /><br /> {casaInfo.PRODUCTACCOUNTNUMBER}  <br /><br /> " : null;
+                    var customerNameLine = $"<br /><br /> 'Customer Name:' <br /><br /> {customerInfo.FIRSTNAME} ' ' {customerInfo.LASTNAME} <br /><br /> ";
+                    var loantTypeLine = $"<br /><br /> 'Customer Name:' <br /><br /> {customerInfo.FIRSTNAME} ' ' {customerInfo.LASTNAME} <br /><br /> ";
+                    var accountNumberLine = $"<br /><br /> 'Account Number:' <br /><br /> {casaInfo.PRODUCTACCOUNTNUMBER}  <br /><br /> ";
+                    var currencyTypeLine = $"<br /><br /> 'Currency:' <br /><br /> {currencyInfo.CURRENCYCODE}  <br /><br /> ";
+
+                    var principalNameLine = invoiceInfo != null  ? $"<br /><br /> 'Principal Name:' <br /><br /> {invoiceInfo.TBL_LOAN_PRINCIPAL.NAME}  <br /><br /> " : null;
+                    var rmCommentLine = invoiceInfo != null  ? $"<br /><br /> 'Comment:' <br /><br /> {invoiceInfo.APPROVAL_COMMENT}  <br /><br /> " : null;
+                    var NumberLine = string.Empty;
+                    var poAmountLine = invoiceInfo != null  ? $"<br /><br /> 'TotalAmount on the PO/Contract/Invoice:' <br /><br /> {invoiceInfo.INVOICE_AMOUNT}  <br /><br /> " : null;
+                    //if (invoiceInfo != null)
+                    //{
+                    //    var numbers = string.Empty;
+                    //    var amount = string.Empty;
+                    //    foreach (var item in invoiceInfo)
+                    //    {
+                    //        numbers = numbers + item.PURCHASEORDERNUMBER + "/" + item.CONTRACTNO + "/" + item.INVOICENO + ",";
+                    //    }
+
+                    //}
+                    messageBoby = $"Attention!, <br /><br />Please note that a job has been assigned with the following details:" +
+                           //$"<br /><br /> 'Job Request Code:' <br /><br /> {data.JOBREQUESTCODE} <br /><br /> " +
+                           $"{ principalNameLine} " +
+                           $"{ customerNameLine} " +
+                           $"{ loantTypeLine} " +
+                           $"{ accountLine} " +
+                           $"{ currencyTypeLine} " + 
+                           $"{ NumberLine} " +
+                           $"{ rmCommentLine} " +
+                           $"<br /><br />  Regards. <br /><br />";
+
+                    messageBoby = messageBoby + $"<br /><br />Regards.";
+                }
+
                 if (hubCordinatorFullStaffData != null)
                     LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, hubCordinatorFullStaffData.EMAIL, data.JOBREQUESTCODE);
 
@@ -245,8 +292,13 @@ namespace FintrakBanking.Repositories.WorkFlow
                     var teamLeadStaff = context.TBL_STAFF.Find(hubTeamLeadEntry.HUBSTAFFID);
                     LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, teamLeadStaff.EMAIL, data.JOBREQUESTCODE);
                 }
-
-
+                if (toStaffData != null)
+                {
+                    var reciverStaff = context.TBL_STAFF.Find(toStaffData.STAFFID);
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, reciverStaff.EMAIL, data.JOBREQUESTCODE);
+                }
+                var verificationOfficer = context.TBL_STAFF.Find(model.createdBy);
+                LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, verificationOfficer.EMAIL, data.JOBREQUESTCODE);
             }
 
             data.REASSIGNEDTO = (int)model.reassignedTo;
@@ -457,6 +509,13 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             foreach (var item in data)
             {
+                var applicationDet = context.TBL_LOAN_APPLICATION_DETAIL.Find(item.targetId);
+                if(applicationDet != null)
+                {
+                    var customer = context.TBL_CUSTOMER.FirstOrDefault(x => x.CUSTOMERID == applicationDet.CUSTOMERID);
+                    if (customer != null) item.customerName = customer.FIRSTNAME; // + " " + customer.LASTNAME.Substring(0, 1).ToUpper()+"."; 
+                }
+                
                 var detail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == item.jobRequestId);
                 if (detail.Any())
                 {
@@ -516,48 +575,53 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 case "completed":
                     return GetAllGlobalJobRequest(staffId, true).Where(x=>x.responseComment != null || x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "approved":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "pending":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Pending).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "in-progress":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Processing).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "cancelled":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Cancel).OrderByDescending(x => x.jobRequestId);
-                   // break;
 
                 case "disapproved":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Disapproved).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "assigned":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.reassignedTo != null).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "unassigned":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.reassignedTo == null).OrderByDescending(x => x.jobRequestId);
-                    //break;
-
 
                 default:
                      return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
-                    //break;
-
             }
+        }
+
+        public jobRequestCountViewModel GetJobRequestStatusCount(int staffId, int branchId)
+        {
+            var jobRequests = GetAllGlobalJobRequest(staffId, false);
+            return new jobRequestCountViewModel()
+            {
+                pendingCount = jobRequests.Where(x => x.requestStatusId == (short)JobRequestStatusEnum.pending).Count(),
+                finishedCount = jobRequests.Where(x => x.responseComment != null).Count(),
+                inProgresCount = jobRequests.Where(x => x.requestStatusId == (short)JobRequestStatusEnum.processing).Count(),
+                cancelledCount = jobRequests.Where(x => x.requestStatusId == (short)JobRequestStatusEnum.cancel).Count(),
+                assignedCount = jobRequests.Where(x => x.receiverStaffId != null || x.reassignedTo != null).Count(),
+                unAssignedCount = jobRequests.Where(x =>  x.reassignedTo == null && x.receiverStaffId == null).Count(),
+                allCount = jobRequests.Count(),
+            };
         }
 
         public List<JobRequestDetailViewModel> GetJobRequestDetailsById(int jobRequestId)
         {
             return GetJobRequestDetails().Where(x => x.jobRequestId == jobRequestId).ToList();
         }
+
         private List<JobRequestDetailViewModel> GetJobRequestDetails()
         {
             var details = (from x in this.context.TBL_JOB_REQUEST_DETAIL
@@ -609,7 +673,7 @@ namespace FintrakBanking.Repositories.WorkFlow
             List<JobRequestDetailViewModel> jobDetailList = new List<JobRequestDetailViewModel>();
             foreach(var i in jobRequest)
             {
-                var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == i.JOBREQUESTID && (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated) && x.ACCREDITEDCONSULTANTPAID == false).ToList();
+                var jobDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == i.JOBREQUESTID && (x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated) && x.ACCREDITEDCONSULTANTPAID == false && x.TRANSACTIONREVERSED != true).ToList();
                 decimal chargeAmount = 0;
                 var jobSubTypeName = string.Empty; 
                 var jobTypeName = string.Empty;
@@ -1165,6 +1229,88 @@ namespace FintrakBanking.Repositories.WorkFlow
         }
 
         [OperationBehavior(TransactionScopeRequired = true)]
+        public bool ReverseChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
+        {
+            var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated).ToList();
+            var consultantId = jobRequestDetail.FirstOrDefault().ACCREDITEDCONSULTANTID;
+            var consultantRecord = context.TBL_ACCREDITEDCONSULTANT.Where(x => x.ACCREDITEDCONSULTANTID == consultantId);
+            var twoFADetails = new TwoFactorAutheticationViewModel
+            {
+                username = model.username,
+                passcode = model.passCode
+            };
+
+            return ReverseChargeOnCustomerForCollatteralSearch(model, jobRequestDetail, twoFADetails, consultantRecord);
+
+        }
+
+        private bool ReverseChargeOnCustomerForCollatteralSearch(JobRequestCollateralSearchViewModel model,
+           List<TBL_JOB_REQUEST_DETAIL> jobRequestDetail, TwoFactorAutheticationViewModel twoFADetails, IEnumerable<TBL_ACCREDITEDCONSULTANT> consultantRecord)
+        {
+            model.debitBusiness = jobRequestDetail.FirstOrDefault().DEBITBUSINESS;
+            var casa = context.TBL_CASA.Find(jobRequestDetail.FirstOrDefault().CUSTOMERCASAACCOUNTID);
+            if (casa == null && !model.debitBusiness) { throw new ConditionNotMetException("Customer account number missing"); }
+            if (!model.debitBusiness) { model.casaAccountId = casa.CASAACCOUNTID; }
+
+            var jobRequestData = context.TBL_JOB_REQUEST.Find(model.jobRequestId);
+            model.operationId = (short)OperationsEnum.CollateralSearchInitiation;
+            model.requestCode = jobRequestData.JOBREQUESTCODE;
+
+            foreach (var item in jobRequestDetail)
+            {
+                model.totalChargeAmount = model.totalChargeAmount + item.AMOUNT.Value;
+                item.ACCREDITEDCONSULTANTPAID =  false;
+                item.TRANSACTIONREVERSED = true;
+            }
+
+            if (model.totalChargeAmount > 0)
+            {
+                List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+                if (model.debitBusiness)
+                {
+                    var bizAccount = context.TBL_OTHER_OPERATION_ACCOUNT.Where(x => x.OTHEROPERATIONID == (short)OtherOperationEnum.ChargeOnBank).FirstOrDefault();
+                    if (bizAccount == null) throw new ConditionNotMetException("No Account has been mapped for charges on business");
+
+                    model.glAccountId = bizAccount.GLACCOUNTID;
+                    model.casaAccountId = null;
+                    model.currencyId = (short)jobRequestDetail.FirstOrDefault().CURRENCYID;
+                    model.currencyCode = context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId).CURRENCYCODE;
+                }
+                inputTransactions.AddRange(BuildCollateralSearchChargeReversalPosting(model));
+
+                if (inputTransactions.Count > 0)
+                {
+                    financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
+                    jobRequestData.REQUESTSTATUSID = (short)JobRequestStatusEnum.cancel;
+                    if (jobRequestData.RESPONSECOMMENT == null) jobRequestData.RESPONSECOMMENT = "This request has been cancelled. The collateral search by solicitor is not confirmed";
+                     // Audit Section ---------------------------
+                     var auditDetail = !model.debitBusiness ? $"Customer account number '{casa.PRODUCTACCOUNTNUMBER}' credited with collateral search fees" : $"Bank account collateral search fees debit reversal";
+                    var audit = new TBL_AUDIT
+                    {
+                        AUDITTYPEID = (short)AuditTypeEnum.CollateralSearchJob,
+                        STAFFID = model.createdBy,
+                        BRANCHID = (short)model.userBranchId,
+                        DETAIL = auditDetail,
+                        IPADDRESS = model.userIPAddress,
+                        URL = model.applicationUrl,
+                        APPLICATIONDATE = general.GetApplicationDate(),
+                        SYSTEMDATETIME = DateTime.Now
+                    };
+                    this.audit.AddAuditTrail(audit);
+                    // End of Audit Section ---------------------
+
+                    context.SaveChanges();
+                    return true;
+                }
+
+                else return false;
+            }
+            else return false;
+        }
+
+
+
+        [OperationBehavior(TransactionScopeRequired = true)]
         public bool PlaceChargeOnCustomerForCollateralSearch(JobRequestCollateralSearchViewModel model)
         {
             var jobRequestDetail = context.TBL_JOB_REQUEST_DETAIL.Where(x => x.JOBREQUESTID == model.jobRequestId && x.JOB_SUB_TYPEID == (short)JobSubTypeEnum.CollateralRelated).ToList();
@@ -1216,6 +1362,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 model.totalChargeAmount = model.totalChargeAmount + item.AMOUNT.Value;
                 item.ACCREDITEDCONSULTANTPAID = !model.isInitiation ? true : false;
                 item.ACCOUNTNUMBER = model.isInitiation ? accountNumber : null;
+                item.CUSTOMERCASAACCOUNTID = model.casaAccountId;
             }
 
             if(model.totalChargeAmount > accountBalance && !model.debitBusiness)
@@ -1239,23 +1386,6 @@ namespace FintrakBanking.Repositories.WorkFlow
                 if (inputTransactions.Count > 0)
                 {
                     financeTransaction.PostTransaction(inputTransactions, false, twoFADetails);
-
-                    //if (consultantRecord.Any())
-                    //{
-                    //    var solicitor = consultantRecord.FirstOrDefault();
-                    //    string messageBoby = $"Dear {solicitor.FIRMNAME}, <br /><br />Your attention is needed to attend to our customer's collateral on the following:<br /> <ul>";
-                    //    foreach (var i in jobRequestDetail)
-                    //    {
-                    //        if (i.JOB_SUB_TYPE_CLASSID != (short)(JobSubTypeClassEnum.AdditionalCharges)) messageBoby = messageBoby + $@"<li>{i.TBL_JOB_TYPE_SUB_CLASS.JOB_SUB_TYPE_CLASS_NAME}</li>";
-
-                    //        i.CUSTOMERORBUSINESSCHARGED = true;
-                    //        if (model.debitBusiness) i.DEBITBUSINESS = true;
-                    //    }
-
-                    //    messageBoby = messageBoby + $@"</ul> <br /> Kindly contact FBN legal department for more information.";
-                    //    string alertSubject = $"Loan Collateral Search";
-                    //    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, solicitor.EMAILADDRESS, jobRequestData.JOBREQUESTCODE);
-                    //}
 
                     if (consultantRecord.Any())
                     {
@@ -1481,7 +1611,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
-            string messageBoby = $"Dear RM, <br /><br />This is to bring your attention that legal has specified that charges for collaral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
+            string messageBoby = $"Dear RM, <br /><br />This is to bring to your attention that legal has specified charges for collaral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
             string alertSubject = $"Collateral Search Request";
             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID), jobRequest.JOBREQUESTCODE);
             //if (baseApplication != null)
@@ -1654,7 +1784,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                                dateTimeDeleted = x.DATETIMECREATED,
                                jobTypeId = x.JOBTYPEID,
                                dateTimeCreated = x.DATETIMECREATED,
-                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                               staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME + " - (" + o.STAFFCODE + ")").FirstOrDefault(),
                                jobTypeName = context.TBL_JOB_TYPE.Where(o => o.JOBTYPEID == x.JOBTYPEID).Select(o => o.JOBTYPENAME).FirstOrDefault(),
 
                            }).ToList();
@@ -1855,7 +1985,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 jobTypeHubId = x.JOBTYPEHUBID,
                 staffId = x.STAFFID,
                 jobTypeHubName = context.TBL_JOB_TYPE_HUB.Where(o => o.JOBTYPEHUBID == x.JOBTYPEHUBID).Select(o => o.HUBNAME).FirstOrDefault(),
-                staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME).FirstOrDefault(),
+                staffName = context.TBL_STAFF.Where(o => o.STAFFID == x.STAFFID).Select(o => o.FIRSTNAME + " " + o.LASTNAME + " " + o.MIDDLENAME +" ("+o.STAFFCODE+")").FirstOrDefault(),
                 jobTypeUnitId = x.JOBTYPEUNITID,
                 jobTypeUnitName = context.TBL_JOB_TYPE_UNIT.Where(o => o.JOBTYPEUNITID == x.JOBTYPEUNITID).Select(o => o.UNITNAME).FirstOrDefault(),
                 isTeamLead = x.ISTEAMLEAD
@@ -2240,12 +2370,110 @@ namespace FintrakBanking.Repositories.WorkFlow
             return inputTransactions;
         }
 
-        public List<FinanceTransactionViewModel> BuildSolicitorFeePaymentPosting(JobRequestCollateralSearchViewModel model)
+        public List<FinanceTransactionViewModel> BuildCollateralSearchChargeReversalPosting(JobRequestCollateralSearchViewModel model)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
+            var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == model.casaAccountId);
+            var searchCharges = context.TBL_CHARGE_FEE.Where(x => x.OPERATIONID == model.operationId);
+            if (searchCharges.Any() && model.totalChargeAmount != 0)
+            {
+                var chargeFeeId = searchCharges.FirstOrDefault().CHARGEFEEID;
+                var postingGroups = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId select details.POSTINGGROUP).Distinct().ToList();
+                foreach (var post in postingGroups)
+                {
+                    var feeDetails = (from details in this.context.TBL_CHARGE_FEE_DETAIL where details.CHARGEFEEID == chargeFeeId && details.POSTINGGROUP == post orderby details.POSTINGTYPEID select details).ToList();
 
+                    foreach (var debits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Debit))
+                    {
+                        FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
+                        decimal debitAmount = 0;
+                        if (debits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            debitAmount = (decimal)model.totalChargeAmount * (decimal)(debits.VALUE / 100.0);
+                        else if (debits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            debitAmount = (decimal)model.totalChargeAmount;
+
+                        debit.operationId = (int)model.operationId;
+                        debit.description = "Collateral related charge reversal"; // model.feeNarration; // $"Fee charge on {debits.DESCRIPTION}";
+                        debit.valueDate = general.GetApplicationDate();
+                        debit.transactionDate = debit.valueDate;
+                        debit.currencyId = model.debitBusiness ? (short)model.currencyId : casa.CURRENCYID;
+                        debit.currencyRate = financeTransaction.GetExchangeRate(debit.valueDate, debit.currencyId, model.companyId).sellingRate;
+                        debit.isApproved = true;
+                        debit.postedBy = model.createdBy;
+                        debit.approvedBy = model.createdBy;
+                        debit.approvedDate = debit.transactionDate;
+                        debit.approvedDateTime = DateTime.Now;
+                        debit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        debit.companyId = model.companyId;
+
+                        if (!model.debitBusiness && context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL == null)
+                            throw new BadLogicException($"No GL is currently mapped to this product code '{casa.TBL_PRODUCT.PRODUCTCODE}'.");
+
+                        debit.glAccountId = model.debitBusiness ? model.glAccountId : context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == casa.PRODUCTID).PRINCIPALBALANCEGL.Value;
+                        debit.sourceReferenceNumber = model.requestCode;
+                        debit.batchCode = batchCode;
+                        if (!model.debitBusiness) debit.casaAccountId = casa.CASAACCOUNTID;
+                        debit.debitAmount = 0;
+                        debit.creditAmount = debitAmount;
+                        debit.sourceBranchId = model.userBranchId;
+                        debit.destinationBranchId = model.debitBusiness ? model.userBranchId : casa.BRANCHID;
+                        debit.rateCode = "TTB";
+                        debit.rateUnit = string.Empty;
+                        debit.currencyCrossCode = model.debitBusiness ? model.currencyCode : casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(debit);
+                    }
+
+                    foreach (var credits in feeDetails.Where(a => a.POSTINGTYPEID == (int)GLPostingTypeEnum.Credit))
+                    {
+                        FinanceTransactionViewModel credit = new FinanceTransactionViewModel();
+                        decimal creditAmount = 0;
+                        if (credits.FEETYPEID == (int)FeeTypeEnum.Rate)
+                            creditAmount = (decimal)model.totalChargeAmount * (decimal)(credits.VALUE / 100.0);
+                        else if (credits.FEETYPEID == (int)FeeTypeEnum.Amount)
+                            creditAmount = (decimal)model.totalChargeAmount;
+
+
+                        credit.operationId = (int)model.operationId;
+                        credit.description = "Collateral related charge reversal"; // model.feeNarration;  //$"Fee charge on {credits.DESCRIPTION}";
+                        credit.valueDate = general.GetApplicationDate();
+                        credit.transactionDate = credit.valueDate;
+                        credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == model.companyId).CURRENCYID; // (short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, model.companyId); //casa.CURRENCYID;
+                        credit.currencyRate = financeTransaction.GetExchangeRate(credit.valueDate, credit.currencyId, model.companyId).sellingRate;
+                        credit.isApproved = true;
+                        credit.postedBy = model.createdBy;
+                        credit.approvedBy = model.createdBy;
+                        credit.approvedDate = credit.transactionDate;
+                        credit.approvedDateTime = DateTime.Now;
+                        credit.sourceApplicationId = (short)SourceApplicationEnum.FinTrakBanking;
+                        credit.companyId = model.companyId;
+                        credit.glAccountId = (int)credits.GLACCOUNTID1;
+                        credit.sourceReferenceNumber = model.requestCode;
+                        credit.batchCode = batchCode;
+                        credit.casaAccountId = null;
+                        credit.debitAmount = creditAmount;
+                        credit.creditAmount = 0;
+                        credit.sourceBranchId = model.userBranchId;
+                        credit.destinationBranchId = model.userBranchId;
+                        credit.rateCode = "TTB";
+                        credit.rateUnit = string.Empty;
+                        credit.currencyCrossCode = model.debitBusiness ? model.currencyCode : casa.TBL_CURRENCY.CURRENCYCODE;
+
+                        inputTransactions.Add(credit);
+                    }
+                }
+            }
+
+            return inputTransactions;
+        }
+
+
+        public List<FinanceTransactionViewModel> BuildSolicitorFeePaymentPosting(JobRequestCollateralSearchViewModel model)
+        {
+            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
 
             //var casa = this.context.TBL_CASA.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
             var currency = this.context.TBL_CURRENCY.FirstOrDefault(x => x.CURRENCYID == model.currencyId);
@@ -2587,10 +2815,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 else
                 {
+                    int position = (short)context.TBL_JOB_REQUEST_STATUS_FEEDBAK.Count();
                     jobFeedback = new TBL_JOB_REQUEST_STATUS_FEEDBAK()
                     {
                         JOBTYPEID = feedback.jobTypeId,
-                        JOB_STATUS_FEEDBACKID = feedback.jobStatusFeedbackId,
+                        JOB_STATUS_FEEDBACKID = (short)position++, //feedback.jobStatusFeedbackId,
                         JOB_STATUS_FEEDBACK_NAME = feedback.jobStatusFeedbackName,
                         REQUESTSTATUSID = feedback.requestStatusId,
                     };

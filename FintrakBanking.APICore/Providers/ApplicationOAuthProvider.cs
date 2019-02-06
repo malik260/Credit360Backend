@@ -4,12 +4,14 @@ using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
 using FintrakBanking.Interfaces.Setups.General;
 using FintrakBanking.Repositories.Setups.General;
+using FintrakBanking.ViewModels.Admin;
 using FintrakBanking.ViewModels.Setups.General;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Net;
@@ -100,7 +102,26 @@ namespace FintrakBanking.APICore.Providers
                     }
                     else
                     {
-                        context.SetError("invalid_grant", "The user is not registered in the application. Contact the system administrator.");
+                        var profile = _bankingContext.TBL_PROFILE_USER.FirstOrDefault(c => c.USERNAME.ToLower() == userVm.username.ToLower());// && c.PASSWORD == password);
+                        if (profile != null)
+                        {
+                            profile.LOGINCODE = null;
+                            profile.FAILEDLOGONATTEMPT += 1;
+                            int count = profile.FAILEDLOGONATTEMPT ?? 0;
+                            TBL_PROFILE_SETTING prosett = new TBL_PROFILE_SETTING();
+                            prosett = _bankingContext.TBL_PROFILE_SETTING.FirstOrDefault();
+                            //if (count == CommonHelpers.MaxInvalidPasswordAttempts)
+                            if (count == prosett.MAXINVALIDPASSWORDATTEMPTS)
+                            {
+                                profile.ISLOCKED = true;
+                                profile.LASTLOCKOUTDATE = DateTime.Now;
+                            }
+
+                            //db.Entry(faileddata).State = EntityState.Modified;
+                            _bankingContext.SaveChanges();
+
+                        }
+                        context.SetError("invalid_grant", "Login Failure.");
                         return;
                     }
                 }
@@ -237,7 +258,6 @@ namespace FintrakBanking.APICore.Providers
             {
                 using (var pc = new PrincipalContext(ContextType.Domain, appSetup.ACTIVE_DIRECTORY_DOMAIN_NAME, appSetup.ACTIVE_DIRECTORY_USERNAME, appSetup.ACTIVE_DIRECTORY_PASSWORD))
                 {
-
                     bool isValid = pc.ValidateCredentials(userName, password);
                     if (isValid)
                     {

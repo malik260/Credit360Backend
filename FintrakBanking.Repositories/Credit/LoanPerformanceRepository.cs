@@ -1,6 +1,7 @@
 ﻿using FintrakBanking.Common.Enum;
 using FintrakBanking.Entities.Models;
 using FintrakBanking.Interfaces.Admin;
+using FintrakBanking.Interfaces.AlertMonitoring;
 using FintrakBanking.Interfaces.Credit;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.Interfaces.Setups.General;
@@ -21,14 +22,16 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository generalSetup;
         private IFinanceTransactionRepository financeTransaction;
         private IAuditTrailRepository auditTrail;
+        private IEmailAlertLogger emailLogger;
 
         public LoanPerformanceRepository(FinTrakBankingContext _contex, IGeneralSetupRepository _genSetup,
-            IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail)
+            IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail, IEmailAlertLogger _emailLogger)
         {
             this.context = _contex;
             this.generalSetup = _genSetup;
             this.financeTransaction = _financeTransaction;
             this.auditTrail = _auditTrail;
+            this.emailLogger = _emailLogger;
         }
         public IQueryable<LoanViewModel> GetAllLoan()
         {
@@ -124,7 +127,8 @@ namespace FintrakBanking.Repositories.Credit
                                        currencyId = a.CURRENCYID,
                                        productId = a.PRODUCTID,
                                        branchId = a.BRANCHID,
-                                       casaAccountId = a.CASAACCOUNTID
+                                       casaAccountId = a.CASAACCOUNTID,
+                                       customerEmail = b.EMAILADDRESS
                                    });
        var bbc =     allFilteredLoan.ToList();
             return allFilteredLoan;
@@ -171,6 +175,7 @@ namespace FintrakBanking.Repositories.Credit
                                        productId = a.PRODUCTID,
                                        branchId = a.BRANCHID,
                                        casaAccountId = a.CASAACCOUNTID,
+                                       customerEmail =b.EMAILADDRESS
                                    });
        var bbw =     allFilteredLoan.ToList();
             return allFilteredLoan;
@@ -316,6 +321,8 @@ namespace FintrakBanking.Repositories.Credit
         }
         public bool LoanPerformanceStatusChange(PrudGuidelineStatusChangeViewModel entity)
         {
+            string emailBody = "";
+            string emailSubject = "";
             //var option = new TransactionOptions
             //{
             //    IsolationLevel = IsolationLevel.ReadCommitted,
@@ -340,6 +347,12 @@ namespace FintrakBanking.Repositories.Credit
                     //LoanPerformancePosting(prudTypeId, termLoan);
                 }
 
+                //Send Email to Customer
+                string loanClasssification = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(o => o.PRUDENTIALGUIDELINETYPEID == termLoan.userPrudentialGuidelineStatusId).Select(o => o.PRUDENTIALGUIDELINETYPENAME).FirstOrDefault();
+                emailBody = "There Valuable Customer, <br /><br /> Your facility with Reference Number: " + termLoan.loanReferenceNumber + " has been classified as "+ loanClasssification + ".,<br /> Kindly contact your Relationship Manager for more information.";
+                emailSubject = "LOAN PERFORMANCE STATUS REPORT";
+
+                emailLogger.ComposeEmail(termLoan.loanReferenceNumber, emailBody, emailSubject, termLoan.customerEmail,false);
             }
             else if (entity.loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
@@ -354,7 +367,19 @@ namespace FintrakBanking.Repositories.Credit
                     revolvingLoanRecord.USER_PRUDENTIAL_GUIDE_STATUSID = entity.prudentialGuidelineStatusId;
                     //LoanPerformancePosting(prudTypeId,  revolvingLoan);
                 }
+
+                //Send Email to Customer
+                string loanClasssification = context.TBL_LOAN_PRUDENT_GUIDE_TYPE.Where(o => o.PRUDENTIALGUIDELINETYPEID == revolvingLoan.userPrudentialGuidelineStatusId).Select(o => o.PRUDENTIALGUIDELINETYPENAME).FirstOrDefault();
+                emailBody = "There Valuable Customer, <br /><br /> Your facility with Reference Number: " + revolvingLoan.loanReferenceNumber + " has been classified as " + loanClasssification + ".,<br /> Kindly contact your Relationship Manager for more information.";
+                emailSubject = "LOAN PERFORMANCE STATUS REPORT";
+
+                emailLogger.ComposeEmail(revolvingLoan.loanReferenceNumber, emailBody, emailSubject, revolvingLoan.customerEmail,false);
             }
+
+            //Send email to customer
+
+
+
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.LoanPerformanceChange,

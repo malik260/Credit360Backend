@@ -1168,7 +1168,7 @@ namespace FintrakBanking.Repositories.Customer
                     {
                         entity.customerTypeId = (int)CustomerTypeEnum.Individual;
                     }
-
+                    var CustomerRec = context.TBL_CUSTOMER.Find(entity.customerId);
                     //If Customer main table ACCOUNTCREATIONCOMPLETE column equal false, record insert directly to the main table 
                     if (directors != null && accountCompleted == false)
                     {
@@ -1183,6 +1183,15 @@ namespace FintrakBanking.Repositories.Customer
                         directors.REGISTRATION_NUMBER = entity.rcNumber;
                         directors.TAX_NUMBER = entity.taxNumber;
                         directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
+                        if (entity.isPoliticallyExposed == true)
+                        {
+                            if (CustomerRec.ISPOLITICALLYEXPOSED == false)
+                            {
+                                CustomerRec.ISPOLITICALLYEXPOSED = true;
+                            }
+                        }
+
+
                         directors.ADDRESS = entity.address;
                         directors.PHONENUMBER = entity.phoneNumber;
                         directors.EMAILADDRESS = entity.email;
@@ -1204,6 +1213,13 @@ namespace FintrakBanking.Repositories.Customer
                         directors.TAX_NUMBER = entity.taxNumber;
                         directors.SHAREHOLDINGPERCENTAGE = entity.numberOfShares;
                         directors.ISPOLITICALLYEXPOSED = entity.isPoliticallyExposed;
+                        if (entity.isPoliticallyExposed == true)
+                        {
+                            if (CustomerRec.ISPOLITICALLYEXPOSED == false)
+                            {
+                                CustomerRec.ISPOLITICALLYEXPOSED = true;
+                            }
+                        }
                         directors.ADDRESS = entity.address;
                         directors.PHONENUMBER = entity.phoneNumber;
                         directors.EMAILADDRESS = entity.email;
@@ -1687,7 +1703,15 @@ namespace FintrakBanking.Repositories.Customer
                         history.EMPLOYDATE = entity.employDate;
                         history.EMPLOYERADDRESS = entity.employerAddress;
                         history.EMPLOYERCOUNTRYID = entity.employerCountryId;
-                        history.EMPLOYERSTATEID = entity.employerStateId;
+                        if(entity.employerStateId > 0)
+                        {
+                            history.EMPLOYERSTATEID = entity.employerStateId;
+                            history.EMPLOYERSTATE = context.TBL_STATE.Where(x=>x.STATEID == entity.employerStateId).Select(m=>m.STATENAME).FirstOrDefault();
+                        }
+                        else
+                        {
+                            history.EMPLOYERSTATE = entity.employerState;
+                        }
                         history.EMPLOYERNAME = entity.employerName;
                         history.OFFICEPHONE = entity.officePhone;
                         history.PREVIOUSEMPLOYER = entity.previousEmployer;
@@ -1701,7 +1725,15 @@ namespace FintrakBanking.Repositories.Customer
                         history.EMPLOYDATE = entity.employDate;
                         history.EMPLOYERADDRESS = entity.employerAddress;
                         history.EMPLOYERCOUNTRYID = entity.employerCountryId;
-                        history.EMPLOYERSTATEID = entity.employerStateId;
+                        if (entity.employerStateId > 0)
+                        {
+                            history.EMPLOYERSTATEID = entity.employerStateId;
+                            history.EMPLOYERSTATE = context.TBL_STATE.Where(x => x.STATEID == entity.employerStateId).Select(m => m.STATENAME).FirstOrDefault();
+                        }
+                        else
+                        {
+                            history.EMPLOYERSTATE = entity.employerState;
+                        }
                         history.EMPLOYERNAME = entity.employerName;
                         history.OFFICEPHONE = entity.officePhone;
                         history.PREVIOUSEMPLOYER = entity.previousEmployer;
@@ -1736,7 +1768,15 @@ namespace FintrakBanking.Repositories.Customer
                             temp.EMPLOYDATE = entity.employDate;
                             temp.EMPLOYERADDRESS = entity.employerAddress;
                             temp.EMPLOYERCOUNTRYID = entity.employerCountryId;
-                            temp.EMPLOYERSTATEID = entity.employerStateId;
+                            if (entity.employerStateId > 0)
+                            {
+                                temp.EMPLOYERSTATEID = entity.employerStateId;
+                                temp.EMPLOYERSTATE = context.TBL_STATE.Where(x => x.STATEID == entity.employerStateId).Select(m => m.STATENAME).FirstOrDefault();
+                            }
+                            else
+                            {
+                                temp.EMPLOYERSTATE = entity.employerState;
+                            }
                             temp.EMPLOYERNAME = entity.employerName;
                             temp.OFFICEPHONE = entity.officePhone;
                             temp.PREVIOUSEMPLOYER = entity.previousEmployer;
@@ -1752,7 +1792,15 @@ namespace FintrakBanking.Repositories.Customer
                             temp.EMPLOYDATE = entity.employDate;
                             temp.EMPLOYERADDRESS = entity.employerAddress;
                             temp.EMPLOYERCOUNTRYID = entity.employerCountryId;
-                            temp.EMPLOYERSTATEID = entity.employerStateId;
+                            if (entity.employerStateId > 0)
+                            {
+                                temp.EMPLOYERSTATEID = entity.employerStateId;
+                                temp.EMPLOYERSTATE = context.TBL_STATE.Where(x => x.STATEID == entity.employerStateId).Select(m => m.STATENAME).FirstOrDefault();
+                            }
+                            else
+                            {
+                                temp.EMPLOYERSTATE = entity.employerState;
+                            }
                             temp.EMPLOYERNAME = entity.employerName;
                             temp.OFFICEPHONE = entity.officePhone;
                             temp.PREVIOUSEMPLOYER = entity.previousEmployer;
@@ -3261,7 +3309,8 @@ namespace FintrakBanking.Repositories.Customer
                                          employerCountryId = s.EMPLOYERCOUNTRYID,
                                          employerName = s.EMPLOYERNAME,
                                          officePhone = s.OFFICEPHONE,
-                                         employerStateId = s.EMPLOYERSTATEID
+                                         employerStateId = s.EMPLOYERSTATEID,
+                                         employerState = s.EMPLOYERSTATE,
                                      }).ToList();
             return employmentHistory;
         }
@@ -4313,6 +4362,7 @@ namespace FintrakBanking.Repositories.Customer
                     entity.EMPLOYERADDRESS = temp.EMPLOYERADDRESS;
                     entity.EMPLOYERCOUNTRYID = temp.EMPLOYERCOUNTRYID;
                     entity.EMPLOYERSTATEID = temp.EMPLOYERSTATEID;
+                    entity.EMPLOYERSTATE = temp.EMPLOYERSTATE;
                     entity.EMPLOYERNAME = temp.EMPLOYERNAME;
                     entity.OFFICEPHONE = temp.OFFICEPHONE;
                     entity.PREVIOUSEMPLOYER = temp.PREVIOUSEMPLOYER;
@@ -4334,6 +4384,7 @@ namespace FintrakBanking.Repositories.Customer
                     entity.EMPLOYERADDRESS = temp.EMPLOYERADDRESS;
                     entity.EMPLOYERCOUNTRYID = temp.EMPLOYERCOUNTRYID;
                     entity.EMPLOYERSTATEID = temp.EMPLOYERSTATEID;
+                    entity.EMPLOYERSTATE = temp.EMPLOYERSTATE;
                     entity.EMPLOYERNAME = temp.EMPLOYERNAME;
                     entity.OFFICEPHONE = temp.OFFICEPHONE;
                     entity.PREVIOUSEMPLOYER = temp.PREVIOUSEMPLOYER;
@@ -4587,7 +4638,7 @@ namespace FintrakBanking.Repositories.Customer
                             }
                         }
                     }
-
+                    var CustomerRec = context.TBL_CUSTOMER.Find(temp.CUSTOMERID);
                     entity = new TBL_CUSTOMER_COMPANY_DIRECTOR();
 
                     entity.CUSTOMERID = temp.CUSTOMERID;
@@ -4600,6 +4651,13 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
+                    if (temp.ISPOLITICALLYEXPOSED == true)
+                    {
+                        if (CustomerRec.ISPOLITICALLYEXPOSED == false)
+                        {
+                            CustomerRec.ISPOLITICALLYEXPOSED = true;
+                        }
+                    }
                     entity.ADDRESS = temp.ADDRESS;
                     entity.PHONENUMBER = temp.PHONENUMBER;
                     entity.EMAILADDRESS = temp.EMAILADDRESS;
@@ -4617,6 +4675,8 @@ namespace FintrakBanking.Repositories.Customer
                 temp = context.TBL_TEMP_CUSTOMER_DIRECTOR.FirstOrDefault(x => x.TEMPCOMPANYDIRECTORID == targetId);
                 if (temp != null) //If temp record is not null select the information from the main table
                 {
+                    var CustomerRec = context.TBL_CUSTOMER.Find(temp.CUSTOMERID);
+
                     entity = context.TBL_CUSTOMER_COMPANY_DIRECTOR.Where(x =>
                         x.COMPANYDIRECTORID == temp.COMPANYDIRECTORID).FirstOrDefault();
                     entity.CUSTOMERID = temp.CUSTOMERID;
@@ -4629,6 +4689,13 @@ namespace FintrakBanking.Repositories.Customer
                     entity.CUSTOMERBVN = temp.CUSTOMERBVN;
                     entity.SHAREHOLDINGPERCENTAGE = temp.SHAREHOLDINGPERCENTAGE;
                     entity.ISPOLITICALLYEXPOSED = temp.ISPOLITICALLYEXPOSED;
+                    if (temp.ISPOLITICALLYEXPOSED == true)
+                    {
+                        if (CustomerRec.ISPOLITICALLYEXPOSED == false)
+                        {
+                            CustomerRec.ISPOLITICALLYEXPOSED = true;
+                        }
+                    }
                     entity.ADDRESS = temp.ADDRESS;
                     entity.PHONENUMBER = temp.PHONENUMBER;
                     entity.EMAILADDRESS = temp.EMAILADDRESS;

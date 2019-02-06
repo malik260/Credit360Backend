@@ -37,7 +37,7 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string MIDDLENAME { get; set; }
 
-        public int JOBTITLEID { get; set; }
+        public int? JOBTITLEID { get; set; }
 
         public int STAFFROLEID { get; set; }
 
@@ -90,6 +90,9 @@ namespace FintrakBanking.Entities.Models
         public int? CITYID { get; set; }
 
         public short CUSTOMERSENSITIVITYLEVELID { get; set; }
+
+        [StringLength(50)]
+        public string OPERATION { get; set; }
 
         public int? CREATEDBY { get; set; }
 

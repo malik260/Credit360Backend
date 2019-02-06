@@ -7,6 +7,7 @@ namespace FintrakBanking.ViewModels.Customer
 {
     public class CustomerGroupMappingViewModel : GeneralEntity
     {
+        
         public CustomerGroupMappingViewModel()
         {
             customerBvnInformation = new List<CustomerBvnViewModels>();
@@ -15,6 +16,7 @@ namespace FintrakBanking.ViewModels.Customer
             customerClients = new List<CustomerClientOrSupplierViewModels>();
             customerSuppliers = new List<CustomerSupplierViewModels>();
         }
+        public string groupDescription { get; set; }
         public int customerGroupMappingId { get; set; }
         public int customerId { get; set; }
         public string customerName { get; set; }

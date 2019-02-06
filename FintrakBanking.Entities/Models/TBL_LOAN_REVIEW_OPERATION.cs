@@ -30,6 +30,8 @@ namespace FintrakBanking.Entities.Models
         //[Column(TypeName = "date")]
         public DateTime EFFECTIVEDATE { get; set; }
 
+        public int? PREPAYMENTMETHODID { get; set; }
+
         [Required]
         public string REVIEWDETAILS { get; set; }
 

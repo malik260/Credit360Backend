@@ -360,6 +360,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal totalOutstandingAmount { get; set; }
         public decimal totalExistingLimitAmount { get; set; }
         public string crmsCode { get; set; }
+        public string customerEmail { get; set; }
 
 
 
@@ -600,8 +601,10 @@ namespace FintrakBanking.ViewModels.Credit
     public class CamProcessedLoanViewModel : LoanApplicationViewModel
     {
         public double approvedInterestRate { get; set; }
+        public List<feeDetails> fees { get; set; }
 
         public string feeAccountName { get; set; }
+        public int? loanSystemTypeId { get; set; }
 
         public bool isLocalCurrrency { get; set; }
         public int? loanId { get; set; }
@@ -619,6 +622,8 @@ namespace FintrakBanking.ViewModels.Credit
         public int requestStaffId { get; set; }
 
         public string approvalStatusName { get; set; }
+        public string lmsOperationName { get; set; }
+        public int? lmsOperationId { get; set; }
 
         public string operationName { get; set; }
 

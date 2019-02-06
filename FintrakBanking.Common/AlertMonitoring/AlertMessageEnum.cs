@@ -24,6 +24,7 @@ namespace FintrakBanking.Common.AlertMonitoring
         CollateralDueForRevaluation = 15,
         WatchListedAccount = 16,
         AuathorizedAccount = 17,
-        LoanRepayment = 18
+        LoanRepayment = 18,
+        CustomerAlertForLoanRepaymentApproachingDueDate = 18
     }
 }

@@ -59,14 +59,15 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("customer-eligibility/{customerCode}")]
         public HttpResponseMessage ValidateCustomerEligibility(string customerCode)
         {
             try
             {
                 var data = repo.ValidateCustomerEligibility(customerCode);
-                if(data != null)
+                if (data != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
                 }
@@ -79,7 +80,18 @@ namespace FintrakBanking.APICore.Controllers
 
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-customer-eligibility/{customerCode}")]
+        public HttpResponseMessage GetCustomerEligibility(string customerCode)
+        {
+            var data = repo.GetCustomerEligibility(customerCode);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        //public CustomerEligibility GetCustomerEligibility(string customerCode)
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("watchlist/{customerId}")]
         public HttpResponseMessage ValidateWatchList(int customerId)
         {

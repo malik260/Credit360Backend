@@ -446,8 +446,8 @@ namespace FintrakBanking.Repositories.Credit
                 var totalPreviouslyBookedAmount = contingentAmount.FirstOrDefault();
 
                 var totalContingentAmount = totalPreviouslyBookedAmount + contingentLoanInput.contingentAmount;
-
-                if (totalContingentAmount > entity.customerAvailableAmount)
+                // if (totalContingentAmount > entity.customerAvailableAmount)
+                if (totalContingentAmount > applicationDetail.APPROVEDAMOUNT)
                     throw new ConditionNotMetException("The loan amount cannot be greater than the availiable amount");
 
                 if (request.APPROVALSTATUSID == (short)ApprovalStatusEnum.Processing)
@@ -636,10 +636,10 @@ namespace FintrakBanking.Repositories.Credit
                 LOANREFERENCENUMBER = loanReferenceNumber,
                 RELATED_LOAN_REFERENCE_NUMBER = loanReferenceNumber,
                 SUBSECTORID = model.subSectorId,
-                RELATIONSHIPOFFICERID = model.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = model.relationshipManagerId,
-                MISCODE = model.misCode,
-                TEAMMISCODE = model.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = model.interestRate,
                 EFFECTIVEDATE = revolvingLoanInput.effectiveDate,
                 MATURITYDATE = revolvingLoanInput.maturityDate,
@@ -816,7 +816,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (ConditionNotMetException ce) { throw new ConditionNotMetException(ce.Message); }
 
-            catch (Exception ex) { throw new SecureException(ex.Message); }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private string addContingentLiability(LoanViewModel entity)
@@ -867,10 +867,10 @@ namespace FintrakBanking.Repositories.Credit
                 LOANREFERENCENUMBER = loanReferenceNumber,
                 RELATED_LOAN_REFERENCE_NUMBER = loanReferenceNumber,
                 SUBSECTORID = entity.subSectorId,
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 EFFECTIVEDATE = contingentLoanInput.effectiveDate,
                 MATURITYDATE = contingentLoanInput.maturityDate,
                 ISBANKFORMAT = isBankFormat,
@@ -980,10 +980,15 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new APIErrorException(ae.Message);
                 }
+                catch (SecureException ae)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ae.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    throw new Exception(ex.Message);
                 }
             }
         }
@@ -1145,7 +1150,7 @@ namespace FintrakBanking.Repositories.Credit
             //}
             var interestRate = Convert.ToDouble(applicationDetail.APPROVEDINTERESTRATE);
             var priceIndex = new TBL_PRODUCT_PRICE_INDEX();
-            if (entity.productPriceIndexId <= 0)
+            if (entity.productPriceIndexId >  0)
             {
                 priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == entity.productPriceIndexId select a).FirstOrDefault();
                 if (priceIndex != null)
@@ -1190,8 +1195,8 @@ namespace FintrakBanking.Repositories.Credit
                 INTERESTNUMBEROFINSTALLMENT = 0,
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
-                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
+                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
+                PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID ,
 
                 SUBSECTORID = entity.subSectorId,
                 CURRENCYID = (short)entity.currencyId,
@@ -1211,10 +1216,10 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALFREQUENCYTYPEID = entity.loanScheduleInput.principalFrequency,
                 INTERESTFREQUENCYTYPEID = entity.loanScheduleInput.interestFrequency,
 
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID, //entity.relationshipOfficerId,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID, //entity.relationshipManagerId,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = interestRate,
 
                 PRINCIPALINSTALLMENTLEFT = 0,
@@ -1367,10 +1372,15 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new TwoFactorAuthenticationException(fa.Message);
                 }
+                catch (SecureException fa)
+                {
+                    trans.Rollback();
+                    throw new SecureException(fa.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
-                    throw new SecureException(ex.Message);
+                    throw new Exception(ex.Message);
                 }
             }
         }
@@ -1468,7 +1478,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (ConditionNotMetException ce) { throw new ConditionNotMetException(ce.Message); }
 
-            catch (Exception ex) { throw new SecureException(ex.Message); }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private string AddCommercialLoan(LoanViewModel entity)
@@ -1491,12 +1501,22 @@ namespace FintrakBanking.Repositories.Credit
 
             // double? priceIndex = (from a in context.TBL_PRODUCT where a.PRODUCTID == entity.productId select a.TBL_PRODUCT_PRICE_INDEX.PRICEINDEXRATE).FirstOrDefault();
 
-            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == applicationDetail.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+            //var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == applicationDetail.PRODUCTPRICEINDEXID select a).FirstOrDefault();
 
-            var interestRate = Convert.ToDouble(entity.interestRate);
-            if (priceIndex != null)
+            //var interestRate = Convert.ToDouble(entity.interestRate);
+            //if (priceIndex != null)
+            //{
+            //    interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+            //}
+            var interestRate = Convert.ToDouble(applicationDetail.APPROVEDINTERESTRATE);
+            var priceIndex = new TBL_PRODUCT_PRICE_INDEX();
+            if (entity.productPriceIndexId > 0)
             {
-                interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == entity.productPriceIndexId select a).FirstOrDefault();
+                if (priceIndex != null)
+                {
+                    interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                }
             }
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
@@ -1524,7 +1544,9 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALNUMBEROFINSTALLMENT = 1,
                 INTERESTNUMBEROFINSTALLMENT = 1,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
+                //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
+                //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
+                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
                 PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
                 SUBSECTORID = applicationDetail.SUBSECTORID,
                 CURRENCYID = (short)applicationDetail.CURRENCYID,
@@ -1538,10 +1560,10 @@ namespace FintrakBanking.Repositories.Credit
                 CASAACCOUNTID2 = entity.casaAccountId2,
                 BRANCHID = application.BRANCHID, //entity.branchId,
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = Convert.ToInt32(applicationDetail.APPROVEDINTERESTRATE),
                 ALLOWFORCEDEBITREPAYMENT = true,
                 PRINCIPALINSTALLMENTLEFT = 0,
@@ -1669,6 +1691,11 @@ namespace FintrakBanking.Repositories.Credit
                     trans.Rollback();
                     throw new TwoFactorAuthenticationException(fa.Message);
                 }
+                catch (SecureException fa)
+                {
+                    trans.Rollback();
+                    throw new SecureException(fa.Message);
+                }
                 catch (Exception ex)
                 {
                     trans.Rollback();
@@ -1773,7 +1800,7 @@ namespace FintrakBanking.Repositories.Credit
             }
             catch (ConditionNotMetException ce) { throw new ConditionNotMetException(ce.Message); }
 
-            catch (Exception ex) { throw new SecureException(ex.Message); }
+            catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
         private string AddFXLoan(LoanViewModel entity)
@@ -1790,12 +1817,23 @@ namespace FintrakBanking.Repositories.Credit
                                   let sumPrincipalAmount = context.TBL_LOAN.Where(x => x.LOANAPPLICATIONDETAILID == entity.loanApplicationDetailId).Sum(x => x.PRINCIPALAMOUNT)
                                   select sumPrincipalAmount;
 
-            var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == applicationDetail.PRODUCTPRICEINDEXID select a).FirstOrDefault();
+            //var priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == applicationDetail.PRODUCTPRICEINDEXID select a).FirstOrDefault();
 
-            var interestRate = Convert.ToDouble(entity.interestRate);
-            if (priceIndex != null)
+            //var interestRate = Convert.ToDouble(entity.interestRate);
+            //if (priceIndex != null)
+            //{
+            //    interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+            //}
+
+            var interestRate = Convert.ToDouble(applicationDetail.APPROVEDINTERESTRATE);
+            var priceIndex = new TBL_PRODUCT_PRICE_INDEX();
+            if (entity.productPriceIndexId > 0)
             {
-                interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                priceIndex = (from a in context.TBL_PRODUCT_PRICE_INDEX where a.PRODUCTPRICEINDEXID == entity.productPriceIndexId select a).FirstOrDefault();
+                if (priceIndex != null)
+                {
+                    interestRate = priceIndex.PRICEINDEXRATE + interestRate;
+                }
             }
 
             var currentExchangeRate = financeTransaction.GetExchangeRate(DateTime.Now, (short)entity.currencyId, entity.companyId).sellingRate;
@@ -1827,7 +1865,9 @@ namespace FintrakBanking.Repositories.Credit
                 PRINCIPALNUMBEROFINSTALLMENT = 1,
                 INTERESTNUMBEROFINSTALLMENT = 1,
                 SCH_PREPAYMENT_FREQUENCY_TYPID = null,
-                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
+                //PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE,
+                //PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
+                PRODUCTPRICEINDEXRATE = priceIndex.PRICEINDEXRATE > 0 ? priceIndex.PRICEINDEXRATE : 0,
                 PRODUCTPRICEINDEXID = priceIndex.PRODUCTPRICEINDEXID,
                 SUBSECTORID = applicationDetail.SUBSECTORID,
                 CURRENCYID = (short)applicationDetail.CURRENCYID,
@@ -1845,10 +1885,10 @@ namespace FintrakBanking.Repositories.Credit
                 NOSTROCURRENCYID = nostroCurrencyId,
                 BRANCHID = application.BRANCHID,
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.TermDisbursedFacility,
-                RELATIONSHIPOFFICERID = entity.relationshipOfficerId,
-                RELATIONSHIPMANAGERID = entity.relationshipManagerId,
-                MISCODE = entity.misCode,
-                TEAMMISCODE = entity.teamMiscode,
+                RELATIONSHIPOFFICERID = application.RELATIONSHIPOFFICERID,
+                RELATIONSHIPMANAGERID = application.RELATIONSHIPMANAGERID,
+                MISCODE = application.MISCODE,
+                TEAMMISCODE = application.TEAMMISCODE,
                 INTERESTRATE = Convert.ToInt32(applicationDetail.APPROVEDINTERESTRATE),
                 ALLOWFORCEDEBITREPAYMENT = false,
                 PRINCIPALINSTALLMENTLEFT = 0,
@@ -5411,7 +5451,7 @@ namespace FintrakBanking.Repositories.Credit
                                 loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
                                 applicationReferenceNumber = m.APPLICATIONREFERENCENUMBER,
                                 applicationStatusId = m.APPLICATIONSTATUSID,
-                                customerId = m.CUSTOMERID ?? 0,
+                                customerId =  d.CUSTOMERID,
                                 customerCode = cust.CUSTOMERCODE,
                                 customerName = d.TBL_CUSTOMER.FIRSTNAME + " " + d.TBL_CUSTOMER.MIDDLENAME + " " + d.TBL_CUSTOMER.LASTNAME,
                                 customerGroupId = m.CUSTOMERGROUPID.HasValue ? m.CUSTOMERGROUPID : 0,
@@ -5776,7 +5816,7 @@ namespace FintrakBanking.Repositories.Credit
                          applicationTenor = m.APPLICATIONTENOR,
                          effectiveDate = (DateTime)d.EFFECTIVEDATE,
                          expiryDate = (DateTime)d.EXPIRYDATE,
-                         currencyId = d.TBL_CURRENCY.CURRENCYID,
+                         currencyId = d.CURRENCYID, //d.TBL_CURRENCY.CURRENCYID,
                          currencyCode = d.TBL_CURRENCY.CURRENCYCODE,
                          exchangeRate = d.EXCHANGERATE,
                          loanTypeId = m.LOANAPPLICATIONTYPEID,
@@ -6217,7 +6257,7 @@ namespace FintrakBanking.Repositories.Credit
                 if (item.operationId == (short)OperationsEnum.TermLoanBooking || item.operationId == (short)OperationsEnum.CommercialLoanBooking || item.operationId == (short)OperationsEnum.ForeignExchangeLoanBooking)
                 {
                     var priceIndex = context.TBL_PRODUCT_PRICE_INDEX.Find(item.productPriceIndexId);
-                    var interestRate = Convert.ToDouble(item.interestRate);
+                    var interestRate = Convert.ToDouble(item.approvedInterestRate);
                     if (priceIndex != null)
                     {
                         item.interestRate = priceIndex.PRICEINDEXRATE + interestRate;
@@ -7865,6 +7905,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.REVOLVINGLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    loanId = a.REVOLVINGLOANID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
@@ -7974,6 +8015,7 @@ namespace FintrakBanking.Repositories.Credit
                                    loanApplicationId = a.LOANAPPLICATIONDETAILID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    customerCode = b.CUSTOMERCODE,
                                    productId = a.PRODUCTID,
                                    companyId = a.COMPANYID,
@@ -8178,6 +8220,7 @@ namespace FintrakBanking.Repositories.Credit
                                where a.CONTINGENTLOANID == loanId && a.ISDISBURSED == true
                                select new LoanViewModel
                                {
+                                   loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                    loanId = a.CONTINGENTLOANID,
                                    customerId = a.CUSTOMERID,
                                    customerName = b.FIRSTNAME + " " + b.LASTNAME,
@@ -9889,6 +9932,8 @@ namespace FintrakBanking.Repositories.Credit
                             //&& d.EXPIRYDATE >= systemDate
                             select new CamProcessedLoanViewModel
                             {
+                                loanSystemTypeId = l.LOANSYSTEMTYPEID,
+                                loanId = l.LOANID,
                                 loanReviewApplicationId = e.LOANAPPLICATIONID,
                                 approvalStatusId = (short)m.APPROVALSTATUSID,
                                 loanApplicationId = m.LOANAPPLICATIONID,

@@ -24,6 +24,9 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
+        public string ACCOUNTNAME { get; set; }
+
+
         //[Column(TypeName = "money")]
         public decimal EXISTINGLIENAMOUNT { get; set; }
 

@@ -487,7 +487,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
             catch (SecureException ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
 
@@ -2199,7 +2199,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             try
             {
                 var data = repo.GetChangeLoanStatusOfACompletedLoan(loanid);
-                if (data == null)
+                if (data == false)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
                 }

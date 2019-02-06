@@ -1188,7 +1188,7 @@ namespace FintrakBanking.APICore.Controllers
         {
             if (model == null)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "product price index not found" });
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "global interest rate change not found" });
             }
 
             try
@@ -1203,7 +1203,7 @@ namespace FintrakBanking.APICore.Controllers
                 repo.UpdateProductPriceIndex(productPriceIndexId, model);
 
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = true, result = productPriceIndexId, message = "product Price Index has been updated successfully" });
+                    new { success = true, result = productPriceIndexId, message = "global interest rate change has been updated successfully " });
             }
             catch (SecureException ex)
             {
@@ -1252,10 +1252,164 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("product-price-index-global-approval")]
+        public HttpResponseMessage GoForApprovalGlobalPriceIndex([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+                entity.createdBy = token.GetStaffId;
+                var data = repo.GoForApprovalGlobalPriceIndex(entity);
 
+                if (data == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation has been approved successfully." });
+                }
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Operation has been disapproved successfully." });
+                }
+                else if (data == 3)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+                
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Approval failed" });
+                }
+            }
+            catch (ConditionNotMetException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+            }
+            catch (System.Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-price-index-global-approval")]
+        public HttpResponseMessage GetAllProductPriceIndexGlobalAwaitingApproval()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetProductPriceIndexGlobalAwaitingApproval(token.GetStaffId).ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
 
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("product-price-index-global")]
+        public HttpResponseMessage GetAllProductPriceIndexGlobal()
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                var data = repo.GetProductPriceIndexGlobal().ToList();
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
 
+                    new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("product-price-index-global")]
+        public HttpResponseMessage AddProductPriceIndexGlobal([FromBody] ProductPriceIndexGlobalViewModel model)
+        {
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
 
+                var record = repo.AddProductPriceIndexGlobal(model);
+                if (record)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, result = record, message = "Global Interest Rate has been Sent For Approval" });
+                }
+                else
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "Global Interest Rate not created" });
+            }
+            catch (ConditionNotMetException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"{e.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        [ClaimsAuthorization]
+        [Route("product-price-index-global/{productPriceIndexGlobalId}")]
+        public HttpResponseMessage UpdateProductPriceIndexGlobal(int productPriceIndexGlobalId, [FromBody] ProductPriceIndexGlobalViewModel model)
+        {
+            if (model == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "product price index not found" });
+            }
+
+            try
+            {
+                var token = new TokenDecryptionHelper();
+                model.userBranchId = (short)token.GetBranchId;
+                model.userIPAddress = HttpContext.Current.Request.UserHostAddress;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+                model.createdBy = token.GetStaffId;
+                model.companyId = token.GetCompanyId;
+
+                repo.UpdateProductPriceIndexGlobal(productPriceIndexGlobalId, model);
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = productPriceIndexGlobalId, message = "global interest rate change has been updated successfully and sent for Approval" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
 
         [HttpGet]
         [ClaimsAuthorization]

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using FintrakBanking.Common.CustomException;
+using System.Text;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -81,6 +82,29 @@ namespace FintrakBanking.APICore.Controllers
             try
             {
                 var staffInfo = repo.GetStaffAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
+
+                if (staffInfo == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = staffInfo.ToList() });
+            }
+            catch (SecureException ex)
+            {
+                errorLogger.LogError(ex, Common.CommonHelpers.GetUserIP(), token.GetUsername);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff-delete/approvals/temp")]
+        public HttpResponseMessage GetStaffDeleteRequestAwaitingApprovals()
+        {
+            try
+            {
+                var staffInfo = repo.GetStaffDeleteRequestAwaitingApprovals(token.GetStaffId, token.GetCompanyId);
 
                 if (staffInfo == null)
                 {
@@ -405,17 +429,18 @@ namespace FintrakBanking.APICore.Controllers
                     BranchId = token.GetBranchId,
                     companyId = token.GetCompanyId,
                     staffId = token.GetStaffId,
+                    createdBy = token.GetStaffId,
                     applicationUrl = HttpContext.Current.Request.Path,
                     userIPAddress = Request.RequestUri.Host
                 };
-                var staff = repo.DeleteStaff(staffId, user);
+                var staff = repo.LogDeleteRequestStaff(staffId, user);
                 if (staff)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = staff, message = "staff has been created successfully" });
+                        new { success = true, result = staff, message = "Staff delete has been successfully submited for approval " });
                 }
                 return Request.CreateResponse(HttpStatusCode.OK,
-                    new { success = false, message = "staff not created" });
+                    new { success = false, message = "Deleting staff record failed." });
             }
             catch (SecureException ex)
             {
@@ -496,7 +521,54 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("staff-delete/approval")]
+        public HttpResponseMessage GoForStaffDeleteApproval([FromBody]ApprovalViewModel entity)
+        {
+            try
+            {
+                entity.BranchId = token.GetBranchId;
+                entity.companyId = token.GetCompanyId;
+                entity.staffId = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.userIPAddress = Request.RequestUri.Host;
+
+                var data = repo.GoForStaffDeleteApproval(entity);
+
+                if (data == 1)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Deleting of staff has been approved successfully and staff has been deleted from the system." });
+                }
+                else if (data == 2)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = true, message = "Staff delete has been disapproved." });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, message = "Operation successful, request has been routed to the next approving office" });
+                }
+
+            }
+            catch (ConditionNotMetException ce)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ce.Message });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message =ex.Message });
+            }
+            catch (Exception)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
+            }
+        }
+
+        [HttpPost] [ClaimsAuthorization]
         [Route("staff/bulk-approval")]
         public HttpResponseMessage GoForBulkApproval([FromBody]List<ApprovalViewModel> entity)
         {
@@ -723,6 +795,10 @@ namespace FintrakBanking.APICore.Controllers
                 //{
                 //    return Request.CreateResponse(HttpStatusCode.BadRequest, "File Type is invalid.");
                 //}
+                
+
+                byte[] pass = Convert.FromBase64String(provider.FormData["loginStaffPassCode"]);
+                string password = Encoding.UTF8.GetString(pass);
 
                 var entity = new StaffDocumentViewModel
                 {
@@ -730,7 +806,9 @@ namespace FintrakBanking.APICore.Controllers
                     documentTitle = provider.FormData["documentTitle"],
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
-                };
+                    loginStaffPassword= password,
+                    loginStaffCode = token.GetUsername
+                 };
 
                 if (!provider.FileStreams.Any())
                 {
@@ -744,6 +822,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.branchId = (short)token.GetBranchId;
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
+                
 
                 var file = provider.Contents.FirstOrDefault();
                 var buffer = await file.ReadAsByteArrayAsync();

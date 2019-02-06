@@ -18,6 +18,8 @@ namespace FintrakBanking.Entities.Models
         [StringLength(50)]
         public string ACCOUNTNUMBER { get; set; }
 
+        public string ACCOUNTNAME { get; set; }
+
         public bool ISOWNEDBYCUSTOMER { get; set; }
 
         //[Column(TypeName = "money")]

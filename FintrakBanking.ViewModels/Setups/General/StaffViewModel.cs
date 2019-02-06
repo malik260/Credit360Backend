@@ -24,7 +24,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MiddleName { get; set; }
-        public int JobTitleId { get; set; }
+        public int? JobTitleId { get; set; }
         public int staffRoleId { get; set; }
         public string staffRoleName { get; set; }
         public string Phone { get; set; }
@@ -193,6 +193,9 @@ namespace FintrakBanking.ViewModels.Setups.General
         public short? departmentName { get; set; }
         public int rankId { get; set; }
         public string rankName { get; set; }
+        public string loginStaffCode { get; set; }
+        public string loginStaffPassword { get; set; }
+
     }
     public class StaffSensitivityLevelViewModel
     {

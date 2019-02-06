@@ -69,6 +69,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Finacle\CWGAPI\StaffDetails.cs" />
     <Compile Include="StagingDatabase\Finacle\StaffMIS.cs" />
     <Compile Include="TwoFactorAuthIntegration\TwoFactorAuthIntegrationService.cs" />
     <Compile Include="Connected Services\CRCWebService\Reference.cs">

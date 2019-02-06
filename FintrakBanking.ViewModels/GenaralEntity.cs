@@ -24,6 +24,7 @@ namespace FintrakBanking.ViewModels
         public int staffId { get; set; }
         public string username { get; set; }
         public string passCode { get; set; }
+
     }
 
 }

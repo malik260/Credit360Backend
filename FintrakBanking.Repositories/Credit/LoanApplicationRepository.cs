@@ -2679,6 +2679,7 @@ namespace FintrakBanking.Repositories.Credit
             };
 
         }
+
         public bool ValidateInvoiceDetails(ValidateNumberViewModel data)
         {
             //var dat = (from a in context.TBL_LOAN_APPLICATION_DETL_INV
@@ -3904,5 +3905,6 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+  
     }
 }

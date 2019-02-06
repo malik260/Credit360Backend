@@ -14,6 +14,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using FintrakBanking.Interfaces.CreditLimitValidations;
 using System.Data.Entity;
+using FintrakBanking.ViewModels.Setups.General;
+using System.Configuration;
+using FintrakBanking.Common;
+using FintrakBanking.Interfaces.AlertMonitoring;
 
 namespace FintrakBanking.Repositories.Credit
 {
@@ -27,13 +31,15 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
         private ICreditLimitValidationsRepository limitValidation;
+        private IEmailAlertLogger emailLogger;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
             IGeneralSetupRepository general, 
             IAuditTrailRepository audit, 
             IWorkflow workflow,
-            ICreditLimitValidationsRepository limitValidation
+            ICreditLimitValidationsRepository limitValidation,
+            IEmailAlertLogger _emailLogger
             )
         {
             this.context = context;
@@ -41,6 +47,7 @@ namespace FintrakBanking.Repositories.Credit
             this.audit = audit;
             this.workflow = workflow;
             this.limitValidation = limitValidation;
+            emailLogger = _emailLogger;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -308,7 +315,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            // workflow.Disputed = appl.DISPUTED; // buggy
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
@@ -323,6 +329,17 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+            // workflow.Disputed = appl.DISPUTED; // buggy
+
+            if (model.forwardAction == 11 || model.forwardAction == 12)
+            {
+                workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
+                workflow.NextLevelId = dictionary["levelId"];
+                workflow.ToStaffId = dictionary["staffId"];
+            }
+
+            string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
 
             var placeholders = new AlertPlaceholders();
             if (appl.CUSTOMERGROUPID == null)
@@ -334,6 +351,7 @@ namespace FintrakBanking.Repositories.Credit
                 placeholders.customerName = "<br />CUSTOMER NAME: " + appl.TBL_CUSTOMER_GROUP.GROUPNAME;
             }
             placeholders.referenceNumber = "<br />APPLICATION REFERENCENUMBER: " + appl.APPLICATIONREFERENCENUMBER;
+            placeholders.facilityType = "<br />FACILITY INFORMATION: " + facilityInformationMarkup;
             placeholders.operationName = "<br />OPERATION NAME: Loan Origination";
             placeholders.branchName = "<br />BRANCH NAME: " + appl.TBL_BRANCH.BRANCHNAME;
             workflow.Placeholders = placeholders;
@@ -404,7 +422,23 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     appl.APPROVEDDATE = applicationDate;
                     appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
+
+
+                    //Send Email to Customer
+                    if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+                    {
+                        SendCustomerLoanApprovalEmail(model.applicationId, model.companyId);
+
+                    }
+                    else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                    {
+                        SendCustomerLoanDisapprovedEmail(model.applicationId, model.companyId);
+                    }
+
                 }
+
+                //applid, 
+
                 if (model.forwardAction == (int)ApprovalStatusEnum.Disapproved) { appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.ApplicationRejected; }
                 if (appl.NEXTAPPLICATIONSTATUSID != null && appl.FINALAPPROVAL_LEVELID != null) { appl.APPLICATIONSTATUSID = (short)appl.NEXTAPPLICATIONSTATUSID; } // may be redundant!!!
                 // MEMORANDUM update
@@ -456,6 +490,41 @@ namespace FintrakBanking.Repositories.Credit
 
             //workflow.Response.success = true;
             return workflow.Response;
+        }
+
+        private Dictionary<string, int> GetRepresentStepdownItems(int applicationId, int action, int operationId)
+        {
+            int levelId;
+            int staffId;
+
+            var trails = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                    && x.TARGETID == applicationId
+                    && x.FROMAPPROVALLEVELID != null
+                    && x.TOAPPROVALLEVELID != null
+                ).OrderBy(x => x.APPROVALTRAILID);
+
+            if (action == 11)
+            {
+                var traill = trails.Join(context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELTYPEID == 2)
+                        , t => t.FROMAPPROVALLEVELID, l => l.APPROVALLEVELID, (t, l) => new { t, l })
+                        .Select(x => new { x.t }).First();
+                staffId = traill.t.REQUESTSTAFFID;
+                levelId = (int)traill.t.FROMAPPROVALLEVELID;
+            }
+            else
+            {
+                var trail = trails.FirstOrDefault();
+                staffId = trail.REQUESTSTAFFID;
+                levelId = (int)trail.FROMAPPROVALLEVELID;
+            }
+
+            if (levelId < 1 || staffId < 1) throw new SecureException("Error while resolving receiving staff.");
+
+            var data = new Dictionary<string, int>();
+            data.Add("levelId", levelId);
+            data.Add("staffId", staffId);
+
+            return data;
         }
 
         private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date, short? decision, short status)
@@ -1263,6 +1332,16 @@ namespace FintrakBanking.Repositories.Credit
                 var items = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.LOANAPPLICATIONID == appl.LOANAPPLICATIONID && x.DELETED == false);
                 var approvedAmount = items.Where(x => x.STATUSID != (short)ApprovalStatusEnum.Disapproved).Sum(x => x.APPROVEDAMOUNT);
                 appl.APPROVEDAMOUNT = approvedAmount;
+
+                //Send Email to Customer
+                if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
+                {
+                    SendCustomerLoanApprovalEmail(model.applicationId,model.companyId);
+
+                }else if(appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    SendCustomerLoanDisapprovedEmail(model.applicationId, model.companyId);
+                }
             }
 
             // Audit Section ---------------------------
@@ -1701,7 +1780,6 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion LMS APPROVAL
 
-
         public LoanApplicationDetailsViewModel GetLMSLoanApplicationDetail(int applicationId)
         {
             var details = new LoanApplicationDetailsViewModel();
@@ -1796,5 +1874,101 @@ namespace FintrakBanking.Repositories.Credit
             if (((result.limit == 0) || ((double)amount + result.outstandingBalance) <= result.outstandingBalance) == false)
                 throw new SecureException("Customer limit validation failed!");
         }
+        private void SendCustomerLoanApprovalEmail(int loanApplicationId, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId)
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                        where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        select new LoanApplicationDetailViewModel
+                        {
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            email = c.EMAILADDRESS,
+                            applicationReferenceNumber = a.RELATEDREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            approvalStatusId = a.APPROVALSTATUSID
+                        }).Distinct().ToList();
+
+
+            
+
+            foreach(var customer in data)
+            {
+               
+                string referenceNo = customer.applicationReferenceNumber;
+                var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                string messageSubject = "APPROVAL FOR LOAN APPLICATION";
+
+                emailLogger.ComposeEmail(referenceNo,successEmailBody, messageSubject,customer.email,false);
+
+            }
+                
+        }
+        private void SendCustomerLoanDisapprovedEmail(int loanApplicationId, int companyId)
+        {
+            var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId)
+                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
+                        join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
+                        where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        select new LoanApplicationDetailViewModel
+                        {
+                            customerName = c.FIRSTNAME + " " + c.LASTNAME,
+                            email = c.EMAILADDRESS,
+                            applicationReferenceNumber = a.RELATEDREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            approvalStatusId = a.APPROVALSTATUSID
+                        }).Distinct().ToList();
+
+            foreach (var customer in data)
+            {
+                string referenceNo = customer.applicationReferenceNumber;
+
+                var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
+                string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
+
+                emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);
+
+            }             
+        }
+
+        private string GetFacilityInformationMarkup(int applicationId)
+        {
+            var facilities = context.TBL_LOAN_APPLICATION_DETAIL.Where(x
+                    => x.LOANAPPLICATIONID == applicationId
+                    && x.DELETED == false 
+                    && x.STATUSID != (int)ApprovalStatusEnum.Disapproved
+                ).ToList();
+
+            var result = String.Empty;
+            var n = 0;
+            result = result + $@"
+                <table border=1>
+                    <tr>
+                        <th>S/N</th>
+                        <th>Facility Type</th>
+                        <th>Amount</th>
+                        <th>Rate</th>
+                        <th>Tenor</th>
+                    </tr>
+                 ";
+            foreach (var f in facilities)
+            {
+                n++;
+                result = result + $@"
+                    <tr>
+                        <td>{n}</td>
+                        <td>{f.TBL_PRODUCT1.PRODUCTNAME}</td>
+                        <td>{f.APPROVEDAMOUNT}</td>
+                        <td>{f.APPROVEDINTERESTRATE}</td>
+                        <td>{f.APPROVEDTENOR}</td>
+                    </tr>
+                ";
+            }
+            result = result + $"</table>";
+            return result;
+        }
     }
+
+   
 }

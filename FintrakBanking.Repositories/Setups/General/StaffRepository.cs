@@ -31,6 +31,7 @@ namespace FintrakBanking.Repositories.Setups.General
         private FinTrakBankingContext context;
         private IAuditTrailRepository auditTrail;
         private IGeneralSetupRepository genSetup;
+        private IAdminRepository adminRepo;
         private IWorkflow workflow;
         private IApprovalLevelStaffRepository level;
         private FinTrakBankingDocumentsContext documentsContext;
@@ -47,6 +48,7 @@ namespace FintrakBanking.Repositories.Setups.General
                                IApprovalLevelStaffRepository _level,
                                FinTrakBankingDocumentsContext _documentsContext,
                                IStaffMIS _staffMIS,
+                               IAdminRepository _adminRepo,
         FinTrakBankingStagingContext _stagingContext)
         {
             this.context = _context;
@@ -57,6 +59,7 @@ namespace FintrakBanking.Repositories.Setups.General
             documentsContext = _documentsContext;
             stagingContext = _stagingContext;
             staffMIS = _staffMIS;
+            adminRepo = _adminRepo;
             profile_Setting = _context.TBL_PROFILE_SETTING.FirstOrDefault();
         }
 
@@ -112,6 +115,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var staff = (from c in context.TBL_STAFF
                          join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
                          join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                         where c.DELETED == false
                          //join dept in context.TBL_DEPARTMENT on c.TBL_DEPARTMENT_UNIT.DEPARTMENTID equals dept.DEPARTMENTID
                          select new StaffInfoViewModel()
                          {
@@ -508,29 +512,234 @@ namespace FintrakBanking.Repositories.Setups.General
             }
         }
 
-        public bool DeleteStaff(int staffId, UserInfo user)
+        public bool LogDeleteRequestStaff(int staffId, UserInfo user)
         {
             var targetStaff = context.TBL_STAFF.Find(staffId);
 
+            var existingApprovalEntry = context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == targetStaff.STAFFCODE && x.ISCURRENT == true && x.OPERATION.ToLower() == "delete").ToList();
+
+            if(existingApprovalEntry.Count() <= 0)
+            {
+                var newTempStaff = new TBL_TEMP_STAFF();
+
+                newTempStaff.ISCURRENT = true;
+                newTempStaff.JOBTITLEID = targetStaff.JOBTITLEID;
+                newTempStaff.LASTNAME = targetStaff.LASTNAME;
+                newTempStaff.FIRSTNAME = targetStaff.FIRSTNAME;
+                newTempStaff.MIDDLENAME = targetStaff.MIDDLENAME;
+                newTempStaff.LOAN_LIMIT = targetStaff.LOAN_LIMIT;
+                newTempStaff.LASTUPDATEDBY = targetStaff.LASTUPDATEDBY;
+                newTempStaff.ADDRESS = targetStaff.ADDRESS;
+                newTempStaff.ADDRESSOFNOK = targetStaff.ADDRESSOFNOK;
+                newTempStaff.APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending;
+                newTempStaff.BRANCHID = targetStaff.BRANCHID;
+                newTempStaff.CITYID = targetStaff.CITYID;
+                newTempStaff.COMMENT = targetStaff.COMMENT;
+                newTempStaff.COMPANYID = targetStaff.COMPANYID;
+                newTempStaff.CREATEDBY = targetStaff.CREATEDBY;
+                newTempStaff.STAFFCODE = targetStaff.STAFFCODE;
+                newTempStaff.STAFFROLEID = targetStaff.STAFFROLEID;
+                newTempStaff.MISINFOID = targetStaff.MISINFOID;
+                newTempStaff.NOKRELATIONSHIP = targetStaff.NOKRELATIONSHIP;
+                newTempStaff.PHONE = targetStaff.PHONE;
+                newTempStaff.PHONEOFNOK = targetStaff.PHONEOFNOK;
+                newTempStaff.STATEID = targetStaff.STATEID;
+                newTempStaff.SUPERVISOR_STAFFID = targetStaff.SUPERVISOR_STAFFID;
+                newTempStaff.EMAILOFNOK = targetStaff.EMAILOFNOK;
+                newTempStaff.EMAIL = targetStaff.EMAIL;
+                newTempStaff.DEPARTMENTUNITID = targetStaff.DEPARTMENTUNITID;
+                newTempStaff.DATETIMEUPDATED = targetStaff.DATETIMEUPDATED;
+                newTempStaff.DATETIMECREATED = targetStaff.DATETIMECREATED;
+                newTempStaff.DATEOFBIRTH = targetStaff.DATEOFBIRTH;
+                newTempStaff.CUSTOMERSENSITIVITYLEVELID = targetStaff.CUSTOMERSENSITIVITYLEVELID;
+                newTempStaff.OPERATION = "Delete";
+
+                context.TBL_TEMP_STAFF.Add(newTempStaff);
+
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    if (context.SaveChanges() > 0 == false)
+                    {
+                        trans.Rollback();
+                        throw new ConditionNotMetException("User delete failed. Contact Administrator");
+                    }
+
+
+                    workflow.StaffId = user.createdBy;
+                    workflow.CompanyId = user.companyId;
+                    workflow.StatusId = (int)ApprovalStatusEnum.Pending;
+                    workflow.TargetId = newTempStaff.TEMPSTAFFID;
+                    workflow.Comment = "Delete Staff";
+                    workflow.OperationId = (int)OperationsEnum.DeleteStaff;
+                    workflow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                    workflow.ExternalInitialization = true;
+                    workflow.LogActivity();
+
+                    if(context.SaveChanges() > 0 == false)
+                    {
+                        trans.Rollback();
+                        throw new ConditionNotMetException("User delete failed. Contact Administrator");
+                    }
+                    trans.Commit();
+                    return true;
+
+                }
+            }
+            else
+            {
+                throw new ConditionNotMetException("This staff record is currently undergoing approval");
+            }
+        }
+
+        public int GoForStaffDeleteApproval(ApprovalViewModel entity)
+        {
+            using (var trans = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    workflow.StaffId = entity.staffId;
+                    workflow.CompanyId = entity.companyId;
+                    workflow.StatusId = ((short)entity.approvalStatusId == (short)ApprovalStatusEnum.Approved) ? (short)ApprovalStatusEnum.Processing : (short)entity.approvalStatusId;
+                    workflow.TargetId = entity.targetId;
+                    workflow.Comment = entity.comment;
+                    workflow.OperationId = (int)OperationsEnum.DeleteStaff;
+                    workflow.ExternalInitialization = false;
+                    workflow.DeferredExecution = true;
+                    workflow.LogActivity();
+
+                    context.SaveChanges();
+
+                    if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
+                    {
+                        var staff = context.TBL_TEMP_STAFF.Find(entity.targetId);
+                        staff.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                        context.SaveChanges();
+                        trans.Commit();
+                        return 2;
+                    }
+
+                    if (workflow.NewState == (int)ApprovalState.Ended)
+                    {
+                        var response = DeleteStaff(entity.targetId, (short)workflow.StatusId, entity);
+
+                        if (response)
+                        {
+                            trans.Commit();
+                            return 1;
+                        }
+                        else return 3;
+                    }
+                    else
+                    {
+                        trans.Commit();
+                    }
+
+                    return 0;
+                }
+                catch (Exception ex)
+                {
+                    trans.Rollback();
+                    throw new SecureException(ex.Message);
+                }
+            }
+        }
+
+        private bool DeleteStaff(int staffId, int approvalStatusId, ApprovalViewModel entity)
+        {
+
+            var targetStaff = context.TBL_STAFF.Find(staffId);
             targetStaff.DELETED = true;
+            targetStaff.DELETEDBY = entity.createdBy;
+            targetStaff.DATETIMEDELETED = DateTime.Now;
+
+            var userAccount = context.TBL_PROFILE_USER.Where(x => x.STAFFID == targetStaff.STAFFID).FirstOrDefault();
+            userAccount.ISACTIVE = false;
+            userAccount.ISLOCKED = true;
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
             {
                 AUDITTYPEID = (short)AuditTypeEnum.StaffDeleted,
-                STAFFID = user.staffId,
-                BRANCHID = (short)user.BranchId,
-                DETAIL = $"Deleted Staff '{targetStaff?.FIRSTNAME}' with code'{targetStaff?.STAFFCODE}'",
-                IPADDRESS = user.userIPAddress,
-                URL = user.applicationUrl,
+                STAFFID = entity.createdBy,
+                BRANCHID = (short)entity.BranchId,
+                DETAIL = $"Approved Deleted Staff '{targetStaff?.FIRSTNAME}' with code'{targetStaff?.STAFFCODE}'",
+                IPADDRESS = entity.userIPAddress,
+                URL = entity.applicationUrl,
                 APPLICATIONDATE = genSetup.GetApplicationDate(),
                 SYSTEMDATETIME = DateTime.Now
             };
 
             this.auditTrail.AddAuditTrail(audit);
             //end of Audit section -------------------------------
-            return this.SaveAll();
+            return context.SaveChanges() > 0;
         }
+
+
+        public IEnumerable<StaffInfoViewModel> GetStaffDeleteRequestAwaitingApprovals(int staffId, int companyId)
+        {
+            var ids = genSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.DeleteStaff).ToList();
+
+            var staff = (from c in context.TBL_TEMP_STAFF
+                         join br in context.TBL_BRANCH on c.BRANCHID equals br.BRANCHID
+                         join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
+                         join t in context.TBL_APPROVAL_TRAIL on c.TEMPSTAFFID equals t.TARGETID
+                         where
+                             (t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending || t.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing)
+                             && c.ISCURRENT == true
+                             && t.RESPONSESTAFFID == null
+                             && t.OPERATIONID == (int)OperationsEnum.DeleteStaff
+                         && ids.Contains((int)t.TOAPPROVALLEVELID) 
+                         && c.OPERATION.ToLower() == "delete"
+                         && c.COMPANYID ==companyId
+                         select new StaffInfoViewModel
+                         {
+                             DelegateName = context.TBL_STAFF
+                                                     .Where(x => x.STAFFID == c.TEMPSTAFFID)
+                                                     .Select(x => new { name = x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME })
+                                                     .FirstOrDefault().name ?? "",
+                             StaffId = c.TEMPSTAFFID,
+                             Address = c.ADDRESS,
+                             companyId = coy.COMPANYID,
+                             AddressOfNok = c.ADDRESSOFNOK,
+                             BranchId = br.BRANCHID,
+                             Comment = c.COMMENT,
+                             customerSensitivityLevelId = c.CUSTOMERSENSITIVITYLEVELID,
+                             DateOfBirth = c.DATEOFBIRTH ?? DateTime.Now,
+                             DepartmentId = c.TBL_DEPARTMENT_UNIT.DEPARTMENTID,
+                             Email = c.EMAIL,
+                             EmailOfNok = c.EMAILOFNOK,
+                             Gender = c.GENDER,
+                             GenderOfNok = c.GENDEROFNOK,
+                             JobTitleId = c.JOBTITLEID,
+                             JobTitleName = c.TBL_STAFF_JOBTITLE.JOBTITLENAME,
+                             MisinfoId = c.MISINFOID,
+                             MisInfoCode = c.TBL_MIS_INFO.MISCODE,
+                             NameOfNok = c.NAMEOFNOK,
+                             NokrelationShip = c.NOKRELATIONSHIP,
+                             Phone = c.PHONE,
+                             PhoneOfNok = c.PHONEOFNOK,
+                             StateId = c.STATEID,
+                             StateName = c.TBL_CITY.TBL_LOCALGOVERNMENT.TBL_STATE.STATENAME,
+                             CityId = (int)c.CITYID,
+                             CityName = c.TBL_CITY.CITYNAME,
+                             FirstName = c.FIRSTNAME,
+                             MiddleName = c.MIDDLENAME,
+                             LastName = c.LASTNAME,
+                             StaffCode = c.STAFFCODE,
+                             staffRoleId = c.STAFFROLEID,
+                             staffRoleName = c.TBL_STAFF_ROLE.STAFFROLENAME,
+                             BranchName = br.BRANCHNAME,
+                             departmentName = c.TBL_DEPARTMENT_UNIT.TBL_DEPARTMENT.DEPARTMENTNAME,
+                             departmentUnitId = c.DEPARTMENTUNITID,
+                             departmentUnitName = c.TBL_DEPARTMENT_UNIT.DEPARTMENTUNITNAME,
+
+                             OperationId = (short)OperationsEnum.DeleteStaff,
+                             SensitivityLevel = context.TBL_CUSTOMER_SENSITIVITY_LEVEL.FirstOrDefault(x => x.CUSTOMERSENSITIVITYLEVELID == c.CUSTOMERSENSITIVITYLEVELID).DESCRIPTION
+                         }).ToList();
+
+            return staff;
+        }
+
 
         public IEnumerable<StaffViewModel> GetStaffName()
         {
@@ -1275,7 +1484,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 COMPANYID = staffModel.companyId,
                 LASTNAME = staffModel.LastName,
                 STAFFCODE = staffModel.StaffCode,
-                JOBTITLEID = staffModel.JobTitleId,
+                //JOBTITLEID = staffModel.JobTitleId,
                 STAFFROLEID = staffModel.staffRoleId,
                 SUPERVISOR_STAFFID = staffModel.supervisorStaffId,
                 ADDRESS = staffModel.Address,
@@ -1286,7 +1495,7 @@ namespace FintrakBanking.Repositories.Setups.General
                 CUSTOMERSENSITIVITYLEVELID = staffModel.customerSensitivityLevelId,
                 DATEOFBIRTH = staffModel.DateOfBirth,
                 DATETIMECREATED = DateTime.Now,
-                DEPARTMENTUNITID = staffModel.departmentUnitId,
+                //DEPARTMENTUNITID = staffModel.departmentUnitId,
                 EMAIL = staffModel.Email,
                 EMAILOFNOK = staffModel.EmailOfNok,
                 GENDER = staffModel.Gender,
@@ -1320,8 +1529,14 @@ namespace FintrakBanking.Repositories.Setups.General
 
             auditTrail.AddAuditTrail(audit);
             context.TBL_TEMP_STAFF.Add(staff);
-            output = context.SaveChanges() > 0;
-
+            try
+            {
+                output = context.SaveChanges() > 0;
+            }
+            catch(Exception ex)
+            {
+                var cd = ex;
+            }
             user.TEMPSTAFFID = staff.TEMPSTAFFID;
             context.TBL_TEMP_PROFILE_USER.Add(user);
 
@@ -1698,6 +1913,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var failedStaffInfo = new List<StaffInfoViewModel>();
 
             var staffBulkFeedbackViewModel = new staffBulkFeedbackViewModel();
+            var setupGlobal = context.TBL_SETUP_GLOBAL.FirstOrDefault();
 
             // Loads a spreadsheet from a file with the specified path
             //Limited unlicenced key : SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY"); 
@@ -1717,16 +1933,19 @@ namespace FintrakBanking.Repositories.Setups.General
                 var rowSuccess = true;
                 int excelRowPosition = 1;
                 StaffInfoViewModel staffRowData = new StaffInfoViewModel();
+                Users getADDetails = new Users();
+                
                 for (int i = range.FirstColumnIndex; i <= range.LastColumnIndex; i++)
                 {
                     ExcelCell cell = range[j - range.FirstRowIndex, i - range.FirstColumnIndex];
+             
 
                     string cellName = CellRange.RowColumnToPosition(j, i);
                     string cellRow = ExcelRowCollection.RowIndexToName(j);
                     string cellColumn = ExcelColumnCollection.ColumnIndexToName(i);
                     excelRowPosition = Convert.ToInt32(cellRow);
                     if (Convert.ToInt32(cellRow) == 1) continue;
-
+                   
                     switch (cellColumn)
                     {
                         case "A":
@@ -1740,13 +1959,31 @@ namespace FintrakBanking.Repositories.Setups.General
                         //break;
                         case "B":
                             staffRowData.StaffCode = cell.Value.ToString();
-                            // staffRowData.user.username = cell.Value.ToString();
-                            // staffRowData.user.password = cell.Value.ToString();
                             if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
                             {
                                 rowSuccess = false;
                                 staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
                             }
+                            if (setupGlobal.USE_ACTIVE_DIRECTORY)
+                            {
+                                getADDetails = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                if (getADDetails == null)
+                                {
+                                    rowSuccess = false;
+                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                                }
+                                else
+                                {
+                                    if (context.TBL_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any() || context.TBL_TEMP_STAFF.Where(x => x.STAFFCODE == staffRowData.StaffCode).Any())
+                                    {
+                                        rowSuccess = false;
+                                        staffRowData.message = staffRowData.message + "Staff Code Already Exist. ";
+                                    }
+                                }
+                            }
+                            // staffRowData.user.username = cell.Value.ToString();
+                            // staffRowData.user.password = cell.Value.ToString();
+                           
                             break;
                         case "C":
                             var roleInfo = context.TBL_STAFF_ROLE.Where(x => x.STAFFROLECODE == cell.Value.ToString()).FirstOrDefault();
@@ -1783,23 +2020,71 @@ namespace FintrakBanking.Repositories.Setups.General
                             }
                             break;
                         case "E":
+                            if(setupGlobal.USE_ACTIVE_DIRECTORY)
+                            {
+                                var firstName = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                if (firstName == null)
+                                {
+                                    rowSuccess = false;
+                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                                }
+                                else
+                                {
+                                    staffRowData.FirstName = firstName.firstName;
+                                }
+                            }
+                            else
+                            {
                             staffRowData.FirstName = cell.Value.ToString();
                             if (staffRowData.FirstName == null)
                             {
                                 rowSuccess = false;
                                 staffRowData.message = staffRowData.message + $"Firstname cannot be null. ";
                             }
+                            }                           
                             break;
                         case "F":
-                            staffRowData.LastName = cell.Value.ToString();
-                            if (staffRowData.LastName == null)
+                            if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
                             {
-                                rowSuccess = false;
-                                staffRowData.message = staffRowData.message + $"LastName cannot be null. ";
+                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                if (record == null)
+                                {
+                                    rowSuccess = false;
+                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                                }
+                                else
+                                {
+                                    staffRowData.LastName = record.lastName;
+                                }
                             }
+                            else
+                            {
+                                staffRowData.LastName = cell.Value.ToString();
+                                if (staffRowData.LastName == null)
+                                {
+                                    rowSuccess = false;
+                                    staffRowData.message = staffRowData.message + $"LastName cannot be null. ";
+                                }
+                            }                           
                             break;
                         case "G":
-                            staffRowData.MiddleName = cell.Value.ToString();
+                            if (setupGlobal.USE_ACTIVE_DIRECTORY == true)
+                            {
+                                var record = adminRepo.GetStaffActiveDirectoryDetails(staffRowData.StaffCode, model.loginStaffCode, model.loginStaffPassword);
+                                if (record != null)
+                                {
+                                    staffRowData.MiddleName = record.middleName;
+                                }
+                                else
+                                {
+                                    rowSuccess = false;
+                                    staffRowData.message = staffRowData.message + "Staff Code Doesnt Exist in Active Directory. ";
+                                }
+                            }
+                            else
+                            {
+                                staffRowData.MiddleName = cell.Value.ToString();
+                            }
                             break;
                         case "H":
                             staffRowData.Email = cell.Value.ToString();

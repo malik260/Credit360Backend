@@ -36,6 +36,8 @@ namespace FintrakBanking.ViewModels.Credit
 
         public int? tenor { get; set; }
 
+        public int? prepaymentMethodId { get; set; }
+
         public int? cASA_AccountId { get; set; }
 
         public decimal? overDraftTopup { get; set; }
@@ -74,6 +76,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string approvalStatus { get; set; }
         public int loanApplicationId { get; set; }
         public int operationId { get; set; }
+        public IEnumerable<feeDetails> fees { get; set; }
+
     }
 
     public class LoanReviewIrregularScheduleViewModel
@@ -251,6 +255,8 @@ public int? newInterestFrequencyTypeId { get; set; }
         public DateTime? newMaturityDate { get; set; }
         public int? loanSystemTypeId { get; set; }
         public int? maturityInstructionTypeId { get; set; }
+
+        public List<feeDetails> fees { get; set; }
     }
 
 
@@ -480,6 +486,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public short loanSystemTypeId { get; set; }
         public short approvalStatusId { get; set; }
         public int? loanReviewOperationsId { get; set; }
+        public IEnumerable<feeDetails> fees { get; set; }
 
     }
 }
