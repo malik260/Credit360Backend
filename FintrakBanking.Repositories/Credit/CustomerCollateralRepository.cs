@@ -521,8 +521,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 isForiegnCurrencyFacility = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CURRENCYID != company.CURRENCYID).Any();
             }
-
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)
+            
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.COLLATERALCUSTOMERID == customerId)
                 .GroupJoin(
                     context.TBL_LOAN_COLLATERAL_MAPPING,
                     c => c.COLLATERALCUSTOMERID,
@@ -555,8 +555,9 @@ namespace FintrakBanking.Repositories.Credit
                         allowApplicationMapping = typeIds.Contains((short)c.c.COLLATERALTYPEID),
                         requireInsurancePolicy = c.c.TBL_COLLATERAL_TYPE.REQUIREINSURANCEPOLICY,
                         exchangeRate = c.c.EXCHANGERATE,
-                        availableValue = 0
-                    })
+                        availableValue = 0,
+                        accountNumber = context.TBL_COLLATERAL_CASA.FirstOrDefault(x => x.COLLATERALCUSTOMERID == customerId).ACCOUNTNUMBER,
+        })
                     .ToList()
                     .GroupBy(x => x.collateralId).Select(g => g.First())
                     ;

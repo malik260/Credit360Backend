@@ -11,19 +11,18 @@ using System.Web.UI.WebControls;
 
 namespace FintrakBanking.APICore.Reports.ReportViews
 {
-    public partial class CashBackedBondAndGuarantee : System.Web.UI.Page
+    public partial class CreditScheduleReport : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
             if (!IsPostBack)
             {
                 try
                 {
                     DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                     DateTime endDate = DateTime.ParseExact(Request.QueryString["endDate"], "dd-MM-yyyy", null);
+
                     int companyId = Int32.Parse(Request.QueryString["companyId"]);
-                    int productClassId = Int32.Parse(Request.QueryString["productClassId"]);
                     //short branchId = short.Parse(Request.QueryString["branchId"]);
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
@@ -51,19 +50,20 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         this.ReportViewer.LocalReport.Refresh();
                         return;
                     }
-                    LoanReportObjects CashBackedBondAndGuaran = new LoanReportObjects();
-                    var data = CashBackedBondAndGuaran.CashBackedBondAndGuarantee(startDate, endDate, companyId);
+
+                    LoanReportObjects creditScheduleReport = new LoanReportObjects();
+                    var data = creditScheduleReport.CreditScheduleReport(startDate, endDate, companyId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();
                     reportDataSource.Value = data;
-                    reportDataSource.Name = "CashBackedBondAndGuarantee";
+                    reportDataSource.Name = "CreditScheduleReport";
 
-                    ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
-                    ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
+                    //   ReportParameter sDate = new ReportParameter("startDate", startDate.ToString());
+                    //  ReportParameter eDate = new ReportParameter("endDate", endDate.ToString());
 
                     this.ReportViewer.LocalReport.DataSources.Add(reportDataSource);
-                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/CashBackedBondAndGuarantee.rdlc");
+                    this.ReportViewer.LocalReport.ReportPath = Server.MapPath("~/Reports/Report/CreditScheduleReport.rdlc");
                     //ReportViewer1.LocalReport.SetParameters(new ReportParameter[] { sDate, eDate });
                     ReportViewer.LocalReport.Refresh();
                 }
@@ -74,9 +74,6 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                     return;
                 }
             }
-
-
-
         }
     }
 }

@@ -64,6 +64,9 @@ namespace FintrakBanking.Entities.Models
 
         public bool APPROVALSTATUS { get; set; }
 
+        [StringLength(50)]
+        public string OPERATION { get; set; }
+
         public DateTime? DATEAPPROVED { get; set; }
 
         public bool ISCURRENT { get; set; }

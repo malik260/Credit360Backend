@@ -989,7 +989,7 @@ namespace FintrakBanking.Repositories.Credit
         //    return output;
 
         //}
-        
+
 
         private List<LoanPaymentSchedulePeriodicViewModel> GenerateIrregularPeriodicScheduleWithAmortisedCost(LoanPaymentScheduleInputViewModel loanInput)
         {
@@ -1721,6 +1721,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -1773,6 +1780,13 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
 
                     }
                     else
@@ -1797,6 +1811,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -1841,6 +1861,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -1860,6 +1887,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -1919,7 +1953,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
             }
-            
+
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
@@ -1973,6 +2007,12 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -2014,6 +2054,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
                     else
@@ -2038,6 +2084,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -2083,6 +2135,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -2102,6 +2161,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -2227,6 +2293,12 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -2281,6 +2353,13 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
 
                     }
@@ -2338,7 +2417,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
-
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
 
@@ -2382,6 +2466,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -2401,6 +2492,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -2507,7 +2605,7 @@ namespace FintrakBanking.Repositories.Credit
 
             //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, (numberOfPayments * numberOfPaymentsInAYear), numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
-           // double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            // double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, loan.INTERESTRATE / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
@@ -2563,6 +2661,12 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -2618,6 +2722,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
                     else
@@ -2673,7 +2783,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
-
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
 
                     }
@@ -2718,6 +2833,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -2737,6 +2859,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -2818,6 +2947,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculationNew);
@@ -2850,6 +2986,13 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                     }
                     else
                     {
@@ -2872,6 +3015,13 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -2916,6 +3066,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -2935,6 +3092,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -2986,7 +3150,17 @@ namespace FintrakBanking.Repositories.Credit
 
             //double annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, (int)frequencyId, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
 
-            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            double annuity = 0;
+
+            if (frequencyId == 8)
+            {
+                annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, (int)frequencyId, (int)loan.SCHEDULEDAYCOUNTCONVENTIONID);
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPeriodicRepaymentData.PAYMENTDATE, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
@@ -3022,6 +3196,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
@@ -3064,6 +3245,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
                     else
@@ -3088,6 +3275,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -3133,6 +3326,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -3152,6 +3352,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -3533,6 +3740,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -3578,6 +3792,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
                     else
@@ -3612,6 +3832,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -3676,6 +3902,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -3695,6 +3928,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -3777,6 +4017,12 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -3822,6 +4068,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
                     else
@@ -3877,6 +4129,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -3951,6 +4209,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -3970,6 +4235,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -4056,6 +4328,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -4100,6 +4379,13 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.endPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
+
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
 
                     }
@@ -4148,6 +4434,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -4212,6 +4504,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -4231,6 +4530,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -4317,6 +4623,12 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -4362,6 +4674,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
                     else
@@ -4409,6 +4727,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -4473,6 +4797,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -4492,6 +4823,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -4578,6 +4916,12 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -4623,6 +4967,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
                     else
@@ -4670,6 +5020,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                         finalCounter = initialCounter;
 
@@ -4734,6 +5090,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -4753,6 +5116,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -4848,7 +5218,17 @@ namespace FintrakBanking.Repositories.Credit
 
             //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, (numberOfPayments * numberOfPaymentsInAYear), numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
 
-            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            double annuity = 0;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+
 
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
@@ -4904,6 +5284,12 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -4959,6 +5345,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
                     else
@@ -5015,7 +5407,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
-
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                     }
 
@@ -5059,6 +5456,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -5078,6 +5482,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
@@ -5177,12 +5588,24 @@ namespace FintrakBanking.Repositories.Credit
 
             //if (principalRepaymentFrequency != 0)
             //{
-            double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            //double annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
             //}
             //else
             //{
             //    annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, ((loan.MATURITYDATE - effectiveDate).Days), GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
             //}
+
+            double annuity = 0;
+
+            if (interestRepaymentFrequency == 8)
+            {
+                annuity = PMT(interestRate, numberOfPayments, nextOpeningBalance, interestRepaymentFrequency, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID));
+            }
+            else
+            {
+                annuity = wct.LPMT(nextOpeningBalance, effectiveDate, interestRate / 100, nextPrincipalPeriodicDate, numberOfPayments, numberOfPaymentsInAYear, GetDaysInAYear((DayCountConventionEnum)loan.SCHEDULEDAYCOUNTCONVENTIONID), 0, null);
+            }
+
 
             TBL_LOAN_SCHEDULE_PERIODIC loanPeriodic = new TBL_LOAN_SCHEDULE_PERIODIC();
 
@@ -5237,6 +5660,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculationNew.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculationNew.paymentDate = loanPeriodic.PAYMENTDATE;
 
+
+                loanPeriodicCalculationNew.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculationNew.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculationNew.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
                 nextPaymentDate = nextPeriodicRepaymentData.PAYMENTDATE;
 
@@ -5293,6 +5723,13 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                     }
                     else
                     {
@@ -5348,6 +5785,12 @@ namespace FintrakBanking.Repositories.Credit
                         loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
 
+                        loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                        loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                        loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
 
 
                     }
@@ -5392,6 +5835,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.interestRate = loanPeriodic.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = loanPeriodic.PAYMENTDATE;
 
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)loanPeriodic.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)loanPeriodic.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)loanPeriodic.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)loanPeriodic.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)loanPeriodic.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = loanPeriodic.INTERESTRATE;
+
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 
             }
@@ -5411,6 +5861,13 @@ namespace FintrakBanking.Repositories.Credit
                 loanPeriodicCalculation.endPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
                 loanPeriodicCalculation.interestRate = _tblPeriodicSchedule.INTERESTRATE;
                 loanPeriodicCalculation.paymentDate = _tblPeriodicSchedule.PAYMENTDATE;
+
+                loanPeriodicCalculation.amortisedStartPrincipalAmount = (double)_tblPeriodicSchedule.STARTPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPaymentAmount = (double)_tblPeriodicSchedule.PERIODPAYMENTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodInterestAmount = (double)_tblPeriodicSchedule.PERIODINTERESTAMOUNT;
+                loanPeriodicCalculation.amortisedPeriodPrincipalAmount = (double)_tblPeriodicSchedule.PERIODPRINCIPALAMOUNT;
+                loanPeriodicCalculation.amortisedEndPrincipalAmount = (double)_tblPeriodicSchedule.ENDPRINCIPALAMOUNT;
+                loanPeriodicCalculation.effectiveInterestRate = _tblPeriodicSchedule.INTERESTRATE;
 
                 loanPeriodic_List.Add(loanPeriodicCalculation);
 

@@ -91,6 +91,9 @@ namespace FintrakBanking.Entities.Models
 
         public short CUSTOMERSENSITIVITYLEVELID { get; set; }
 
+        [StringLength(50)]
+        public string OPERATION { get; set; }
+
         public int? CREATEDBY { get; set; }
 
         public int? LASTUPDATEDBY { get; set; }
