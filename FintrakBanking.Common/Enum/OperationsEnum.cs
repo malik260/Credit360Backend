@@ -111,5 +111,6 @@ namespace FintrakBanking.Common.Enum
         DeleteStaff = 102,
         ContingentLiabilityTerminateAndRebook = 104,
 
+        UserAccountStatusChange = 103,
     }
 }

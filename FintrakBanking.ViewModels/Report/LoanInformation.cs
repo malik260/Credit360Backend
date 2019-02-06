@@ -125,7 +125,7 @@ namespace FintrakBanking.ViewModels.Reports
 
     public class ReportSearchEntity
     {
-        public short? branchId { get; set; }
+        public int branchId { get; set; }
 
         public int? typeId { get; set; }
         public int? staffId { get; set; }

@@ -39,6 +39,8 @@ namespace FintrakBanking.Repositories.Finance
         }
 
 
+
+
         [OperationBehavior(TransactionScopeRequired = true)]
         public bool RunEndOfDay(EndOfDayViewModel model)
         {
@@ -107,7 +109,6 @@ namespace FintrakBanking.Repositories.Finance
             return true;
         }
 
-
         public IEnumerable<FinanceEndofdayViewModel> GetFinanceEndofday(int companyId)
         {
             var financeEod = (from e in context.TBL_FINANCE_ENDOFDAY
@@ -126,6 +127,12 @@ namespace FintrakBanking.Repositories.Finance
         [OperationBehavior(TransactionScopeRequired = true)]
         public void ProcessEndOfDay(DateTime date, int companyId, int staffId)
         {
+
+            if (date.Day == 1)
+            {
+                loanOperation.UpdateLoanClassification(date);
+            }
+
             TBL_FINANCE_ENDOFDAY endOfDay = new TBL_FINANCE_ENDOFDAY();
 
             endOfDay.COMPANYID = companyId;
@@ -190,6 +197,13 @@ namespace FintrakBanking.Repositories.Finance
             context.SaveChanges();
         }
 
+        [OperationBehavior(TransactionScopeRequired = true)]
+        public bool RefreshLoanClassification()
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            var result = loanOperation.UpdateLoanClassification(applicationDate);
+            return result;
+        }
 
     }
 }

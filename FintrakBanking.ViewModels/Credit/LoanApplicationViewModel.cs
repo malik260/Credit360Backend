@@ -203,6 +203,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string documentNo { get; set; }
         public string purchaseOrderNumber { get; set; }
         public string certificateNumber { get; set; }
+        public bool reValidated { get; set; }
     }
 
     public class LoanApplicationDetailViewModel : GeneralEntity
@@ -516,6 +517,10 @@ namespace FintrakBanking.ViewModels.Credit
         public int? approvedBy { get; set; }
 
         public DateTime? approvedDateTime { get; set; }
+
+        public bool reValidated { get; set; }
+
+        public string entrySheetNumber { get; set; }
     }
 
     public class RegionLoanApplicationViewModel : GeneralEntity
@@ -601,6 +606,10 @@ namespace FintrakBanking.ViewModels.Credit
         public short? approvalStatusId { get; set; }
 
         public int productClassId { get; set; }
+
+        public bool reValidated { get; set; }
+
+        public string entrySheetNumber { get; set; }
 
     }
 

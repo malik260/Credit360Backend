@@ -136,7 +136,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     }
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loan covenants which are approaching their due date. <br /><br />" + $"{dataTable}";
                     string additionalRecipient = loanDetails.FirstOrDefault((LoanCovenantDetailViewModel x) => x.relationshipOfficerId == item2.STAFFID).officerEmail;
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -177,7 +177,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 }
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which are approaching their due date. <br /><br />" + $"{dataTable}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -310,7 +310,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loan covenants which have pass their due date. <br /><br />" + $"{dataTable2}";
                     string additionalRecipient = loanDetails.FirstOrDefault((LoanCovenantDetailViewModel x) => x.relationshipOfficerId == item2.STAFFID).officerEmail;
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -351,7 +351,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loan covenants which have pass their due date. <br /><br />" + $"{dataTable}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -476,7 +476,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     }
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following collaterals which are due for revaluation. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -517,7 +517,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following collaterals which are due for revaluation. <br /><br />" + $"{dataTable}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -642,7 +642,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     }
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following collaterals which are due for revaluation. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -683,7 +683,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following collaterals which are due for revaluation. <br /><br />" + $"{dataTable}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -783,7 +783,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loans which are underperforming. <br /><br />" + $"{dataTable2}";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -824,7 +824,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable += "</table>";
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loans which are underperforming. <br /><br />" + $"{dataTable}";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -956,7 +956,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = "Dear Team, <br /><br />This is to bring your attention the following self-liquidating loans which are approaching expiry. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -997,7 +997,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following self-liquidating loans which are approaching expiry. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1126,7 +1126,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = "Dear Team, <br /><br />This is to bring your attention the following overdraft loans which are approaching expiry. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1167,7 +1167,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following overdraft loans which are approaching expiry. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1298,7 +1298,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     }
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following loans are on PND and lein placed on them. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1339,7 +1339,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following loans are on PND and lein placed on them. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1471,7 +1471,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1512,7 +1512,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1615,7 +1615,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1656,7 +1656,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -1902,7 +1902,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -1943,7 +1943,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2076,7 +2076,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
                     string otherRecipient = loanDetails.FirstOrDefault((LoanViewModel x) => x.relationshipOfficerId == item2.STAFFID).relationshipOfficerEmail;
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2117,7 +2117,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Bond and guarantee  are about to expire. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2246,7 +2246,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2287,7 +2287,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2415,7 +2415,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2456,7 +2456,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2589,7 +2589,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     dataTable2 += "</table>";
                     string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2630,7 +2630,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable2 += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Insurance has expired. <br /><br />" + $"{dataTable2}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2754,7 +2754,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     }
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following Loans which will soon be due for repayment. Kindly follow up with the customer to fund his/her account. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2795,7 +2795,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following Loans which would soon be due for repayment. The respective account's account need to be funded.  <br /><br />" + $"{dataTable}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -2922,7 +2922,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     }
                     dataTable2 += "</table>";
                     string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention the following collaterals which are due for visitation. <br /><br />" + $"{dataTable2}";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -2963,7 +2963,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                 dataTable += "</table>";
                 string messageSubject = alertSetups.MESSAGE_TITLE;
                 string messageContent = "Dear Team, <br /><br />This is to bring your attention the following collaterals which are due for visitation. <br /><br />" + $"{dataTable}";
-                string templateUrl = "EmailTemplates\\Monitoring.html";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
                 string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                 MessageLogViewModel messageModel = new MessageLogViewModel
                 {
@@ -3029,7 +3029,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                     string recipient = customer.email;
                     string messageSubject = "NOTIFICATION FOR LOAN REPAYMENT DUE";
                     string messageContent = "Dear Valuable Customer, <br /><br />This is to bring your attention that your loan with reference Number "+ customer.LoanReferenceNumber + " will be due for repayment on " + customer.nextPaymentDate + ".";
-                    string templateUrl = "EmailTemplates\\Monitoring.html";
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
                     string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
                     MessageLogViewModel messageModel = new MessageLogViewModel
                     {
@@ -3151,7 +3151,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                       ";
             var EmailSubject = operation+ "Approval Notification";
 
-            string templateUrl = "EmailTemplates\\Monitoring.html";
+            string templateUrl = @"~/EmailTemplates/Monitoring.html";
             string mailBody = EmailHelpers.PopulateBody(bodyContent + bPart + cPart, templateUrl);
 
             CreateSLAApprovalNotificationMethod(mailBody, EmailSubject, sla.staffEmail, sla.targetId, sla.operationId);
@@ -3175,7 +3175,7 @@ namespace FintrakBanking.Repositories.AlertMonitoring
                      " <p>Thanks,<br>Fintrak Credit 360</br></p>";
                         var EmailSubject = operation + "Approval Notification";
 
-            string templateUrl = "EmailTemplates\\Monitoring.html";
+            string templateUrl = @"~/EmailTemplates/Monitoring.html";
                         string mailBody = EmailHelpers.PopulateBody(bodyContent, templateUrl);
 
             CreateSLAApprovalNotificationMethod(mailBody, EmailSubject, email, targetId, operationId);

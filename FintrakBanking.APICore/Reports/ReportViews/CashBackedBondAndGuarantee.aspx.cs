@@ -52,7 +52,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
                         return;
                     }
                     LoanReportObjects CashBackedBondAndGuaran = new LoanReportObjects();
-                    var data = CashBackedBondAndGuaran.CashBackedBondAndGuarantee(startDate, endDate, companyId, productClassId);
+                    var data = CashBackedBondAndGuaran.CashBackedBondAndGuarantee(startDate, endDate, companyId);
 
                     this.ReportViewer.LocalReport.DataSources.Clear();
                     ReportDataSource reportDataSource = new ReportDataSource();

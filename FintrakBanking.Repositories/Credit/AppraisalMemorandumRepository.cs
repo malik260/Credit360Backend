@@ -315,7 +315,6 @@ namespace FintrakBanking.Repositories.Credit
             workflow.TargetId = model.applicationId;
             workflow.CompanyId = model.companyId;
             workflow.Vote = model.vote;
-            // workflow.Disputed = appl.DISPUTED; // buggy
             workflow.ProductClassId = appl.PRODUCTCLASSID;
             workflow.ProductId = model.productId;
             workflow.NextLevelId = model.receiverLevelId;
@@ -330,6 +329,15 @@ namespace FintrakBanking.Repositories.Credit
             workflow.InterestRateConcession = model.interestRateConcession;
             workflow.FeeRateConcession = model.feeRateConcession;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+            // workflow.Disputed = appl.DISPUTED; // buggy
+
+            if (model.forwardAction == 8 || model.forwardAction == 9)
+            {
+                //workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
+                workflow.NextLevelId = dictionary["levelId"];
+                workflow.ToStaffId = dictionary["staffId"];
+            }
 
             string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
 
@@ -482,6 +490,41 @@ namespace FintrakBanking.Repositories.Credit
 
             //workflow.Response.success = true;
             return workflow.Response;
+        }
+
+        private Dictionary<string, int> GetRepresentStepdownItems(int applicationId, int action, int operationId)
+        {
+            int levelId;
+            int staffId;
+
+            var trails = context.TBL_APPROVAL_TRAIL.Where(x => x.OPERATIONID == operationId
+                    && x.TARGETID == applicationId
+                    && x.FROMAPPROVALLEVELID != null
+                    && x.TOAPPROVALLEVELID != null
+                ).OrderBy(x => x.APPROVALTRAILID);
+
+            if (action == 8)
+            {
+                var traill = trails.Join(context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELTYPEID == 2)
+                        , t => t.FROMAPPROVALLEVELID, l => l.APPROVALLEVELID, (t, l) => new { t, l })
+                        .Select(x => new { x.t }).First();
+                staffId = traill.t.REQUESTSTAFFID;
+                levelId = (int)traill.t.FROMAPPROVALLEVELID;
+            }
+            else
+            {
+                var trail = trails.FirstOrDefault();
+                staffId = trail.REQUESTSTAFFID;
+                levelId = (int)trail.FROMAPPROVALLEVELID;
+            }
+
+            if (levelId < 1 || staffId < 1) throw new SecureException("Error while resolving receiving staff.");
+
+            var data = new Dictionary<string, int>();
+            data.Add("levelId", levelId);
+            data.Add("staffId", staffId);
+
+            return data;
         }
 
         private void LogApplicationDetailChanges(int applicationId, int staffId, DateTime date, short? decision, short status)
@@ -1737,7 +1780,6 @@ namespace FintrakBanking.Repositories.Credit
 
         #endregion LMS APPROVAL
 
-
         public LoanApplicationDetailsViewModel GetLMSLoanApplicationDetail(int applicationId)
         {
             var details = new LoanApplicationDetailsViewModel();
@@ -1858,7 +1900,7 @@ namespace FintrakBanking.Repositories.Credit
                 var successEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been approved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "APPROVAL FOR LOAN APPLICATION";
 
-                emailLogger.ComposerBody(referenceNo,successEmailBody, messageSubject,customer.email,false);
+                emailLogger.ComposeEmail(referenceNo,successEmailBody, messageSubject,customer.email,false);
 
             }
                 
@@ -1885,7 +1927,7 @@ namespace FintrakBanking.Repositories.Credit
                 var failedEmailBody = "There Valuable Customer, <br /><br /> Your facility application with Reference Number : " + referenceNo + " has been disapproved,<br /> Kindly contact your Relationship Manager and collect your Offer Letter.";
                 string messageSubject = "DISAPPROVAL FOR LOAN APPLICATION";
 
-                emailLogger.ComposerBody(referenceNo, failedEmailBody, messageSubject, customer.email,false);
+                emailLogger.ComposeEmail(referenceNo, failedEmailBody, messageSubject, customer.email,false);
 
             }             
         }

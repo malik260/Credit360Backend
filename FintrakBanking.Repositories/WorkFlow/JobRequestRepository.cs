@@ -294,9 +294,11 @@ namespace FintrakBanking.Repositories.WorkFlow
                 }
                 if (toStaffData != null)
                 {
-                    var toStaff = context.TBL_STAFF.Find(toStaffData.STAFFID);
-                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, toStaff.EMAIL, data.JOBREQUESTCODE);
+                    var reciverStaff = context.TBL_STAFF.Find(toStaffData.STAFFID);
+                    LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, reciverStaff.EMAIL, data.JOBREQUESTCODE);
                 }
+                var verificationOfficer = context.TBL_STAFF.Find(model.createdBy);
+                LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, verificationOfficer.EMAIL, data.JOBREQUESTCODE);
             }
 
             data.REASSIGNEDTO = (int)model.reassignedTo;
@@ -573,47 +575,53 @@ namespace FintrakBanking.Repositories.WorkFlow
             {
                 case "completed":
                     return GetAllGlobalJobRequest(staffId, true).Where(x=>x.responseComment != null || x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "approved":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Approved).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "pending":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Pending).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "in-progress":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Processing).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "cancelled":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Cancel).OrderByDescending(x => x.jobRequestId);
-                   // break;
 
                 case "disapproved":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.requestStatusId == (short)RequestStatusEnum.Disapproved).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "assigned":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.reassignedTo != null).OrderByDescending(x => x.jobRequestId);
-                    //break;
 
                 case "unassigned":
                     return GetAllGlobalJobRequest(staffId,true).Where(x => x.reassignedTo == null).OrderByDescending(x => x.jobRequestId);
-                    //break;
-
 
                 default:
                      return GetAllGlobalJobRequest(staffId).OrderByDescending(x => x.jobRequestId);
-                    //break;
             }
+        }
+
+        public jobRequestCountViewModel GetJobRequestStatusCount(int staffId, int branchId)
+        {
+            var jobRequests = GetAllGlobalJobRequest(staffId, false);
+            return new jobRequestCountViewModel()
+            {
+                pendingCount = jobRequests.Where(x => x.requestStatusId == (short)JobRequestStatusEnum.pending).Count(),
+                finishedCount = jobRequests.Where(x => x.responseComment != null).Count(),
+                inProgresCount = jobRequests.Where(x => x.requestStatusId == (short)JobRequestStatusEnum.processing).Count(),
+                cancelledCount = jobRequests.Where(x => x.requestStatusId == (short)JobRequestStatusEnum.cancel).Count(),
+                assignedCount = jobRequests.Where(x => x.receiverStaffId != null || x.reassignedTo != null).Count(),
+                unAssignedCount = jobRequests.Where(x =>  x.reassignedTo == null && x.receiverStaffId == null).Count(),
+                allCount = jobRequests.Count(),
+            };
         }
 
         public List<JobRequestDetailViewModel> GetJobRequestDetailsById(int jobRequestId)
         {
             return GetJobRequestDetails().Where(x => x.jobRequestId == jobRequestId).ToList();
         }
+
         private List<JobRequestDetailViewModel> GetJobRequestDetails()
         {
             var details = (from x in this.context.TBL_JOB_REQUEST_DETAIL
@@ -1603,7 +1611,7 @@ namespace FintrakBanking.Repositories.WorkFlow
 
             //NOTIFY STAKE HOLDER OF THE TOTAL CANCELLATION
             var staffName = this.context.TBL_STAFF.Where(x => x.STAFFID == model.createdBy).Select(x => x.FIRSTNAME + " " + x.MIDDLENAME + " " + x.LASTNAME).FirstOrDefault();
-            string messageBoby = $"Dear RM, <br /><br />This is to bring your attention that legal has specified that charges for collaral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
+            string messageBoby = $"Dear RM, <br /><br />This is to bring to your attention that legal has specified charges for collaral on job request with code '{jobRequest.JOBREQUESTCODE}'. <br /><br /> You attention is required to effect the charges. <br /><br />";
             string alertSubject = $"Collateral Search Request";
             LogEmailAlertForLoanApplicationCancellation(messageBoby, alertSubject, GetStaffEmailRecipients(jobRequest.SENDERSTAFFID), jobRequest.JOBREQUESTCODE);
             //if (baseApplication != null)

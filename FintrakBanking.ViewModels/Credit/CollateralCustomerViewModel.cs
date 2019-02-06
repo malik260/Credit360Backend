@@ -296,6 +296,8 @@ namespace FintrakBanking.ViewModels.Credit
                 return availableValue > 0 ? true : false;
             }
         }
+
+        public string accountName { get; set; }
     }
 
     public class crossGarantee
@@ -424,6 +426,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime maturityDate { get; set; }
         public decimal maturityAmount { get; set; }
         public string remark { get; set; }
+        public string accountName { get; set; }
     }
 
     public class CollateralCasaViewModel
@@ -441,6 +444,7 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal lienAmount { get; set; }
         public decimal securityValue { get; set; }
         public string remark { get; set; }
+        public string accountName { get; set; }
     }
 
     public class CollateralPlantsAndEquipmentViewModel

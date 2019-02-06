@@ -19,7 +19,7 @@ namespace FintrakBanking.Entities.Models
         [Key]
         public int TEMPUSERID { get; set; }
 
-        public int TEMPSTAFFID { get; set; }
+        public int? TEMPSTAFFID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -63,6 +63,9 @@ namespace FintrakBanking.Entities.Models
         public DateTime? DATETIMEUPDATED { get; set; }
 
         public bool APPROVALSTATUS { get; set; }
+
+        [StringLength(50)]
+        public string OPERATION { get; set; }
 
         public DateTime? DATEAPPROVED { get; set; }
 

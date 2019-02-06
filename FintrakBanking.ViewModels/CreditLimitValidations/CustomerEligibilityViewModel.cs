@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace FintrakBanking.ViewModels.CreditLimitValidations
 {
-   public class CustomerEligibilityViewModel
+    public class CustomerEligibility
+    {
+        public bool eligible { get; set; }
+        public string message { get; set; }
+    }
+
+    public class CustomerEligibilityViewModel
     {
         public string customerCode { get; set; }
         public DateTime dateBlackListed { get; set; }

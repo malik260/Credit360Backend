@@ -125,6 +125,15 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("count-job-request-by-status")]
+        public HttpResponseMessage GetJobRequestStatusCount()
+        {
+            var data = repo.GetJobRequestStatusCount(token.GetStaffId, token.GetBranchId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
         [HttpGet] [ClaimsAuthorization]  
         [Route("application-detail-job-request/{applicationDetailId}")]
         public HttpResponseMessage GetApplicationJobRequest(int applicationDetailId)
@@ -432,6 +441,7 @@ namespace FintrakBanking.APICore.Controllers
                 entity.userBranchId = (short)token.GetBranchId;
                 entity.companyId = token.GetCompanyId;
                 entity.lastUpdatedBy = token.GetStaffId;
+                entity.createdBy = token.GetStaffId;
                 entity.applicationUrl = HttpContext.Current.Request.Path;
                 entity.staffId = token.GetStaffId;
 

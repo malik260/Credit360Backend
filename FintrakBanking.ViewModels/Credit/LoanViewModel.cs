@@ -1153,10 +1153,10 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime expiryDate { get; set; }
         public string sanctionLimit { get; set; }
         public int tenor { get; set; }
-        public Decimal balance { get; set; }
+        public decimal balance { get; set; }
         public string  currency { get; set; }
         public string  collateralDetail { get; set; }
-        public Decimal  collateralValue { get; set; }
+        public decimal  collateralValue { get; set; }
         public string perfectionStatus { get; set; }
         public string titleDocsSighted { get; set; }
         public string location { get; set; }
@@ -1176,11 +1176,208 @@ namespace FintrakBanking.ViewModels.Credit
 
     }
 
+    public class AgeAnalysisViewModel
+    {
+        public string businessDevelopmentManager { get; set; }
+        public string groupName { get; set; }
+        public string schemmeCode { get; set; }
+        public string customerName { get; set; }
+        public string  operativeAccount { get; set; }
+        public int sanctionLimit { get; set; }
+        public DateTime disbursedDate { get; set; }
+        public DateTime expireDate { get; set; }
+        public string branchName { get; set; }
+        public decimal totalExposure { get; set; }
+        public string status { get; set; }
+        public DateTime pastDueDate { get; set; }
+        public int pastDueDays { get; set; }
+        
+    }
+
+    public class CreditScheduleViewModel
+    {
+        public string accountNumber { get; set; }
+        public string bvn { get; set; }
+        public string customerName { get; set; }
+        public string tin { get; set; }
+        public string glSubHeadCode { get; set; }
+        public string facilityType { get; set; }
+        public string businessType { get; set; }
+        public string sector { get; set; }
+        public string subSector { get; set; }
+        public int customerId { get; set; }
+        public string groupOrganization { get; set; }
+        public DateTime dateGranted { get; set; }
+        public DateTime lastCreditDate { get; set; }
+        public DateTime expiryDate { get; set; }
+        public string sanctionLimit { get; set; }
+        public string previousLimit { get; set; }
+        public string repaymentFrequencyForInterest { get; set; }
+        public string repaymentFrequencyForPrincipal { get; set; }
+        public decimal cumRepaymentAmountDue { get; set; }
+        public decimal cumRepaymentAmountPaid { get; set; }
+        public decimal cumInterestDueNotYetPaid { get; set; }
+        public decimal cumPrincipalDueNotYetPaid { get; set; }
+        public double interestRate { get; set; }
+        public int  tenor { get; set; }
+        public decimal balance { get; set; }
+        public string curr  { get; set; }
+        public string bankClassification { get; set; }
+        public string detailsOfSecuritiesOthers { get; set; }
+        public decimal collateralValue { get; set; }
+        public int collateralStatus { get; set; }
+
+
+
+
+    }
+
+
+    public class SanctionLimitReportViewModel
+    {
+        public string initSol { get; set; }
+        public string branchCode { get; set; }
+        public string branchName { get; set; }
+        public string initSoldDesc { get; set; }
+        public string currency { get; set; }
+
+        public string loanOdAcct { get; set; }
+        public string accountNumber { get; set; }
+        public DateTime acctopNdate { get; set; }
+        public int customerId { get; set; }
+        public string glSubHeadCode { get; set; }
+        public string productName { get; set; }
+        public string accountName { get; set; }
+        public string sanctionLimit { get; set; }
+        public DateTime limitSanctionDate { get; set; }
+        public DateTime applicableDate { get; set; }
+        public string status { get; set; }
+        public DateTime limitExpiryDate { get; set; }
+        public int tenor { get; set; }
+        public DateTime interestStartDate { get; set; }
+        public string interestRepaymentFrequency { get; set; }
+        public string principalRepaymentFrequency { get; set; }
+        public DateTime principalStartDate { get; set; }
+        public string   lchgUserId { get; set; }
+        public DateTime lchgTime { get; set; }
+        public string rcreUserid { get; set; }
+        public DateTime rcreTime { get; set; }
+        public int staffId { get; set; }
+        public string staffName { get; set; }
+        public string staffLevel { get; set; }
+        public string staffCode { get; set; }
+       
+        public string approvalId { get; set; }
+        public string  approvalName { get; set; }
+        public string approvalLevel { get; set; }
+        public decimal clrBalanceAmount { get; set; }
+        public string relationshipManagerCode { get; set; }
+        public string relationshipManagerSbu { get; set; }
+        public string limitLevel { get; set; }
+        public decimal limitInterestRate { get; set; }
+        public decimal limitAccountInterestRate { get; set; }
+        public string cotCode { get; set; }
+        public string sbuCode  { get; set; }
+        public string sbuName { get; set; }
+        public string sbuBranch { get; set; }
+        public string entererName { get; set; }
+        public string entererLevel { get; set; }
+        public string entererCode { get; set; }
+        public int entererId { get; set; }
+        public string entererAppName { get; set; }
+        public string authAppName { get; set; }
+        public int relationshipManagerId { get; set; }
+        public int branchId { get; set; }
+
+
+
+
+
+
+
+
+    }
+
+
+    public class ImpairedWatchListViewModel
+    {
+        public string branchName { get; set; }
+        
+        
+        
+        
+        
+       
+        public string currencyType { get; set; }
+        
+        public decimal clrBalance { get; set; }
+        public decimal interestOverDue { get; set; }
+        public decimal principalOverDue { get; set; }
+        public decimal totalExposure { get; set; }
+
+
+        public string teamCode { get; set; }
+        public string deskCode { get; set; }
+        public string rmCode { get; set; }
+        public string buCode { get; set; }
+        public string schemeCode { get; set; }
+        public string schemeType { get; set; }
+        public string teamDescription { get; set; }
+        public string deskDescription { get; set; }
+        public string buDescription { get; set; }
+        public decimal sanctionLimit { get; set; }
+        public decimal pastDueDate { get; set; }
+        public string groupDescription { get; set; }
+        public string accountName { get; set; }
+        public string account { get; set; }
+        public DateTime limitExpiryDate { get; set; }
+        public string customerId { get; set; }
+        
+       
+       
+        public double interestRate { get; set; }
+      
+        public string groupCode { get; set; }
+
+        public string glSubHeadCode { get; set; }
+        
+       
+    }
+
+
+    public class SubHeadCode {
+        public string glSubHeadCode { get; set; }
+        public string schemeCode { get; set; }
+    }
+
+   
+    public class LoanMart
+    {
+        public string teamCode { get; set; }
+        public string deskCode { get; set; }
+        public string rmCode { get; set; }
+        public string buCode { get; set; }
+        public string schemeCode { get; set; }
+        public string schemeType { get; set; }
+        public string teamDescription { get; set; }
+        public string deskDescription { get; set; }
+        public string buDescription { get; set; }
+        public decimal sanctionLimit { get; set; }
+        public decimal pastDueDate { get; set; }
+        public string groupDescription { get; set; }
+        public string accountName { get; set; }
+        public string account { get; set; }
+        public DateTime limitExpiryDate { get; set; }
+        public string customerId { get; set; }
+
+        public string groupCode { get; set; }
+    }
     public class SbHead
     {
         public string subHead { get; set; }
         public string staffCode { get; set; }
         public string teamUnit { get; set; }
+      
     }
     //public class MaturityIntructionViewModel : GeneralEntity
     //{

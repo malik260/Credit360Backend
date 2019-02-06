@@ -20,6 +20,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         public decimal amount { get; set; }
         public bool isPoliticalyExposed { get; set; }
         public bool externalInitialization { get; set; }
+        public bool isLms { get; set; }
         public bool keepPending {
             get { return _keepPending; }
             set {
@@ -29,6 +30,7 @@ namespace FintrakBanking.ViewModels.WorkFlow
         }
         public bool deferredExecution { get; set; }
         public string rollOverType { get; set; }
+        public string collateralCode { get; set; }
 
     }
 }
