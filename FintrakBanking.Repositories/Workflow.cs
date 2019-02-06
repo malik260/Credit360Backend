@@ -107,6 +107,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private List<WorkflowSetup> workflowSetup;
         private WorkflowSetup level;
         private WorkflowSetup next;
+        private TBL_APPROVAL_TRAIL trailRequest;
         private List<TBL_APPROVAL_TRAIL> trailLog;
         private bool skipLimitsCheck = false;
         private IEnumerable<WorkflowSetup> approvalGrid;
@@ -261,7 +262,7 @@ namespace FintrakBanking.Repositories.WorkFlow
                 var levels = context.TBL_APPROVAL_GROUP_MAPPING.Where(x => x.OPERATIONID == operationId && x.PRODUCTCLASSID == productClassId && x.PRODUCTID == productId)
                     .Join(context.TBL_APPROVAL_GROUP, m => m.GROUPID, g => g.GROUPID, (m, g) => new { m, g })
                     .Join(context.TBL_APPROVAL_LEVEL.Where(x => x.ISACTIVE == true && x.DELETED == false && x.LEVELTYPEID == 2)
-                        , mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg,l})
+                        , mg => mg.g.GROUPID, l => l.GROUPID, (mg, l) => new { mg, l })
                     .Join(context.TBL_APPROVAL_LEVEL_STAFF.Where(x => x.STAFFID == user.STAFFID), mgl => mgl.l.APPROVALLEVELID, ls => ls.APPROVALLEVELID, (mgl, ls) => new ApprovalLevelInfo
                     {
                         groupId = mgl.l.GROUPID,
@@ -341,6 +342,8 @@ namespace FintrakBanking.Repositories.WorkFlow
             this.fromLevelId = null;
             this.newStateId = (int)ApprovalState.Processing;
             if (this.statusId == (int)ApprovalStatusEnum.Pending) this.statusId = (int)ApprovalStatusEnum.Processing;
+            // if (IsSpecialReferedBackResponse()) this.statusId = (int)ApprovalStatusEnum.Processing;
+            
         }
 
         private DateTime GetApplicationDate()
@@ -503,6 +506,11 @@ namespace FintrakBanking.Repositories.WorkFlow
             return true;
         }
 
+        private bool IsSpecialReferedBackResponse()
+        {
+            return this.statusId == (int)ApprovalStatusEnum.RePresent || this.statusId == (int)ApprovalStatusEnum.StepDown;
+        }
+
         private bool ResolveLevelMultipleApproval()
         {
             var votes = context.TBL_APPROVAL_TRAIL.Where(x =>
@@ -621,6 +629,8 @@ namespace FintrakBanking.Repositories.WorkFlow
                 case 5: return 3;
                 case 6: return 2;
                 case 7: return 2;
+                case 8: return 2;
+                case 9: return 2;
                 default: break;
             }
             return statusId;

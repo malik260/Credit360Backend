@@ -226,7 +226,7 @@
     <Compile Include="Setups\Risk\RiskRepository.cs" />
     <Compile Include="Validetion\OverDraftValidation.cs" />
     <Compile Include="WorkFlow\JobRequestRepository.cs" />
-    <Compile Include="WorkFlow\Workflow.cs" />
+    <Compile Include="Workflow.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
