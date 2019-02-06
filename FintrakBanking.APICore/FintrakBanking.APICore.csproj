@@ -451,6 +451,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TransactionDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.cs">
+      <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\AgeAnalysisReport.aspx.designer.cs">
+      <DependentUpon>AgeAnalysisReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\AllCommercialLoanReport.aspx.cs">
       <DependentUpon>AllCommercialLoanReport.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -549,6 +556,13 @@
     <Compile Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx.designer.cs">
       <DependentUpon>CovenantsApproachingDueDate.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\CreditScheduleReport.aspx.cs">
+      <DependentUpon>CreditScheduleReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\CreditScheduleReport.aspx.designer.cs">
+      <DependentUpon>CreditScheduleReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\CustomeFacilityRepayment.aspx.cs">
       <DependentUpon>CustomeFacilityRepayment.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -590,6 +604,13 @@
     </Compile>
     <Compile Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx.designer.cs">
       <DependentUpon>FORM3800B_LOS.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ImpairedWatchListReport.aspx.cs">
+      <DependentUpon>ImpairedWatchListReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ImpairedWatchListReport.aspx.designer.cs">
+      <DependentUpon>ImpairedWatchListReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Lein.aspx.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
@@ -674,6 +695,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\RunningFacilitiesReport.aspx.designer.cs">
       <DependentUpon>RunningFacilitiesReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SanctionLimitReport.aspx.cs">
+      <DependentUpon>SanctionLimitReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\SanctionLimitReport.aspx.designer.cs">
+      <DependentUpon>SanctionLimitReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\SeftLiquidatingLoans.aspx.cs">
       <DependentUpon>SeftLiquidatingLoans.aspx</DependentUpon>
@@ -948,6 +976,7 @@
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetter.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.aspx" />
     <Content Include="Reports\Credit\TestReport.aspx" />
+    <Content Include="Reports\ReportViews\AgeAnalysisReport.aspx" />
     <Content Include="Reports\ReportViews\AllCommercialLoanReport.aspx" />
     <Content Include="Reports\ReportViews\ApprovalTrailWith_SLA.aspx" />
     <Content Include="Reports\ReportViews\AuditTrailView.aspx" />
@@ -964,12 +993,14 @@
     <Content Include="Reports\ReportViews\CollateralVisitation.aspx" />
     <Content Include="Reports\ReportViews\ContigentLiabilityInformation.aspx" />
     <Content Include="Reports\ReportViews\CovenantsApproachingDueDate.aspx" />
+    <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx" />
+    <Content Include="Reports\ReportViews\ImpairedWatchListReport.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
     <Content Include="Reports\ReportViews\LoanClassification.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
@@ -995,6 +1026,7 @@
     <Content Include="Reports\ReportViews\BranchLimitMonitoring.aspx" />
     <Content Include="Reports\ReportViews\LoanStatement.aspx" />
     <Content Include="Reports\ReportViews\RunningFacilitiesReport.aspx" />
+    <Content Include="Reports\ReportViews\SanctionLimitReport.aspx" />
     <Content Include="Reports\ReportViews\SeftLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\SLAReport.aspx" />
     <Content Include="Reports\ReportViews\StaffPriviledgeChangeReport.aspx" />
@@ -1230,6 +1262,7 @@
     <Content Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <Content Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Report\AgeAnalysisReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />
@@ -1241,11 +1274,13 @@
     <EmbeddedResource Include="Reports\Report\CollateralVisitation.rdlc" />
     <EmbeddedResource Include="Reports\Report\ContigentLiabilityInformation.rdlc" />
     <EmbeddedResource Include="Reports\Report\CovenantsApproachingDueDate.rdlc" />
+    <EmbeddedResource Include="Reports\Report\CreditScheduleReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />
@@ -1276,6 +1311,7 @@
     <EmbeddedResource Include="Reports\Report\ReceivableInterestReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\RuningLoansByLoanType.rdlc" />
     <EmbeddedResource Include="Reports\Report\RunningFacilities.rdlc" />
+    <EmbeddedResource Include="Reports\Report\SanctionLimitReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Report\SectorialLimits.rdlc" />
     <EmbeddedResource Include="Reports\Report\SelfLiquidatingLoan.rdlc" />
