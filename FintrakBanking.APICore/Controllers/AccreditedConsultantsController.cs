@@ -82,6 +82,31 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
             }
         }
+        [HttpPost, Route("consultant-type-add")]
+        public HttpResponseMessage AddConsultantType([FromBody] AccreditedConsultantTypeViewModel entity)
+        {
+            try
+            {
+                //entity.createdBy = token.GetStaffId;
+                //entity.userBranchId = (short)token.GetBranchId;
+                //entity.applicationUrl = HttpContext.Current.Request.Path;
+                //entity.companyId = token.GetCompanyId;
+                //entity.countryId = (short)token.GetCountryId;
+                var response = repo.AddConsultantType(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = true, result = response, message = "The record has been created successfully.." });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK,
+                   new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
 
         [HttpPost, Route("accredited-solicitors")]
         public async Task<HttpResponseMessage> AddAccreditedSolicitors([FromBody] AccreditedConsultantsViewModel entity)

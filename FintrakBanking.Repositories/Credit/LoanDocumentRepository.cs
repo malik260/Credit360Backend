@@ -999,7 +999,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = (int)model.createdBy,
                     DOCUMENTCODE = model.documentCode,
                     DOCUMENTID = model.documentId,
-
+                    DOCUMENTTYPEID = model.documentTypeId,
                 };
 
                 context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);

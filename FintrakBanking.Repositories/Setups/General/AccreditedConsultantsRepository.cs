@@ -98,6 +98,29 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return data;
         }
+        public bool AddConsultantType(AccreditedConsultantTypeViewModel entity)
+        {
+            bool output = false;
+
+            TBL_ACCREDITEDCONSULTANT_TYPE consultanttype = new TBL_ACCREDITEDCONSULTANT_TYPE();
+
+            consultanttype.NAME = entity.name;
+                
+                try
+                {
+                context.TBL_ACCREDITEDCONSULTANT_TYPE.Add(consultanttype);
+                output = context.SaveChanges() > 0;
+
+                }
+                catch (Exception ex)
+                {
+                    throw new SecureException(ex.Message);
+                }
+
+           
+            return output;
+        }
+
         public async Task<AccreditedConsultantsViewModel> AddAccreditedConsultants(AccreditedConsultantsViewModel entity)
         {
             bool output = false;

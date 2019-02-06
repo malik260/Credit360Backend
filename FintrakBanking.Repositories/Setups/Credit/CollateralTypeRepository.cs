@@ -90,7 +90,81 @@ namespace FintrakBanking.Interfaces.Setups.Credit
 
             return list.Where(x => typeIds.Contains((short)x.collateralTypeId));
         }
-        
+        public IEnumerable<CollateralDocumentTypeViewModel> GetCollateralDocumentTypes(int id)
+        {
+            //var documentType = context.TBL_COLLATERAL_DOCUMENT_TYPE.Where(x => x.COLLATERALTYPEID == id).ToList();
+
+            var documentType = (from m in context.TBL_COLLATERAL_DOCUMENT_TYPE
+                                where m.COLLATERALTYPEID == id
+                       select new CollateralDocumentTypeViewModel
+                       {
+                           collateralTypeId = m.COLLATERALTYPEID,
+                           documentTypeId = m.DOCUMENTTYPEID,
+                           documentType = m.DOCUMENTTYPENAME,
+                          
+                       }).ToList();
+
+
+            return documentType;
+        }
+        public bool AddCollateralDocumentType(CollateralDocumentTypeViewModel entity)
+        {
+            bool output = false;
+            var collateralType = context.TBL_COLLATERAL_TYPE.Where(x => x.COLLATERALTYPEID == entity.collateralTypeId).FirstOrDefault();
+            if(entity.documentTypeId==0)
+            {
+                var docType = new TBL_COLLATERAL_DOCUMENT_TYPE
+                {
+                    COLLATERALTYPEID = entity.collateralTypeId,
+                    DOCUMENTTYPENAME = entity.documentType,
+                    CREATEDBY = entity.createdBy,
+                    DATETIMECREATED = DateTime.Now.Date,
+                };
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentType,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = entity.userBranchId,
+                    DETAIL = $"Added collateral Document Type: { entity.documentType  }  Created for {collateralType.COLLATERALTYPENAME} ",
+                    IPADDRESS = entity.userIPAddress,
+                    APPLICATIONDATE = genSetup.GetApplicationDate().Date,
+                    SYSTEMDATETIME = DateTime.Now.Date,
+                    URL = entity.applicationUrl
+                };
+                context.TBL_COLLATERAL_DOCUMENT_TYPE.Add(docType);
+                this.auditTrail.AddAuditTrail(audit);
+                output = context.SaveChanges() > 0;
+            }
+            else
+            {
+                TBL_COLLATERAL_DOCUMENT_TYPE docType = new TBL_COLLATERAL_DOCUMENT_TYPE();
+
+                docType = context.TBL_COLLATERAL_DOCUMENT_TYPE.Where(x => x.DOCUMENTTYPEID == entity.documentTypeId).FirstOrDefault();
+                docType.DOCUMENTTYPENAME = entity.documentType;
+                docType.LASTUPDATEDBY = entity.createdBy;
+                docType.DATETIMEUPDATED = DateTime.Now.Date;
+
+                // Audit Section ---------------------------
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.CollateralDocumentType,
+                    STAFFID = entity.createdBy,
+                    BRANCHID = entity.userBranchId,
+                    DETAIL = $"Updated collateral Document Type: { entity.documentType  }  Created for {collateralType.COLLATERALTYPENAME} ",
+                    IPADDRESS = entity.userIPAddress,
+                    APPLICATIONDATE = genSetup.GetApplicationDate().Date,
+                    SYSTEMDATETIME = DateTime.Now.Date,
+                    URL = entity.applicationUrl
+                };
+                //context.TBL_COLLATERAL_DOCUMENT_TYPE.Add(docType);
+                this.auditTrail.AddAuditTrail(audit);
+                output = context.SaveChanges() > 0;
+            }
+
+            return output;
+        }
         public IEnumerable<CollateralTypeViewModel> GetCollateralTypes()
         {
             return CollateralTypes();

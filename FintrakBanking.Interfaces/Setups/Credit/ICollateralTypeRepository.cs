@@ -11,6 +11,9 @@ namespace FintrakBanking.Interfaces.Setups.Credit
     {
         #region Collateral Types
         Task<bool> UpdateCollateralTypes(int typeId, CollateralTypeViewModel entity);
+        IEnumerable<CollateralDocumentTypeViewModel> GetCollateralDocumentTypes(int id);
+        bool AddCollateralDocumentType(CollateralDocumentTypeViewModel entity);
+
         IEnumerable<CollateralTypeViewModel> GetCollateralTypes();
         CollateralTypeViewModel GetCollateralTypesById(int typeId);
         IEnumerable<CollateralTypeViewModel> CollateralTypesByLoanApplication(int? id);
