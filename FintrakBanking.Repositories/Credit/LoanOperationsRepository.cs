@@ -13069,6 +13069,8 @@ namespace FintrakBanking.Repositories.Credit
 
                                 if (authenticated.authenticated == false)
                                     throw new TwoFactorAuthenticationException(authenticated.message);
+
+                                twoFADetails.skipAuthentication = true;
                             }
 
 
@@ -13081,7 +13083,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 if (feePostings != null)
                                 {
-                                    twoFADetails.skipAuthentication = true;
+                                    //twoFADetails.skipAuthentication = true;
                                     financeTransaction.PostTransaction(feePostings, false, twoFADetails);
 
 
