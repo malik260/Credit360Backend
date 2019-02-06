@@ -526,6 +526,10 @@ namespace FintrakBanking.Repositories.Credit
                 appl.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
                 operationId = (int)appl.OPERATIONID;
                 nextProcessId = (int)OperationsEnum.LoanReviewApprovalOfferLetter; // redefine
+            }
+
+            if (camOperationIds.Contains(operationId) || (operationId == (int)OperationsEnum.LoanReviewApprovalAvailment))
+            {
                 if (appl.CUSTOMERID > 0) workflow.Amount = GetCustomerTotalOutstandingBalance((int)appl.CUSTOMERID);
             }
 

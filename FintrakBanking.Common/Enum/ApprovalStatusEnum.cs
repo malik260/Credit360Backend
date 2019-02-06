@@ -14,6 +14,8 @@ namespace FintrakBanking.Common.Enum
         Referred = 5,
         Reroute = 6,
         Escalated = 7,
+        RePresent = 8,
+        StepDown = 9,
     }
 
   
