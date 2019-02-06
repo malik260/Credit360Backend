@@ -60,7 +60,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public short? interestTypeId { get; set; }
 
-        public int lmsApplicationDetailId { get; set; }
+        public int? lmsApplicationDetailId { get; set; }
 
         public string instructionType { get; set; }
 

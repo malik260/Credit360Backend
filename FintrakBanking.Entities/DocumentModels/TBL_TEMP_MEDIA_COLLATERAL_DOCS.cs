@@ -35,5 +35,7 @@ namespace FintrakBanking.Entities.DocumentModels
         public DateTime SYSTEMDATETIME { get; set; }
 
         public int CREATEDBY { get; set; }
+        public int? DOCUMENTTYPEID { get; set; }
+
     }
 }

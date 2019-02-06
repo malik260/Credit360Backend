@@ -14,6 +14,8 @@ namespace FintrakBanking.Interfaces.Setups.General
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedStateConsultantsByStateId(int companyId, int stateId);
         IEnumerable<AccreditedConsultantTypeViewModel> GetAccreditedConsultantType();
         IEnumerable<AccreditedConsultantsViewModel> GetAccreditedConsultants(int companyId, int accreditedConsultantId);
+        bool AddConsultantType(AccreditedConsultantTypeViewModel entity);
+
         Task<AccreditedConsultantsViewModel> AddAccreditedConsultants(AccreditedConsultantsViewModel entity);
         Task<bool> UpdateAccreditedConsultants(AccreditedConsultantsViewModel entity, int id);
         Task<bool> DeleteAccreditedConsultantStates(int id);

@@ -620,10 +620,15 @@ namespace FintrakBanking.APICore.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
                 }
-
+                int documentTypeId;
+                if (!Int32.TryParse(provider.FormData["documentTypeId"], out documentTypeId))
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Upload Type is invalid.");
+                }
                 var entity = new CollateralDocumentViewModel
                 {
                     documentTitle = provider.FormData["documentTitle"], // document code
+                    documentTypeId =  Convert.ToInt32(provider.FormData["documentTypeId"]),
                     fileName = provider.FormData["fileName"],
                     fileExtension = provider.FormData["fileExtension"],
                 };
@@ -838,8 +843,48 @@ namespace FintrakBanking.APICore.Controllers
         #endregion
 
         #region Collatera Types
+        [Route("collateral-document-type/{id}")]
+        public HttpResponseMessage GetCollateralDocumentType(int id)
+        {
+            try
+            {
+                var response = type.GetCollateralDocumentTypes(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("collateral-document-type")]
+        public HttpResponseMessage AddCollateralDocumentType([FromBody] CollateralDocumentTypeViewModel entity)
+        {
+            try
+            {
+                entity.createdBy = token.GetStaffId;
+                entity.userBranchId = (short)token.GetBranchId;
+                entity.applicationUrl = HttpContext.Current.Request.Path;
+                entity.companyId = token.GetCompanyId;
 
-      [HttpGet] [ClaimsAuthorization]  
+                var response = type.AddCollateralDocumentType(entity);
+                if (response)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "Created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unknown error has occured" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+
+
+        [HttpGet] [ClaimsAuthorization]  
         [Route("collateral-type")]
         public HttpResponseMessage GetCollateralType()
         {

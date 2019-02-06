@@ -220,6 +220,8 @@ namespace FintrakBanking.ViewModels.Credit
         //public int collateralId { get; set; }
         //public int collateralTypeId { get; set; }
         public string collateralType { get; set; }
+        public int? documentTypeId { get; set; }
+        public string documentType { get; set; }
 
         //public string collateralCode { get; set; }
         //public short currencyId { get; set; }

@@ -469,6 +469,7 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = (int)model.createdBy,
                 ISPRIMARYDOCUMENT = true,
                 TARGETID = model.TargetId,
+                DOCUMENTTYPEID = model.documentTypeId,
 
             };
 
@@ -4858,7 +4859,7 @@ namespace FintrakBanking.Repositories.Credit
                     SYSTEMDATETIME = doc.SYSTEMDATETIME,
                     COLLATERALCUSTOMERID = newCollateralId,
                     TARGETID = doc.TARGETID,
-
+                    DOCUMENTTYPEID = doc.DOCUMENTTYPEID,
                 });
                 documentContext.SaveChanges();
             }
