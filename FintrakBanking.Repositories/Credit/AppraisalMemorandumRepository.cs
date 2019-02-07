@@ -423,18 +423,13 @@ namespace FintrakBanking.Repositories.Credit
                     appl.APPROVEDDATE = applicationDate;
                     appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
 
-
                     //Send Email to Customer
-                    if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
-                    {
-                        SendCustomerLoanApprovalEmail(model.applicationId, model.companyId);
-
-                    }
-                    else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                    {
-                        SendCustomerLoanDisapprovedEmail(model.applicationId, model.companyId);
-                    }
-
+                    SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
+                    cc
+                }
+                else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
                 }
 
                 //applid, 
@@ -1336,11 +1331,11 @@ namespace FintrakBanking.Repositories.Credit
                 //Send Email to Customer
                 if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                 {
-                    SendCustomerLoanApprovalEmail(model.applicationId,model.companyId);
+                    SendEmailToCustomerForLoanApproval(model.applicationId,model.companyId);
 
                 }else if(appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                 {
-                    SendCustomerLoanDisapprovedEmail(model.applicationId, model.companyId);
+                    SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
                 }
             }
 
@@ -1874,7 +1869,7 @@ namespace FintrakBanking.Repositories.Credit
             if (((result.limit == 0) || ((double)amount + result.outstandingBalance) <= result.outstandingBalance) == false)
                 throw new SecureException("Customer limit validation failed!");
         }
-        private void SendCustomerLoanApprovalEmail(int loanApplicationId, int companyId)
+        private void SendEmailToCustomerForLoanApproval(int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
@@ -1905,7 +1900,7 @@ namespace FintrakBanking.Repositories.Credit
             }
                 
         }
-        private void SendCustomerLoanDisapprovedEmail(int loanApplicationId, int companyId)
+        private void SendEmailToCustomerForLoanDisapproval(int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID

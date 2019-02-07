@@ -1626,6 +1626,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnofferLetterSalutation;
             
+            private global::System.Data.DataColumn columnofferLetterClauses;
+            
+            private global::System.Data.DataColumn columnofferLetteracceptance;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public OfferLetterDataTable() {
@@ -1749,6 +1753,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn offerLetterClausesColumn {
+                get {
+                    return this.columnofferLetterClauses;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public global::System.Data.DataColumn offerLetteracceptanceColumn {
+                get {
+                    return this.columnofferLetteracceptance;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -1784,7 +1804,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
-            public OfferLetterRow AddOfferLetterRow(string customerName, string customerAddress, string customerId, string applicationDate, string companyName, string isFinal, string final, string customerGroupName, string operationName, string offerLetterTitle, string offerLetterSalutation) {
+            public OfferLetterRow AddOfferLetterRow(string customerName, string customerAddress, string customerId, string applicationDate, string companyName, string isFinal, string final, string customerGroupName, string operationName, string offerLetterTitle, string offerLetterSalutation, string offerLetterClauses, string offerLetteracceptance) {
                 OfferLetterRow rowOfferLetterRow = ((OfferLetterRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         customerName,
@@ -1797,7 +1817,9 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         customerGroupName,
                         operationName,
                         offerLetterTitle,
-                        offerLetterSalutation};
+                        offerLetterSalutation,
+                        offerLetterClauses,
+                        offerLetteracceptance};
                 rowOfferLetterRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowOfferLetterRow);
                 return rowOfferLetterRow;
@@ -1831,6 +1853,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnoperationName = base.Columns["operationName"];
                 this.columnofferLetterTitle = base.Columns["offerLetterTitle"];
                 this.columnofferLetterSalutation = base.Columns["offerLetterSalutation"];
+                this.columnofferLetterClauses = base.Columns["offerLetterClauses"];
+                this.columnofferLetteracceptance = base.Columns["offerLetteracceptance"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1858,6 +1882,10 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnofferLetterTitle);
                 this.columnofferLetterSalutation = new global::System.Data.DataColumn("offerLetterSalutation", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnofferLetterSalutation);
+                this.columnofferLetterClauses = new global::System.Data.DataColumn("offerLetterClauses", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnofferLetterClauses);
+                this.columnofferLetteracceptance = new global::System.Data.DataColumn("offerLetteracceptance", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnofferLetteracceptance);
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -14236,6 +14264,38 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string offerLetterClauses {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetter.offerLetterClausesColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'offerLetterClauses\' in table \'OfferLetter\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetter.offerLetterClausesColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public string offerLetteracceptance {
+                get {
+                    try {
+                        return ((string)(this[this.tableOfferLetter.offerLetteracceptanceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'offerLetteracceptance\' in table \'OfferLetter\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableOfferLetter.offerLetteracceptanceColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public bool IscustomerNameNull() {
                 return this.IsNull(this.tableOfferLetter.customerNameColumn);
             }
@@ -14364,6 +14424,30 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
             public void SetofferLetterSalutationNull() {
                 this[this.tableOfferLetter.offerLetterSalutationColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsofferLetterClausesNull() {
+                return this.IsNull(this.tableOfferLetter.offerLetterClausesColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetofferLetterClausesNull() {
+                this[this.tableOfferLetter.offerLetterClausesColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public bool IsofferLetteracceptanceNull() {
+                return this.IsNull(this.tableOfferLetter.offerLetteracceptanceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "15.0.0.0")]
+            public void SetofferLetteracceptanceNull() {
+                this[this.tableOfferLetter.offerLetteracceptanceColumn] = global::System.Convert.DBNull;
             }
         }
         

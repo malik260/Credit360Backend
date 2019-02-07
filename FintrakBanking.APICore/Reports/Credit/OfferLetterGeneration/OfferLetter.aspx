@@ -27,7 +27,6 @@
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterSignatory" Name="OfferLetterSignatory" />
                     <rsweb:ReportDataSource DataSourceId="odsOfferLetterCollateral" Name="OfferLetterCollateral" />
                         <rsweb:ReportDataSource DataSourceId="odsOfferLetterBorrowerDetail" Name="OfferLetterBorrowerDetail" />
-                        <rsweb:ReportDataSource DataSourceId="odsOfferLetterClause" Name="OfferLetterClauses" />
                 </DataSources>
             </LocalReport>
         </rsweb:ReportViewer>
@@ -76,11 +75,8 @@
                 <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
             </SelectParameters>
         </asp:ObjectDataSource>
-        <asp:ObjectDataSource ID="odsOfferLetterClause" runat="server" SelectMethod="OfferLetterClauses" TypeName="FintrakBanking.ReportObjects.Credit.OfferLetterInfo">
-            <SelectParameters>
-                <asp:QueryStringParameter Name="applicationRefNumber" QueryStringField="applicationRefNumber" Type="String" />
-            </SelectParameters>
-        </asp:ObjectDataSource>
+       
+        <br />
     </div>
     </form>
 </body>
