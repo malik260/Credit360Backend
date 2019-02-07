@@ -212,7 +212,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 //var allLoans = scheduledLoan.Union(unscheduledLoan).ToList();
 
-                var allLoans = scheduledLoan.ToList();
+                var allLoans = scheduledLoan.ToList().Where(x=> x.dailyAccuralAmount > 0);
 
                 List<TBL_DAILY_ACCRUAL> allAccrual = new List<TBL_DAILY_ACCRUAL>();
 
@@ -978,6 +978,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / 100.0000) * item.availableBalance * (1 / (decimal)item.daysInAYear));
 
+                    if (accuralAmount <= 0)
+                        continue;
+
                     dailyAccrual.DAILYACCURALAMOUNT = accuralAmount;
                     dailyAccrual.DAILYACCURALAMOUNT2 = 0;
 
@@ -1027,6 +1030,9 @@ namespace FintrakBanking.Repositories.Credit
                     dailyAccrual.REPAYMENTPOSTEDSTATUS = false;
 
                     transAccrual.Add(dailyAccrual);
+
+
+
                 }
 
                 this.context.TBL_DAILY_ACCRUAL.AddRange(transAccrual);
@@ -1043,7 +1049,7 @@ namespace FintrakBanking.Repositories.Credit
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
-                             }).ToList();
+                             }).Where(x => x.dailyAccuralAmount > 0).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
@@ -1129,6 +1135,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     var accuralAmount = (decimal)Math.Abs((decimal)(item.interestRate / 100.0000) * item.availableBalance * (1 / (decimal)item.daysInAYear));
 
+                    if (accuralAmount <= 0)
+                        continue;
+
                     dailyAccrual.DAILYACCURALAMOUNT = accuralAmount;
                     dailyAccrual.DAILYACCURALAMOUNT2 = 0;
 
@@ -1193,7 +1202,7 @@ namespace FintrakBanking.Repositories.Credit
                                  companyId = groupedQ.Key.COMPANYID,
                                  currencyId = groupedQ.Key.CURRENCYID,
                                  dailyAccuralAmount = (double)groupedQ.Sum(i => i.DAILYACCURALAMOUNT),
-                             }).ToList();
+                             }).Where(x => x.dailyAccuralAmount > 0).ToList();
 
                 var setup = context.TBL_SETUP_GLOBAL.FirstOrDefault();
                 if (setup.USE_THIRD_PARTY_INTEGRATION)
@@ -1787,7 +1796,7 @@ namespace FintrakBanking.Repositories.Credit
                         FINTRAK_TRAN_PROC_DETAILS bulk = (from a in stagingContext.FINTRAK_TRAN_PROC_DETAILS
                                                           where a.BATCH_ID == model.batchId && a.BATCH_REF_ID
                                                             == model.batchRefId
-                                                          select a).SingleOrDefault();
+                                                          select a).FirstOrDefault();
                         bulk.FINTRAK_FLG = "Y";
                     }
 
@@ -10507,8 +10516,6 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanRecapitilization(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
-            twoFactorAuth.skipAuthentication = true;
-
             twoFactorAuth.skipAuthentication = true;
 
             bool output = false;
