@@ -10508,6 +10508,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
 
+            twoFactorAuth.skipAuthentication = true;
+
             bool output = false;
             int installmentNo = 0;
             try
