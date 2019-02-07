@@ -2,11 +2,15 @@
 {
     public class ProductFeeViewModel : GeneralEntity
     {
-        public short approvalStatusId;
-        public string chargeFeeName;
-        public int feeAmount;
-        public bool isIntegralFee;
-        public bool? isRecurring;
+        public string valueBase { get; set; }
+        public short approvalStatusId { get; set; }
+        public string chargeFeeName { get; set; }
+        public decimal feeAmount { get; set; }
+        public bool isIntegralFee { get; set; }
+        public bool? isRecurring { get; set; }
+        public bool? isRequired { get; set; }
+        public decimal feeRateValue { get; set; }
+
         public string approvalStatusName { get; set; }
 
         public int loanChargeFeeId { get; set; }
