@@ -224,12 +224,12 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     var prodFeeView = new ProductFeeViewModel()
                     {
-                        feeName = chargeFeeDetail.TBL_CHARGE_FEE.CHARGEFEENAME,
+                        feeName = chargeFeeDetail.DESCRIPTION,
                         loanApplicationDetailId = loanApplicationDeatilId,
                         chargeFeeId = chargeFeeDetail.CHARGEFEEID,
                         recommededFeeRateValue = (decimal)chargeFeeDetail.VALUE,
                         feeRateValue = (decimal) chargeFeeDetail.VALUE,
-                        feeAmount = (bookingRequest.AMOUNT_REQUESTED * (decimal)chargeFeeDetail.VALUE) / 100,
+                        feeAmount = (item.feeAmount * (decimal)chargeFeeDetail.VALUE) / 100,
                         feeIntervalName = chargeFeeDetail.TBL_CHARGE_FEE.TBL_FEE_INTERVAL.FEEINTERVALNAME,
                         isIntegralFee = chargeFeeDetail.TBL_CHARGE_FEE.ISINTEGRALFEE,
                         isRecurring = chargeFeeDetail.TBL_CHARGE_FEE.RECURRING,
@@ -240,7 +240,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
             }
 
-            loanAppProdFee = loanAppProdFee.Union(lisProdFeeViewModel).ToList();
+            loanAppProdFee = loanAppProdFee.Union(lisProdFeeViewModel).OrderBy(x=>x.feeName).ToList();
 
             return loanAppProdFee;
         }
@@ -3352,6 +3352,8 @@ namespace FintrakBanking.Repositories.Credit
                             sanctionLimit = String.Format("{0:0.00}", revolvingLoanRecord.OVERDRAFTLIMIT),
                             sanctionReferenceNumber = batchCode,//revolvingLoanRecord.LOANREFERENCENUMBER
                             interestRateAmount = String.Format("{0:0.00}", revolvingLoanRecord.INTERESTRATE),
+                            sanctionLevel = "003",
+                            sanctionAuthorizer = "999"
                         };
                         InterestRateInquiryViewModel accountOutput = finacle.GetInterestRateInquiry(model.accountNumber, acctType);
                         if (accountOutput.interestRateAmount == model.interestRateAmount)
