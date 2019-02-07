@@ -101,11 +101,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         public bool WriteBulkContingentLiabilityTerminationAtMaturityToStaging(List<TBL_LOAN_CONTINGENT> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                                IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
             foreach (var item in model)
             {
                 //item.date = applicationDate;
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
 
@@ -152,7 +153,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             }
 
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
@@ -160,10 +161,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         public bool WriteBulkDailyTermLoanInterestAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                               IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -209,7 +212,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
@@ -218,10 +221,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         public bool WriteBulkDailyFeeAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                             IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -248,7 +253,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 //addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(product.INTERESTRECEIVABLEPAYABLEGL.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
 
                 addStaging.CREDITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID2.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.Where(x => x.GLACCOUNTID == product.INTERESTINCOMEEXPENSEGL.Value).FirstOrDefault().ACCOUNTCODE;// product.INTERESTINCOMEEXPENSEGL.Value;
-                addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID1.Value , item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
+                addStaging.DEBITACCOUNT = finacle.GetGlAccountCode(chardedFeeDetails.GLACCOUNTID1.Value, item.currencyId, item.branchId);// context.TBL_CHART_OF_ACCOUNT.FirstOrDefault(x => x.GLACCOUNTID == product.INTERESTRECEIVABLEPAYABLEGL.Value).ACCOUNTCODE;
 
 
                 addStaging.DESCRIPTION = "Fee Daily Accrual Posting";
@@ -283,17 +288,18 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
         public bool WriteBulkDailyTaxAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                     IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -356,17 +362,19 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
         public bool WriteBulkDailyAuthorisedOverdraftInterestAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                                    IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -392,7 +400,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = DateTime.Now.Date; 
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -412,17 +420,19 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
         public bool WriteBulkDailyUnauthorisedOverdraftInterestAccuralToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                            IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -448,7 +458,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 addStaging.ISPOSTED = false;
                 addStaging.OPERATIONID = (int)OperationsEnum.DailyInterestAccural;
                 addStaging.POSTEDBY = "SYSTEM";
-                addStaging.POSTEDDATE = DateTime.Now.Date; 
+                addStaging.POSTEDDATE = DateTime.Now.Date;
                 addStaging.SOURCEBRANCHID = item.branchId;
                 addStaging.SOURCEREFERENCENUMBER = product.PRODUCTCODE;
                 addStaging.VALUEDATE = item.date;
@@ -468,17 +478,19 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
         public bool WriteBulkDailyPastDueInterestAccrualToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                          IFinanceTransactionRepository financeTransaction, DateTime applicationDate, string description)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -524,17 +536,19 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
         public bool WriteBulkDailyPastDuePrincipalAccrualToStaging(List<DailyInterestAccrualViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
                  IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 item.date = applicationDate;
 
                 var addStaging = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -582,18 +596,20 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
             }
 
 
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
         public bool WriteBulkLoanRepaymentPostingPastDueToStaging(List<LoanRepaymentViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
              IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
 
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 var addStagingInterest = new TBL_CUSTOM_TRANSACTION_BULK();
                 var addStagingPrincipal = new TBL_CUSTOM_TRANSACTION_BULK();
                 var addStagingPastDueInterest = new TBL_CUSTOM_TRANSACTION_BULK();
@@ -612,8 +628,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 {
                     casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId2.Value && x.COMPANYID == item.companyId);
                 }
-               
-               
+
+
                 if (item.interestOnPastDueInterest > 0)
                 {
                     count++;
@@ -657,7 +673,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                                                 && a.CATEGORYID == (short)DailyAccrualCategory.PastDueInterest && a.REPAYMENTPOSTEDSTATUS == false
                                                 && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
                                                 select a);
-                    
+
 
                     foreach (var itemDaily in pastDueInterestDaily)
                     {
@@ -666,7 +682,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     }
                 }
 
-                               
+
                 if (item.interestOnPastDuePrincipal > 0)
                 {
                     count++;
@@ -706,15 +722,15 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPastDuePrincipal);
 
                     var pastDuePrincipalDaily = (from a in context.TBL_DAILY_ACCRUAL
-                                                where a.REFERENCENUMBER == item.loanRefNo && a.COMPANYID == item.companyId
-                                                && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal && a.REPAYMENTPOSTEDSTATUS == false
-                                                && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                                select a);
+                                                 where a.REFERENCENUMBER == item.loanRefNo && a.COMPANYID == item.companyId
+                                                 && a.CATEGORYID == (short)DailyAccrualCategory.PastDuePrincipal && a.REPAYMENTPOSTEDSTATUS == false
+                                                 && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                                 select a);
 
                     foreach (var itemDaily in pastDuePrincipalDaily)
                     {
                         itemDaily.REPAYMENTPOSTEDSTATUS = true;
-                        itemDaily.DEMANDDATE = applicationDate; 
+                        itemDaily.DEMANDDATE = applicationDate;
                     }
                 }
 
@@ -795,12 +811,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 //    context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingPastDuePrincipal);
                 //}
 
-                
+
                 if ((decimal)item.periodInterestAmount > 0)
                 {
                     count++;
 
-                    addStagingInterest.AMOUNT = (decimal) Math.Abs(item.periodInterestAmount);
+                    addStagingInterest.AMOUNT = (decimal)Math.Abs(item.periodInterestAmount);
                     addStagingInterest.FLOWTYPE = "BIF";
                     addStagingInterest.FORCEDEBITACCOUNT = "N";
                     addStagingInterest.VALUEDATENUMBER = 1;
@@ -835,10 +851,10 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     context.TBL_CUSTOM_TRANSACTION_BULK.Add(addStagingInterest);
 
                     var interestDaily = (from a in context.TBL_DAILY_ACCRUAL
-                                                 where a.REFERENCENUMBER == item.loanRefNo && a.COMPANYID == item.companyId
-                                                 && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan && a.REPAYMENTPOSTEDSTATUS == false
-                                                 && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
-                                                 select a);
+                                         where a.REFERENCENUMBER == item.loanRefNo && a.COMPANYID == item.companyId
+                                         && a.CATEGORYID == (short)DailyAccrualCategory.TermLoan && a.REPAYMENTPOSTEDSTATUS == false
+                                         && a.TRANSACTIONTYPEID == (byte)LoanTransactionTypeEnum.Interest
+                                         select a);
 
                     foreach (var itemDaily in interestDaily)
                     {
@@ -847,7 +863,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                     }
                 }
 
-                
+
                 if ((decimal)item.periodPrincipalAmount > 0)
                 {
                     count++;
@@ -893,14 +909,14 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BL", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BL");
         }
 
-        private bool WriteBulkPostingToStagingSub(FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, DateTime applicationDate, string TransactionType, string batchCode)
+        private bool WriteBulkPostingToStagingSub(FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, DateTime applicationDate, string TransactionType)
         {
             bool output = false;
             var data = (from a in context.TBL_CUSTOM_TRANSACTION_BULK
-                        where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
+                        where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) //&& a.BATCHID == batchCode
                         select new FinanceTransactionStagingViewModel()
                         {
                             batchId = a.BATCHID,
@@ -920,8 +936,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                             sourceReferenceNumber = a.SOURCEREFERENCENUMBER,
                             forceDebitAccount = a.FORCEDEBITACCOUNT,
                             valueDate = a.VALUEDATE,
-                            transactionDate= a.POSTEDDATE
-                            
+                            transactionDate = a.POSTEDDATE
+
                         }).ToList();
 
             List<FINTRAK_TRAN_PROC_DETAILS> staging = new List<FINTRAK_TRAN_PROC_DETAILS>();
@@ -977,7 +993,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
 
             var model = (from a in context.TBL_CUSTOM_TRANSACTION_BULK
-                         where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && a.BATCHID == batchCode
+                         where a.VALUEDATE == DbFunctions.TruncateTime(applicationDate) //&& a.BATCHID == batchCode
                          group a by new { a.BATCHID } into groupedQ
                          select new FinanceTransactionStagingViewModel()
                          {
@@ -986,7 +1002,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                          }).ToList();
 
             List<FINTRAK_TRAN_PROC_MAIN> main = new List<FINTRAK_TRAN_PROC_MAIN>();
-            var recordCount = context.TBL_CUSTOM_TRANSACTION_BULK.Where(x => x.VALUEDATE == DbFunctions.TruncateTime(applicationDate) && x.BATCHID == batchCode).Count();
+            var recordCount = context.TBL_CUSTOM_TRANSACTION_BULK.Where(x => x.VALUEDATE == DbFunctions.TruncateTime(applicationDate)).Count();  //&& x.BATCHID == batchCode
             foreach (var item in model)
             {
                 FINTRAK_TRAN_PROC_MAIN addMain = new FINTRAK_TRAN_PROC_MAIN();
@@ -1020,11 +1036,12 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
         public bool WriteBulkLoanRepaymentPostingForceDebitToStaging(List<LoanRepaymentViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
        IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
             int count = 0;
             foreach (var item in model)
             {
-                
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == item.productId);
                 //var casa = context.TBL_CASA.FirstOrDefault(x => x.CASAACCOUNTID == item.casaAccountId && x.COMPANYID == item.companyId);
 
@@ -1033,7 +1050,7 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 //var interest = context.TBL_LOAN_SCHEDULE_DAILY.Where(x => x.LOANID == item.loanId && x.PAYMENTDATE == DbFunctions.TruncateTime(applicationDate));
                 //var interestAmount = interest.Sum(x => x.DAILYPRINCIPALAMOUNT);
 
-                
+
 
                 //item.periodInterestAmount = interestAmount; ///TODO will not work for CP since its unscheduled 
 
@@ -1146,17 +1163,18 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
 
             }
 
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
         public bool WriteBulkProcessLoanDisbursmentRollOverToStaging(List<LoanRepaymentViewModel> model, FinTrakBankingContext context, FinTrakBankingStagingContext stagingContext, IIntegrationWithFinacle finacle,
       IFinanceTransactionRepository financeTransaction, DateTime applicationDate)
         {
-            var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
             int count = 0;
             foreach (var item in model)
             {
+                var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
                 if (item.maturityInstructionTypeId == (int)MaturityInstructionTypeEnum.RolloverInterstAndPrincipal)
                 {
                     item.totalAmount = item.periodInterestAmount + item.periodPrincipalAmount;
@@ -1209,7 +1227,8 @@ namespace FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI
                 context.SaveChanges();
 
             }
-            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP", batchCode);
+
+            return WriteBulkPostingToStagingSub(context, stagingContext, applicationDate, "BP");
 
         }
 
