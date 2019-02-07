@@ -50,6 +50,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                               isFinal = h.ISFINAL,
                                               producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                               loanApplicationDetailId = d.LOANAPPLICATIONDETAILID,
+                                              offerLetterTitle = b.OFFERLETTERTITLE,
+                                              offerLetterSalutation = b.OFFERLETTERSALUTATION
 
                                           }).FirstOrDefault();
 
@@ -768,6 +770,20 @@ namespace FintrakBanking.ReportObjects.Credit
             return customers;
         }
 
+        public OfferLetterViewModel OfferLetterClauses(string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var clause = (from x in context.TBL_LOAN_APPLICATION
+                             join y in context.TBL_LOAN_OFFER_LETTER on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                             where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                             select new OfferLetterViewModel
+                             {
+                                 offerLetteracceptance = y.OFFERLETTERACCEPTANCE,
+                                 offerLetterClauses = y.OFFERLETTERCLAUSES
+                             }).FirstOrDefault();
+            return clause;
+        }
         #endregion
 
 

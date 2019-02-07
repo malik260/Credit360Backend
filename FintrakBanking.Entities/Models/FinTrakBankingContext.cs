@@ -254,6 +254,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_MONITORING_TRIG_SETUP> TBL_LOAN_MONITORING_TRIG_SETUP { get; set; }
         public virtual DbSet<TBL_LOAN_MONITORING_TRIGGER> TBL_LOAN_MONITORING_TRIGGER { get; set; }
         public virtual DbSet<TBL_LOAN_OPERATION> TBL_LOAN_OPERATION { get; set; }
+        public virtual DbSet<TBL_LOAN_OFFER_LETTER> TBL_LOAN_OFFER_LETTER { get; set; }
         public virtual DbSet<TBL_LOAN_PAST_DUE> TBL_LOAN_PAST_DUE { get; set; }
         public virtual DbSet<TBL_LOAN_PRELIMINARY_EVALUATN> TBL_LOAN_PRELIMINARY_EVALUATN { get; set; }
         public virtual DbSet<TBL_LOAN_PRICEINDEX_EXCEPTION> TBL_LOAN_PRICEINDEX_EXCEPTION { get; set; }
