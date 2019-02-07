@@ -5385,6 +5385,40 @@ namespace FintrakBanking.Repositories.Credit
                 })).FirstOrDefault();
         }
 
+        public IEnumerable<CollateralViewModel> GetCollateralStampToCoverValues(int customerId)
+        {
+            var collaterals = (from x in context.TBL_COLLATERAL_CUSTOMER
+                               join c in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals c.COLLATERALTYPEID
+                               join a in context.TBL_CUSTOMER on x.CUSTOMERID equals a.CUSTOMERID
+                               let ColSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(c => c.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).Select(c => c.COLLATERALSUBTYPENAME).FirstOrDefault()
+                               where x.CUSTOMERID == customerId orderby x.COLLATERALCUSTOMERID descending
+                               select new CollateralViewModel
+                               {
+                                   collateralId = x.COLLATERALCUSTOMERID,
+                                   collateralTypeId = x.COLLATERALTYPEID,
+                                   collateralSubTypeId = x.COLLATERALSUBTYPEID,
+                                   customerId = x.CUSTOMERID,
+                                   currencyId = x.CURRENCYID,
+                                   currency = x.TBL_CURRENCY.CURRENCYNAME,
+                                   collateralTypeName = x.TBL_COLLATERAL_TYPE.COLLATERALTYPENAME,
+                                   collateralSubTypeName = ColSubType,
+                                   collateralCode = x.COLLATERALCODE,
+                                   collateralValue = x.COLLATERALVALUE,
+                                   camRefNumber = x.CAMREFNUMBER,
+                                   allowSharing = x.ALLOWSHARING,
+                                   isLocationBased = (bool)x.ISLOCATIONBASED,
+                                   valuationCycle = x.VALUATIONCYCLE,
+                                   haircut = x.HAIRCUT,
+                                   requireInsurancePolicy = c.REQUIREINSURANCEPOLICY,
+                                   dateTimeCreated = x.DATETIMECREATED,
+                                   requireVisitation = c.REQUIREVISITATION,
+                                   customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME,
+
+                               }).ToList();
+
+            return collaterals;
+        }
+
     }
 
 }
