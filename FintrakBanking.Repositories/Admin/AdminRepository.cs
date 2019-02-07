@@ -982,7 +982,7 @@ namespace FintrakBanking.Repositories.Admin
                         join st in context.TBL_STAFF on p.STAFFID equals st.STAFFID
                         join br in context.TBL_BRANCH on st.BRANCHID equals br.BRANCHID
                         join coy in context.TBL_COMPANY on br.COMPANYID equals coy.COMPANYID
-                        where st.COMPANYID == companyId
+                        where st.COMPANYID == companyId where st.DELETED == false
                         select new ActiveUserDetails
                         {
                             companyId = coy.COMPANYID,

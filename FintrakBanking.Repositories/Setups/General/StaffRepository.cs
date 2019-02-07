@@ -624,6 +624,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
                         if (response)
                         {
+                            context.SaveChanges();
                             trans.Commit();
                             return 1;
                         }
@@ -631,6 +632,7 @@ namespace FintrakBanking.Repositories.Setups.General
                     }
                     else
                     {
+                        context.SaveChanges();
                         trans.Commit();
                     }
 
@@ -646,8 +648,9 @@ namespace FintrakBanking.Repositories.Setups.General
 
         private bool DeleteStaff(int staffId, int approvalStatusId, ApprovalViewModel entity)
         {
+            var tempStaff = context.TBL_TEMP_STAFF.Find(staffId);
+            var targetStaff = context.TBL_STAFF.FirstOrDefault(x=>x.STAFFCODE == tempStaff.STAFFCODE);
 
-            var targetStaff = context.TBL_STAFF.Find(staffId);
             targetStaff.DELETED = true;
             targetStaff.DELETEDBY = entity.createdBy;
             targetStaff.DATETIMEDELETED = DateTime.Now;
@@ -655,6 +658,9 @@ namespace FintrakBanking.Repositories.Setups.General
             var userAccount = context.TBL_PROFILE_USER.Where(x => x.STAFFID == targetStaff.STAFFID).FirstOrDefault();
             userAccount.ISACTIVE = false;
             userAccount.ISLOCKED = true;
+
+            tempStaff.ISCURRENT = false;
+
 
             // Audit Section ---------------------------
             var audit = new TBL_AUDIT
