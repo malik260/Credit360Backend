@@ -15,14 +15,17 @@ namespace FintrakBanking.Repositories.Credit
     public class CollateralDocumentRepository : ICollateralDocumentRepository
     {
         private FinTrakBankingDocumentsContext context;
+        private FinTrakBankingContext bankingContext;
+
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private ICustomerCollateralRepository coll;
          private ICollateralDocumentRepository document;
 
-        public CollateralDocumentRepository(CustomerCollateralRepository coll, FinTrakBankingDocumentsContext context, IGeneralSetupRepository general, IAuditTrailRepository audit)
+        public CollateralDocumentRepository(CustomerCollateralRepository coll, FinTrakBankingDocumentsContext context, FinTrakBankingContext bankingContext, IGeneralSetupRepository general, IAuditTrailRepository audit)
         {
             this.context = context;
+            this.bankingContext = bankingContext;
             this.general = general;
             this.audit = audit;
             this.coll = coll;
@@ -40,7 +43,8 @@ namespace FintrakBanking.Repositories.Credit
                 SYSTEMDATETIME = DateTime.Now,
                 CREATEDBY = (int)model.createdBy,
                 ISPRIMARYDOCUMENT = model.isPrimaryDocument,
-               // COLLATERALCODE = model.collateralCode,
+                DOCUMENTTYPEID = model.documentTypeId,
+                
             };
 
             context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(data);
@@ -144,7 +148,8 @@ namespace FintrakBanking.Repositories.Credit
         }
         public IEnumerable<CollateralDocumentViewModel> GetTempAllCollateralDocument(int collateralId)
         {
-            return this.context.TBL_TEMP_MEDIA_COLLATERAL_DOCS.Where(x=>x.TEMPCOLLATERALCUSTOMERID==collateralId).Select(x => new CollateralDocumentViewModel
+            string docName = "";
+            var docMedia = this.context.TBL_TEMP_MEDIA_COLLATERAL_DOCS.Where(x => x.TEMPCOLLATERALCUSTOMERID == collateralId).Select(x => new CollateralDocumentViewModel
             {
                 collateralId = x.TEMPCOLLATERALCUSTOMERID,
                 documentId = x.DOCUMENTID,
@@ -152,8 +157,24 @@ namespace FintrakBanking.Repositories.Credit
                 fileData = x.FILEDATA,
                 fileName = x.FILENAME,
                 fileExtension = x.FILEEXTENSION,
-                targetId = x.TARGETID
+                targetId = x.TARGETID,
+                documentTypeId = x.DOCUMENTTYPEID,
+                //documentType = x.DOCUMENTTYPEID != null ? docName : "N/A",
             }).ToList();
+
+            foreach(var item in docMedia.ToList())
+            {
+                docName = bankingContext.TBL_COLLATERAL_DOCUMENT_TYPE.Where(p => p.DOCUMENTTYPEID == item.documentTypeId).Select(m => m.DOCUMENTTYPENAME).FirstOrDefault();
+                if (!string.IsNullOrEmpty(docName))
+                {
+                    item.documentType = docName;
+                }
+            }
+
+            var test = docMedia.ToList();
+
+
+            return docMedia;
         }
 
         public CollateralDocumentViewModel GetCollateralDocument(int documentId)

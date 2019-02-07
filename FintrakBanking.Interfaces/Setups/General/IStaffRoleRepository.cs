@@ -7,6 +7,7 @@ namespace FintrakBanking.Interfaces.Setups.General
     public interface IStaffRoleRepository
     {
         IEnumerable<StaffRoleViewModel> GetStaffRole();
+        StaffRoleViewModel GetStaffRoleByStaffId(int staffId);
 
         StaffRoleViewModel GetStaffRole(int rankId);
 

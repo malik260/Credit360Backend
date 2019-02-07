@@ -40,8 +40,28 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("staff-role-by-staffid")]
+        public HttpResponseMessage GetStaffRoleByStaffId()
+        {
+            try
+            {
+                
+                var data = repo.GetStaffRoleByStaffId(token.GetStaffId);
 
-      [HttpGet] [ClaimsAuthorization]  
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet] [ClaimsAuthorization]  
         [Route("staff-role/{staffRoleId}")]
         public HttpResponseMessage GetStaffRole(int rankId)
         {

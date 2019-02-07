@@ -16,6 +16,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string lien { get; set; }
         public DateTime startDate { get; set; }
         public DateTime endDate { get; set; }
+        public string loanOverdraftAccount { get; set; }
+        public string loanOverdraftAccountBalance { get; set; }
+
     }
 }
 

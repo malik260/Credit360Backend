@@ -786,7 +786,6 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
-                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -822,7 +821,6 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
-                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -843,6 +841,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -1057,7 +1056,7 @@
         <Top>0.59667in</Top>
         <Left>0.28in</Left>
         <Height>0.71666in</Height>
-        <Width>20.00149in</Width>
+        <Width>20.0015in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>
