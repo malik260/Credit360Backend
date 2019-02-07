@@ -345,8 +345,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
                                            && (b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
-                                          || b.CHECKLISTSTATUSID == null)
-                                           && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                                    || b.CHECKLISTSTATUSID == null)
+                                 && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
                                           && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                            select new OfferLetterConditionPrecidentViewModel()
                                            {
