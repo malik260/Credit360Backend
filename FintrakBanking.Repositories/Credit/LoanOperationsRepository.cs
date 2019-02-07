@@ -10507,6 +10507,9 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanRecapitilization(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
+            twoFactorAuth.skipAuthentication = true;
+
+            twoFactorAuth.skipAuthentication = true;
 
             bool output = false;
             int installmentNo = 0;
@@ -13074,6 +13077,8 @@ namespace FintrakBanking.Repositories.Credit
 
                                 if (authenticated.authenticated == false)
                                     throw new TwoFactorAuthenticationException(authenticated.message);
+
+                                twoFADetails.skipAuthentication = true;
                             }
 
 
@@ -13085,8 +13090,7 @@ namespace FintrakBanking.Repositories.Credit
                                 var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
 
                                 if (feePostings != null)
-                                {
-                                    twoFADetails.skipAuthentication = true;
+                                {                                    
                                     financeTransaction.PostTransaction(feePostings, false, twoFADetails);
 
 

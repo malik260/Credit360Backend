@@ -276,6 +276,7 @@ namespace FintrakBanking.ReportObjects
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                            join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                            join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
+                           join br in context.TBL_STAFF on a.CREATEDBY equals br.STAFFID
                            where (a.ISDISBURSED
                              && a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate)
                          && a.COMPANYID == companyId
@@ -314,6 +315,7 @@ namespace FintrakBanking.ReportObjects
                                firstName = a.TBL_CUSTOMER.FIRSTNAME,
                                lastName = a.TBL_CUSTOMER.LASTNAME,
                                middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                               staffName = br.FIRSTNAME +" "+" "+br.MIDDLENAME+" "+" "+br.LASTNAME
 
 
                            };
@@ -904,9 +906,9 @@ namespace FintrakBanking.ReportObjects
                             join rv in context.TBL_LOAN_REVOLVING on s.CASAACCOUNTID equals rv.CASAACCOUNTID
                             join br in context.TBL_BRANCH on s.BRANCHID equals br.BRANCHID
                             join cs in context.TBL_CUSTOMER on s.CUSTOMERID equals cs.CUSTOMERID
-                            where (s.AVAILABLEBALANCE < 0 && DbFunctions.TruncateTime(rv.MATURITYDATE) > DbFunctions.TruncateTime(maturityDate))
+                            where s.AVAILABLEBALANCE < 0 && DbFunctions.TruncateTime(rv.MATURITYDATE) > DbFunctions.TruncateTime(maturityDate)
                             && (br.BRANCHID == branchId || branchId == null)
-                            && (cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName == null || rv.LOANREFERENCENUMBER.StartsWith(customerName.Trim()))
+                            || (cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName == null || rv.LOANREFERENCENUMBER.StartsWith(customerName.Trim()))
 
                             select new LoanViewModel
                             {
@@ -1681,7 +1683,7 @@ namespace FintrakBanking.ReportObjects
                                   join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
                                   join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
                                   join ccust in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals ccust.COLLATERALCUSTOMERID
-                                  join li in context.TBL_CASA_LIEN on ca.PRODUCTACCOUNTNUMBER equals li.PRODUCTACCOUNTNUMBER
+                                  //join li in context.TBL_CASA_LIEN on ca.PRODUCTACCOUNTNUMBER equals li.PRODUCTACCOUNTNUMBER
                                   where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
                                    DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
                                   && l.COMPANYID == companyid && l.ISDISBURSED == true
@@ -1690,9 +1692,9 @@ namespace FintrakBanking.ReportObjects
                                       availablebalance = a.APPROVEDAMOUNT,
                                       cashBalance = ca.AVAILABLEBALANCE,
                                       lien = " ",
-                                      lienamount = li.LIENAMOUNT,
-                                      loanaccountnumber = ca.PRODUCTACCOUNTNUMBER,
-                                      productaccountnumber = li.PRODUCTACCOUNTNUMBER
+                                      //lienamount = li.LIENAMOUNT,
+                                      loanaccountnumber = l.LOANREFERENCENUMBER,
+                                      //productaccountnumber = li.PRODUCTACCOUNTNUMBER
                                   }).ToList();
 
                 return reportData;
