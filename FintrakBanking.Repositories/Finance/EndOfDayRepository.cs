@@ -166,7 +166,7 @@ namespace FintrakBanking.Repositories.Finance
 
             loanOperation.ProcessLoanRepaymentPostingPastDue(date);
 
-            loanOperation.ProcessAutomaticCommercialLoanRollover(date);
+            //loanOperation.ProcessAutomaticCommercialLoanRollover(date);
 
             //loanOperation.ProcessUnauthorisedOverdraftInterestRepaymentPostingPastDue(date);
             //loanOperation.ProcessUnauthorisedOverdraftPrincipalRepaymentPostingPastDue(date);
