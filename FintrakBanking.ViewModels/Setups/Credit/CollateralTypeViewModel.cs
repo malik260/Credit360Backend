@@ -32,5 +32,12 @@ namespace FintrakBanking.ViewModels.Credit
         public string seniorityOfClaims { get; set; }
         public string description { get; set; }
     }
+    public class CollateralDocumentTypeViewModel : GeneralEntity
+    {
+        public short documentTypeId { get; set; }
+        public string documentType { get; set; }
+        public int collateralTypeId { get; set; }
+        public string collateralTypeName { get; set; }
 
+    }
 }

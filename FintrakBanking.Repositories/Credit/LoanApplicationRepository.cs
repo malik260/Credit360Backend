@@ -166,7 +166,9 @@ namespace FintrakBanking.Repositories.Credit
                                     invoiceDate = i.INVOICE_DATE,
                                     principalName = i.TBL_LOAN_PRINCIPAL.NAME,
                                     principalId = i.PRINCIPALID,
-                                    purchaseOrderNumber = i.PURCHASEORDERNUMBER
+                                    purchaseOrderNumber = i.PURCHASEORDERNUMBER,
+                                    reValidated = i.REVALIDATED,
+                                    entrySheetNumber = i.ENTRYSHEETNUMBER,
                                 }).ToList(),
                                 educationLoan = b.TBL_LOAN_APPLICATION_DETL_EDU.Where(i => i.LOANAPPLICATIONDETAILID == b.LOANAPPLICATIONDETAILID).Select(x => new EducationLoanViewModel
                                 {
@@ -433,6 +435,8 @@ namespace FintrakBanking.Repositories.Credit
                                                          principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
                                                          principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
                                                          principalId = i.PRINCIPALID,
+                                                         reValidated = i.REVALIDATED,
+                                                         entrySheetNumber = i.ENTRYSHEETNUMBER,
                                                          // purchaseOrderNumber = i.PURCHASEORDERNUMBER
                                                      }).ToList(),
                             firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
@@ -567,6 +571,8 @@ namespace FintrakBanking.Repositories.Credit
                                                          principalAccount = i.TBL_LOAN_PRINCIPAL.ACCOUNTNUMBER,
                                                          principalRegNo = i.TBL_LOAN_PRINCIPAL.PRINCIPALSREGNUMBER,
                                                          principalId = i.PRINCIPALID,
+                                                         reValidated = i.REVALIDATED,
+                                                         entrySheetNumber = i.ENTRYSHEETNUMBER,
                                                          // purchaseOrderNumber = i.PURCHASEORDERNUMBER
                                                      }).ToList(),
                             firstEducationtDetail = (from i in context.TBL_LOAN_APPLICATION_DETL_EDU.Where(x => x.LOANAPPLICATIONDETAILID == a.LOANAPPLICATIONDETAILID)
@@ -1376,6 +1382,8 @@ namespace FintrakBanking.Repositories.Credit
                 invoice.INVOICENO = invoiceUpdate.invoiceNo;
                 invoice.INVOICE_DATE = invoiceUpdate.invoiceDate;
                 invoice.INVOICE_AMOUNT = invoiceUpdate.invoiceAmount;
+                invoice.REVALIDATED = invoiceUpdate.reValidated;
+                invoice.ENTRYSHEETNUMBER = invoiceUpdate.entrySheetNumber;
             }
 
             if (productClassId == (int)ProductClassEnum.BondAndGuarantees)
@@ -1506,7 +1514,9 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = DateTime.Now,
                 CREATEDBY = createdBy,
                 PURCHASEORDERNUMBER = c.purchaseOrderNumber,
-                CERTIFICATENO = c.certificateNumber
+                CERTIFICATENO = c.certificateNumber,
+                REVALIDATED = c.reValidated,
+                ENTRYSHEETNUMBER = c.entrySheetNumber
 
             });
             context.TBL_LOAN_APPLICATION_DETL_INV.AddRange(data);
@@ -1649,6 +1659,8 @@ namespace FintrakBanking.Repositories.Credit
                                       contractEndDate = a.CONTRACT_ENDDATE,
                                       approvalStatusId = a.APPROVALSTATUSID,
                                       purchaseOrderNumber = a.PURCHASEORDERNUMBER,
+                                      reValidated = a.REVALIDATED,
+                                      entrySheetNumber = a.ENTRYSHEETNUMBER,
                                       productClassId = (int)ProductClassEnum.InvoiceDiscountingFacility
                                   }).ToList();
 
@@ -2578,6 +2590,8 @@ namespace FintrakBanking.Repositories.Credit
                                contractEndDate = a.CONTRACT_ENDDATE,
                                approvalStatusId = a.APPROVALSTATUSID,
                                purchaseOrderNumber = a.PURCHASEORDERNUMBER,
+                               reValidated = a.REVALIDATED,
+                               entrySheetNumber = a.ENTRYSHEETNUMBER,
                                productClassId = (int)ProductClassEnum.InvoiceDiscountingFacility
                            }).ToList();
                 return inv;
@@ -2688,12 +2702,19 @@ namespace FintrakBanking.Repositories.Credit
             //             || a.PURCHASEORDERNUMBER == data.purchaseOrderNumber || a.CONTRACTNO == data.contractNumber ||
             //             a.CERTIFICATENO == data.certificateNumber)
             //           select a).ToList();
-            var dat = (from a in context.TBL_LOAN_APPLICATION_DETL_INV
+            var invoice = (from a in context.TBL_LOAN_APPLICATION_DETL_INV
                        join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                        where b.CUSTOMERID == data.customerId && a.INVOICENO == data.documentNo
-                       select a).ToList();
-            return dat.Any();
+                       select a).FirstOrDefault();
 
+            if (data.reValidated == true && invoice != null)
+            {
+                invoice.REVALIDATED = true;
+                context.SaveChanges();
+                return true;
+            }
+
+            return invoice == null;
         }
 
         #region All Operation Applications

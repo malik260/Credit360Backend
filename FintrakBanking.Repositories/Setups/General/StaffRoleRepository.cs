@@ -76,6 +76,22 @@ namespace FintrakBanking.Repositories.Setups.General
                    };
 
         }
+        public StaffRoleViewModel GetStaffRoleByStaffId(int staffId)
+        {
+            var role = (from a in context.TBL_STAFF
+                        join b in context.TBL_STAFF_ROLE on a.STAFFROLEID equals b.STAFFROLEID 
+                        where a.STAFFID == staffId
+                        select new StaffRoleViewModel
+                        {
+                            staffRoleName = b.STAFFROLENAME,
+                            companyId = (short)a.COMPANYID,
+                            staffRoleId = a.STAFFROLEID,
+                            staffRoleCode = b.STAFFROLECODE,
+                            workEndDuration = a.WORKENDDURATION,
+                            workStartDuration = a.WORKSTARTDURATION,
+                        }).FirstOrDefault();
+            return role;
+        }
 
         public IEnumerable<StaffRoleViewModel> GetStaffRole()
         {

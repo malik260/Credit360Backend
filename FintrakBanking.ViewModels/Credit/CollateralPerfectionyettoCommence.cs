@@ -35,6 +35,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string subHead { get; set; }
         public string staffCode { get; set; }
         public string teamUnit { get; set; }
+        public string region { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string middleName { get; set; }
     }
 
 

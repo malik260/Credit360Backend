@@ -187,6 +187,28 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
+        [Route("loan-search-contingent")]
+        public HttpResponseMessage SearchForLoanContingent(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForLoanContingent(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("fx-revolving-loan-search/")]
         public HttpResponseMessage SearchForFXRevolvingLoan(string searchQuery)
         {
@@ -1013,7 +1035,24 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
                 }
-                
+                else if ((int)OperationsEnum.ContingentLiabilityTerminateAndRebook == model.operationTypeId)
+                {
+
+                    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    }
+
+                    var response = repo.AddOperationReviewContingent(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+                }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 

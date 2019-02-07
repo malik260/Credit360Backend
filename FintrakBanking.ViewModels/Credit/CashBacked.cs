@@ -20,5 +20,6 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal securityValue { get; set; }
         public string currencyType { get; set; }
         public string securityInTheNameOf { get; set; }
+        public string loanReferenceNumber { get; set; }
     }
 }

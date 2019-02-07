@@ -33,6 +33,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string phoneNumber { get; set; }
         public string address { get; set; }
         public string coreCompetence { get; set; }
+
         public List<AccreditedConsultantStateViewModel> accreditedConsultantStates { get; set; }
     }
     public class AccreditedPrincipalsViewModel : GeneralEntity

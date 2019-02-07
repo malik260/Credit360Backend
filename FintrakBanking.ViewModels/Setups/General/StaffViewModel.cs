@@ -39,7 +39,7 @@ namespace FintrakBanking.ViewModels.Setups.General
         public string GenderOfNok { get; set; }
         public string NokrelationShip { get; set; }
         public string Comment { get; set; }
-        public byte[] StaffSignature { get; set; }
+        public byte?[] StaffSignature { get; set; }
         public short? BranchId { get; set; }
         public string BranchName { get; set; }
         public int? MisinfoId { get; set; }

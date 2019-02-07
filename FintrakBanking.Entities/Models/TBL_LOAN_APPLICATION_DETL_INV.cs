@@ -52,6 +52,8 @@ namespace FintrakBanking.Entities.Models
 
         public string CERTIFICATENO { get; set; }
 
+        public string ENTRYSHEETNUMBER { get; set; }
+
         public bool REVALIDATED { get; set; }
 
         public int CREATEDBY { get; set; }

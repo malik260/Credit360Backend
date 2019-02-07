@@ -80,6 +80,12 @@ namespace FintrakBanking.Interfaces.Reports
         string GetCollateralValuationReport(DateRange dateRange);
         string GetLoanClassificationReport(DateRange dateRange);
 
+        string GetAgeAnalysisReport(DateRange dateRange);
+
+        string GetCreditScheduleReport(DateRange dateRange);
+
+        string GetSanctionLimitReport(DateRange dateRange);
+        string GetImpairedWatchListReport(DateRange dateRange);
 
     }
 }
