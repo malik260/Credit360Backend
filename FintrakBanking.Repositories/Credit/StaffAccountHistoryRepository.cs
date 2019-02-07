@@ -231,7 +231,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 var staff = context.TBL_STAFF_ACCOUNT_HISTORY.Where(s => s.STAFFACCOUNTHISTORYID == entity.staffAccountHistoryId).FirstOrDefault();
 
-                data = GetSelectedLoanDetails(entity.companyId, staff.TARGETID, entity.accountTypeId);
+                data = GetSelectedLoanDetails(entity.companyId, staff.TARGETID, entity.loanSystemTypeId);
                  
                 data.reasonForChange = staff.REASONFORCHANGE;
                 data.newRMStaffName = staff.TBL_STAFF1.LASTNAME + " " + staff.TBL_STAFF1.FIRSTNAME + " " + staff.TBL_STAFF1.MIDDLENAME;
@@ -242,18 +242,18 @@ namespace FintrakBanking.Repositories.Credit
             return data;
         }
 
-        public StaffMISHistoryViewModel GetSelectedLoanDetails(int companyId, int loanId, int accountTypeId)
+        public StaffMISHistoryViewModel GetSelectedLoanDetails(int companyId, int loanId, int loanSystemTypeId)
         {
             StaffMISHistoryViewModel loan = null;
-            if (accountTypeId == 1)
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.TermDisbursedFacility)
             {
                 loan = GetRunningTeamLoans(companyId, loanId);
             }
-            if(accountTypeId == 2)
+            if(loanSystemTypeId == (int)LoanSystemTypeEnum.OverdraftFacility)
             {
                 loan = GetRunningRevolvingLoans(companyId, loanId);
             }
-            if (accountTypeId == 3 )
+            if (loanSystemTypeId == (int)LoanSystemTypeEnum.ContingentLiability)
             {
                 loan = GetRunningContingentLiability(companyId, loanId);
             }
@@ -278,7 +278,7 @@ namespace FintrakBanking.Repositories.Credit
             {
                 if(entity.approvalStatusId == (int)ApprovalStatusEnum.Approved)
                 {
-                    switch (entity.accountTypeId)
+                    switch (entity.loanSystemTypeId)
                     {
                         case ((int) StaffAccountHistoryTypeEnum.TermOrDisbusrsedFacility): TeamLoan(entity); break;
                         case ((int)StaffAccountHistoryTypeEnum.RevolvingFacility): RevolvingLoan(entity); break;

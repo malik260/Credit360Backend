@@ -86,6 +86,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_COLLATERAL_SENIORITY_CLAIM> TBL_COLLATERAL_SENIORITY_CLAIM { get; set; }
         public virtual DbSet<TBL_COLLATERAL_STOCK> TBL_COLLATERAL_STOCK { get; set; }
         public virtual DbSet<TBL_COLLATERAL_TYPE> TBL_COLLATERAL_TYPE { get; set; }
+        public virtual DbSet<TBL_COLLATERAL_DOCUMENT_TYPE> TBL_COLLATERAL_DOCUMENT_TYPE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_TYPE_SUB> TBL_COLLATERAL_TYPE_SUB { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VALUEBASE_TYPE> TBL_COLLATERAL_VALUEBASE_TYPE { get; set; }
         public virtual DbSet<TBL_COLLATERAL_VALUER> TBL_COLLATERAL_VALUER { get; set; }

@@ -54,8 +54,10 @@ namespace FintrakBanking.ReportObjects
                 var approvalTrail = (from f in context.TBL_APPROVAL_TRAIL
                                      join l in context.TBL_APPROVAL_LEVEL on f.FROMAPPROVALLEVELID  equals l.APPROVALLEVELID 
                                      join g in context.TBL_APPROVAL_GROUP on l.GROUPID equals g.GROUPID
-                                     where f.TARGETID == targetId && f.OPERATIONID == operationId && f.COMPANYID == companyId
-                                     orderby g.GROUPID, l.APPROVALLEVELID
+                                     join b in context.TBL_APPROVAL_GROUP_MAPPING on g.GROUPID equals b.GROUPID
+                                     join c in context.TBL_APPROVAL_LEVEL on g.GROUPID equals c.GROUPID
+                                     where f.TARGETID == targetId || f.TARGETID != targetId && f.OPERATIONID == operationId && f.COMPANYID == companyId
+                                     orderby b.POSITION, c.POSITION
 
                                      select new WorkflowTrackerViewModel()
                                      {
@@ -87,34 +89,24 @@ namespace FintrakBanking.ReportObjects
             {
                  data = (from a in context.TBL_APPROVAL_GROUP
                             join b in context.TBL_APPROVAL_GROUP_MAPPING on a.GROUPID equals b.GROUPID
-                            join c in context.TBL_APPROVAL_LEVEL_STAFF on a.GROUPID equals c.TBL_APPROVAL_LEVEL.GROUPID
-                            where c.TBL_APPROVAL_LEVEL.ISACTIVE == true && a.COMPANYID == companyId && b.OPERATIONID == operationId
-                            group new { a,b,c, c.TBL_APPROVAL_LEVEL , c.TBL_STAFF } by  new
-                            {
-                                LevelStaff = c,
-                                Staff = c.TBL_STAFF,
-                                Level =   c.TBL_APPROVAL_LEVEL,
-                                b.TBL_OPERATIONS.OPERATIONNAME,
-                                a.GROUPNAME,
-                                b.POSITION ,
-                                c.VETOPOWER
-                            } into g
-
-                         orderby g.Key.Level.POSITION  
+                            join c in context.TBL_APPROVAL_LEVEL on a.GROUPID equals c.GROUPID
+                         //join c in context.TBL_APPROVAL_LEVEL_STAFF on a.GROUPID equals c.TBL_APPROVAL_LEVEL.GROUPID
+                         where c.ISACTIVE == true && a.COMPANYID == companyId && b.OPERATIONID == operationId
+                         orderby b.POSITION ascending, c.POSITION  ascending                   
                          select new WorkFlowViewModel()
                             {   
-                                operationName = g.Key.OPERATIONNAME,
-                                groupName = g.Key.GROUPNAME,
-                                vetoPower = g.Key.VETOPOWER == true ? "Yes" : "No",
-                                levelName = g.Key.Level .LEVELNAME,
-                                username = (g.Key.Staff.FIRSTNAME  + " " + g.Key.Staff.LASTNAME).ToUpper(),
-                                scope = g.Key.LevelStaff.PROCESSVIEWSCOPEID == 1 ? "Default" : g.Key.LevelStaff.PROCESSVIEWSCOPEID == 2 ? "Group" : g.Key.LevelStaff.PROCESSVIEWSCOPEID == 3 ? "Global" : null,
-                                grpPosition = g.Key.Level.POSITION,
-                                levelPosition = g.Key.Level .POSITION,
-                                canApprove = g.Key.LevelStaff.CANAPPROVE == true ? "Yes" : "No",
-                                canEdit = g.Key.LevelStaff.CANEDIT == true ? "Yes" : "No",
-                                canUploadFile = g.Key.LevelStaff.CANUPLOAD == true ? "Yes" : "No",
-                                staffLevelId = g.Key.LevelStaff.STAFFLEVELID.ToString()
+                                operationName = b.TBL_OPERATIONS.OPERATIONNAME,
+                                groupName = a.GROUPNAME,
+                                //vetoPower = c.VETOPOWER == true ? "Yes" : "No",
+                                levelName = c.LEVELNAME,
+                                //username = (c.TBL_STAFF.FIRSTNAME  + " " + c.TBL_STAFF.LASTNAME).ToUpper(),
+                                //scope = c.PROCESSVIEWSCOPEID == 1 ? "Default" : c.PROCESSVIEWSCOPEID == 2 ? "Group" : c.PROCESSVIEWSCOPEID == 3 ? "Global" : null,
+                                grpPosition = b.POSITION,
+                                levelPosition = c.POSITION,
+                                canApprove = c.CANAPPROVE == true ? "Yes" : "No",
+                                canEdit = c.CANEDIT == true ? "Yes" : "No",
+                                canUploadFile = c.CANUPLOAD == true ? "Yes" : "No",
+                                //staffLevelId = c.STAFFLEVELID.ToString()
                             }).ToList();
 
                 return data;

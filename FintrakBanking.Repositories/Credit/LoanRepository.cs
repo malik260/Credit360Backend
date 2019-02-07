@@ -7050,7 +7050,77 @@ namespace FintrakBanking.Repositories.Credit
             return allFilteredLoan;
 
         }
+        public IQueryable<LoanViewModel> SearchForLoanContingent(string searchQuery)
+        {
+            var applicationDate = generalSetup.GetApplicationDate();
+            IQueryable<LoanViewModel> allFilteredLoan = null;
 
+            searchQuery = searchQuery.Trim();
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                var loans = (from a in context.TBL_LOAN_CONTINGENT
+                             join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                             join c in context.TBL_CASA on a.CASAACCOUNTID equals c.CASAACCOUNTID
+                             where a.ISDISBURSED == true && a.MATURITYDATE >= DbFunctions.TruncateTime(applicationDate) && a.LOANSTATUSID == (int)LoanStatusEnum.Active
+                             select new LoanViewModel
+                             {
+                                 loanId = a.CONTINGENTLOANID,
+                                 customerId = a.CUSTOMERID,
+                                 customerName = b.FIRSTNAME + " " + b.LASTNAME,
+                                 firstName = b.FIRSTNAME,
+                                 lastName = b.LASTNAME,
+                                 customerCode = b.CUSTOMERCODE,
+                                 productAccountName = c.PRODUCTACCOUNTNAME,
+                                 loanReferenceNumber = a.LOANREFERENCENUMBER,
+                                 principalAmount = a.CONTINGENTAMOUNT,
+                                 loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
+                                 productTypeName = a.TBL_PRODUCT.TBL_PRODUCT_TYPE.PRODUCTTYPENAME,
+                                 currencyId = a.CURRENCYID,
+                                 currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
+                                 systemCurrentDate = applicationDate,
+                                 operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
+                                 {
+                                     loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
+                                     operationTypeId = op.OPERATIONTYPEID,
+                                     operationTypeName = context.TBL_OPERATIONS.FirstOrDefault(d => d.OPERATIONID == op.OPERATIONTYPEID).OPERATIONNAME,
+                                     newEffectiveDate = op.EFFECTIVEDATE,
+                                     reviewDetails = op.REVIEWDETAILS,
+                                     prepayment = op.PREPAYMENT,
+                                     newInterateRate = op.INTERATERATE,
+                                     newPrincipalFirstPaymentDate = op.PRINCIPALFIRSTPAYMENTDATE,
+                                     newPrincipalFrequencyTypeId = op.PRINCIPALFREQUENCYTYPEID,
+                                     newInterestFrequencyTypeId = op.INTERESTFREQUENCYTYPEID,
+                                     newPrincipalFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.PRINCIPALFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                     newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
+                                     newTenor = op.TENOR,
+                                     cASA_AccountId = op.CASA_ACCOUNTID,
+                                     cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
+                                     overDraftTopup = op.OVERDRAFTTOPUP,
+                                     fee_Charges = op.FEE_CHARGES,
+                                     scheduleDayCountConventionId = op.SCHEDULEDAYCOUNTCONVENTIONID,
+                                     scheduleDayCountConventionIName = context.TBL_DAY_COUNT_CONVENTION.Where(x => x.DAYCOUNTCONVENTIONID == op.SCHEDULEDAYCOUNTCONVENTIONID).Select(x => x.DAYCOUNTCONVENTIONNAME).FirstOrDefault(),
+                                     scheduleDayInterestTypeId = op.SCHEDULEDAYINTERESTTYPEID,
+                                     scheduledPrepaymentFrequencyTypeId = op.SCHEDULETYPEID,
+                                     scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
+                                     newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
+                                     newMaturityDate = op.MATURITYDATE,
+                                     dateTimeCreated = op.DATECREATED
+                                 }).FirstOrDefault(),
+                             });
+
+                allFilteredLoan = loans.Where(x => x.loanReferenceNumber.Contains(searchQuery) ||
+                                                   x.customerCode.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.firstName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.lastName.ToLower().Contains(searchQuery.ToLower()) ||
+                                                   x.productAccountName.ToLower().Contains(searchQuery.ToLower()))
+                                   .Take(10).AsQueryable();
+
+            }
+
+            return allFilteredLoan;
+
+        }
         public IQueryable<LoanViewModel> SearchForFXRevolvingLoan(string searchQuery)
         {
             var applicationDate = generalSetup.GetApplicationDate();

@@ -282,6 +282,8 @@ namespace FintrakBanking.Common.Enum
         LoanChargeFee = 260,
         ProductPriceIndexGlobalAdded = 261,
         ProductPriceIndexGlobalUpdated = 262,
+        ContingentLiabilityRebook = 263,
+        CollateralDocumentType = 264,
 
     };
    public enum RegulatoryTypeEnum

@@ -86,7 +86,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class ReasignedAccountApprovalViewModel : ApprovalViewModel
     {
-        public int accountTypeId { get; set; }
+        public int loanSystemTypeId { get; set; }
         public int loanId { get; set; }
         public int newRMStaffId { get; set; }
         public int staffAccountHistoryId { get; set; }

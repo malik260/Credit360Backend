@@ -331,9 +331,9 @@ namespace FintrakBanking.Repositories.Credit
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
             // workflow.Disputed = appl.DISPUTED; // buggy
 
-            if (model.forwardAction == 11 || model.forwardAction == 12)
+            if (model.forwardAction == 8 || model.forwardAction == 9)
             {
-                workflow.StatusId = (int)ApprovalStatusEnum.Referred;
+                //workflow.StatusId = (int)ApprovalStatusEnum.Referred;
                 var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
                 workflow.NextLevelId = dictionary["levelId"];
                 workflow.ToStaffId = dictionary["staffId"];
@@ -503,7 +503,7 @@ namespace FintrakBanking.Repositories.Credit
                     && x.TOAPPROVALLEVELID != null
                 ).OrderBy(x => x.APPROVALTRAILID);
 
-            if (action == 11)
+            if (action == 8)
             {
                 var traill = trails.Join(context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELTYPEID == 2)
                         , t => t.FROMAPPROVALLEVELID, l => l.APPROVALLEVELID, (t, l) => new { t, l })

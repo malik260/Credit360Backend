@@ -98,6 +98,7 @@ namespace FintrakBanking.ViewModels.Reports
         public string firstName { get; set; }
         public string lastName { get; set; }
         public string middleName { get; set; }
+        public string staffName { get; set; }
 
     }
 
@@ -125,7 +126,7 @@ namespace FintrakBanking.ViewModels.Reports
 
     public class ReportSearchEntity
     {
-        public short? branchId { get; set; }
+        public int branchId { get; set; }
 
         public int? typeId { get; set; }
         public int? staffId { get; set; }
