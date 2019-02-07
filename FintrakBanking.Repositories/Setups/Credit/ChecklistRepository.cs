@@ -1889,7 +1889,8 @@ namespace FintrakBanking.Repositories.Credit
         {
             entity.externalInitialization = false;
 
-            var appl = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
+            TBL_LOAN_APPLICATION appl = null;
+            if (!entity.isLms) appl = context.TBL_LOAN_APPLICATION.Find(entity.loanApplicationId);
 
             using (var trans = context.Database.BeginTransaction())
             {
@@ -1901,36 +1902,55 @@ namespace FintrakBanking.Repositories.Credit
                     workflow.TargetId = entity.targetId;
                     workflow.Comment = entity.comment;
                     workflow.OperationId = (int)OperationsEnum.ChecklistApproval;
-                    workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
+                    if (appl != null) workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
                     workflow.LogActivity();
 
 
                     if (entity.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
                     {
-                        var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
-                                               where s.LOANCONDITIONID == entity.targetId
-                                               select s).FirstOrDefault();
-                        var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
-                                              where s.LOANCONDITIONID == entity.targetId
-                                              select s).FirstOrDefault();
-                        if (checklistRecord != null || deferredRecord != null)
-                        {
-                            deferredRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
-                            checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
-                            context.SaveChanges();
-                            trans.Commit();
-                            return 2;
+                        
+                        if (entity.isLms) {
+                            var checklistRecord = (from s in context.TBL_LMSR_CONDITION_PRECEDENT
+                                                   where s.LOANCONDITIONID == entity.targetId
+                                                   select s).FirstOrDefault();
+                            var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                                                  where s.LOANCONDITIONID == entity.targetId && s.ISLMS == true
+                                                  select s).FirstOrDefault();
+                            if (checklistRecord != null || deferredRecord != null)
+                            {
+                                deferredRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                                checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                                context.SaveChanges();
+                                trans.Commit();
+                                return 2;
+                            }
+                        } else {
+                            var checklistRecord = (from s in context.TBL_LOAN_CONDITION_PRECEDENT
+                                                   where s.LOANCONDITIONID == entity.targetId
+                                                   select s).FirstOrDefault();
+                            var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                                                  where s.LOANCONDITIONID == entity.targetId && s.ISLMS == false
+                                                  select s).FirstOrDefault();
+                            if (checklistRecord != null || deferredRecord != null)
+                            {
+                                deferredRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                                checklistRecord.APPROVALSTATUSID = (short)ApprovalStatusEnum.Disapproved;
+                                context.SaveChanges();
+                                trans.Commit();
+                                return 2;
+                            }
                         }
-
-
-
-
                     }
 
                     if (workflow.NewState == (int)ApprovalState.Ended)
                     {
-                        var response = ApproveChecklistDeferral(entity.targetId, entity);
+                        bool response = false;
+
+                        if (entity.isLms)
+                            response = ApproveChecklistDeferralLms(entity.targetId, entity);
+                        else
+                            response = ApproveChecklistDeferral(entity.targetId, entity);
 
                         if (response)
                         {
@@ -1963,7 +1983,7 @@ namespace FintrakBanking.Repositories.Credit
                                    select s).FirstOrDefault();
 
             var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
-                                  where s.LOANCONDITIONID == targetId
+                                  where s.LOANCONDITIONID == targetId && s.ISLMS == false
                                  && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
                                   select s).FirstOrDefault();
 
@@ -1981,6 +2001,57 @@ namespace FintrakBanking.Repositories.Credit
                 deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
 
                 var deferredCondition = context.TBL_LOAN_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
+                deferredCondition.ISSUBSEQUENT = true;
+                context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
+            }
+
+            // Audit Section ---------------------------
+            var audit = new TBL_AUDIT
+            {
+                AUDITTYPEID = (short)AuditTypeEnum.LoanChecklistUpdated,
+                STAFFID = user.staffId,
+                BRANCHID = (short)user.BranchId,
+                DETAIL = $"Approve Loan Condition Precedence deferral with Condition ID: {targetId}",
+                IPADDRESS = user.userIPAddress,
+                URL = user.applicationUrl,
+                APPLICATIONDATE = _genSetup.GetApplicationDate(),
+                SYSTEMDATETIME = DateTime.Now
+            };
+
+            this.auditTrail.AddAuditTrail(audit);
+
+            output = context.SaveChanges() > 0;
+
+            return output;
+        }
+
+        private bool ApproveChecklistDeferralLms(int targetId, ApprovalViewModel user)
+        {
+            bool output = false;
+            var checklistRecord = (from s in context.TBL_LMSR_CONDITION_PRECEDENT
+                                   where s.LOANCONDITIONID == targetId
+                                  && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                   select s).FirstOrDefault();
+
+            var deferredRecord = (from s in context.TBL_LOAN_CONDITION_DEFERRAL
+                                  where s.LOANCONDITIONID == targetId && s.ISLMS == true
+                                 && s.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                                  select s).FirstOrDefault();
+
+            if (workflow.NewState != (int)ApprovalState.Ended)
+            {
+                if (checklistRecord.APPROVALSTATUSID != (int)ApprovalStatusEnum.Processing)
+                {
+                    checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                    deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Processing;
+                }
+            }
+            else if (workflow.NewState == (int)ApprovalState.Ended)
+            {
+                checklistRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+                deferredRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved;
+
+                var deferredCondition = context.TBL_LMSR_CONDITION_PRECEDENT.Find(deferredRecord.LOANCONDITIONID);
                 deferredCondition.ISSUBSEQUENT = true;
                 context.Entry(deferredCondition).State = System.Data.Entity.EntityState.Modified;
             }

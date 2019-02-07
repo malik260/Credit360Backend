@@ -828,7 +828,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetStakeholdersOnExpirationOfFTP(reportSearchEntity, token.GetCompanyId, token.GetCompanyId);
+                var data = repo.GetStakeholdersOnExpirationOfFTP(reportSearchEntity, token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,
@@ -1726,6 +1726,116 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
             }
         }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("age-analysis-report")]
+        public HttpResponseMessage GetAgeAnalysisReport(DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetAgeAnalysisReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("credit-schedule-report")]
+        public HttpResponseMessage GetCreditScheduleReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetCreditScheduleReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("sanction-limit-report")]
+        public HttpResponseMessage GetSanctionLimitReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+                
+
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetSanctionLimitReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("impaired-watch-list-report")]
+        public HttpResponseMessage GetImpairedWatchListReport([FromBody]DateRange param)
+        {
+            var token = new TokenDecryptionHelper();
+            try
+            {
+
+
+                param.companyId = token.GetCompanyId;
+
+                var data = repo.GetImpairedWatchListReport(param);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                        new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });  //Ok(accounts);
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
     }
 }
 

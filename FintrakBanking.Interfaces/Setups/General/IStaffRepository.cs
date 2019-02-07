@@ -17,9 +17,12 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         int GoForApproval(ApprovalViewModel entity);
 
+        int GoForStaffDeleteApproval(ApprovalViewModel entity);
         IEnumerable<StaffInfoViewModel> GetAllStaff();
         List<StaffSensitivityLevelViewModel> GetStaffSensitivityLevel();
         IEnumerable<StaffInfoViewModel> GetStaffAwaitingApprovals(int staffId, int companyId);
+
+        IEnumerable<StaffInfoViewModel> GetStaffDeleteRequestAwaitingApprovals(int staffId, int companyId);
 
         IEnumerable<StaffViewModel> GetStaffName();
 
@@ -29,7 +32,7 @@ namespace FintrakBanking.Interfaces.Setups.General
 
         IEnumerable<simpleStaffModel> GetStaffByUnitId(int companyId, short departmentUnitId);
 
-        bool DeleteStaff(int staffId, UserInfo user);
+        bool LogDeleteRequestStaff(int staffId, UserInfo user);
 
         bool IsStaffCodeAlreadyExist(string staffCode);
 

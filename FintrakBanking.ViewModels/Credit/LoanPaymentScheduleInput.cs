@@ -9,6 +9,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public short scheduleMethodId { get; set; }
         public Double principalAmount { get; set; }
+        public Double? payAmount { get; set; }
         public DateTime effectiveDate { get; set; }
         public double interestRate { get; set; }
         public int? loanId { get; set; }
@@ -22,9 +23,11 @@ namespace FintrakBanking.ViewModels.Credit
         public string tenorMode { get; set; }
         public int numberOfPayments { get; set; }
         public int scheduleList { get; set; }
+        public int? prepaymentMethodId { get; set; }
         public short? repricingModeId { get; set; }
         public int? repricingDuration { get; set; }
         public int? priceIndexId { get; set; }
+        public double? equityContribution { get; set; }
 
         //public int tenor { get { return  }  }
         private int _tenor;
@@ -41,7 +44,7 @@ namespace FintrakBanking.ViewModels.Credit
         public short accrualBasis { get; set; }
         public double integralFeeAmount { get; set; }
         public short firstDayType { get; set; }
- 
+        public bool isExistingFacility { get; set; }
 
 
         public List<IrregularLoanScheduleInputViewModel> irregularPaymentSchedule { get; set; }

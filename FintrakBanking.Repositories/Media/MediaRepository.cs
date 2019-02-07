@@ -33,6 +33,7 @@ namespace FintrakBanking.Repositories.media
                 FILEEXTENSION = extention,
                 FILEDATA = imgContent,
                 SYSTEMDATETIME = DateTime.Now
+                
             };
             context.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(document);
             var response = await context.SaveChangesAsync();
