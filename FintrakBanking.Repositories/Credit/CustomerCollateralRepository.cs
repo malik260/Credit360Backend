@@ -469,7 +469,8 @@ namespace FintrakBanking.Repositories.Credit
                 CREATEDBY = (int)model.createdBy,
                 ISPRIMARYDOCUMENT = true,
                 TARGETID = model.TargetId,
-               // COLLATERALCODE = model.collateralCode
+                DOCUMENTTYPEID = model.documentTypeId,
+
             };
 
             documentContext.TBL_TEMP_MEDIA_COLLATERAL_DOCS.Add(data);
@@ -522,7 +523,7 @@ namespace FintrakBanking.Repositories.Credit
                 isForiegnCurrencyFacility = context.TBL_LOAN_APPLICATION_DETAIL.Where(x => x.CURRENCYID != company.CURRENCYID).Any();
             }
             
-            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.COLLATERALCUSTOMERID == customerId)
+            var collaterals = context.TBL_COLLATERAL_CUSTOMER.Where(x => x.DELETED == false && x.CUSTOMERID == customerId)
                 .GroupJoin(
                     context.TBL_LOAN_COLLATERAL_MAPPING,
                     c => c.COLLATERALCUSTOMERID,
@@ -4914,27 +4915,23 @@ namespace FintrakBanking.Repositories.Credit
         private void UpdateCollateralDocument(int tempCollateralId, int newCollateralId)
         {
 
-            var doc = documentContext.TBL_TEMP_MEDIA_COLLATERAL_DOCS.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).ToList();
-            if (doc.Count() > 0)
+            var doc = documentContext.TBL_TEMP_MEDIA_COLLATERAL_DOCS.Where(x => x.TEMPCOLLATERALCUSTOMERID == tempCollateralId).FirstOrDefault();
+            if (doc != null)
             {
-                foreach (var x in doc)
+                documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(new TBL_MEDIA_COLLATERAL_DOCUMENTS
                 {
-                    documentContext.TBL_MEDIA_COLLATERAL_DOCUMENTS.Add(new TBL_MEDIA_COLLATERAL_DOCUMENTS
-                    {
-                        CREATEDBY = x.CREATEDBY,
-                        DOCUMENTCODE = x.DOCUMENTCODE,
-                        DOCUMENTID = x.DOCUMENTID,
-                        FILEDATA = x.FILEDATA,
-                        FILEEXTENSION = x.FILEEXTENSION,
-                        FILENAME = x.FILENAME,
-                        ISPRIMARYDOCUMENT = x.ISPRIMARYDOCUMENT,
-                        SYSTEMDATETIME = x.SYSTEMDATETIME,
-                        COLLATERALCUSTOMERID = newCollateralId,
-                        TARGETID = x.TARGETID,
-                        // COLLATERALCODE = doc.COLLATERALCODE,
-
-                    });
-                }
+                    CREATEDBY = doc.CREATEDBY,
+                    DOCUMENTCODE = doc.DOCUMENTCODE,
+                    DOCUMENTID = doc.DOCUMENTID,
+                    FILEDATA = doc.FILEDATA,
+                    FILEEXTENSION = doc.FILEEXTENSION,
+                    FILENAME = doc.FILENAME,
+                    ISPRIMARYDOCUMENT = doc.ISPRIMARYDOCUMENT,
+                    SYSTEMDATETIME = doc.SYSTEMDATETIME,
+                    COLLATERALCUSTOMERID = newCollateralId,
+                    TARGETID = doc.TARGETID,
+                    DOCUMENTTYPEID = doc.DOCUMENTTYPEID,
+                });
                 documentContext.SaveChanges();
             }
         }

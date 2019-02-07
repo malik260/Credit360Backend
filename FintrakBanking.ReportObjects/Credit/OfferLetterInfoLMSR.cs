@@ -344,7 +344,10 @@ namespace FintrakBanking.ReportObjects.Credit
                                            join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
-                                           //   && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                           && (b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                          || b.CHECKLISTSTATUSID == null)
+                                           && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                          && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                            select new OfferLetterConditionPrecidentViewModel()
                                            {
                                                conditionPrecident = b.CONDITION,
@@ -365,8 +368,10 @@ namespace FintrakBanking.ReportObjects.Credit
             var conditionSubsequentData = (from a in context.TBL_LMSR_APPLICATION
                                            join c in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals c.LOANAPPLICATIONID
                                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
-                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
-                                         //   && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved || c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
+                                           where a.APPLICATIONREFERENCENUMBER == applicationRefNumber 
+                                           && b.ISSUBSEQUENT == true && b.ISEXTERNAL == true
+                                           && b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
+                                           && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                            select new OfferLetterConditionPrecidentViewModel()
                                            {
                                                conditionPrecident = b.CONDITION,
@@ -378,6 +383,8 @@ namespace FintrakBanking.ReportObjects.Credit
 
             var forDebugging = conditionSubsequentData.ToList();
             return conditionSubsequentData;
+
+
         }
 
         public static OfferLetterTemplateViewModel PrepareOfferLetterTemplate(string applicationRefNumber)

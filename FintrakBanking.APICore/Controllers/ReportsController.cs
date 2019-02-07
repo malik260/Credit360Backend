@@ -828,7 +828,7 @@ namespace FintrakBanking.APICore.Controllers
             var token = new TokenDecryptionHelper();
             try
             {
-                var data = repo.GetStakeholdersOnExpirationOfFTP(reportSearchEntity, token.GetCompanyId, token.GetCompanyId);
+                var data = repo.GetStakeholdersOnExpirationOfFTP(reportSearchEntity, token.GetCompanyId, token.GetStaffId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

@@ -10507,6 +10507,9 @@ namespace FintrakBanking.Repositories.Credit
         public bool LoanRecapitilization(int loanId, LoanPaymentRestructureScheduleInputViewModel loanInput, DateTime applicationDate, int staffId)
         {
             TwoFactorAutheticationViewModel twoFactorAuth = new TwoFactorAutheticationViewModel();
+            twoFactorAuth.skipAuthentication = true;
+
+            twoFactorAuth.skipAuthentication = true;
 
             bool output = false;
             int installmentNo = 0;
@@ -10917,7 +10920,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 var systemDate = generalSetup.GetApplicationDate();
                 var product = context.TBL_PRODUCT.FirstOrDefault(x => x.PRODUCTID == loanInput.productId);
-                var penalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.TenorChange);
+                //var penalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.TenorChange);
                 var reviewData = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANID == loanId && x.OPERATIONTYPEID == loanInput.operationId && x.OPERATIONCOMPLETED == false).FirstOrDefault();
 
                 if (LoanExist(loanId) > 0)
@@ -12348,11 +12351,11 @@ namespace FintrakBanking.Repositories.Credit
                             //join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
                             //from mp in context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).DefaultIfEmpty() 
 
-                            join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID into grpAppDetail
-                            from mp in grpAppDetail.Where(x => x.OPERATIONPERFORMED == true).DefaultIfEmpty()
+                            //join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID into grpAppDetail
+                            //from mp in grpAppDetail.Where(x => x.OPERATIONPERFORMED == true).DefaultIfEmpty()
 
-                            join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID into grpApp
-                            from e in grpApp.DefaultIfEmpty()
+                            //join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID into grpApp
+                            //from e in grpApp.DefaultIfEmpty()
 
                             join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                             join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
@@ -12376,7 +12379,7 @@ namespace FintrakBanking.Repositories.Credit
 
                             select new LoanReviewOperationApprovalViewModel
                             {
-                                // loanReviewApplicationId = e.LOANAPPLICATIONID,
+                                loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
                                 currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                 loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                 loanId = ln.TERMLOANID,
@@ -12472,6 +12475,8 @@ namespace FintrakBanking.Repositories.Credit
                                 newMaturityDate = op.MATURITYDATE,
                                 approvedAmount = ld.APPROVEDAMOUNT,
                                 creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
+                                lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+
                                 //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.TERMLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                 // lmsLoanReferenceNumber = mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
                                 dateTimeCreated = op.DATECREATED,
@@ -12490,8 +12495,8 @@ namespace FintrakBanking.Repositories.Credit
 
             var dataRevolvingLoan = (from ln in context.TBL_LOAN_REVOLVING
                                      join op in context.TBL_LOAN_REVIEW_OPERATION on ln.REVOLVINGLOANID equals op.LOANID
-                                     join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
-                                     join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                                     //join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
+                                     //join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                      join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                                      join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                                      join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -12508,11 +12513,11 @@ namespace FintrakBanking.Repositories.Credit
                                      && atrail.OPERATIONID == op.OPERATIONTYPEID
                                      && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                      && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                     && op.OPERATIONCOMPLETED == false && mp.OPERATIONPERFORMED == true
+                                     && op.OPERATIONCOMPLETED == false //&& mp.OPERATIONPERFORMED == true
                                      orderby op.DATECREATED descending
                                      select new LoanReviewOperationApprovalViewModel
                                      {
-                                         loanReviewApplicationId = e.LOANAPPLICATIONID,
+                                         loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
                                          loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                          loanId = ln.REVOLVINGLOANID,
                                          loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -12584,7 +12589,7 @@ namespace FintrakBanking.Repositories.Credit
                                          //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.REVOLVINGLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                          dateTimeCreated = op.DATECREATED,
 
-                                         lmsLoanReferenceNumber = mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                         lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
 
                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
                                          productAccountNumber = ch.ACCOUNTCODE,
@@ -12605,8 +12610,8 @@ namespace FintrakBanking.Repositories.Credit
                                      }).ToList();
             var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
                                       join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
-                                      join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
-                                      join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
+                                      //join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
+                                      //join e in context.TBL_LMSR_APPLICATION on mp.LOANAPPLICATIONID equals e.LOANAPPLICATIONID
                                       join tt in context.TBL_OPERATIONS on op.OPERATIONTYPEID equals tt.OPERATIONID
                                       join atrail in context.TBL_APPROVAL_TRAIL on op.LOANREVIEWOPERATIONID equals atrail.TARGETID
                                       join br in context.TBL_BRANCH on ln.BRANCHID equals br.BRANCHID
@@ -12623,12 +12628,12 @@ namespace FintrakBanking.Repositories.Credit
                                       && atrail.OPERATIONID == op.OPERATIONTYPEID
                                       && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
                                       && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                                      && op.OPERATIONCOMPLETED == false && mp.OPERATIONPERFORMED == true
+                                      && op.OPERATIONCOMPLETED == false //&& mp.OPERATIONPERFORMED == true
 
                                       orderby op.DATECREATED descending
                                       select new LoanReviewOperationApprovalViewModel
                                       {
-                                          loanReviewApplicationId = e.LOANAPPLICATIONID,
+                                          loanReviewApplicationId = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault(),//e.LOANAPPLICATIONID,
                                           loanSystemTypeId = ln.LOANSYSTEMTYPEID,
                                           loanId = ln.CONTINGENTLOANID,
                                           loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -12701,7 +12706,7 @@ namespace FintrakBanking.Repositories.Credit
                                           scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
                                           newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
                                           newMaturityDate = op.MATURITYDATE,
-                                          lmsLoanReferenceNumber = mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
+                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h=>h.LOANAPPLICATIONID==context.TBL_LMSR_APPLICATION_DETAIL.Where(x=>x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l=>l.LOANAPPLICATIONID).FirstOrDefault()).Select(c=>c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
                                           //lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(x => x.TBL_LMSR_APPLICATION_DETAIL.Where(a => a.LOANAPPLICATIONID == x.LOANAPPLICATIONID).Select(a => a.LOANID).FirstOrDefault() == ln.CONTINGENTLOANID).Select(x => x.APPLICATIONREFERENCENUMBER).FirstOrDefault(),
                                           dateTimeCreated = op.DATECREATED,
 
@@ -13003,7 +13008,10 @@ namespace FintrakBanking.Repositories.Credit
                         workFlow.LogActivity();
 
                         var lmsrRecord = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == reviewRecord.LOANREVIEWAPPLICATIONID).FirstOrDefault();
-                        lmsrRecord.OPERATIONPERFORMED = false;
+                        if (lmsrRecord != null )
+                        {
+                            lmsrRecord.OPERATIONPERFORMED = false;
+                        }
 
                         reviewRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Referred;
                         reviewRecord.OPERATIONCOMPLETED = false;
@@ -13069,6 +13077,8 @@ namespace FintrakBanking.Repositories.Credit
 
                                 if (authenticated.authenticated == false)
                                     throw new TwoFactorAuthenticationException(authenticated.message);
+
+                                twoFADetails.skipAuthentication = true;
                             }
 
 
@@ -13080,8 +13090,7 @@ namespace FintrakBanking.Repositories.Credit
                                 var feePostings = BuildLoanOperationsManualChargeFeesPosting(item.LOANCHARGEFEEID);
 
                                 if (feePostings != null)
-                                {
-                                    twoFADetails.skipAuthentication = true;
+                                {                                    
                                     financeTransaction.PostTransaction(feePostings, false, twoFADetails);
 
 
@@ -14493,6 +14502,31 @@ namespace FintrakBanking.Repositories.Credit
 
         #region contingient liability operations
 
+        private bool ContingentLiabilityTerminateAndRebook(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
+        {
+            bool result;
+            bool output;
+             result = ProcessContingentLiabilityTermination(twoFactorAuth,model, approvalComment);
+            if (result)
+            {
+                output = ProcessContingentLiabilityRenewal(twoFactorAuth, model, approvalComment);
+                if (output)
+                {
+                    return output;
+                }
+                else
+                {
+                    return output;
+                }
+            }
+            else
+            {
+                return result;
+            }
+
+
+        }
+
         private bool ProcessContingentLiabilityRenewal(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
 
@@ -14509,21 +14543,25 @@ namespace FintrakBanking.Repositories.Credit
 
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
 
-            if (oldContingent.MATURITYDATE > model.newEffectiveDate)
+            if(model.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
             {
-                throw new ConditionNotMetException("Old Maturity Date cannot be more than the New Effective Date");
+                if (oldContingent.MATURITYDATE > model.newEffectiveDate)
+                {
+                    throw new ConditionNotMetException("Old Maturity Date cannot be more than the New Effective Date");
+                }
             }
+            
 
             bool output = false;
 
-            var renewalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal);
+            //var renewalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal);
 
-            decimal chargeAmount = 0;
+            //decimal chargeAmount = 0;
 
-            if (renewalCharge != null)
-            {
-                chargeAmount = (decimal)model.principalAmount;
-            }
+            //if (renewalCharge != null)
+            //{
+            //    chargeAmount = (decimal)model.principalAmount;
+            //}
 
 
 
@@ -14537,20 +14575,20 @@ namespace FintrakBanking.Repositories.Credit
 
                 var loanReferenceNumber = loanGenerate.GenerateLoanReferenceNumber(oldContingent.BRANCHID, oldContingent.PRODUCTID, (int)LoanSystemTypeEnum.ContingentLiability);
 
-                List<FinanceTransactionViewModel> chargeDetails = new List<FinanceTransactionViewModel>();
+                List<FinanceTransactionViewModel> transactionDetails = new List<FinanceTransactionViewModel>();
 
-                if (chargeAmount > 0)
-                {
-                    chargeDetails.AddRange(financeTransaction.BuildContingentChargeFeePosting(model, loanReferenceNumber, chargeAmount, renewalCharge.CHARGEFEEID, "Bond and Guarantee Renewal Fee ", (int)OperationsEnum.ContingentLiabilityRenewal));
+                //if (chargeAmount > 0)
+                //{
+                //    chargeDetails.AddRange(financeTransaction.BuildContingentChargeFeePosting(model, loanReferenceNumber, chargeAmount, renewalCharge.CHARGEFEEID, "Bond and Guarantee Renewal Fee ", (int)OperationsEnum.ContingentLiabilityRenewal));
 
-                    var debitAmount = chargeDetails.Sum(x => x.debitAmount);
+                //    var debitAmount = chargeDetails.Sum(x => x.debitAmount);
 
-                    var balance = financeTransaction.GetCASABalance(model.newCasaAccountId.Value);
-                    if (balance.availableBalance < debitAmount)
-                    {
-                        throw new ConditionNotMetException($"Account balance of {balance.availableBalance} is not sufficient for the Bond and Guarantee Renewal Fee of {debitAmount}");
-                    }
-                }
+                //    var balance = financeTransaction.GetCASABalance(model.newCasaAccountId.Value);
+                //    if (balance.availableBalance < debitAmount)
+                //    {
+                //        throw new ConditionNotMetException($"Account balance of {balance.availableBalance} is not sufficient for the Bond and Guarantee Renewal Fee of {debitAmount}");
+                //    }
+                //}
 
 
 
@@ -14604,10 +14642,20 @@ namespace FintrakBanking.Repositories.Credit
 
                 };
 
+                int operation;
+                if (model.operationId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    operation = (int)OperationsEnum.ContingentLiabilityTerminateAndRebook;
+                }
+                else
+                {
+                    operation = (int)OperationsEnum.ContingentLiabilityRenewal;
 
-                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, loanReferenceNumber, addContingent.CONTINGENTAMOUNT, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityRenewal));
+                }
 
-                financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
+                transactionDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, loanReferenceNumber, addContingent.CONTINGENTAMOUNT, "Contingent Liability posting", operation));
+
+                financeTransaction.PostTransaction(transactionDetails, false, twoFactorAuth);
 
                 this.context.TBL_LOAN_CONTINGENT.Add(addContingent);
 
@@ -14715,15 +14763,15 @@ namespace FintrakBanking.Repositories.Credit
 
             bool output = false;
 
-            var penalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination);
+//var penalCharge = context.TBL_CHARGE_FEE.FirstOrDefault(x => x.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination);
 
 
-            decimal chargeAmount = 0;
+            //decimal chargeAmount = 0;
 
-            if (penalCharge != null)
-            {
-                chargeAmount = (decimal)model.principalAmount;
-            }
+            //if (penalCharge != null)
+            //{
+            //    chargeAmount = (decimal)model.principalAmount;
+            //}
 
 
 
@@ -14734,45 +14782,45 @@ namespace FintrakBanking.Repositories.Credit
 
                 var currentDate = DateTime.Now;
 
-                List<FinanceTransactionViewModel> chargeDetails = new List<FinanceTransactionViewModel>();
+                List<FinanceTransactionViewModel> transactionDetails = new List<FinanceTransactionViewModel>();
 
                 //List<FinanceTransactionViewModel> principalDetails = new List<FinanceTransactionViewModel>();
 
-                if (chargeAmount > 0)
-                {
-                    chargeDetails.AddRange(financeTransaction.BuildContingentChargeFeePosting(model, oldContingent.LOANREFERENCENUMBER, chargeAmount, penalCharge.CHARGEFEEID, "Penal Charge ", (int)OperationsEnum.ContingentLiabilityRenewal));
-                }
+                //if (chargeAmount > 0)
+                //{
+                //    chargeDetails.AddRange(financeTransaction.BuildContingentChargeFeePosting(model, oldContingent.LOANREFERENCENUMBER, chargeAmount, penalCharge.CHARGEFEEID, "Penal Charge ", (int)OperationsEnum.ContingentLiabilityRenewal));
+                //}
 
                 var loan = this.context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
 
                 if (loan.CONTINGENTAMOUNT > 0)
                 {
-                    chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPostingReversal(model, oldContingent.LOANREFERENCENUMBER, loan.CONTINGENTAMOUNT, "Contingent Amount ", (int)OperationsEnum.ContingentLiabilityTermination));
+                    transactionDetails.AddRange(financeTransaction.BuildContingentPrincipalPostingReversal(model, oldContingent.LOANREFERENCENUMBER, loan.CONTINGENTAMOUNT, "Contingent Amount ", (int)OperationsEnum.ContingentLiabilityTermination));
                 }
 
 
                 //var feeAmount = context.TBL_LOAN_FEE.Where(x => x.LOANID == model.loanId && x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).GroupBy(c => c.LOANID).Select(g => new { LOANID = g.Key, total = g.Sum(i => i.FEEAMOUNT) }).FirstOrDefault();
 
-                var feeDetails = context.TBL_LOAN_FEE.Where(x => x.LOANID == model.loanId && x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).ToList();
+                //var feeDetails = context.TBL_LOAN_FEE.Where(x => x.LOANID == model.loanId && x.LOANSYSTEMTYPEID == (int)LoanSystemTypeEnum.ContingentLiability).ToList();
 
-                foreach (var item in feeDetails)
+                //foreach (var item in feeDetails)
+                //{
+
+
+
+                //    var unEarnedFee = DailyAccruedInterest(oldContingent.EFFECTIVEDATE, oldContingent.MATURITYDATE, item.FEEAMOUNT) * DateDiff(model.effectiveDate, oldContingent.MATURITYDATE);
+
+                //    if (unEarnedFee > 0)
+                //    {
+                //        chargeDetails.AddRange(financeTransaction.BuildContingentUnEarnedFeePostingReversal(model, oldContingent.LOANREFERENCENUMBER, unEarnedFee, item.CHARGEFEEID, "UnEarned Fee for Contingent Liability", (int)OperationsEnum.ContingentLiabilityTermination));
+                //    }
+                //}
+
+
+
+                if (transactionDetails.Count > 0)
                 {
-
-
-
-                    var unEarnedFee = DailyAccruedInterest(oldContingent.EFFECTIVEDATE, oldContingent.MATURITYDATE, item.FEEAMOUNT) * DateDiff(model.effectiveDate, oldContingent.MATURITYDATE);
-
-                    if (unEarnedFee > 0)
-                    {
-                        chargeDetails.AddRange(financeTransaction.BuildContingentUnEarnedFeePostingReversal(model, oldContingent.LOANREFERENCENUMBER, unEarnedFee, item.CHARGEFEEID, "UnEarned Fee for Contingent Liability", (int)OperationsEnum.ContingentLiabilityTermination));
-                    }
-                }
-
-
-
-                if (chargeDetails.Count > 0)
-                {
-                    financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
+                    financeTransaction.PostTransaction(transactionDetails, false, twoFactorAuth);
                 }
 
 
@@ -15800,6 +15848,21 @@ namespace FintrakBanking.Repositories.Credit
                     {
 
                         result = ContingentLiabilityAmountReduction(twoFactorAuth, model, approvalComment);
+
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.ContingentLiabilityTerminateAndRebook == model.operationId)
+                    {
+
+                        result = ContingentLiabilityTerminateAndRebook(twoFactorAuth, model, approvalComment);
 
                         if (result == true)
                         {
@@ -18931,7 +18994,7 @@ namespace FintrakBanking.Repositories.Credit
                     OPERATIONCOMPLETED = false,
                     CREATEDBY = model.createdBy,
                     DATECREATED = DateTime.Now,
-                    LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId,
+                    LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId == 0 ? null : model.lmsApplicationDetailId,
                     //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
                 };
                 // Audit Section ---------------------------
@@ -18950,25 +19013,30 @@ namespace FintrakBanking.Repositories.Credit
                 short _AUDITTYPEID = 0;
                 string DETAIL = string.Empty;
 
-                if (model.operationTypeId == 85)
+                if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityRenewal)
                 {
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRenewal;
                     DETAIL = $"Contingent Liability Renewal Approval in process for contingent: '{ referenceNo}' ";
                 }
-                else if (model.operationTypeId == 86)
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTermination)
                 {
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
                     DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
                 }
-                else if (model.operationTypeId == 96)
-                {
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                {                    
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
                     DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
                 }
-                else if (model.operationTypeId == 97)
-                {
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountReduction)
+                {                    
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
                     DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
+                    DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
                 }
 
                 var audit = new TBL_AUDIT
@@ -19098,26 +19166,33 @@ namespace FintrakBanking.Repositories.Credit
                 short _AUDITTYPEID = 0;
                 string DETAIL = string.Empty;
 
-                if (model.operationTypeId == 85)
+                if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityRenewal)
                 {
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRenewal;
                     DETAIL = $"Contingent Liability Renewal Approval in process for contingent: '{ referenceNo}' ";
                 }
-                else if (model.operationTypeId == 86)
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTermination)
                 {
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
                     DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
                 }
-                else if (model.operationTypeId == 96)
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
                 {
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
                     DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
                 }
-                else if (model.operationTypeId == 97)
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountReduction)
                 {
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
                     DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
                 }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
+                    DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
+                }
+
+
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = _AUDITTYPEID,
