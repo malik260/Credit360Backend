@@ -19,11 +19,13 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             {
                 try
                 {
-                    short branchId = 0;
+                    //short branchId = 0;
                     DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
-                    string branch = Request.QueryString["branchId"];
-                    if (branch != null && branch != "")
-                        branchId = short.Parse(Request.QueryString["branchId"]);
+                    //string branch = Request.QueryString["branchId"];
+                    //if (branch != null && branch != "")
+                    //    branchId = short.Parse(Request.QueryString["branchId"]);
+
+                    short branchId = short.Parse(Request.QueryString["branchId"]);
                     string customerName = Request.QueryString["customerName"];
                     string inputDateInfo = Request.QueryString["key1"];
                     string inputHashValue = Request.QueryString["key2"];
