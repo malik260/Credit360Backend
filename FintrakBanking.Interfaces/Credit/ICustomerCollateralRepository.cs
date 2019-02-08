@@ -105,5 +105,8 @@ namespace FintrakBanking.Interfaces.Credit
         CasaLienViewModel GetAccountLienDetail(string AccountNumber);
 
         IEnumerable<CollateralViewModel> GetCustomerCollateralByCollateralId(int companyId, int collaterId);
+
+        IEnumerable<CollateralViewModel> GetCollateralStampToCoverValues(int customerId);
+        
     }
 }
