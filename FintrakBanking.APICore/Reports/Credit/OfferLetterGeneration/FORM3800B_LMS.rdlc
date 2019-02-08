@@ -3742,7 +3742,7 @@ Remarks: ................................................</Value>
                         <Paragraph>
                           <TextRuns>
                             <TextRun>
-                              <Value>Other Conditions Precedent for Internal usage which does not have to be included in the offer letter. The RM must ensure compliance with these conditions before drawdown.</Value>
+                              <Value>Other Conditions Subsequent for Internal usage which does not have to be included in the offer letter. The RM must ensure compliance with these conditions before drawdown.</Value>
                               <Style>
                                 <FontWeight>Bold</FontWeight>
                               </Style>

@@ -306,7 +306,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("loan-product-fees/{loanBookingRequestId}")]
+        [Route("loan-product-fees/booking-request/{loanBookingRequestId}")]
         public HttpResponseMessage GetLoanProductFees(int loanBookingRequestId)
         {
             var response = repo.GetLoanProductFees(loanBookingRequestId);

@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool DoesOperationExist(int loanId, int operationTypeId, short loanSystemTypeId);
         int GoForApproval(ApprovalViewModel entity);
         bool AddCollateralSearchLien(CasaLienViewModel model);
+        string GetCollateralLoanNewRefernceNumber(ApprovalViewModel model);
+
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();

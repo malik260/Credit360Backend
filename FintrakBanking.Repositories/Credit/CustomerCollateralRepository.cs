@@ -5388,7 +5388,8 @@ namespace FintrakBanking.Repositories.Credit
                                join c in context.TBL_COLLATERAL_TYPE on x.COLLATERALTYPEID equals c.COLLATERALTYPEID
                                join a in context.TBL_CUSTOMER on x.CUSTOMERID equals a.CUSTOMERID
                                let ColSubType = context.TBL_COLLATERAL_TYPE_SUB.Where(c => c.COLLATERALSUBTYPEID == x.COLLATERALSUBTYPEID).Select(c => c.COLLATERALSUBTYPENAME).FirstOrDefault()
-                               where x.CUSTOMERID == customerId orderby x.COLLATERALCUSTOMERID descending
+                               where x.CUSTOMERID == customerId && x.COLLATERALTYPEID == (int)CollateralTypeEnum.Property
+                               orderby x.COLLATERALCUSTOMERID descending
                                select new CollateralViewModel
                                {
                                    collateralId = x.COLLATERALCUSTOMERID,
