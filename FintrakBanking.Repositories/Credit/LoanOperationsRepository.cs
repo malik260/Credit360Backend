@@ -12941,7 +12941,26 @@ namespace FintrakBanking.Repositories.Credit
                         }).ToList();
             return data;
         }
+        public string GetCollateralLoanNewRefernceNumber(ApprovalViewModel model)
+        {
+            string refNo = "";
+            var reviewRecord = (from s in context.TBL_LOAN_REVIEW_OPERATION
+                                where s.LOANREVIEWOPERATIONID == model.targetId && s.OPERATIONTYPEID == model.operationId                                
+                                select s).FirstOrDefault();
 
+            var oldRec =  context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == reviewRecord.LOANID).Select(m => m.LOANREFERENCENUMBER).FirstOrDefault();
+
+
+            refNo = context.TBL_LOAN_CONTINGENT.Where(x => x.RELATED_LOAN_REFERENCE_NUMBER == oldRec && x.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook).Select(m => m.LOANREFERENCENUMBER).FirstOrDefault();
+            if (!string.IsNullOrEmpty(refNo))
+            {
+                return refNo;
+            }
+            else {
+                return refNo;
+            }
+
+        }
         public int GoForApproval(ApprovalViewModel entity)
         {
 
@@ -14497,6 +14516,26 @@ namespace FintrakBanking.Repositories.Credit
 
 
         #region contingient liability operations
+        private bool CancelContingentLiability(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
+        {
+            bool result;
+            var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
+            oldContingent.LOANSTATUSID = (int)OperationsEnum.CancelContingentLiability;
+            result = context.SaveChanges() > 0;
+
+            if (result)
+            {
+                return result;
+            }
+            else
+            {
+                return result;
+            }
+
+        }
+
+
+
 
         private bool ContingentLiabilityTerminateAndRebook(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
@@ -15861,6 +15900,50 @@ namespace FintrakBanking.Repositories.Credit
                         result = ContingentLiabilityTerminateAndRebook(twoFactorAuth, model, approvalComment);
 
                         if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+                    else if ((int)OperationsEnum.CancelContingentLiability == model.operationId)
+                    {
+                               var inactiveBG = (from a in context.TBL_LOAN_REVIEW_OPERATION
+                                                    join b in context.TBL_LOAN_CONTINGENT on a.LOANID equals b.CONTINGENTLOANID
+                                                    where  a.LOANID == loanId && a.OPERATIONCOMPLETED == false
+                                                    && a.LOANREVIEWOPERATIONID == loanReviewOperationsId
+
+                                                    select new LoanPaymentRestructureScheduleInputViewModel()
+                                                    {
+                                                        loanId = b.CONTINGENTLOANID,
+                                                        principalAmount = (double)a.PREPAYMENT,
+                                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
+                                                        //interestRate = b.INTERESTRATE,
+                                                        effectiveDate = b.EFFECTIVEDATE,
+                                                        maturityDate = b.MATURITYDATE,
+                                                        integralFeeAmount = 0,
+                                                        newEffectiveDate = a.EFFECTIVEDATE,
+                                                        newInterestFirstpaymentDate = (DateTime)a.INTERESTFIRSTPAYMENTDATE,
+                                                        newInterest = (double)a.INTERATERATE,
+                                                        newAmount = (double?)a.OVERDRAFTTOPUP ?? 0,
+                                                        operationId = a.OPERATIONTYPEID,
+                                                        newPrincipalFirstpaymentDate = (DateTime)a.PRINCIPALFIRSTPAYMENTDATE,
+                                                        isManagementInterestRate = a.ISMANAGEMENTINTERESTRATE,
+                                                        proposedTenor = a.TENOR,
+                                                        newMaturityDate = a.MATURITYDATE,// change to maturity date affter scarfolding
+                                                        companyId = b.COMPANYID,
+                                                        staffId = staffId,
+                                                        createdBy = staffId,
+                                                        customerId = b.CUSTOMERID,
+                                                        productId = b.PRODUCTID,
+                                                        newCasaAccountId = b.CASAACCOUNTID
+                                                    }).FirstOrDefault();
+                        result = CancelContingentLiability(twoFactorAuth, inactiveBG, approvalComment);
+
+                        if (result)
                         {
                             output = true;
                         }
@@ -19034,7 +19117,11 @@ namespace FintrakBanking.Repositories.Credit
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
                     DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
                 }
-
+                else if (model.operationTypeId == (int)OperationsEnum.CancelContingentLiability)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.CancelContingentLiability;
+                    DETAIL = $"Cancel Contingent Liability Approval in process for contingent: '{ referenceNo}' ";
+                }
                 var audit = new TBL_AUDIT
                 {
                     AUDITTYPEID = _AUDITTYPEID,
@@ -19100,7 +19187,7 @@ namespace FintrakBanking.Repositories.Credit
                         }
                         else
                         {
-                            output = context.SaveChanges() == 0;
+                            output = context.SaveChanges() > 0;
                         }
 
 
@@ -19187,7 +19274,11 @@ namespace FintrakBanking.Repositories.Credit
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
                     DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
                 }
-
+                else if (model.operationTypeId == (int)OperationsEnum.CancelContingentLiability)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.CancelContingentLiability;
+                    DETAIL = $"Cancel Contingent Liability Approval in process for contingent: '{ referenceNo}' ";
+                }
 
                 var audit = new TBL_AUDIT
                 {
@@ -19217,7 +19308,7 @@ namespace FintrakBanking.Repositories.Credit
                 }
                 else
                 {
-                    output = context.SaveChanges() == 0;
+                    output = context.SaveChanges() > 0;
                 }
                 //output = context.SaveChanges() > 0;
 

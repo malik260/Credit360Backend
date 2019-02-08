@@ -284,6 +284,7 @@ namespace FintrakBanking.Common.Enum
         ProductPriceIndexGlobalUpdated = 262,
         ContingentLiabilityRebook = 263,
         CollateralDocumentType = 264,
+        CancelContingentLiability = 265,
 
     };
    public enum RegulatoryTypeEnum

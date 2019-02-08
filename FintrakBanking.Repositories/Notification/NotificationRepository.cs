@@ -38,7 +38,7 @@ namespace FintrakBanking.Repositories.Notification
                                  where c.COMPANYID == companyId &&
                                        c.OPERATIONID == level.operationId &&
                                        c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending ||
-                                        c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Pending
+                                        c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing
                                        && c.RESPONSESTAFFID == null &&
                                        c.TOAPPROVALLEVELID == level.approvalLevelId
                                  group c by c.OPERATIONID into d
