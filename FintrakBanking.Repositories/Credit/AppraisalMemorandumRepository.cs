@@ -425,7 +425,8 @@ namespace FintrakBanking.Repositories.Credit
 
                     //Send Email to Customer
                     SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
-                    cc
+                    
+                    ss
                 }
                 else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                 {

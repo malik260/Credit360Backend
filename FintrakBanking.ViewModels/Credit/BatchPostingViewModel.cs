@@ -41,5 +41,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string    isSelected { get; set; }
         public string rcreUser { get; set; }
         public decimal? recCount { get; set; }
+        public decimal amt { get; set; }
+        public string rateCode { get; set; }
+        public DateTime rcreDate { get; set; }
+        public string failureReason { get; set; }
     }
 }

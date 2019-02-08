@@ -2569,6 +2569,39 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public void AddOfferLetterClauses(int applicationId, int staffId)
+        {
+            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
+
+            var detail = (from a in context.TBL_LOAN_APPLICATION
+                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                      join c in context.TBL_CUSTOMER_GROUP on a.CUSTOMERGROUPID equals c.CUSTOMERGROUPID 
+                                      where a.LOANAPPLICATIONID == applicationId
+                                      select new OfferLetterViewModel
+                                      {
+                                          customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
+                                          offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == 193).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                          offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == 193).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                          customerId = b.CUSTOMERID
+
+                                      }).FirstOrDefault();
+
+            var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
+            if (offerLetterDoc!=null)
+            {
+                offerLetterDoc.OFFERLETTERSALUTATION = "Attention : " + detail.customerName;
+                offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
+            }
+
+            var loanOfferLetter = new TBL_LOAN_OFFER_LETTER
+            {
+                CREATEDBY = staffId,
+                DATETIMECREATED = DateTime.Now,
+                DELETED = false,
+                ISLMS = false
+            };
+        }
+
         //public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
         //{
         //    var details = application.LoanApplicationDetail;
@@ -2637,6 +2670,8 @@ namespace FintrakBanking.Repositories.Credit
         //        }
         //    }
         //}
+
+
 
     } 
 }
