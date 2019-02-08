@@ -3320,6 +3320,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             decimal totalBookedAmount = 0;
             var loanReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER;
+            var systemDate = generalSetup.GetApplicationDate();
             if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
             {
                 revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
@@ -3344,7 +3345,7 @@ namespace FintrakBanking.Repositories.Credit
                         var model = new OverDraftNormalViewModel
                         {
                             accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                            applicationDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                            applicationDate = systemDate.ToString("dd-MMM-yyyy", null), //revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             documentDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                             reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
