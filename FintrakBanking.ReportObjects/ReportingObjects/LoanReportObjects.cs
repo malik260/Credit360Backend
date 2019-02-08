@@ -276,6 +276,7 @@ namespace FintrakBanking.ReportObjects
                            join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
                            join p in context.TBL_PRODUCT on a.PRODUCTID equals p.PRODUCTID
                            join pc in context.TBL_PRODUCT_CLASS on p.PRODUCTCLASSID equals pc.PRODUCTCLASSID
+                           join br in context.TBL_STAFF on a.CREATEDBY equals br.STAFFID
                            where (a.ISDISBURSED
                              && a.DISBURSEDATE >= startDate && a.DISBURSEDATE <= endDate)
                          && a.COMPANYID == companyId
@@ -314,6 +315,7 @@ namespace FintrakBanking.ReportObjects
                                firstName = a.TBL_CUSTOMER.FIRSTNAME,
                                lastName = a.TBL_CUSTOMER.LASTNAME,
                                middleName = a.TBL_CUSTOMER.MIDDLENAME,
+                               staffName = br.FIRSTNAME +" "+" "+br.MIDDLENAME+" "+" "+br.LASTNAME
 
 
                            };
@@ -904,10 +906,16 @@ namespace FintrakBanking.ReportObjects
                             join rv in context.TBL_LOAN_REVOLVING on s.CASAACCOUNTID equals rv.CASAACCOUNTID
                             join br in context.TBL_BRANCH on s.BRANCHID equals br.BRANCHID
                             join cs in context.TBL_CUSTOMER on s.CUSTOMERID equals cs.CUSTOMERID
-                            where (s.AVAILABLEBALANCE < 0 && DbFunctions.TruncateTime(rv.MATURITYDATE) > DbFunctions.TruncateTime(maturityDate))
-                            && (br.BRANCHID == branchId || branchId == null)
-                            && (cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName == null || rv.LOANREFERENCENUMBER.StartsWith(customerName.Trim()))
+                            where s.AVAILABLEBALANCE < 0 
+                            && DbFunctions.TruncateTime(rv.MATURITYDATE) > DbFunctions.TruncateTime(maturityDate)
+                           
+                             &&(br.BRANCHID == branchId || branchId == null || branchId == 0) 
+                            && (cs.FIRSTNAME.StartsWith(customerName.Trim()) || cs.MIDDLENAME.StartsWith(customerName.Trim()) || cs.LASTNAME.StartsWith(customerName.Trim()) || customerName == null || customerName== ""|| rv.LOANREFERENCENUMBER.StartsWith(customerName.Trim()) ||(customerName.Trim()).Contains(cs.FIRSTNAME) || (customerName.Trim()).Contains(cs.MIDDLENAME) || (customerName.Trim().Contains(cs.LASTNAME)) )
 
+                            // 1
+                            // 2
+                            // 3
+                            //
                             select new LoanViewModel
                             {
                                 applicationReferenceNumber = rv.LOANREFERENCENUMBER,
@@ -1388,6 +1396,7 @@ namespace FintrakBanking.ReportObjects
                                       join cas2 in context.TBL_CASA on l.CASAACCOUNTID2 equals cas2.CASAACCOUNTID
                                       join sub in context.TBL_STAFF on l.RELATIONSHIPOFFICERID equals sub.STAFFID
                                       join acc in accruedInterest on l.LOANREFERENCENUMBER equals acc.loanReference
+                                      join la in context.TBL_LOAN_ARCHIVE on l.TERMLOANID equals la.LOANID
                                       where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
                                       DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
                                        && l.COMPANYID == companyid && l.LOANSTATUSID == (short)LoanStatusEnum.Active
@@ -1399,7 +1408,7 @@ namespace FintrakBanking.ReportObjects
                                           endDate = l.MATURITYDATE,
                                           startDate = l.EFFECTIVEDATE,
                                           interestRate = l.INTERESTRATE,
-                                          interestRateChange = 0,
+                                          //interestRateChange = context.TBL_LOAN.Where(x=>x.TERMLOANID == la.LOANID  && x.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(x=>x.INTERESTRATE - la.INTERESTRATE),
                                           interestToDate = 0,
                                           interestType = "",
                                           principalAmount = l.PRINCIPALAMOUNT,
@@ -1409,7 +1418,10 @@ namespace FintrakBanking.ReportObjects
                                           tenorToMaturity = 0,
                                           unearnedInterestAsAtDate = 0,
                                           staffcode = sub.STAFFCODE,
-                                          businessGroup = " "
+                                          businessGroup = " ",
+                                          laInterestRate = la.INTERESTRATE,
+                                          laLoanId = la.LOANID,
+                                          
 
                                       }).ToList().Select(x => new UnearnedLoanInterestReport
                                       {
@@ -1419,7 +1431,7 @@ namespace FintrakBanking.ReportObjects
                                           endDate = x.endDate,
                                           startDate = x.startDate,
                                           interestRate = x.interestRate,
-                                          interestRateChange = x.interestRateChange,
+                                          //interestRateChange = x.interestRateChange,
                                           interestToDate = x.interestToDate,
                                           interestType = x.interestType,
                                           principalAmount = x.principalAmount,
@@ -1431,7 +1443,12 @@ namespace FintrakBanking.ReportObjects
                                           staffcode = x.staffcode,
                                           businessGroup = subList.Where(f => f.staffCode == x.staffcode).FirstOrDefault().subHead
 
-                                      }).ToList();
+                                      }).ToList().Select(x=>
+                                     {
+
+                                         x.interestRateChange = context.TBL_LOAN.Where(u => u.TERMLOANID == x.laLoanId && u.LOANSTATUSID == (short)LoanStatusEnum.Active).Select(u => u.INTERESTRATE - x.laInterestRate).FirstOrDefault();
+                                         return x;
+                                     }).ToList();
 
                     return reportData;
                 }
@@ -1681,7 +1698,7 @@ namespace FintrakBanking.ReportObjects
                                   join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
                                   join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
                                   join ccust in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals ccust.COLLATERALCUSTOMERID
-                                  join li in context.TBL_CASA_LIEN on ca.PRODUCTACCOUNTNUMBER equals li.PRODUCTACCOUNTNUMBER
+                                  //join li in context.TBL_CASA_LIEN on ca.PRODUCTACCOUNTNUMBER equals li.PRODUCTACCOUNTNUMBER
                                   where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
                                    DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
                                   && l.COMPANYID == companyid && l.ISDISBURSED == true
@@ -1690,9 +1707,12 @@ namespace FintrakBanking.ReportObjects
                                       availablebalance = a.APPROVEDAMOUNT,
                                       cashBalance = ca.AVAILABLEBALANCE,
                                       lien = " ",
-                                      lienamount = li.LIENAMOUNT,
-                                      loanaccountnumber = ca.PRODUCTACCOUNTNUMBER,
-                                      productaccountnumber = li.PRODUCTACCOUNTNUMBER
+                                      //lienamount = li.LIENAMOUNT,
+                                     loanOverdraftAccount = l.LOANREFERENCENUMBER,
+                                     loanOverdraftAccountBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
+                                     hasLien = ca.HASLIEN,
+                                    
+                                      //productaccountnumber = li.PRODUCTACCOUNTNUMBER
                                   }).ToList();
 
                 return reportData;

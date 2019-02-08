@@ -26,6 +26,8 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<TransactionDynamicsViewModel> GetLoanTransactionDynamics(int loanApplicationDetailId);
         decimal getDailyInterest(decimal principal, double interestRate, int daysInAYear);
 
+        List<ProductFeeViewModel> GetLoanProductFees(int loanBookingRequestId);
+
         CurrencyExchangeRateViewModel GetExchangeRate(string fromCurrencyCode, string toCurrencyCode, string rateCode);
 
         decimal getTotalInterest(decimal principal, double interestRate, int interestDaysPeriod, DayCountConventionEnum dayCountConventionId);

@@ -5229,6 +5229,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             private global::System.Data.DataColumn columnproductClassName;
             
+            private global::System.Data.DataColumn columnstaffName;
+            
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public DisbursedLoansDataTable() {
@@ -5448,6 +5450,14 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn staffNameColumn {
+                get {
+                    return this.columnstaffName;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             [global::System.ComponentModel.Browsable(false)]
             public int Count {
                 get {
@@ -5506,7 +5516,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         string approvedTenor, 
                         string accountNumber, 
                         string bookingRef, 
-                        string productClassName) {
+                        string productClassName, 
+                        string staffName) {
                 DisbursedLoansRow rowDisbursedLoansRow = ((DisbursedLoansRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         approvedInterestRate,
@@ -5531,7 +5542,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                         approvedTenor,
                         accountNumber,
                         bookingRef,
-                        productClassName};
+                        productClassName,
+                        staffName};
                 rowDisbursedLoansRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowDisbursedLoansRow);
                 return rowDisbursedLoansRow;
@@ -5577,6 +5589,7 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 this.columnaccountNumber = base.Columns["accountNumber"];
                 this.columnbookingRef = base.Columns["bookingRef"];
                 this.columnproductClassName = base.Columns["productClassName"];
+                this.columnstaffName = base.Columns["staffName"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -5628,6 +5641,8 @@ namespace FintrakBanking.APICore.Reports.Credit {
                 base.Columns.Add(this.columnbookingRef);
                 this.columnproductClassName = new global::System.Data.DataColumn("productClassName", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnproductClassName);
+                this.columnstaffName = new global::System.Data.DataColumn("staffName", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnstaffName);
                 this.columnexchangeValue.Caption = "approvedTenor";
                 this.columnproductId.Caption = "approvedTenor";
                 this.columncompanyName.Caption = "approvedTenor";
@@ -17464,6 +17479,22 @@ namespace FintrakBanking.APICore.Reports.Credit {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string staffName {
+                get {
+                    try {
+                        return ((string)(this[this.tableDisbursedLoans.staffNameColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'staffName\' in table \'DisbursedLoans\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableDisbursedLoans.staffNameColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsapprovedInterestRateNull() {
                 return this.IsNull(this.tableDisbursedLoans.approvedInterestRateColumn);
             }
@@ -17736,6 +17767,18 @@ namespace FintrakBanking.APICore.Reports.Credit {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetproductClassNameNull() {
                 this[this.tableDisbursedLoans.productClassNameColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsstaffNameNull() {
+                return this.IsNull(this.tableDisbursedLoans.staffNameColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetstaffNameNull() {
+                this[this.tableDisbursedLoans.staffNameColumn] = global::System.Convert.DBNull;
             }
         }
         

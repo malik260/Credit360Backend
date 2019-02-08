@@ -630,6 +630,7 @@
                         <PaddingBottom>2pt</PaddingBottom>
                       </Style>
                     </Textbox>
+                    <rd:Selected>true</rd:Selected>
                   </CellContents>
                 </TablixCell>
                 <TablixCell>
@@ -717,7 +718,6 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
-                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -825,7 +825,6 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
-                                <Format>'$'#,0.00;('$'#,0.00)</Format>
                                 <rd:FormatSymbolCulture>en-US</rd:FormatSymbolCulture>
                               </Style>
                             </TextRun>
@@ -862,7 +861,6 @@
                               <Style>
                                 <FontFamily>Tahoma</FontFamily>
                                 <FontSize>8pt</FontSize>
-                                <Format>#,0.00;(#,0.00)</Format>
                               </Style>
                             </TextRun>
                           </TextRuns>
@@ -1134,7 +1132,7 @@
         <Top>0.58889in</Top>
         <Left>0.11333in</Left>
         <Height>0.71667in</Height>
-        <Width>20.4947in</Width>
+        <Width>20.49471in</Width>
         <ZIndex>1</ZIndex>
         <Style>
           <Border>

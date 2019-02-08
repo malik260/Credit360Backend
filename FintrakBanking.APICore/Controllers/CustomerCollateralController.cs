@@ -1449,13 +1449,30 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-      [HttpGet] [ClaimsAuthorization]  
+        [HttpGet]
+        [ClaimsAuthorization]
         [Route("stock-price")]
         public HttpResponseMessage GetStockPrice()
         {
             try
             {
                 var response = repo.getStockPrice();
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("collateral-stamp-to-cover-values/{customerId}")]
+        public HttpResponseMessage GetCollateralStampToCoverValues(int customerId)
+        {
+            try
+            {
+                var response = repo.GetCollateralStampToCoverValues(customerId);
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
             }
             catch (SecureException ex)

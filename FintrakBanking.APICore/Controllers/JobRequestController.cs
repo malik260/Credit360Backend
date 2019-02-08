@@ -52,6 +52,7 @@ namespace FintrakBanking.APICore.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 
+
         [HttpGet] [ClaimsAuthorization]  
         [Route("job-request/loan-application-details/{applicationId}")]
         public HttpResponseMessage GetLoanApplicationJobsById(int applicationId)
@@ -82,6 +83,15 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage getJobRequestByStaffId()
         {
             var data = repo.GetJobRequestByStaffId(token.GetStaffId, token.GetBranchId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("facility-job-request/{facilityReferenceNumber}")]
+        public HttpResponseMessage GetAllGlobalJobRequestByFacilityRef(string facilityReferenceNumber)
+        {
+            var data = repo.GetAllGlobalJobRequestByFacilityRef(facilityReferenceNumber);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
         }
 

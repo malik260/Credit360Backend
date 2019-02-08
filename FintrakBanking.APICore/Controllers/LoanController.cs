@@ -224,6 +224,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             }
         }
 
+
         [HttpGet]
         [Route("temporary-overdraft-revolving-types")]
         public HttpResponseMessage GetTemporaryOverdrafts()
@@ -302,6 +303,19 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
             {
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: an error occured" });
             }
+        }
+
+        [HttpGet]
+        [Route("loan-product-fees/booking-request/{loanBookingRequestId}")]
+        public HttpResponseMessage GetLoanProductFees(int loanBookingRequestId)
+        {
+            var response = repo.GetLoanProductFees(loanBookingRequestId);
+            if (response == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "No record found" });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
         }
 
         [HttpGet]
