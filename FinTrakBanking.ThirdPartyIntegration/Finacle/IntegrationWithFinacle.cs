@@ -1054,7 +1054,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
 
             Users module = null;
-            Task.Run(async () => module = await staff.GetStaffRoleByStaffCode(staffCode)).GetAwaiter()
+            Task.Run(async () => module = await staff.GetStaffRoleByStaffCode(staffCode.ToUpper())).GetAwaiter()
                .GetResult();
 
             return module;
