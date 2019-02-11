@@ -72,8 +72,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         private ReceivableInterestReportDataTable tableReceivableInterestReport;
         
-        private CashCollaterizedCreditsDataTable tableCashCollaterizedCredits;
-        
         private RunningFacilitiesDataTable tableRunningFacilities;
         
         private ContigentLiabilityInformationDataTable tableContigentLiabilityInformation;
@@ -93,6 +91,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         private SanctionLimitReportDataTable tableSanctionLimitReport;
         
         private ImpairedWatchListReportDataTable tableImpairedWatchListReport;
+        
+        private CashCollaterizedCreditsDataTable tableCashCollaterizedCredits;
         
         private global::System.Data.SchemaSerializationMode _schemaSerializationMode = global::System.Data.SchemaSerializationMode.IncludeSchema;
         
@@ -194,9 +194,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["ReceivableInterestReport"] != null)) {
                     base.Tables.Add(new ReceivableInterestReportDataTable(ds.Tables["ReceivableInterestReport"]));
                 }
-                if ((ds.Tables["CashCollaterizedCredits"] != null)) {
-                    base.Tables.Add(new CashCollaterizedCreditsDataTable(ds.Tables["CashCollaterizedCredits"]));
-                }
                 if ((ds.Tables["RunningFacilities"] != null)) {
                     base.Tables.Add(new RunningFacilitiesDataTable(ds.Tables["RunningFacilities"]));
                 }
@@ -226,6 +223,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["ImpairedWatchListReport"] != null)) {
                     base.Tables.Add(new ImpairedWatchListReportDataTable(ds.Tables["ImpairedWatchListReport"]));
+                }
+                if ((ds.Tables["CashCollaterizedCredits"] != null)) {
+                    base.Tables.Add(new CashCollaterizedCreditsDataTable(ds.Tables["CashCollaterizedCredits"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -489,16 +489,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         [global::System.ComponentModel.Browsable(false)]
         [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
-        public CashCollaterizedCreditsDataTable CashCollaterizedCredits {
-            get {
-                return this.tableCashCollaterizedCredits;
-            }
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        [global::System.ComponentModel.Browsable(false)]
-        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
         public RunningFacilitiesDataTable RunningFacilities {
             get {
                 return this.tableRunningFacilities;
@@ -592,6 +582,16 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public ImpairedWatchListReportDataTable ImpairedWatchListReport {
             get {
                 return this.tableImpairedWatchListReport;
+            }
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        [global::System.ComponentModel.Browsable(false)]
+        [global::System.ComponentModel.DesignerSerializationVisibility(global::System.ComponentModel.DesignerSerializationVisibility.Content)]
+        public CashCollaterizedCreditsDataTable CashCollaterizedCredits {
+            get {
+                return this.tableCashCollaterizedCredits;
             }
         }
         
@@ -734,9 +734,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 if ((ds.Tables["ReceivableInterestReport"] != null)) {
                     base.Tables.Add(new ReceivableInterestReportDataTable(ds.Tables["ReceivableInterestReport"]));
                 }
-                if ((ds.Tables["CashCollaterizedCredits"] != null)) {
-                    base.Tables.Add(new CashCollaterizedCreditsDataTable(ds.Tables["CashCollaterizedCredits"]));
-                }
                 if ((ds.Tables["RunningFacilities"] != null)) {
                     base.Tables.Add(new RunningFacilitiesDataTable(ds.Tables["RunningFacilities"]));
                 }
@@ -766,6 +763,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 }
                 if ((ds.Tables["ImpairedWatchListReport"] != null)) {
                     base.Tables.Add(new ImpairedWatchListReportDataTable(ds.Tables["ImpairedWatchListReport"]));
+                }
+                if ((ds.Tables["CashCollaterizedCredits"] != null)) {
+                    base.Tables.Add(new CashCollaterizedCreditsDataTable(ds.Tables["CashCollaterizedCredits"]));
                 }
                 this.DataSetName = ds.DataSetName;
                 this.Prefix = ds.Prefix;
@@ -944,12 +944,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableReceivableInterestReport.InitVars();
                 }
             }
-            this.tableCashCollaterizedCredits = ((CashCollaterizedCreditsDataTable)(base.Tables["CashCollaterizedCredits"]));
-            if ((initTable == true)) {
-                if ((this.tableCashCollaterizedCredits != null)) {
-                    this.tableCashCollaterizedCredits.InitVars();
-                }
-            }
             this.tableRunningFacilities = ((RunningFacilitiesDataTable)(base.Tables["RunningFacilities"]));
             if ((initTable == true)) {
                 if ((this.tableRunningFacilities != null)) {
@@ -1010,6 +1004,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                     this.tableImpairedWatchListReport.InitVars();
                 }
             }
+            this.tableCashCollaterizedCredits = ((CashCollaterizedCreditsDataTable)(base.Tables["CashCollaterizedCredits"]));
+            if ((initTable == true)) {
+                if ((this.tableCashCollaterizedCredits != null)) {
+                    this.tableCashCollaterizedCredits.InitVars();
+                }
+            }
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1068,8 +1068,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableUnearnedLoanInterestReport);
             this.tableReceivableInterestReport = new ReceivableInterestReportDataTable();
             base.Tables.Add(this.tableReceivableInterestReport);
-            this.tableCashCollaterizedCredits = new CashCollaterizedCreditsDataTable();
-            base.Tables.Add(this.tableCashCollaterizedCredits);
             this.tableRunningFacilities = new RunningFacilitiesDataTable();
             base.Tables.Add(this.tableRunningFacilities);
             this.tableContigentLiabilityInformation = new ContigentLiabilityInformationDataTable();
@@ -1090,6 +1088,8 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             base.Tables.Add(this.tableSanctionLimitReport);
             this.tableImpairedWatchListReport = new ImpairedWatchListReportDataTable();
             base.Tables.Add(this.tableImpairedWatchListReport);
+            this.tableCashCollaterizedCredits = new CashCollaterizedCreditsDataTable();
+            base.Tables.Add(this.tableCashCollaterizedCredits);
         }
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -1238,12 +1238,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        private bool ShouldSerializeCashCollaterizedCredits() {
-            return false;
-        }
-        
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializeRunningFacilities() {
             return false;
         }
@@ -1299,6 +1293,12 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         private bool ShouldSerializeImpairedWatchListReport() {
+            return false;
+        }
+        
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        private bool ShouldSerializeCashCollaterizedCredits() {
             return false;
         }
         
@@ -1430,9 +1430,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         public delegate void ReceivableInterestReportRowChangeEventHandler(object sender, ReceivableInterestReportRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public delegate void CashCollaterizedCreditsRowChangeEventHandler(object sender, CashCollaterizedCreditsRowChangeEvent e);
-        
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void RunningFacilitiesRowChangeEventHandler(object sender, RunningFacilitiesRowChangeEvent e);
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -1461,6 +1458,9 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public delegate void ImpairedWatchListReportRowChangeEventHandler(object sender, ImpairedWatchListReportRowChangeEvent e);
+        
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public delegate void CashCollaterizedCreditsRowChangeEventHandler(object sender, CashCollaterizedCreditsRowChangeEvent e);
         
         /// <summary>
         ///Represents the strongly named DataTable class.
@@ -11747,351 +11747,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///</summary>
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class CashCollaterizedCreditsDataTable : global::System.Data.TypedTableBase<CashCollaterizedCreditsRow> {
-            
-            private global::System.Data.DataColumn columnproductaccountnumber;
-            
-            private global::System.Data.DataColumn columnavailablebalance;
-            
-            private global::System.Data.DataColumn columnlienamount;
-            
-            private global::System.Data.DataColumn columnloanaccountnumber;
-            
-            private global::System.Data.DataColumn columncashBalance;
-            
-            private global::System.Data.DataColumn columnlien;
-            
-            private global::System.Data.DataColumn columnstartDate;
-            
-            private global::System.Data.DataColumn columnendDate;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public CashCollaterizedCreditsDataTable() {
-                this.TableName = "CashCollaterizedCredits";
-                this.BeginInit();
-                this.InitClass();
-                this.EndInit();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal CashCollaterizedCreditsDataTable(global::System.Data.DataTable table) {
-                this.TableName = table.TableName;
-                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
-                    this.CaseSensitive = table.CaseSensitive;
-                }
-                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
-                    this.Locale = table.Locale;
-                }
-                if ((table.Namespace != table.DataSet.Namespace)) {
-                    this.Namespace = table.Namespace;
-                }
-                this.Prefix = table.Prefix;
-                this.MinimumCapacity = table.MinimumCapacity;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected CashCollaterizedCreditsDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
-                    base(info, context) {
-                this.InitVars();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn productaccountnumberColumn {
-                get {
-                    return this.columnproductaccountnumber;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn availablebalanceColumn {
-                get {
-                    return this.columnavailablebalance;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn lienamountColumn {
-                get {
-                    return this.columnlienamount;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn loanaccountnumberColumn {
-                get {
-                    return this.columnloanaccountnumber;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn cashBalanceColumn {
-                get {
-                    return this.columncashBalance;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn lienColumn {
-                get {
-                    return this.columnlien;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn startDateColumn {
-                get {
-                    return this.columnstartDate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn endDateColumn {
-                get {
-                    return this.columnendDate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            [global::System.ComponentModel.Browsable(false)]
-            public int Count {
-                get {
-                    return this.Rows.Count;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public CashCollaterizedCreditsRow this[int index] {
-                get {
-                    return ((CashCollaterizedCreditsRow)(this.Rows[index]));
-                }
-            }
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event CashCollaterizedCreditsRowChangeEventHandler CashCollaterizedCreditsRowChanging;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event CashCollaterizedCreditsRowChangeEventHandler CashCollaterizedCreditsRowChanged;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event CashCollaterizedCreditsRowChangeEventHandler CashCollaterizedCreditsRowDeleting;
-            
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public event CashCollaterizedCreditsRowChangeEventHandler CashCollaterizedCreditsRowDeleted;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void AddCashCollaterizedCreditsRow(CashCollaterizedCreditsRow row) {
-                this.Rows.Add(row);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public CashCollaterizedCreditsRow AddCashCollaterizedCreditsRow(string productaccountnumber, decimal availablebalance, decimal lienamount, string loanaccountnumber, decimal cashBalance, string lien, System.DateTime startDate, System.DateTime endDate) {
-                CashCollaterizedCreditsRow rowCashCollaterizedCreditsRow = ((CashCollaterizedCreditsRow)(this.NewRow()));
-                object[] columnValuesArray = new object[] {
-                        productaccountnumber,
-                        availablebalance,
-                        lienamount,
-                        loanaccountnumber,
-                        cashBalance,
-                        lien,
-                        startDate,
-                        endDate};
-                rowCashCollaterizedCreditsRow.ItemArray = columnValuesArray;
-                this.Rows.Add(rowCashCollaterizedCreditsRow);
-                return rowCashCollaterizedCreditsRow;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public override global::System.Data.DataTable Clone() {
-                CashCollaterizedCreditsDataTable cln = ((CashCollaterizedCreditsDataTable)(base.Clone()));
-                cln.InitVars();
-                return cln;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Data.DataTable CreateInstance() {
-                return new CashCollaterizedCreditsDataTable();
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal void InitVars() {
-                this.columnproductaccountnumber = base.Columns["productaccountnumber"];
-                this.columnavailablebalance = base.Columns["availablebalance"];
-                this.columnlienamount = base.Columns["lienamount"];
-                this.columnloanaccountnumber = base.Columns["loanaccountnumber"];
-                this.columncashBalance = base.Columns["cashBalance"];
-                this.columnlien = base.Columns["lien"];
-                this.columnstartDate = base.Columns["startDate"];
-                this.columnendDate = base.Columns["endDate"];
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            private void InitClass() {
-                this.columnproductaccountnumber = new global::System.Data.DataColumn("productaccountnumber", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnproductaccountnumber);
-                this.columnavailablebalance = new global::System.Data.DataColumn("availablebalance", typeof(decimal), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnavailablebalance);
-                this.columnlienamount = new global::System.Data.DataColumn("lienamount", typeof(decimal), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnlienamount);
-                this.columnloanaccountnumber = new global::System.Data.DataColumn("loanaccountnumber", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnloanaccountnumber);
-                this.columncashBalance = new global::System.Data.DataColumn("cashBalance", typeof(decimal), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columncashBalance);
-                this.columnlien = new global::System.Data.DataColumn("lien", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnlien);
-                this.columnstartDate = new global::System.Data.DataColumn("startDate", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnstartDate);
-                this.columnendDate = new global::System.Data.DataColumn("endDate", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnendDate);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public CashCollaterizedCreditsRow NewCashCollaterizedCreditsRow() {
-                return ((CashCollaterizedCreditsRow)(this.NewRow()));
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
-                return new CashCollaterizedCreditsRow(builder);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override global::System.Type GetRowType() {
-                return typeof(CashCollaterizedCreditsRow);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanged(e);
-                if ((this.CashCollaterizedCreditsRowChanged != null)) {
-                    this.CashCollaterizedCreditsRowChanged(this, new CashCollaterizedCreditsRowChangeEvent(((CashCollaterizedCreditsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowChanging(e);
-                if ((this.CashCollaterizedCreditsRowChanging != null)) {
-                    this.CashCollaterizedCreditsRowChanging(this, new CashCollaterizedCreditsRowChangeEvent(((CashCollaterizedCreditsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleted(e);
-                if ((this.CashCollaterizedCreditsRowDeleted != null)) {
-                    this.CashCollaterizedCreditsRowDeleted(this, new CashCollaterizedCreditsRowChangeEvent(((CashCollaterizedCreditsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
-                base.OnRowDeleting(e);
-                if ((this.CashCollaterizedCreditsRowDeleting != null)) {
-                    this.CashCollaterizedCreditsRowDeleting(this, new CashCollaterizedCreditsRowChangeEvent(((CashCollaterizedCreditsRow)(e.Row)), e.Action));
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void RemoveCashCollaterizedCreditsRow(CashCollaterizedCreditsRow row) {
-                this.Rows.Remove(row);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
-                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
-                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
-                LoanDataSet ds = new LoanDataSet();
-                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
-                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
-                any1.MinOccurs = new decimal(0);
-                any1.MaxOccurs = decimal.MaxValue;
-                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any1);
-                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
-                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
-                any2.MinOccurs = new decimal(1);
-                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
-                sequence.Items.Add(any2);
-                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
-                attribute1.Name = "namespace";
-                attribute1.FixedValue = ds.Namespace;
-                type.Attributes.Add(attribute1);
-                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
-                attribute2.Name = "tableTypeName";
-                attribute2.FixedValue = "CashCollaterizedCreditsDataTable";
-                type.Attributes.Add(attribute2);
-                type.Particle = sequence;
-                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
-                if (xs.Contains(dsSchema.TargetNamespace)) {
-                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
-                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
-                    try {
-                        global::System.Xml.Schema.XmlSchema schema = null;
-                        dsSchema.Write(s1);
-                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
-                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
-                            s2.SetLength(0);
-                            schema.Write(s2);
-                            if ((s1.Length == s2.Length)) {
-                                s1.Position = 0;
-                                s2.Position = 0;
-                                for (; ((s1.Position != s1.Length) 
-                                            && (s1.ReadByte() == s2.ReadByte())); ) {
-                                    ;
-                                }
-                                if ((s1.Position == s1.Length)) {
-                                    return type;
-                                }
-                            }
-                        }
-                    }
-                    finally {
-                        if ((s1 != null)) {
-                            s1.Close();
-                        }
-                        if ((s2 != null)) {
-                            s2.Close();
-                        }
-                    }
-                }
-                xs.Add(dsSchema);
-                return type;
-            }
-        }
-        
-        /// <summary>
-        ///Represents the strongly named DataTable class.
-        ///</summary>
-        [global::System.Serializable()]
-        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
         public partial class RunningFacilitiesDataTable : global::System.Data.TypedTableBase<RunningFacilitiesRow> {
             
             private global::System.Data.DataColumn columncRMSCode;
@@ -17635,6 +17290,323 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
                 global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
                 attribute2.Name = "tableTypeName";
                 attribute2.FixedValue = "ImpairedWatchListReportDataTable";
+                type.Attributes.Add(attribute2);
+                type.Particle = sequence;
+                global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
+                if (xs.Contains(dsSchema.TargetNamespace)) {
+                    global::System.IO.MemoryStream s1 = new global::System.IO.MemoryStream();
+                    global::System.IO.MemoryStream s2 = new global::System.IO.MemoryStream();
+                    try {
+                        global::System.Xml.Schema.XmlSchema schema = null;
+                        dsSchema.Write(s1);
+                        for (global::System.Collections.IEnumerator schemas = xs.Schemas(dsSchema.TargetNamespace).GetEnumerator(); schemas.MoveNext(); ) {
+                            schema = ((global::System.Xml.Schema.XmlSchema)(schemas.Current));
+                            s2.SetLength(0);
+                            schema.Write(s2);
+                            if ((s1.Length == s2.Length)) {
+                                s1.Position = 0;
+                                s2.Position = 0;
+                                for (; ((s1.Position != s1.Length) 
+                                            && (s1.ReadByte() == s2.ReadByte())); ) {
+                                    ;
+                                }
+                                if ((s1.Position == s1.Length)) {
+                                    return type;
+                                }
+                            }
+                        }
+                    }
+                    finally {
+                        if ((s1 != null)) {
+                            s1.Close();
+                        }
+                        if ((s2 != null)) {
+                            s2.Close();
+                        }
+                    }
+                }
+                xs.Add(dsSchema);
+                return type;
+            }
+        }
+        
+        /// <summary>
+        ///Represents the strongly named DataTable class.
+        ///</summary>
+        [global::System.Serializable()]
+        [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
+        public partial class CashCollaterizedCreditsDataTable : global::System.Data.TypedTableBase<CashCollaterizedCreditsRow> {
+            
+            private global::System.Data.DataColumn columnproductaccountnumber;
+            
+            private global::System.Data.DataColumn columnavailablebalance;
+            
+            private global::System.Data.DataColumn columnloanOverdraftAccountBalance;
+            
+            private global::System.Data.DataColumn columncashBalance;
+            
+            private global::System.Data.DataColumn columnoverdraftAccount;
+            
+            private global::System.Data.DataColumn columnisLien;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CashCollaterizedCreditsDataTable() {
+                this.TableName = "CashCollaterizedCredits";
+                this.BeginInit();
+                this.InitClass();
+                this.EndInit();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal CashCollaterizedCreditsDataTable(global::System.Data.DataTable table) {
+                this.TableName = table.TableName;
+                if ((table.CaseSensitive != table.DataSet.CaseSensitive)) {
+                    this.CaseSensitive = table.CaseSensitive;
+                }
+                if ((table.Locale.ToString() != table.DataSet.Locale.ToString())) {
+                    this.Locale = table.Locale;
+                }
+                if ((table.Namespace != table.DataSet.Namespace)) {
+                    this.Namespace = table.Namespace;
+                }
+                this.Prefix = table.Prefix;
+                this.MinimumCapacity = table.MinimumCapacity;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected CashCollaterizedCreditsDataTable(global::System.Runtime.Serialization.SerializationInfo info, global::System.Runtime.Serialization.StreamingContext context) : 
+                    base(info, context) {
+                this.InitVars();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn productaccountnumberColumn {
+                get {
+                    return this.columnproductaccountnumber;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn availablebalanceColumn {
+                get {
+                    return this.columnavailablebalance;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn loanOverdraftAccountBalanceColumn {
+                get {
+                    return this.columnloanOverdraftAccountBalance;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn cashBalanceColumn {
+                get {
+                    return this.columncashBalance;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn overdraftAccountColumn {
+                get {
+                    return this.columnoverdraftAccount;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn isLienColumn {
+                get {
+                    return this.columnisLien;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            [global::System.ComponentModel.Browsable(false)]
+            public int Count {
+                get {
+                    return this.Rows.Count;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CashCollaterizedCreditsRow this[int index] {
+                get {
+                    return ((CashCollaterizedCreditsRow)(this.Rows[index]));
+                }
+            }
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CashCollaterizedCreditsRowChangeEventHandler CashCollaterizedCreditsRowChanging;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CashCollaterizedCreditsRowChangeEventHandler CashCollaterizedCreditsRowChanged;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CashCollaterizedCreditsRowChangeEventHandler CashCollaterizedCreditsRowDeleting;
+            
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public event CashCollaterizedCreditsRowChangeEventHandler CashCollaterizedCreditsRowDeleted;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void AddCashCollaterizedCreditsRow(CashCollaterizedCreditsRow row) {
+                this.Rows.Add(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CashCollaterizedCreditsRow AddCashCollaterizedCreditsRow(string productaccountnumber, decimal availablebalance, string loanOverdraftAccountBalance, decimal cashBalance, string overdraftAccount, string isLien) {
+                CashCollaterizedCreditsRow rowCashCollaterizedCreditsRow = ((CashCollaterizedCreditsRow)(this.NewRow()));
+                object[] columnValuesArray = new object[] {
+                        productaccountnumber,
+                        availablebalance,
+                        loanOverdraftAccountBalance,
+                        cashBalance,
+                        overdraftAccount,
+                        isLien};
+                rowCashCollaterizedCreditsRow.ItemArray = columnValuesArray;
+                this.Rows.Add(rowCashCollaterizedCreditsRow);
+                return rowCashCollaterizedCreditsRow;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public override global::System.Data.DataTable Clone() {
+                CashCollaterizedCreditsDataTable cln = ((CashCollaterizedCreditsDataTable)(base.Clone()));
+                cln.InitVars();
+                return cln;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataTable CreateInstance() {
+                return new CashCollaterizedCreditsDataTable();
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal void InitVars() {
+                this.columnproductaccountnumber = base.Columns["productaccountnumber"];
+                this.columnavailablebalance = base.Columns["availablebalance"];
+                this.columnloanOverdraftAccountBalance = base.Columns["loanOverdraftAccountBalance"];
+                this.columncashBalance = base.Columns["cashBalance"];
+                this.columnoverdraftAccount = base.Columns["overdraftAccount"];
+                this.columnisLien = base.Columns["isLien"];
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            private void InitClass() {
+                this.columnproductaccountnumber = new global::System.Data.DataColumn("productaccountnumber", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnproductaccountnumber);
+                this.columnavailablebalance = new global::System.Data.DataColumn("availablebalance", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnavailablebalance);
+                this.columnloanOverdraftAccountBalance = new global::System.Data.DataColumn("loanOverdraftAccountBalance", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnloanOverdraftAccountBalance);
+                this.columncashBalance = new global::System.Data.DataColumn("cashBalance", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columncashBalance);
+                this.columnoverdraftAccount = new global::System.Data.DataColumn("overdraftAccount", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnoverdraftAccount);
+                this.columnisLien = new global::System.Data.DataColumn("isLien", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnisLien);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CashCollaterizedCreditsRow NewCashCollaterizedCreditsRow() {
+                return ((CashCollaterizedCreditsRow)(this.NewRow()));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Data.DataRow NewRowFromBuilder(global::System.Data.DataRowBuilder builder) {
+                return new CashCollaterizedCreditsRow(builder);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override global::System.Type GetRowType() {
+                return typeof(CashCollaterizedCreditsRow);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanged(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanged(e);
+                if ((this.CashCollaterizedCreditsRowChanged != null)) {
+                    this.CashCollaterizedCreditsRowChanged(this, new CashCollaterizedCreditsRowChangeEvent(((CashCollaterizedCreditsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowChanging(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowChanging(e);
+                if ((this.CashCollaterizedCreditsRowChanging != null)) {
+                    this.CashCollaterizedCreditsRowChanging(this, new CashCollaterizedCreditsRowChangeEvent(((CashCollaterizedCreditsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleted(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleted(e);
+                if ((this.CashCollaterizedCreditsRowDeleted != null)) {
+                    this.CashCollaterizedCreditsRowDeleted(this, new CashCollaterizedCreditsRowChangeEvent(((CashCollaterizedCreditsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            protected override void OnRowDeleting(global::System.Data.DataRowChangeEventArgs e) {
+                base.OnRowDeleting(e);
+                if ((this.CashCollaterizedCreditsRowDeleting != null)) {
+                    this.CashCollaterizedCreditsRowDeleting(this, new CashCollaterizedCreditsRowChangeEvent(((CashCollaterizedCreditsRow)(e.Row)), e.Action));
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void RemoveCashCollaterizedCreditsRow(CashCollaterizedCreditsRow row) {
+                this.Rows.Remove(row);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public static global::System.Xml.Schema.XmlSchemaComplexType GetTypedTableSchema(global::System.Xml.Schema.XmlSchemaSet xs) {
+                global::System.Xml.Schema.XmlSchemaComplexType type = new global::System.Xml.Schema.XmlSchemaComplexType();
+                global::System.Xml.Schema.XmlSchemaSequence sequence = new global::System.Xml.Schema.XmlSchemaSequence();
+                LoanDataSet ds = new LoanDataSet();
+                global::System.Xml.Schema.XmlSchemaAny any1 = new global::System.Xml.Schema.XmlSchemaAny();
+                any1.Namespace = "http://www.w3.org/2001/XMLSchema";
+                any1.MinOccurs = new decimal(0);
+                any1.MaxOccurs = decimal.MaxValue;
+                any1.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any1);
+                global::System.Xml.Schema.XmlSchemaAny any2 = new global::System.Xml.Schema.XmlSchemaAny();
+                any2.Namespace = "urn:schemas-microsoft-com:xml-diffgram-v1";
+                any2.MinOccurs = new decimal(1);
+                any2.ProcessContents = global::System.Xml.Schema.XmlSchemaContentProcessing.Lax;
+                sequence.Items.Add(any2);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute1 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute1.Name = "namespace";
+                attribute1.FixedValue = ds.Namespace;
+                type.Attributes.Add(attribute1);
+                global::System.Xml.Schema.XmlSchemaAttribute attribute2 = new global::System.Xml.Schema.XmlSchemaAttribute();
+                attribute2.Name = "tableTypeName";
+                attribute2.FixedValue = "CashCollaterizedCreditsDataTable";
                 type.Attributes.Add(attribute2);
                 type.Particle = sequence;
                 global::System.Xml.Schema.XmlSchema dsSchema = ds.GetSchemaSerializable();
@@ -27161,248 +27133,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         /// <summary>
         ///Represents strongly named DataRow class.
         ///</summary>
-        public partial class CashCollaterizedCreditsRow : global::System.Data.DataRow {
-            
-            private CashCollaterizedCreditsDataTable tableCashCollaterizedCredits;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            internal CashCollaterizedCreditsRow(global::System.Data.DataRowBuilder rb) : 
-                    base(rb) {
-                this.tableCashCollaterizedCredits = ((CashCollaterizedCreditsDataTable)(this.Table));
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string productaccountnumber {
-                get {
-                    try {
-                        return ((string)(this[this.tableCashCollaterizedCredits.productaccountnumberColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'productaccountnumber\' in table \'CashCollaterizedCredits\' is" +
-                                " DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCashCollaterizedCredits.productaccountnumberColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public decimal availablebalance {
-                get {
-                    try {
-                        return ((decimal)(this[this.tableCashCollaterizedCredits.availablebalanceColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'availablebalance\' in table \'CashCollaterizedCredits\' is DBN" +
-                                "ull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCashCollaterizedCredits.availablebalanceColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public decimal lienamount {
-                get {
-                    try {
-                        return ((decimal)(this[this.tableCashCollaterizedCredits.lienamountColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'lienamount\' in table \'CashCollaterizedCredits\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCashCollaterizedCredits.lienamountColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string loanaccountnumber {
-                get {
-                    try {
-                        return ((string)(this[this.tableCashCollaterizedCredits.loanaccountnumberColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'loanaccountnumber\' in table \'CashCollaterizedCredits\' is DB" +
-                                "Null.", e);
-                    }
-                }
-                set {
-                    this[this.tableCashCollaterizedCredits.loanaccountnumberColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public decimal cashBalance {
-                get {
-                    try {
-                        return ((decimal)(this[this.tableCashCollaterizedCredits.cashBalanceColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'cashBalance\' in table \'CashCollaterizedCredits\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCashCollaterizedCredits.cashBalanceColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string lien {
-                get {
-                    try {
-                        return ((string)(this[this.tableCashCollaterizedCredits.lienColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'lien\' in table \'CashCollaterizedCredits\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCashCollaterizedCredits.lienColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public System.DateTime startDate {
-                get {
-                    try {
-                        return ((global::System.DateTime)(this[this.tableCashCollaterizedCredits.startDateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'startDate\' in table \'CashCollaterizedCredits\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCashCollaterizedCredits.startDateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public System.DateTime endDate {
-                get {
-                    try {
-                        return ((global::System.DateTime)(this[this.tableCashCollaterizedCredits.endDateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'endDate\' in table \'CashCollaterizedCredits\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tableCashCollaterizedCredits.endDateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsproductaccountnumberNull() {
-                return this.IsNull(this.tableCashCollaterizedCredits.productaccountnumberColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetproductaccountnumberNull() {
-                this[this.tableCashCollaterizedCredits.productaccountnumberColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsavailablebalanceNull() {
-                return this.IsNull(this.tableCashCollaterizedCredits.availablebalanceColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetavailablebalanceNull() {
-                this[this.tableCashCollaterizedCredits.availablebalanceColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IslienamountNull() {
-                return this.IsNull(this.tableCashCollaterizedCredits.lienamountColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetlienamountNull() {
-                this[this.tableCashCollaterizedCredits.lienamountColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsloanaccountnumberNull() {
-                return this.IsNull(this.tableCashCollaterizedCredits.loanaccountnumberColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetloanaccountnumberNull() {
-                this[this.tableCashCollaterizedCredits.loanaccountnumberColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IscashBalanceNull() {
-                return this.IsNull(this.tableCashCollaterizedCredits.cashBalanceColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetcashBalanceNull() {
-                this[this.tableCashCollaterizedCredits.cashBalanceColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IslienNull() {
-                return this.IsNull(this.tableCashCollaterizedCredits.lienColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetlienNull() {
-                this[this.tableCashCollaterizedCredits.lienColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsstartDateNull() {
-                return this.IsNull(this.tableCashCollaterizedCredits.startDateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetstartDateNull() {
-                this[this.tableCashCollaterizedCredits.startDateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsendDateNull() {
-                return this.IsNull(this.tableCashCollaterizedCredits.endDateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetendDateNull() {
-                this[this.tableCashCollaterizedCredits.endDateColumn] = global::System.Convert.DBNull;
-            }
-        }
-        
-        /// <summary>
-        ///Represents strongly named DataRow class.
-        ///</summary>
         public partial class RunningFacilitiesRow : global::System.Data.DataRow {
             
             private RunningFacilitiesDataTable tableRunningFacilities;
@@ -33778,6 +33508,193 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         }
         
         /// <summary>
+        ///Represents strongly named DataRow class.
+        ///</summary>
+        public partial class CashCollaterizedCreditsRow : global::System.Data.DataRow {
+            
+            private CashCollaterizedCreditsDataTable tableCashCollaterizedCredits;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            internal CashCollaterizedCreditsRow(global::System.Data.DataRowBuilder rb) : 
+                    base(rb) {
+                this.tableCashCollaterizedCredits = ((CashCollaterizedCreditsDataTable)(this.Table));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string productaccountnumber {
+                get {
+                    try {
+                        return ((string)(this[this.tableCashCollaterizedCredits.productaccountnumberColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'productaccountnumber\' in table \'CashCollaterizedCredits\' is" +
+                                " DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCashCollaterizedCredits.productaccountnumberColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public decimal availablebalance {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableCashCollaterizedCredits.availablebalanceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'availablebalance\' in table \'CashCollaterizedCredits\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCashCollaterizedCredits.availablebalanceColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string loanOverdraftAccountBalance {
+                get {
+                    try {
+                        return ((string)(this[this.tableCashCollaterizedCredits.loanOverdraftAccountBalanceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'loanOverdraftAccountBalance\' in table \'CashCollaterizedCred" +
+                                "its\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCashCollaterizedCredits.loanOverdraftAccountBalanceColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public decimal cashBalance {
+                get {
+                    try {
+                        return ((decimal)(this[this.tableCashCollaterizedCredits.cashBalanceColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'cashBalance\' in table \'CashCollaterizedCredits\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCashCollaterizedCredits.cashBalanceColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string overdraftAccount {
+                get {
+                    try {
+                        return ((string)(this[this.tableCashCollaterizedCredits.overdraftAccountColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'overdraftAccount\' in table \'CashCollaterizedCredits\' is DBN" +
+                                "ull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCashCollaterizedCredits.overdraftAccountColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string isLien {
+                get {
+                    try {
+                        return ((string)(this[this.tableCashCollaterizedCredits.isLienColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'isLien\' in table \'CashCollaterizedCredits\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tableCashCollaterizedCredits.isLienColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsproductaccountnumberNull() {
+                return this.IsNull(this.tableCashCollaterizedCredits.productaccountnumberColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetproductaccountnumberNull() {
+                this[this.tableCashCollaterizedCredits.productaccountnumberColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsavailablebalanceNull() {
+                return this.IsNull(this.tableCashCollaterizedCredits.availablebalanceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetavailablebalanceNull() {
+                this[this.tableCashCollaterizedCredits.availablebalanceColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsloanOverdraftAccountBalanceNull() {
+                return this.IsNull(this.tableCashCollaterizedCredits.loanOverdraftAccountBalanceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetloanOverdraftAccountBalanceNull() {
+                this[this.tableCashCollaterizedCredits.loanOverdraftAccountBalanceColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IscashBalanceNull() {
+                return this.IsNull(this.tableCashCollaterizedCredits.cashBalanceColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetcashBalanceNull() {
+                this[this.tableCashCollaterizedCredits.cashBalanceColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsoverdraftAccountNull() {
+                return this.IsNull(this.tableCashCollaterizedCredits.overdraftAccountColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetoverdraftAccountNull() {
+                this[this.tableCashCollaterizedCredits.overdraftAccountColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsisLienNull() {
+                return this.IsNull(this.tableCashCollaterizedCredits.isLienColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetisLienNull() {
+                this[this.tableCashCollaterizedCredits.isLienColumn] = global::System.Convert.DBNull;
+            }
+        }
+        
+        /// <summary>
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -34597,40 +34514,6 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
         ///Row event argument class
         ///</summary>
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-        public class CashCollaterizedCreditsRowChangeEvent : global::System.EventArgs {
-            
-            private CashCollaterizedCreditsRow eventRow;
-            
-            private global::System.Data.DataRowAction eventAction;
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public CashCollaterizedCreditsRowChangeEvent(CashCollaterizedCreditsRow row, global::System.Data.DataRowAction action) {
-                this.eventRow = row;
-                this.eventAction = action;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public CashCollaterizedCreditsRow Row {
-                get {
-                    return this.eventRow;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataRowAction Action {
-                get {
-                    return this.eventAction;
-                }
-            }
-        }
-        
-        /// <summary>
-        ///Row event argument class
-        ///</summary>
-        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
         public class RunningFacilitiesRowChangeEvent : global::System.EventArgs {
             
             private RunningFacilitiesRow eventRow;
@@ -34953,6 +34836,40 @@ namespace FintrakBanking.APICore.Reports.ReportDataset {
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public ImpairedWatchListReportRow Row {
+                get {
+                    return this.eventRow;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataRowAction Action {
+                get {
+                    return this.eventAction;
+                }
+            }
+        }
+        
+        /// <summary>
+        ///Row event argument class
+        ///</summary>
+        [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+        public class CashCollaterizedCreditsRowChangeEvent : global::System.EventArgs {
+            
+            private CashCollaterizedCreditsRow eventRow;
+            
+            private global::System.Data.DataRowAction eventAction;
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CashCollaterizedCreditsRowChangeEvent(CashCollaterizedCreditsRow row, global::System.Data.DataRowAction action) {
+                this.eventRow = row;
+                this.eventAction = action;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public CashCollaterizedCreditsRow Row {
                 get {
                     return this.eventRow;
                 }

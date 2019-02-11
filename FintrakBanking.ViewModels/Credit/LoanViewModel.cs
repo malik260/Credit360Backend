@@ -1332,9 +1332,10 @@ namespace FintrakBanking.ViewModels.Credit
         public string account { get; set; }
         public DateTime limitExpiryDate { get; set; }
         public string customerId { get; set; }
-        
-       
-       
+
+        public string branchCode { get; set; }
+
+
         public double interestRate { get; set; }
       
         public string groupCode { get; set; }
@@ -1347,7 +1348,7 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class SubHeadCode {
         public string glSubHeadCode { get; set; }
-        public string schemeCode { get; set; }
+        public string schemeCodes { get; set; }
     }
 
    
@@ -1371,6 +1372,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerId { get; set; }
 
         public string groupCode { get; set; }
+
+        public string branchCode { get; set; }
     }
     public class SbHead
     {

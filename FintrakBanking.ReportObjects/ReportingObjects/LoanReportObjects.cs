@@ -1412,7 +1412,7 @@ namespace FintrakBanking.ReportObjects
                                           interestToDate = 0,
                                           interestType = "",
                                           principalAmount = l.PRINCIPALAMOUNT,
-                                          tenor = (int)DbFunctions.DiffDays(l.MATURITYDATE, l.EFFECTIVEDATE),
+                                          tenor = (int)DbFunctions.DiffDays(l.EFFECTIVEDATE,l.MATURITYDATE),
                                           tenorToDate = (int)DbFunctions.DiffDays(l.MATURITYDATE, DateTime.Now),
                                           accruedInterestToDate = acc.accruedInterest,
                                           tenorToMaturity = 0,
@@ -1698,7 +1698,7 @@ namespace FintrakBanking.ReportObjects
                                   join ca in context.TBL_CASA on l.CASAACCOUNTID equals ca.CASAACCOUNTID
                                   join cm in context.TBL_LOAN_COLLATERAL_MAPPING on l.TERMLOANID equals cm.LOANID
                                   join ccust in context.TBL_COLLATERAL_CUSTOMER on cm.COLLATERALCUSTOMERID equals ccust.COLLATERALCUSTOMERID
-                                  //join li in context.TBL_CASA_LIEN on ca.PRODUCTACCOUNTNUMBER equals li.PRODUCTACCOUNTNUMBER
+                                  join li in context.TBL_CASA_LIEN on ca.PRODUCTACCOUNTNUMBER equals li.PRODUCTACCOUNTNUMBER
                                   where (DbFunctions.TruncateTime(l.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) &&
                                    DbFunctions.TruncateTime(l.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate))
                                   && l.COMPANYID == companyid && l.ISDISBURSED == true
@@ -1708,11 +1708,25 @@ namespace FintrakBanking.ReportObjects
                                       cashBalance = ca.AVAILABLEBALANCE,
                                       lien = " ",
                                       //lienamount = li.LIENAMOUNT,
-                                     loanOverdraftAccount = l.LOANREFERENCENUMBER,
+                                     overdraftAccount = l.LOANREFERENCENUMBER,
                                      loanOverdraftAccountBalance = l.OUTSTANDINGPRINCIPAL + l.PASTDUEPRINCIPAL,
                                      hasLien = ca.HASLIEN,
                                     
-                                      //productaccountnumber = li.PRODUCTACCOUNTNUMBER
+                                      productaccountnumber = li.PRODUCTACCOUNTNUMBER
+                                  }).ToList().Select(x =>
+
+                                  {
+
+                                      if (x.hasLien == false)
+                                      {
+                                          x.isLien = "No";
+                                      }
+                                      else
+                                      {
+                                          x.isLien = "Yes";
+                                      }
+
+                                      return x;
                                   }).ToList();
 
                 return reportData;
@@ -2260,8 +2274,8 @@ namespace FintrakBanking.ReportObjects
             using (FinTrakBankingStagingContext stagecontext = new FinTrakBankingStagingContext())
             {
                 subList = (from sl in stagecontext.STG_STAFFMIS select new SubHead { staffCode = sl.USERNAME, subHead = sl.GROUP_HUB, firstName = sl.FIRSTNAME, middleName = sl.MIDDLENAME, lastName = sl.LASTNAME, region = sl.REGION }).ToList();
-                loanMart = (from l in stagecontext.STG_LOAN_MART select new LoanMart {groupCode = l.GROUP_CODE, teamCode = l.TEAM_CODE, buCode = l.BU_CODE, buDescription = l.BU_DESCRIPTION, deskCode = l.DESK_CODE, rmCode = l.RM_CODE, schemeCode = l.SCHEME_CODE, deskDescription = l.DESK_DESCRIPTION, accountName = l.ACCOUNT_NAME, groupDescription = l.GROUP_DESCRIPTION, pastDueDate = l.DAYS_PAST_DUE, sanctionLimit = l.SANCTIONED_LIMIT, schemeType = l.SCHM_TYPE, account = l.ACCOUNT, customerId = l.CUST_ID }).ToList();
-                subHeadCode = (from h in stagecontext.STG_GL_SUBHEAD_TBL select new SubHeadCode { glSubHeadCode = h.GL_SUB_HEAD_CODE, schemeCode = h.SCHM_CODE }).ToList();
+                loanMart = (from l in stagecontext.STG_LOAN_MART select new LoanMart {  branchCode = l.BRANCH,  groupCode = l.GROUP_CODE, teamCode = l.TEAM_CODE, buCode = l.BU_CODE, buDescription = l.BU_DESCRIPTION, deskCode = l.DESK_CODE, rmCode = l.RM_CODE, schemeCode = l.SCHEME_CODE, deskDescription = l.DESK_DESCRIPTION, accountName = l.ACCOUNT_NAME, groupDescription = l.GROUP_DESCRIPTION, pastDueDate = l.DAYS_PAST_DUE, sanctionLimit = l.SANCTIONED_LIMIT, schemeType = l.SCHM_TYPE, account = l.ACCOUNT, customerId = l.CUST_ID}).ToList();
+                subHeadCode = (from h in stagecontext.STG_GL_SUBHEAD_TBL select new SubHeadCode { glSubHeadCode = h.GL_SUB_HEAD_CODE, schemeCodes = h.SCHM_CODE }).ToList();
                 using (FinTrakBankingContext context = new FinTrakBankingContext())
                 {
                     var impairedWatchList = (from l in context.TBL_LOAN
@@ -2273,6 +2287,7 @@ namespace FintrakBanking.ReportObjects
                                                       && l.COMPANYID == companyid
                                              select new ImpairedWatchListViewModel
                                              {
+                                                 branchCode = b.BRANCHCODE,
                                                  branchName = b.BRANCHNAME,
                                                  customerId = l.CUSTOMERID.ToString(),
                                                  currencyType = cur.CURRENCYNAME,
@@ -2283,7 +2298,7 @@ namespace FintrakBanking.ReportObjects
                                                  interestRate = l.INTERESTRATE,
                                              }).ToList().Select(x =>
                                              {
-                    var checkForBusinessDescription = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.buDescription).FirstOrDefault();
+                    var checkForBusinessDescription = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.buDescription).FirstOrDefault();
                     if (checkForBusinessDescription == null)
                     {
                         x.buDescription = "";
@@ -2293,7 +2308,7 @@ namespace FintrakBanking.ReportObjects
                         x.buDescription = checkForBusinessDescription;
                     }
 
-                    var checkForGroupDescription = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.groupDescription).FirstOrDefault();
+                    var checkForGroupDescription = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.groupDescription).FirstOrDefault();
                     if (checkForGroupDescription == null)
                     {
                         x.groupDescription = "";
@@ -2302,7 +2317,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.groupDescription = checkForGroupDescription;
                     }
-                    var checkForTeamDescription = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.teamDescription).FirstOrDefault();
+                    var checkForTeamDescription = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.teamDescription).FirstOrDefault();
                     if (checkForTeamDescription == null)
                     {
                         x.teamDescription = "";
@@ -2311,7 +2326,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.teamDescription = checkForTeamDescription;
                     }
-                    var checkForDeskDescription = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.deskDescription).FirstOrDefault();
+                    var checkForDeskDescription = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.deskDescription).FirstOrDefault();
                     if (checkForDeskDescription == null)
                     {
                         x.deskDescription = "";
@@ -2320,7 +2335,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.deskDescription = checkForDeskDescription;
                     }
-                    var checkForAccountName = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.accountName).FirstOrDefault();
+                    var checkForAccountName = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.accountName).FirstOrDefault();
                     if (checkForAccountName == null)
                     {
                         x.accountName = "";
@@ -2329,7 +2344,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.accountName = checkForAccountName;
                     }
-                    var checkForAccount = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.account).FirstOrDefault();
+                    var checkForAccount = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.account).FirstOrDefault();
                     if (checkForAccount == null)
                     {
                         x.account = "";
@@ -2338,7 +2353,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.account = checkForAccount;
                     }
-                    var checkForSanctionLimit = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.sanctionLimit).FirstOrDefault();
+                    var checkForSanctionLimit = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.sanctionLimit).FirstOrDefault();
                     if (checkForSanctionLimit == null)
                     {
                         x.sanctionLimit = 0;
@@ -2347,7 +2362,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.sanctionLimit = checkForSanctionLimit;
                     }
-                    var checkForLimitExpiryDate = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.limitExpiryDate).FirstOrDefault();
+                    var checkForLimitExpiryDate = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.limitExpiryDate).FirstOrDefault();
                     if (checkForLimitExpiryDate == null)
                     {
                         x.limitExpiryDate = DateTime.Now; ;
@@ -2357,7 +2372,7 @@ namespace FintrakBanking.ReportObjects
                         x.limitExpiryDate = checkForLimitExpiryDate;
                     }
 
-                    var checkForSchmType = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.schemeType).FirstOrDefault();
+                    var checkForSchmType = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.schemeType).FirstOrDefault();
                     if (checkForSchmType == null)
                     {
                         x.schemeType = "";
@@ -2367,7 +2382,7 @@ namespace FintrakBanking.ReportObjects
                         x.schemeType = checkForSchmType;
                     }
 
-                    var checkForDueDate = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.pastDueDate).FirstOrDefault();
+                    var checkForDueDate = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.pastDueDate).FirstOrDefault();
                     if (checkForDueDate == null)
                     {
                         x.pastDueDate = 0;
@@ -2376,7 +2391,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.pastDueDate = checkForDueDate;
                     }
-                    var checkForSchmCode = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.schemeCode).FirstOrDefault();
+                    var checkForSchmCode = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.schemeCode).FirstOrDefault();
                     if (checkForSchmCode == null)
                     {
                         x.schemeCode = "";
@@ -2387,7 +2402,7 @@ namespace FintrakBanking.ReportObjects
                     }
 
 
-                    var checkForSubHeadCode = subHeadCode.Where(f => f.schemeCode == x.schemeCode).Select(f => f.glSubHeadCode).FirstOrDefault();
+                    var checkForSubHeadCode = subHeadCode.Where(f => f.schemeCodes == x.schemeCode).Select(f => f.glSubHeadCode).FirstOrDefault();
                     if (checkForSubHeadCode == null)
                     {
                         x.glSubHeadCode = "";
@@ -2396,7 +2411,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.glSubHeadCode = checkForSubHeadCode;
                     }
-                    var checkForBuCode = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.buCode).FirstOrDefault();
+                    var checkForBuCode = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.buCode).FirstOrDefault();
                     if (checkForBuCode == null)
                     {
                         x.buCode = "";
@@ -2405,7 +2420,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.buCode = checkForBuCode;
                     }
-                    var checkForGroupCode = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.groupCode).FirstOrDefault();
+                    var checkForGroupCode = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.groupCode).FirstOrDefault();
                     if (checkForGroupCode == null)
                     {
                         x.groupCode = "";
@@ -2414,7 +2429,7 @@ namespace FintrakBanking.ReportObjects
                     {
                         x.groupCode = checkForGroupCode;
                     }
-                    var checkForTeamCode = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.teamCode).FirstOrDefault();
+                    var checkForTeamCode = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.teamCode).FirstOrDefault();
                     if (checkForTeamCode == null)
                     {
                         x.teamCode = "";
@@ -2424,7 +2439,7 @@ namespace FintrakBanking.ReportObjects
                         x.teamCode = checkForTeamCode;
                     }
 
-                    var checkForDeskCode = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.deskCode).FirstOrDefault();
+                    var checkForDeskCode = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.deskCode).FirstOrDefault();
                     if (checkForDeskCode == null)
                     {
                         x.deskCode = "";
@@ -2434,7 +2449,7 @@ namespace FintrakBanking.ReportObjects
                         x.deskCode = checkForDeskCode;
                     }
 
-                    var checkForRmCode = loanMart.Where(f => f.customerId == x.customerId).Select(f => f.rmCode).FirstOrDefault();
+                    var checkForRmCode = loanMart.Where(f => f.branchCode == x.branchCode).Select(f => f.rmCode).FirstOrDefault();
                     if (checkForRmCode == null)
                     {
                         x.rmCode = "";

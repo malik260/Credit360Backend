@@ -130,6 +130,8 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
+                    statusId = 2,//d.STATUSID,
+
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
@@ -571,6 +573,20 @@ namespace FintrakBanking.Repositories.Credit
                         detail.APPROVEDAMOUNT = changed.amount;
                         detail.APPROVEDINTERESTRATE = changed.interestRate;
                         detail.APPROVEDTENOR = changed.tenor;
+                        // detail.STATUSID = (short)changed.statusId;
+                        //detail.LASTUPDATEDBY = model.createdBy;
+                        //detail.DATETIMEUPDATED = DateTime.Now;
+
+                        /*if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                        {
+                            if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
+                            else
+                            {
+                                detail.PROPOSEDAMOUNT = changed.amount;
+                                detail.PROPOSEDINTERESTRATE = changed.interestRate;
+                                detail.PROPOSEDTENOR = changed.tenor;
+                            }
+                        }*/
                     }
                 }
             }

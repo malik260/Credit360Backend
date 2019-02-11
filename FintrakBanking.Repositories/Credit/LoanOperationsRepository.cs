@@ -12350,7 +12350,7 @@ namespace FintrakBanking.Repositories.Credit
             UserCurrencyViewFilter cf = GetUserCurrencyViewFilter(companyId, staffId);
 
 
-            var ids = generalSetup.GetStaffApprovalLevelIds(staffId, (int)OperationsEnum.OfferLetterApproval).ToList();
+            var ids = generalSetup.GetStaffApprovalLevelIds(staffId,0).ToList();
 
             var dataLoan = (from ln in context.TBL_LOAN
                             join op in context.TBL_LOAN_REVIEW_OPERATION on ln.TERMLOANID equals op.LOANID
@@ -12375,12 +12375,12 @@ namespace FintrakBanking.Repositories.Credit
                             join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                             join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
                             join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
-                            where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
-                            && atrail.OPERATIONID == op.OPERATIONTYPEID
-                            && ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
-                            && atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
-                            && op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
-                            && (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId) // currency filter
+                            //where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
+                            //&& atrail.OPERATIONID == op.OPERATIONTYPEID
+                            //&& ids.Contains((int)atrail.TOAPPROVALLEVELID)// == staffApprovalLevelId
+                            //&& atrail.RESPONSESTAFFID == null && op.APPROVALSTATUSID != (int)ApprovalStatusEnum.Approved
+                            //&& op.OPERATIONCOMPLETED == false   //&& mp.OPERATIONPERFORMED == true
+                            //&& (cf.CanSeeLocalCurrency && ln.CURRENCYID == cf.DefaultCurrencyId) || (cf.CanSeeForeignCurrency && ln.CURRENCYID != cf.DefaultCurrencyId) // currency filter
 
                             orderby op.DATECREATED descending
 
@@ -12514,7 +12514,7 @@ namespace FintrakBanking.Repositories.Credit
                                      join pr in context.TBL_PRODUCT on ln.PRODUCTID equals pr.PRODUCTID
                                      join st in context.TBL_STAFF on ln.RELATIONSHIPOFFICERID equals st.STAFFID
                                      join stm in context.TBL_STAFF on ln.RELATIONSHIPMANAGERID equals stm.STAFFID
-                                     join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
+                                     //join ch in context.TBL_CHART_OF_ACCOUNT on pr.PRINCIPALBALANCEGL equals ch.GLACCOUNTID
 
                                      where (atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Processing || atrail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred)
                                      && atrail.OPERATIONID == op.OPERATIONTYPEID
@@ -12599,8 +12599,8 @@ namespace FintrakBanking.Repositories.Credit
                                          lmsLoanReferenceNumber = context.TBL_LMSR_APPLICATION.Where(h => h.LOANAPPLICATIONID == context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == op.LOANREVIEWAPPLICATIONID).Select(l => l.LOANAPPLICATIONID).FirstOrDefault()).Select(c => c.APPLICATIONREFERENCENUMBER).FirstOrDefault(), //mp.TBL_LMSR_APPLICATION.APPLICATIONREFERENCENUMBER,
 
                                          currentApprovalLevelId = (int)atrail.TOAPPROVALLEVELID,
-                                         productAccountNumber = ch.ACCOUNTCODE,
-                                         productAccountName = ch.ACCOUNTNAME,
+                                         productAccountNumber =  "N/A", //ch.ACCOUNTCODE,
+                                         productAccountName =  "N/A", // ch.ACCOUNTNAME,
                                          approvedAmount = ld.APPROVEDAMOUNT,
                                          creatorName = context.TBL_STAFF.Where(x => x.STAFFID == ld.CREATEDBY).Select(x => x.FIRSTNAME + " " + x.LASTNAME).FirstOrDefault(),
                                          fees = context.TBL_LOAN_FEE.Where(lop => lop.LOANREVIEWOPERATIONID == op.LOANREVIEWOPERATIONID).Select(mp => new feeDetails
@@ -12615,6 +12615,8 @@ namespace FintrakBanking.Repositories.Credit
 
                                          }).ToList(),
                                      }).ToList();
+
+
             var dataContingentLoan = (from ln in context.TBL_LOAN_CONTINGENT
                                       join op in context.TBL_LOAN_REVIEW_OPERATION on ln.CONTINGENTLOANID equals op.LOANID
                                       //join mp in context.TBL_LMSR_APPLICATION_DETAIL on op.LOANREVIEWAPPLICATIONID equals mp.LOANREVIEWAPPLICATIONID
