@@ -1220,7 +1220,7 @@ namespace FintrakBanking.Repositories.Credit
                     && x.TOAPPROVALLEVELID != null
                 ).OrderBy(x => x.APPROVALTRAILID);
 
-            if (action == 8)
+            if (action == (int)ApprovalStatusEnum.RePresent)
             {
                 var traill = trails.Join(context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELTYPEID == 2)
                         , t => t.FROMAPPROVALLEVELID, l => l.APPROVALLEVELID, (t, l) => new { t, l })
