@@ -20,6 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
         private IAdminRepository admin;
+        private IOfferLetterAndAvailmentRepository offerLetter;
 
         private CreditCommonRepository creditCommon;
 
@@ -33,7 +34,7 @@ namespace FintrakBanking.Repositories.Credit
             IAuditTrailRepository audit,
             IWorkflow workflow,
             IAdminRepository admin,
-
+            IOfferLetterAndAvailmentRepository _offerLetter,
         CreditCommonRepository creditCommon
             )
         {
@@ -43,6 +44,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = workflow;
             this.admin = admin;
             this.creditCommon = creditCommon;
+            this.offerLetter = _offerLetter;
         }
 
         public IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? classId)
@@ -571,7 +573,10 @@ namespace FintrakBanking.Repositories.Credit
                     }
                 }
             }
-            vv
+            //generate offer letter doc
+            offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
+
+
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
             {

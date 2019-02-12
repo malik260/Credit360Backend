@@ -1223,7 +1223,6 @@
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS - Copy.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS11.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetter.rdlc" />
-    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR.rdlc" />
     <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\ScheduledCollateral.rdlc" />
     <EmbeddedResource Include="Reports\Credit\Header.rdlc" />
@@ -1232,6 +1231,7 @@
     <Content Include="Reports\Report\ApprovalTrailWithSLA.rdlc" />
     <Content Include="Reports\Report\Blacklist.rdlc" />
     <Content Include="Reports\Report\BondAndGuarantee.rdlc" />
+    <EmbeddedResource Include="Reports\Credit\OfferLetterGeneration\OfferLetterLMSR 060219.rdlc" />
     <EmbeddedResource Include="Reports\Report\AllCommercialLoanReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedBondAndGuarantee.rdlc" />
     <EmbeddedResource Include="Reports\Report\CashBackedReport.rdlc" />

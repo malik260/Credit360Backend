@@ -25,6 +25,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string offerLetterSalutation { get; set; }
         public string offerLetterClauses { get; set; }
         public string offerLetteracceptance { get; set; }
+        public int loanApplicationId { get; set; }
+        public bool isLMS { get; set; }
     }
 
     public class OfferLetterDetailViewModel : GeneralEntity

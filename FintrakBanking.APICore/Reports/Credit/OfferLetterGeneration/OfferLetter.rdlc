@@ -370,7 +370,7 @@
                     <Value>We refer to your application for credit facility </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
@@ -380,7 +380,7 @@
                   <TextRun>
                     <Value xml:space="preserve"> </Value>
                     <Style>
-                      <FontFamily>Garamond</FontFamily>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
                     </Style>
                   </TextRun>
@@ -388,7 +388,7 @@
                     <Value>and are pleased to advise approval of same under the following Terms and Conditions.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Garamond</FontFamily>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
@@ -426,7 +426,7 @@
                     <Value>OFFER FOR CREDIT FACILITY</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontWeight>Bold</FontWeight>
                       <TextDecoration>Underline</TextDecoration>
                       <Color>#000000</Color>
@@ -461,7 +461,7 @@
                   <TextRun>
                     <Value>=StrConv(First(Fields!customerAddress.Value, "OfferLetterDetails"), vbProperCase)</Value>
                     <Style>
-                      <FontFamily>Garamond</FontFamily>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
                     </Style>
                   </TextRun>
@@ -494,7 +494,7 @@
                   <TextRun>
                     <Value>=Parameters!currentDate.Value</Value>
                     <Style>
-                      <FontFamily>Garamond</FontFamily>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
                       <FontSize>11pt</FontSize>
                       <Format>d MMM yyyy</Format>
                     </Style>
@@ -547,7 +547,8 @@
                                   <Value>SECTION 3 (a) - Conditions Precedent to Drawdown</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>Underline</TextDecoration>
                                     <Color>#000000</Color>
@@ -588,7 +589,7 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontFamily>garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -622,7 +623,7 @@
                                 <TextRun>
                                   <Value>=Fields!conditionPrecident.Value</Value>
                                   <Style>
-                                    <FontFamily>garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -701,7 +702,8 @@
                                   <Value>Section 4(a) Conditions Subsequent to Utilization:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>Underline</TextDecoration>
                                     <Color>#000000</Color>
@@ -742,7 +744,7 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -776,7 +778,7 @@
                                 <TextRun>
                                   <Value>=Fields!conditionPrecident.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -855,7 +857,8 @@
                                   <Value>Facility Type:   </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -889,7 +892,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!productName.Value, vbProperCase)</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -927,7 +930,8 @@
                                   <Value>Facility Amount:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -961,7 +965,7 @@
                                 <TextRun>
                                   <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!loanAmount.Value,"#,#.00")</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
@@ -1002,7 +1006,8 @@
                                   <Value>Purpose of the credit</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1012,7 +1017,8 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1047,7 +1053,7 @@
                                   <Value>=Fields!purpose.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1088,7 +1094,8 @@
                                   <Value>Facility Tenor</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1098,7 +1105,8 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1132,14 +1140,14 @@
                                 <TextRun>
                                   <Value>=Fields!tenor.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value> Days</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1177,7 +1185,8 @@
                                   <Value>Repayment terms</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1187,7 +1196,8 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1222,7 +1232,7 @@
                                   <Value>=Fields!repaymentTerms.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1263,7 +1273,8 @@
                                   <Value>Repayment day</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1273,7 +1284,8 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1307,14 +1319,14 @@
                                 <TextRun>
                                   <Value>=Fields!tenor.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value> days </Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1322,7 +1334,7 @@
                                   <Value>from set-up</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1363,7 +1375,8 @@
                                   <Value>Repayment schedule</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1373,7 +1386,8 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1408,7 +1422,7 @@
                                   <Value>=Fields!repaymentSchedule.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1449,7 +1463,8 @@
                                   <Value>Prepayment Terms/Early Liquidation Terms:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1459,7 +1474,8 @@
                                   <Value xml:space="preserve"> </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1494,7 +1510,7 @@
                                   <Value>Not applicable</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1535,7 +1551,8 @@
                                   <Value>Late repayment:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1569,7 +1586,7 @@
                                 <TextRun>
                                   <Value>These shall be penalties that will be borne by the borrower in the event of default in line with CBN guide to bank charges</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1609,7 +1626,8 @@
                                   <Value>Grace period:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1643,7 +1661,7 @@
                                 <TextRun>
                                   <Value>A grace period of seven (7) days will be allowed within which there will be no penal charge on late repayments, after which a monthly penal charge of 1% flat on overdue amount, in addition to current rate of interest and management fees on the unpaid sum until full repayment will be applicable.</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1683,7 +1701,8 @@
                                   <Value>Expiry Date:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1717,14 +1736,14 @@
                                 <TextRun>
                                   <Value>=Fields!tenor.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value xml:space="preserve"> </Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1732,7 +1751,7 @@
                                   <Value>days from set-up</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1773,7 +1792,8 @@
                                   <Value>Pricing:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1783,7 +1803,8 @@
                                   <Value xml:space="preserve">       </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1855,7 +1876,8 @@
                                   <Value>Interest rate:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1865,7 +1887,8 @@
                                   <Value xml:space="preserve"> </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1899,14 +1922,14 @@
                                 <TextRun>
                                   <Value>=Fields!interestRate.Value.ToString + "%  " + First(Fields!productPriceIndex.Value, "OfferLetterLoanDetail")</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value xml:space="preserve"> </Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <Format>0.00;(0.00) %</Format>
                                     <TextDecoration>None</TextDecoration>
@@ -1916,7 +1939,7 @@
                                 <TextRun>
                                   <Value>per annum floating.  The interest rate advised is subject to change in line with money market conditions as advised by the Bank from time to time. Any future variation of interest rate as advised by the Bank will become effective after 10 business days notification to the Borrower unless the facility is fully repaid by the effective date of such reviewed rate</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -2011,14 +2034,14 @@
                                 <TextRun>
                                   <Value>=Fields!feeName.Value</Value>
                                   <Style>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value>:</Value>
                                   <Style>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2050,7 +2073,7 @@
                                 <TextRun>
                                   <Value>=Fields!rateValue.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <Format>0.00;(0.00)</Format>
                                   </Style>
@@ -2059,7 +2082,7 @@
                                   <Value>% flat of facility amount</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -2096,7 +2119,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!productName.Value, vbProperCase)</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2174,7 +2197,7 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2206,7 +2229,7 @@
                                 <TextRun>
                                   <Value>=Fields!collateralDetail.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2266,7 +2289,8 @@
                     <Value>SECTION 2 COLLATERAL</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                       <TextDecoration>Underline</TextDecoration>
                       <Color>#000000</Color>
@@ -2318,7 +2342,8 @@
                                   <Value>Lender: </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -2352,7 +2377,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!companyName.Value, vbProperCase)</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2387,7 +2412,18 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Name of Borrower:  </Value>
+                                  <Value>Name of Borrower: </Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                    <Color>#000000</Color>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value xml:space="preserve"> </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Lucida Sans Unicode</FontFamily>
@@ -2424,7 +2460,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!customerName.Value, vbProperCase)</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2462,7 +2498,8 @@
                                   <Value>Contact detail of borrower:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Lucida Sans Unicode</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -2496,7 +2533,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!customerAddress.Value, vbProperCase) &amp; "," &amp; vbCrLf &amp; Fields!customerPhoneNumber.Value &amp; "," &amp; vbCrLf &amp; Fields!customerEmailAddress.Value</Value>
                                   <Style>
-                                    <FontFamily>Garamond</FontFamily>
+                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2551,38 +2588,6 @@
               </Border>
             </Style>
           </Tablix>
-          <Rectangle Name="Rectangle2">
-            <PageBreak>
-              <BreakLocation>End</BreakLocation>
-            </PageBreak>
-            <KeepTogether>true</KeepTogether>
-            <Top>8.9957in</Top>
-            <Left>0.35599in</Left>
-            <Height>0.07292in</Height>
-            <Width>5.72917in</Width>
-            <ZIndex>11</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Rectangle>
-          <Rectangle Name="Rectangle15">
-            <PageBreak>
-              <BreakLocation>End</BreakLocation>
-            </PageBreak>
-            <KeepTogether>true</KeepTogether>
-            <Top>9.55181in</Top>
-            <Left>0.1888in</Left>
-            <Height>0.07479in</Height>
-            <Width>6.49546in</Width>
-            <ZIndex>12</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-            </Style>
-          </Rectangle>
           <Rectangle Name="Rectangle17">
             <PageBreak>
               <BreakLocation>End</BreakLocation>
@@ -2592,7 +2597,7 @@
             <Left>0.22935in</Left>
             <Height>0.07479in</Height>
             <Width>6.60354in</Width>
-            <ZIndex>13</ZIndex>
+            <ZIndex>11</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2623,7 +2628,7 @@
             <Left>0.20006in</Left>
             <Height>0.25in</Height>
             <Width>6.21812in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2657,6 +2662,57 @@
             <Left>0.18628in</Left>
             <Height>0.25in</Height>
             <Width>6.2319in</Width>
+            <ZIndex>13</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Rectangle Name="Rectangle5">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>9.55573in</Top>
+            <Left>0.57892in</Left>
+            <Height>0.07292in</Height>
+            <Width>5.72917in</Width>
+            <ZIndex>14</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Textbox Name="Textbox33">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Label>Offer Letter Clause</Label>
+                    <Value>=First(Fields!offerLetterClauses.Value, "OfferLetterDetails")</Value>
+                    <MarkupType>HTML</MarkupType>
+                    <Style>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox33</rd:DefaultName>
+            <Top>9.06597in</Top>
+            <Left>0.22935in</Left>
+            <Height>0.25in</Height>
+            <Width>6.56299in</Width>
             <ZIndex>15</ZIndex>
             <Style>
               <Border>
@@ -2668,8 +2724,43 @@
               <PaddingBottom>2pt</PaddingBottom>
             </Style>
           </Textbox>
+          <Textbox Name="Textbox34">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Label>Offer Letter Acceptance</Label>
+                    <Value>=First(Fields!offerLetteracceptance.Value, "OfferLetterDetails")</Value>
+                    <MarkupType>HTML</MarkupType>
+                    <Style>
+                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox34</rd:DefaultName>
+            <Top>9.79306in</Top>
+            <Left>0.22935in</Left>
+            <Height>0.25in</Height>
+            <Width>6.56299in</Width>
+            <ZIndex>16</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
         </ReportItems>
-        <Height>10.11875in</Height>
+        <Height>10.16354in</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2698,21 +2789,24 @@
                     <TextRun>
                       <Value>Ref:</Value>
                       <Style>
-                        <FontFamily>Lucida Sans Unicode</FontFamily>
+                        <FontFamily>Frutiger LT 45 Light</FontFamily>
+                        <FontSize>11pt</FontSize>
                         <FontWeight>Bold</FontWeight>
                       </Style>
                     </TextRun>
                     <TextRun>
                       <Value xml:space="preserve"> </Value>
                       <Style>
-                        <FontFamily>Lucida Sans Unicode</FontFamily>
+                        <FontFamily>Frutiger LT 45 Light</FontFamily>
+                        <FontSize>11pt</FontSize>
                       </Style>
                     </TextRun>
                     <TextRun>
                       <Value>=First(Fields!loanApplicationId.Value, "OfferLetterLoanDetail")</Value>
                       <Style>
                         <FontStyle>Normal</FontStyle>
-                        <FontFamily>Lucida Sans Unicode</FontFamily>
+                        <FontFamily>Frutiger LT 45 Light</FontFamily>
+                        <FontSize>11pt</FontSize>
                         <FontWeight>Bold</FontWeight>
                         <TextDecoration>None</TextDecoration>
                         <Color>#000000</Color>
@@ -2759,7 +2853,10 @@
                   <TextRuns>
                     <TextRun>
                       <Value>=Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
-                      <Style />
+                      <Style>
+                        <FontFamily>Frutiger LT 45 Light</FontFamily>
+                        <FontSize>11pt</FontSize>
+                      </Style>
                     </TextRun>
                   </TextRuns>
                   <Style>

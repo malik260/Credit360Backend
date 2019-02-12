@@ -54,6 +54,15 @@ namespace FintrakBanking.Interfaces.Credit
 
         bool SendBackToBusinessAvailment(LoanAvailmentApprovalViewModel entity);
 
-       void AddOfferLetterClauses(int applicationId, int staffId);
+       void AddOfferLetterClauses(int applicationId, int staffId,bool isLMS, bool callSaveChanges);
+        bool EditOfferLetterTitle(int custimerId, string data, int staffId, int branchId);
+        bool EditOfferLetterSalutation(int custimerId, string data, int staffId, int branchId);
+        bool EditOfferLetterAcceptance(int applicationId, string data, bool isLMS, int staffId, int branchId);
+        bool EditOfferLetterClause(int applicationId, string data, bool isLMS, int staffId, int branchId);
+
+        OfferLetterViewModel GetOfferLetterTitle(int custimerId);
+        OfferLetterViewModel GetOfferLetterSalutation(int custimerId);
+        OfferLetterViewModel GetOfferLetterAcceptance(int applicationId);
+        OfferLetterViewModel GetOfferLetterClause(int applicationId);
     }
 }

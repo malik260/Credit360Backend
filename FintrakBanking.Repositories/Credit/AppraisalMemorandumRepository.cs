@@ -32,6 +32,7 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private ICreditLimitValidationsRepository limitValidation;
         private IEmailAlertLogger emailLogger;
+        private IOfferLetterAndAvailmentRepository offerLetter;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -39,7 +40,8 @@ namespace FintrakBanking.Repositories.Credit
             IAuditTrailRepository audit, 
             IWorkflow workflow,
             ICreditLimitValidationsRepository limitValidation,
-            IEmailAlertLogger _emailLogger
+            IEmailAlertLogger _emailLogger,
+            IOfferLetterAndAvailmentRepository _offerLetter
             )
         {
             this.context = context;
@@ -48,6 +50,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = workflow;
             this.limitValidation = limitValidation;
             emailLogger = _emailLogger;
+            offerLetter = _offerLetter;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -425,8 +428,9 @@ namespace FintrakBanking.Repositories.Credit
 
                     //Send Email to Customer
                     SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
-                    
-                    ss
+
+                    //generate offer letter doc
+                    offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
                 }
                 else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                 {
@@ -1875,8 +1879,9 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
-                        where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
-                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        where a.COMPANYID == companyId && a.DELETED == false 
+                        //&& a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        && a.LOANAPPLICATIONID == loanApplicationId
                         select new LoanApplicationDetailViewModel
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
@@ -1906,7 +1911,8 @@ namespace FintrakBanking.Repositories.Credit
             var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
-                        where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        where a.COMPANYID == companyId && a.DELETED == false
+                        && a.LOANAPPLICATIONID == loanApplicationId
                         select new LoanApplicationDetailViewModel
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
