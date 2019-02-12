@@ -33,6 +33,10 @@
               <xs:element name="final" msprop:Generator_ColumnVarNameInTable="columnfinal" msprop:Generator_ColumnPropNameInRow="final" msprop:Generator_ColumnPropNameInTable="finalColumn" msprop:Generator_UserColumnName="final" type="xs:string" minOccurs="0" />
               <xs:element name="customerGroupName" msprop:Generator_ColumnVarNameInTable="columncustomerGroupName" msprop:Generator_ColumnPropNameInRow="customerGroupName" msprop:Generator_ColumnPropNameInTable="customerGroupNameColumn" msprop:Generator_UserColumnName="customerGroupName" type="xs:string" minOccurs="0" />
               <xs:element name="operationName" msprop:Generator_ColumnVarNameInTable="columnoperationName" msprop:Generator_ColumnPropNameInRow="operationName" msprop:Generator_ColumnPropNameInTable="operationNameColumn" msprop:Generator_UserColumnName="operationName" type="xs:string" minOccurs="0" />
+              <xs:element name="offerLetterTitle" msprop:Generator_ColumnVarNameInTable="columnofferLetterTitle" msprop:Generator_ColumnPropNameInRow="offerLetterTitle" msprop:Generator_ColumnPropNameInTable="offerLetterTitleColumn" msprop:Generator_UserColumnName="offerLetterTitle" type="xs:string" minOccurs="0" />
+              <xs:element name="offerLetterSalutation" msprop:Generator_ColumnVarNameInTable="columnofferLetterSalutation" msprop:Generator_ColumnPropNameInRow="offerLetterSalutation" msprop:Generator_ColumnPropNameInTable="offerLetterSalutationColumn" msprop:Generator_UserColumnName="offerLetterSalutation" type="xs:string" minOccurs="0" />
+              <xs:element name="offerLetterClauses" msprop:Generator_ColumnVarNameInTable="columnofferLetterClauses" msprop:Generator_ColumnPropNameInRow="offerLetterClauses" msprop:Generator_ColumnPropNameInTable="offerLetterClausesColumn" msprop:Generator_UserColumnName="offerLetterClauses" type="xs:string" minOccurs="0" />
+              <xs:element name="offerLetteracceptance" msprop:Generator_ColumnVarNameInTable="columnofferLetteracceptance" msprop:Generator_ColumnPropNameInRow="offerLetteracceptance" msprop:Generator_ColumnPropNameInTable="offerLetteracceptanceColumn" msprop:Generator_UserColumnName="offerLetteracceptance" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
@@ -549,6 +553,14 @@
               <xs:element name="maturityDate" msprop:Generator_ColumnVarNameInTable="columnmaturityDate" msprop:Generator_ColumnPropNameInRow="maturityDate" msprop:Generator_ColumnPropNameInTable="maturityDateColumn" msprop:Generator_UserColumnName="maturityDate" type="xs:string" minOccurs="0" />
               <xs:element name="outstandingPrincipal" msprop:Generator_ColumnVarNameInTable="columnoutstandingPrincipal" msprop:Generator_ColumnPropNameInRow="outstandingPrincipal" msprop:Generator_ColumnPropNameInTable="outstandingPrincipalColumn" msprop:Generator_UserColumnName="outstandingPrincipal" type="xs:string" minOccurs="0" />
               <xs:element name="pastDueTotal" msprop:Generator_ColumnVarNameInTable="columnpastDueTotal" msprop:Generator_ColumnPropNameInRow="pastDueTotal" msprop:Generator_ColumnPropNameInTable="pastDueTotalColumn" msprop:Generator_UserColumnName="pastDueTotal" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="OfferLeterClauses" msprop:Generator_TableClassName="OfferLeterClausesDataTable" msprop:Generator_TableVarName="tableOfferLeterClauses" msprop:Generator_RowChangedName="OfferLeterClausesRowChanged" msprop:Generator_TablePropName="OfferLeterClauses" msprop:Generator_RowDeletingName="OfferLeterClausesRowDeleting" msprop:Generator_RowChangingName="OfferLeterClausesRowChanging" msprop:Generator_RowEvHandlerName="OfferLeterClausesRowChangeEventHandler" msprop:Generator_RowDeletedName="OfferLeterClausesRowDeleted" msprop:Generator_RowClassName="OfferLeterClausesRow" msprop:Generator_UserTableName="OfferLeterClauses" msprop:Generator_RowEvArgName="OfferLeterClausesRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="offerLetteracceptance" msprop:Generator_ColumnVarNameInTable="columnofferLetteracceptance" msprop:Generator_ColumnPropNameInRow="offerLetteracceptance" msprop:Generator_ColumnPropNameInTable="offerLetteracceptanceColumn" msprop:Generator_UserColumnName="offerLetteracceptance" type="xs:string" minOccurs="0" />
+              <xs:element name="offerLetterClauses" msprop:Generator_ColumnVarNameInTable="columnofferLetterClauses" msprop:Generator_ColumnPropNameInRow="offerLetterClauses" msprop:Generator_ColumnPropNameInTable="offerLetterClausesColumn" msprop:Generator_UserColumnName="offerLetterClauses" type="xs:string" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
