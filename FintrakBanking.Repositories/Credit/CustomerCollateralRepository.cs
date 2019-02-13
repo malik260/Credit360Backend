@@ -5411,7 +5411,7 @@ namespace FintrakBanking.Repositories.Credit
                                    dateTimeCreated = x.DATETIMECREATED,
                                    requireVisitation = c.REQUIREVISITATION,
                                    customerName = a.FIRSTNAME + " " + a.LASTNAME + " " + a.MAIDENNAME,
-
+                                   stampToCover = context.TBL_COLLATERAL_IMMOVE_PROPERTY.Where(o=>o.COLLATERALCUSTOMERID==x.COLLATERALCUSTOMERID).Select(o=>o.STAMPTOCOVER).FirstOrDefault()
                                }).ToList();
 
             return collaterals;

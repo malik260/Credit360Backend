@@ -553,5 +553,174 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("offer-letter/edit/clause")]
+        public HttpResponseMessage EditOfferLetterClause(OfferLetterViewModel data)
+        {
+            try
+            {
+                bool response = repo.EditOfferLetterClause(data.loanApplicationId, data.offerLetterClauses,data.isLMS, token.GetStaffId, token.GetBranchId);
+
+                if (response == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("offer-letter/edit/acceptance")]
+        public HttpResponseMessage EditOfferLetterAcceptance(OfferLetterViewModel data)
+        {
+            try
+            {
+                bool response = repo.EditOfferLetterAcceptance(data.loanApplicationId, data.offerLetteracceptance,data.isLMS, token.GetStaffId, token.GetBranchId);
+
+                if (response == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("offer-letter/edit/title")]
+        public HttpResponseMessage EditOfferLetterTtitle(OfferLetterViewModel data)
+        {
+            try
+            {
+                bool response = repo.EditOfferLetterTitle(data.customerId, data.offerLetterTitle, token.GetStaffId, token.GetBranchId);
+
+                if (response == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("offer-letter/edit/salutation")]
+        public HttpResponseMessage EditOfferLetterSalutation(OfferLetterViewModel data)
+        {
+            try
+            {
+                bool response = repo.EditOfferLetterSalutation(data.customerId, data.offerLetterSalutation, token.GetStaffId, token.GetBranchId);
+
+                if (response == true)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully" });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message, error = ex.InnerException });
+            }
+        }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offer-letter/get/salutation/{customerId}")]
+        public HttpResponseMessage GetOfferLetterSalutation(int customerId)
+        {
+            try
+            {
+                var response = repo.GetOfferLetterSalutation(customerId);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offer-letter/get/title/{customerId}")]
+        public HttpResponseMessage GetOfferLetterTitle(int customerId)
+        {
+            try
+            {
+                var response = repo.GetOfferLetterTitle(customerId);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offer-letter/get/clauses/{loanApplicationId}")]
+        public HttpResponseMessage GetOfferLetterClauses(int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.GetOfferLetterClause(loanApplicationId);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("offer-letter/get/acceptance/{loanApplicationId}")]
+        public HttpResponseMessage GetOfferLetterAcceptance(int loanApplicationId)
+        {
+            try
+            {
+                var response = repo.GetOfferLetterAcceptance(loanApplicationId);
+
+                if (response != null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, result = response, message = "No record found!" });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = $"Error: {e.Message}" });
+            }
+        }
     }
 }
