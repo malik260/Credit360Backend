@@ -49,30 +49,10 @@
           <DataField>customerGroupName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="operationName">
-          <DataField>operationName</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="offerLetterTitle">
-          <DataField>offerLetterTitle</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="offerLetterSalutation">
-          <DataField>offerLetterSalutation</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="offerLetterClauses">
-          <DataField>offerLetterClauses</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="offerLetteracceptance">
-          <DataField>offerLetteracceptance</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetter</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -165,18 +145,10 @@
           <DataField>productPriceIndex</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="offerLetterIntroduction">
-          <DataField>offerLetterIntroduction</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="isRenewal">
-          <DataField>isRenewal</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterDetail</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -200,7 +172,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterConditionPrecident</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -224,7 +196,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterConditionSubsequent</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -252,7 +224,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterFee</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -276,7 +248,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterSignatory</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -304,7 +276,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterCollateral</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -348,7 +320,7 @@
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>Credit</rd:DataSetName>
-        <rd:SchemaPath>C:\Users\FINTRAK\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\ReportDataset\Credit.xsd</rd:SchemaPath>
+        <rd:SchemaPath>C:\Users\uuser\Documents\Visual Studio 2017\Projects\ReportDeveloper\ReportDeveloper\Report\Credit.xsd</rd:SchemaPath>
         <rd:TableName>OfferLetterBorrowerDetail</rd:TableName>
         <rd:TableAdapterFillMethod />
         <rd:TableAdapterGetDataMethod />
@@ -360,6 +332,796 @@
     <ReportSection>
       <Body>
         <ReportItems>
+          <Textbox Name="Textbox24">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>“Acceptance of the Bank's offer shall be required within 30 days of issuance of offer letter  and conditions met within 60 days from date of acceptance of offer, failing which the offer will lapse”.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Kindly signify your acceptance of this offer by signing, sealing and returning the three copies of this offer letter.  Please also put across the face of the offer letter a postage stamp (with your Borrower’s seal duly affixed).</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Yours faithfully,</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>For:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve"> </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>FIRST BANK OF NIGERIA LIMITED</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!rmStaffName.Value, "OfferLetterSignatory")</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">           </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">                                                             </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!bmStaffName.Value, "OfferLetterSignatory")</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Relationship Manager                                                                                    Business Manager</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Signature:                                                                                                      Signature:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Date:                                                                                                             Date:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value xml:space="preserve">                         </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>ACCEPTANCE OF OFFER</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>We hereby accept the terms and conditions of this offer as indicated above and we hereunder append our signatures to the effect accordingly.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Accepted by</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Name………………………………….        and,            Name……………………………………</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Designation………………………….                             Designation……………………………</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Signature……………………………..                             Signature………………………………</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Date……………………………………                         Date……………………………………</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value xml:space="preserve"> </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>In the presence of</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Name…………………………………</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Address……………………………..</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Designation………………………..</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Signature……………………………</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>For……………………………………………………………..      (The Borrower)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>14pt</LineHeight>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>50.57486cm</Top>
+            <Left>0.50814cm</Left>
+            <Height>2.55044cm</Height>
+            <Width>16.7444cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox23">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>a)     All term loans would be subject to annual review, and annual renewal fees would be charged on all term loans with maturity longer than one (1) year.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>b)    Advisory fee (negotiable but not below 0.5% of the facility amount) would be charged on all specialized credits and appropriate advisory service agreement would be put in place as a condition precedent.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>17pt</LineHeight>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>39.8577cm</Top>
+            <Left>0.54364cm</Left>
+            <Height>1.13518cm</Height>
+            <Width>16.7089cm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox22">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>If the Borrower fails to pay any sum due or to become due hereunder, the Borrower shall pay a monthly penal charge on the overdue amount in addition to being charged prevailing interest rate, management and processing fees on the unpaid sum from the date when such payment falls due to the date of payment.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>36.99739cm</Top>
+            <Left>0.53907cm</Left>
+            <Height>1.90781cm</Height>
+            <Width>16.71347cm</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox21">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Any submission or acknowledgment in writing by the Borrower or by the person duly authorised on behalf of the Borrower on the amount of the indebtedness of the Borrower to the Bank or any Statement of Account furnished  by the Bank as true copy extracted from its books shall be binding and conclusive against the Borrower.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>34.42812cm</Top>
+            <Left>0.54364cm</Left>
+            <Height>1.51094cm</Height>
+            <Width>16.7089cm</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
           <Textbox Name="Textbox5">
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
@@ -370,7 +1132,7 @@
                     <Value>We refer to your application for credit facility </Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
@@ -380,7 +1142,7 @@
                   <TextRun>
                     <Value xml:space="preserve"> </Value>
                     <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                     </Style>
                   </TextRun>
@@ -388,7 +1150,7 @@
                     <Value>and are pleased to advise approval of same under the following Terms and Conditions.</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <FontWeight>Normal</FontWeight>
                       <TextDecoration>None</TextDecoration>
@@ -402,10 +1164,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox5</rd:DefaultName>
-            <Top>4.64316cm</Top>
+            <Top>3.69066cm</Top>
             <Left>0.51492cm</Left>
             <Height>1.01528cm</Height>
             <Width>16.73762cm</Width>
+            <ZIndex>4</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -426,7 +1189,7 @@
                     <Value>OFFER FOR CREDIT FACILITY</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
                       <FontWeight>Bold</FontWeight>
                       <TextDecoration>Underline</TextDecoration>
                       <Color>#000000</Color>
@@ -437,11 +1200,58 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox4</rd:DefaultName>
-            <Top>3.9726cm</Top>
+            <Top>3.0201cm</Top>
             <Left>0.51717cm</Left>
             <Height>0.67056cm</Height>
             <Width>9.50516cm</Width>
-            <ZIndex>1</ZIndex>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox4">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Dear </Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=StrConv(First(Fields!customerName.Value, "OfferLetterDetails"), vbProperCase)</Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>,</Value>
+                    <Style>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox4</rd:DefaultName>
+            <Top>2.25253cm</Top>
+            <Left>0.51718cm</Left>
+            <Height>0.5559cm</Height>
+            <Width>4.76786cm</Width>
+            <ZIndex>6</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -461,7 +1271,7 @@
                   <TextRun>
                     <Value>=StrConv(First(Fields!customerAddress.Value, "OfferLetterDetails"), vbProperCase)</Value>
                     <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                     </Style>
                   </TextRun>
@@ -470,11 +1280,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Address</rd:DefaultName>
-            <Top>1.92725cm</Top>
+            <Top>1.03825cm</Top>
             <Left>0.51718cm</Left>
             <Height>1.10845cm</Height>
             <Width>4.76786cm</Width>
-            <ZIndex>2</ZIndex>
+            <ZIndex>7</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -494,7 +1304,7 @@
                   <TextRun>
                     <Value>=Parameters!currentDate.Value</Value>
                     <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
+                      <FontFamily>Garamond</FontFamily>
                       <FontSize>11pt</FontSize>
                       <Format>d MMM yyyy</Format>
                     </Style>
@@ -510,7 +1320,7 @@
             <Left>0.51718cm</Left>
             <Height>0.70583cm</Height>
             <Width>5.7897cm</Width>
-            <ZIndex>3</ZIndex>
+            <ZIndex>8</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -528,7 +1338,7 @@
                   <Width>0.47917in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.11136in</Width>
+                  <Width>5.41551in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -547,8 +1357,7 @@
                                   <Value>SECTION 3 (a) - Conditions Precedent to Drawdown</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>Underline</TextDecoration>
                                     <Color>#000000</Color>
@@ -589,7 +1398,7 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -623,7 +1432,7 @@
                                 <TextRun>
                                   <Value>=Fields!conditionPrecident.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -665,17 +1474,201 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionPrecident</DataSetName>
-            <Top>7.77766in</Top>
+            <Top>7.40266in</Top>
             <Left>0.20181in</Left>
             <Height>0.53124in</Height>
-            <Width>6.59053in</Width>
-            <ZIndex>4</ZIndex>
+            <Width>5.89468in</Width>
+            <ZIndex>9</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
+          <Textbox Name="Textbox27">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>The Borrower represents and warrants to the Bank that: </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>a)     The Borrower has the power to borrow and has taken all necessary actions to authorise the borrowing of the loan upon its terms and conditions and to authorise the execution, delivery and performance of all terms and conditions herein stated.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>b)    There has been no material adverse change in the Borrower’s financial position as represented to the Bank prior to the signing of this Offer Letter.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>c)     There is no bankruptcy proceeding pending against the Borrower which would affect the financial position of the Borrower.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>d)    The Borrower is not in default under any obligation in respect of any borrowed money and that the execution and performance of this loan obligation will not be or result in breach of or default under any provision of any agreements to which the Borrower is a party.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>e)     All consents, licenses, approvals, authorizations of any government authority, bureau or agency etc required in connection with the execution, delivery, performance, validity or enforceability of this offer letter, have been obtained by the Borrower and the conditions contained therein or otherwise applicable thereto have been  complied with or fulfilled.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>23.1948cm</Top>
+            <Left>0.51029cm</Left>
+            <Height>2.22005cm</Height>
+            <Width>16.74225cm</Width>
+            <ZIndex>10</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox36">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Section 5 Representations and Warranties</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>8.81237in</Top>
+            <Left>0.2009in</Left>
+            <Height>0.25in</Height>
+            <Width>3.30208in</Width>
+            <ZIndex>11</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
           <Tablix Name="Tablix4">
             <TablixBody>
               <TablixColumns>
@@ -683,7 +1676,7 @@
                   <Width>0.48008in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>6.10003in</Width>
+                  <Width>5.40418in</Width>
                 </TablixColumn>
               </TablixColumns>
               <TablixRows>
@@ -702,8 +1695,7 @@
                                   <Value>Section 4(a) Conditions Subsequent to Utilization:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>Underline</TextDecoration>
                                     <Color>#000000</Color>
@@ -744,7 +1736,7 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -778,7 +1770,7 @@
                                 <TextRun>
                                   <Value>=Fields!conditionPrecident.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -820,17 +1812,503 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterConditionSubsequent</DataSetName>
-            <Top>8.37834in</Top>
+            <Top>8.00334in</Top>
             <Left>0.21223in</Left>
             <Height>0.51736in</Height>
-            <Width>6.58011in</Width>
-            <ZIndex>5</ZIndex>
+            <Width>5.88426in</Width>
+            <ZIndex>12</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
+          <Textbox Name="Textbox37">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Section 6: Events of Default:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>10.20029in</Top>
+            <Left>0.2009in</Left>
+            <Height>0.25in</Height>
+            <Width>3.30208in</Width>
+            <ZIndex>13</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox28">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Without prejudice to the Bank’s right to demand repayment of any outstanding sum under the facility(ies) at any time, the Bank reserves the right to call in the lending should any of the following events occur:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>a)     If the Borrower fails to settle when due, any outstanding amount owed to and advised by the Bank. </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>b)    If the Borrower defaults in the performance or the observance of any term, condition or covenant herein and such breach or default continues unremedied after fourteen days’ notice had been given to it. </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>c)     If any representation or warranty by the Borrower proves to be incorrect in any material respect.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>d)    If the Borrower fails to provide any security required under this Offer Letter or the Borrower is unable to satisfactorily meet all requirements necessary to enable the Bank take any security contemplated in this Offer Letter.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>e)     If the Borrower’s creditors obtain a court order or injunction on the Borrower’s credit balances with the Bank or any other financial institution.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>13pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>f)      If an order is made or a petition is presented or if a distress or execution is levied upon or issued against the Borrower’s property and is not discharged within five days. </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>g)    If an encumbrancer takes possession of, or a receiver is appointed over all or any part of the Borrower’s undertaking and assets. </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>h)    If the Borrower is unable to pay its debt to any party.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>i)      If any extraordinary situation shall have arisen the continuance of which in the opinion of the Bank shall make it impossible that the Borrower will be able to perform its obligations under these presents.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>17pt</LineHeight>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>26.72013cm</Top>
+            <Left>0.51029cm</Left>
+            <Height>2.74922cm</Height>
+            <Width>16.74225cm</Width>
+            <ZIndex>14</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox38">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Section 7: Acceleration</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>11.79655in</Top>
+            <Left>0.20006in</Left>
+            <Height>0.25in</Height>
+            <Width>3.30208in</Width>
+            <ZIndex>15</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox29">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>On or at any time after the occurrence of an Event of Default which is continuing the Bank may without notice to the Borrower:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>a.     cancel all or any part of the Facility(ies) whereupon the Facility(ies) shall immediately be cancelled;</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>17pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>b.    declare that all or part of the Facility(ies), together with accrued interest, and all other amounts accrued or outstanding be immediately due and payable, whereupon they shall become immediately due and payable; and/or</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>17pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>c.     declare that all or part of the Facilities be payable on demand, whereupon they shall immediately become payable on demand; and/or</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>17pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>d.    exercise any or all of its rights (eg right of setoff, right to realise any collateral etc ), remedies, powers or discretions under this Offer Letter or Loan Agreement (if any).</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>1.27cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <HangingIndent>-18pt</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>17pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>7.2 The failure or delay by the Bank in exercising any remedy, power or right as a lender shall not be considered as a waiver or impairment thereof nor shall it affect or impair any such remedies powers or rights in respect of any default.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>7.3 Notwithstanding any provision to the contrary in this Offer Letter, where the Borrower at any time during the subsistence of the Facility(ies) fails and/or neglects to provide any document required for the perfection of the Bank’s title to the Collateral within any timeline advised by the Bank, the Bank shall be entitled to, without notice or recourse to the Borrower, cancel the Facility(ies), whereupon the Facility(ies) shall become cancelled. All or part of the Facility(ies), together with accrued interest, and all other amounts accrued or outstanding shall thereupon immediately become due and payable.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>30.73453cm</Top>
+            <Left>0.5126cm</Left>
+            <Height>2.27366cm</Height>
+            <Width>16.73994cm</Width>
+            <ZIndex>16</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
           <Tablix Name="Tablix1">
             <TablixBody>
               <TablixColumns>
@@ -857,8 +2335,7 @@
                                   <Value>Facility Type:   </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -892,7 +2369,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!productName.Value, vbProperCase)</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -930,8 +2407,7 @@
                                   <Value>Facility Amount:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -965,7 +2441,7 @@
                                 <TextRun>
                                   <Value>=First(Fields!currencyName.Value, "OfferLetterLoanDetail") &amp; Format(Fields!loanAmount.Value,"#,#.00")</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <Format>#,0.00;(#,0.00)</Format>
                                   </Style>
@@ -1006,8 +2482,7 @@
                                   <Value>Purpose of the credit</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1017,8 +2492,7 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1053,7 +2527,7 @@
                                   <Value>=Fields!purpose.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1094,8 +2568,7 @@
                                   <Value>Facility Tenor</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1105,8 +2578,7 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1140,14 +2612,14 @@
                                 <TextRun>
                                   <Value>=Fields!tenor.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value> Days</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1185,8 +2657,7 @@
                                   <Value>Repayment terms</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1196,8 +2667,7 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1232,7 +2702,7 @@
                                   <Value>=Fields!repaymentTerms.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1273,8 +2743,7 @@
                                   <Value>Repayment day</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1284,8 +2753,7 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1319,14 +2787,14 @@
                                 <TextRun>
                                   <Value>=Fields!tenor.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value> days </Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1334,7 +2802,7 @@
                                   <Value>from set-up</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1375,8 +2843,7 @@
                                   <Value>Repayment schedule</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1386,8 +2853,7 @@
                                   <Value>:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1422,7 +2888,7 @@
                                   <Value>=Fields!repaymentSchedule.Value</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1463,8 +2929,7 @@
                                   <Value>Prepayment Terms/Early Liquidation Terms:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1474,8 +2939,7 @@
                                   <Value xml:space="preserve"> </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1510,7 +2974,7 @@
                                   <Value>Not applicable</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1551,8 +3015,7 @@
                                   <Value>Late repayment:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1586,7 +3049,7 @@
                                 <TextRun>
                                   <Value>These shall be penalties that will be borne by the borrower in the event of default in line with CBN guide to bank charges</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1626,8 +3089,7 @@
                                   <Value>Grace period:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1661,7 +3123,7 @@
                                 <TextRun>
                                   <Value>A grace period of seven (7) days will be allowed within which there will be no penal charge on late repayments, after which a monthly penal charge of 1% flat on overdue amount, in addition to current rate of interest and management fees on the unpaid sum until full repayment will be applicable.</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1701,8 +3163,7 @@
                                   <Value>Expiry Date:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1736,14 +3197,14 @@
                                 <TextRun>
                                   <Value>=Fields!tenor.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value xml:space="preserve"> </Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -1751,7 +3212,7 @@
                                   <Value>days from set-up</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1792,8 +3253,7 @@
                                   <Value>Pricing:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1803,8 +3263,7 @@
                                   <Value xml:space="preserve">       </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1876,8 +3335,7 @@
                                   <Value>Interest rate:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1887,8 +3345,7 @@
                                   <Value xml:space="preserve"> </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1922,14 +3379,14 @@
                                 <TextRun>
                                   <Value>=Fields!interestRate.Value.ToString + "%  " + First(Fields!productPriceIndex.Value, "OfferLetterLoanDetail")</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value xml:space="preserve"> </Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <Format>0.00;(0.00) %</Format>
                                     <TextDecoration>None</TextDecoration>
@@ -1939,7 +3396,7 @@
                                 <TextRun>
                                   <Value>per annum floating.  The interest rate advised is subject to change in line with money market conditions as advised by the Bank from time to time. Any future variation of interest rate as advised by the Bank will become effective after 10 business days notification to the Borrower unless the facility is fully repaid by the effective date of such reviewed rate</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -1995,17 +3452,869 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>3.06107in</Top>
+            <Top>2.68607in</Top>
             <Left>0.20361in</Left>
             <Height>3.25in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>6</ZIndex>
+            <ZIndex>17</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
+          <Textbox Name="Textbox39">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Section 8: Admission and acknowledgment:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>13.23493in</Top>
+            <Left>0.21223in</Left>
+            <Height>0.25in</Height>
+            <Width>4.13027in</Width>
+            <ZIndex>18</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox40">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Section 9: Default Charges</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>14.20479in</Top>
+            <Left>0.21403in</Left>
+            <Height>0.25in</Height>
+            <Width>4.13027in</Width>
+            <ZIndex>19</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox41">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Section 10</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>: </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>Credit related Fees</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>15.37256in</Top>
+            <Left>0.21403in</Left>
+            <Height>0.25in</Height>
+            <Width>4.13027in</Width>
+            <ZIndex>20</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox42">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>SECTION 11:  Interest Capitalisation</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>16.19448in</Top>
+            <Left>0.21403in</Left>
+            <Height>0.25in</Height>
+            <Width>4.13027in</Width>
+            <ZIndex>21</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox43">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>If any interest payable shall remain unpaid after the day on which the same ought to have been paid, the same shall be added to the general balance of the account and shall bear interest at the rate applicable to this facility.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>41.94539cm</Top>
+            <Left>0.54364cm</Left>
+            <Height>1.13518cm</Height>
+            <Width>16.7089cm</Width>
+            <ZIndex>22</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox44">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>SECTION 12: Expenses</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>17.0303in</Top>
+            <Left>0.21223in</Left>
+            <Height>0.25in</Height>
+            <Width>4.13027in</Width>
+            <ZIndex>23</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox45">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>The Borrower agrees that all statutory and professional fees in relation to the perfection of security/collateral including but not limited to consent fees, registration fees, legal fees, consultancy fees, stamp duties, taxes (if any) and any other fee shall automatically be charged/debited to the account of the Borrower.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Also, all costs, out-of-pocket expenses (including transportation) and other fees incurred by the Bank in the processing of this facility, enforcement and recovery of the facility shall be charged/debited to the account of the Borrower and the Borrower unconditionally authorises the Bank to debit its account(s) with any such costs and expenses as the Bank may consider necessary to achieve the successful recovery of the sums owing. Such costs and expenses shall form part of the Borrower’s indebtedness to the Bank due for payment.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0cm</LeftIndent>
+                <RightIndent>0cm</RightIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>18pt</LineHeight>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>44.06837cm</Top>
+            <Left>0.53907cm</Left>
+            <Height>1.13518cm</Height>
+            <Width>16.71347cm</Width>
+            <ZIndex>24</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox46">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>SECTION 13-</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve"> </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>SETOFF</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>17.97723in</Top>
+            <Left>0.2009in</Left>
+            <Height>0.25in</Height>
+            <Width>4.13027in</Width>
+            <ZIndex>25</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox47">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>In addition to any other general lien or similar right to which the Bank may be entitled by law, the Bank may at any time and without notice on the Borrower’s combine or consolidate all or any of the Borrower’s accounts with any liabilities to the Bank and set off or transfer any sum(s) standing to the credit of any one or more of such accounts in or towards the satisfaction of the Borrower’s liabilities to the Bank on any other account or in any other respect whether such liabilities be actual or contingent, primary or collateral, several or joint.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>46.47357cm</Top>
+            <Left>0.53906cm</Left>
+            <Height>1.13518cm</Height>
+            <Width>16.74225cm</Width>
+            <ZIndex>26</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox48">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>SECTION 14a: Other terms and conditions:</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
+                      <FontWeight>Bold</FontWeight>
+                      <TextDecoration>Underline</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox36</rd:DefaultName>
+            <Top>18.93805in</Top>
+            <Left>0.2009in</Left>
+            <Height>0.25in</Height>
+            <Width>4.13027in</Width>
+            <ZIndex>27</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox49">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <SpaceAfter>5pt</SpaceAfter>
+                <Style />
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>a)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>In line with the Bank’s policy to review facilities from time to time in light of changing market conditions, the Bank reserves the right at any time without notice, liability, cavil, let or hindrance and at its absolute discretion to convert any foreign currency facility to Naira, at the prevailing interbank foreign exchange rate on the date of conversion. The interest rate on the naira facility will default to the bank’s prime lending rate until re-negotiated.*</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>b)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>Approval of any request for extension of the facility at the expiration of the tenure hereby provided shall be at the discretion of the Bank and shall be subject to a fee of  ……% flat for new tenure as may be approved.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>c)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>The Borrower hereby indemnifies the Bank against any loss that might be incurred by the Bank as a result of any irregularity or incompleteness in the information contained in any documents submitted to the Bank.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>d)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>No change in the business operations and conditions (financial or otherwise) or in the prospects of the Borrower shall affect the full repayment of the facility at maturity.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>e)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">       </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>This facility shall be utilized strictly for the purpose for which it is granted and on no condition should it be utilized for any other purpose.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>f)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>This offer is subject to the availability of funds and the rules and regulations as enunciated from time to time by the Central Bank of Nigeria.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>g)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">      </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>The Bank reserves the right to convert the facilities into any money market instrument and/or sell the entire debt or portion of it at its discretion and without recourse and/or consent from the Borrower.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>h)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">       </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>This Offer Letter may be varied by the Bank at any time upon giving the Borrower 10 business days’ prior notification (“variation notice”) of the variation of any term or condition of this offer.  The variation shall be deemed effective by the 10th business day of the Bank’s notification to the Borrower provided that the Borrower shall be entitled to opt out by liquidating the facility(ies) on or before the 10th business day of the variation notice.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>i)</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>12pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve">       </Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Times New Roman</FontFamily>
+                      <FontSize>7pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                      <Color>#000000</Color>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>The Bank reserves the right to open a loan account, impersonal or suspense account (“Loan Account”) on whatever terms the Bank may think fit for the purpose of repayment and management of the facility(ies) as the Bank may from time to time conclusively determine in its absolute discretion.</Value>
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <LeftIndent>0.5in</LeftIndent>
+                <HangingIndent>-0.25in</HangingIndent>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontStyle>Normal</FontStyle>
+                      <FontFamily>Garamond</FontFamily>
+                      <FontSize>11pt</FontSize>
+                      <FontWeight>Normal</FontWeight>
+                      <TextDecoration>None</TextDecoration>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                  <LineHeight>12pt</LineHeight>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <Top>48.91404cm</Top>
+            <Left>0.51028cm</Left>
+            <Height>1.13518cm</Height>
+            <Width>16.74226cm</Width>
+            <ZIndex>28</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>1pt</PaddingBottom>
+            </Style>
+          </Textbox>
           <Tablix Name="Tablix5">
             <TablixBody>
               <TablixColumns>
@@ -2034,14 +4343,14 @@
                                 <TextRun>
                                   <Value>=Fields!feeName.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
                                 <TextRun>
                                   <Value>:</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -2073,7 +4382,7 @@
                                 <TextRun>
                                   <Value>=Fields!rateValue.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <Format>0.00;(0.00)</Format>
                                   </Style>
@@ -2082,7 +4391,7 @@
                                   <Value>% flat of facility amount</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                     <FontWeight>Normal</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -2119,7 +4428,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!productName.Value, vbProperCase)</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2161,11 +4470,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterFee</DataSetName>
-            <Top>6.47774in</Top>
+            <Top>6.10274in</Top>
             <Left>0.20361in</Left>
             <Height>0.25in</Height>
             <Width>6.58873in</Width>
-            <ZIndex>7</ZIndex>
+            <ZIndex>29</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2197,7 +4506,7 @@
                                 <TextRun>
                                   <Value>=RowNumber(nothing)</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2229,7 +4538,7 @@
                                 <TextRun>
                                   <Value>=Fields!collateralDetail.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2268,11 +4577,11 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterCollateral</DataSetName>
-            <Top>7.21042in</Top>
+            <Top>6.83542in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>6.61487in</Width>
-            <ZIndex>8</ZIndex>
+            <ZIndex>30</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2289,8 +4598,7 @@
                     <Value>SECTION 2 COLLATERAL</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
+                      <FontFamily>Lucida Sans Unicode</FontFamily>
                       <FontWeight>Bold</FontWeight>
                       <TextDecoration>Underline</TextDecoration>
                       <Color>#000000</Color>
@@ -2301,11 +4609,11 @@
               </Paragraph>
             </Paragraphs>
             <rd:DefaultName>Textbox36</rd:DefaultName>
-            <Top>6.91875in</Top>
+            <Top>6.54375in</Top>
             <Left>0.1888in</Left>
             <Height>0.25in</Height>
             <Width>3.30208in</Width>
-            <ZIndex>9</ZIndex>
+            <ZIndex>31</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2342,8 +4650,7 @@
                                   <Value>Lender: </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -2377,7 +4684,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!companyName.Value, vbProperCase)</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2412,18 +4719,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Name of Borrower: </Value>
-                                  <Style>
-                                    <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                    <TextDecoration>None</TextDecoration>
-                                    <Color>#000000</Color>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value xml:space="preserve"> </Value>
+                                  <Value>Name of Borrower:  </Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
                                     <FontFamily>Lucida Sans Unicode</FontFamily>
@@ -2460,7 +4756,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!customerName.Value, vbProperCase)</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2498,8 +4794,7 @@
                                   <Value>Contact detail of borrower:</Value>
                                   <Style>
                                     <FontStyle>Normal</FontStyle>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
-                                    <FontSize>11pt</FontSize>
+                                    <FontFamily>Lucida Sans Unicode</FontFamily>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
                                     <Color>#000000</Color>
@@ -2533,7 +4828,7 @@
                                 <TextRun>
                                   <Value>=StrConv(Fields!customerAddress.Value, vbProperCase) &amp; "," &amp; vbCrLf &amp; Fields!customerPhoneNumber.Value &amp; "," &amp; vbCrLf &amp; Fields!customerEmailAddress.Value</Value>
                                   <Style>
-                                    <FontFamily>Frutiger LT 45 Light</FontFamily>
+                                    <FontFamily>Garamond</FontFamily>
                                     <FontSize>11pt</FontSize>
                                   </Style>
                                 </TextRun>
@@ -2577,190 +4872,147 @@
               </TablixMembers>
             </TablixRowHierarchy>
             <DataSetName>OfferLetterLoanDetail</DataSetName>
-            <Top>2.22336in</Top>
+            <Top>1.84836in</Top>
             <Left>0.22935in</Left>
             <Height>0.75in</Height>
             <Width>6.56299in</Width>
-            <ZIndex>10</ZIndex>
+            <ZIndex>32</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Tablix>
+          <Rectangle Name="Rectangle2">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>8.6207in</Top>
+            <Left>0.35599in</Left>
+            <Height>0.07292in</Height>
+            <Width>5.72917in</Width>
+            <ZIndex>33</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle7">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>18.81711in</Top>
+            <Left>0.32892in</Left>
+            <Height>0.07292in</Height>
+            <Width>5.72917in</Width>
+            <ZIndex>34</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle13">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>10.07949in</Top>
+            <Left>0.14173in</Left>
+            <Height>0.07479in</Height>
+            <Width>6.60354in</Width>
+            <ZIndex>35</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle14">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>11.66461in</Top>
+            <Left>0.14173in</Left>
+            <Height>0.07479in</Height>
+            <Width>6.60354in</Width>
+            <ZIndex>36</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle15">
+            <PageBreak>
+              <BreakLocation>End</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>13.07264in</Top>
+            <Left>0.1888in</Left>
+            <Height>0.07479in</Height>
+            <Width>6.60354in</Width>
+            <ZIndex>37</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
+          <Rectangle Name="Rectangle16">
+            <PageBreak>
+              <BreakLocation>Start</BreakLocation>
+            </PageBreak>
+            <KeepTogether>true</KeepTogether>
+            <Top>19.79491in</Top>
+            <Left>0.1888in</Left>
+            <Height>0.07479in</Height>
+            <Width>6.60354in</Width>
+            <ZIndex>38</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Rectangle>
           <Rectangle Name="Rectangle17">
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>7.57986in</Top>
+            <Top>7.20486in</Top>
             <Left>0.22935in</Left>
             <Height>0.07479in</Height>
             <Width>6.60354in</Width>
-            <ZIndex>11</ZIndex>
+            <ZIndex>39</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Rectangle>
-          <Textbox Name="Textbox21">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Label>Offer Letter Tiltle</Label>
-                    <Value>=First(Fields!offerLetterTitle.Value, "OfferLetterDetails")</Value>
-                    <MarkupType>HTML</MarkupType>
-                    <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>0.4532in</Top>
-            <Left>0.20006in</Left>
-            <Height>0.25in</Height>
-            <Width>6.21812in</Width>
-            <ZIndex>12</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox22">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Label>Offer Letter Salutation</Label>
-                    <Value>=First(Fields!offerLetterSalutation.Value, "OfferLetterDetails")</Value>
-                    <MarkupType>HTML</MarkupType>
-                    <Style>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox8</rd:DefaultName>
-            <Top>1.27095in</Top>
-            <Left>0.18628in</Left>
-            <Height>0.25in</Height>
-            <Width>6.2319in</Width>
-            <ZIndex>13</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Rectangle Name="Rectangle5">
+          <Rectangle Name="Rectangle8">
             <PageBreak>
               <BreakLocation>End</BreakLocation>
             </PageBreak>
             <KeepTogether>true</KeepTogether>
-            <Top>9.55573in</Top>
-            <Left>0.57892in</Left>
+            <Top>17.84112in</Top>
+            <Left>0.31642in</Left>
             <Height>0.07292in</Height>
             <Width>5.72917in</Width>
-            <ZIndex>14</ZIndex>
+            <ZIndex>40</ZIndex>
             <Style>
               <Border>
                 <Style>None</Style>
               </Border>
             </Style>
           </Rectangle>
-          <Textbox Name="Textbox33">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Label>Offer Letter Clause</Label>
-                    <Value>=First(Fields!offerLetterClauses.Value, "OfferLetterDetails")</Value>
-                    <MarkupType>HTML</MarkupType>
-                    <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox33</rd:DefaultName>
-            <Top>9.06597in</Top>
-            <Left>0.22935in</Left>
-            <Height>0.25in</Height>
-            <Width>6.56299in</Width>
-            <ZIndex>15</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
-          <Textbox Name="Textbox34">
-            <CanGrow>true</CanGrow>
-            <KeepTogether>true</KeepTogether>
-            <Paragraphs>
-              <Paragraph>
-                <TextRuns>
-                  <TextRun>
-                    <Label>Offer Letter Acceptance</Label>
-                    <Value>=First(Fields!offerLetteracceptance.Value, "OfferLetterDetails")</Value>
-                    <MarkupType>HTML</MarkupType>
-                    <Style>
-                      <FontFamily>Frutiger LT 45 Light</FontFamily>
-                      <FontSize>11pt</FontSize>
-                    </Style>
-                  </TextRun>
-                </TextRuns>
-                <Style />
-              </Paragraph>
-            </Paragraphs>
-            <rd:DefaultName>Textbox34</rd:DefaultName>
-            <Top>9.79306in</Top>
-            <Left>0.22935in</Left>
-            <Height>0.25in</Height>
-            <Width>6.56299in</Width>
-            <ZIndex>16</ZIndex>
-            <Style>
-              <Border>
-                <Style>None</Style>
-              </Border>
-              <PaddingLeft>2pt</PaddingLeft>
-              <PaddingRight>2pt</PaddingRight>
-              <PaddingTop>2pt</PaddingTop>
-              <PaddingBottom>2pt</PaddingBottom>
-            </Style>
-          </Textbox>
         </ReportItems>
-        <Height>10.16354in</Height>
+        <Height>21.0875in</Height>
         <Style>
           <Border>
             <Style>None</Style>
@@ -2789,24 +5041,21 @@
                     <TextRun>
                       <Value>Ref:</Value>
                       <Style>
-                        <FontFamily>Frutiger LT 45 Light</FontFamily>
-                        <FontSize>11pt</FontSize>
+                        <FontFamily>Lucida Sans Unicode</FontFamily>
                         <FontWeight>Bold</FontWeight>
                       </Style>
                     </TextRun>
                     <TextRun>
                       <Value xml:space="preserve"> </Value>
                       <Style>
-                        <FontFamily>Frutiger LT 45 Light</FontFamily>
-                        <FontSize>11pt</FontSize>
+                        <FontFamily>Lucida Sans Unicode</FontFamily>
                       </Style>
                     </TextRun>
                     <TextRun>
                       <Value>=First(Fields!loanApplicationId.Value, "OfferLetterLoanDetail")</Value>
                       <Style>
                         <FontStyle>Normal</FontStyle>
-                        <FontFamily>Frutiger LT 45 Light</FontFamily>
-                        <FontSize>11pt</FontSize>
+                        <FontFamily>Lucida Sans Unicode</FontFamily>
                         <FontWeight>Bold</FontWeight>
                         <TextDecoration>None</TextDecoration>
                         <Color>#000000</Color>
@@ -2853,10 +5102,7 @@
                   <TextRuns>
                     <TextRun>
                       <Value>=Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
-                      <Style>
-                        <FontFamily>Frutiger LT 45 Light</FontFamily>
-                        <FontSize>11pt</FontSize>
-                      </Style>
+                      <Style />
                     </TextRun>
                   </TextRuns>
                   <Style>
@@ -2866,7 +5112,7 @@
               </Paragraphs>
               <rd:DefaultName>Textbox1</rd:DefaultName>
               <Top>0.23158in</Top>
-              <Left>4.49966in</Left>
+              <Left>4.48833in</Left>
               <Height>0.25in</Height>
               <Width>2.30401in</Width>
               <Style>

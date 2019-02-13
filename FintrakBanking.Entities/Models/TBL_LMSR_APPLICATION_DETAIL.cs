@@ -27,7 +27,7 @@
         public int CUSTOMERID { get; set; }
 
         // public short STATUSID { get; set; }
-        // public bool DELETED { get; set; }
+        public bool DELETED { get; set; }
 
         [StringLength(2000)]
         public string REVIEWDETAILS { get; set; }

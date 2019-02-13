@@ -20,6 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
         private IAdminRepository admin;
+        private IOfferLetterAndAvailmentRepository offerLetter;
 
         private CreditCommonRepository creditCommon;
 
@@ -33,7 +34,7 @@ namespace FintrakBanking.Repositories.Credit
             IAuditTrailRepository audit,
             IWorkflow workflow,
             IAdminRepository admin,
-
+            IOfferLetterAndAvailmentRepository _offerLetter,
         CreditCommonRepository creditCommon
             )
         {
@@ -43,6 +44,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = workflow;
             this.admin = admin;
             this.creditCommon = creditCommon;
+            this.offerLetter = _offerLetter;
         }
 
         public IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? classId)
@@ -111,7 +113,7 @@ namespace FintrakBanking.Repositories.Credit
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
-                applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Select(d => new applicationDetails
+                applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false).Select(d => new applicationDetails
                 {
                     detailId = d.LOANREVIEWAPPLICATIONID,
                     operationId = d.OPERATIONID,
@@ -130,7 +132,7 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
-                    statusId = 2,//d.STATUSID,
+                    statusId = d.APPROVALSTATUSID,
 
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
 
@@ -321,7 +323,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = applicationDate,
                 SYSTEMDATETIME = DateTime.Now,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                APPLICATIONSTATUSID = (short)1, // -------------------------------------------------- REMOVE COLUMN!!
+                APPLICATIONSTATUSID = (short)1, // remove magic numbers
             });
 
             List<int> customerIds = new List<int>();
@@ -343,7 +345,7 @@ namespace FintrakBanking.Repositories.Credit
                     REPAYMENTTERMS = String.Empty,
                     REPAYMENTSCHEDULE = String.Empty,
                     CUSTOMERID = loan.customerId,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved, // REMOVE DUPLICATE [STATUSID]
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
                     CREATEDBY = staffId,
                     DATETIMECREATED = applicationDate,
                     PROPOSEDTENOR = tenor,
@@ -544,6 +546,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ToStaffId = model.receiverStaffId;
             workflow.NextLevelId = model.receiverLevelId;
             workflow.Comment = model.comment;
+            workflow.Vote = model.vote;
             workflow.DeferredExecution = true;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
@@ -573,23 +576,26 @@ namespace FintrakBanking.Repositories.Credit
                         detail.APPROVEDAMOUNT = changed.amount;
                         detail.APPROVEDINTERESTRATE = changed.interestRate;
                         detail.APPROVEDTENOR = changed.tenor;
-                        // detail.STATUSID = (short)changed.statusId;
+                        detail.APPROVALSTATUSID = changed.statusId;
                         //detail.LASTUPDATEDBY = model.createdBy;
                         //detail.DATETIMEUPDATED = DateTime.Now;
 
-                        /*if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                        if (model.isBusiness) // DELETE OR UPDATE PROPOSED
                         {
-                            if (detail.STATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
+                            if (detail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
                             else
                             {
                                 detail.PROPOSEDAMOUNT = changed.amount;
                                 detail.PROPOSEDINTERESTRATE = changed.interestRate;
                                 detail.PROPOSEDTENOR = changed.tenor;
                             }
-                        }*/
+                        }
                     }
                 }
             }
+            //generate offer letter doc
+            offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
+
 
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -1236,7 +1242,7 @@ namespace FintrakBanking.Repositories.Credit
                     && x.TOAPPROVALLEVELID != null
                 ).OrderBy(x => x.APPROVALTRAILID);
 
-            if (action == 8)
+            if (action == (int)ApprovalStatusEnum.RePresent)
             {
                 var traill = trails.Join(context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELTYPEID == 2)
                         , t => t.FROMAPPROVALLEVELID, l => l.APPROVALLEVELID, (t, l) => new { t, l })
