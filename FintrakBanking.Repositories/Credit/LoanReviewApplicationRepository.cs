@@ -113,7 +113,9 @@ namespace FintrakBanking.Repositories.Credit
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
-                applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false).Select(d => new applicationDetails
+                applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL
+                //.Where(d => d.DELETED != true)
+                .Select(d => new applicationDetails
                 {
                     detailId = d.LOANREVIEWAPPLICATIONID,
                     operationId = d.OPERATIONID,
