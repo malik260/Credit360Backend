@@ -85,6 +85,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
                                                              where DbFunctions.TruncateTime(a.NEXTCOVENANTDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(a.NEXTCOVENANTDATE)<= DbFunctions.TruncateTime(endDate)
                                                              && a.COMPANYID == companyId
+                                                             orderby a.NEXTCOVENANTDATE descending
                                                              select new LoanCovenantDetailViewModel
                                                              {
                                                                  //companyId = a.COMPANYID,
@@ -117,7 +118,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      join d in context.TBL_COLLATERAL_TYPE on a.COLLATERALTYPEID equals d.COLLATERALTYPEID
                                                      join e in context.TBL_COLLATERAL_TYPE_SUB on a.COLLATERALSUBTYPEID equals e.COLLATERALSUBTYPEID
                                                      where f.LASTVALUATIONDATE >= startDate && f.LASTVALUATIONDATE <= endDate
-                                                     select new CollateralViewModel
+                                                             orderby f.LASTVALUATIONDATE descending
+
+                                                             select new CollateralViewModel
                                                      {
                                                          collateralTypeId = a.COLLATERALTYPEID,
                                                         collateralType = d.COLLATERALTYPENAME,
@@ -146,7 +149,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      join v in context.TBL_COLLATERAL_VISITATION on a.COLLATERALCUSTOMERID equals v.COLLATERALCUSTOMERID
                                                      where v.VISITATIONDATE >= startDate && v.VISITATIONDATE <= endDate
                                                      && d.REQUIREVISITATION == true
-                                                     select new CollateralViewModel
+                                                                  orderby v.VISITATIONDATE descending
+
+                                                                  select new CollateralViewModel
                                                      {
                                                          collateralTypeId = a.COLLATERALTYPEID,
                                                          collateralType = d.COLLATERALTYPENAME,
@@ -176,7 +181,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                              join f in context.TBL_FREQUENCY_TYPE on a.FREQUENCYTYPEID equals (short?)f.FREQUENCYTYPEID
                                                              join g in context.TBL_LOAN_COVENANT_TYPE on a.COVENANTTYPEID equals g.COVENANTTYPEID
                                                              where a.NEXTCOVENANTDATE >= startDate && a.NEXTCOVENANTDATE <= endDate && (decimal?)ca.AVAILABLEBALANCE < a.COVENANTAMOUNT
-                                                             select new LoanCovenantDetailViewModel
+                                                                  orderby a.NEXTCOVENANTDATE descending
+
+                                                                  select new LoanCovenantDetailViewModel
                                                              {
                                                                  companyId = a.COMPANYID,
                                                                  covenantAmount = a.COVENANTAMOUNT,
@@ -208,7 +215,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                            //join c in context.TBL_LOAN_REVOLVING on d.LOANAPPLICATIONDETAILID equals c.LOANAPPLICATIONDETAILID
                                            where e.PRUDENTIALGUIDELINETYPEID  == (int)PrudentialGuidelineTypeEnum.NonPerforming //b.EXT_PRUDENT_GUIDELINE_STATUSID
                                            && DbFunctions.TruncateTime(b.EFFECTIVEDATE) >= DbFunctions.TruncateTime(startDate) && DbFunctions.TruncateTime(b.EFFECTIVEDATE) <= DbFunctions.TruncateTime(endDate)
-                                           select new LoanViewModel
+                                                 orderby b.EFFECTIVEDATE descending
+
+                                                 select new LoanViewModel
                                            {
                                                applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
                                                loanReferenceNumber = b.LOANREFERENCENUMBER,
@@ -311,6 +320,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                                where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.SelfLiquidating &&
                                                a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate
+                                                       orderby a.MATURITYDATE descending
+
                                                        select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -341,6 +352,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                join d in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals d.LOANAPPLICATIONDETAILID
                                                where a.TBL_PRODUCT.PRODUCTTYPEID == (int)LoanProductTypeEnum.RevolvingLoan 
                                                && a.MATURITYDATE >= startDate && a.MATURITYDATE<= endDate
+                                             orderby a.MATURITYDATE descending
+
                                              select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = d.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
@@ -373,6 +386,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                         join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                                         where a.ISTENORED == false && a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate
                                                         && a.LOANSTATUSID == (int)LoanStatusEnum.Active && a.RELATED_LOAN_REFERENCE_NUMBER != string.Empty
+                                                        orderby a.MATURITYDATE descending
+
                                                         select new LoanViewModel
                                                         {
                                                             applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -404,6 +419,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                         join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                         join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                                         where a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate && a.LOANSTATUSID == approvalStatus
+                                                        orderby a.MATURITYDATE descending
+
                                                         select new LoanViewModel
                                                         {
                                                             applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -437,6 +454,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                            join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                            where a.MATURITYDATE >= startDate && a.MATURITYDATE <= endDate
                                            &&  s.AVAILABLEBALANCE < 0m
+                                           orderby a.MATURITYDATE descending
                                            select new LoanViewModel
                                            {
                                                applicationReferenceNumber = a.LOANREFERENCENUMBER,
@@ -467,7 +485,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                join br in context.TBL_BRANCH on a.BRANCHID equals br.BRANCHID
                                                join cs in context.TBL_CUSTOMER on a.CUSTOMERID equals cs.CUSTOMERID
                                                where a.MATURITYDATE >=startDate && a.MATURITYDATE <= endDate && s.AVAILABLEBALANCE < 0m
-                                               select new LoanViewModel
+                                                     orderby a.MATURITYDATE descending
+                                                     select new LoanViewModel
                                                {
                                                    applicationReferenceNumber = a.LOANREFERENCENUMBER,
                                                    loanReferenceNumber = a.LOANREFERENCENUMBER,
@@ -500,6 +519,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                      join f in context.TBL_COLLATERAL_IMMOVE_PROPERTY on a.COLLATERALCUSTOMERID equals f.COLLATERALCUSTOMERID
                                                      join p in context.TBL_COLLATERAL_ITEM_POLICY on a.COLLATERALCUSTOMERID equals p.COLLATERALCUSTOMERID
                                                      where p.ENDDATE>= startDate && p.ENDDATE <=endDate
+                                                                       orderby p.ENDDATE descending
+
                                                                        select new CollateralViewModel
                                                      {
                                                          collateralType = d.COLLATERALTYPENAME,
@@ -590,7 +611,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                    where a.SYSTEMARRIVALDATETIME >= startDate && a.SYSTEMARRIVALDATETIME <= endDate 
                                    && ( a.APPROVALSTATUSID == approvalStatus || approvalStatus == 0)
                                    && (a.OPERATIONID == operationId || operationId ==0)
-                                   
+
+                                   orderby a.SYSTEMARRIVALDATETIME descending
+
                                    //&& a.RESPONSESTAFFID == null
                                    //&& a.TOSTAFFID != null
                                    //&& b.SLAINTERVAL > 0
@@ -690,6 +713,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                         && DbFunctions.TruncateTime(camsol.DATE) <= DbFunctions.TruncateTime(endDate) 
                         && (camsol.CUSTOMERNAME.ToLower().Contains(customercode.ToLower())
                         || camsol.CUSTOMERCODE == customercode || customercode == null ||  customercode == "")
+                        orderby camsol.DATE descending
                         select new Blacklist
                         {
                             accountName = camsol.ACCOUNTNAME,

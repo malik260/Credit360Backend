@@ -9,5 +9,6 @@ namespace FintrakBanking.ReportObjects.ViewModels
         public decimal principalRepaymentAmount { get; set; }
         public decimal periodInterestAmount { get; set; }
         public decimal closePrincipalAmount { get; set; }
+        public DateTime bookingDate { get; set; }
     }
 }
