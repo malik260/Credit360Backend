@@ -107,7 +107,22 @@ namespace FintrakBanking.APICore.Controllers
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
             }
         }
-
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("get-all-document-operations-uploads")]
+        public HttpResponseMessage GetAllUploadedOperationsDocument(LoanDocumentViewModel model)
+        {
+            try
+            {
+                var response = repo.getListOfUploadedOperationsDocument(model, (int)model.operationReviewId);
+                //var response = repo.getListOfUploadedDocument(model);
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, error = ex.InnerException, message = ex.Message });
+            }
+        }
 
         //[HttpPost] [ClaimsAuthorization]
         //[Route("get-all-document-uploads")]
@@ -124,7 +139,7 @@ namespace FintrakBanking.APICore.Controllers
         //    }
         //}
 
-         [HttpPost] [ClaimsAuthorization]
+        [HttpPost] [ClaimsAuthorization]
         [Route("delete-uploaded-document")]
         public async Task<HttpResponseMessage> DeleteUploadedDocument(LoanDocumentViewModel model)
         {

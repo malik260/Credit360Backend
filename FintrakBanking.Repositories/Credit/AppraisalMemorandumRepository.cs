@@ -839,7 +839,7 @@ namespace FintrakBanking.Repositories.Credit
                         customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
                         obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
                         currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
-
+                        loanPurpose = x.d.LOANPURPOSE,
                         proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
                         proposedTenor = x.d.PROPOSEDTENOR,
                         proposedRate = x.d.PROPOSEDINTERESTRATE,
@@ -915,7 +915,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
                     obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
                     currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
-
+                    loanPurpose = x.d.LOANPURPOSE,
                     proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
                     proposedTenor = x.d.PROPOSEDTENOR,
                     proposedRate = x.d.PROPOSEDINTERESTRATE,
@@ -1007,6 +1007,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationAmount = a.APPLICATIONAMOUNT,
                 dateTimeCreated = a.DATETIMECREATED,
                 collateralDetail = a.COLLATERALDETAIL,
+                loanPurpose = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false).Select(l => l.LOANPURPOSE).FirstOrDefault(),
                 LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false)
                                             .Select(c => new LoanApplicationDetailViewModel
                                             {
@@ -1019,6 +1020,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 currencyId = c.CURRENCYID,
                                                 currencyName = c.TBL_CURRENCY.CURRENCYNAME,
                                                 customerId = c.CUSTOMERID,
+                                                loanPurpose = c.LOANPURPOSE,
                                                 exchangeRate = c.EXCHANGERATE,
                                                 loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                                                 subSectorId = c.SUBSECTORID,

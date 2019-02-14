@@ -285,6 +285,7 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityRebook = 263,
         CollateralDocumentType = 264,
         CancelContingentLiability = 265,
+        ContingentLiabilityAmountAddition = 267,
 
     };
    public enum RegulatoryTypeEnum

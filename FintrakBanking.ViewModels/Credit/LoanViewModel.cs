@@ -78,6 +78,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string userActivity { get; set; }
         public string ApprovalStatus { get; set; }
         public string approvedByName { get; set; }
+        public string approvalStatusName { get; set; }
 
         public short requestStatusId { get; set; }
         public bool requestDeleted { get; set; }
@@ -216,6 +217,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
         public string loanTypeName { get; set; }
+        public string loanPurpose { get; set; }
+
         public string branchName { get; set; }
         public string subSectorName { get; set; }
         public string sectorName { get; set; }

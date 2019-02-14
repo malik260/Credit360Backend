@@ -29,6 +29,7 @@ namespace FintrakBanking.ViewModels.Credit
         public int? customerId { get; set; }
         public string staffCode { get; set; }
 
+        public int? operationReviewId { get; set; }
 
         //Other references
         public int customerCreditBureauId { get; set; }
