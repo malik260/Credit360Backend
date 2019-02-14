@@ -177,6 +177,26 @@ namespace FintrakBanking.Repositories.Credit
             });
         }
 
+        public void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result, int operationReviewId)
+        {
+            result = this.context.TBL_MEDIA_LOAN_DOCUMENTS.Where(x => x.LOANREVIEWOPERATIONID == operationReviewId)
+                .Select(x => new LoanDocumentViewModel
+                {
+                    documentId = x.DOCUMENTID,
+                    loanApplicationNumber = x.LOANAPPLICATIONNUMBER,
+                    loanReferenceNumber = x.LOANREFERENCENUMBER,
+                    documentTitle = x.DOCUMENTTITLE,
+                    documentTypeId = x.DOCUMENTTYPEID,
+                    fileData = x.FILEDATA,
+                    fileName = x.FILENAME,
+                    fileExtension = x.FILEEXTENSION,
+                    systemDateTime = x.SYSTEMDATETIME,
+                    physicalFileNumber = x.PHYSICALFILENUMBER,
+                    physicalLocation = x.PHYSICALLOCATION,
+                    isPrimaryDocument = x.ISPRIMARYDOCUMENT,
+                    databaseTable = (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS
+                }).ToList();
+        }
 
         public void GetAllLoanDocument(LoanDocumentViewModel model, out List<LoanDocumentViewModel> result)
         {
@@ -1915,7 +1935,25 @@ namespace FintrakBanking.Repositories.Credit
             }
 
         }
+        public List<LoanDocumentViewModel> getListOfUploadedOperationsDocument(LoanDocumentViewModel model, int operationReviewId)
+        {
+            var result = new List<LoanDocumentViewModel>();
+            switch (model.databaseTable)
+            {
+                case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_LOAN_DOCUMENTS: GetAllLoanDocument(model, out result, operationReviewId); return result;
+                //case (int)documentUploadDatabaseTableEnum.TBL_LOAN_COMMITTEE_MINUTES: GetCommitteeDocument(model, out result); return result;
+                //case (int)documentUploadDatabaseTableEnum.TBL_CUSTOMER_CREDIT_BUREAU: GetCreditBureauReportDocument(model, out result); return result;
+                //case (int)documentUploadDatabaseTableEnum.TBL_LOAN_CONDITION_DOCUMENTS: GetConditionDocuments(model, out result); return result;
+                //case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_CHECKLIST_DOCUMENTS: GetMediaCheckListDocuments(model, out result); return result;
+                //case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_COLLATERAL_DOCUMENTS: GetMediaCollateralDocuments(model, out result); return result;
+                //case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_JOB_REQUEST_DOCUMENT: GetMediaJobRequestDocuments(model, out result); return result;
+                //case (int)documentUploadDatabaseTableEnum.TBL_MEDIA_KYC_DOCUMENTS: GetMediaKYCDocuments(model, out result); return result;
 
+                default:
+                    return result;
+            }
+
+        }
 
         public int DeleteUploadedDocument(LoanDocumentViewModel model)
         {

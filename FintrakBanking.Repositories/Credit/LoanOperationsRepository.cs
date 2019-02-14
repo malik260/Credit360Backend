@@ -26,6 +26,7 @@ using System.ServiceModel;
 using FintrakBanking.Common.CustomException;
 using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
+using FintrakBanking.Entities.DocumentModels;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -49,13 +50,16 @@ namespace FintrakBanking.Repositories.Credit
         private IAdminRepository admin;
         private IAccreditedConsultantsRepository consultant;
         // private ILoanApplicationRepository application;
+        private FinTrakBankingDocumentsContext documentContext;
 
         public LoanOperationsRepository(
         FinTrakBankingContext _context, IGeneralSetupRepository _genSetup, IFinanceTransactionRepository _financeTransaction, IAuditTrailRepository _auditTrail,
             ILoanScheduleRepository _loanSchedule, IWorkflow _workFlow, IApprovalLevelStaffRepository _level, ICasaLienRepository _casaLien
             , ILoanRepository _loan, IOverDraftValidation validate, IIntegrationWithFinacle finacle, FinTrakBankingStagingContext _stagingContext,
-             ITwoFactorAuthIntegrationService _twoFactoeAuth, IAdminRepository _admin, IAccreditedConsultantsRepository _consultant
-            //ILoanApplicationRepository _application
+             ITwoFactorAuthIntegrationService _twoFactoeAuth, IAdminRepository _admin, IAccreditedConsultantsRepository _consultant,
+            //ILoanApplicationRepository _application 
+             FinTrakBankingDocumentsContext _documentContext
+
             )
         {
 
@@ -74,6 +78,8 @@ namespace FintrakBanking.Repositories.Credit
             this.admin = _admin;
             this.consultant = _consultant;
             //this.application = _application;
+            this.documentContext = _documentContext;
+
 
             var globalSetting = context.TBL_SETUP_GLOBAL.FirstOrDefault();
             USE_THIRD_PARTY_INTEGRATION = globalSetting.USE_THIRD_PARTY_INTEGRATION;
@@ -6334,7 +6340,7 @@ namespace FintrakBanking.Repositories.Credit
         public IEnumerable<LoanOperationTypeViewModel> GetOperationTypeByContingent()
         {
             return (from data in context.TBL_OPERATIONS
-                    where data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension
+                    where data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityRenewal || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTermination || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountReduction || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityAmountAddition || data.OPERATIONID == (int)OperationsEnum.ContingentLiabilityTenorExtension
                     select new LoanOperationTypeViewModel()
                     {
                         operationTypeId = data.OPERATIONID,
@@ -12394,6 +12400,7 @@ namespace FintrakBanking.Repositories.Credit
                                 customerId = ln.CUSTOMERID,
                                 productId = ln.PRODUCTID,
                                 casaAccountId = ln.CASAACCOUNTID,
+                                casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
@@ -12470,6 +12477,7 @@ namespace FintrakBanking.Repositories.Credit
                                 newInterestFrequencyTypeName = context.TBL_FREQUENCY_TYPE.Where(x => x.FREQUENCYTYPEID == op.INTERESTFREQUENCYTYPEID).Select(x => x.MODE).FirstOrDefault(),
                                 newTenor = op.TENOR,
                                 cASA_AccountId = op.CASA_ACCOUNTID,
+                                cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                 cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                 overDraftTopup = op.OVERDRAFTTOPUP,
                                 fee_Charges = op.FEE_CHARGES,
@@ -12531,6 +12539,7 @@ namespace FintrakBanking.Repositories.Credit
                                          customerId = ln.CUSTOMERID,
                                          productId = ln.PRODUCTID,
                                          casaAccountId = ln.CASAACCOUNTID,
+                                         casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                          casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                          branchId = ln.BRANCHID,
                                          loanReferenceNumber = ln.LOANREFERENCENUMBER,
@@ -12583,6 +12592,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                          newTenor = op.TENOR,
                                          cASA_AccountId = op.CASA_ACCOUNTID,
+                                         cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                          cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                          overDraftTopup = op.OVERDRAFTTOPUP,
                                          fee_Charges = op.FEE_CHARGES,
@@ -12651,6 +12661,7 @@ namespace FintrakBanking.Repositories.Credit
                                           productTypeId = pr.PRODUCTTYPEID,
                                           productTypeName = context.TBL_PRODUCT_TYPE.Where(x => x.PRODUCTTYPEID == pr.PRODUCTTYPEID).Select(m => m.PRODUCTTYPENAME).FirstOrDefault(),
                                           casaAccountId = ln.CASAACCOUNTID,
+                                          casaAccount = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                           casaAccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == ln.CASAACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                           branchId = ln.BRANCHID,
                                           loanReferenceNumber = ln.LOANREFERENCENUMBER,
@@ -12705,6 +12716,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                           newTenor = op.TENOR,
                                           cASA_AccountId = op.CASA_ACCOUNTID,
+                                          cASA_Account = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNUMBER).FirstOrDefault(),
                                           cASA_AccountName = context.TBL_CASA.Where(x => x.CASAACCOUNTID == op.CASA_ACCOUNTID).Select(x => x.PRODUCTACCOUNTNAME).FirstOrDefault(),
                                           overDraftTopup = op.OVERDRAFTTOPUP,
                                           fee_Charges = op.FEE_CHARGES,
@@ -15081,6 +15093,103 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
+        public bool ContingentLiabilityAmountAddition(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
+        {
+
+            //if (DoesOperationExist(model.loanId, model.operationId, (short)model.loanSystemTypeId))
+            //{
+            //    throw new ConditionNotMetException("The requested operation already exist and going through approval");
+            //}
+
+            var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
+            oldContingent.CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT - (decimal)model.principalAmount;
+
+            bool output = false;
+
+            try
+            {
+
+                var applicationDate = generalSetup.GetApplicationDate();
+                var archiveBatchCode = CommonHelpers.GenerateRandomDigitCode(10);
+
+                var currentDate = DateTime.Now;
+
+                List<FinanceTransactionViewModel> chargeDetails = new List<FinanceTransactionViewModel>();
+
+                TBL_LOAN_CONTINGENT_ARCHIVE addContingent = new TBL_LOAN_CONTINGENT_ARCHIVE
+                {
+                    ARCHIVEDATE = applicationDate,
+                    ARCHIVEBATCHCODE = archiveBatchCode,
+                    CONTINGENTLOANID = oldContingent.CONTINGENTLOANID,
+                    CUSTOMERID = oldContingent.CUSTOMERID,
+                    LOANSYSTEMTYPEID = oldContingent.LOANSYSTEMTYPEID,
+                    PRODUCTID = oldContingent.PRODUCTID,
+                    COMPANYID = oldContingent.COMPANYID,
+                    CASAACCOUNTID = oldContingent.CASAACCOUNTID,
+                    BRANCHID = oldContingent.BRANCHID,
+                    CURRENCYID = oldContingent.CURRENCYID,
+                    LOANAPPLICATIONDETAILID = oldContingent.LOANAPPLICATIONDETAILID,
+                    CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT,
+                    EXCHANGERATE = oldContingent.EXCHANGERATE,
+                    LOANREFERENCENUMBER = oldContingent.LOANREFERENCENUMBER,
+                    RELATED_LOAN_REFERENCE_NUMBER = oldContingent.LOANREFERENCENUMBER,
+                    SUBSECTORID = oldContingent.SUBSECTORID,
+                    RELATIONSHIPOFFICERID = oldContingent.RELATIONSHIPOFFICERID,
+                    RELATIONSHIPMANAGERID = oldContingent.RELATIONSHIPMANAGERID,
+                    MISCODE = oldContingent.MISCODE,
+                    TEAMMISCODE = oldContingent.TEAMMISCODE,
+                    EFFECTIVEDATE = model.effectiveDate,
+                    MATURITYDATE = model.maturityDate,
+                    BOOKINGDATE = currentDate.Date,
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
+                    APPROVEDBY = model.createdBy,
+                    APPROVERCOMMENT = approvalComment,
+                    DATEAPPROVED = currentDate.Date,
+                    LOANSTATUSID = (short)LoanStatusEnum.Active,
+                    ISDISBURSED = true,
+                    DISBURSEDBY = "",
+                    DISBURSERCOMMENT = approvalComment,
+                    DISBURSEDATE = currentDate,
+                    OPERATIONID = model.operationId,
+                    CREATEDBY = model.createdBy,
+                    DATETIMECREATED = currentDate,
+                    DISCHARGELETTER = true,
+                    FIELD1 = oldContingent.FIELD1,
+                    FIELD2 = oldContingent.FIELD2,
+                    FIELD3 = oldContingent.FIELD3,
+                    FIELD4 = oldContingent.FIELD4,
+                    FIELD5 = oldContingent.FIELD5,
+                    FIELD6 = oldContingent.FIELD6,
+                    FIELD7 = oldContingent.FIELD7,
+                    FIELD8 = oldContingent.FIELD8,
+                    FIELD9 = oldContingent.FIELD9,
+                    FIELD10 = oldContingent.FIELD10,
+
+                };
+
+
+                chargeDetails.AddRange(financeTransaction.BuildContingentPrincipalPosting(model, oldContingent.LOANREFERENCENUMBER, (decimal)model.principalAmount, "Contingent Liability posting", (int)OperationsEnum.ContingentLiabilityAmountReduction));
+
+                financeTransaction.PostTransaction(chargeDetails, false, twoFactorAuth);
+
+                this.context.TBL_LOAN_CONTINGENT_ARCHIVE.Add(addContingent);
+
+                var result = context.SaveChanges() > 0;
+
+                if (result)
+                {
+                    output = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw new SecureException(ex.Message);
+
+            }
+
+            return output;
+        }
 
         #endregion
 
@@ -15907,6 +16016,22 @@ namespace FintrakBanking.Repositories.Credit
                         }
 
                     }
+                    else if ((int)OperationsEnum.ContingentLiabilityAmountAddition == model.operationId)
+                    {
+
+                       // result = ContingentLiabilityAmountAddition(twoFactorAuth, model, approvalComment);
+
+                        if (result == true)
+                        {
+                            output = true;
+                        }
+                        else
+                        {
+                            output = false;
+                        }
+
+                    }
+
                     else if ((int)OperationsEnum.ContingentLiabilityTerminateAndRebook == model.operationId)
                     {
 
@@ -19051,6 +19176,328 @@ namespace FintrakBanking.Repositories.Credit
             return overDraftDetail;
 
         }
+        public bool SaveMainDocument(LoanReviewOperationViewModel model, int loanId, byte[] file, int loanreviewoperationId)
+        {
+            var rec = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).FirstOrDefault();
+
+            var data = new TBL_MEDIA_LOAN_DOCUMENTS
+            {
+                FILEDATA = file,
+                DOCUMENTTITLE = model.documentTitle,
+                FILENAME = model.fileName,
+                FILEEXTENSION = model.fileExtension,
+                LOANREFERENCENUMBER = rec.LOANREFERENCENUMBER,
+                LOANAPPLICATIONNUMBER = rec.LOANREFERENCENUMBER,
+                SYSTEMDATETIME = DateTime.Now,
+                CREATEDBY = (int)model.createdBy,
+                ISPRIMARYDOCUMENT = true,
+                COMPANYID = model.companyId,
+                LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.ContingentLiability,
+                LOANREVIEWOPERATIONID = loanreviewoperationId,
+                PHYSICALLOCATION = "N/A",
+                DOCUMENTTYPEID=4,
+
+            };
+
+            documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+            try
+            {
+                return documentContext.SaveChanges() != 0;
+            }
+            catch (Exception ex) { }
+
+            return documentContext.SaveChanges() != 0;
+        }
+
+        //public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model)
+        public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer)
+        {
+            bool output = false;
+            var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+
+            if (model.loanReviewOperationsId == 0)
+            {
+                var data = new TBL_LOAN_REVIEW_OPERATION
+                {
+                    LOANID = model.loanId,
+                    //LOANSYSTEMTYPEID = model.productTypeId,
+                    LOANSYSTEMTYPEID = model.loanSystemTypeId,
+                    OPERATIONTYPEID = model.operationTypeId,
+                    EFFECTIVEDATE = model.proposedEffectiveDate,
+                    REVIEWDETAILS = model.reviewDetails,
+                    INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate,
+                    PREPAYMENT = model.prepayment ?? 0,
+                    PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId,
+                    INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId,
+                    PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate,
+                    INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate,
+                    MATURITYDATE = model.maturityDate,
+                    TENOR = model.tenor,
+                    CASA_ACCOUNTID = model.cASA_AccountId,
+                    OVERDRAFTTOPUP = model.overDraftTopup,
+                    FEE_CHARGES = model.fee_Charges,
+                    APPROVALSTATUSID = model.approvalStatusId,
+                    ISMANAGEMENTINTERESTRATE = model.isManagementRate,
+                    SCHEDULETYPEID = model.scheduleTypeId,
+                    SCHEDULEDAYINTERESTTYPEID = model.interestTypeId,
+                    SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountId,
+                    OPERATIONCOMPLETED = false,
+                    CREATEDBY = model.createdBy,
+                    DATECREATED = DateTime.Now,
+                    LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId == 0 ? null : model.lmsApplicationDetailId,
+                    //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
+                };
+                // Audit Section ---------------------------
+
+                var referenceNo = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == data.LOANID).FirstOrDefault().LOANREFERENCENUMBER;
+
+                var operationPerformed = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
+                if (operationPerformed != null)
+                {
+                    operationPerformed.OPERATIONPERFORMED = true;
+                }
+
+                //ContingentLiabilityTermination = 86,
+                //ContingentLiabilityRenewal = 85
+
+                short _AUDITTYPEID = 0;
+                string DETAIL = string.Empty;
+
+                if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityRenewal)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRenewal;
+                    DETAIL = $"Contingent Liability Renewal Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTermination)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
+                    DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
+                    DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountReduction)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
+                    DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountAddition)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountAddition;
+                    DETAIL = $"Contingent Liability Amount Addition Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
+                    DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.CancelContingentLiability)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.CancelContingentLiability;
+                    DETAIL = $"Cancel Contingent Liability Approval in process for contingent: '{ referenceNo}' ";
+                }
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = _AUDITTYPEID,
+                    DETAIL = DETAIL,
+                    STAFFID = model.createdBy,
+                    BRANCHID = model.userBranchId,
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+
+                //end of Audit section -----------------------
+                using (var trans = context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        context.TBL_LOAN_REVIEW_OPERATION.Add(data);
+                        auditTrail.AddAuditTrail(audit);
+                        int status = 0;
+                        try
+                        {
+                            output = context.SaveChanges() > 0;
+                        }
+                        catch (DbEntityValidationException ex)
+                        {
+
+                            string errorMessages = string.Join("; ", ex.EntityValidationErrors.SelectMany(x => x.ValidationErrors).Select(x => x.ErrorMessage));
+                            throw new DbEntityValidationException(errorMessages);
+                        }
+
+
+                        status = (int)ApprovalStatusEnum.Pending;
+
+                        workFlow.StaffId = model.createdBy;
+                        workFlow.CompanyId = model.companyId;
+                        workFlow.StatusId = status;//(int)ApprovalStatusEnum.Pending;
+                        workFlow.TargetId = data.LOANREVIEWOPERATIONID;
+                        workFlow.Comment = "Initiation";
+                        workFlow.OperationId = model.operationTypeId;
+                        workFlow.DeferredExecution = true; // false by default will call the internal SaveChanges()
+                        workFlow.ExternalInitialization = true;
+                        //if ((int)OperationsEnum.Prepayment != model.operationTypeId)
+                        //{
+                        var response = workFlow.LogActivity();
+                        //}
+
+                        //output = context.SaveChanges() > 0;
+
+
+                        if (model.fees != null)
+                        {
+                            LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                            feeDetails.feeDetails = model.fees;
+                            feeDetails.createdBy = model.createdBy;
+                            feeDetails.userIPAddress = model.userIPAddress;
+                            feeDetails.userBranchId = model.userBranchId;
+                            feeDetails.applicationUrl = model.applicationUrl;
+                            feeDetails.companyId = model.companyId;
+                            feeDetails.loanOperationReviewId = data.LOANREVIEWOPERATIONID;
+                            output = SubmitTakeFee(feeDetails);
+                        }
+                        else
+                        {
+                            output = context.SaveChanges() > 0;
+                        }
+
+                        if (buffer != null) { SaveMainDocument(model, data.LOANID, buffer, data.LOANREVIEWOPERATIONID); }
+                        trans.Commit();
+
+
+                        //if ((int)OperationsEnum.Prepayment == model.operationTypeId)
+                        //{
+                        //    int loanReviewOperationsId = this.context.TBL_LOAN_REVIEW_OPERATION.FirstOrDefault(x => x.LOANID == model.loanId).LOANREVIEWOPERATIONID;
+                        //    LoanRephasementProcess((short)loanReviewOperationsId, model.loanId, model.createdBy);
+                        //}
+
+                        return output;
+
+
+                    }
+
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        throw new SecureException(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                var reviewOperation = context.TBL_LOAN_REVIEW_OPERATION.Where(x => x.LOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
+
+                reviewOperation.LOANID = model.loanId;
+                reviewOperation.LOANSYSTEMTYPEID = model.loanSystemTypeId;
+                reviewOperation.OPERATIONTYPEID = model.operationTypeId;
+                reviewOperation.EFFECTIVEDATE = model.proposedEffectiveDate;
+                reviewOperation.REVIEWDETAILS = model.reviewDetails;
+                reviewOperation.INTERATERATE = model.interateRate == null ? 0 : (double)model.interateRate;
+                reviewOperation.PREPAYMENT = model.prepayment ?? 0;
+                reviewOperation.PRINCIPALFREQUENCYTYPEID = model.principalFrequencyTypeId;
+                reviewOperation.INTERESTFREQUENCYTYPEID = model.interestFrequencyTypeId;
+                reviewOperation.PRINCIPALFIRSTPAYMENTDATE = model.principalFirstPaymentDate;
+                reviewOperation.INTERESTFIRSTPAYMENTDATE = model.interestFirstPaymentDate;
+                reviewOperation.MATURITYDATE = model.maturityDate;
+                reviewOperation.TENOR = model.tenor;
+                reviewOperation.CASA_ACCOUNTID = model.cASA_AccountId;
+                reviewOperation.OVERDRAFTTOPUP = model.overDraftTopup;
+                reviewOperation.FEE_CHARGES = model.fee_Charges;
+                reviewOperation.APPROVALSTATUSID = model.approvalStatusId;
+                reviewOperation.ISMANAGEMENTINTERESTRATE = model.isManagementRate;
+                reviewOperation.SCHEDULETYPEID = model.scheduleTypeId;
+                reviewOperation.SCHEDULEDAYINTERESTTYPEID = model.interestTypeId;
+                reviewOperation.SCHEDULEDAYCOUNTCONVENTIONID = model.scheduleDayCountId;
+                reviewOperation.OPERATIONCOMPLETED = false;
+                reviewOperation.CREATEDBY = model.createdBy;
+                reviewOperation.DATECREATED = DateTime.Now;
+                //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
+
+                reviewApplicationDetail.OPERATIONPERFORMED = true;
+
+                var referenceNo = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == reviewOperation.LOANID).FirstOrDefault().LOANREFERENCENUMBER;
+
+                short _AUDITTYPEID = 0;
+                string DETAIL = string.Empty;
+
+                if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityRenewal)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRenewal;
+                    DETAIL = $"Contingent Liability Renewal Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTermination)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTermination;
+                    DETAIL = $"Contingent Liability Termination Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTenorExtension)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityTenorExtension;
+                    DETAIL = $"Contingent Liability Tenor Extension Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountReduction)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
+                    DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountAddition)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountAddition;
+                    DETAIL = $"Contingent Liability Amount Addition Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityRebook;
+                    DETAIL = $"Contingent Liability Rebook Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.CancelContingentLiability)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.CancelContingentLiability;
+                    DETAIL = $"Cancel Contingent Liability Approval in process for contingent: '{ referenceNo}' ";
+                }
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = _AUDITTYPEID,
+                    DETAIL = DETAIL,
+                    STAFFID = model.createdBy,
+                    BRANCHID = model.userBranchId,
+                    IPADDRESS = model.userIPAddress,
+                    URL = model.applicationUrl,
+                    APPLICATIONDATE = generalSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now
+                };
+                auditTrail.AddAuditTrail(audit);
+
+                if (model.fees != null)
+                {
+                    LoanFeeChargesViewModel feeDetails = new LoanFeeChargesViewModel();
+
+                    feeDetails.feeDetails = model.fees;
+                    feeDetails.createdBy = model.createdBy;
+                    feeDetails.userIPAddress = model.userIPAddress;
+                    feeDetails.userBranchId = model.userBranchId;
+                    feeDetails.applicationUrl = model.applicationUrl;
+                    feeDetails.companyId = model.companyId;
+                    feeDetails.loanOperationReviewId = reviewOperation.LOANREVIEWOPERATIONID;
+                    output = SubmitTakeFee(feeDetails);
+                }
+                else
+                {
+                    output = context.SaveChanges() > 0;
+                }
+                //output = context.SaveChanges() > 0;
+                if (buffer != null) { SaveMainDocument(model, reviewOperation.LOANID, buffer, reviewOperation.LOANREVIEWOPERATIONID); }
+
+                return output;
+            }
+
+        }
 
         public bool AddOperationReviewContingent(LoanReviewOperationViewModel model)
         {
@@ -19124,6 +19571,11 @@ namespace FintrakBanking.Repositories.Credit
                 {                    
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
                     DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountAddition)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountAddition;
+                    DETAIL = $"Contingent Liability Amount Addition Approval in process for contingent: '{ referenceNo}' ";
                 }
                 else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
                 {
@@ -19281,6 +19733,11 @@ namespace FintrakBanking.Repositories.Credit
                 {
                     _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountReduction;
                     DETAIL = $"Contingent Liability Amount Reduction Approval in process for contingent: '{ referenceNo}' ";
+                }
+                else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityAmountAddition)
+                {
+                    _AUDITTYPEID = (short)AuditTypeEnum.ContingentLiabilityAmountAddition;
+                    DETAIL = $"Contingent Liability Amount Addition Approval in process for contingent: '{ referenceNo}' ";
                 }
                 else if (model.operationTypeId == (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
                 {
