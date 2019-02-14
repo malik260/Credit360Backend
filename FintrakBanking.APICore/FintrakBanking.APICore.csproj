@@ -585,12 +585,26 @@
     <Compile Include="Reports\ReportViews\DailyAccrualReport.aspx.designer.cs">
       <DependentUpon>DailyAccrualReport.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Reports\ReportViews\ExcessReport.aspx.cs">
+      <DependentUpon>ExcessReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExcessReport.aspx.designer.cs">
+      <DependentUpon>ExcessReport.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx.cs">
       <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx.designer.cs">
       <DependentUpon>ExpiredOverdraftLoans.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredReport.aspx.cs">
+      <DependentUpon>ExpiredReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\ExpiredReport.aspx.designer.cs">
+      <DependentUpon>ExpiredReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx.cs">
       <DependentUpon>ExpiredSelfLiquidatingLoans.aspx</DependentUpon>
@@ -619,6 +633,13 @@
     </Compile>
     <Compile Include="Reports\ReportViews\ImpairedWatchListReport.aspx.designer.cs">
       <DependentUpon>ImpairedWatchListReport.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ReportViews\InsuranceReport.aspx.cs">
+      <DependentUpon>InsuranceReport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ReportViews\InsuranceReport.aspx.designer.cs">
+      <DependentUpon>InsuranceReport.aspx</DependentUpon>
     </Compile>
     <Compile Include="Reports\ReportViews\Lein.aspx.cs">
       <DependentUpon>Lein.aspx</DependentUpon>
@@ -1004,11 +1025,14 @@
     <Content Include="Reports\ReportViews\CreditScheduleReport.aspx" />
     <Content Include="Reports\ReportViews\CustomeFacilityRepayment.aspx" />
     <Content Include="Reports\ReportViews\DailyAccrualReport.aspx" />
+    <Content Include="Reports\ReportViews\ExcessReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredOverdraftLoans.aspx" />
+    <Content Include="Reports\ReportViews\ExpiredReport.aspx" />
     <Content Include="Reports\ReportViews\ExpiredSelfLiquidatingLoans.aspx" />
     <Content Include="Reports\ReportViews\FinancialTransactions.aspx" />
     <Content Include="Reports\Credit\OfferLetterGeneration\FORM3800B_LOS.aspx" />
     <Content Include="Reports\ReportViews\ImpairedWatchListReport.aspx" />
+    <Content Include="Reports\ReportViews\InsuranceReport.aspx" />
     <Content Include="Reports\ReportViews\Lein.aspx" />
     <Content Include="Reports\ReportViews\LoanClassification.aspx" />
     <Content Include="Reports\ReportViews\LoanDocumentDeferalsForMCC.aspx" />
@@ -1280,9 +1304,12 @@
     <EmbeddedResource Include="Reports\Report\CustomFacilityRepayment.rdlc" />
     <EmbeddedResource Include="Reports\Report\DailyAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Error.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ExcessReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredOverdraftLoans.rdlc" />
+    <EmbeddedResource Include="Reports\Report\ExpiredReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\ExpiredSelfLiquidatingLoans.rdlc" />
     <EmbeddedResource Include="Reports\Report\ImpairedWatchListReport.rdlc" />
+    <EmbeddedResource Include="Reports\Report\InsuranceReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\InterestAccrualReport.rdlc" />
     <EmbeddedResource Include="Reports\Report\Lein.rdlc" />
     <EmbeddedResource Include="Reports\Report\LoanClassification.rdlc" />

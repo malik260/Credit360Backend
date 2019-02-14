@@ -141,49 +141,49 @@
                   <Width>1in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.96875in</Width>
+                  <Width>1.60417in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.11333in</Width>
+                  <Width>1.51958in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.13542in</Width>
+                  <Width>1.40625in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.36458in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.64583in</Width>
+                  <Width>1.10416in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.30208in</Width>
+                  <Width>1.84375in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.08333in</Width>
+                  <Width>1.4375in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.61458in</Width>
+                  <Width>1.61458in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1.33333in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.30208in</Width>
+                  <Width>1.90625in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.51042in</Width>
+                  <Width>2.73959in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1.45833in</Width>
+                  <Width>1.78125in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>1in</Width>
-                </TablixColumn>
-                <TablixColumn>
-                  <Width>1in</Width>
+                  <Width>1.65625in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.40625in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>1in</Width>
@@ -530,7 +530,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Approved Amount (" + First(Fields!facilityCurrency.Value, "DisbursedLoan") + ")"</Value>
+                                  <Value>Approved Amount</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -653,7 +653,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Amount Disbursed ("+First(Fields!facilityCurrency.Value, "DisbursedLoan")+")"</Value>
+                                  <Value>Amount Disbursed</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -694,7 +694,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Base Currency Value ("+First(Fields!baseCurrency.Value, "DisbursedLoan")+")"</Value>
+                                  <Value>Base Currency Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -735,7 +735,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Outstanding Principal ("+ First(Fields!facilityCurrency.Value, "DisbursedLoan")+")"</Value>
+                                  <Value>Outstanding Principal</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -776,7 +776,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Outstanding Interest ("+ First(Fields!facilityCurrency.Value, "DisbursedLoan")+")"</Value>
+                                  <Value>Outstanding Interest</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>9pt</FontSize>
@@ -1089,7 +1089,6 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
                       </CellContents>
                     </TablixCell>
                     <TablixCell>
@@ -3557,7 +3556,7 @@
             <DataSetName>DisbursedLoan</DataSetName>
             <Left>0.0625in</Left>
             <Height>1.32292in</Height>
-            <Width>24.51957in</Width>
+            <Width>31.76957in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -3568,7 +3567,7 @@
         <Height>1.4375in</Height>
         <Style />
       </Body>
-      <Width>24.58207in</Width>
+      <Width>31.83207in</Width>
       <Page>
         <PageHeader>
           <Height>1.23958in</Height>
@@ -3642,7 +3641,7 @@
                 <PaddingBottom>2pt</PaddingBottom>
               </Style>
             </Textbox>
-            <Textbox Name="startDate">
+            <Textbox Name="endDate">
               <CanGrow>true</CanGrow>
               <KeepTogether>true</KeepTogether>
               <Paragraphs>
@@ -3658,7 +3657,6 @@
                   <Style />
                 </Paragraph>
               </Paragraphs>
-              <rd:DefaultName>startDate</rd:DefaultName>
               <Top>0.83208in</Top>
               <Left>0.0625in</Left>
               <Height>0.25in</Height>
