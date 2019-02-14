@@ -1216,7 +1216,7 @@ namespace FintrakBanking.Repositories.Credit
             }
 
             response = context.SaveChanges();
-           
+
             var returndate = GetLoanApplicationByLoanRefrenceNo(loanData.APPLICATIONREFERENCENUMBER, loanData.COMPANYID);
 
             if (response > 0 && !loan.isNewApplication)
