@@ -396,6 +396,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         }
 
         public string loanReferenceNumber { get; set; }
+        public int statusId { get; set; }
     }
 
     public class LMSOperationListViewModel

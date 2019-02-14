@@ -3320,6 +3320,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             decimal totalBookedAmount = 0;
             var loanReferenceNumber = revolvingLoanRecord.LOANREFERENCENUMBER;
+            var systemDate = generalSetup.GetApplicationDate();
             if (user.approvalStatusId == (short)ApprovalStatusEnum.Disapproved)
             {
                 revolvingLoanRecord.APPROVALSTATUSID = (int)ApprovalStatusEnum.Disapproved;
@@ -3344,7 +3345,7 @@ namespace FintrakBanking.Repositories.Credit
                         var model = new OverDraftNormalViewModel
                         {
                             accountNumber = revolvingLoanRecord.TBL_CASA.PRODUCTACCOUNTNUMBER,
-                            applicationDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
+                            applicationDate = systemDate.ToString("dd-MMM-yyyy", null), //revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             documentDate = revolvingLoanRecord.EFFECTIVEDATE.ToString("dd-MMM-yyyy", null),
                             expiryDate = revolvingLoanRecord.MATURITYDATE.ToString("dd-MMM-yyyy", null),
                             reviewedDate = reviewDate.ToString("dd-MMM-yyyy", null),
@@ -9804,11 +9805,14 @@ namespace FintrakBanking.Repositories.Credit
 
 
             var data = (from l in context.TBL_LOAN
-                        where (l.LOANREFERENCENUMBER == param.param.Trim()
-                         || l.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(param.param.Trim().ToLower())  //&& param.branchId == 0
+                        where 
+                          (l.BRANCHID == param.branchId || param.branchId == 0)
+                         && (l.LOANREFERENCENUMBER == param.param.Trim() || param.param.Trim() == null || param.param.Trim() == "" || l.TBL_CUSTOMER.FIRSTNAME.ToLower().Contains(param.param.Trim().ToLower())  //&& param.branchId == 0
                          || l.TBL_CUSTOMER.LASTNAME.ToLower().Contains(param.param.Trim().ToLower())  // && param.branchId == 0
                          || l.TBL_CUSTOMER.MAIDENNAME.ToLower().Contains(param.param.Trim().ToLower())) // && param.branchId == 0
                          && !loanStatus.Contains(l.LOANSTATUSID)
+
+                        orderby l.BOOKINGDATE descending
                         select new LoanViewModel
                         {
                             loanId = l.TERMLOANID,
@@ -9829,7 +9833,8 @@ namespace FintrakBanking.Repositories.Credit
                             sectorName = l.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
                             outstandingPrincipal = l.OUTSTANDINGPRINCIPAL,
                             maturityDate = l.MATURITYDATE,
-                            effectiveDate = l.EFFECTIVEDATE
+                            effectiveDate = l.EFFECTIVEDATE,
+                            bookingDate = l.BOOKINGDATE
                         });
             return data;
         }

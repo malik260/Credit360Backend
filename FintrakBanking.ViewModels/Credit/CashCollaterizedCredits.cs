@@ -20,6 +20,8 @@ namespace FintrakBanking.ViewModels.Credit
         public decimal loanOverdraftAccountBalance { get; set; }
         public string isLien { get; set; }
         public bool hasLien { get; set; }
+        public string overdraftAccount { get; set; }
+        
     }
 }
 

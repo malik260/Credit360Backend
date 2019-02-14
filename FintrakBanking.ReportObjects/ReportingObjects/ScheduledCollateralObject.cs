@@ -23,6 +23,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                            where l.COMPANYID == companyId && l.LOANSTATUSID == 1
                                 && DbFunctions.TruncateTime(l.DATEAPPROVED) >= DbFunctions.TruncateTime(startDate)
                                  && DbFunctions.TruncateTime(l.DATEAPPROVED) <= DbFunctions.TruncateTime(endDate)
+                           orderby l.DATEAPPROVED descending
+
                            select new ScheduledCollateralModel()
                            {
                                lastName = l.TBL_CUSTOMER.LASTNAME,
