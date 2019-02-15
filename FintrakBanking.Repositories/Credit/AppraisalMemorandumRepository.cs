@@ -340,6 +340,7 @@ namespace FintrakBanking.Repositories.Credit
                 var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
                 workflow.NextLevelId = dictionary["levelId"];
                 workflow.ToStaffId = dictionary["staffId"];
+                if (model.forwardAction == 8) workflow.ToStaffId = null;
             }
 
             string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);

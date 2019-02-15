@@ -113,7 +113,8 @@ namespace FintrakBanking.Repositories.Credit
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
-                applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false).Select(d => new applicationDetails
+                applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
+                .Select(d => new applicationDetails
                 {
                     detailId = d.LOANREVIEWAPPLICATIONID,
                     operationId = d.OPERATIONID,
@@ -356,8 +357,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
+                    DELETED = false
                     //LOANREFERENCENUMBER = loan.loanReferenceNumber
-
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
 
@@ -555,6 +556,7 @@ namespace FintrakBanking.Repositories.Credit
                 var dictionary = GetRepresentStepdownItems(appl.LOANAPPLICATIONID, model.forwardAction,operationId);
                 workflow.NextLevelId = dictionary["levelId"];
                 workflow.ToStaffId = dictionary["staffId"];
+                if (model.forwardAction == 8) workflow.ToStaffId = null;
             }
 
             workflow.LogActivity();
@@ -878,7 +880,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvedAmount = d.APPROVEDAMOUNT,
                     })
                 })
-                .GroupBy(d => d.approvalTrailId)
+                .GroupBy(d => d.loanReviewApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 
