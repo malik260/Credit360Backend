@@ -861,6 +861,36 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string productAccountNumber { get; set; }
     }
+    public class LoanContingentViewModel : GeneralEntity
+    {
+        public int? casaAccountId;
+
+        public int loanCovenantDetailId { get; set; }
+        public string covenantDetail { get; set; }
+        public int loanId { get; set; }
+        public decimal? contingentAmount { get; set; }
+
+        public string loanRef { get; set; }
+        public string productName { get; set; }
+        public int casaId { get; set; }
+        public int maximumDrawDownDuration { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime? dueDate { get; set; }
+        public string loanRefNumber { get; set; }
+        public string relationshipManager { get; set; }
+        public string managerEmail { get; set; }
+        public string relationshipOfficer { get; set; }
+        public string officerEmail { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public int relationshipManagerId { get; set; }
+
+        public int notificationDuration { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public bool isPercentage { get; set; }
+        public DateTime? nextCovenantDate { get; set; }
+        public short loanSystemTypeId { get; set; }
+        public string productCustomerName { get; set; }
+    }
 
     public class LoanCovenantDetailViewModel : GeneralEntity
     {

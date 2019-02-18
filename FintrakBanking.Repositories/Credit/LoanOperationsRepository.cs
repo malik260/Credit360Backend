@@ -27,6 +27,10 @@ using FintrakBanking.Common.CustomException;
 using FinTrakBanking.ThirdPartyIntegration.Finacle.CWGAPI;
 using static FinTrakBanking.ThirdPartyIntegration.TwoFactorAuthIntegration.TwoFactorAuthIntegrationService;
 using FintrakBanking.Entities.DocumentModels;
+using System.Net;
+using System.Configuration;
+using FintrakBanking.ViewModels.Setups.General;
+using FintrakBanking.Common.AlertMonitoring;
 
 namespace FintrakBanking.Repositories.Credit
 
@@ -14719,11 +14723,47 @@ namespace FintrakBanking.Repositories.Credit
 
                 this.context.TBL_LOAN_CONTINGENT.Add(addContingent);
 
+
+
                 //addOverDraft.SERIALNUMBER = renewalResult.serialNumber;
+
                 var result = context.SaveChanges() > 0;
+              
 
                 if (renewalResult != null && result)
                 {
+
+                    var tempmedia = documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
+
+                    var data = new TBL_MEDIA_LOAN_DOCUMENTS
+                    {
+                        FILEDATA = tempmedia.FILEDATA,
+                        DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
+                        FILENAME = tempmedia.FILENAME,
+                        FILEEXTENSION = tempmedia.FILEEXTENSION,
+                        LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
+                        LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
+                        SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
+                        CREATEDBY = tempmedia.CREATEDBY,
+                        ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
+                        COMPANYID = tempmedia.COMPANYID,
+                        LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
+                        LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
+                        PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
+                        DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
+
+                    };
+
+                    documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+                    try
+                    {
+                     documentContext.SaveChanges();
+                    }
+                    catch (Exception ex) { }
+
+
+
+
                     output = true;
                 }
             }
@@ -14892,6 +14932,35 @@ namespace FintrakBanking.Repositories.Credit
 
                 if (renewalResult != null && result)
                 {
+                    var tempmedia = documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Where(x => x.TEMPLOANREVIEWOPERATIONID == model.loanReviewOperationsId).FirstOrDefault();
+
+                    var data = new TBL_MEDIA_LOAN_DOCUMENTS
+                    {
+                        FILEDATA = tempmedia.FILEDATA,
+                        DOCUMENTTITLE = tempmedia.DOCUMENTTITLE,
+                        FILENAME = tempmedia.FILENAME,
+                        FILEEXTENSION = tempmedia.FILEEXTENSION,
+                        LOANREFERENCENUMBER = tempmedia.LOANREFERENCENUMBER,
+                        LOANAPPLICATIONNUMBER = tempmedia.LOANAPPLICATIONNUMBER,
+                        SYSTEMDATETIME = tempmedia.SYSTEMDATETIME,
+                        CREATEDBY = tempmedia.CREATEDBY,
+                        ISPRIMARYDOCUMENT = tempmedia.ISPRIMARYDOCUMENT,
+                        COMPANYID = tempmedia.COMPANYID,
+                        LOANSYSTEMTYPEID = tempmedia.LOANSYSTEMTYPEID,
+                        LOANREVIEWOPERATIONID = tempmedia.TEMPLOANREVIEWOPERATIONID,
+                        PHYSICALLOCATION = tempmedia.PHYSICALLOCATION,
+                        DOCUMENTTYPEID = tempmedia.DOCUMENTTYPEID,
+
+                    };
+
+                    documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+                    try
+                    {
+                        documentContext.SaveChanges();
+                    }
+                    catch (Exception ex) { }
+
+                    var outcome = SendNotification(model.loanId, data.LOANREVIEWOPERATIONID);
                     output = true;
                 }
             }
@@ -14904,6 +14973,196 @@ namespace FintrakBanking.Repositories.Credit
 
             return output;
         }
+
+        public bool SendNotification(int loanId, int? loanOperationReviewId)
+        {
+            TBL_MONITORING_ALERT_SETUP alertsetupForTerminatedBG = (from x in context.TBL_MONITORING_ALERT_SETUP
+                                                                    where x.MONITORING_ITEMID == (int)AlertMessageEnum.TerminatedBG
+                                                                    select x).FirstOrDefault();
+            List<LoanContingentViewModel> loanDetails = (from a in context.TBL_LOAN_CONTINGENT
+                                                         join c in context.TBL_STAFF on a.RELATIONSHIPMANAGERID equals c.STAFFID
+                                                         join d in context.TBL_STAFF on a.RELATIONSHIPOFFICERID equals d.STAFFID
+                                                         where a.CONTINGENTLOANID == loanId
+                                                         select new LoanContingentViewModel
+                                                         {
+                                                             companyId = a.COMPANYID,
+                                                             contingentAmount = a.CONTINGENTAMOUNT,
+                                                             effectiveDate = a.EFFECTIVEDATE,
+                                                             dueDate = a.MATURITYDATE,
+                                                             loanId = a.CONTINGENTLOANID,
+                                                             loanRefNumber = a.LOANREFERENCENUMBER,
+                                                             productName = context.TBL_PRODUCT.Where(m => m.PRODUCTID == a.PRODUCTID).Select(p => p.PRODUCTNAME).FirstOrDefault(),
+                                                             relationshipManager = c.FIRSTNAME + " " + c.LASTNAME,
+                                                             managerEmail = c.EMAIL,
+                                                             relationshipOfficer = d.FIRSTNAME + " " + d.LASTNAME,
+                                                             officerEmail = d.EMAIL,
+                                                         }).ToList();
+          var result =  SendAlertsForTerminatedBGRM(loanDetails, alertsetupForTerminatedBG.MESSAGE_TITLE, loanOperationReviewId);
+            var result2 = false;
+            if (alertsetupForTerminatedBG.RECIPIENTEMAILS1.Trim() != string.Empty)
+            {
+                List<LoanContingentViewModel> escalationLevelOne = (from x in loanDetails
+                                                                    where x.notificationDuration <= alertsetupForTerminatedBG.NOTIFICATION_PERIOD1
+                                                                    select x).ToList();
+                if (escalationLevelOne.Count != 0)
+                {
+                    result2 = SendAlertsForTerminatedBGMonitoringTeam(loanDetails, alertsetupForTerminatedBG, loanOperationReviewId);
+                }
+            }
+
+            if (result == true)
+            {
+                return result2;
+            }
+            else
+            {
+                return result;
+            }           
+        }
+
+
+        public int SaveMessageDetails(MessageLogViewModel model, int? loanReviewOperationsId)
+        {
+            var message = new TBL_MESSAGE_LOG()
+            {
+                //MessageId = model.MessageId,
+                MESSAGESUBJECT = model.MessageSubject,
+                MESSAGEBODY = model.MessageBody,
+                MESSAGESTATUSID = model.MessageStatusId,
+                MESSAGETYPEID = model.MessageTypeId,
+                FROMADDRESS = model.FromAddress,
+                TOADDRESS = model.ToAddress,
+                DATETIMERECEIVED = model.DateTimeReceived,
+                SENDONDATETIME = model.SendOnDateTime,
+                ATTACHMENTTYPEID = (int)AttachementTypeEnum.ContingentTermination,
+                ATTACHMENTCODE = Convert.ToString(loanReviewOperationsId),
+            };
+
+            context.TBL_MESSAGE_LOG.Add(message);
+
+            try
+            {
+                return context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+        }
+
+        public bool SendAlertsForTerminatedBGRM(List<LoanContingentViewModel> loanDetails, string title, int? loanReviewOperationsId)
+        {
+            bool response= false;
+
+            try
+            {
+                List<TBL_STAFF> staffList = context.TBL_STAFF.ToList();
+                List<int> dataList = (from g in loanDetails
+                                      select g.relationshipManagerId).ToList();
+
+                var RMdetail = (from x in staffList
+                                where dataList.Contains(x.STAFFID)
+                                select x).ToList();
+
+                foreach (TBL_STAFF item2 in RMdetail)
+                {
+                    var bankManagerID = staffList.Where(o => o.STAFFCODE == item2.STAFFCODE).FirstOrDefault().SUPERVISOR_STAFFID;
+                    var bankManagerEmail = staffList.Where(o => o.STATEID == item2.STATEID).FirstOrDefault().EMAIL;
+
+                    string recipient = item2.EMAIL.Trim() + ";" + bankManagerEmail;
+                    List<LoanContingentViewModel> mailList = (from x in loanDetails
+                                                              where x.relationshipManagerId == item2.STAFFID
+                                                              select x).ToList();
+                    string dataTable2 = "<table><tr><th>Loan Ref. No.</th><th>Effective Date</th><th>Maturity Date</th><th>Amount</th><th>Product Name</th></tr>";
+                    foreach (LoanContingentViewModel item3 in mailList)
+                    {
+                        dataTable2 = dataTable2 + $"<tr><td>{item3.loanRefNumber}</td><td>{item3.effectiveDate}</td><td>{item3.dueDate}</td>" + $"<td>{item3.contingentAmount}</td><td>{item3.productName}</td></tr>";
+                    }
+                    dataTable2 += "</table>";
+                    string messageSubject = ConfigurationManager.AppSettings["messageSubject"] + " " + title;
+                    string messageContent = string.Format("Dear {0}, <br /><br />", item2.FIRSTNAME + " " + item2.LASTNAME) + "This is to bring your attention that the above B & G's has been Terminated on " + $" { DateTime.Today.Date }.<br /> Find Attached File <br /><br />" + $"{dataTable2}";
+                    string additionalRecipient = loanDetails.FirstOrDefault((LoanContingentViewModel x) => x.relationshipManagerId == item2.STAFFID).officerEmail;
+                    string templateUrl = @"~/EmailTemplates/Monitoring.html";
+                    string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                    MessageLogViewModel messageModel = new MessageLogViewModel
+                    {
+                        MessageSubject = messageSubject,
+                        MessageBody = mailBody,
+                        MessageStatusId = 1,
+                        MessageTypeId = 1,
+                        FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                        ToAddress = $"{recipient};{additionalRecipient}",
+                        DateTimeReceived = DateTime.Now,
+                        SendOnDateTime = DateTime.Now,
+                        
+                    };
+                    if (SaveMessageDetails(messageModel, loanReviewOperationsId) != 0)
+                    {
+                        return response = true;
+                    }
+                    else
+                    {
+                        return response = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+            return response;
+        }
+        public bool SendAlertsForTerminatedBGMonitoringTeam(List<LoanContingentViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups, int? loanReviewOperationsId)
+        {
+            bool response =false;
+            try
+            {
+                string recipient = alertSetups.RECIPIENTEMAILS2.Trim();
+                string dataTable = "<table><tr><th>Loan Ref. No.</th><th>Effective Date</th><th>Maturity Date</th><th>Amount</th></tr>";
+                foreach (LoanContingentViewModel loanDetail in loanDetails)
+                {
+                    dataTable = dataTable + $"<tr><td>{loanDetail.loanRefNumber}</td><td>{loanDetail.effectiveDate}</td><td>{loanDetail.dueDate}</td>" + $"<td>{loanDetail.contingentAmount}</td></tr>";
+                }
+
+                dataTable += "</table>";
+                string messageSubject = alertSetups.MESSAGE_TITLE;
+                string messageContent = "Dear Team, <br /><br />his is to bring your attention that the above B & G's has been Terminated on " + $" { DateTime.Today.Date }. <br /> Find Attached File <br /><br />" + $"{dataTable}";
+                string templateUrl = @"~/EmailTemplates/Monitoring.html";
+                string mailBody = EmailHelpers.PopulateBody(messageContent, templateUrl);
+                MessageLogViewModel messageModel = new MessageLogViewModel
+                {
+                    MessageSubject = messageSubject,
+                    MessageBody = mailBody,
+                    MessageStatusId = 1,
+                    MessageTypeId = 1,
+                    FromAddress = ConfigurationManager.AppSettings["SupportEmailAddr"],
+                    ToAddress = $"{recipient}",
+                    DateTimeReceived = DateTime.Now,
+                    SendOnDateTime = DateTime.Now
+                };
+                if (SaveMessageDetails(messageModel, loanReviewOperationsId) != 0)
+                {
+                   response = true;
+                }
+                else
+                {
+                   response =false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new SecureException(ex.Message);
+            }
+            return response;
+
+        }
+
+
+
+
+
+
+
 
         public bool ContingentLiabilityTenorExtension(TwoFactorAutheticationViewModel twoFactorAuth, LoanPaymentRestructureScheduleInputViewModel model, string approvalComment)
         {
@@ -15932,6 +16191,7 @@ namespace FintrakBanking.Repositories.Credit
 
                                 select new LoanPaymentRestructureScheduleInputViewModel()
                                 {
+                                    loanReviewOperationsId = a.LOANREVIEWOPERATIONID,
                                     loanId = b.CONTINGENTLOANID,
                                     principalAmount = (double)a.PREPAYMENT,
                                     loanSystemTypeId = a.LOANSYSTEMTYPEID,
@@ -19180,7 +19440,7 @@ namespace FintrakBanking.Repositories.Credit
         {
             var rec = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == loanId).FirstOrDefault();
 
-            var data = new TBL_MEDIA_LOAN_DOCUMENTS
+            var data = new TBL_TEMP_MEDIA_LOAN_DOCUMENTS
             {
                 FILEDATA = file,
                 DOCUMENTTITLE = model.documentTitle,
@@ -19193,13 +19453,13 @@ namespace FintrakBanking.Repositories.Credit
                 ISPRIMARYDOCUMENT = true,
                 COMPANYID = model.companyId,
                 LOANSYSTEMTYPEID = (int)LoanSystemTypeEnum.ContingentLiability,
-                LOANREVIEWOPERATIONID = loanreviewoperationId,
+                TEMPLOANREVIEWOPERATIONID = loanreviewoperationId,
                 PHYSICALLOCATION = "N/A",
                 DOCUMENTTYPEID=4,
 
             };
 
-            documentContext.TBL_MEDIA_LOAN_DOCUMENTS.Add(data);
+            documentContext.TBL_TEMP_MEDIA_LOAN_DOCUMENTS.Add(data);
             try
             {
                 return documentContext.SaveChanges() != 0;
@@ -19209,9 +19469,24 @@ namespace FintrakBanking.Repositories.Credit
             return documentContext.SaveChanges() != 0;
         }
 
+       
+
         //public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model)
         public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer)
         {
+            //var record = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
+
+            //if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
+            //{
+            //    if (model.proposedEffectiveDate >= record.MATURITYDATE)
+            //    {
+            //        throw new ConditionNotMetException( "Proposed Effective Date cannot be More than Approved Maturity Date" );
+            //    }
+            //}
+
+
+
+
             bool output = false;
             var reviewApplicationDetail = context.TBL_LMSR_APPLICATION_DETAIL.Where(x => x.LOANREVIEWAPPLICATIONID == model.lmsApplicationDetailId).FirstOrDefault();
 
