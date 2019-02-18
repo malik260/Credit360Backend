@@ -110,6 +110,7 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = x.application.OPERATIONID,
                 customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                 atInitiator = x.application.CREATEDBY == staffId,
+                
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
@@ -891,7 +892,7 @@ namespace FintrakBanking.Repositories.Credit
         #region
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
-            searchString = searchString.Trim().ToLower();
+            searchString = searchString.Trim().ToLower(); //46, 71, 79
 
             int[] operations = { (int)OperationsEnum.LoanReviewApprovalAppraisal, (int)OperationsEnum.LoanReviewApprovalOfferLetter, (int)OperationsEnum.LoanReviewApprovalAvailment ,
            (int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
@@ -900,8 +901,10 @@ namespace FintrakBanking.Repositories.Credit
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
                                join y in context.TBL_APPROVAL_TRAIL on d.LOANREVIEWAPPLICATIONID equals y.TARGETID
-                               let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
-                               where (a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchString)
+                              // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
+                               where y.RESPONSESTAFFID == null
+                               && operations.Contains(y.OPERATIONID)
+                               && (a.APPLICATIONREFERENCENUMBER == searchString
                                || g.FIRSTNAME.ToLower().Contains(searchString)
                                || g.LASTNAME.ToLower().Contains(searchString)
                                || g.MIDDLENAME.ToLower().Contains(searchString)
@@ -925,7 +928,9 @@ namespace FintrakBanking.Repositories.Credit
                                    applicationTenor = d.PROPOSEDTENOR,
                                    approvalStatusId = (short)a.APPROVALSTATUSID,
                                    approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+
                                    currentApprovalLevel = y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+
                                    approvalTrailId = y.APPROVALTRAILID,
                                    responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
                                    applicationStatusId = a.APPLICATIONSTATUSID,

@@ -217,7 +217,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanViewModel> SearchAllOverdraft(string searchQuery);
 
-
+        AccountBalanceViewModel GetLoanBalances(int loanId, int companyId);
 
 
     }

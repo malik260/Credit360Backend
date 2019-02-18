@@ -96,5 +96,23 @@ namespace FintrakBanking.APICore.Controllers
             bool response = repo.SaveContigentLoansUsageApproval(entity);
             return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("get-contingent-usage/{loanId}")]
+        public HttpResponseMessage GetContingentUsage(int loanId)
+        {
+
+            try
+            {
+                var data = repo.GetContingentUsage(loanId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = ex.Message });
+            }
+        }
     }
 }
