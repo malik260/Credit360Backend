@@ -87,5 +87,9 @@ namespace FintrakBanking.Interfaces.Reports
         string GetSanctionLimitReport(DateRange dateRange);
         string GetImpairedWatchListReport(DateRange dateRange);
 
+        string GetInsuranceReport(DateRange dateRange);
+        string GetExpiredReport(DateRange dateRange);
+        string GetExcessReport(DateRange dateRange);
+
     }
 }

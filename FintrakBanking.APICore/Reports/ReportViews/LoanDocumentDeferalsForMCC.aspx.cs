@@ -15,6 +15,7 @@ namespace FintrakBanking.APICore.Reports.ReportViews
             if (!IsPostBack)
             {
                 startDate.Text = Request.QueryString["startDate"];
+               // DateTime startDate = DateTime.ParseExact(Request.QueryString["startDate"], "dd-MM-yyyy", null);
                 companyId.Text = Request.QueryString["companyId"];
                 branchCode.Text = Request.QueryString["branchCode"];
 

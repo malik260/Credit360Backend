@@ -24,6 +24,8 @@ namespace FintrakBanking.Entities.DocumentModels
         public virtual DbSet<TBL_MEDIA_JOB_REQUEST_DOCUMENT> TBL_MEDIA_JOB_REQUEST_DOCUMENT { get; set; }
         public virtual DbSet<TBL_MEDIA_KYC_DOCUMENTS> TBL_MEDIA_KYC_DOCUMENTS { get; set; }
         public virtual DbSet<TBL_MEDIA_LOAN_DOCUMENTS> TBL_MEDIA_LOAN_DOCUMENTS { get; set; }
+        public virtual DbSet<TBL_TEMP_MEDIA_LOAN_DOCUMENTS> TBL_TEMP_MEDIA_LOAN_DOCUMENTS { get; set; }
+
         public virtual DbSet<TBL_MEDIA_STAFF_PICTURE> TBL_MEDIA_STAFF_PICTURE { get; set; }
         public virtual DbSet<TBL_MEDIA_STAFF_SIGNATURE> TBL_MEDIA_STAFF_SIGNATURE { get; set; }
         public virtual DbSet<TBL_TEMP_MEDIA_COLLATERAL_DOCS> TBL_TEMP_MEDIA_COLLATERAL_DOCS { get; set; }

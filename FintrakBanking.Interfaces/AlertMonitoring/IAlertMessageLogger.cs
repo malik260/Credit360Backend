@@ -15,6 +15,7 @@ namespace FintrakBanking.Interfaces.AlertMonitoring
         void SendAlertsForCovenantsApproachingDueDateToRM(List<LoanCovenantDetailViewModel> loanDetails, string title);
         void SendAlertsForCovenantsApproachingDueDateToMonitoringTeam(List<LoanCovenantDetailViewModel> loanDetails, TBL_MONITORING_ALERT_SETUP alertSetups);
 
+        bool SendAlertsForExpiredBG(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups);
 
         bool SendAlertsForCovenantsOverDue(string title, string messageBody, List<TBL_MONITORING_ALERT_SETUP> alertSetups);
         void SendAlertsForCovenantsOverDueRM(List<LoanCovenantDetailViewModel> loanDetails, string title);

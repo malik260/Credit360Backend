@@ -196,6 +196,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview(int staffId, int companyId);
 
         IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate, int loanId);
+        IEnumerable<LoanViewModel> GetContingentApprovedExpiredApplication(int staffId, int companyId);
 
         IEnumerable<LoanViewModel> GetContingentApprovedApplication(int staffId, int companyId);
 

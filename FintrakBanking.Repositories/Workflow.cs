@@ -284,12 +284,15 @@ namespace FintrakBanking.Repositories.WorkFlow
         private void SetResponseInformation()
         {
             response.fromLevelId = this.fromLevelId;
-            response.statusId = this.statusId;
             response.stateId = this.newStateId;
             response.nextLevelId = this.nextLevelId;
             response.nextPersonId = this.toStaffId;
+            int finalStatusId = this.statusId;
 
-            var s = context.TBL_APPROVAL_STATUS.Find(this.statusId);
+            if (response.nextLevelId == null && finalStatusId == (int)ApprovalStatusEnum.Processing) finalStatusId = (int)ApprovalStatusEnum.Approved;
+            response.statusId = finalStatusId;
+
+            var s = context.TBL_APPROVAL_STATUS.Find(finalStatusId);
             response.statusName = s.APPROVALSTATUSNAME;
 
             response.nextLevelName = String.Empty;
