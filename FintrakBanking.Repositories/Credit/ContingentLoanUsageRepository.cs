@@ -103,7 +103,7 @@ namespace FintrakBanking.Repositories.Credit
                     if (usedData.Any())
                     {
                         item.usedAmount = usedData.Sum(c => c.AMOUNTREQUESTED);
-                        //item.amountRemaining = item.facilityAmount - item.usedAmount;
+                       // item.amountRemaining = item.facilityAmount - item.usedAmount;
                     }
                     contingentData.Add(item);
 

@@ -11179,5 +11179,19 @@ namespace FintrakBanking.Repositories.Credit
             result.CanSeeForeignCurrency = activities.Contains("fcy-user");
             return result;
         }
+
+        public AccountBalanceViewModel GetLoanBalances(int loanId, int companyId)
+        {
+            return context.TBL_LOAN.Where(o => o.TERMLOANID == loanId && o.COMPANYID==companyId).Select(o =>  new AccountBalanceViewModel
+            {
+                outstandingPrincipal = o.OUTSTANDINGPRINCIPAL,
+                interestOnPastDueInterest = o.INTERESTONPASTDUEINTEREST,
+                interestOnPastDuePrincipal = o.INTERESTONPASTDUEPRINCIPAL,
+                pastDueInterest = o.PASTDUEINTEREST,
+                pastDuePrincipal = o.PASTDUEPRINCIPAL,
+                accruedInterest = 0,
+
+            }).FirstOrDefault();
+        }
     }
 }
