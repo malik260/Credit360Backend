@@ -2579,8 +2579,8 @@ namespace FintrakBanking.Repositories.Credit
                                       select new OfferLetterViewModel
                                       {
                                           customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o=>o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o=>o.GROUPNAME).FirstOrDefault(),
-                                          offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == 124).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
-                                          offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATEID == 121).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                          offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 221).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                          offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 222).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
                                           customerId = b.CUSTOMERID
 
                                       }).FirstOrDefault();
