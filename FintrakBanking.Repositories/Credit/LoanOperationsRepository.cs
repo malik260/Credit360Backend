@@ -15361,7 +15361,7 @@ namespace FintrakBanking.Repositories.Credit
             //}
 
             var oldContingent = context.TBL_LOAN_CONTINGENT.FirstOrDefault(x => x.CONTINGENTLOANID == model.loanId);
-            oldContingent.CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT - (decimal)model.principalAmount;
+            oldContingent.CONTINGENTAMOUNT = oldContingent.CONTINGENTAMOUNT + (decimal)model.principalAmount;
 
             bool output = false;
 

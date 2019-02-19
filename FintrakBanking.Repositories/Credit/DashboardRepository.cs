@@ -19,6 +19,7 @@ namespace FintrakBanking.Repositories.Credit
         private IGeneralSetupRepository general;
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
+
         public DashboardRepository(FinTrakBankingContext context, IGeneralSetupRepository general, IAuditTrailRepository audit, IWorkflow workflow)
         {
             this.context = context;
@@ -97,6 +98,7 @@ namespace FintrakBanking.Repositories.Credit
 
             return loanDetails;
         }
+
         public List<LoanDisburseByType> LoanDisbursedByType(DateTime startDate, DateTime endDate, int companyId, int staffId)
         {
             int count = 0;
@@ -280,6 +282,7 @@ namespace FintrakBanking.Repositories.Credit
             return facilityCollateral;
 
         }
+
         public List<DashboardViewModel> ApprovedLoan(DateTime startDate, DateTime endDate, int companyId, int staffId)
         {
             var staff = context.TBL_STAFF.Where(o => o.STAFFID == staffId).Select(o => o).FirstOrDefault();
@@ -353,5 +356,6 @@ namespace FintrakBanking.Repositories.Credit
 
             return result;
         }
+
     }
 }
