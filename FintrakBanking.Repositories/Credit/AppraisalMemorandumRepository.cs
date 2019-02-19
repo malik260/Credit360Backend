@@ -363,6 +363,8 @@ namespace FintrakBanking.Repositories.Credit
             workflow.DeferredExecution = true;
             workflow.LogActivity();
 
+            WorkflowResponse finalResponse = new WorkflowResponse();// workflow.Response;
+
             // DETAIL CHANGES
             if (model.recommendedChanges.Count() > 0) // only approving authority
             {
@@ -486,6 +488,7 @@ namespace FintrakBanking.Repositories.Credit
             if (workflow.NewState == (int)ApprovalState.Ended && workflow.StatusId != (int)ApprovalStatusEnum.Disapproved)
             {
                 appl.APPLICATIONSTATUSID = (int)LoanApplicationStatusEnum.OfferLetterGenerationInProgress;
+                workflow.SetResponse = false;
                 workflow.NextProcess(appl.COMPANYID, model.createdBy, (int)OperationsEnum.OfferLetterApproval, model.applicationId, null, "New pproved application", true, false);
             }
 
