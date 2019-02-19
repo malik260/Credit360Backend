@@ -32,16 +32,16 @@ namespace FintrakBanking.APICore.Controllers
         [Route("end-of-day")]
         public HttpResponseMessage GetFinanceEndofday()
         {
-           
-                var data = repoEOD.GetFinanceEndofday(token.GetCompanyId);
-                if (data != null)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        new { success = true, result = data });
-                }
 
+            var data = repoEOD.GetFinanceEndofday(token.GetCompanyId);
+            if (data != null)
+            {
                 return Request.CreateResponse(HttpStatusCode.OK,
-                   new { success = false, message = "An unknown error has occured" });          
+                    new { success = true, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "An unknown error has occured" });
 
         }
 
@@ -51,20 +51,20 @@ namespace FintrakBanking.APICore.Controllers
         [Route("end-of-day")]
         public HttpResponseMessage RunEndOfDay([FromBody] EndOfDayViewModel model)
         {
-           
-                model.companyId = token.GetCompanyId;
-                model.createdBy = token.GetStaffId;
-                model.userBranchId = (short)token.GetBranchId;
-                var data = repoEOD.RunEndOfDay(model);
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = true, message = "End of day transaction completed successfully" });
-                }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "End of day transaction failed" });
-           
+
+            model.companyId = token.GetCompanyId;
+            model.createdBy = token.GetStaffId;
+            model.userBranchId = (short)token.GetBranchId;
+            var data = repoEOD.RunEndOfDay(model);
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, message = "End of day transaction completed successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "End of day transaction failed" });
+
         }
 
         [HttpGet]
@@ -73,7 +73,7 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage RefreshLoanClassification()
         {
 
-           
+
             var data = repoEOD.RefreshLoanClassification();
 
             if (data)
@@ -95,19 +95,19 @@ namespace FintrakBanking.APICore.Controllers
 
             //try
             //{
-                // model.companyId = token.GetCompanyId;
-                //model.createdBy = token.GetStaffId;
-                //model.userBranchId = (short)token.GetBranchId;
-                var data = repoLoanOP.GetRepaymentFromStaging();                
+            // model.companyId = token.GetCompanyId;
+            //model.createdBy = token.GetStaffId;
+            //model.userBranchId = (short)token.GetBranchId;
+            var data = repoLoanOP.GetRepaymentFromStaging();
 
-                if (data)
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = true, message = "Refresh Finacle Bulk Posting Transaction Completed Successfully" });
-                }
-                else
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                               new { success = false, message = "Refresh Finacle Bulk Posting Transaction Failed" });
+            if (data)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = true, message = "Refresh Finacle Bulk Posting Transaction Completed Successfully" });
+            }
+            else
+                return Request.CreateResponse(HttpStatusCode.OK,
+                           new { success = false, message = "Refresh Finacle Bulk Posting Transaction Failed" });
             //}
             //catch (ConditionNotMetException ce)
             //{
@@ -129,14 +129,14 @@ namespace FintrakBanking.APICore.Controllers
         public HttpResponseMessage DeactivateInactiveUsers()
         {
 
-           
+
             adminRepo.DeactivateInactiveUsers();
 
-            
-                return Request.CreateResponse(HttpStatusCode.OK,
-                           new { success = true, message = "Inactive Users Deactivated successfully" });
-            
-           
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, message = "Inactive Users Deactivated successfully" });
+
+
             //}
             //catch (ConditionNotMetException ce)
             //{
@@ -151,6 +151,26 @@ namespace FintrakBanking.APICore.Controllers
             //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "An unhandled error occured. The system cannot complete the process." });
             //}
         }
+        
+        [HttpPost]
+        [ClaimsAuthorization]
+        [Route("get_endofday_operation_log")]
+        public HttpResponseMessage GetEndofdayOperationLog([FromBody] FinanceEndofdayViewModel model)
+        {
+            var  data = repoEOD.GetEndofdayOperationLog((DateTime)model.eodDate, token.GetCompanyId);
+
+            if (data != null)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                    new { success = true, result = data });
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK,
+               new { success = false, message = "An unknown error has occured" });
+
+        }
+
+
     }
 
 }
