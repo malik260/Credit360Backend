@@ -19469,21 +19469,39 @@ namespace FintrakBanking.Repositories.Credit
             return documentContext.SaveChanges() != 0;
         }
 
-       
+       public bool VerifyLegalContingentCode(string legalContingentCode)
+        {
+            bool result = false;
+            var record = (from a in context.TBL_LOAN_CONTINGENT
+                          join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONDETAILID equals b.LOANAPPLICATIONDETAILID
+                          where a.LEGALCONTINGENTCODE == legalContingentCode
+                          select a.LEGALCONTINGENTCODE 
+                          ).FirstOrDefault();
+            if (string.IsNullOrEmpty(record))
+            {
+                result = false;
+            }
+            else
+            {
+                result = true;
+            }
+            return result;
+        }
+
 
         //public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model)
         public bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer)
         {
             //var record = context.TBL_LOAN_CONTINGENT.Where(x => x.CONTINGENTLOANID == model.loanId).FirstOrDefault();
-
-            //if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
-            //{
-            //    if (model.proposedEffectiveDate >= record.MATURITYDATE)
-            //    {
-            //        throw new ConditionNotMetException( "Proposed Effective Date cannot be More than Approved Maturity Date" );
-            //    }
-            //}
-
+            //bool validatelegalContingentCode =false;
+            if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
+            {
+               bool validatelegalContingentCode = VerifyLegalContingentCode(model.legalContingentCode);
+                if (validatelegalContingentCode)
+                {
+                    throw new ConditionNotMetException("Legal Contingent Code Provided Has Been Used Before..");
+                }
+            }
 
 
 
@@ -19520,6 +19538,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = model.createdBy,
                     DATECREATED = DateTime.Now,
                     LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId == 0 ? null : model.lmsApplicationDetailId,
+                    LEGALCONTINGENTCODE = model.legalContingentCode,
                     //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
                 };
                 // Audit Section ---------------------------
@@ -19691,6 +19710,7 @@ namespace FintrakBanking.Repositories.Credit
                 reviewOperation.OPERATIONCOMPLETED = false;
                 reviewOperation.CREATEDBY = model.createdBy;
                 reviewOperation.DATECREATED = DateTime.Now;
+                reviewOperation.LEGALCONTINGENTCODE = model.legalContingentCode;
                 //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
 
                 reviewApplicationDetail.OPERATIONPERFORMED = true;
@@ -19809,6 +19829,7 @@ namespace FintrakBanking.Repositories.Credit
                     CREATEDBY = model.createdBy,
                     DATECREATED = DateTime.Now,
                     LOANREVIEWAPPLICATIONID = model.lmsApplicationDetailId == 0 ? null : model.lmsApplicationDetailId,
+                    LEGALCONTINGENTCODE=model.legalContingentCode,
                     //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
                 };
                 // Audit Section ---------------------------
@@ -19980,6 +20001,7 @@ namespace FintrakBanking.Repositories.Credit
                 reviewOperation.OPERATIONCOMPLETED = false;
                 reviewOperation.CREATEDBY = model.createdBy;
                 reviewOperation.DATECREATED = DateTime.Now;
+                reviewOperation.LEGALCONTINGENTCODE = model.legalContingentCode;
                 //TBL_LOAN_REVIEW_OPRATN_IREG_SC = irregularSchedules
 
                 reviewApplicationDetail.OPERATIONPERFORMED = true;

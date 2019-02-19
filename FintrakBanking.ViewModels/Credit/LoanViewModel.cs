@@ -53,8 +53,9 @@ namespace FintrakBanking.ViewModels.Credit
         public string operationTypeName { get; set; }
         public int? currentApprovalLevelId { get; set; }
         public int approvedTenor { get; set; }
-
         public string payingAccountNumber { get; set; }
+
+        public string legalContingentCode { get; set; }
 
         //public int newtenor { get; set; }
         public double? newInterestRate { get; set; }

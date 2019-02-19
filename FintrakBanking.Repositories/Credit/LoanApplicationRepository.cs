@@ -2265,6 +2265,43 @@ namespace FintrakBanking.Repositories.Credit
                         });
             return data;
         }
+        private IQueryable<LoanApplicationDetailViewModel> GetLmsLoanApplicationsDetails(int companyId)
+        {
+            var data = (from b in context.TBL_LMSR_APPLICATION_DETAIL
+                        join a in context.TBL_LMSR_APPLICATION on b.LOANAPPLICATIONID equals a.LOANAPPLICATIONID
+                        where a.APPROVALSTATUSID == (short)ApprovalStatusEnum.Approved
+                        && a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        select new LoanApplicationDetailViewModel()
+                        {
+                            requireCollateral = a.REQUIRECOLLATERAL,
+                            loanApplicationId = b.LOANAPPLICATIONID,
+                            applicationReferenceNumber = a.APPLICATIONREFERENCENUMBER,
+                            customerId = b.CUSTOMERID,
+                            customerName = b.TBL_CUSTOMER.FIRSTNAME + " " + b.TBL_CUSTOMER.MIDDLENAME + " " + b.TBL_CUSTOMER.LASTNAME,
+                            firstName = b.TBL_CUSTOMER.FIRSTNAME,
+                            middleName = b.TBL_CUSTOMER.MIDDLENAME,
+                            lastName = b.TBL_CUSTOMER.LASTNAME,
+                            customerCode = b.TBL_CUSTOMER.CUSTOMERCODE,
+                            loanApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
+                            proposedProductId = b.PRODUCTID,
+                            proposedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            approvedProductName = b.TBL_PRODUCT.PRODUCTNAME,
+                            approvedAmount = b.APPROVEDAMOUNT,
+                            proposedTenor = b.PROPOSEDTENOR,
+                            proposedAmount = b.PROPOSEDAMOUNT,
+                            proposedInterestRate = b.PROPOSEDINTERESTRATE,
+                            customerType = b.TBL_CUSTOMER.TBL_CUSTOMER_TYPE.NAME,
+                            branchName = a.TBL_BRANCH.BRANCHNAME,
+                            customerGroupName = a.CUSTOMERGROUPID.HasValue ? context.TBL_CUSTOMER_GROUP.Where(o=>o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).FirstOrDefault().GROUPNAME : "",
+                           // customerAccountNumber =  b.TBL_CUSTOMER.TBL_CASA.PRODUCTACCOUNTNUMBER
+                        });
+            return data;
+        }
+
+        public List<LoanApplicationDetailViewModel> GetLmsLoanApplicationDetailsById(int loanApplicationId, int companyId)
+        {
+            return GetLmsLoanApplicationsDetails(companyId).Where(x => x.loanApplicationId == loanApplicationId).ToList();
+        }
 
         public List<LoanApplicationDetailViewModel> GetLoanApplicationDetailsById(int loanApplicationId, int companyId)
         {

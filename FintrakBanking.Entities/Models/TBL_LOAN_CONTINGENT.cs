@@ -129,6 +129,7 @@ namespace FintrakBanking.Entities.Models
         public short? CRMSREPAYMENTAGREEMENTID { get; set; }
 
         public DateTime? CRMSDATE { get; set; }
+        public string LEGALCONTINGENTCODE { get; set; }
 
         public int? LOAN_BOOKING_REQUESTID { get; set; }
 
