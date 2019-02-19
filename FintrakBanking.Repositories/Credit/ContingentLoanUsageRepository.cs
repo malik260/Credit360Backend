@@ -67,7 +67,8 @@ namespace FintrakBanking.Repositories.Credit
                                 loanReferenceNumber = a.LOANREFERENCENUMBER,
                                 maturityDate = a.MATURITYDATE,
                                 productName = a.TBL_PRODUCT.PRODUCTNAME,
-                                loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS
+                                loanStatus = a.TBL_LOAN_STATUS.ACCOUNTSTATUS,
+                                loanSystemTypeId = a.LOANSYSTEMTYPEID
                             }).ToList();
 
                 var data2 = context.TBL_LOAN_CONTINGENT
@@ -379,6 +380,34 @@ namespace FintrakBanking.Repositories.Credit
 
             return this.context.SaveChanges() > 0;
         }
+        public List<ContingentLoansViewModel> GetContingentUsage(int loanId)
+        {
 
+            List<ContingentLoansViewModel> contingentData = new List<ContingentLoansViewModel>();
+            var data = (from a in context.TBL_LOAN_CONTINGENT
+                        join b in context.TBL_PRODUCT_BEHAVIOUR on a.PRODUCTID equals b.PRODUCTID
+                        join c in context.TBL_LOAN_CONTINGENT_USAGE on a.CONTINGENTLOANID equals c.CONTINGENTLOANID
+                        where  b.ALLOWFUNDUSAGE == true && c.CONTINGENTLOANID==loanId
+                        select new ContingentLoansViewModel()
+                        {
+                            principalName = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION_DETL_BG.FirstOrDefault().TBL_LOAN_PRINCIPAL.NAME,
+                            bookingDate = a.BOOKINGDATE,
+                            casaAccountNumber = a.TBL_CASA.PRODUCTACCOUNTNUMBER,
+                            facilityAmount = a.CONTINGENTAMOUNT,
+                            contingentLoanId = a.CONTINGENTLOANID,
+                            currencyCode = a.TBL_CURRENCY.CURRENCYCODE,
+                            effectiveDate = a.EFFECTIVEDATE,
+                            exchangeRate = a.EXCHANGERATE,
+                            loanApplicationReferenceNumber = a.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
+                            loanReferenceNumber = a.LOANREFERENCENUMBER,
+                            maturityDate = a.MATURITYDATE,
+                            productName = a.TBL_PRODUCT.PRODUCTNAME,
+                            usedAmount = c.AMOUNTREQUESTED,
+                            remark = c.REMARK,
+
+                        }).ToList();
+
+            return data;
+        }
     }
 }

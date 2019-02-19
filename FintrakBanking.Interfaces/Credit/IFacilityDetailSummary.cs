@@ -19,7 +19,7 @@ namespace FintrakBanking.Interfaces.Credit
         List<LoanChargeFeeViewModel> LoanChargeFee(int loanId);
         List<LoanChargeFeeViewModel> GuarantorDetail(int loanId);
         List<LoanPaymentSchedulePeriodicViewModel> LoanSchedule(int loanId);
-        List<CollateralViewModel> Collateral(int loanId);
+        List<CollateralViewModel> Collateral(int loanId, int loanSystemTypeId);
         List<LoanViewModel> LoanSearch(int productTypeId, string searchQuery);
         List<ProductType> ProductType();
         LoanViewModel OverdraftFacilityDetail(int loanId);

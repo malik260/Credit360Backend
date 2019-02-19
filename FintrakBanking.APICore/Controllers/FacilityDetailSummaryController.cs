@@ -494,12 +494,12 @@ namespace FintrakBanking.APICore.Controllers
         }
         [HttpGet]
         [ClaimsAuthorization]
-        [Route("loan-collateral/{loanId}")]
-        public HttpResponseMessage GetCollateralDetail(int loanId)
+        [Route("loan-collateral/{loanId}/loanSystemTypeId/{loanSystemTypeId}")]
+        public HttpResponseMessage GetCollateralDetail(int loanId,int loanSystemTypeId)
         {
             try
             {
-                var data = repo.Collateral(loanId);
+                var data = repo.Collateral(loanId, loanSystemTypeId);
                 if (data == null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK,

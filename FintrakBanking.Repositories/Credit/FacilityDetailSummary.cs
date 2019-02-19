@@ -51,13 +51,13 @@ namespace FintrakBanking.Repositories.Credit
             transRepo=_transRepo;
         }
 
-        public List<CollateralViewModel> Collateral(int loanId)
+        public List<CollateralViewModel> Collateral(int loanId,int loanSystemTypeId)
         {
             var data = (from x in context.TBL_LOAN_COLLATERAL_MAPPING
                         join c in context.TBL_COLLATERAL_CUSTOMER on x.COLLATERALCUSTOMERID equals c.COLLATERALCUSTOMERID
                         join ct in context.TBL_COLLATERAL_TYPE on c.COLLATERALTYPEID equals ct.COLLATERALTYPEID
                         join cs in context.TBL_COLLATERAL_TYPE_SUB on c.COLLATERALSUBTYPEID equals cs.COLLATERALSUBTYPEID
-                        where x.LOANID == loanId
+                        where x.LOANID == loanId && x.LOANSYSTEMTYPEID == loanSystemTypeId
                         select new CollateralViewModel
                         {
                             collateralType = ct.COLLATERALTYPENAME,
