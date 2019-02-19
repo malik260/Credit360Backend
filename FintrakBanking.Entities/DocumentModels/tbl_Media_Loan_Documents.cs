@@ -47,5 +47,9 @@ namespace FintrakBanking.Entities.DocumentModels
 
         public int CREATEDBY { get; set; }
         public bool ISPRIMARYDOCUMENT { get; set; }
+        public int? COMPANYID { get; set; }
+        public int? LOANSYSTEMTYPEID { get; set; }
+        public int? LOANREVIEWOPERATIONID { get; set; }
+
     }
 }

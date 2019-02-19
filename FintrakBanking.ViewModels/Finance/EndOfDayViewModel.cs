@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FintrakBanking.Common.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,22 @@ namespace FintrakBanking.ViewModels.Finance
         public DateTime startDateTime { get; set; }
 
         public DateTime? endDateTime { get; set; }
+        
+        public int eodOperationLogId { get; set; }
 
+        public int eodOperationId { get; set; }
+
+        public string eodOperation { get; set; }
+
+        public DateTime? eodDate { get; set; }
+
+        public int? eodStatusId { get; set; }
+
+        public string eodStatus { get; set; }
+
+        public int? companyId { get; set; }
 
     }
 }
+
+

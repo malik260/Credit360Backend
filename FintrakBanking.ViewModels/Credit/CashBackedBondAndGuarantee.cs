@@ -21,6 +21,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime dateIssue { get; set; }
         public string cashSecurityAccount { get; set; }
         public string typeofSecurity { get; set; }
+        public decimal securityValue { get; set; }
         //public decimal securityAmountInNaira { get; set; }
         //public decimal securityAmountInDollar { get; set; }
         //public decimal securityAmountInEuro { get; set; }

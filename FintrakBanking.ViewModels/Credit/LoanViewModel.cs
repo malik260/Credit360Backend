@@ -77,6 +77,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string userActivity { get; set; }
         public string ApprovalStatus { get; set; }
         public string approvedByName { get; set; }
+        public string approvalStatusName { get; set; }
 
         public short requestStatusId { get; set; }
         public bool requestDeleted { get; set; }
@@ -212,6 +213,8 @@ namespace FintrakBanking.ViewModels.Credit
         public string creatorName { get; set; }
         public string productAccountName { get; set; }
         public string loanTypeName { get; set; }
+        public string loanPurpose { get; set; }
+
         public string branchName { get; set; }
         public string subSectorName { get; set; }
         public string sectorName { get; set; }
@@ -859,6 +862,36 @@ namespace FintrakBanking.ViewModels.Credit
         public string loanReferenceNumber { get; set; }
         public string productAccountNumber { get; set; }
     }
+    public class LoanContingentViewModel : GeneralEntity
+    {
+        public int? casaAccountId;
+
+        public int loanCovenantDetailId { get; set; }
+        public string covenantDetail { get; set; }
+        public int loanId { get; set; }
+        public decimal? contingentAmount { get; set; }
+
+        public string loanRef { get; set; }
+        public string productName { get; set; }
+        public int casaId { get; set; }
+        public int maximumDrawDownDuration { get; set; }
+        public DateTime effectiveDate { get; set; }
+        public DateTime? dueDate { get; set; }
+        public string loanRefNumber { get; set; }
+        public string relationshipManager { get; set; }
+        public string managerEmail { get; set; }
+        public string relationshipOfficer { get; set; }
+        public string officerEmail { get; set; }
+        public int relationshipOfficerId { get; set; }
+        public int relationshipManagerId { get; set; }
+
+        public int notificationDuration { get; set; }
+        public int loanApplicationDetailId { get; set; }
+        public bool isPercentage { get; set; }
+        public DateTime? nextCovenantDate { get; set; }
+        public short loanSystemTypeId { get; set; }
+        public string productCustomerName { get; set; }
+    }
 
     public class LoanCovenantDetailViewModel : GeneralEntity
     {
@@ -1291,6 +1324,18 @@ namespace FintrakBanking.ViewModels.Credit
         public int relationshipManagerId { get; set; }
         public int branchId { get; set; }
 
+
+    }
+
+    public class ExpiredViewModel: ImpairedWatchListViewModel
+    {
+        public DateTime expiryDate { get; set; }
+        public decimal transactionDateBalance { get; set; }
+        public string userClassification { get; set; }
+        public string subClassification { get; set; }
+        public DateTime classificationDate { get; set; }
+        public string customerName { get; set; }
+        public string rmName { get; set; }
     }
 
 
@@ -1298,6 +1343,7 @@ namespace FintrakBanking.ViewModels.Credit
     {
         public string branchName { get; set; }
         
+       
         public string currencyType { get; set; }
         
         public decimal clrBalance { get; set; }
@@ -1322,45 +1368,79 @@ namespace FintrakBanking.ViewModels.Credit
         public string account { get; set; }
         public DateTime limitExpiryDate { get; set; }
         public string customerId { get; set; }
-        
-       
-       
+
+        public string branchCode { get; set; }
+
+
         public double interestRate { get; set; }
       
         public string groupCode { get; set; }
 
         public string glSubHeadCode { get; set; }
-        
        
     }
 
 
     public class SubHeadCode {
         public string glSubHeadCode { get; set; }
-        public string schemeCode { get; set; }
+        public string schemeCodes { get; set; }
     }
 
    
-    public class LoanMart
+    public class LoanMart : ImpairedWatchListViewModel
     {
-        public string teamCode { get; set; }
-        public string deskCode { get; set; }
-        public string rmCode { get; set; }
-        public string buCode { get; set; }
-        public string schemeCode { get; set; }
-        public string schemeType { get; set; }
-        public string teamDescription { get; set; }
-        public string deskDescription { get; set; }
-        public string buDescription { get; set; }
-        public decimal sanctionLimit { get; set; }
-        public decimal pastDueDate { get; set; }
-        public string groupDescription { get; set; }
-        public string accountName { get; set; }
-        public string account { get; set; }
-        public DateTime limitExpiryDate { get; set; }
-        public string customerId { get; set; }
+       
+        public decimal transactionDateBalance { get; set; }
+        public string userClassification { get; set; }
+        public string subClassification { get; set; }
+        public DateTime classificationDate { get; set; }
+        public DateTime expiryDate { get; set; }
+        
 
-        public string groupCode { get; set; }
+    }
+    public class ExcessViewModel: ImpairedWatchListViewModel
+    {
+        public string excess { get; set; }
+        public DateTime endDate { get; set; }
+        public string rmName { get; set; }
+        public string customerName { get; set; }
+
+        public decimal transactionDateBalance { get; set; }
+        public string userClassification { get; set; }
+        public string subClassification { get; set; }
+        public DateTime classificationDate { get; set; }
+
+        public DateTime expiryDate { get; set; }
+       
+    }
+
+    public class InsuranceViewModel : ImpairedWatchListViewModel
+    {
+        public short branchId { get; set; }
+        public string collateralType { get; set; }
+        public string perfectionStatus { get; set; }
+        public string insuranceType { get; set; }
+        public string insurancePolicyNumber { get; set; }
+        public string insuranceCompanyName { get; set; }
+        public decimal premiumPaid { get; set; }
+        public decimal insuredValue { get; set; }
+        public DateTime startDate { get; set; }
+        public DateTime endDate { get; set; }
+        public DateTime maturityDate { get; set; }
+        public int days { get; set; }
+        public string workFlowID { get; set; }
+        public string  status { get; set; }
+        public string businessDevelopmentManger { get; set; }
+        public string remarks { get; set; }
+        public string staffCode  { get; set; }
+        public string rmName { get; set; }
+        public string subHead { get; set; }
+        public int customerId { get; set; }
+    }
+
+    public class LoanMartWatchList : ImpairedWatchListViewModel
+    {
+        public string subClassification { get; set; }
     }
     public class SbHead
     {

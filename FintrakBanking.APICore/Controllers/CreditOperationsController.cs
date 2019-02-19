@@ -12,6 +12,10 @@ using FintrakBanking.ViewModels.Finance;
 using FintrakBanking.Interfaces.Finance;
 using FintrakBanking.ViewModels.WorkFlow;
 using FintrakBanking.Common.CustomException;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace FintrakBanking.APICore.Controllers
 {
@@ -185,6 +189,30 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-search-inactive-contingent")]
+        public HttpResponseMessage SearchForLoanInactiveContingent(string searchQuery)
+        {
+            try
+            {
+                var data = loanRepo.SearchForLoanInactiveContingent(searchQuery);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [ClaimsAuthorization]
         [Route("loan-search-contingent")]
@@ -477,6 +505,31 @@ namespace FintrakBanking.APICore.Controllers
                       new { success = false, message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("undisbursed-loan-details/")]
+        public HttpResponseMessage SearchForLoansUnDisbursed(int loanId, int loanType)
+        {
+            try
+            {
+                var data = loanRepo.GetUnDisbursedLoanByLoanId(loanId, loanType);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
+
+
 
         [HttpGet]
         [ClaimsAuthorization]
@@ -858,8 +911,18 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (data == 1)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK,
+                    if(entity.operationId != (int)OperationsEnum.ContingentLiabilityTerminateAndRebook)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK,
                         new { success = true, message = "Operation has been approved successfully." });
+                    }
+                    else
+                    {
+                        var newRef = repo.GetCollateralLoanNewRefernceNumber(entity);
+                        return Request.CreateResponse(HttpStatusCode.OK,
+                          new { success = true, message = "Operation has been approved successfully, With New Reference Number" + newRef });
+                    }
+                    
                 }
                 else if (data == 2)
                 {
@@ -919,7 +982,28 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
-
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("contingent-for-termination-application")]
+        public HttpResponseMessage GetContingentApprovedExpiredApplication()
+        {
+            try
+            {
+                var data = loanRepo.GetContingentApprovedExpiredApplication(token.GetStaffId, token.GetCompanyId);
+                if (data == null)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = false, message = "No record found" });
+                }
+                return Request.CreateResponse(HttpStatusCode.OK,
+                       new { success = true, result = data });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK,
+                      new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         [ClaimsAuthorization]
         [Route("approved-contingent-application")]
@@ -967,6 +1051,142 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpPost, Route("add-loan-contingent-with-attachment")]
+        public async Task<HttpResponseMessage> AddOperationReviewContingentWithAttachment()
+        {
+
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    return Request.CreateResponse(HttpStatusCode.UnsupportedMediaType, "Unsupported media type.");
+                }
+                MultipartFormDataMemoryStreamProvider provider = new MultipartFormDataMemoryStreamProvider();
+                await Request.Content.ReadAsMultipartAsync(provider);
+
+                var formData = provider.FormData["formData"];
+
+                var errors = new List<string>();
+                LoanReviewOperationViewModel model = JsonConvert.DeserializeObject<LoanReviewOperationViewModel>(formData,
+                    new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Include,
+                        Error = delegate (object sender, Newtonsoft.Json.Serialization.ErrorEventArgs earg)
+                        {
+                            errors.Add(earg.ErrorContext.Member.ToString());
+                            earg.ErrorContext.Handled = true;
+                        }
+                    });
+
+
+                if (!provider.FileStreams.Any())
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "No file uploaded.");
+                }
+
+                model.userBranchId = (short)token.GetBranchId;
+                model.companyId = token.GetCompanyId;
+                model.createdBy = token.GetStaffId;
+                model.applicationUrl = HttpContext.Current.Request.Path;
+
+                var file = provider.Contents.FirstOrDefault();
+                var buffer = await file.ReadAsByteArrayAsync();
+
+                if ((int)OperationsEnum.ContingentLiabilityRenewal == model.operationTypeId)
+
+                {
+
+                   
+                    //if (repo.DoesOperationExist(model.loanId, model.operationTypeId))
+                    //{
+                    //    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    //}
+
+                    var response = repo.AddOperationReviewContingentWithImage(model, buffer);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+                }
+                else if ((int)OperationsEnum.ContingentLiabilityTermination == model.operationTypeId)
+                {
+
+                    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    }
+
+                    var response = repo.AddOperationReviewContingentWithImage(model,buffer);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+                }
+                else if ((int)OperationsEnum.ContingentLiabilityTenorExtension == model.operationTypeId || (int)OperationsEnum.ContingentLiabilityAmountReduction == model.operationTypeId || (int)OperationsEnum.ContingentLiabilityAmountAddition == model.operationTypeId)
+                {
+
+                    var response = repo.AddOperationReviewContingent(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+                }
+                else if ((int)OperationsEnum.ContingentLiabilityTerminateAndRebook == model.operationTypeId)
+                {
+
+                    model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    }
+
+                    var response = repo.AddOperationReviewContingent(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+                }
+                else if ((int)OperationsEnum.CancelContingentLiability == model.operationTypeId)
+                {
+                    model.approvalStatusId = model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    }
+
+                    var response = repo.AddOperationReviewContingent(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+            }
+            catch (ConditionNotMetException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {e.Message}" });
+            }
+            catch (SecureException ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"There was an error creating this record {ex.Message}" });
+            }
+        }
 
         [HttpPost]
         [ClaimsAuthorization]
@@ -1024,7 +1244,7 @@ namespace FintrakBanking.APICore.Controllers
                     return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
 
                 }
-                else if ((int)OperationsEnum.ContingentLiabilityTenorExtension == model.operationTypeId || (int)OperationsEnum.ContingentLiabilityAmountReduction == model.operationTypeId)
+                else if ((int)OperationsEnum.ContingentLiabilityTenorExtension == model.operationTypeId || (int)OperationsEnum.ContingentLiabilityAmountReduction == model.operationTypeId || (int)OperationsEnum.ContingentLiabilityAmountAddition == model.operationTypeId)
                 {
 
                     var response = repo.AddOperationReviewContingent(model);
@@ -1039,6 +1259,23 @@ namespace FintrakBanking.APICore.Controllers
                 {
 
                     model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
+
+                    if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "The requested operation already exist and going through approval" });
+                    }
+
+                    var response = repo.AddOperationReviewContingent(model);
+                    if (response)
+                    {
+                        return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, message = "The record has been created successfully and passed for approval" });
+                    }
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "There was an error creating this record" });
+
+                }
+                else if ((int)OperationsEnum.CancelContingentLiability == model.operationTypeId)
+                {                    
+                    model.approvalStatusId = model.approvalStatusId = (int)ApprovalStatusEnum.Processing;
 
                     if (repo.DoesOperationExist(model.loanId, model.operationTypeId, (short)model.loanSystemTypeId))
                     {

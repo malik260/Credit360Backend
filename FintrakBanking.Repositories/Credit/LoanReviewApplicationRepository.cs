@@ -20,6 +20,7 @@ namespace FintrakBanking.Repositories.Credit
         private IAuditTrailRepository audit;
         private IWorkflow workflow;
         private IAdminRepository admin;
+        private IOfferLetterAndAvailmentRepository offerLetter;
 
         private CreditCommonRepository creditCommon;
 
@@ -33,7 +34,7 @@ namespace FintrakBanking.Repositories.Credit
             IAuditTrailRepository audit,
             IWorkflow workflow,
             IAdminRepository admin,
-
+            IOfferLetterAndAvailmentRepository _offerLetter,
         CreditCommonRepository creditCommon
             )
         {
@@ -43,6 +44,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = workflow;
             this.admin = admin;
             this.creditCommon = creditCommon;
+            this.offerLetter = _offerLetter;
         }
 
         public IQueryable<LoanReviewApplicationViewModel> GetApplications(UserInfo user, int operationId, int? classId)
@@ -108,10 +110,12 @@ namespace FintrakBanking.Repositories.Credit
                 operationId = x.application.OPERATIONID,
                 customerName = x.customer.FIRSTNAME + " " + x.customer.MIDDLENAME + " " + x.customer.LASTNAME,
                 atInitiator = x.application.CREATEDBY == staffId,
+                
 
                 // currentStage = trail == null ? "" : context.TBL_OPERATIONS.FirstOrDefault(s => s.OPERATIONID == trail.OPERATIONID).OPERATIONNAME,
 
-                applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Select(d => new applicationDetails
+                applicationDetails = x.application.TBL_LMSR_APPLICATION_DETAIL.Where(d => d.DELETED == false)
+                .Select(d => new applicationDetails
                 {
                     detailId = d.LOANREVIEWAPPLICATIONID,
                     operationId = d.OPERATIONID,
@@ -130,6 +134,8 @@ namespace FintrakBanking.Repositories.Credit
                     approvedRate = d.APPROVEDINTERESTRATE,
                     approvedAmount = d.APPROVEDAMOUNT,
                     customerProposedAmount = d.CUSTOMERPROPOSEDAMOUNT,
+                    statusId = d.APPROVALSTATUSID,
+
                     //loanReferenceNumber = d.LOANREFERENCENUMBER,
 
                 })
@@ -319,7 +325,7 @@ namespace FintrakBanking.Repositories.Credit
                 DATETIMECREATED = applicationDate,
                 SYSTEMDATETIME = DateTime.Now,
                 APPROVALSTATUSID = (short)ApprovalStatusEnum.Pending,
-                APPLICATIONSTATUSID = (short)1, // -------------------------------------------------- REMOVE COLUMN!!
+                APPLICATIONSTATUSID = (short)1, // remove magic numbers
             });
 
             List<int> customerIds = new List<int>();
@@ -341,7 +347,7 @@ namespace FintrakBanking.Repositories.Credit
                     REPAYMENTTERMS = String.Empty,
                     REPAYMENTSCHEDULE = String.Empty,
                     CUSTOMERID = loan.customerId,
-                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved, // REMOVE DUPLICATE [STATUSID]
+                    APPROVALSTATUSID = (int)ApprovalStatusEnum.Approved,
                     CREATEDBY = staffId,
                     DATETIMECREATED = applicationDate,
                     PROPOSEDTENOR = tenor,
@@ -352,8 +358,8 @@ namespace FintrakBanking.Repositories.Credit
                     APPROVEDAMOUNT = loan.outstandingPrincipal,
                     OPERATIONPERFORMED = false,
                     CUSTOMERPROPOSEDAMOUNT = detail.customerProposedAmount,
+                    DELETED = false
                     //LOANREFERENCENUMBER = loan.loanReferenceNumber
-
                     //LOANAPPLICATIONDETAILID = loan.loanApplicationDetailId,
                 });
 
@@ -542,6 +548,7 @@ namespace FintrakBanking.Repositories.Credit
             workflow.ToStaffId = model.receiverStaffId;
             workflow.NextLevelId = model.receiverLevelId;
             workflow.Comment = model.comment;
+            workflow.Vote = model.vote;
             workflow.DeferredExecution = true;
             workflow.FinalLevel = appl.FINALAPPROVAL_LEVELID;
 
@@ -550,6 +557,7 @@ namespace FintrakBanking.Repositories.Credit
                 var dictionary = GetRepresentStepdownItems(appl.LOANAPPLICATIONID, model.forwardAction,operationId);
                 workflow.NextLevelId = dictionary["levelId"];
                 workflow.ToStaffId = dictionary["staffId"];
+                if (model.forwardAction == 8) workflow.ToStaffId = null;
             }
 
             workflow.LogActivity();
@@ -571,9 +579,26 @@ namespace FintrakBanking.Repositories.Credit
                         detail.APPROVEDAMOUNT = changed.amount;
                         detail.APPROVEDINTERESTRATE = changed.interestRate;
                         detail.APPROVEDTENOR = changed.tenor;
+                        detail.APPROVALSTATUSID = changed.statusId;
+                        //detail.LASTUPDATEDBY = model.createdBy;
+                        //detail.DATETIMEUPDATED = DateTime.Now;
+
+                        if (model.isBusiness) // DELETE OR UPDATE PROPOSED
+                        {
+                            if (detail.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved) { detail.DELETED = true; }
+                            else
+                            {
+                                detail.PROPOSEDAMOUNT = changed.amount;
+                                detail.PROPOSEDINTERESTRATE = changed.interestRate;
+                                detail.PROPOSEDTENOR = changed.tenor;
+                            }
+                        }
                     }
                 }
             }
+            //generate offer letter doc
+            offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId, true, false);
+
 
             int lastStatusId = workflow.StatusId;
             if (workflow.NewState == (int)ApprovalState.Ended)
@@ -856,7 +881,7 @@ namespace FintrakBanking.Repositories.Credit
                         approvedAmount = d.APPROVEDAMOUNT,
                     })
                 })
-                .GroupBy(d => d.approvalTrailId)
+                .GroupBy(d => d.loanReviewApplicationId)
                 .Select(g => g.OrderByDescending(b => b.approvalTrailId).FirstOrDefault())
                 ;
 
@@ -867,7 +892,7 @@ namespace FintrakBanking.Repositories.Credit
         #region
         public IEnumerable<LoanApplicationViewModel> Search(string searchString)
         {
-            searchString = searchString.Trim().ToLower();
+            searchString = searchString.Trim().ToLower(); //46, 71, 79
 
             int[] operations = { (int)OperationsEnum.LoanReviewApprovalAppraisal, (int)OperationsEnum.LoanReviewApprovalOfferLetter, (int)OperationsEnum.LoanReviewApprovalAvailment ,
            (int)OperationsEnum.NPLoanReviewApprovalAppraisal,(int)OperationsEnum.WrittenOffLoanReviewApprovalAppraisal};
@@ -876,8 +901,10 @@ namespace FintrakBanking.Repositories.Credit
                                join d in context.TBL_LMSR_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals d.LOANAPPLICATIONID
                                join g in context.TBL_CUSTOMER on d.CUSTOMERID equals g.CUSTOMERID
                                join y in context.TBL_APPROVAL_TRAIL on d.LOANREVIEWAPPLICATIONID equals y.TARGETID
-                               let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
-                               where (a.APPLICATIONREFERENCENUMBER.ToLower().Contains(searchString)
+                              // let staffcode = context.TBL_STAFF.Where(o => o.STAFFCODE.ToLower().Contains(searchString)).Select(o => o.STAFFID).FirstOrDefault()
+                               where y.RESPONSESTAFFID == null
+                               && operations.Contains(y.OPERATIONID)
+                               && (a.APPLICATIONREFERENCENUMBER == searchString
                                || g.FIRSTNAME.ToLower().Contains(searchString)
                                || g.LASTNAME.ToLower().Contains(searchString)
                                || g.MIDDLENAME.ToLower().Contains(searchString)
@@ -901,7 +928,9 @@ namespace FintrakBanking.Repositories.Credit
                                    applicationTenor = d.PROPOSEDTENOR,
                                    approvalStatusId = (short)a.APPROVALSTATUSID,
                                    approvalStatus = context.TBL_APPROVAL_STATUS.FirstOrDefault(s => s.APPROVALSTATUSID == a.APPROVALSTATUSID).APPROVALSTATUSNAME,
+
                                    currentApprovalLevel = y.FROMAPPROVALLEVELID != null ? y.TBL_APPROVAL_LEVEL1.LEVELNAME : "n/a",
+
                                    approvalTrailId = y.APPROVALTRAILID,
                                    responsiblePerson = y.TOSTAFFID == null ? "n/a" : y.TBL_STAFF1.STAFFCODE + " - " + y.TBL_STAFF1.FIRSTNAME + " " + y.TBL_STAFF1.MIDDLENAME + " " + y.TBL_STAFF1.LASTNAME,
                                    applicationStatusId = a.APPLICATIONSTATUSID,
@@ -1220,7 +1249,7 @@ namespace FintrakBanking.Repositories.Credit
                     && x.TOAPPROVALLEVELID != null
                 ).OrderBy(x => x.APPROVALTRAILID);
 
-            if (action == 8)
+            if (action == (int)ApprovalStatusEnum.RePresent)
             {
                 var traill = trails.Join(context.TBL_APPROVAL_LEVEL.Where(x => x.LEVELTYPEID == 2)
                         , t => t.FROMAPPROVALLEVELID, l => l.APPROVALLEVELID, (t, l) => new { t, l })

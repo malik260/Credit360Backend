@@ -2569,6 +2569,220 @@ namespace FintrakBanking.Repositories.Credit
             }
         }
 
+        public void AddOfferLetterClauses(int applicationId, int staffId,bool isLMS, bool callSaveChanges)
+        {
+            var customerExist = context.TBL_LOAN_APPLICATION.FirstOrDefault(x => x.LOANAPPLICATIONID == applicationId).CUSTOMERID;
+
+            var detail = (from a in context.TBL_LOAN_APPLICATION
+                                      join b in context.TBL_CUSTOMER on a.CUSTOMERID equals b.CUSTOMERID
+                                      where a.LOANAPPLICATIONID == applicationId
+                                      select new OfferLetterViewModel
+                                      {
+                                          customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : context.TBL_CUSTOMER_GROUP.Where(o=>o.CUSTOMERGROUPID == a.CUSTOMERGROUPID).Select(o=>o.GROUPNAME).FirstOrDefault(),
+                                          offerLetteracceptance = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 221).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                          offerLetterClauses = context.TBL_DOC_TEMPLATE_SECTION.Where(o => o.TEMPLATESECTIONID == 222).Select(o => o.TEMPLATEDOCUMENT).FirstOrDefault(),
+                                          customerId = b.CUSTOMERID
+
+                                      }).FirstOrDefault();
+
+            var offerLetterDoc = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == detail.customerId).Select(o => o).FirstOrDefault();
+            if (offerLetterDoc!=null)
+            {
+                offerLetterDoc.OFFERLETTERSALUTATION = "Attention : " + detail.customerName;
+                offerLetterDoc.OFFERLETTERTITLE = "Dear Sir,";
+
+                var loanOfferLetter = new TBL_LOAN_OFFER_LETTER
+                {
+                    CREATEDBY = staffId,
+                    DATETIMECREATED = DateTime.Now,
+                    DELETED = false,
+                    ISLMS = isLMS,
+                    LOANAPPLICATIONID = applicationId,
+                    OFFERLETTERACCEPTANCE = detail.offerLetteracceptance,
+                    OFFERLETTERCLAUSES = detail.offerLetterClauses,
+                };
+
+                context.TBL_LOAN_OFFER_LETTER.Add(loanOfferLetter);
+
+                if (callSaveChanges)
+                    context.SaveChanges();
+            }
+           
+        }
+
+      
+
+        public bool EditOfferLetterTitle(int custimerId, string data, int staffId, int branchId)
+        {
+            var clause = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == custimerId).Select(o => o).FirstOrDefault();
+            if (clause != null)
+            {
+                clause.OFFERLETTERTITLE = data;
+                clause.LASTUPDATEDBY = staffId;
+                clause.DATETIMEUPDATED = DateTime.Now;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.EditOfferLetterContent,
+                    STAFFID = staffId,
+                    BRANCHID = (short)branchId,
+                    DETAIL =
+                   $"Change offer letter title for a customer with custimerId " + custimerId,
+                    IPADDRESS = "",
+                    URL = "",
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = custimerId
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
+
+           
+
+            if (context.SaveChanges() > 0)
+                return true;
+
+            return false;
+        }
+
+        public bool EditOfferLetterSalutation(int custimerId, string data, int staffId, int branchId)
+        {
+            var clause = context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == custimerId).Select(o => o).FirstOrDefault();
+            if (clause != null)
+            {
+                clause.OFFERLETTERSALUTATION = data;
+                clause.LASTUPDATEDBY = staffId;
+                clause.DATETIMEUPDATED = DateTime.Now;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.EditOfferLetterContent,
+                    STAFFID = staffId,
+                    BRANCHID = (short)branchId,
+                    DETAIL =
+                  $"Change offer letter saluatation for a customer with custimerId " + custimerId,
+                    IPADDRESS = "",
+                    URL = "",
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = custimerId
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
+
+          
+
+            if (context.SaveChanges() > 0)
+                return true;
+
+            return false;
+        }
+
+        public bool EditOfferLetterAcceptance(int applicationId, string data, bool isLMS, int staffId, int branchId)
+        {
+            var clause = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId && o.ISLMS == isLMS).Select(o => o).FirstOrDefault();
+            if (clause != null)
+            {
+                clause.OFFERLETTERACCEPTANCE = data;
+                clause.LASTUPDATEDBY = staffId;
+                clause.DATETIMEUPDATED = DateTime.Now;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.EditOfferLetterContent,
+                    STAFFID = staffId,
+                    BRANCHID = (short)branchId,
+                    DETAIL =
+                   $"Change offer letter acceptance discription for customer with db loan application Id " + applicationId,
+                    IPADDRESS = "",
+                    URL = "",
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = applicationId
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
+
+           
+
+            if (context.SaveChanges() > 0)
+                return true;
+
+            return false;
+        }
+
+        public bool EditOfferLetterClause(int applicationId, string data, bool isLMS, int staffId, int branchId)
+        {
+            var clause = context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId && o.ISLMS==isLMS).Select(o => o).FirstOrDefault();
+            if (clause != null)
+            {
+                clause.OFFERLETTERCLAUSES = data;
+                clause.LASTUPDATEDBY = staffId;
+                clause.DATETIMEUPDATED = DateTime.Now;
+
+                var audit = new TBL_AUDIT
+                {
+                    AUDITTYPEID = (short)AuditTypeEnum.EditOfferLetterContent,
+                    STAFFID = staffId,
+                    BRANCHID = (short)branchId,
+                    DETAIL =
+                   $"Change offer letter clause for customer with db loan application Id " + applicationId,
+                    IPADDRESS = "",
+                    URL = "",
+                    APPLICATIONDATE = genSetup.GetApplicationDate(),
+                    SYSTEMDATETIME = DateTime.Now,
+                    TARGETID = applicationId
+                };
+
+                this.auditTrail.AddAuditTrail(audit);
+            }
+
+            
+
+            if (context.SaveChanges() > 0)
+                return true;
+
+            return false;
+        }
+
+        public OfferLetterViewModel GetOfferLetterTitle(int custimerId)
+        {
+            return context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == custimerId).Select( o => new OfferLetterViewModel {
+                   offerLetterTitle = o.OFFERLETTERTITLE,
+                   customerId = o.CUSTOMERID
+            }).FirstOrDefault();
+        }
+
+        public OfferLetterViewModel GetOfferLetterSalutation(int custimerId)
+        {
+            return context.TBL_CUSTOMER.Where(o => o.CUSTOMERID == custimerId).Select(o => new OfferLetterViewModel
+            {
+                offerLetterSalutation = o.OFFERLETTERSALUTATION,
+                customerId = o.CUSTOMERID
+            }).FirstOrDefault();
+        }
+
+        public OfferLetterViewModel GetOfferLetterAcceptance(int applicationId)
+        {
+            return context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => new OfferLetterViewModel
+            {
+                offerLetteracceptance = o.OFFERLETTERACCEPTANCE,
+                loanApplicationId = o.LOANAPPLICATIONID
+            }).FirstOrDefault();
+        }
+
+        public OfferLetterViewModel GetOfferLetterClause(int applicationId)
+        {
+            return context.TBL_LOAN_OFFER_LETTER.Where(o => o.LOANAPPLICATIONID == applicationId).Select(o => new OfferLetterViewModel
+            {
+                offerLetterClauses = o.OFFERLETTERCLAUSES,
+                loanApplicationId = o.LOANAPPLICATIONID
+            }).FirstOrDefault();
+        }
+
         //public void ValidateLoanApplicationLimits(LoanApplicationViewModel application)
         //{
         //    var details = application.LoanApplicationDetail;
@@ -2637,6 +2851,8 @@ namespace FintrakBanking.Repositories.Credit
         //        }
         //    }
         //}
+
+
 
     } 
 }

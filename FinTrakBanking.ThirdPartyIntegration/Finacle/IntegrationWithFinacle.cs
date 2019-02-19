@@ -59,11 +59,13 @@ namespace FinTrakBanking.ThirdPartyIntegration
             {
                 if (twoFADetails == null)
                     throw new TwoFactorAuthenticationException("Authentication token not specified. Specify the second factor authentication token");
+                if(twoFADetails.skipAuthentication == false)
+                {
+                    var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
 
-                var authenticated = twoFactorAuth.Authenticate(twoFADetails.username, twoFADetails.passcode);
-
-                if (authenticated.authenticated == false)
-                    throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                    if (authenticated.authenticated == false)
+                        throw new TwoFactorAuthenticationException("Two factor authentication failed. Input the token and try again");
+                }
             }
 
             ResponseMessage result = null;
@@ -1054,7 +1056,7 @@ namespace FinTrakBanking.ThirdPartyIntegration
         {
 
             Users module = null;
-            Task.Run(async () => module = await staff.GetStaffRoleByStaffCode(staffCode)).GetAwaiter()
+            Task.Run(async () => module = await staff.GetStaffRoleByStaffCode(staffCode.ToUpper())).GetAwaiter()
                .GetResult();
 
             return module;

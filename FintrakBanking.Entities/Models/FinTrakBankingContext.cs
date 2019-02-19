@@ -178,6 +178,11 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_FEE_AMORTISATION_TYPE> TBL_FEE_AMORTISATION_TYPE { get; set; }
         public virtual DbSet<TBL_FEE_INTERVAL> TBL_FEE_INTERVAL { get; set; }
         public virtual DbSet<TBL_FEE_TARGET> TBL_FEE_TARGET { get; set; }
+        
+        public virtual DbSet<TBL_EOD_OPERATION> TBL_EOD_OPERATION { get; set; }
+        public virtual DbSet<TBL_EOD_OPERATION_LOG> TBL_EOD_OPERATION_LOG { get; set; }
+        public virtual DbSet<TBL_EOD_STATUS> TBL_EOD_STATUS { get; set; }
+        
         public virtual DbSet<TBL_FEE_TYPE> TBL_FEE_TYPE { get; set; }
         public virtual DbSet<TBL_FINANCE_ENDOFDAY> TBL_FINANCE_ENDOFDAY { get; set; }
         public virtual DbSet<TBL_FINANCE_TRANSACTION> TBL_FINANCE_TRANSACTION { get; set; }
@@ -255,6 +260,7 @@ namespace FintrakBanking.Entities.Models
         public virtual DbSet<TBL_LOAN_MONITORING_TRIG_SETUP> TBL_LOAN_MONITORING_TRIG_SETUP { get; set; }
         public virtual DbSet<TBL_LOAN_MONITORING_TRIGGER> TBL_LOAN_MONITORING_TRIGGER { get; set; }
         public virtual DbSet<TBL_LOAN_OPERATION> TBL_LOAN_OPERATION { get; set; }
+        public virtual DbSet<TBL_LOAN_OFFER_LETTER> TBL_LOAN_OFFER_LETTER { get; set; }
         public virtual DbSet<TBL_LOAN_PAST_DUE> TBL_LOAN_PAST_DUE { get; set; }
         public virtual DbSet<TBL_LOAN_PRELIMINARY_EVALUATN> TBL_LOAN_PRELIMINARY_EVALUATN { get; set; }
         public virtual DbSet<TBL_LOAN_PRICEINDEX_EXCEPTION> TBL_LOAN_PRICEINDEX_EXCEPTION { get; set; }

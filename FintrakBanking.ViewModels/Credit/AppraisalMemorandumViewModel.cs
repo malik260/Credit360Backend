@@ -62,6 +62,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string obligorName { get; set; }
         public int approvedTenor { get; set; }
         public double approvedRate { get; set; }
+        public string loanPurpose { get; set; }
 
         public string priceIndexName { get; set; }
         public int? priceIndexId { get; set; }

@@ -57,6 +57,8 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public int contingentLoanUsageId { get; set; }
         public decimal amountRequested { get; set; }
+        public short loanSystemTypeId { get; set; }
+        public string remark { get; set; }
     }
 
 
