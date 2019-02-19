@@ -76,6 +76,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsDueForInitiateBooking(int companyId, int staffId, int branchId);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationsReadyForBooking(int companyId, int staffId);
+        IEnumerable<CamProcessedLoanViewModel> GetAvailedContingentFacilityBooking(int companyId, int staffId);
 
         IEnumerable<CamProcessedLoanViewModel> GetAvailedLoanApplicationDetailById(int staffId, int companyId, int applicationDetailId, int loanBookingRequestId);
 
@@ -92,7 +93,9 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanChargeFeeViewModel> GetLoanProductChargeFee(int chargeFeeId, int productId);
         IEnumerable<LoanViewModel> GetLoanByCustomerGroup(int customerGroupId);
 
-        IEnumerable<LoanViewModel> GetLoanBookingAwaitingApproval(int staffId, int companyId);
+        IEnumerable<LoanViewModel> GetLoanFacilityBookingAwaitingApproval(int staffId, int companyId);
+
+        IEnumerable<CamProcessedLoanViewModel> GetBookedLoanApplicationForBookingVerification(int staffId, int companyId);
 
         IEnumerable<RevolvingLoanViewModel> GetRevolvingFacilityBookingAwaitingApproval(int staffId, int companyId);
 
@@ -129,6 +132,8 @@ namespace FintrakBanking.Interfaces.Credit
 
         List<LoanCovenantDetailViewModel> GetLoanCovenant(int loanId, int loanType);
         List<CollateralLoanApplication> GetLoanCollateral(int loanId, int loanType);
+        List<LoanDisbursementViewModel> GetForeignLoanBeneficiaryNaration(int loanId);
+        List<LoanMonitoringTriggerViewModel> GetLoanMonitoringTriggers(int loanId, int loanSystemTypeId);
 
         List<CurrentCustomerExposure> GetCurrentCustomerExposure(List<CustomerExposure> customer, int companyId);
         List<LoanCAMSOLViewModel> GetCurrentCamsolByCustomer(List<CustomerExposure> customer, int companyId);
