@@ -16279,7 +16279,7 @@ namespace FintrakBanking.Repositories.Credit
                     else if ((int)OperationsEnum.ContingentLiabilityAmountAddition == model.operationId)
                     {
 
-                       // result = ContingentLiabilityAmountAddition(twoFactorAuth, model, approvalComment);
+                       //result = ContingentLiabilityAmountAddition(twoFactorAuth, model, approvalComment);
 
                         if (result == true)
                         {
