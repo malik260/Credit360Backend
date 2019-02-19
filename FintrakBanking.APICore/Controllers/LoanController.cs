@@ -306,7 +306,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         }
 
         [HttpGet]
-        [Route("loan-product-fees/{loanBookingRequestId}")]
+        [Route("loan-product-fees/booking-request/{loanBookingRequestId}")]
         public HttpResponseMessage GetLoanProductFees(int loanBookingRequestId)
         {
             var response = repo.GetLoanProductFees(loanBookingRequestId);
@@ -2227,7 +2227,7 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         #endregion
 
 
-       
+
 
         //    [HttpPost]
         //    [ClaimsAuthorization]
@@ -2258,5 +2258,23 @@ namespace FintrakBanking.APICore.Controllers //D:\Projects\FintrakBanking\Fintra
         //                  new { success = false, message = ex.Message });
         //        }
         //    }
+
+
+        [HttpGet]
+        [ClaimsAuthorization]
+        [Route("loan-balance/{loanId}")]
+        public HttpResponseMessage GetLoanBalances(int loanId)
+        {
+            try
+            {
+                var response = repo.GetLoanBalances(loanId, token.GetCompanyId);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response, count = 1 });
+            }
+            catch (SecureException e)
+            {
+                return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = $"Error: {e.Message}" });
+            }
+        }
     }
 }

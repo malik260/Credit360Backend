@@ -18,6 +18,8 @@ namespace FintrakBanking.Interfaces.Credit
         bool DoesOperationExist(int loanId, int operationTypeId, short loanSystemTypeId);
         int GoForApproval(ApprovalViewModel entity);
         bool AddCollateralSearchLien(CasaLienViewModel model);
+        string GetCollateralLoanNewRefernceNumber(ApprovalViewModel model);
+
         decimal GetCollateralSearchChargeAmount(int stateId);
         bool AddOperationReview(LoanReviewOperationViewModel model);
         IEnumerable<LoanOperationTypeViewModel> GetOperationType();
@@ -94,6 +96,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<LoanReviewIrregularScheduleViewModel> GetLoanReviewOperationIrregularSchedule(int loanReviewOperationId);
 
         bool AddOperationReviewContingent(LoanReviewOperationViewModel model);
+        bool AddOperationReviewContingentWithImage(LoanReviewOperationViewModel model, byte[] buffer);
 
         bool DeleteLoanExistingOnDailyAndPeriodicSchedule(int loanId);
 

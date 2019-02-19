@@ -73,5 +73,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string customerGroupName { get; set; }
         public List<CustomerGroupMappingViewModel> customerGroupMappings { get; set; }
         public int penId { get; set; }
+        public int? capRegionId { get; set; }
+        public int? levelTypeId { get; set; }
     }
 }

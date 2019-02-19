@@ -29,7 +29,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                        && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
                                                        && a.STAFFROLEID != d.STAFFROLEID
                                                        && d.COMPANYID == companyId
-                                                       select new StaffPrivilegeChangeViewModel()
+                                                                  orderby a.DATETIMECREATED descending
+                                                                  select new StaffPrivilegeChangeViewModel()
                                                        {
 
 
@@ -63,6 +64,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                   && (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                                                                   && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
 
+                                                                  orderby a.DATETIMECREATED descending
                                                                   select new UserGroupProfileViewModel()
                                                                   {
                                                                         username = c.USERNAME,
@@ -96,6 +98,7 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                    where e.COMPANYID == companyId && a.CANAPPROVE == true
                                                               && (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                                                               && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+                                                                   orderby a.DATETIMECREATED descending
 
                                                                    select new ProfileActivityReportViewModel()
                                                                    {
@@ -128,6 +131,8 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                          where e.COMPANYID == companyId && a.APPROVALSTATUSID == (short)(ApprovalStatusEnum.Approved)
                                                                     && (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                                                                     && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
+
+                                                                         orderby a.DATETIMECREATED descending
 
                                                                          select new StaffRoleProfileGroupReportViewModel()
                                                                          {
@@ -162,7 +167,9 @@ namespace FintrakBanking.ReportObjects.ReportingObjects
                                                                   && (DbFunctions.TruncateTime(a.DATETIMECREATED) >= DbFunctions.TruncateTime(startDate)
                                                                   && DbFunctions.TruncateTime(a.DATETIMECREATED) <= DbFunctions.TruncateTime(endDate))
 
-                                                                       select new StaffRoleProfileActivityReportViewModel()
+                                                                                orderby a.DATETIMECREATED descending
+
+                                                                                select new StaffRoleProfileActivityReportViewModel()
                                                                        {
                                                                            activityName = b.ACTIVITYNAME,
                                                                            staffRoleName = c.STAFFROLENAME,

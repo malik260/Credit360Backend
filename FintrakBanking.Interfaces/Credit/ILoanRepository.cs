@@ -39,12 +39,14 @@ namespace FintrakBanking.Interfaces.Credit
         IQueryable<LoanViewModel> SearchForLoan(string searchQuery);
         IQueryable<LoanViewModel> SearchForLoanPrepayment(string searchQuery);
         IQueryable<LoanViewModel> SearchForLoanContingent(string searchQuery);
+        IQueryable<LoanViewModel> SearchForLoanInactiveContingent(string searchQuery);
 
         IQueryable<LoanViewModel> SearchForFXRevolvingLoan(string searchQuery);
 
         IEnumerable<LoanViewModel> GetApprovedLoanReview(int companyId, int staffId);
 
         IEnumerable<LoanViewModel> GetApprovedLoanReviewRemedial(int userId, int companyId);
+        LoanViewModel GetUnDisbursedLoanByLoanId(int loanId, int loanType);
 
         LoanViewModel GetDisbursedLoanByLoanId(int loanId, int loanType);
 
@@ -194,6 +196,7 @@ namespace FintrakBanking.Interfaces.Credit
         IEnumerable<CamProcessedLoanViewModel> GetApprovedLineReview(int staffId, int companyId);
 
         IEnumerable<DailyInterestAccrualViewModel> ProcessBackDatedTeamLoansInterestAccrual(DateTime effectiveDate, int loanId);
+        IEnumerable<LoanViewModel> GetContingentApprovedExpiredApplication(int staffId, int companyId);
 
         IEnumerable<LoanViewModel> GetContingentApprovedApplication(int staffId, int companyId);
 
@@ -214,7 +217,7 @@ namespace FintrakBanking.Interfaces.Credit
 
         IQueryable<LoanViewModel> SearchAllOverdraft(string searchQuery);
 
-
+        AccountBalanceViewModel GetLoanBalances(int loanId, int companyId);
 
 
     }

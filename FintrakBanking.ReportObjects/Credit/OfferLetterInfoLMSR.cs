@@ -60,6 +60,9 @@ namespace FintrakBanking.ReportObjects.Credit
                                           operationName = context.TBL_OPERATIONS.Where(o=>o.OPERATIONID==a.OPERATIONID).Select(o=>o.OPERATIONNAME).FirstOrDefault(),
                                           //  producyClassProcessId = a.PRODUCT_CLASS_PROCESSID,
                                           //customerName = customerExist != null ? b.TITLE + " " + b.FIRSTNAME + " " + b.LASTNAME : c.GROUPNAME,
+                                          offerLetterTitle = b.OFFERLETTERTITLE,
+                                          offerLetterSalutation = b.OFFERLETTERSALUTATION
+
 
                                       }).FirstOrDefault();
 
@@ -345,8 +348,8 @@ namespace FintrakBanking.ReportObjects.Credit
                                            join b in context.TBL_LMSR_CONDITION_PRECEDENT on a.LOANAPPLICATIONID equals b.TBL_LMSR_APPLICATION_DETAIL.LOANAPPLICATIONID
                                            where a.APPLICATIONREFERENCENUMBER == applicationRefNumber && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
                                            && (b.CHECKLISTSTATUSID != (short)CheckListStatusEnum.Waived
-                                          || b.CHECKLISTSTATUSID == null)
-                                           && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
+                                                    || b.CHECKLISTSTATUSID == null)
+                                 && b.ISSUBSEQUENT == false && b.ISEXTERNAL == true
                                           && c.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
                                            select new OfferLetterConditionPrecidentViewModel()
                                            {
@@ -859,6 +862,21 @@ namespace FintrakBanking.ReportObjects.Credit
                 x.groupHead = staggingCon.STG_STAFFMIS.Where(m => m.USERNAME == staffcode).Select(m => m.GROUP_HUB).FirstOrDefault();
             }
             return customers;
+        }
+
+        public OfferLetterViewModel offerLetterClauses(string applicationRefNumber)
+        {
+            FinTrakBankingContext context = new FinTrakBankingContext();
+
+            var clause = (from x in context.TBL_LOAN_APPLICATION
+                          join y in context.TBL_LOAN_OFFER_LETTER on x.LOANAPPLICATIONID equals y.LOANAPPLICATIONID
+                          where x.APPLICATIONREFERENCENUMBER == applicationRefNumber
+                          select new OfferLetterViewModel
+                          {
+                              offerLetteracceptance = y.OFFERLETTERACCEPTANCE,
+                              offerLetterClauses = y.OFFERLETTERCLAUSES
+                          }).FirstOrDefault();
+            return clause;
         }
         #endregion
 

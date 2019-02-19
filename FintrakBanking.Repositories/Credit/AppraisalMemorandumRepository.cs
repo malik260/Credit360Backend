@@ -32,6 +32,7 @@ namespace FintrakBanking.Repositories.Credit
         private IWorkflow workflow;
         private ICreditLimitValidationsRepository limitValidation;
         private IEmailAlertLogger emailLogger;
+        private IOfferLetterAndAvailmentRepository offerLetter;
 
         public AppraisalMemorandumRepository(
             FinTrakBankingContext context, 
@@ -39,7 +40,8 @@ namespace FintrakBanking.Repositories.Credit
             IAuditTrailRepository audit, 
             IWorkflow workflow,
             ICreditLimitValidationsRepository limitValidation,
-            IEmailAlertLogger _emailLogger
+            IEmailAlertLogger _emailLogger,
+            IOfferLetterAndAvailmentRepository _offerLetter
             )
         {
             this.context = context;
@@ -48,6 +50,7 @@ namespace FintrakBanking.Repositories.Credit
             this.workflow = workflow;
             this.limitValidation = limitValidation;
             emailLogger = _emailLogger;
+            offerLetter = _offerLetter;
         }
 
         public AppraisalMemorandumViewModel GetAppraisalMemorandum(int applicationId, int staffId)
@@ -337,6 +340,7 @@ namespace FintrakBanking.Repositories.Credit
                 var dictionary = GetRepresentStepdownItems(model.applicationId, model.forwardAction,operationId);
                 workflow.NextLevelId = dictionary["levelId"];
                 workflow.ToStaffId = dictionary["staffId"];
+                if (model.forwardAction == 8) workflow.ToStaffId = null;
             }
 
             string facilityInformationMarkup = GetFacilityInformationMarkup(appl.LOANAPPLICATIONID);
@@ -423,18 +427,15 @@ namespace FintrakBanking.Repositories.Credit
                     appl.APPROVEDDATE = applicationDate;
                     appl.FINALAPPROVAL_LEVELID = workflow.Response.fromLevelId;
 
-
                     //Send Email to Customer
-                    if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
-                    {
-                        SendCustomerLoanApprovalEmail(model.applicationId, model.companyId);
+                    SendEmailToCustomerForLoanApproval(model.applicationId, model.companyId);
 
-                    }
-                    else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
-                    {
-                        SendCustomerLoanDisapprovedEmail(model.applicationId, model.companyId);
-                    }
-
+                    //generate offer letter doc
+                    offerLetter.AddOfferLetterClauses(model.applicationId, model.staffId,false,false);
+                }
+                else if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
+                {
+                    SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
                 }
 
                 //applid, 
@@ -839,7 +840,7 @@ namespace FintrakBanking.Repositories.Credit
                         customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
                         obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
                         currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
-
+                        loanPurpose = x.d.LOANPURPOSE,
                         proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
                         proposedTenor = x.d.PROPOSEDTENOR,
                         proposedRate = x.d.PROPOSEDINTERESTRATE,
@@ -915,7 +916,7 @@ namespace FintrakBanking.Repositories.Credit
                     customerId = x.d.TBL_CUSTOMER.CUSTOMERID,
                     obligorName = x.d.TBL_CUSTOMER.FIRSTNAME + " " + x.d.TBL_CUSTOMER.MIDDLENAME + " " + x.d.TBL_CUSTOMER.LASTNAME,
                     currencyCode = x.d.TBL_CURRENCY.CURRENCYCODE,
-
+                    loanPurpose = x.d.LOANPURPOSE,
                     proposedProductName = x.d.TBL_PRODUCT.PRODUCTNAME,
                     proposedTenor = x.d.PROPOSEDTENOR,
                     proposedRate = x.d.PROPOSEDINTERESTRATE,
@@ -1007,6 +1008,7 @@ namespace FintrakBanking.Repositories.Credit
                 applicationAmount = a.APPLICATIONAMOUNT,
                 dateTimeCreated = a.DATETIMECREATED,
                 collateralDetail = a.COLLATERALDETAIL,
+                loanPurpose = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false).Select(l => l.LOANPURPOSE).FirstOrDefault(),
                 LoanApplicationDetail = context.TBL_LOAN_APPLICATION_DETAIL.Where(c => c.LOANAPPLICATIONID == a.LOANAPPLICATIONID && c.DELETED == false)
                                             .Select(c => new LoanApplicationDetailViewModel
                                             {
@@ -1019,6 +1021,7 @@ namespace FintrakBanking.Repositories.Credit
                                                 currencyId = c.CURRENCYID,
                                                 currencyName = c.TBL_CURRENCY.CURRENCYNAME,
                                                 customerId = c.CUSTOMERID,
+                                                loanPurpose = c.LOANPURPOSE,
                                                 exchangeRate = c.EXCHANGERATE,
                                                 loanApplicationDetailId = c.LOANAPPLICATIONDETAILID,
                                                 subSectorId = c.SUBSECTORID,
@@ -1336,11 +1339,11 @@ namespace FintrakBanking.Repositories.Credit
                 //Send Email to Customer
                 if (appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved)
                 {
-                    SendCustomerLoanApprovalEmail(model.applicationId,model.companyId);
+                    SendEmailToCustomerForLoanApproval(model.applicationId,model.companyId);
 
                 }else if(appl.APPROVALSTATUSID == (int)ApprovalStatusEnum.Disapproved)
                 {
-                    SendCustomerLoanDisapprovedEmail(model.applicationId, model.companyId);
+                    SendEmailToCustomerForLoanDisapproval(model.applicationId, model.companyId);
                 }
             }
 
@@ -1874,13 +1877,14 @@ namespace FintrakBanking.Repositories.Credit
             if (((result.limit == 0) || ((double)amount + result.outstandingBalance) <= result.outstandingBalance) == false)
                 throw new SecureException("Customer limit validation failed!");
         }
-        private void SendCustomerLoanApprovalEmail(int loanApplicationId, int companyId)
+        private void SendEmailToCustomerForLoanApproval(int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
-                        where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
-                        && a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        where a.COMPANYID == companyId && a.DELETED == false 
+                        //&& a.APPROVALSTATUSID == (int)ApprovalStatusEnum.Approved
+                        && a.LOANAPPLICATIONID == loanApplicationId
                         select new LoanApplicationDetailViewModel
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
@@ -1905,12 +1909,13 @@ namespace FintrakBanking.Repositories.Credit
             }
                 
         }
-        private void SendCustomerLoanDisapprovedEmail(int loanApplicationId, int companyId)
+        private void SendEmailToCustomerForLoanDisapproval(int loanApplicationId, int companyId)
         {
             var data = (from a in context.TBL_LOAN_APPLICATION.Where(x => x.LOANAPPLICATIONID == loanApplicationId)
                         join b in context.TBL_LOAN_APPLICATION_DETAIL on a.LOANAPPLICATIONID equals b.LOANAPPLICATIONID
                         join c in context.TBL_CUSTOMER on b.CUSTOMERID equals c.CUSTOMERID
-                        where a.COMPANYID == companyId && a.DELETED == false && b.DELETED == false
+                        where a.COMPANYID == companyId && a.DELETED == false
+                        && a.LOANAPPLICATIONID == loanApplicationId
                         select new LoanApplicationDetailViewModel
                         {
                             customerName = c.FIRSTNAME + " " + c.LASTNAME,
