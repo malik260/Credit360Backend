@@ -9,6 +9,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanReviewOperationViewModel : GeneralEntity
     {
         public int loanReviewOperationsId { get; set; }
+        public string legalContingentCode { get; set; }
+
 
         public int loanId { get; set; }
 
@@ -115,6 +117,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string description { get; set; }
         public int? takeFeeCasaAccountId { get; set; }
         public string takeFeeCasaAccountName { get; set; }
+        public string legalContingentCode { get; set; }
 
         public int? loanReviewApplicationId { get; set; }
         public string currencyCode { get; set; }

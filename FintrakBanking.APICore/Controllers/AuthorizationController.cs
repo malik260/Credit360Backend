@@ -21,6 +21,9 @@ namespace FintrakBanking.APICore.Controllers
     {
         private IAuthorizationRepository repo;
         IErrorLogRepository errorLogger;
+
+        private TokenDecryptionHelper token = new TokenDecryptionHelper();
+
         public AuthorizationController(IAuthorizationRepository _repo,
                                         IErrorLogRepository _errorLogger)
         {
@@ -211,5 +214,22 @@ namespace FintrakBanking.APICore.Controllers
             }
         }
 
+
+        [HttpGet]
+        [Route("logged-in-users-number")]
+        public HttpResponseMessage GetLoggedInUsersNumber()//(int? userId = null)
+        {
+            var response = repo.GetLoggedInUsersNumber(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
+
+        [HttpGet]
+        [Route("logout-all-users")]
+        public HttpResponseMessage LogOutAllUsers()//(int? userId = null)
+        {
+            var response = repo.LogOutAllUsers(token.GetStaffId);
+            return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = response });
+        }
+        
     }
 }
