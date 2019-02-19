@@ -822,6 +822,7 @@ namespace FintrakBanking.Repositories.Setups.General
 
             return activities;
         }
+
         public LookupViewModel GetDashboardStaffRole(int staffId)
         {
             var dash = (from st in context.TBL_STAFF
@@ -834,6 +835,7 @@ namespace FintrakBanking.Repositories.Setups.General
                         }).FirstOrDefault();
             return dash;
         }
+
         public bool PasswordChange(PasswordChangeViewModel pwdChange)
         {
 
@@ -873,6 +875,7 @@ namespace FintrakBanking.Repositories.Setups.General
             else
                 throw new SecureException("New Password should not be same as the Current Password");
         }
+
         public bool ValidatePasswordPolicy(string password)
         {
             var hasNumber = new Regex(@"[0-9]+");
@@ -882,6 +885,7 @@ namespace FintrakBanking.Repositories.Setups.General
             var isValidated = hasNumber.IsMatch(password) && hasUpperChar.IsMatch(password) && hasMinimum8Chars.IsMatch(password);
             return isValidated;
         }
+
         public bool ValidateOldPassword(string username, string oldPassword)
         {
             bool isOldPasswordValid = false;
@@ -896,5 +900,31 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return isOldPasswordValid;
         }
+
+        public int GetLoggedInUsersNumber(int? userId = null)
+        {
+            if (userId == null)
+            {
+                return context.TBL_PROFILE_USER.Where(x => x.LOGINCODE != null && x.ISACTIVE == true).Count();
+            }
+            return context.TBL_PROFILE_USER.Where(x => x.LOGINCODE != null && x.ISACTIVE == true && x.USERID != userId).Count();
+        }
+
+        public bool LogOutAllUsers(int userId)
+        {
+            var activeUsers = context.TBL_PROFILE_USER
+                .Where(x => x.LOGINCODE != null && x.ISACTIVE == true && x.USERID != userId)
+                //.ToList()
+                ;
+            // activeUsers.
+            foreach (var user in activeUsers)
+            {
+                user.ISACTIVE = false;
+                user.LOGINCODE = null;
+            }
+
+            return context.SaveChanges() > 0;
+        }
+
     }
 }
