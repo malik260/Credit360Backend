@@ -896,5 +896,6 @@ namespace FintrakBanking.Repositories.Setups.General
             }
             return isOldPasswordValid;
         }
+
     }
 }
