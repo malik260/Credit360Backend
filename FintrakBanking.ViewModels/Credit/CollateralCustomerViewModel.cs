@@ -811,6 +811,13 @@ namespace FintrakBanking.ViewModels.Credit
 
     public class CollateralLoanApplication
     {
+        public int? valuationCycle { get; set; }
+        public string collateralTypeName { get; set; }
+        public int collateralCustomerId { get; set; }
+        public string currencyCode { get; set; }
+        public short currencyId { get; set; }
+        public string currency { get; set; }
+
         public int loanApplicationCollateralId { get; set; }
         public double haircut { get; set; }
         public string collateralCode { get; set; }

@@ -70,13 +70,11 @@ namespace FintrakBanking.Repositories.CreditLimitValidations
 
         public CustomerEligibility GetCustomerEligibility(string customerCode)
         {
-            // var customer = context.TBL_CUSTOMER.FirstOrDefault(c => c.CUSTOMERCODE == customerCode);
-
             var camsol = (from a in context.TBL_LOAN_CAMSOL
                           join b in context.TBL_LOAN_CAMSOL_TYPE on a.CAMSOLTYPEID equals b.CAMSOLTYPEID
                           where a.CUSTOMERCODE == customerCode && a.CANTAKELOAN == false
                           select new { b.CAMSOLTYPENAME }).FirstOrDefault();
-                       
+
             CustomerEligibility result = new CustomerEligibility();
             result.eligible = true;
             result.message = String.Empty;

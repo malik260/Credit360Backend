@@ -83,6 +83,7 @@
     <Compile Include="CASA\OverrideViewModel.cs" />
     <Compile Include="CreditLimitValidations\CreditLimitValidationsModel.cs" />
     <Compile Include="CreditLimitValidations\CustomerEligibilityViewModel.cs" />
+    <Compile Include="Credit\AccountBalanceViewModel.cs" />
     <Compile Include="Credit\AppraisalMemorandumLoanDetailViewModel2.cs" />
     <Compile Include="Credit\AppraisalMemorandumViewModel.cs" />
     <Compile Include="Credit\ApprovalStatusViewModel.cs" />

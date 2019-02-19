@@ -291,7 +291,7 @@ namespace FintrakBanking.APICore.Controllers
 
                 if (data != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Staff data was successfully uploaded" });
+                    return Request.CreateResponse(HttpStatusCode.OK, new { success = true, result = data, message = "Camsol document uploaded successfully" });
                 }
 
                 return Request.CreateResponse(HttpStatusCode.OK, new { success = false, message = "Error uploading staff data" });

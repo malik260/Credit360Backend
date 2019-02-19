@@ -9,6 +9,8 @@ namespace FintrakBanking.ViewModels.Credit
     public class LoanReviewOperationViewModel : GeneralEntity
     {
         public int loanReviewOperationsId { get; set; }
+        public string legalContingentCode { get; set; }
+
 
         public int loanId { get; set; }
 
@@ -35,6 +37,7 @@ namespace FintrakBanking.ViewModels.Credit
         public DateTime? maturityDate { get; set; }
 
         public int? tenor { get; set; }
+        public int? amountType { get; set; }
 
         public int? prepaymentMethodId { get; set; }
 
@@ -78,6 +81,17 @@ namespace FintrakBanking.ViewModels.Credit
         public int operationId { get; set; }
         public IEnumerable<feeDetails> fees { get; set; }
 
+
+        //File Upload
+        public string documentTitle { get; set; }
+        public string fileName { get; set; }
+        public string fileExtension { get; set; }
+        public byte[] file { get; set; }
+        public int? TargetId { get; set; }
+
+        public bool isPrimaryDocument { get; set; }
+        public string formData { get; set; }
+
     }
 
     public class LoanReviewIrregularScheduleViewModel
@@ -103,6 +117,7 @@ namespace FintrakBanking.ViewModels.Credit
         public string description { get; set; }
         public int? takeFeeCasaAccountId { get; set; }
         public string takeFeeCasaAccountName { get; set; }
+        public string legalContingentCode { get; set; }
 
         public int? loanReviewApplicationId { get; set; }
         public string currencyCode { get; set; }
@@ -119,7 +134,9 @@ namespace FintrakBanking.ViewModels.Credit
         public short productId { get; set; }
         public decimal productPriceIndexRate { get; set; }
         public int casaAccountId { get; set; }
-               public string casaAccountName { get; set; }
+        public string casaAccount { get; set; }
+
+        public string casaAccountName { get; set; }
  public int loanApplicationDetailId { get; set; }
 
         public short branchId { get; set; }
@@ -245,6 +262,7 @@ public int? newInterestFrequencyTypeId { get; set; }
         public int? newTenor { get; set; }
         public int? cASA_AccountId { get; set; }
         public string cASA_AccountName { get; set; }
+        public string cASA_Account { get; set; }
 
         public decimal? overDraftTopup { get; set; }
         public decimal? fee_Charges { get; set; }

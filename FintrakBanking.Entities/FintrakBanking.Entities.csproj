@@ -75,7 +75,11 @@
     <Compile Include="DocumentModels\FinTrakBankingDocumentsContext.cs" />
     <Compile Include="DocumentModels\TBL_CUSTOMER_CREDIT_BUREAU.cs" />
     <Compile Include="DocumentModels\TBL_DOC_COLLATERAL_VISITATION.cs" />
+    <Compile Include="DocumentModels\TBL_TEMP_MEDIA_LOAN_DOCUMENTS.cs" />
     <Compile Include="Models\TBL_COLLATERAL_DOCUMENT_TYPE.cs" />
+    <Compile Include="Models\TBL_EOD_OPERATION.cs" />
+    <Compile Include="Models\TBL_EOD_OPERATION_LOG.cs" />
+    <Compile Include="Models\TBL_EOD_STATUS.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_HUB.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_HUB_STAFF.cs" />
     <Compile Include="Models\TBL_JOB_TYPE_REASSIGNMENT.cs" />

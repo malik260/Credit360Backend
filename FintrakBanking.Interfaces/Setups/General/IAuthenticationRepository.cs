@@ -57,5 +57,6 @@ namespace FintrakBanking.Interfaces.Setups.General
         bool ValidateOldPassword(string username, string oldPassword);
 
         UserViewModel GetUserLoginInfoByUserName(string userName);
+
     }
 }

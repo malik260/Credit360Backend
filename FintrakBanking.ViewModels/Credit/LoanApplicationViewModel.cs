@@ -94,6 +94,7 @@ namespace FintrakBanking.ViewModels.Credit
 
         public string collateralDetail { get; set; }
         //private int _tenor;
+        public string loanPurpose { get; set; }
 
         public int tenor { get; set; }
         public bool customerInfoValidated { get; set; }

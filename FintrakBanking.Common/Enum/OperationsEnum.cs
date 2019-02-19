@@ -112,5 +112,7 @@ namespace FintrakBanking.Common.Enum
         ContingentLiabilityTerminateAndRebook = 104,
         CancelContingentLiability = 105,
         UserAccountStatusChange = 103,
+        ContingentLiabilityAmountAddition = 106,
+
     }
 }
