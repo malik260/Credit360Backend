@@ -3980,27 +3980,27 @@ namespace FintrakBanking.Repositories.Credit
             return loanModel;
         }
 
-        private string getLoanDisbursementDescription(LoanViewModel model)
-        {
-            var loanDescription = "Loan disbursement";
+        //private string getLoanDisbursementDescription(LoanViewModel model)
+        //{
+        //    var loanDescription = "FTK" + model.loanReferenceNumber + " disbursement";
 
-            if (model.productTypeId == (short)LoanProductTypeEnum.TermLoan)
-                loanDescription = "Term Loan Disbursement";
+        //    //if (model.productTypeId == (short)LoanProductTypeEnum.TermLoan)
+        //    //    loanDescription = "Term Loan Disbursement";
 
-            if (model.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
-                loanDescription = "Self Liquidating Loan Disbursement";
+        //    //if (model.productTypeId == (short)LoanProductTypeEnum.SelfLiquidating)
+        //    //    loanDescription = "Self Liquidating Loan Disbursement";
 
-            if (model.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
-                loanDescription = "Syndicated Loan Disbursement";
+        //    //if (model.productTypeId == (short)LoanProductTypeEnum.SyndicatedTermLoan)
+        //    //    loanDescription = "Syndicated Loan Disbursement";
 
-            if ((int)model.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
-                loanDescription = "Commercial Loan Disbursement";
+        //    //if ((int)model.productTypeId == (short)LoanProductTypeEnum.CommercialLoan)
+        //    //    loanDescription = "Commercial Loan Disbursement";
 
-            if ((int)model.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
-                loanDescription = "fx revolving Loan Disbursement";
+        //    //if ((int)model.productTypeId == (short)LoanProductTypeEnum.ForeignXRevolving)
+        //    //    loanDescription = "fx revolving Loan Disbursement";
 
-            return loanDescription;
-        }
+        //    return loanDescription;
+        //}
 
         public List<FinanceTransactionViewModel> BuildLoanDisbursmentPosting(LoanViewModel model)
         {
@@ -4036,7 +4036,11 @@ namespace FintrakBanking.Repositories.Credit
             List<FinanceTransactionViewModel> debits = new List<FinanceTransactionViewModel>();
             FinanceTransactionViewModel debit = new FinanceTransactionViewModel();
 
-            var loanDescription = getLoanDisbursementDescription(model);
+            var loanDescription = "FTK" + model.loanReferenceNumber + " disbursement"; //getLoanDisbursementDescription(model);
+            if (loanDescription.Length > 40)
+            {
+                loanDescription = loanDescription.Substring(0, 40);
+            }
 
             debit.operationId = (int)model.operationId;
             debit.description = loanDescription; // $"Loan disbursement";
@@ -4270,10 +4274,16 @@ namespace FintrakBanking.Repositories.Credit
         public List<FinanceTransactionViewModel> BuildLoanChargeFeesPosting(LoanViewModel loanDetails)
         {
             var batchCode = CommonHelpers.GenerateRandomDigitCode(10);
+            var feeDescription = "FTK" + loanDetails.loanReferenceNumber + " fees";
+            if (feeDescription.Length > 40)
+            {
+                feeDescription = feeDescription.Substring(0, 40);
+            }
+
             List<FinanceTransactionViewModel> inputTransactions = new List<FinanceTransactionViewModel>();
+
             //TBL_LOAN loanTable = new TBL_LOAN();
             var bookingRequestDetails = context.TBL_LOAN_BOOKING_REQUEST.FirstOrDefault(x => x.LOAN_BOOKING_REQUESTID == loanDetails.loanBookingRequestId);
-
             var company = context.TBL_COMPANY.Find(loanDetails.companyId);
             foreach (var item in loanDetails.loanChargeFee)
             {
@@ -4309,7 +4319,7 @@ namespace FintrakBanking.Repositories.Credit
                                 debitAmount = (decimal)debits.VALUE;
 
                             debit.operationId = (int)loanDetails.operationId;
-                            debit.description = $"Fee charge on {debits.DESCRIPTION}";
+                            debit.description = feeDescription; // $"Fee charge on {debits.DESCRIPTION}";
                             debit.valueDate = generalSetup.GetApplicationDate();
                             debit.transactionDate = debit.valueDate;
                             debit.currencyId = casa.CURRENCYID;
@@ -4350,7 +4360,7 @@ namespace FintrakBanking.Repositories.Credit
 
 
                             credit.operationId = (int)loanDetails.operationId;
-                            credit.description = $"Fee charge on {credits.DESCRIPTION}";
+                            credit.description = feeDescription; // $"Fee charge on {credits.DESCRIPTION}";
                             credit.valueDate = generalSetup.GetApplicationDate();
                             credit.transactionDate = credit.valueDate;
                             credit.currencyId = context.TBL_COMPANY.FirstOrDefault(x => x.COMPANYID == loanDetails.companyId).CURRENCYID; //(short)chartOfAccount.GetAccountDefaultCurrency((int)credits.GLACCOUNTID1, loanDetails.companyId); //casa.CURRENCYID;
