@@ -58,6 +58,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         private bool externalInitialization = false;
         private bool keepPending = false;
         private bool politicallyExposed = false;
+        private bool setResponse = true;
         private bool deferredExecution = false;
         private short? vote = null;
         private int? toStaffId = null;
@@ -80,6 +81,7 @@ namespace FintrakBanking.Repositories.WorkFlow
         public bool Untenored { set { untenored = value; } }
         public bool Disputed { set { disputed = value; } }
         public bool PoliticallyExposed { set { politicallyExposed = value; } }
+        public bool SetResponse { set { setResponse = value; } }
         public short? Vote { set { vote = value; } }
 
         public float? InterestRateConcession { set { interestRateConcession = value; } }
@@ -283,6 +285,8 @@ namespace FintrakBanking.Repositories.WorkFlow
 
         private void SetResponseInformation()
         {
+            if (this.setResponse == false) return;
+
             response.fromLevelId = this.fromLevelId;
             response.stateId = this.newStateId;
             response.nextLevelId = this.nextLevelId;

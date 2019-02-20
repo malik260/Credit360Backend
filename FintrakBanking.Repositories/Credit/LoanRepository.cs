@@ -8867,7 +8867,7 @@ namespace FintrakBanking.Repositories.Credit
                                    misCode = a.MISCODE,
                                    teamMiscode = a.TEAMMISCODE,
                                    loanPurpose = ld.LOANPURPOSE,
-
+                                   legalContingentCode = a.LEGALCONTINGENTCODE == null ? "n/a":a.LEGALCONTINGENTCODE,
                                    //interestRate = a.INTERESTRATE,
                                    effectiveDate = a.EFFECTIVEDATE,
                                    maturityDate = a.MATURITYDATE,
@@ -9344,6 +9344,7 @@ namespace FintrakBanking.Repositories.Credit
                                        systemCurrentDate = currentDate,
                                        lmsApplicationDetailId = b.LOANREVIEWAPPLICATIONID,
                                        loanSystemTypeId = b.LOANSYSTEMTYPEID,
+                                       legalContingentCode =a.LEGALCONTINGENTCODE,
                                        operationReview = context.TBL_LOAN_REVIEW_OPERATION.Where(m => m.LOANID == a.CONTINGENTLOANID && m.APPROVALSTATUSID == (int)ApprovalStatusEnum.Referred && m.OPERATIONCOMPLETED == false).Select(op => new LoanReviewOperationApprovalViewModel
                                        {
                                            loanReviewOperationsId = op.LOANREVIEWOPERATIONID,
@@ -9370,7 +9371,8 @@ namespace FintrakBanking.Repositories.Credit
                                            scheduledPrepaymentFrequencyTypeName = context.TBL_LOAN_SCHEDULE_TYPE.Where(x => x.SCHEDULETYPEID == op.SCHEDULETYPEID).Select(x => x.SCHEDULETYPENAME).FirstOrDefault(),
                                            newInterestFirstPaymentDate = op.INTERESTFIRSTPAYMENTDATE,
                                            newMaturityDate = op.MATURITYDATE,
-                                           dateTimeCreated = op.DATECREATED
+                                           dateTimeCreated = op.DATECREATED,
+                                           legalContingentCode = op.LEGALCONTINGENTCODE,
                                        }).FirstOrDefault(),
                                    }).ToList();
 
@@ -10938,7 +10940,7 @@ namespace FintrakBanking.Repositories.Credit
                                        disburseDate = a.DISBURSEDATE,
                                        loanSystemTypeId = a.LOANSYSTEMTYPEID,
                                        //approvedAmount = a.ApprovedAmount,
-                                       operationId = a.OPERATIONID,
+                                       operationId = b.OPERATIONID,
                                        operationName = b.TBL_OPERATIONS.OPERATIONNAME, //context.TBL_OPERATIONS.FirstOrDefault(x => x.OPERATIONID == a.OPERATIONID).OPERATIONNAME,
                                        subSectorName = a.TBL_SUB_SECTOR.NAME,
                                        sectorName = a.TBL_SUB_SECTOR.TBL_SECTOR.NAME,
