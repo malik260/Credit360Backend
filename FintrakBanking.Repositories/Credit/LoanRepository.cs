@@ -717,7 +717,7 @@ namespace FintrakBanking.Repositories.Credit
                 USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
-                CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentAgreementTypeId
+                //CRMSREPAYMENTAGREEMENTID = model.crmsRepaymentAgreementTypeId
             };
 
             //Audit Section ---------------------------
@@ -931,7 +931,7 @@ namespace FintrakBanking.Repositories.Credit
                 ISBANKFORMAT = isBankFormat,
                 ISTENORED = isTenored,
                 BOOKINGDATE = generalSetup.GetApplicationDate(),
-                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
+                //CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
 
                 LOANSYSTEMTYPEID = (short)LoanSystemTypeEnum.ContingentLiability,
                 CONTINGENTAMOUNT = contingentLoanInput.contingentAmount,
@@ -1308,7 +1308,7 @@ namespace FintrakBanking.Repositories.Credit
                 USER_PRUDENTIAL_GUIDE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 EXT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
                 INT_PRUDENT_GUIDELINE_STATUSID = (short)LoanPrudentialStatusEnum.Performing,
-                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
+                //CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
                 REPRICINGMODEID = entity.loanScheduleInput.repricingModeId != 0 ? entity.loanScheduleInput.repricingModeId : null,
                 REPRICINGDURATION = entity.loanScheduleInput.repricingDuration != 0 ? entity.loanScheduleInput.repricingDuration : null,
 
@@ -1495,7 +1495,7 @@ namespace FintrakBanking.Repositories.Credit
             loanData.SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount;
             loanData.PRINCIPALAMOUNT = Convert.ToDecimal(entity.loanPrincipal);
             loanData.OUTSTANDINGPRINCIPAL = Convert.ToDecimal(entity.loanPrincipal);
-            loanData.CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId;
+            //loanData.CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId;
             loanData.EFFECTIVEDATE = entity.effectiveDate;
             loanData.MATURITYDATE = entity.maturityDate;
             loanData.INTERESTRATE = Convert.ToInt32(applicationDetail.APPROVEDINTERESTRATE);
@@ -1639,7 +1639,7 @@ namespace FintrakBanking.Repositories.Credit
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 PRINCIPALAMOUNT = Convert.ToDecimal(entity.loanPrincipal),
                 OUTSTANDINGPRINCIPAL = Convert.ToDecimal(entity.loanPrincipal),
-                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
+                //CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
 
                 EFFECTIVEDATE = entity.effectiveDate, 
                 MATURITYDATE = entity.maturityDate, 
@@ -1820,7 +1820,7 @@ namespace FintrakBanking.Repositories.Credit
             loanData.SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount;
             loanData.PRINCIPALAMOUNT = Convert.ToDecimal(entity.loanPrincipal);
             loanData.OUTSTANDINGPRINCIPAL = Convert.ToDecimal(entity.loanPrincipal);
-            loanData.CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId;
+            //loanData.CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId;
             loanData.EFFECTIVEDATE = (DateTime)entity.effectiveDate;
             loanData.MATURITYDATE = (DateTime)entity.maturityDate;
 
@@ -1964,7 +1964,7 @@ namespace FintrakBanking.Repositories.Credit
                 SCHEDULEDPREPAYMENTAMOUNT = entity.scheduledPrepaymentAmount,
                 PRINCIPALAMOUNT = Convert.ToDecimal(entity.loanPrincipal),
                 OUTSTANDINGPRINCIPAL = Convert.ToDecimal(entity.loanPrincipal),
-                CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
+                //CRMSREPAYMENTAGREEMENTID = entity.crmsRepaymentAgreementTypeId,
 
                 EFFECTIVEDATE = (DateTime)entity.effectiveDate,
                 MATURITYDATE = (DateTime)entity.maturityDate,
@@ -2493,7 +2493,7 @@ namespace FintrakBanking.Repositories.Credit
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                crmsCode = ln.CRMSCODE,
+                                //crmsCode = ln.CRMSCODE,
                                 staffId = staffId,
 
                                 pricipalFrequencyTypeName = ln.TBL_FREQUENCY_TYPE.DESCRIPTION ?? null,
@@ -2582,7 +2582,7 @@ namespace FintrakBanking.Repositories.Credit
                                 nostroRateAmount = ln.NOSTRORATEAMOUNT,
                                 nostroAccountId = ln.NOSTROACCOUNTID,
                                 
-                                crmsRepaymentAgreementTypeId = ln.CRMSREPAYMENTAGREEMENTID,
+                                //crmsRepaymentAgreementTypeId = ln.CRMSREPAYMENTAGREEMENTID,
                                 
                                 loanCollateral = (from cm in context.TBL_LOAN_COLLATERAL_MAPPING.Where(x => x.LOANID == ln.TERMLOANID && x.LOANSYSTEMTYPEID == ln.LOANSYSTEMTYPEID)
                                                   select (new LoanCollateralMappingViewModel
@@ -2686,7 +2686,7 @@ namespace FintrakBanking.Repositories.Credit
                                 branchId = ln.BRANCHID,
                                 loanReferenceNumber = ln.LOANREFERENCENUMBER,
                                 applicationReferenceNumber = ln.TBL_LOAN_APPLICATION_DETAIL.TBL_LOAN_APPLICATION.APPLICATIONREFERENCENUMBER,
-                                crmsRepaymentAgreementTypeId = ln.CRMSREPAYMENTAGREEMENTID,
+                                //crmsRepaymentAgreementTypeId = ln.CRMSREPAYMENTAGREEMENTID,
 
                                 relationshipOfficerId = ln.RELATIONSHIPOFFICERID,
                                 relationshipManagerId = ln.RELATIONSHIPMANAGERID,
@@ -4938,7 +4938,7 @@ namespace FintrakBanking.Repositories.Credit
                                   nostroAccountId = data.NOSTROACCOUNTID,
                                   nostroRateAmount = data.NOSTRORATEAMOUNT,
                                   nostroRateCodeId = data.NOSTRORATECODEID,
-                                  crmsRepaymentAgreementTypeId = data.CRMSREPAYMENTAGREEMENTID,
+                                  //crmsRepaymentAgreementTypeId = data.CRMSREPAYMENTAGREEMENTID,
 
                                   approvedAmount = data.TBL_LOAN_APPLICATION_DETAIL.APPROVEDAMOUNT,
 
@@ -9146,7 +9146,7 @@ namespace FintrakBanking.Repositories.Credit
                             isBidbond = ln.TBL_PRODUCT.PRODUCTCLASSID == (short)ProductClassEnum.BondAndGuarantees ? true : false,
                             isOverdraft = ln.TBL_PRODUCT.PRODUCTTYPEID == (short)LoanProductTypeEnum.RevolvingLoan ? true : false,
                             scheduleDayCountConventionId = ln.DAYCOUNTCONVENTIONID,
-                            crmsRepaymentAgreementTypeId = ln.CRMSREPAYMENTAGREEMENTID,
+                            //crmsRepaymentAgreementTypeId = ln.CRMSREPAYMENTAGREEMENTID,
                             revolvingTypeId = ln.REVOLVINGTYPEID,
                         });
 

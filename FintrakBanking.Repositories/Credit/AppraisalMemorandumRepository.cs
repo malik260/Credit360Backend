@@ -860,6 +860,7 @@ namespace FintrakBanking.Repositories.Credit
                         schedule = x.d.REPAYMENTSCHEDULE,
                         securedByCollateral = x.d.SECUREDBYCOLLATERAL,
                         crmsCollateralTypeId = x.d.CRMSCOLLATERALTYPEID,
+                        crmsRepaymentTypeId = x.d.CRMSREPAYMENTAGREEMENTID,
                         isSpecialised = (bool)x.d.ISSPECIALISED,
 
                         priceIndexId = x.d.PRODUCTPRICEINDEXID,

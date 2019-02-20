@@ -124,6 +124,11 @@ namespace FintrakBanking.Entities.Models
 
         public string CRMS_ECCI_NUMBER { get; set; }
 
+        public string CRMSCODE { get; set; }
+        public short? CRMSREPAYMENTAGREEMENTID { get; set; }
+
+        public DateTime? CRMSDATE { get; set; }
+
         public string TRANSACTIONDYNAMICS { get; set; }
 
         public string CONDITIONPRECIDENT { get; set; }

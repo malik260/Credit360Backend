@@ -47,7 +47,7 @@ namespace FintrakBanking.APICore.Controllers
         [HttpPut]
         [ClaimsAuthorization]
         [Route("save-collateral-type-crms")]
-        public HttpResponseMessage UpdateApprovalRelief([FromBody] ApprovedLoanDetailViewModel model)
+        public HttpResponseMessage AddCRMSCollateralType([FromBody] ApprovedLoanDetailViewModel model)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace FintrakBanking.APICore.Controllers
                 model.createdBy = token.GetStaffId;
                 model.companyId = token.GetCompanyId;
                 int applicationId = model.loanApplicationDetailId;
-                var data = repo.UpdateLoadDetails(applicationId, model);
+                var data = repo.AddCRMSCollateralType(applicationId, model);
 
                 if (data)
                 {
